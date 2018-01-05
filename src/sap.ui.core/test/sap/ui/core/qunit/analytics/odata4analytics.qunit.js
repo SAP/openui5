@@ -66,7 +66,9 @@ sap.ui.require([
 
 		assert.strictEqual(aQueryResultNames[0], "ActualPlannedCostsResults",
 			"First Query Result Name is 'ActualPlannedCostsResults'.");
-		assert.strictEqual(aQueryResultNames.length, 1,
+		assert.strictEqual(aQueryResultNames[1], "TypeWithHierarchiesResults",
+			"Second Query Result Name is 'TypeWithHierarchiesResults'.");
+		assert.strictEqual(aQueryResultNames.length, 2,
 			"Number of interpreted Query Results is correct.");
 	});
 
@@ -977,18 +979,26 @@ sap.ui.require([
 	QUnit.test("From model to query results", function (assert) {
 		var oActualPlannedCostsResults,
 			// Note: this is a simpler way to start
-			oOData4SAPAnalyticsModel = this.oODataModel.getAnalyticalExtensions();
+			oOData4SAPAnalyticsModel = this.oODataModel.getAnalyticalExtensions(),
+			oTypeWithHierarchiesResults;
 
 		assert.deepEqual(oOData4SAPAnalyticsModel.getAllQueryResultNames(),
-			["ActualPlannedCostsResults"]);
+			["ActualPlannedCostsResults", "TypeWithHierarchiesResults"]);
 
 		oActualPlannedCostsResults
 			= oOData4SAPAnalyticsModel.findQueryResultByName("ActualPlannedCostsResults");
 
 		assert.ok(oActualPlannedCostsResults instanceof odata4analytics.QueryResult);
 
-		assert.deepEqual(oOData4SAPAnalyticsModel.getAllQueryResults(),
-			{"ActualPlannedCostsResults" : oActualPlannedCostsResults});
+		oTypeWithHierarchiesResults
+			= oOData4SAPAnalyticsModel.findQueryResultByName("TypeWithHierarchiesResults");
+
+		assert.ok(oTypeWithHierarchiesResults instanceof odata4analytics.QueryResult);
+
+		assert.deepEqual(oOData4SAPAnalyticsModel.getAllQueryResults(), {
+			"ActualPlannedCostsResults" : oActualPlannedCostsResults,
+			"TypeWithHierarchiesResults" : oTypeWithHierarchiesResults
+		});
 	});
 
 	//*********************************************************************************************

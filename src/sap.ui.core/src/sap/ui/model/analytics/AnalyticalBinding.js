@@ -1015,10 +1015,12 @@ sap.ui.define([
 
 		if (!oTextProperty) {
 			sFormattedPropertyValue = fValueFormatter ? fValueFormatter(sPropertyValue) : sPropertyValue;
-			sGroupName = ((oDimension.getLabelText()) ? oDimension.getLabelText() + ': ' : '') + sFormattedPropertyValue;
+			sGroupName = (oDimension.getLabelText ? oDimension.getLabelText() + ': ' : '')
+				+ sFormattedPropertyValue;
 		} else {
 			sFormattedPropertyValue = fValueFormatter ? fValueFormatter(sPropertyValue, sTextPropertyValue) : sPropertyValue;
-			sGroupName = ((oDimension.getLabelText()) ? oDimension.getLabelText() + ': ' : '') + sFormattedPropertyValue;
+			sGroupName = (oDimension.getLabelText ? oDimension.getLabelText() + ': ' : '')
+				+ sFormattedPropertyValue;
 
 			var sFormattedTextPropertyValue = fTextValueFormatter ? fTextValueFormatter(sTextPropertyValue, sPropertyValue) : sTextPropertyValue;
 			if (sFormattedTextPropertyValue) {
@@ -1048,6 +1050,14 @@ sap.ui.define([
 	 *       <li>total: totals and sub-totals will be provided for the measure at all aggregation levels</li>
 	 *     </ul>
 	 *   </li>
+	 *   <li>A column bound to a hierarchy property has further properties:
+	 *     <ul>
+	 *       <li>grouped: boolean value; indicates whether the hierarchy will be used for building
+	 *           groups</li>
+	 *       <li>level: integer value; the hierarchy level is mandatory for at least one of those
+	 *           columns that represent the same hierarchy.</li>
+	 *     </ul>
+	 *   </li>
 	 * </ol>
 	 *
 	 * Invoking this function resets the state of the binding and subsequent data requests such as calls to getNodeContexts() will
@@ -1063,6 +1073,90 @@ sap.ui.define([
 	 * @protected
 	 */
 	AnalyticalBinding.prototype.updateAnalyticalInfo = function(aColumns, bForceChange) {
+		var oDimensionDetails,
+			oEntityType = this.oAnalyticalQueryResult.getEntityType(),
+			aHierarchyProperties,
+			that = this;
+
+		/*
+		 * If the given analytical column is related to a hierarchy, add or update the corresponding
+		 * entry in <code>that.mHierarchyDetailsByName</code>.
+		 * @param {object} The analytical info for an analytical column
+		 */
+		function addOrUpdateHierarchy(oColumn) {
+			var iLevel = oColumn.level,
+				sName = oColumn.name;
+
+			aHierarchyProperties = aHierarchyProperties
+				|| oEntityType.getAllHierarchyPropertyNames();
+
+			aHierarchyProperties.forEach(function (sHierarchyName) {
+				var oHierarchy = that.oAnalyticalQueryResult
+						.findDimensionByPropertyName(sHierarchyName).getHierarchy(),
+					oHierarchyDetails = null,
+					// each hierarchy has a node ID property, see post processing in
+					// sap.ui.model.analytics.odata4analytics.EntityType.prototype._init
+					sNodeIDName = oHierarchy.getNodeIDProperty().name,
+					oProperty;
+
+				if (sNodeIDName === sName) {
+					oHierarchyDetails = getOrCreateHierarchyDetails(oHierarchy);
+				} else {
+					oProperty = oHierarchy.getNodeExternalKeyProperty();
+					if (oProperty && oProperty.name === sName) {
+						oHierarchyDetails = getOrCreateHierarchyDetails(oHierarchy);
+						oHierarchyDetails.nodeExternalKeyName = sName;
+					} else {
+						oProperty = oEntityType.getTextPropertyOfProperty(sNodeIDName);
+						if (oProperty && oProperty.name === sName) {
+							oHierarchyDetails = getOrCreateHierarchyDetails(oHierarchy);
+							oHierarchyDetails.nodeTextName = sName;
+						}
+					}
+				}
+				if (oHierarchyDetails && "level" in oColumn) {
+					// add level restriction and check that aColumns is properly defined
+					if (typeof iLevel === "number") {
+						if ("level" in oHierarchyDetails && oHierarchyDetails.level !== iLevel) {
+							throw new Error("Multiple different level filter for hierarchy '"
+								+ sNodeIDName + "' defined");
+						}
+						oHierarchyDetails.level = iLevel;
+						// the property which defines the level also defines the grouping
+						oHierarchyDetails.grouped = !!oColumn.grouped;
+					} else {
+						throw new Error("The level of '" + sNodeIDName
+							+ "' has to be an integer value");
+					}
+				}
+			});
+		}
+
+		/*
+		 * Get the hierarchy details for the given name from
+		 * <code>that.mHierarchyDetailsByName</code>. If there is no entry in the set, a new empty
+		 * object is added to the hierarchy details map and returned.
+		 * @param {object} oHierarchy The hierarchy for which to get the details
+		 * @returns {object} The hierarchy details object.
+		 */
+		function getOrCreateHierarchyDetails(oHierarchy) {
+			var sName = oHierarchy.getNodeIDProperty().name,
+				oNodeLevelProperty,
+				oHierarchyDetails = that.mHierarchyDetailsByName[sName];
+
+			if (!oHierarchyDetails) {
+				oNodeLevelProperty = oHierarchy.getNodeLevelProperty();
+				// add hierarchy information
+				oHierarchyDetails = {
+					dimensionName : oHierarchy.getNodeValueProperty().name,
+					nodeIDName : sName,
+					nodeLevelName : oNodeLevelProperty && oNodeLevelProperty.name
+				};
+				that.mHierarchyDetailsByName[sName] = oHierarchyDetails;
+			}
+			return oHierarchyDetails;
+		}
+
 		if (!this.oModel.oMetadata || !this.oModel.oMetadata.isLoaded() || this.isInitial()) {
 			this.aInitialAnalyticalInfo = aColumns;
 			return;
@@ -1102,6 +1196,9 @@ sap.ui.define([
 		this.oMeasureDetailsSet = {}; // properties with structure {rawValueProperty,unitProperty,formattedValueProperty}
 		this.oDimensionDetailsSet = {}; // properties with structure {name,keyProperty,textProperty,aAttributeName}
 		this.aAdditionalSelects = [];
+		// Maps the nodeIDName to an object with the structure: {dimensionName, grouped, level,
+		// nodeExternalKeyName, nodeIDName, nodeLevelName, nodeTextName}
+		this.mHierarchyDetailsByName = {}; //
 
 		// process column settings for dimensions and measures part of the result or visible
 		for (var i = 0; i < aColumns.length; i++) {
@@ -1109,7 +1206,7 @@ sap.ui.define([
 			var oDimension = this.oAnalyticalQueryResult.findDimensionByPropertyName(aColumns[i].name);
 			if (oDimension && (aColumns[i].inResult == true || aColumns[i].visible == true)) {
 				aColumns[i].dimensionPropertyName = oDimension.getName();
-				var oDimensionDetails = this.oDimensionDetailsSet[oDimension.getName()];
+				oDimensionDetails = this.oDimensionDetailsSet[oDimension.getName()];
 				if (!oDimensionDetails) {
 					oDimensionDetails = {};
 					oDimensionDetails.name = oDimension.getName();
@@ -1161,8 +1258,39 @@ sap.ui.define([
 				}
 				oMeasureDetails.analyticalInfo = aColumns[i];
 			}
+
+			// determine requested hierarchy information from columns representing hierarchy-related
+			// information (column properties are not considered)
+			if (!oDimension && !oMeasure) {
+				addOrUpdateHierarchy(aColumns[i]);
+			}
 			this.mAnalyticalInfoByProperty[aColumns[i].name] = aColumns[i];
 		}
+		// for compatibility reasons remove hierarchy elements without a level information
+		Object.keys(this.mHierarchyDetailsByName).forEach(function (sNodeIDName) {
+			var oHierarchyDetails = that.mHierarchyDetailsByName[sNodeIDName];
+			if (!("level" in oHierarchyDetails)) {
+				delete that.mHierarchyDetailsByName[sNodeIDName];
+				if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.INFO, sClassName)) {
+					jQuery.sap.log.info("No level specified for hierarchy node '" + sNodeIDName
+						+ "'; ignored hierarchy", "", sClassName);
+				}
+			} else if (!that.oDimensionDetailsSet[sNodeIDName]) {
+				// also add it as regular dimension, which is a precondition to integrate
+				// hierarchies with regular processing of data requests and responses
+				that.oDimensionDetailsSet[sNodeIDName] = {
+					aAttributeName : [],
+					grouped : oHierarchyDetails.grouped,
+					isHierarchyDimension : true, // mark it as hierarchy dimension
+					name : sNodeIDName
+				};
+				that.aMaxAggregationLevel.push(sNodeIDName);
+				if (oHierarchyDetails.grouped) {
+					that.aAggregationLevel.push(sNodeIDName);
+				}
+			}
+		});
+
 		// finalize measure information with unit properties also being part of the table
 		for ( var measureName in this.oMeasureDetailsSet) {
 			var oUnitProperty = this.oAnalyticalQueryResult.findMeasureByName(measureName).getUnitProperty();
@@ -1285,6 +1413,26 @@ sap.ui.define([
 			};
 
 	AnalyticalBinding._artificialRootContextGroupId = "artificialRootContext";
+
+	/**
+	 * Iterates over the given array of hierarchy level filters. For each level filter removes an
+	 * already existing entry from given filter expression and adds a new entry to the filter
+	 * expression.
+	 *
+	 * @param {object[]} aFilters
+	 *   An array of hierarchy level filter objects. Each object has a <code>propertyName</code>
+	 *   property of type string and a <code>level</code> property of type number.
+	 * @param {sap.ui.model.analytics.odata4analytics.FilterExpression} oFilterExpression
+	 *   The FilterExpression to which to add the hierarchy level filters
+	 * @private
+	 */
+	AnalyticalBinding._addHierarchyLevelFilters = function (aFilters, oFilterExpression) {
+		// add level restrictions, if hierarchy is included in request
+		aFilters.forEach(function (oFilter) {
+			oFilterExpression.removeConditions(oFilter.propertyName);
+			oFilterExpression.addCondition(oFilter.propertyName, FilterOperator.EQ, oFilter.level);
+		});
+	};
 
 	/**
 	 * @private
@@ -1475,6 +1623,70 @@ sap.ui.define([
 		return aContext;
 	};
 
+
+	/**
+	 * Computes the hierarchy level filters for all entries in <code>mHierarchyDetailsByName</code>
+	 * and adds for each entry a recursive hierarchy to the given analytical query request.
+	 * If the given group ID is null nothing is done and if the given group ID is not "/" an error
+	 * is logged and an empty array is returned.
+	 *
+	 * @param {sap.ui.model.analytics.odata4analytics.QueryResultRequest} oAnalyticalQueryRequest
+	 *   The analytical query request to which to add the recursive hierarchy
+	 * @param {string} sGroupId
+	 *   The group ID; has to be "/" or null otherwise an error is logged and an empty array is
+	 *   returned
+	 * @returns {object[]} An array of hierarchy level filters. Each filter has a
+	 *   <code>propertyName</code> property of type string and a <code>level</code> property of type
+	 *   number.
+	 * @private
+	 */
+	AnalyticalBinding.prototype._getHierarchyLevelFiltersAndAddRecursiveHierarchy
+			= function (oAnalyticalQueryRequest, sGroupId) {
+		var aHierarchyKeys,
+			aHierarchyLevelFilters = [],
+			that = this;
+
+		if (sGroupId === null) {
+			return aHierarchyLevelFilters;
+		}
+
+		aHierarchyKeys = Object.keys(this.mHierarchyDetailsByName);
+		if (aHierarchyKeys.length > 0 && sGroupId !== "/") {
+			jQuery.sap.log.error("Hierarchy cannot be requested for members of a group",
+				sGroupId, sClassName);
+			return aHierarchyLevelFilters;
+		}
+
+		aHierarchyKeys.forEach(function (sHierarchyKey) {
+			var oHierarchyDetails = that.mHierarchyDetailsByName[sHierarchyKey];
+
+			oAnalyticalQueryRequest.addRecursiveHierarchy(oHierarchyDetails.dimensionName,
+				!!oHierarchyDetails.nodeExternalKeyName,
+				!!oHierarchyDetails.nodeTextName);
+			aHierarchyLevelFilters.push({
+				propertyName : oHierarchyDetails.nodeLevelName,
+				level : oHierarchyDetails.level
+			});
+		});
+		return aHierarchyLevelFilters;
+	};
+
+	/**
+	 * Filters out hierarchy dimensions from given aggregation level.
+	 *
+	 * @param {string[]} aAggregationLevel
+	 *   Array of dimension property names which define the aggregation level
+	 * @returns {string[]} Array of non hierarchy dimensions
+	 * @private
+	 */
+	AnalyticalBinding.prototype._getNonHierarchyDimensions = function (aAggregationLevel) {
+		var that = this;
+
+		return aAggregationLevel.filter(function (sDimension) {
+			return !that.oDimensionDetailsSet[sDimension].isHierarchyDimension;
+		});
+	};
+
 	AnalyticalBinding.prototype._processRequestQueue = function(aRequestQueue) {
 		// if no argument is given: use the shared member aBatchRequestQueue
 		if (aRequestQueue === undefined || aRequestQueue === null) {
@@ -1548,7 +1760,8 @@ sap.ui.define([
 	 * @private
 	 */
 	AnalyticalBinding.prototype._prepareGroupMembersQueryRequest = function(iRequestType, sGroupId, iStartIndex, iLength) {
-		var aGroupId = [];
+		var aGroupId = [],
+			aHierarchyLevelFilters;
 
 		// (0) set up analytical OData request object
 		var oAnalyticalQueryRequest = new odata4analytics.QueryResultRequest(this.oAnalyticalQueryResult);
@@ -1593,11 +1806,17 @@ sap.ui.define([
 		var bIsLeafGroupsRequest = iChildGroupToLevel >= this.aMaxAggregationLevel.length - 1;
 
 		// (3) set aggregation level for child nodes
+		// need to distinguish between regular dimensions and hierarchy dimensions
+		aHierarchyLevelFilters
+			= this._getHierarchyLevelFiltersAndAddRecursiveHierarchy(oAnalyticalQueryRequest,
+				sGroupId);
+
 		var aAggregationLevel = this.aMaxAggregationLevel.slice(0, iChildGroupToLevel + 1);
-		oAnalyticalQueryRequest.setAggregationLevel(aAggregationLevel);
-		for (var i = 0; i < aAggregationLevel.length; i++) {
+		var aAggregationLevelNoHierarchy = this._getNonHierarchyDimensions(aAggregationLevel);
+		oAnalyticalQueryRequest.setAggregationLevel(aAggregationLevelNoHierarchy);
+		for (var i = 0; i < aAggregationLevelNoHierarchy.length; i++) {
 			// specify components requested for this level (key, text, attributes)
-			var oDimensionDetails = this.oDimensionDetailsSet[aAggregationLevel[i]];
+			var oDimensionDetails = this.oDimensionDetailsSet[aAggregationLevelNoHierarchy[i]];
 			// as we combine the key and text in the group header we also need the text!
 			var bIncludeText = (oDimensionDetails.textPropertyName != undefined);
 			oAnalyticalQueryRequest.includeDimensionKeyTextAttributes(oDimensionDetails.name, // bIncludeKey: No, always needed!
@@ -1605,7 +1824,7 @@ sap.ui.define([
 
 			// define a default sort order in case no sort criteria have been provided externally
 			if (oDimensionDetails.grouped) {
-				oAnalyticalQueryRequest.getSortExpression().addSorter(aAggregationLevel[i], odata4analytics.SortOrder.Ascending);
+				oAnalyticalQueryRequest.getSortExpression().addSorter(aAggregationLevelNoHierarchy[i], odata4analytics.SortOrder.Ascending);
 			}
 		}
 
@@ -1625,6 +1844,7 @@ sap.ui.define([
 				oFilterExpression.addCondition(this.aAggregationLevel[k], FilterOperator.EQ, aGroupId[k]);
 			}
 		}
+		AnalyticalBinding._addHierarchyLevelFilters(aHierarchyLevelFilters, oFilterExpression);
 
 		// (5) set measures as requested per column
 		var bIncludeRawValue;
@@ -1659,9 +1879,9 @@ sap.ui.define([
 						bIncludeFormattedValue, bIncludeUnitProperty);
 			}
 			// exclude those unit properties from the selected that are included in the current aggregation level
-			for (var n in aAggregationLevel) {
+			for (var n in aAggregationLevelNoHierarchy) {
 				var iMatchingIndex;
-				if ((iMatchingIndex = jQuery.inArray(aAggregationLevel[n], aSelectedUnitPropertyName)) != -1) {
+				if ((iMatchingIndex = jQuery.inArray(aAggregationLevelNoHierarchy[n], aSelectedUnitPropertyName)) != -1) {
 					aSelectedUnitPropertyName.splice(iMatchingIndex, 1);
 				}
 			}
@@ -1706,13 +1926,19 @@ sap.ui.define([
 	 * @private
 	 */
 	AnalyticalBinding.prototype._prepareTotalSizeQueryRequest = function(iRequestType) {
+		var aHierarchyLevelFilters;
 
 		// (0) set up analytical OData request object
 		var oAnalyticalQueryRequest = new odata4analytics.QueryResultRequest(this.oAnalyticalQueryResult);
 		oAnalyticalQueryRequest.setResourcePath(this._getResourcePath());
 
 		// (1) set aggregation level
-		oAnalyticalQueryRequest.setAggregationLevel(this.aMaxAggregationLevel);
+		// need to distinguish between regular dimensions and hierarchy dimensions
+		aHierarchyLevelFilters
+			= this._getHierarchyLevelFiltersAndAddRecursiveHierarchy(oAnalyticalQueryRequest, "/");
+		oAnalyticalQueryRequest
+			.setAggregationLevel(this._getNonHierarchyDimensions(this.aMaxAggregationLevel));
+
 		oAnalyticalQueryRequest.setMeasures([]);
 
 		// (2) set filter
@@ -1724,6 +1950,7 @@ sap.ui.define([
 		if (this.aControlFilter) {
 			oFilterExpression.addUI5FilterConditions(this.aControlFilter);
 		}
+		AnalyticalBinding._addHierarchyLevelFilters(aHierarchyLevelFilters, oFilterExpression);
 
 		// (2) fetch no data
 		oAnalyticalQueryRequest.setRequestOptions(null, null, true);
@@ -1868,6 +2095,7 @@ sap.ui.define([
 		// local helper function for requesting members of a given level (across groups) - copied from _prepareGroupMembersQueryRequest & adapted
 		var prepareLevelMembersQueryRequest = function(iRequestType, sGroupId, iLevel, oGroupContextFilter,
 				iStartIndex, iLength, bAvoidLengthUpdate, bUseStartIndexForSkip) {
+			var aHierarchyLevelFilters;
 
 			// (1) set up analytical OData request object
 			var oAnalyticalQueryRequest = new odata4analytics.QueryResultRequest(that.oAnalyticalQueryResult);
@@ -1908,6 +2136,10 @@ sap.ui.define([
 			var bIsLeafGroupsRequest = iChildGroupToLevel >= that.aMaxAggregationLevel.length - 1;
 
 			// (3) set aggregation level for child nodes
+			aHierarchyLevelFilters
+				= that._getHierarchyLevelFiltersAndAddRecursiveHierarchy(oAnalyticalQueryRequest,
+					sGroupId);
+
 			var aAggregationLevel = that.aMaxAggregationLevel.slice(0, iChildGroupToLevel + 1);
 			oAnalyticalQueryRequest.setAggregationLevel(aAggregationLevel);
 
@@ -1935,6 +2167,7 @@ sap.ui.define([
 			if (oGroupContextFilter) {
 				oFilterExpression.addUI5FilterConditions([oGroupContextFilter]);
 			}
+			AnalyticalBinding._addHierarchyLevelFilters(aHierarchyLevelFilters, oFilterExpression);
 
 			// (5) set measures as requested per column
 			var bIncludeRawValue;

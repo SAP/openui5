@@ -7,6 +7,7 @@ sap.ui.require([
 	"sap/ui/model/analytics/AnalyticalBinding",
 	"sap/ui/model/analytics/AnalyticalTreeBindingAdapter",
 	"sap/ui/model/analytics/ODataModelAdapter",
+	'sap/ui/model/FilterOperator',
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/qunit/analytics/o4aMetadata",
@@ -17,13 +18,14 @@ sap.ui.require([
 	"sap/ui/core/qunit/analytics/TBA_Batch_Filter",
 	"sap/ui/core/qunit/analytics/TBA_Batch_Sort"
 ], function (jQuery, odata4analytics, AnalyticalBinding, AnalyticalTreeBindingAdapter,
-		ODataModelAdapter, ODataModelV1, ODataModelV2, o4aFakeService) {
+		ODataModelAdapter, FilterOperator, ODataModelV1, ODataModelV2, o4aFakeService) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0 */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
 
-	var sServiceURL = "http://o4aFakeService:8080/",
+	var sClassName = "sap.ui.model.analytics.AnalyticalBinding",
+		sServiceURL = "http://o4aFakeService:8080/",
 		// Analytical info for dimensions
 		oCostCenterGrouped = {
 			name: "CostCenter",
@@ -135,10 +137,83 @@ sap.ui.require([
 			total: false,
 			visible: true
 		},
-		sPath = "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',"
-			+ "P_CostCenterTo='999-9999')/Results";
+		// Analytical information for properties of "TypeWithHierarchies"
+		oCostCenterDrillstate = {
+			name: "CostCenter_Drillstate",
+			grouped: false,
+			inResult: false,
+			level : 2,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
+			visible: true
+		},
+		oCostCenterNodeID = {
+			name: "CostCenter_NodeID",
+			grouped: false,
+			inResult: false,
+			level : 2,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
+			visible: true
+		},
+		oCostCenterNodeIDExternalKey = {
+			name: "CostCenter_NodeIDExt",
+			grouped: false,
+			inResult: false,
+			level : 2,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
+			visible: true
+		},
+		oCostCenterNodeIDGrouped = {
+			name: "CostCenter_NodeID",
+			grouped: true,
+			inResult: false,
+			level : 0,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
+			visible: true
+		},
+		oCostCenterNodeIDText = {
+			name: "CostCenter_NodeText",
+			grouped: false,
+			inResult: false,
+			level : 2,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
+			visible: true
+		},
+		oCostCenterNodeIDTextNoLevel = {
+			name: "CostCenter_NodeText",
+			grouped: true,
+			inResult: false,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
+			visible: true
+		},
+		oCostElement = {
+			name: "CostElement_NodeID",
+			grouped: false,
+			inResult: false,
+			level : 1,
+			sortOrder: "Ascending",
+			sorted: false,
+			total: false,
+			visible: true
+		},
 
-	function setupAnalyticalBinding(iVersion, mParameters, fnODataV2Callback, aAnalyticalInfo) {
+		sPath = "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',"
+			+ "P_CostCenterTo='999-9999')/Results",
+		sPathHierarchy = "/TypeWithHierarchiesResults";
+
+	function setupAnalyticalBinding(iVersion, mParameters, fnODataV2Callback, aAnalyticalInfo,
+			sBindingPath) {
 		var oBinding,
 			oModel;
 
@@ -161,7 +236,7 @@ sap.ui.require([
 		}
 
 		ODataModelAdapter.apply(oModel);
-		oBinding = new AnalyticalBinding(oModel, sPath, null, [], [],
+		oBinding = new AnalyticalBinding(oModel, sBindingPath || sPath, null, [], [],
 			/*mParameters*/ {
 				analyticalInfo : aAnalyticalInfo,
 				useBatchRequests: true,
@@ -604,7 +679,8 @@ sap.ui.require([
 		expectedSelect : "CostCenter,CostElementText,ActualCosts,Currency,CostElement,"
 			+ "CostCenterText"
 	}].forEach(function (oFixture, i) {
-		QUnit.test("getDownloadURL: no duplicate units / select parameter: " + i, function(assert) {
+		QUnit.test("getDownloadURL: no duplicate units / select parameter: " + i,
+				function (assert) {
 			// analytical info represents column order of table and is taken for column order in
 			// $select of excel download urls
 			var done = assert.async();
@@ -645,6 +721,7 @@ sap.ui.require([
 			// Code under test
 			assert.strictEqual(oBinding.getGroupName(oContext, 1), "Controlling Area: foo - bar");
 
+			oContextMock.verify();
 			done();
 		});
 	});
@@ -777,7 +854,7 @@ sap.ui.require([
 				+ " analytical info (see updateAnalyticalInfo)"
 		]
 	}].forEach(function (oFixture, i) {
-		QUnit.test("updateAnalyticalInfo: select causes warnings #" + i, function(assert) {
+		QUnit.test("updateAnalyticalInfo: select causes warnings #" + i, function (assert) {
 			var oBinding,
 				done = assert.async(),
 				oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURL, {
@@ -806,8 +883,7 @@ sap.ui.require([
 				oFixture.warnings.forEach(function (sText) {
 					that.oLogMock.expects("warning")
 						.withExactArgs("Ignored the 'select' binding parameter, because " + sText,
-							sPath,
-							"sap.ui.model.analytics.AnalyticalBinding");
+							sPath, sClassName);
 				});
 
 				// metadata does not contain associated properties for measures, so simulate it
@@ -862,7 +938,7 @@ sap.ui.require([
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal],
 		select : "CostCenter,Currency,ActualCosts,CostCenter Text"
 	}].forEach(function (oFixture, i) {
-		QUnit.test("updateAnalyticalInfo: additional selects - " + i, function(assert) {
+		QUnit.test("updateAnalyticalInfo: additional selects - " + i, function (assert) {
 			var oBinding,
 				done = assert.async(),
 				oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURL, {
@@ -936,7 +1012,7 @@ sap.ui.require([
 			"CostElement,ActualCosts,Currency,ActualPlannedCostsPercentage,CostElementText"
 		]
 	}].forEach(function (oFixture, i) {
-		QUnit.test("_getQueryODataRequestOptions is called as expected - " + i, function(assert) {
+		QUnit.test("_getQueryODataRequestOptions is called as expected - " + i, function (assert) {
 			var oBinding,
 				done = assert.async(),
 				aExpectedSelects = oFixture.expectedSelects.slice(),
@@ -1011,7 +1087,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_getQueryODataRequestOptions: enhance $select", function(assert) {
+	QUnit.test("_getQueryODataRequestOptions: enhance $select", function (assert) {
 		var done = assert.async(),
 			sSelects = "FiscalPeriod,ControllingArea,CostCenter,CostCenterText,CostElement,"
 				+ "ActualCosts,Currency",
@@ -1059,6 +1135,555 @@ sap.ui.require([
 				[sExpectedSelect]);
 
 			done();
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getNonHierarchyDimensions", function (assert) {
+		var aAggregationLevel = [],
+			oAnalyticalBinding = {
+				oDimensionDetailsSet : {
+					"dimension1" : {},
+					"dimension2" : {},
+					"hierarchyDimension1" : {isHierarchyDimension : true},
+					"hierarchyDimension2" : {isHierarchyDimension : true}
+				}
+			},
+			fnGetNonHierarchyDimensions = AnalyticalBinding.prototype._getNonHierarchyDimensions
+				.bind(oAnalyticalBinding);
+
+		// code under test
+		assert.deepEqual(fnGetNonHierarchyDimensions(aAggregationLevel), aAggregationLevel);
+
+		aAggregationLevel = ["hierarchyDimension1", "dimension1", "hierarchyDimension2",
+			"dimension2"];
+		// code under test
+		assert.deepEqual(fnGetNonHierarchyDimensions(aAggregationLevel), ["dimension1",
+			"dimension2"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getHierarchyLevelFiltersAndAddRecursiveHierarchy", function (assert) {
+		var oAnalyticalBinding = {
+				mHierarchyDetailsByName : {}
+			},
+			oAnalyticalQueryRequest = {
+				addRecursiveHierarchy : function () {}
+			},
+			oAnalyticalQueryRequestMock = sinon.mock(oAnalyticalQueryRequest),
+			aHierarchyLevelFilters;
+
+		// code under test
+		aHierarchyLevelFilters = AnalyticalBinding.prototype
+			._getHierarchyLevelFiltersAndAddRecursiveHierarchy.call(oAnalyticalBinding,
+				oAnalyticalQueryRequest, null);
+
+		assert.deepEqual(aHierarchyLevelFilters, [], "sGroupId === null");
+
+		// code under test
+		aHierarchyLevelFilters = AnalyticalBinding.prototype
+			._getHierarchyLevelFiltersAndAddRecursiveHierarchy.call(oAnalyticalBinding,
+				oAnalyticalQueryRequest, "/foo/");
+
+		assert.deepEqual(aHierarchyLevelFilters, [],
+			"empty mHierarchyDetailsByName, ignore group ID");
+
+		this.oLogMock.expects("error")
+			.withExactArgs("Hierarchy cannot be requested for members of a group", "/foo/",
+				sClassName);
+
+		oAnalyticalBinding.mHierarchyDetailsByName = {
+			property0 : {
+				dimensionName : "dimensionName0",
+				level : 2,
+				nodeExternalKeyName : undefined,
+				nodeIDName : "nodeIDPropertyName0",
+				nodeLevelName : "nodeLevelPropertyName0",
+				nodeTextName : "nodeTextPropertyName0"
+			},
+			property1 : {
+				dimensionName : "dimensionName1",
+				level : 42,
+				nodeExternalKeyName : "nodeExternalKeyPropertyName1",
+				nodeIDName : "nodeIDPropertyName1",
+				nodeLevelName : "nodeLevelPropertyName1",
+				nodeTextName : undefined
+			}
+
+		};
+
+		// code under test
+		aHierarchyLevelFilters = AnalyticalBinding.prototype
+			._getHierarchyLevelFiltersAndAddRecursiveHierarchy.call(oAnalyticalBinding,
+				oAnalyticalQueryRequest, "/foo/");
+
+		assert.deepEqual(aHierarchyLevelFilters, [],
+			"filled mHierarchyDetailsByName and given group ID -> log error");
+
+		oAnalyticalQueryRequestMock.expects("addRecursiveHierarchy")
+			.withExactArgs("dimensionName0", false, true);
+		oAnalyticalQueryRequestMock.expects("addRecursiveHierarchy")
+			.withExactArgs("dimensionName1", true, false);
+
+		// code under test
+		aHierarchyLevelFilters = AnalyticalBinding.prototype
+			._getHierarchyLevelFiltersAndAddRecursiveHierarchy.call(oAnalyticalBinding,
+				oAnalyticalQueryRequest, "/");
+
+		// order might be different, so sort before compare
+		assert.deepEqual(aHierarchyLevelFilters.sort(function (oHierarchy0, oHierarchy1) {
+			return oHierarchy0.propertyName.localeCompare(oHierarchy1.propertyName);
+		}),
+		[
+			{propertyName : "nodeLevelPropertyName0", level : 2},
+			{propertyName : "nodeLevelPropertyName1", level : 42}
+		], "success case");
+		oAnalyticalQueryRequestMock.verify();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_addHierarchyLevelFilters", function (assert) {
+		var oFilterExpression = new odata4analytics.FilterExpression(),
+			oFilterExpressionMock = sinon.mock(oFilterExpression),
+			aHierarchyLevelFilters = [
+				{propertyName : "foo", level : 1},
+				{propertyName : "bar", level : 42}
+			];
+
+		oFilterExpressionMock.expects("removeConditions")
+			.withExactArgs("foo");
+		oFilterExpressionMock.expects("addCondition")
+			.withExactArgs("foo", FilterOperator.EQ, 1);
+		oFilterExpressionMock.expects("removeConditions")
+			.withExactArgs("bar");
+		oFilterExpressionMock.expects("addCondition")
+			.withExactArgs("bar", FilterOperator.EQ, 42);
+
+		// code under test
+		AnalyticalBinding._addHierarchyLevelFilters(aHierarchyLevelFilters, oFilterExpression);
+
+		oFilterExpressionMock.verify();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_prepareGroupMembersAutoExpansionQueryRequest-prepareLevelMembersQueryRequest:"
+			+ " calls _getHierarchyLevelFiltersAndAddRecursiveHierarchy and"
+			+ " _addHierarchyLevelFilters",
+		function (assert) {
+			var done = assert.async();
+
+			setupAnalyticalBinding(2, {noPaging: true, numberOfExpandedLevels: 2},
+				function (oBinding) {
+					var oAnalyticalBindingMock = sinon.mock(AnalyticalBinding),
+						oBindingMock = sinon.mock(oBinding),
+						aHierarchyLevelFilters = [];
+
+					oBindingMock.expects("_getHierarchyLevelFiltersAndAddRecursiveHierarchy")
+						.withExactArgs(sinon.match.instanceOf(odata4analytics.QueryResultRequest),
+							"/")
+						// 3x once for each level, 2x for total size (for group null and /)
+						.exactly(5)
+						.returns(aHierarchyLevelFilters);
+
+					// 1x for _prepareGroupMembersQueryRequest
+					oBindingMock.expects("_getHierarchyLevelFiltersAndAddRecursiveHierarchy")
+						.withExactArgs(sinon.match.instanceOf(odata4analytics.QueryResultRequest),
+							null)
+						.returns(aHierarchyLevelFilters);
+
+					oAnalyticalBindingMock.expects("_addHierarchyLevelFilters")
+						.withExactArgs(sinon.match.same(aHierarchyLevelFilters),
+							sinon.match.instanceOf(odata4analytics.FilterExpression))
+						.exactly(6);
+
+					oBinding.attachChange(fnChangeHandler);
+					oBinding.getContexts(0, 20, 10);
+
+					function fnChangeHandler() {
+						oAnalyticalBindingMock.verify();
+						oBindingMock.verify();
+						done();
+					}
+
+				}
+			);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_prepareTotalSizeQueryRequest: hierarchy dimensions tests", function (assert) {
+		var done = assert.async();
+
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+			var oAnalyticalBindingMock = sinon.mock(AnalyticalBinding),
+				oBindingMock = sinon.mock(oBinding),
+				oQueryResultRequestMock = sinon.mock(odata4analytics.QueryResultRequest.prototype),
+				aHierarchyLevelFilters = [],
+				aMaxAggregationLevel = [],
+				aNonHierarchyAggregationLevel = [];
+
+			// fake maxAggregationLevel to check same instance in _getNonHierarchyDimensions
+			oBinding.aMaxAggregationLevel = aMaxAggregationLevel;
+			oBindingMock.expects("_getHierarchyLevelFiltersAndAddRecursiveHierarchy")
+				.withExactArgs(sinon.match.instanceOf(odata4analytics.QueryResultRequest), "/")
+				.returns(aHierarchyLevelFilters);
+			oBindingMock.expects("_getNonHierarchyDimensions")
+				.withExactArgs(sinon.match.same(aMaxAggregationLevel))
+				.returns(aNonHierarchyAggregationLevel);
+			oQueryResultRequestMock.expects("setAggregationLevel")
+				.withExactArgs(sinon.match.same(aNonHierarchyAggregationLevel));
+			oAnalyticalBindingMock.expects("_addHierarchyLevelFilters")
+				.withExactArgs(sinon.match.same(aHierarchyLevelFilters),
+					sinon.match.instanceOf(odata4analytics.FilterExpression));
+
+			//code under test
+			oBinding._prepareTotalSizeQueryRequest(/*parameters don't care*/);
+
+			oAnalyticalBindingMock.verify();
+			oBindingMock.verify();
+			oQueryResultRequestMock.verify();
+			done();
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_prepareGroupMembersQueryRequest: hierarchy dimensions tests", function (assert) {
+		var done = assert.async();
+
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+			var oAnalyticalBindingMock = sinon.mock(AnalyticalBinding),
+				oBindingMock = sinon.mock(oBinding),
+				aHierarchyLevelFilters = [];
+
+			oBindingMock.expects("_getHierarchyLevelFiltersAndAddRecursiveHierarchy")
+				.withExactArgs(sinon.match.instanceOf(odata4analytics.QueryResultRequest), "/")
+				.returns(aHierarchyLevelFilters);
+			oBindingMock.expects("_getNonHierarchyDimensions")
+				.withExactArgs(["CostCenter"])
+				.returns(["CostCenter"]);
+			oAnalyticalBindingMock.expects("_addHierarchyLevelFilters")
+				.withExactArgs(sinon.match.same(aHierarchyLevelFilters),
+					sinon.match.instanceOf(odata4analytics.FilterExpression));
+
+			// code under test
+			oBinding._prepareGroupMembersQueryRequest(0, "/");
+
+			oAnalyticalBindingMock.verify();
+			oBindingMock.verify();
+			done();
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		// input
+		analyticalInfo : [oCostCenterNodeID],
+		// expected results
+		aggregationLevel : [],
+		dimensionDetails : {
+			"CostCenter_NodeID" : {
+				aAttributeName : [],
+				grouped : false,
+				isHierarchyDimension : true,
+				name : "CostCenter_NodeID"
+			}
+		},
+		hierarchyDetails : {
+			"CostCenter_NodeID" : {
+				dimensionName : "CostCenter",
+				grouped : false,
+				level : 2,
+				nodeIDName : "CostCenter_NodeID",
+				nodeLevelName : "CostCenter_Level"
+			}
+		},
+		maxAggregationLevel : ["CostCenter_NodeID"]
+	}, {
+		// input
+		analyticalInfo : [oCostCenterNodeIDGrouped],
+		// expected results
+		aggregationLevel : ["CostCenter_NodeID"],
+		dimensionDetails : {
+			"CostCenter_NodeID" : {
+				aAttributeName : [],
+				grouped : true,
+				isHierarchyDimension : true,
+				name : "CostCenter_NodeID"
+			}
+		},
+		hierarchyDetails : {
+			"CostCenter_NodeID" : {
+				dimensionName : "CostCenter",
+				grouped : true,
+				level : 0,
+				nodeIDName : "CostCenter_NodeID",
+				nodeLevelName : "CostCenter_Level"
+			}
+		},
+		maxAggregationLevel : ["CostCenter_NodeID"]
+	}, {
+		// input
+		analyticalInfo : [oCostCenterNodeIDText],
+		// expected results
+		aggregationLevel : [],
+		dimensionDetails : {
+			"CostCenter_NodeID" : {
+				aAttributeName : [],
+				grouped : false,
+				isHierarchyDimension : true,
+				name : "CostCenter_NodeID"
+			}
+		},
+		hierarchyDetails : {
+			"CostCenter_NodeID" : {
+				dimensionName : "CostCenter",
+				grouped : false,
+				level : 2,
+				nodeIDName : "CostCenter_NodeID",
+				nodeLevelName : "CostCenter_Level",
+				nodeTextName : "CostCenter_NodeText"
+			}
+		},
+		maxAggregationLevel : ["CostCenter_NodeID"]
+	}, {
+		// input
+		analyticalInfo : [oCostCenterNodeIDExternalKey],
+		// expected results
+		aggregationLevel : [],
+		dimensionDetails : {
+			"CostCenter_NodeID" : {
+				aAttributeName : [],
+				grouped : false,
+				isHierarchyDimension : true,
+				name : "CostCenter_NodeID"
+			}
+		},
+		hierarchyDetails : {
+			"CostCenter_NodeID" : {
+				dimensionName : "CostCenter",
+				grouped : false,
+				level : 2,
+				nodeExternalKeyName : "CostCenter_NodeIDExt",
+				nodeIDName : "CostCenter_NodeID",
+				nodeLevelName : "CostCenter_Level"
+			}
+		},
+		maxAggregationLevel : ["CostCenter_NodeID"]
+	}, {
+		// input
+		analyticalInfo : [oCostCenterGrouped], // a dimension, no hierarchy
+		// expected results
+		aggregationLevel : ["CostCenter"],
+		dimensionDetails : {
+			"CostCenter" : {
+				aAttributeName : [],
+				analyticalInfo : oCostCenterGrouped,
+				grouped : true,
+				keyPropertyName : "CostCenter",
+				name : "CostCenter"
+			}
+		},
+		hierarchyDetails : {},
+		maxAggregationLevel : ["CostCenter"]
+	}, {
+		// input
+		analyticalInfo : [oActualCostsTotal], // a measure, no hierarchy
+		// expected results
+		aggregationLevel : [],
+		dimensionDetails : {},
+		hierarchyDetails : {},
+		maxAggregationLevel : []
+	}, {
+		// input
+		analyticalInfo : [oCostCenterNodeIDExternalKey, oCostCenterNodeID],
+		// expected results
+		aggregationLevel : [],
+		dimensionDetails : {
+			"CostCenter_NodeID" : {
+				aAttributeName : [],
+				grouped : false,
+				isHierarchyDimension : true,
+				name : "CostCenter_NodeID"
+			}
+		},
+		hierarchyDetails : {
+			"CostCenter_NodeID" : {
+				dimensionName : "CostCenter",
+				grouped : false,
+				level : 2,
+				nodeExternalKeyName : "CostCenter_NodeIDExt",
+				nodeIDName : "CostCenter_NodeID",
+				nodeLevelName : "CostCenter_Level"
+			}
+		},
+		maxAggregationLevel : ["CostCenter_NodeID"]
+	}, {
+		// input
+		analyticalInfo : [oCostCenterNodeIDText, oCostCenterNodeIDExternalKey],
+		// expected results
+		aggregationLevel : [],
+		dimensionDetails : {
+			"CostCenter_NodeID" : {
+				aAttributeName : [],
+				grouped : false,
+				isHierarchyDimension : true,
+				name : "CostCenter_NodeID"
+			}
+		},
+		hierarchyDetails : {
+			"CostCenter_NodeID" : {
+				dimensionName : "CostCenter",
+				grouped : false,
+				level : 2,
+				nodeExternalKeyName : "CostCenter_NodeIDExt",
+				nodeIDName : "CostCenter_NodeID",
+				nodeLevelName : "CostCenter_Level",
+				nodeTextName : "CostCenter_NodeText"
+			}
+		},
+		maxAggregationLevel : ["CostCenter_NodeID"]
+	}, {
+		// input
+		analyticalInfo : [oCostCenterNodeIDExternalKey, oCostCenterNodeIDText],
+		// expected results
+		aggregationLevel : [],
+		dimensionDetails : {
+			"CostCenter_NodeID" : {
+				aAttributeName : [],
+				grouped : false,
+				isHierarchyDimension : true,
+				name : "CostCenter_NodeID"
+			}
+		},
+		hierarchyDetails : {
+			"CostCenter_NodeID" : {
+				dimensionName : "CostCenter",
+				grouped : false,
+				level : 2,
+				nodeExternalKeyName : "CostCenter_NodeIDExt",
+				nodeIDName : "CostCenter_NodeID",
+				nodeLevelName : "CostCenter_Level",
+				nodeTextName : "CostCenter_NodeText"
+			}
+		},
+		maxAggregationLevel : ["CostCenter_NodeID"]
+	}, {
+		// input
+		analyticalInfo : [oCostCenterNodeID, oCostCenterNodeIDTextNoLevel],
+		// expected results
+		aggregationLevel : [],
+		dimensionDetails : {
+			"CostCenter_NodeID" : {
+				aAttributeName : [],
+				grouped : false,
+				isHierarchyDimension : true,
+				name : "CostCenter_NodeID"
+			}
+		},
+		hierarchyDetails : {
+			"CostCenter_NodeID" : {
+				dimensionName : "CostCenter",
+				grouped : false,
+				level : 2,
+				nodeIDName : "CostCenter_NodeID",
+				nodeLevelName : "CostCenter_Level",
+				nodeTextName : "CostCenter_NodeText"
+			}
+		},
+		maxAggregationLevel : ["CostCenter_NodeID"]
+	}, {
+		// input
+		analyticalInfo : [oCostCenterDrillstate], // drill state ignored, no hierarchy
+		// expected results
+		aggregationLevel : [],
+		dimensionDetails : {},
+		hierarchyDetails : {},
+		maxAggregationLevel : []
+	}, {
+		// input
+		analyticalInfo : [oCostElement],
+		// expected results
+		aggregationLevel : [],
+		dimensionDetails : {
+			"CostElement_NodeID" : {
+				aAttributeName : [],
+				grouped : false,
+				isHierarchyDimension : true,
+				name : "CostElement_NodeID"
+			}
+		},
+		hierarchyDetails : {
+			"CostElement_NodeID" : {
+				dimensionName : "CostElement",
+				grouped : false,
+				level : 1,
+				nodeIDName : "CostElement_NodeID",
+				nodeLevelName : "CostElement_Level"
+			}
+		},
+		maxAggregationLevel : ["CostElement_NodeID"]
+	}, {
+		// input
+		// if there is no column with a level for a hierarchy, ignore it for compatibility reasons
+		analyticalInfo : [oCostCenterNodeIDTextNoLevel],
+		// expected results
+		aggregationLevel : [],
+		dimensionDetails : {},
+		hierarchyDetails : {},
+		maxAggregationLevel : [],
+		message : "No level specified for hierarchy node 'CostCenter_NodeID'; ignored hierarchy"
+	}].forEach(function (oFixture, i) {
+		QUnit.test("updateAnalyticalInfo: hierarchy dimensions tests - " + i, function (assert) {
+			var done = assert.async(),
+				that = this;
+
+			setupAnalyticalBinding(2, {}, function (oBinding) {
+				if (oFixture.message) {
+					that.oLogMock.expects("isLoggable")
+						.withExactArgs(jQuery.sap.log.Level.INFO, sClassName)
+						.returns(true);
+					that.oLogMock.expects("info").withExactArgs(oFixture.message, "", sClassName);
+				}
+
+				// code under test
+				oBinding.updateAnalyticalInfo(oFixture.analyticalInfo);
+
+				assert.deepEqual(oBinding.aAggregationLevel, oFixture.aggregationLevel,
+					"aAggregationLevel");
+				assert.deepEqual(oBinding.oDimensionDetailsSet, oFixture.dimensionDetails,
+					"oDimensionDetailsSet");
+				assert.deepEqual(oBinding.mHierarchyDetailsByName, oFixture.hierarchyDetails,
+					"mHierarchyDetailsByName");
+				assert.deepEqual(oBinding.aMaxAggregationLevel, oFixture.maxAggregationLevel,
+					"aMaxAggregationLevel");
+
+				done();
+			}, [], sPathHierarchy);
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		// input
+		analyticalInfo : [oCostCenterNodeIDGrouped, oCostCenterNodeIDText],
+		sErrorMessage : "Multiple different level filter for hierarchy 'CostCenter_NodeID' defined"
+	}, {
+		// input
+		analyticalInfo : [{
+			name: "CostCenter_NodeID",
+			level : "0"
+		}],
+		sErrorMessage : "The level of 'CostCenter_NodeID' has to be an integer value"
+	}].forEach(function (oFixture, i) {
+		QUnit.test("updateAnalyticalInfo: hierarchy dimensions - errors - " + i, function (assert) {
+			var done = assert.async();
+
+			setupAnalyticalBinding(2, {}, function (oBinding) {
+				assert.throws(function () {
+					// code under test
+					oBinding.updateAnalyticalInfo(oFixture.analyticalInfo);
+				}, new Error(oFixture.sErrorMessage));
+				done();
+			}, [], sPathHierarchy);
 		});
 	});
 });
