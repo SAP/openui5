@@ -318,7 +318,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 	 * @private
 	 */
 	MultiComboBox.prototype.onfocusin = function(oEvent) {
-		var bDropdownPickerType = this.getPickerType() === "Dropdown";
+		var bDropdownPickerType = this.getPickerType() === "Popover";
 
 		this.getEditable() && this.addStyleClass("sapMMultiComboBoxFocus");
 
