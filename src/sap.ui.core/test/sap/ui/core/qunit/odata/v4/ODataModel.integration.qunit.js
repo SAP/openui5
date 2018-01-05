@@ -1881,10 +1881,11 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Behaviour of a bound action if nothing is available before the execute
+	// Scenario: bound action
 	QUnit.test("Bound action", function (assert) {
 		var sView = '\
 <VBox binding="{/EMPLOYEES(\'1\')}">\
+	<Text id="name" text="{Name}" />\
 	<VBox id="action" \
 			binding="{com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee(...)}">\
 		<Text id="teamId" text="{TEAM_ID}" />\
@@ -1892,12 +1893,14 @@ sap.ui.require([
 </VBox>',
 			that = this;
 
-		this.expectChange("teamId"); // no event initially
+		this.expectRequest("EMPLOYEES('1')", {
+				"Name" : "Jonathan Smith",
+				"@odata.etag" : "eTag"
+			})
+			.expectChange("name", "Jonathan Smith")
+			.expectChange("teamId", null);
 		return this.createView(assert, sView).then(function () {
-			that.expectRequest("EMPLOYEES('1')", {
-					"@odata.etag" : "eTag"
-				})
-				.expectRequest({
+			that.expectRequest({
 					method : "POST",
 					headers : {"If-Match" : "eTag"},
 					url : "EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001"
@@ -1908,7 +1911,6 @@ sap.ui.require([
 				}, {
 					"TEAM_ID" : "42"
 				})
-				.expectChange("teamId", null) // TODO unexpected change
 				.expectChange("teamId", "42");
 
 			that.oView.byId("action").getObjectBinding().setParameter("TeamID", "42").execute();
