@@ -81,6 +81,8 @@ sap.ui.define([
 				oModelData.showNavButton = Device.system.phone || !!oPrevHash;
 				oModelData.previousSampleId = oSample.previousSampleId;
 				oModelData.nextSampleId = oSample.nextSampleId;
+				// we need this property to navigate to API reference
+				this.entityId = oSample.entityId;
 
 				// set page title
 				oPage.setTitle("Sample: " + oSample.name);
@@ -125,11 +127,22 @@ sap.ui.define([
 
 				// scroll to top of page
 				oPage.scrollTo(0);
+
+
+				this.getAPIReferenceCheckPromise(oSample.entityId).then(function (bHasAPIReference) {
+					oModelData.bHasAPIReference = bHasAPIReference;
+				});
+
 				this._viewModel.setData(oModelData);
 
 				jQuery.sap.delayedCall(0, this, function () {
 					oPage.setBusy(false);
 				});
+
+			},
+
+			onAPIRefPress: function () {
+				this.getRouter().navTo("apiId", {id: this.entityId});
 			},
 
 			onNewTab : function () {

@@ -15,17 +15,28 @@
 		<landmarkInfo>
 			<PageAccessibleLandmarkInfo rootRole="Region" rootLabel="Details" headerRole="Region" headerLabel="Header" contentRole="Main" contentLabel="Content"></PageAccessibleLandmarkInfo>
 		</landmarkInfo>
-		<headerContent>
-			<Button
-					class="sapUiHideOnPhone"
-					text="Download"
-					icon="sap-icon://download"
-					press="onDownload" />
-			<Button
-					class="sapUiVisibleOnlyOnPhone"
-					icon="sap-icon://download"
-					press="onDownload" />
-		</headerContent>
+		<customHeader>
+			<Bar id="header" class="sapContrast sapContrastPlus">
+				<contentLeft>
+					<Button type="Back" press="onNavBack"/>
+				</contentLeft>
+				<contentMiddle>
+					<Title text="{/title}"/>
+				</contentMiddle>
+				<contentRight>
+					<Button text="API Reference" type="Emphasized" press="onAPIRefPress" visible="{/bHasAPIReference}"/>
+					<Button
+							class="sapUiHideOnPhone"
+							text="Download"
+							icon="sap-icon://download"
+							press="onDownload" />
+					<Button
+							class="sapUiVisibleOnlyOnPhone"
+							icon="sap-icon://download"
+							press="onDownload" />
+				</contentRight>
+			</Bar>
+		</customHeader>
 		<content>
 			<l:FixFlex>
 				<l:fixContent>

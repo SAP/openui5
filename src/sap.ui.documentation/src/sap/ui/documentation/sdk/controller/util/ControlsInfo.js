@@ -274,6 +274,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
 								}
 								oPreviousSample = oSample;
 
+								oSample.entityId = oEnt.id;
+
 								// add the sample to the local store
 								aSamples.push(oSample);
 								oEnt.searchTags += " " + oSample.name;
