@@ -28,7 +28,7 @@
 						<Link text="LICENSE.txt" href="LICENSE.txt" target="_blank" class="aboutLink"/>
 					</HBox>
 					<Text text="UI5 Version {versionData>/fullVersion}" class="sapMTitleStyleH4 sapUiSmallMarginBottom"/>
-					<Text text="This software includes the folloing library versions"/>
+					<Text text="This software includes the following library versions"/>
 					<HBox class="sapUiTinyMarginBottom" allowWrapping="true">
 						<Text text="(a full change log for all libraries can be found"/>
 						<Link text="here" href="releasenotes.html" target="_blank" class="aboutLink"/>
