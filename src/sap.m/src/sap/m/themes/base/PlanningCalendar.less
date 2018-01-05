@@ -134,6 +134,25 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapMPlanCal .sapUiCalRow:not(.sapUi
 	margin: 0;
 }
 
+.sapMPlanCalStickyHeader {
+	position: sticky;
+	position: -webkit-sticky;
+	z-index: 1;
+	top: 0;
+}
+
+.sapMPlanCal .sapMPlanCalStickyHeader.sapMListHdrTBar {
+	background-color: @sapUiListBackground;
+}
+.sapMPlanCal .sapMPlanCalStickyHeader.sapMListInfoTBar {
+	top: 3rem;
+	background-color: @sapUiListBackground;
+}
+
+.sap-phone .sapMPlanCal .sapMPlanCalStickyHeader.sapMListInfoTBar {
+	top: 0;
+}
+
 .sapMPlanCal.sapMPlanCalNoHead > .sapMList > .sapMListInfoTBar,
 .sapMSize0.sapMPlanCal > .sapMList > .sapMListInfoTBar,
 .sapMSize1.sapMPlanCal > .sapMList > .sapMListInfoTBar{
