@@ -868,7 +868,8 @@
 			});
 
 			QUnit.test("Grouping items selection", function (assert) {
-				var clock = sinon.useFakeTimers(),
+				var sSelectedGroupItem,
+					clock = sinon.useFakeTimers(),
 					fnOnConfirmObject = sinon.spy(function (oEvent) {
 						assert.ok(typeof oEvent.getParameter("groupItem") == "object", "Group Item is an object");
 					}),
@@ -891,13 +892,33 @@
 				this.oVSD.detachConfirm(fnOnConfirmObject);
 				this.oVSD.attachConfirm(fnOnConfirmUndefined);
 				this.oVSD.open("group");
-				this.oVSD.setSelectedGroupItem(this.oVSD._oGroupingNoneItem);
+				this.oVSD.setSelectedGroupItem();
 				this.oVSD._getDialog().getBeginButton().firePress();
 				sap.ui.getCore().applyChanges();
 				clock.tick(1000);
 
 				//Check
 				assert.ok(fnOnConfirmUndefined.calledOnce, "Event handler is being called");
+				sSelectedGroupItem = this.oVSD.getSelectedGroupItem();
+				assert.equal(sap.ui.getCore().byId(sSelectedGroupItem), this.oVSD._oGroupingNoneItem, "GroupingNoneItem is selected when setSelectedGroupItem is called without params");
+
+				clock.restore();
+			});
+
+			QUnit.test("Selectting Grouping None item by empty string", function (assert) {
+				var sSelectedGroupItem,
+					clock = sinon.useFakeTimers();
+
+				//Act
+				this.oVSD.open("group");
+				this.oVSD.setSelectedGroupItem("");
+				this.oVSD._getDialog().getBeginButton().firePress();
+				sap.ui.getCore().applyChanges();
+				clock.tick(1000);
+
+				//Check
+				sSelectedGroupItem = this.oVSD.getSelectedGroupItem();
+				assert.equal(sap.ui.getCore().byId(sSelectedGroupItem), this.oVSD._oGroupingNoneItem, "GroupingNoneItem is selected when setSelectedGroupItem is called with empty string param");
 
 				clock.restore();
 			});
