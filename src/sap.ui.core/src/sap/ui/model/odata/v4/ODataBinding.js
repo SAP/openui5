@@ -102,7 +102,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context instance to be used, must be undefined for absolute bindings
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which resolves with the query options to create the cache for this binding,
 	 *   or with <code>undefined</code> if no cache is to be created
 	 *
@@ -529,8 +529,8 @@ sap.ui.define([
 	 * @param {string} [sPath=""] The path; either relative to the binding or absolute containing
 	 *   the cache's request path (it will become absolute when forwarding the request to the
 	 *   parent binding)
-	 * @returns {SyncPromise} A sync promise that is resolved with either the result of the
-	 *   processor or <code>undefined</code> if there is no cache for this binding currently
+	 * @returns {sap.ui.base.SyncPromise} A sync promise that is resolved with either the result of
+	 *   the processor or <code>undefined</code> if there is no cache for this binding currently
 	 */
 	ODataBinding.prototype.withCache = function (fnProcessor, sPath) {
 		var sRelativePath,

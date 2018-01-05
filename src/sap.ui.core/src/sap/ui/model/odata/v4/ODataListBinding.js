@@ -544,7 +544,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Context} oContext
 	 *   The context instance to be used
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving with the binding's query options
 	 *
 	 * @private
@@ -583,7 +583,7 @@ sap.ui.define([
 	 *   that the cache promise is already created when the events are fired.
 	 * @param {string} sStaticFilter
 	 *   The static filter value
-	 * @returns {SyncPromise} A promise which resolves with the $filter value or "" if the
+	 * @returns {sap.ui.base.SyncPromise} A promise which resolves with the $filter value or "" if the
 	 *   filter arrays are empty and the static filter parameter is not given. It rejects with
 	 *   an error if a filter has an unknown operator or an invalid path.
 	 *
@@ -655,7 +655,7 @@ sap.ui.define([
 		 * @param {boolean} [bAnd] Whether the filters are combined with 'and'; combined with
 		 *   'or' if not given
 		 * @param {object} mLambdaVariableToPath The map from lambda variable to full path
-		 * @returns {SyncPromise} A promise which resolves with the $filter value
+		 * @returns {sap.ui.base.SyncPromise} A promise which resolves with the $filter value
 		 */
 		function fetchArrayFilter(aFilters, bAnd, mLambdaVariableToPath) {
 			var aFilterPromises = [],
@@ -697,8 +697,8 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.model.Filter[]} aGroupFilters The non-empty array of filters
 		 * @param {object} mLambdaVariableToPath The map from lambda variable to full path
-		 * @returns {SyncPromise} A promise which resolves with the $filter value or rejects
-		 *   with an error if the filter value uses an unknown operator
+		 * @returns {sap.ui.base.SyncPromise} A promise which resolves with the $filter value or
+		 *   rejects with an error if the filter value uses an unknown operator
 		 */
 		function fetchGroupFilter(aGroupFilters, mLambdaVariableToPath) {
 			var oMetaModel = that.oModel.getMetaModel(),
@@ -788,7 +788,7 @@ sap.ui.define([
 	 *   Some absolute path
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
 	 *
 	 * @private

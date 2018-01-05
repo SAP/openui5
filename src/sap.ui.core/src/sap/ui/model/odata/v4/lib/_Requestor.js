@@ -457,7 +457,7 @@ sap.ui.define([
 	 *   If <code>true</code>, the name of the type is delivered instead of the type itself. This
 	 *   must be used when asking for a property type to avoid that the function logs an error
 	 *   because there are no objects for primitive types like "Edm.Stream".
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that is resolved with the type of the object at the given path or its name.
 	 */
 	Requestor.prototype.fetchTypeForPath = function (sPath, bAsName) {
@@ -582,7 +582,7 @@ sap.ui.define([
 	 * Returns a sync promise that is resolved when the requestor is ready to be used. The V4
 	 * requestor is ready immediately. Subclasses may behave differently.
 	 *
-	 * @returns {SyncPromise} A sync promise that is resolved immediately with no result
+	 * @returns {sap.ui.base.SyncPromise} A sync promise that is resolved immediately with no result
 	 */
 	Requestor.prototype.ready = function () {
 		return SyncPromise.resolve();
@@ -635,8 +635,8 @@ sap.ui.define([
 	 * which the <code>$cancel</code> callback is defined are removed.
 	 *
 	 * @param {Promise} oPromise
-	 *   A promise that has been returned for a PATCH request. It will be rejected with an error
-	 *   with property <code>canceled = true</code>.
+	 *   A promise that has been returned for a PATCH request. That request will be rejected with
+	 *   an error with property <code>canceled = true</code>.
 	 * @throws {Error}
 	 *   If the request is not in the queue, assuming that it has been submitted already
 	 *

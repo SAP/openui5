@@ -537,7 +537,7 @@ sap.ui.require([
 			 *   it.
 			 *   If bRejected is false, create a SyncPromise that is resolved with the given value.
 			 * @param {object} [oResolvedValue] The value for the resolved SyncPromise
-			 * @returns {SyncPromise} The SyncPromise
+			 * @returns {sap.ui.base.SyncPromise} The SyncPromise
 			*/
 			function createPromise(bReject, oResolvedValue) {
 				var oPromise;

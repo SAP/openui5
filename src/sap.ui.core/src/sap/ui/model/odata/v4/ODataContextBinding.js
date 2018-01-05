@@ -172,7 +172,7 @@ sap.ui.define([
 	/**
 	 * Requests the metadata for this operation binding. Caches the result.
 	 *
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that is resolved with the operation metadata.
 	 *
 	 * @private
@@ -389,7 +389,7 @@ sap.ui.define([
 	 * Hook method for {@link sap.ui.model.odata.v4.ODataBinding#fetchQueryOptionsForOwnCache} to
 	 * determine the query options for this binding.
 	 *
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving with the binding's query options
 	 *
 	 * @private
@@ -432,7 +432,7 @@ sap.ui.define([
 		 * @param {object} oOperationMetadata The operation's metadata
 		 * @param {string} sPathPrefix
 		 *   The prefix for the path that results from the binding parameter
-		 * @returns {SyncPromise} The request promise
+		 * @returns {sap.ui.base.SyncPromise} The request promise
 		 */
 		function createCacheAndRequest(oOperationMetadata, sPathPrefix) {
 			var oCache,
@@ -540,7 +540,7 @@ sap.ui.define([
 	 *   Some absolute path
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
 	 *
 	 * @private
