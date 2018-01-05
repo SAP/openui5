@@ -435,6 +435,7 @@ sap.ui.define([
 				return {
 					changes: oResponse.response,
 					componentClassName: sComponentClassName,
+					messagebundle: oResponse.response.messagebundle,
 					etag: oResponse.etag
 				};
 			}, function(oError) {
