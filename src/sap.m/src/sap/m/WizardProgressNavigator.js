@@ -91,7 +91,10 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery, Actio
 		ANCHOR: "sapMWizardProgressNavAnchor",
 		ANCHOR_CIRCLE: "sapMWizardProgressNavAnchorCircle",
 		ANCHOR_TITLE: "sapMWizardProgressNavAnchorTitle",
-		ANCHOR_ICON: "sapMWizardProgressNavAnchorIcon"
+		ANCHOR_TITLE_OPTIONAL_TITLE: "sapMWizardProgressNavAnchorTitleOptional",
+		ANCHOR_TITLE_OPTIONAL_LABEL: "sapMWizardProgressNavAnchorLabelOptional",
+		ANCHOR_ICON: "sapMWizardProgressNavAnchorIcon",
+		ANCHOR_TITLE_CONTAINER: "sapMWizardProgressNavAnchorTitleContainer"
 	};
 
 	WizardProgressNavigator.ATTRIBUTES = {
@@ -109,7 +112,8 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery, Actio
 	WizardProgressNavigator.TEXT = {
 		SELECTED: "WIZARD_PROG_NAV_SELECTED",
 		PROCESSED: "WIZARD_PROG_NAV_PROCESSED",
-		STEP: "WIZARD_PROG_NAV_STEP_TITLE"
+		STEP: "WIZARD_PROG_NAV_STEP_TITLE",
+		OPTIONAL_STEP: "WIZARD_STEP_OPTIONAL_STEP_TEXT"
 	};
 
 	/**************************************** LICECYCLE METHODS ***************************************/
@@ -118,6 +122,7 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery, Actio
 		this._currentStep = 1;
 		this._activeStep = 1;
 		this._cachedSteps = [];
+		this._stepOptionalIndication = [];
 		this._resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._actionSheet = new ActionSheet();
 		this._createAnchorNavigation();
@@ -203,6 +208,8 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery, Actio
 		this._currentStep = null;
 		this._activeStep = null;
 		this._cachedSteps = null;
+
+		this._stepOptionalIndication = null;
 	};
 
 	/**************************************** PUBLIC METHODS ***************************************/
@@ -536,7 +543,6 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery, Actio
 			stepsToShow = this.getStepTitles().length ?
 				Math.floor(width / WizardProgressNavigator.CONSTANTS.MIN_STEP_WIDTH_WITH_TITLE) :
 				Math.floor(width / WizardProgressNavigator.CONSTANTS.MIN_STEP_WIDTH_NO_TITLE);
-
 
 		[].forEach.call(this._cachedSteps, function (step) {
 			step.setAttribute(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP, false);

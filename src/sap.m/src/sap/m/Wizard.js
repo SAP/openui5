@@ -926,6 +926,7 @@ sap.ui.define([
 				allSteps = this.getSteps(),
 				stepTitles = [currentStep.getTitle()],
 				stepIcons = [currentStep.getIcon()],
+				stepOptionalIndication = [],
 				stepCount = 1;
 
 			if (this.getEnableBranching()) {
@@ -934,6 +935,7 @@ sap.ui.define([
 					stepCount++;
 					currentStep = currentStep._getNextStepReference();
 					stepTitles.push(currentStep.getTitle());
+					stepOptionalIndication.push(currentStep.getOptional());
 					stepIcons.push(currentStep.getIcon());
 				}
 
@@ -941,10 +943,12 @@ sap.ui.define([
 				progressNavigator.setStepCount(stepCount);
 			} else {
 				stepTitles = allSteps.map(function (step) { return step.getTitle(); });
+				stepOptionalIndication = allSteps.map(function (step) { return step.getOptional(); });
 				stepIcons = allSteps.map(function (step) { return step.getIcon(); });
 			}
 
 			progressNavigator.setStepTitles(stepTitles);
+			progressNavigator._stepOptionalIndication = stepOptionalIndication;
 			progressNavigator.setStepIcons(stepIcons);
 		};
 
