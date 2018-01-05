@@ -725,6 +725,33 @@
 			assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
 		});
 
+		QUnit.test("_safeBackToPage should work with back transition", function(assert) {
+			var nc = new sap.m.NavContainer({
+				pages : [
+					new sap.m.Page("firstPage"),
+					new sap.m.Page("secondPage")
+				],
+				initialPage: "secondPage"
+			}),
+				mySinon = sinon.sandbox.create(),
+				spy;
+
+			nc.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			spy = mySinon.spy(sap.m.NavContainer.transitions["slide"], "back");
+
+			// act
+			nc._safeBackToPage("firstPage");
+
+			// assert
+			assert.strictEqual(spy.callCount, 1, "Back animation was executed.")
+
+			// clean-up
+			nc.destroy();
+			mySinon.restore();
+		});
 
 		var pageRenderCounter = 0;
 		var realPageRender;
