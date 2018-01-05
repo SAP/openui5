@@ -8,6 +8,9 @@ sap.ui.define([
 	QUnit.module("Overview");
 
 	opaTest("Should see the results table with all entries", function (Given, When, Then) {
+		// Arrangements
+		Given.iStartMyAppOnTheDetailsTab();
+
 		//Actions
 		When.onTheOverviewPage.iLookAtTheScreen();
 
@@ -31,7 +34,7 @@ sap.ui.define([
 		and.iSelectTheTagWithName("magic");
 
 		// Assertions
-		Then.onTheOverviewPage.theTableShowsOnlyObjectsWithTheTag("magic", "fav");
+		Then.onTheOverviewPage.theTableShouldShowOnlyObjectsWithTheTag("magic", "fav");
 
 		// Cleanup: remove favorite
 		When.onTheOverviewPage.iMarkAnIconAsFavorite("activate");
@@ -43,7 +46,7 @@ sap.ui.define([
 			and.iSelectTheTagWithName("settings");
 
 		// Assertions
-		Then.onTheOverviewPage.theTableShowsOnlyObjectsWithTheTag("settings");
+		Then.onTheOverviewPage.theTableShouldShowOnlyObjectsWithTheTag("settings");
 	});
 
 	opaTest("Selecting another tag on the details page should deliver results that contain the tag value", function (Given, When, Then) {
@@ -51,7 +54,7 @@ sap.ui.define([
 		When.onTheOverviewPage.iSelectTheTagWithName("cogwheels");
 
 		// Assertions
-		Then.onTheOverviewPage.theTableShowsOnlyObjectsWithTheTag("cogwheels");
+		Then.onTheOverviewPage.theTableShouldShowOnlyObjectsWithTheTag("cogwheels");
 	});
 
 	opaTest("Selecting a tag should deliver results that contain the tag value", function (Given, When, Then) {
@@ -60,7 +63,7 @@ sap.ui.define([
 			and.iSelectTheCategoryWithName("Objects");
 
 		// Assertions
-		Then.onTheOverviewPage.theTableShowsTheCategory("Objects").
+		Then.onTheOverviewPage.theTableShouldShowTheCategory("Objects").
 			and.iTeardownMyApp();
 	});
 

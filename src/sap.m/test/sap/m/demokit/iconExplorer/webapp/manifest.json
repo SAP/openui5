@@ -2,7 +2,7 @@
 	"_version": "1.8.0",
 
 	"sap.app": {
-	"id": "sap.ui.demo.iconexplorer",
+		"id": "sap.ui.demo.iconexplorer",
 		"type": "application",
 		"i18n": "i18n/i18n.properties",
 		"title": "{{appTitle}}",
@@ -13,7 +13,7 @@
 	},
 
 	"sap.ui": {
-	"technology": "UI5",
+		"technology": "UI5",
 		"icons": {
 			"icon": "sap-icon://image-viewer",
 			"favIcon": "",
@@ -30,7 +30,7 @@
 	},
 
 	"sap.ui5": {
-	"rootView": {
+		"rootView": {
 			"viewName": "sap.ui.demo.iconexplorer.view.App",
 			"type": "XML",
 			"async": true,
@@ -82,24 +82,39 @@
 				"controlId": "app",
 				"controlAggregation": "pages",
 				"bypassed": {
-					"target": ["notFound"]
+					"target": "notFound"
 				},
 				"async": true
 			},
 
 			"routes": [
 				{
+					"pattern": "",
+					"name": "home",
+					"target": "home"
+				},
+				{
 					"pattern": ":?query:",
-					"name": "overview",
+					"name": "legacy",
 					"target": ["overview"]
+				},
+				{
+					"pattern": "overview/:fontName:/:?query:",
+					"name": "overview",
+					"target": "overview"
 				}
 			],
 
 			"targets": {
+				"home": {
+					"viewName": "Home",
+					"viewId": "home",
+					"viewLevel": 1
+				},
 				"overview": {
 					"viewName": "Overview",
 					"viewId": "overview",
-					"viewLevel": 1
+					"viewLevel": 2
 				},
 				"notFound": {
 					"viewName": "NotFound",

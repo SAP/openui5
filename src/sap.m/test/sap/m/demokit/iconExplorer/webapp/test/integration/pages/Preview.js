@@ -45,7 +45,6 @@ sap.ui.require([
 			},
 
 			assertions: {
-
 				iShouldSeeTheIcon: function (sName) {
 					return this.waitFor({
 						id: sPreviewIconId,
@@ -162,7 +161,6 @@ sap.ui.require([
 						errorMessage: "The category info is not displayed"
 					});
 				}
-
 			}
 
 		}

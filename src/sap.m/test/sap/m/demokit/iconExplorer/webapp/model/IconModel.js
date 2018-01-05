@@ -13,7 +13,23 @@ sap.ui.define([
 	return JSONModel.extend("sap.ui.demo.iconexplorer.model.IconModel", {
 
 		/**
-		 * Loads an icon font and rearranges it based on metadata for display im the icon explorer.
+		 * Constructor for the IconModel
+		 * It contains icons from all loaded fonts, sorted into groups with the following structure
+		 * /AllFonts: flat list of all loaded fonts with the technical property "name" for each entry
+		 * /AllIcons: flat list of icons from all fonts that can be used for a global search
+		 * /FontName: for each loaded font an entry is created containing
+		 *   - [groups]: array of groups of the font as specified in the metadata and the generated "all" group
+		 *             containing all icons of the font that can be used for a font-specific search
+		 *     - name: group name
+		 *     - count: number of icons in this group
+		 *     - [icons]: array of icons consisting of the following properties
+		 *         - name: technical name of the icon
+		 *         - iconPath: path to the icon (used mostly for managing favorites)
+		 *         - font: name of the font the icon is part of (for more binding convenience)
+		 *         - delivery: SAPUI5, OpenUI5, or Other depending on the delivery channel of the font
+		 *         - tags: array of tags for the icon
+		 *           - name: the name of the tag
+		 *         - tagString: all tags concatenated for a more efficient search
 		 * @class
 		 * @public
 		 * @alias sap.ui.demo.iconexplorer.model.IconModel
@@ -22,29 +38,45 @@ sap.ui.define([
 
 			// call base class constructor
 			JSONModel.apply(this, arguments);
-			this.setSizeLimit(10000);
 
-			// set up the JSON model data in a timeout to not block the UI while loading the app
-			setTimeout(function () {
-				this._iStartTime = new Date().getTime();
-				this._loadIcons();
-			}.bind(this), 0);
-
+			// reset default size limit
+			this.setSizeLimit(Infinity);
 			return this;
 		},
 
 		/**
-		 * Promise to register when the asynchronous loading of an icon font including its metadata is finished
-		 * @return {Promise} a promise that is resolved when all icons are loaded
+		 * Initializes and fills the model with groups and tags information for all icon fonts
+		 * @param {Array} aIconFonts contains all fonts names we want to load
+		 */
+		init: function (aIconFonts) {
+			// set up the JSON model data in a timeout to not block the UI while loading the app
+			this._iStartTime = new Date().getTime();
+
+			// initialize icon array for global search
+			this.setProperty("/AllIcons", []);
+			this.setProperty("/AllFonts", []);
+
+			var aPromises = [];
+			for (var i = 0; i < aIconFonts.length; i++){
+				aPromises.push(this._loadIcons(aIconFonts[i]));
+			}
+			this._pIconsLoaded = Promise.all(aPromises);
+		},
+
+		/**
+		 * Register to this promise to get notified when the icon model is initialized
+		 * @returns {Promise} resolved when all icon font metadata is loaded
 		 */
 		iconsLoaded: function () {
-			if (!this._oIconsLoadedPromise) {
-				this._oIconsLoadedPromise = new Promise(function(fnResolve, fnReject) {
-					this._fnIconsLoadedResolve = fnResolve;
-					this._fnIconsLoadedReject = fnReject;
-				}.bind(this));
-			}
-			return this._oIconsLoadedPromise;
+			return this._pIconsLoaded;
+		},
+
+		/**
+		 * Set the currently displayed main font to fetch icon and group paths correctly
+		 * @param {string} sFontName a valid font name
+		 */
+		setFont : function (sFontName) {
+			this._sFontName = sFontName;
 		},
 
 		/**
@@ -55,7 +87,7 @@ sap.ui.define([
 		 */
 		getIconPath: function (sName, sGroupPath) {
 			var sIconPath = sGroupPath || "/groups/0";
-			sIconPath += "/icons";
+			sIconPath =  "/" + this._sFontName + sIconPath + "/icons";
 
 			var aIcons = this.getProperty(sIconPath),
 				iIconIndex;
@@ -69,37 +101,38 @@ sap.ui.define([
 
 			if (iIconIndex >= 0) {
 				return sIconPath + "/" + iIconIndex;
-			} else {
+			} else if (sName !== "error") {
 				return this.getIconPath("error", sGroupPath);
 			}
 		},
 
 		/**
 		 * Returns the binding path for a given group name
-		 * @param {string} sName the name of the group
+		 * @param {string} sGroupName the name of the group
 		 * @return {string} the binding path for the group
 		 */
-		getGroupPath: function (sName) {
-			var aCategories = this.getProperty("/groups"),
+		getGroupPath: function (sGroupName) {
+			var sGroupPath = "/" + this._sFontName + "/groups",
+				aGroups = this.getProperty(sGroupPath),
 				iIndex = 0;
 
-			for (var i = 0; i < aCategories.length; i++) {
-				if (aCategories[i].name === sName) {
+			for (var i = 0; i < aGroups.length; i++) {
+				if (aGroups[i].name === sGroupName) {
 					iIndex = i;
 					break;
 				}
 			}
-
-			return "/groups/" + iIndex;
+			return sGroupPath + "/" + iIndex;
 		},
 
 		/**
-		 * Returns the groups the icons is assigned to
-		 * @param {string} sName the icon name
+		 * Returns the groups the icon is assigned to
+		 * @param {string} sIconName the icon name
 		 * @return {Array} the groups the icon is assigned to
 		 */
-		getIconGroups: function (sName) {
-			var aGroups = this.getProperty("/groups"),
+		getIconGroups: function (sIconName) {
+			var sGroupPath = "/" + this._sFontName + "/groups",
+				aGroups = this.getProperty(sGroupPath),
 				aIconGroups = [];
 
 			if (aGroups) {
@@ -107,11 +140,10 @@ sap.ui.define([
 
 				aIconGroups = aGroups.filter(function (oGroup) {
 					return oGroup.icons.some(function (oItem) {
-						return oItem.name == sName;
+						return oItem.name == sIconName;
 					});
 				});
 			}
-
 			return 	aIconGroups.map(function(oGroup) {
 				return oGroup.text;
 			});
@@ -123,7 +155,8 @@ sap.ui.define([
 		 * @return {string} the unicode representation of the icon
 		 */
 		getUnicode: function (sName) {
-			var oInfo = IconPool.getIconInfo(sName);
+			var sFontName = (this._sFontName === "SAP-icons" ? undefined : this._sFontName),
+				oInfo = IconPool.getIconInfo(this._sFontName + "/" + sName, sFontName);
 
 			return (oInfo ? oInfo.content : "?");
 		},
@@ -134,9 +167,10 @@ sap.ui.define([
 		 * @return {string} the unicode HTML representation of the icon
 		 */
 		getUnicodeHTML: function (sName) {
-			var oInfo = IconPool.getIconInfo(sName);
+			var sFontName = (this._sFontName === "SAP-icons" ? undefined : this._sFontName),
+				oInfo = IconPool.getIconInfo(sName, sFontName);
 
-			return (oInfo ? "&#x" + oInfo.content.charCodeAt(0).toString(16) + ";" : "?");
+			return (oInfo && oInfo.content ? "&#x" + oInfo.content.charCodeAt(0).toString(16) + ";" : "?");
 		},
 
 		/* =========================================================== */
@@ -144,65 +178,57 @@ sap.ui.define([
 		/* =========================================================== */
 
 		/**
-		 * Load and process all icons from the metadata
+		 * Load and process groups and tags of icon fonts from the metadata
+		 * @param {string} sFontName name of currently selected font to be loaded
 		 * @private
 		 */
-		_loadIcons: function () {
-			var bGroupsLoaded = false,
-				bTagsLoaded = false,
-				oMetadataloaded = new Promise(function(fnResolve, fnReject) {
-					// load groups asynchronously
-					jQuery.ajax(jQuery.sap.getModulePath("sap.ui.demo.iconexplorer", "/model/groups.json"), {
+		_loadIcons: function (sFontName) {
+			var aPromises = [];
+
+			["groups.json", "tags.json"].forEach(function (sName) {
+				aPromises.push(new Promise(function (fnResolve, fnReject) {
+					// load font metadata asynchronously
+					jQuery.ajax({
+						url: jQuery.sap.getModulePath("sap.ui.demo.iconexplorer", "/model/" + sFontName + "/" + sName),
 						dataType: "json",
 						success: function (oData) {
-							bGroupsLoaded = true;
-							this._oTempGroupData = oData;
-							if (bTagsLoaded) {
-								fnResolve();
-							}
-						}.bind(this),
-						error: fnReject
+							fnResolve(oData);
+						},
+						error: function (oError) {
+							fnReject(oError);
+						}
 					});
+				}));
+			} );
 
-					// load tags asynchronously
-					jQuery.ajax(jQuery.sap.getModulePath("sap.ui.demo.iconexplorer", "/model/tags.json"), {
-						dataType: "json",
-						success: function (oData) {
-							bTagsLoaded = true;
-							this._oTempTagsData = oData;
-							if (bGroupsLoaded) {
-								fnResolve();
-							}
-						}.bind(this),
-						error: fnReject
-					});
-				}.bind(this));
-
-			// process data once both models are loaded
-			oMetadataloaded.then(this._onMetadataLoaded.bind(this), this._onError.bind(this));
+			//process data when groups and tags are loaded
+			return Promise.all(aPromises).then(function (aData) {
+				this._onMetadataLoaded(sFontName, aData[0], aData[1]);
+			}.bind(this), function (oError) {
+				this._onError(oError);
+			}.bind(this));
 		},
 
 		/**
-		 *	Post process all data for display in the icon explorer
+		 * Post process all data for display in the icon explorer
+		 * @param {string} sFontName name of currently selected font to be loaded
 		 * @private
 		 */
-		_onMetadataLoaded : function()  {
+		_onMetadataLoaded : function(sFontName, oGroups, oTags)  {
 			// process groups and tags
-			this._processGroups();
-			this._processTags();
+			this._processGroups(oGroups);
+			this._processTags(sFontName, oTags, oGroups);
+
+			var aAllFonts = this.getProperty("/AllFonts");
+			aAllFonts.push({name: sFontName});
+
+			this.setProperty("/AllFonts", aAllFonts);
 
 			// trace elapsed time
-			jQuery.sap.log.info("IconModel: Loaded and sorted all icons in " + (new Date().getTime() - this._iStartTime) + " ms");
+			jQuery.sap.log.info("IconModel: Loaded and sorted all icons of " + sFontName + " in " + (new Date().getTime() - this._iStartTime) + " ms");
 
 			// set the model data
-			this.setData(this._oTempGroupData);
-
-			// resolve iconsLoaded promise
-			this._fnIconsLoadedResolve();
-
-			// cleanup
-			this._oTempGroupData = null;
-			this._oTempTagsData = null;
+			this.setProperty("/" + sFontName, oGroups);
 		},
 
 		/**
@@ -213,38 +239,42 @@ sap.ui.define([
 		_onError: function (oResponse) {
 			oResponse.error = "Failed to load the icon metadata, check for parse errors";
 			this.fireRequestFailed({response: oResponse});
-			this._fnIconsLoadedReject();
 		},
 
 		/**
-		 * Processes all groups: sort and enrich the model data
+		 * Processes all groups: sort groups by name and enrich the model data
+		 * Sorting is done in the model once for faster processing in the views
+		 * @param {string} sFontName name of currently selected font to be loaded
 		 * @private
 		 */
-		_processGroups : function() {
-			// sort groups by name (sorting is done in the model once for faster processing in the views)
-			this._oTempGroupData.groups.sort(Sorter.sortByName);
-
-			for (var i = 0; i < this._oTempGroupData.groups.length; i++) {
-				// count & sort icons of group
-				if (this._oTempGroupData.groups[i].icons) {
-					this._oTempGroupData.groups[i].count = this._oTempGroupData.groups[i].icons.length;
-					this._oTempGroupData.groups[i].icons.sort(Sorter.sortByName);
+		_processGroups : function(oGroups) {
+			oGroups.groups.sort(Sorter.sortByName);
+			oGroups.groups.forEach(function (oInnerGroup) {
+				if (oInnerGroup.icons) {
+					oInnerGroup.count = oInnerGroup.icons.length;
+					oInnerGroup.icons.sort(Sorter.sortByName);
 				}
-			}
+			});
 		},
 
 		/**
-		 * Processes all tags: relate tags to the icons in the all group
+		 * Processes all tags.
+		 * Create an "all" group for every font under index 0.
+		 * Also, create an AllIcons path in the model, that contains icons from all loaded fonts
+		 * Relate tags to icons in all groups.
+		 * @param {string} sFontName the Name of font we currently want to relate icon tags
+		 * @param {Object} oTags raw tag data
+		 * @param {Object} oGroups raw group data
 		 * @private
 		 */
-		_processTags : function() {
-			var oData = this._oTempTagsData,
-				aIconNames = IconPool.getIconNames(),
-				aIcons = [];
+		_processTags : function (sFontName, oTags, oGroups) {
+			var	aIconNames = IconPool.getIconNames(sFontName === "SAP-icons" ? undefined : sFontName),
+				sIconPath = (sFontName === "SAP-icons" ? "" : sFontName + "/"),
+				sDelivery = (["SAP-icons", "SAP-icons-TNT"].indexOf(sFontName) >= 0 ? "OpenUI5" : "SAPUI5");
 
 			// add all icons from icon pool and append tag info
-			aIcons = aIconNames.map(function (sIconName) {
-				var oIconMetadata = oData[sIconName],
+			var aIcons = aIconNames.map(function (sIconName) {
+				var oIconMetadata = oTags[sIconName],
 					aTags = [];
 
 				if (oIconMetadata) {
@@ -255,74 +285,109 @@ sap.ui.define([
 
 				return {
 					name : sIconName,
+					iconPath : sIconPath,
+					font : sFontName,
+					delivery : sDelivery,
 					tags : aTags,
 					tagString : (oIconMetadata ? oIconMetadata.tags.join(" ") : "")
 				};
 			});
-
-			// sort and add the all group at index 0
+			// Sort the Icons
 			aIcons.sort(Sorter.sortByName);
-			this._oTempGroupData.groups.splice(0, 0, {
+
+			// add the all group for this font at index 0
+			oGroups.groups.splice(0, 0, {
 				name : "all",
 				text : "All",
 				icons : aIcons,
 				count : aIcons.length
 			});
 
-			// calculate top
-			this._calculateTagsPerGroup();
+			// Add all icons of this font to the AllIcons path in IconModel for the global search
+			/*var aClonedIcons = aIcons.map(function (oIcon) {
+				return jQuery.extend(true, {}, oIcon);
+			});*/
+			this.setProperty("/AllIcons", this.getProperty("/AllIcons").concat(aIcons));
+
+			// calculate top tag and relate tags to other groups than "all"
+			this._calculateTagsPerGroup(oGroups, sFontName);
 		},
 
 		/**
-		 * Calculates the top tags per category and copies over the tags to each group
+		 * Calculates the top tag and relates the tags from the "all" group to each group
+		 * @param {string} sFontName name of currently selected font to be loaded
 		 * @private
 		 */
-		_calculateTagsPerGroup: function () {
-			var i = 0,
-				j = 0;
-			for (i = 0; i < this._oTempGroupData.groups.length; i++) {
-				var oTagOccurrences = {};
-				for (j = 0; j < this._oTempGroupData.groups[i].icons.length; j++) {
-					var oTags = this._oTempGroupData.groups[i].icons[j].tags;
+		_calculateTagsPerGroup: function (oGroups) {
+			for (var i = 0; i < oGroups.groups.length; i++) {
+				var oTagOccurrence = {};
 
-					if (!oTags) {
-						/* eslint-disable no-loop-func */
-						var aIcons = this._oTempGroupData.groups[0].icons.filter(function (oIcon) {
-							return oIcon.name === this._oTempGroupData.groups[i].icons[j].name;
-						}.bind(this));
-						/* eslint-enable no-alert */
-						if (aIcons) {
-							// copy over tags from all section
-							this._oTempGroupData.groups[i].icons[j].tags = aIcons[0].tags;
-							this._oTempGroupData.groups[i].icons[j].tagString = aIcons[0].tagString;
-							oTags = aIcons[0].tags;
-						}
+				// Loop over all icons in the current group
+				for (var j = 0; j < oGroups.groups[i].icons.length; j++) {
+					var oTags = {};
+					var aIcon = this._getIconMetadata(oGroups.groups[0], oGroups.groups[i].icons[j]);
+
+					// Copy over tags from all sections
+					if (aIcon) {
+						oGroups.groups[i].icons[j].tags = aIcon.tags;
+						oGroups.groups[i].icons[j].tagString = aIcon.tagString;
+						oTags = aIcon.tags;
+					} else {
+						jQuery.sap.log.info("IconModel: Failed to load tags for " + oGroups.groups[i].icons[j].name);
 					}
+
+					// Count tag occurrence for every tag in group
 					if (oTags) {
 						for (var k = 0; k < oTags.length; k++) {
-							if (!oTagOccurrences[oTags[k].name]) {
-								oTagOccurrences[oTags[k].name] = 1;
+							if (!oTagOccurrence[oTags[k].name]) {
+								oTagOccurrence[oTags[k].name] = 1;
 							} else {
-								oTagOccurrences[oTags[k].name]++;
+								oTagOccurrence[oTags[k].name]++;
 							}
 						}
 					}
 				}
-				/* eslint-disable no-loop-func */
-				var aSortedTagsByRelevance = Object.keys(oTagOccurrences).sort(function (sKey1, sKey2) {
-					if (oTagOccurrences[sKey1] === oTagOccurrences[sKey2]) {
-						return 0;
-					} else if (oTagOccurrences[sKey1] < oTagOccurrences[sKey2]) {
-						return 1;
-					} else {
-						return -1;
-					}
-				});
-				/* eslint-enable no-loop-func */
+				// Sort tags by their occurrence
+				var aSortedGroupTags = this._sortGroupTags(oTagOccurrence);
 
-				this._oTempGroupData.groups[i].tags = [];
-				for (j = 0; j < aSortedTagsByRelevance.length; j++) {
-					this._oTempGroupData.groups[i].tags.push({ "name" : aSortedTagsByRelevance[j]});
+				// Create new tags property for groups and add sorted group tags
+				oGroups.groups[i].tags = [];
+				for (var x = 0; x < aSortedGroupTags.length; x++) {
+					oGroups.groups[i].tags.push({ "name" : aSortedGroupTags[x]});
+				}
+			}
+		},
+
+		/**
+		 * Sort tags by their occurrence descending
+		 * @param {Object} oTagOccurrence map of tags with their occurance
+		 * @returns {string[]} A list of tags sorted by their occurance
+		 * @private
+		 */
+		_sortGroupTags : function (oTagOccurrence) {
+			return Object.keys(oTagOccurrence).sort(function (sKey1, sKey2) {
+				if (oTagOccurrence[sKey1] === oTagOccurrence[sKey2]) {
+					return 0;
+				} else if (oTagOccurrence[sKey1] < oTagOccurrence[sKey2]) {
+					return 1;
+				} else {
+					return -1;
+				}
+			});
+		},
+
+		/**
+		 * Finds icon metadata in the all group
+		 * @param {Object} oAllGroup a map of all icons for the current font
+		 * @param {Object} {oCurrentIcon} the item to look up
+		 * @returns {Object} the icon metadata requested
+		 * @private
+		 */
+		_getIconMetadata : function (oAllGroup, oCurrentIcon) {
+			var aIcons = oAllGroup.icons;
+			for ( var i = 0; i < aIcons.length; i++ ) {
+				if (aIcons[i].name === oCurrentIcon.name) {
+					return aIcons[i];
 				}
 			}
 		}

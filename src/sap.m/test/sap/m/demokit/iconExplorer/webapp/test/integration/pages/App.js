@@ -11,32 +11,27 @@ sap.ui.define([
 			baseClass: Common,
 
 			actions: {
-
 				iWaitUntilTheAppBusyIndicatorIsGone: function () {
 					return this.waitFor({
 						id: "app",
 						viewName: "App",
-						// inline-matcher directly as function
-						matchers: function(oAppControl) {
-							// we set the view busy, so we need to query the parent of the app
-							return oAppControl.getParent() && oAppControl.getParent().getBusy() === false;
-						},
+						matchers: new PropertyStrictEquals({
+							name: "busy",
+							value : false
+						}),
 						errorMessage: "Did not find the App control"
 					});
 				}
 			},
 
 			assertions: {
-
 				iShouldSeeTheBusyIndicatorForTheWholeApp: function () {
 					return this.waitFor({
 						id: "app",
 						viewName: "App",
 						matchers: new PropertyStrictEquals({
 							name: "busy",
-							// we cannot mock loading the json files in the IconModel class.
-							// on browsers other than chrome it is too fast to make this check work
-							value : !!sap.ui.Device.browser.chrome
+							value : true
 						}),
 						success: function () {
 							// we set the view busy, so we need to query the parent of the app

@@ -39,7 +39,10 @@ sap.ui.define([
 			oViewModel = new JSONModel({
 				growingThreshold : 200,
 				iconFilterCount: this.getResourceBundle().getText("overviewTabAllInitial"),
-				overviewNoDataText : this.getResourceBundle().getText("overviewNoDataText")
+				overviewNoDataText : this.getResourceBundle().getText("overviewNoDataText"),
+				fontName: "",
+				iconPath : "",
+				busy : true
 			});
 			this.setModel(oViewModel, "view");
 
@@ -47,6 +50,19 @@ sap.ui.define([
 			oTagModel = new JSONModel();
 			this.setModel(oTagModel, "tags");
 
+			// Sets the current previewCopyIcon and the fontName when pressing an icon
+			this.byId("previewCopyIcon").addEventDelegate({
+				onAfterRendering: function () {
+					var $previewCopyIcon = this.byId("previewCopyIcon").$(),
+						sFontName = this.getModel("view").getProperty("/fontName");
+
+					// always set current font family for the preview
+					$previewCopyIcon.children("span").css("font-family", sFontName);
+				}.bind(this)
+			});
+
+			// register to both new and legacy pattern to not break bookmarked URLs
+			this.getRouter().getRoute("legacy").attachPatternMatched(this._updateUI, this);
 			this.getRouter().getRoute("overview").attachPatternMatched(this._updateUI, this);
 		},
 
@@ -69,7 +85,42 @@ sap.ui.define([
 		 * @public
 		 */
 		onNavBack : function() {
-			history.go(-1);
+			this.getRouter().navTo("home");
+		},
+
+		/**
+		 * Event handler for the navigation button, opens a Popover with all fonts
+		 * @public
+		 * @param oEvent
+		 */
+		onSelectFont : function(oEvent) {
+			var sFontName = this.getModel("view").getProperty("/fontName"),
+				aListItems = this.byId("selectFontList").getItems(),
+				oSelectedItem = aListItems.filter(function (oListItem) {
+					return oListItem.getCustomData()[0].getValue() === sFontName;
+				}).pop();
+
+			this.byId("selectFont").openBy(oEvent.getSource());
+			this.byId("selectFontList").setSelectedItem(oSelectedItem);
+		},
+
+		/**
+		 * Event handler for pressing a list item in the navigation popover
+		 * @public
+		 * @param oEvent
+		 */
+		onChangeFont : function(oEvent) {
+			var oListItem = oEvent.getParameter("listItem"),
+				sSelectedFont = oListItem.getCustomData()[0].getValue();
+
+			this.getModel("view").setProperty("/busy", true, null, true);
+			this.getRouter().navTo("overview", {
+				query: {
+					tab: this._oCurrentQueryContext.tab
+				},
+				fontName: sSelectedFont
+			});
+			this.byId("selectFont").close();
 		},
 
 		/**
@@ -90,9 +141,8 @@ sap.ui.define([
 					return oEvent.srcControl.getParent();
 				}
 			}
-
 			// show total count of items
-			this.getModel("view").setProperty("/iconFilterCount", this.byId("results").getBinding(this._sAggregationName).getLength());
+			this.getModel("view").setProperty("/iconFilterCount", this.byId("results").getBinding(this._sAggregationName).getLength(), null, true);
 			// register press callback for grid and visual mode
 			if (this._oCurrentQueryContext.tab === "grid" || this._oCurrentQueryContext.tab === "visual") {
 				if (!this._oPressLayoutCellDelegate) {
@@ -294,7 +344,8 @@ sap.ui.define([
 		 * @public
 		 */
 		onSurpriseMe: function () {
-			var aIcons = this.getModel().getProperty("/groups/0/icons"),
+			var sFontName = this.getModel("view").getProperty("/fontName"),
+				aIcons = this.getModel().getProperty("/" + sFontName + "/groups/0/icons"),
 				oRandomItem = aIcons[Math.floor(Math.random() * aIcons.length)];
 
 			this._updateHash("icon", oRandomItem.name);
@@ -305,7 +356,8 @@ sap.ui.define([
 		 * @public
 		 */
 		onDownload: function () {
-			mobileLibrary.URLHelper.redirect(jQuery.sap.getModulePath("sap.ui.core", "/themes/base/fonts/SAP-icons.ttf"));
+			var sFontName = this.getModel("view").getProperty("/fontName");
+			mobileLibrary.URLHelper.redirect(jQuery.sap.getModulePath("sap.ui.core", "/themes/base/fonts/" + sFontName + ".ttf"));
 		},
 
 		/* =========================================================== */
@@ -315,6 +367,7 @@ sap.ui.define([
 		/**
 		 * Copies the string to the clipboard and displays a message
 		 * @param {string} copyText the text string that has to be copied to the clipboard
+		 * @private
 		 */
 		_copyStringToClipboard: function (copyText, successText, exceptionText) {
 			var $temp = $("<input>");
@@ -333,28 +386,32 @@ sap.ui.define([
 
 		/**
 		 * Shows the selected item on the object page
-		 * On phones a additional history entry is created
+		 * On phones an additional history entry is created
 		 * @param {string} sIcon the icon name to be previewed
 		 * @private
 		 */
 		_previewIcon : function (sIcon) {
 			this.getModel().iconsLoaded().then(function () {
-				// bind the preview to the item path
-				this.byId("preview").bindElement({
-					path: this.getModel().getIconPath(sIcon)
-				});
+				var sPath = this.getModel().getIconPath(sIcon);
 
-				var sIconSymbol = this.getModel().getUnicodeHTML(sIcon);
-				this.byId("previewCopyIcon").setHtmlText("<span>" + sIconSymbol + "</span>" + sIcon);
+				if (sPath) {
+					// bind the preview to the item path
+					this.byId("preview").bindElement({
+						path: sPath
+					});
 
-				// update the group information with a timeout as this task takes some time to calculate
-				setTimeout(function () {
-					var aGroups = this.getModel().getIconGroups(sIcon);
-					this.byId("categoryInfo").setText(aGroups.join(", "));
-				}.bind(this),0);
+					var sIconSymbol = this.getModel().getUnicodeHTML(sIcon);
+					this.byId("previewCopyIcon").setHtmlText("<span>" + sIconSymbol + "</span>" + sIcon);
 
-				// update unicode info
-				this.byId("unicodeInfo").setText(this.getModel().getUnicodeHTML(sIcon));
+					// update the group information with a timeout as this task takes some time to calculate
+					setTimeout(function () {
+						var aGroups = this.getModel().getIconGroups(sIcon);
+						this.byId("categoryInfo").setText(aGroups.join(", "));
+					}.bind(this), 0);
+
+					// update unicode info
+					this.byId("unicodeInfo").setText(this.getModel().getUnicodeHTML(sIcon));
+				}
 			}.bind(this));
 		},
 
@@ -364,10 +421,13 @@ sap.ui.define([
 		 * @private
 		 */
 		_updateUI: function (oEvent) {
-			var oQuery = oEvent.getParameter("arguments")["?query"],
-				bInitial = false;
+			var oArguments = oEvent.getParameter("arguments"),
+				sFontName = oArguments.fontName || "SAP-icons",
+				oQuery = oArguments["?query"],
+				bInitial = false,
+				oViewModel = this.getModel("view");
 
-			// set a default query object in case no has is defined
+			// set a default query object in case no hash is defined
 			if (!oQuery) {
 				oQuery = {
 					tab: "grid"
@@ -392,6 +452,7 @@ sap.ui.define([
 			this._oCurrentQueryContext = oQuery;
 
 			// helper variables for updating the UI pieces
+			var bFontChanged = sFontName !== oViewModel.getProperty("/fontName");
 			var bTabChanged = this._oPreviousQueryContext.tab !== oQuery.tab;
 			var bCategoryChanged = this._oPreviousQueryContext.cat !== oQuery.cat;
 			var bSearchChanged = this._oPreviousQueryContext.search !== oQuery.search;
@@ -401,6 +462,26 @@ sap.ui.define([
 			this._sAggregationName = "items";
 
 			this.getOwnerComponent().iconsLoaded().then(function () {
+				// bind the view if the displayed icon font changes or is not set yet
+				if (bFontChanged) {
+					// avoid refresh of preview area when setting new properties since we hide it anyway
+					this.byId("preview") && this.byId("preview").unbindElement();
+
+					// store the current font name in the view model and set the path to the new font (async)
+					oViewModel.setProperty("/fontName", sFontName, null, true);
+					oViewModel.setProperty("/iconPath", (sFontName === "SAP-icons" ? "" : sFontName + "/"), null, true);
+
+					// update the view to the new path
+					this.getView().bindElement({
+						path: "/" + sFontName,
+						suspend: true
+					});
+
+					// set the font on the icon model
+					this.getModel().setFont(sFontName);
+					oViewModel.setProperty("/busy", false, null, true);
+				}
+
 				// tab
 				if (!this.byId("iconTabBar")) {
 					return;
@@ -419,7 +500,8 @@ sap.ui.define([
 					// add new content to the end of result container
 					var oResultsFragment = sap.ui.xmlfragment(
 						this.getView().getId(),
-						"sap.ui.demo.iconexplorer.view.browse." + sFragmentName, this);
+						"sap.ui.demo.iconexplorer.view.browse." + sFragmentName,
+						this);
 					this.byId("resultContainer").addContent(oResultsFragment);
 
 					var bCategoriesVisible = !(Device.system.phone || oQuery.tab == "favorites");
@@ -442,9 +524,9 @@ sap.ui.define([
 				}
 
 				// category
-				this.byId("categorySelection").setSelectedKey(oQuery.cat);
-				if ((oQuery.cat || bCategoryChanged) && oQuery.tab !== "favorites") {
-					if (bInitial || bTabChanged) {
+				this.byId("categorySelection").setSelectedKey(oQuery.cat || "all");
+				if ((oQuery.cat || bCategoryChanged || bFontChanged) && oQuery.tab !== "favorites") {
+					if (bInitial || bFontChanged || bTabChanged) {
 						this._selectCategory(oQuery);
 					} else {
 						clearTimeout(this._iCategorySelectionTimeout);
@@ -456,12 +538,10 @@ sap.ui.define([
 
 				// search & tags
 				this.byId("searchField").setValue(oQuery.search);
-				if (bInitial || bSearchChanged || bTagChanged || bTabChanged) {
+				if (bInitial || bFontChanged || bSearchChanged || bTagChanged || bTabChanged) {
 					// search
-					if (bInitial || bTabChanged) {
-						if (oQuery.search || bTabChanged) {
-							this._searchIcons(oQuery.search, oQuery.tag);
-						}
+					if (bInitial || bFontChanged || bTabChanged) {
+						this._searchIcons(oQuery.search, oQuery.tag);
 					} else {
 						clearTimeout(this._iSearchTimeout);
 						this._iSearchTimeout = setTimeout(function () {
@@ -470,7 +550,7 @@ sap.ui.define([
 					}
 
 					// tags
-					if (bInitial || bTabChanged) {
+					if (bInitial || bFontChanged || bTabChanged) {
 						if (oQuery.tab === "favorites") {
 							this._aCategoryTags = undefined;
 						}
@@ -546,6 +626,7 @@ sap.ui.define([
 
 			// call route with query parameter
 			this.getRouter().navTo("overview", {
+				fontName: this.getModel("view").getProperty("/fontName"),
 				query: oQuery
 			});
 
@@ -572,8 +653,8 @@ sap.ui.define([
 				var aFilters = [],
 					oFilterTags = (sTagValue ? new Filter("tagString", FilterOperator.Contains, sTagValue) : undefined),
 					oFilterSearchName = (sSearchValue ? new Filter("name", FilterOperator.Contains, sSearchValue) : undefined),
-					fnUmicodeCustomFilter = (sSearchValue ? this._unicodeFilterFactory(sSearchValue) : undefined),
-					oFilterSearchUnicode = (sSearchValue ? new Filter("name", fnUmicodeCustomFilter) : undefined),
+					fnUnicodeCustomFilter = (sSearchValue ? this._unicodeFilterFactory(sSearchValue) : undefined),
+					oFilterSearchUnicode = (sSearchValue ? new Filter("name", fnUnicodeCustomFilter) : undefined),
 					oFilterSearchTags = (sSearchValue ? new Filter("tagString", FilterOperator.Contains, sSearchValue) : undefined),
 					oFilterSearchNameTags = (sSearchValue ? new Filter({
 						filters: [oFilterSearchTags, oFilterSearchName, oFilterSearchUnicode],
@@ -607,7 +688,7 @@ sap.ui.define([
 			var oResultBinding = this.byId("results").getBinding(this._sAggregationName);
 			if (oResultBinding !== undefined) {
 				oResultBinding.filter(this._vFilterSearch);
-				this.getModel("view").setProperty("/overviewNoDataText", this.getResourceBundle().getText("overviewNoDataWithSearchText"));
+				this.getModel("view").setProperty("/overviewNoDataText", this.getResourceBundle().getText("overviewNoDataWithSearchText"), null, true);
 			}
 		},
 
@@ -636,10 +717,12 @@ sap.ui.define([
 			this.byId("results").bindAggregation(this._sAggregationName, {
 				path: sGroupPath + "/icons",
 				length: this.getModel("view").getProperty("/growingThreshold"),
-				template: this.byId("results").getBindingInfo(this._sAggregationName).template,
+				template: this.byId("results").getBindingInfo(this._sAggregationName).template.clone(),
+				templateSharable: true,
 				events: {
 					change: this.onUpdateFinished.bind(this)
-				}
+				},
+				suspended: true
 			});
 			// apply filters
 			this.byId("results").getBinding(this._sAggregationName).filter(this._vFilterSearch);
@@ -662,6 +745,7 @@ sap.ui.define([
 				aAllTags = [],
 				aCurrentTags = [],
 				bTagVisible = false,
+				sFontName = this.getModel("view").getProperty("/fontName"),
 				i;
 
 			// collect all current tags from the result list
@@ -671,7 +755,7 @@ sap.ui.define([
 
 			// no category selected yet: use all tags
 			if (!this._aCategoryTags) {
-				this._aCategoryTags = this.getModel().getProperty("/groups/0/tags");
+				this._aCategoryTags = this.getModel().getProperty("/" + sFontName + "/groups/0/tags");
 			}
 
 			// filter tags to the currently visible

@@ -1,7 +1,120 @@
-/* overstyle generic tile header for accent cell*/
-.sapUiDemoIconExplorer .sapUiBlockLayoutBackgroundAccent .sapUiBlockCellContent .previewGenericTile .sapMText {
-	color: #333;
-	font-size: 120%;
+/***** Home page styles *****/
+
+.sapUiDemoIconExplorer .TitleLink > a.sapMLnk,
+.sapUiDemoIconExplorer .TitleLink > a.sapMLnk:hover,
+.sapUiDemoIconExplorer .TitleLink > a.sapMLnk:visited{
+	font-size:1.3rem;
+	font-family: Arial;
+}
+
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw):not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw)
+.sapUiDemoIconExplorer .TitleLink > a.sapMLnk,
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw):not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw)
+.sapUiDemoIconExplorer .TitleLink > a.sapMLnk:hover,
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw):not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw)
+.sapUiDemoIconExplorer .TitleLink > a.sapMLnk:visited{
+    color: #fff;
+}
+.sapUiDemoIconExplorer .IconDescriptionLink{
+    font-family: Arial;
+}
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw):not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw)
+.sapUiDemoIconExplorer .IconDescriptionLink{
+	color:#ffffff !important;
+}
+
+.sapUiDemoIconExplorer .entryIcon{
+	font-size: 3rem;
+}
+
+/* margin for clear icon in search field*/
+.sapUiDemoIconExplorer .inputClear{
+    margin-right: 2rem;
+}
+
+.sapUiDemoIconExplorer .HomeHeaderText {
+    font-size: 5.5rem;
+    font-family: Arial;
+    text-shadow: 0 0 0.250rem #000;
+    position:relative;
+}
+
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw):not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw)
+.sapUiDemoIconExplorer .HomeHeaderText {
+	color: #fff;
+}
+
+.sapUiDemoIconExplorer .BlockLayoutFirstRow {
+	position:relative;
+	width:100vw;
+}
+.BlockLayoutFlex {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+.BlockLayoutFooter {
+	flex-grow: 1;
+}
+
+.BlockLayoutCellHeight {
+	height:40vh;
+}
+@media only screen and (orientation: portrait) {
+    .BlockLayoutCellHeight {
+        height:30vh;
+    }
+}
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw):not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw)
+.IconExplorerHomeBackground {
+	background-color: #2b556d;
+	background: url("../image/IcoExp_M_and_L.jpg") right top;
+	background-repeat-x: repeat;
+    background-repeat-y: no-repeat;
+}
+
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw):not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw)
+.IconExplorerBackgroundColor {
+    background-color: #415669;
+}
+
+.sapUiDemoIconExplorer .VerticalLayout {
+	margin-top:4rem;
+	margin-bottom:4rem;
+}
+
+/* centers the inputField*/
+.sapUiDemoIconExplorer .VerticalLayout .sapUiVltCell {
+	text-align: center;
+}
+
+/*SMALL*/
+.sapUiDemoIconExplorer .sap-phone .VerticalLayout{
+	margin-top:1rem;
+	margin-bottom:1rem;
+}
+
+.sap-phone .sapUiDemoIconExplorer .sapMText.HomeHeaderText {
+	font-size: 1.625rem;
+}
+.sap-phone .sapUiDemoIconExplorer .sapUiMediumMarginBottom.inputSearch {
+	width: 80% !important;
+	margin: 1rem auto !important;
+}
+
+.sap-phone .sapUiDemoIconExplorer .VerticalLayout {
+	margin: 1rem auto;
+}
+.sap-phone .BlockLayoutCellHeight {
+	height:auto;
+}
+
+/***** Overview page styles *****/
+
+/* Sets the color for the footer links */
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesBrightLink.sapMLnk,
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesBrightLink.sapMLnk:hover {
+    color: #7ed0ff;
 }
 
 /* workaround for Tokenizer in table */
@@ -12,11 +125,6 @@
 /* align block layout cell content to the middle */
 .sapUiDemoIconExplorer .centeredBlockCells .sapUiBlockCellContent {
 	text-align: center;
-}
-
-/* align inner block layout cell content to the left again */
-.sapUiDemoIconExplorer .centeredBlockCells .sapUiBlockCellContent > * {
-	text-align: left;
 }
 
 /* design for the grid tab cell */
@@ -39,7 +147,7 @@
 	cursor: pointer;
 }
 
-/* style for an icongroup in a toolbar to have the same font size as the headline */
+/* style for an icon group in a toolbar to have the same font size as the headline */
 .sapUiDemoIconExplorer .sapUiPanelHeaderRadioButtonGroup label {
 	font-size: 1.125rem;
 }
@@ -56,6 +164,8 @@
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow: hidden;
+    border: 1px solid #bfbfbf;
+    background-color: #f2f2f2;
 }
 
 .sapUiSizeCompact .sapUiDemoIconExplorer .sapUiCopyIcon {
@@ -64,7 +174,7 @@
 	margin: 0.1875rem 0;
 }
 
-/* style for the icon preview copy area */
+/* styles for the icon preview copy area */
 .sapUiDemoIconExplorer .sapUiCopyIcon > span {
 	display: inline-block;
 	margin-bottom: 3px;
@@ -83,20 +193,35 @@
 	text-overflow: ellipsis;
 }
 
-/* Styles for FixFlex layout inside panel */
+/* styles for FixFlex layout inside panel */
 .sapUiDemoIconExplorer .previewCopy .sapUiFixFlexFlexibleContainer {
 	width: 100%;
 	position: inherit;
 }
 
-/* Styles for icon preview area */
+/* styles for icon preview area */
 .sapUiDemoIconExplorer .sapUiIcon.previewIcon {
 	font-size: 100px;
 }
+
+/* wrap tokens in table */
 .sapUiDemoIconExplorer .tagsArea {
 	white-space: pre-line;
 }
 
+/* disables overflow for tags in suggestion popup */
+.sapMPopover .sapUiHLayout.tagsArea {
+	overflow: hidden;
+	height: 1.625rem;
+}
+
+/* similar margin as tokenizer uses but better handling */
+.sapUiDemoIconExplorer .tagsArea .tagsToken:not(last-child),
+.sapMPopover .sapUiHLayout.tagsArea .tagsToken:not(last-child) {
+	margin-right: 0.25rem;
+}
+
+/* over styled list and list item that wraps for visual and grid tab */
 .sapUiDemoIconExplorer .wrappingListItem.sapMLIB {
 	display: inline-block;
 	border-bottom: 0;
@@ -110,14 +235,9 @@
 	white-space: normal;
 }
 
-html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw)
+/* set border color only for non-accessible themes */
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw):not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw)
 .sapUiDemoIconExplorer .gridLayoutCell,
 .sapUiDemoIconExplorer .visualLayoutCell {
 	border-color: #bfbfbf;
-}
-
-@media (max-width:599px) {
-	.sapUiDemoIconExplorer .sapUiIcon.previewIcon {
-		font-size: 50px;
-	}
 }

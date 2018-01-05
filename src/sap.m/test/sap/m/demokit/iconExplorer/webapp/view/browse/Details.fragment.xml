@@ -9,7 +9,11 @@
 		mode="SingleSelectMaster"
 		selectionChange="onSelectionChange"
 		items="{
-			path: '/groups/0/icons',
+			path: 'groups/0/icons',
+			sorter: {
+				path: 'name',
+				descending: false
+			},
 			templateShareable: true
 		}"
 		noDataText="{view>/overviewNoDataText}"
@@ -19,7 +23,7 @@
 		updateFinished="onUpdateFinished">
 
 		<columns>
-			<Column id="iconColumn" width="2rem">
+			<Column id="iconColumn" width="2rem" vAlign="Middle">
 				<Text id="iconColumnTitle" text="{i18n>tableIconColumnTitle}"/>
 			</Column>
 			<Column id="nameColumn" width="20%" vAlign="Middle">
@@ -37,30 +41,28 @@
 				id="tagsColumn"
 				width="35%"
 				minScreenWidth="Desktop"
-				demandPopin="true">
+				demandPopin="true"
+				vAlign="Middle">
 				<Text id="tagsColumnTitle" text="{i18n>tableTagsColumnTitle}"/>
 			</Column>
-			<Column id="favColumn" width="2rem"/>
+			<Column id="favColumn" width="2rem" vAlign="Middle"/>
 		</columns>
 
 		<items>
 			<ColumnListItem
 				type="Active">
 				<cells>
-					<core:Icon size="2rem" src="sap-icon://{name}" color="Default"/>
+					<core:Icon size="2rem" src="sap-icon://{view>/iconPath}{name}" color="Default" useIconTooltip="false"/>
 					<Label design="Bold" text="{name}"/>
-					<Text text="sap-icon://{name}"/>
-					<l:HorizontalLayout allowWrapping="true">
-						<Tokenizer
-							class="sapUiTinyMarginTop tagsArea"
-							width="100%"
-							tokens="{
-								path: 'tags',
-								templateShareable: true
-							}"
-							editable="false">
-							<Token text="{name}" select="onTagSelect"/>
-						</Tokenizer>
+					<Text text="sap-icon://{view>/iconPath}{name}"/>
+					<l:HorizontalLayout
+						class="tagsArea"
+						content="{
+							path: 'tags',
+							templateShareable: true
+						}"
+						allowWrapping="true">
+						<Token text="{name}" select="onTagSelect" editable="false" class="tagsToken"/>
 					</l:HorizontalLayout>
 					<RatingIndicator
 						iconUnselected="sap-icon://unfavorite"

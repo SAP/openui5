@@ -1,0 +1,2455 @@
+{
+	"icon-heart" : {
+		"tags" : [
+			"heart",
+			"medical"
+		]
+	},
+	"icon-equalizer" : {
+		"tags" : [
+			"equalizer",
+			"sliders",
+			"adjust"
+		]
+	},
+	"icon-component" : {
+		"tags" : [
+			"component"
+		]
+	},
+	"icon-component-private" : {
+		"tags" : [
+			"component",
+			"private",
+			"locked"
+		]
+	},
+	"icon-raw-material" : {
+		"tags" : [
+			"barrel",
+			"raw",
+			"material"
+		]
+	},
+	"icon-sms" : {
+		"tags" : [
+			"sms",
+			"mobile",
+			"message",
+			"phone",
+			"speech",
+			"bubble",
+			"text"
+		]
+	},
+	"icon-delegated-important-task" : {
+		"tags" : [
+			"flag",
+			"arrow",
+			"task",
+			"delegate",
+			"important"
+		]
+	},
+	"icon-forklift" : {
+		"tags" : [
+			"forklift",
+			"transport"
+		]
+	},
+	"icon-coins" : {
+		"tags" : [
+			"coins",
+			"money",
+			"cash"
+		]
+	},
+	"icon-filter-menu" : {
+		"tags" : [
+			"filter",
+			"organise",
+			"aggregate",
+			"data",
+			"menu"
+		]
+	},
+	"icon-program" : {
+		"tags" : [
+			"planning",
+			"scheduling",
+			"program",
+			"project",
+			"scheduling",
+			"shape",
+			"gantt",
+			"chart",
+			"display",
+			"analytics"
+		]
+	},
+	"icon-phase" : {
+		"tags" : [
+			"planning",
+			"scheduling",
+			"program",
+			"project",
+			"scheduling",
+			"shape",
+			"gantt",
+			"chart",
+			"display",
+			"analytics",
+			"chevron"
+		]
+	},
+	"icon-checklist" : {
+		"tags" : [
+			"planning",
+			"scheduling",
+			"program",
+			"project",
+			"scheduling",
+			"shape",
+			"gantt",
+			"chart",
+			"display",
+			"analytics",
+			"checklist"
+		]
+	},
+	"icon-mirrored-task" : {
+		"tags" : [
+			"planning",
+			"scheduling",
+			"program",
+			"project",
+			"scheduling",
+			"shape",
+			"gantt",
+			"chart",
+			"display",
+			"analytics",
+			"mirrored task"
+		]
+	},
+	"icon-sub-project" : {
+		"tags" : [
+			"planning",
+			"scheduling",
+			"program",
+			"project",
+			"scheduling",
+			"shape",
+			"gantt",
+			"chart",
+			"display",
+			"analytics",
+			"sub project"
+		]
+	},
+	"icon-checklist-item" : {
+		"tags" : [
+			"planning",
+			"scheduling",
+			"program",
+			"project",
+			"scheduling",
+			"shape",
+			"gantt",
+			"chart",
+			"display",
+			"analytics",
+			"checklist item"
+		]
+	},
+	"icon-project-definition" : {
+		"tags" : [
+			"shape",
+			"gantt",
+			"chart",
+			"display",
+			"analytics",
+			"triangle",
+			"project",
+			"definition",
+			"planning",
+			"scheduling"
+		]
+	},
+	"icon-change-log" : {
+		"tags" : [
+			"change",
+			"log",
+			"time",
+			"clock"
+		]
+	},
+	"icon-jam" : {
+		"tags" : [
+			"jam",
+			"message",
+			"speech",
+			"bubble",
+			"text",
+			"conversation",
+			"social",
+			"comment",
+			"discussion"
+		]
+	},
+	"icon-milestone" : {
+		"tags" : [
+			"badge",
+			"insignia",
+			"star",
+			"prize",
+			"award",
+			"achievement",
+			"milestone"
+		]
+	},
+	"icon-segmentation" : {
+		"tags" : [
+			"segmentation",
+			"hierarchy",
+			"map",
+			"org",
+			"tree",
+			"overview",
+			"data"
+		]
+	},
+	"icon-split-segmentation" : {
+		"tags" : [
+			"split",
+			"separate",
+			"divide",
+			"arrows",
+			"segmentation",
+			"segment",
+			"target group"
+		]
+	},
+	"icon-pipette" : {
+		"tags" : [
+			"pipette",
+			"eye dropper",
+			"sample"
+		]
+	},
+	"icon-top-recipe" : {
+		"tags" : [
+			"recipe",
+			"bowl",
+			"mortar",
+			"star",
+			"top",
+			"important"
+		]
+	},
+	"icon-recipe" : {
+		"tags" : [
+			"recipe",
+			"bowl",
+			"mortar"
+		]
+	},
+	"icon-ingredients" : {
+		"tags" : [
+			"ingredients"
+		]
+	},
+	"icon-spill" : {
+		"tags" : [
+			"spill",
+			"hazard"
+		]
+	},
+	"icon-fire" : {
+		"tags" : [
+			"fire",
+			"hazard"
+		]
+	},
+	"icon-control-group" : {
+		"tags" : [
+			"control group",
+			"people"
+		]
+	},
+	"icon-responsible-area" : {
+		"tags" : [
+			"responsible area",
+			"person",
+			"people"
+		]
+	},
+	"icon-current-stock" : {
+		"tags" : [
+			"current stock",
+			"diamond"
+		]
+	},
+	"icon-stock-requirements" : {
+		"tags" : [
+			"arrows",
+			"stock",
+			"requirement"
+		]
+	},
+	"icon-gender-male-and-female" : {
+		"tags" : [
+			"gender",
+			"male and female"
+		]
+	},
+	"icon-icon-marital-status" : {
+		"tags" : [
+			"marital status",
+			"wedding rings",
+			"married",
+			"not married"
+		]
+	},
+	"icon-birthday" : {
+		"tags" : [
+			"birthday",
+			"cake",
+			"candles",
+			"birth date"
+		]
+	},
+	"icon-classification" : {
+		"tags" : [
+			"classification",
+			"ranking"
+		]
+	},
+	"icon-remove-filter" : {
+		"tags" : [
+			"filter",
+			"organise",
+			"aggregate",
+			"data",
+			"clear",
+			"delete",
+			"remove",
+			"cancel"
+		]
+	},
+	"icon-savings-account" : {
+		"tags" : [
+			"money",
+			"bank",
+			"account",
+			"savings"
+		]
+	},
+	"icon-debit-card" : {
+		"tags" : [
+			"money",
+			"bank",
+			"account",
+			"savings",
+			"debit",
+			"payment",
+			"buy",
+			"purchase",
+			"shopping"
+		]
+	},
+	"icon-answered-change-request" : {
+		"tags" : [
+			"request",
+			"bubble"
+		]
+	},
+	"icon-collected-change-request" : {
+		"tags" : [
+			"request",
+			"collection",
+			"layers stacked"
+		]
+	},
+	"icon-traffic-cone" : {
+		"tags" : [
+			"traffic",
+			"logistics",
+			"cone"
+		]
+	},
+	"icon-traffic-lights" : {
+		"tags" : [
+			"traffic",
+			"logistics",
+			"traffic lights"
+		]
+	},
+	"icon-container" : {
+		"tags" : [
+			"traffic",
+			"logistics",
+			"container",
+			"freight",
+			"shipping"
+		]
+	},
+	"icon-container-loading" : {
+		"tags" : [
+			"traffic",
+			"logistics",
+			"container",
+			"freight",
+			"shipping",
+			"load"
+		]
+	},
+	"icon-products" : {
+		"tags" : [
+			"product",
+			"commodity",
+			"goods",
+			"stock",
+			"merchandise",
+			"package"
+		]
+	},
+	"icon-sidepanel" : {
+		"tags" : [
+			"screen",
+			"split",
+			"two",
+			"area",
+			"split app",
+			"side panel"
+		]
+	},
+	"icon-split-screen" : {
+		"tags" : [
+			"screen",
+			"split",
+			"two",
+			"area",
+			"split app",
+			"top bottom",
+			"horizontal split",
+			"analytics"
+		]
+	},
+	"icon-next-open-item" : {
+		"tags" : [
+			"navigation",
+			"jump",
+			"shift",
+			"next",
+			"arrow",
+			"queue"
+		]
+	},
+	"icon-where-used" : {
+		"tags" : [
+			"arrows",
+			"directions",
+			"move",
+			"forward"
+		]
+	},
+	"icon-outbound-delivery-inactive" : {
+		"tags" : [
+			"circle",
+			"stroke",
+			"dot",
+			"status"
+		]
+	},
+	"icon-outbound-delivery-active" : {
+		"tags" : [
+			"circle",
+			"fill",
+			"dot",
+			"status"
+		]
+	},
+	"icon-target" : {
+		"tags" : [
+			"arrow",
+			"download",
+			"down",
+			"import"
+		]
+	},
+	"icon-source" : {
+		"tags" : [
+			"arrow",
+			"upload",
+			"up",
+			"export"
+		]
+	},
+	"icon-material" : {
+		"tags" : [
+			"screw",
+			"data",
+			"material"
+		]
+	},
+	"icon-quarter" : {
+		"tags" : [
+			"calendar",
+			"time",
+			"date",
+			"quarter",
+			"schedule"
+		]
+	},
+	"icon-year" : {
+		"tags" : [
+			"calendar",
+			"time",
+			"date",
+			"year",
+			"schedule"
+		]
+	},
+	"icon-target-to-date" : {
+		"tags" : [
+			"date",
+			"target",
+			"calendar",
+			"arrow"
+		]
+	},
+	"icon-expedite" : {
+		"tags" : [
+			"arrow left",
+			"calendar",
+			"accelerate"
+		]
+	},
+	"icon-postpone" : {
+		"tags" : [
+			"arrow right",
+			"calendar",
+			"postpone",
+			"delay"
+		]
+	},
+	"icon-due-date" : {
+		"tags" : [
+			"arrow",
+			"calendar",
+			"due",
+			"date",
+			"appointment",
+			"next"
+		]
+	},
+	"icon-overdue" : {
+		"tags" : [
+			"arrow",
+			"calendar",
+			"due",
+			"date",
+			"appointment",
+			"previous"
+		]
+	},
+	"icon-add-note" : {
+		"tags" : [
+			"add",
+			"plus",
+			"additional",
+			"more",
+			"another",
+			"note",
+			"info",
+			"draft"
+		]
+	},
+	"icon-change-time-horizon" : {
+		"tags" : [
+			"change",
+			"arrow",
+			"time",
+			"clock",
+			"time horizon"
+		]
+	},
+	"icon-table-chart-customization" : {
+		"tags" : [
+			"wrench",
+			"control",
+			"customize",
+			"configuration",
+			"tools",
+			"settings",
+			"table",
+			"chart"
+		]
+	},
+	"icon-adhoc-analysis" : {
+		"tags" : [
+			"magnifier",
+			"glass",
+			"search",
+			"adhoc analysis",
+			"analytics",
+			"exclamation",
+			"status"
+		]
+	},
+	"icon-change-analysis" : {
+		"tags" : [
+			"magnifier",
+			"glass",
+			"search",
+			"change analysis",
+			"analytics"
+		]
+	},
+	"icon-review-demands" : {
+		"tags" : [
+			"magnifier",
+			"glass",
+			"search",
+			"review demands",
+			"clipboard",
+			"task",
+			"arrow"
+		]
+	},
+	"icon-define-shortage" : {
+		"tags" : [
+			"define",
+			"shortage",
+			"chart",
+			"measurement"
+		]
+	},
+	"icon-data-access" : {
+		"tags" : [
+			"arrow",
+			"data",
+			"access"
+		]
+	},
+	"icon-review-supplies" : {
+		"tags" : [
+			"magnifier",
+			"glass",
+			"search",
+			"review",
+			"supplies",
+			"supply",
+			"analytics"
+		]
+	},
+	"icon-priority-1" : {
+		"tags" : [
+			"high priority",
+			"exclamation",
+			"alert",
+			"warning",
+			"status"
+		]
+	},
+	"icon-priority-2" : {
+		"tags" : [
+			"high priority",
+			"exclamation",
+			"alert",
+			"warning",
+			"status",
+			"multiple"
+		]
+	},
+	"icon-bulleting-with-numbers" : {
+		"tags" : [
+			"bullet",
+			"text",
+			"dots",
+			"rich text"
+		]
+	},
+	"icon-decrease-indent" : {
+		"tags" : [
+			"text",
+			"rich text",
+			"decrease indent",
+			"paragraph",
+			"move left",
+			"align",
+			"arrow",
+			"outdent"
+		]
+	},
+	"icon-increase-indent" : {
+		"tags" : [
+			"text",
+			"rich text",
+			"increase indent",
+			"paragraph",
+			"move left",
+			"align",
+			"arrow",
+			"indent"
+		]
+	},
+	"icon-bold" : {
+		"tags" : [
+			"text",
+			"rich text",
+			"style",
+			"text decoration",
+			"format",
+			"bold",
+			"fat",
+			"weight"
+		]
+	},
+	"icon-italic" : {
+		"tags" : [
+			"text",
+			"rich text",
+			"style",
+			"text decoration",
+			"format",
+			"italic",
+			"slanted",
+			"leaning"
+		]
+	},
+	"icon-strike-through" : {
+		"tags" : [
+			"text",
+			"rich text",
+			"style",
+			"text decoration",
+			"format",
+			"strike through",
+			"crossed out"
+		]
+	},
+	"icon-underline" : {
+		"tags" : [
+			"text",
+			"rich text",
+			"style",
+			"text decoration",
+			"format",
+			"underline"
+		]
+	},
+	"icon-save-as" : {
+		"tags" : [
+			"save as",
+			"diskette",
+			"pencil",
+			"floppy disc"
+		]
+	},
+	"icon-context-menu" : {
+		"tags" : [
+			"menu",
+			"options",
+			"context",
+			"button",
+			"corner",
+			"triangle"
+		]
+	},
+	"icon-snapshot" : {
+		"tags" : [
+			"snapshot",
+			"arrows",
+			"x",
+			"cancel",
+			"remove",
+			"delete",
+			"close"
+		]
+	},
+	"icon-subtraction-b-a" : {
+		"tags" : [
+			"circles",
+			"subtraction",
+			"analytics",
+			"analyze objects",
+			"filter",
+			"segmentation",
+			"segment",
+			"target group",
+			"b-a"
+		]
+	},
+	"icon-subtraction-a-b" : {
+		"tags" : [
+			"circles",
+			"subtraction",
+			"analytics",
+			"analyze objects",
+			"filter",
+			"segmentation",
+			"segment",
+			"target group",
+			"a-b"
+		]
+	},
+	"icon-intersection" : {
+		"tags" : [
+			"circles",
+			"intersection",
+			"analytics",
+			"analyze objects",
+			"filter",
+			"segmentation",
+			"segment",
+			"target group"
+		]
+	},
+	"icon-union" : {
+		"tags" : [
+			"circles",
+			"intersection",
+			"analytics",
+			"analyze objects",
+			"filter",
+			"segmentation",
+			"segment",
+			"target group",
+			"union",
+			"merge",
+			"combine"
+		]
+	},
+	"icon-top" : {
+		"tags" : [
+			"arrow",
+			"top"
+		]
+	},
+	"icon-bottom" : {
+		"tags" : [
+			"arrow",
+			"bottom"
+		]
+	},
+	"icon-page-up" : {
+		"tags" : [
+			"arrows",
+			"page up"
+		]
+	},
+	"icon-page-down" : {
+		"tags" : [
+			"arrows",
+			"page down"
+		]
+	},
+	"icon-create-dashboard" : {
+		"tags" : [
+			"create",
+			"new",
+			"plus",
+			"dashboard",
+			"page",
+			"file"
+		]
+	},
+	"icon-excelsius-file" : {
+		"tags" : [
+			"excelsius file"
+		]
+	},
+	"icon-open-folder" : {
+		"tags" : [
+			"arrow",
+			"open",
+			"folder"
+		]
+	},
+	"icon-neutral" : {
+		"tags" : [
+			"neutral"
+		]
+	},
+	"icon-split-segmentation" : {
+		"tags" : [
+			"split",
+			"separate",
+			"divide",
+			"arrows",
+			"segmentation",
+			"segment",
+			"target group"
+		]
+	},
+	"icon-manage-budget" : {
+		"tags" : [
+			"arrows",
+			"money",
+			"manage",
+			"budget"
+		]
+	},
+	"icon-blocked" : {
+		"tags" : [
+			"blocked"
+		]
+	},
+	"icon-multiple-charts" : {
+		"tags" : [
+			"analytics",
+			"chart",
+			"display",
+			"data",
+			"multiple charts"
+		]
+	},
+	"icon-descending-bars" : {
+		"tags" : [
+			"analytics",
+			"chart",
+			"display",
+			"data",
+			"descending bars"
+		]
+	},
+	"icon-descending-stacked-bars" : {
+		"tags" : [
+			"analytics",
+			"chart",
+			"display",
+			"data",
+			"descending stacked bars"
+		]
+	},
+	"icon-scatter-plot" : {
+		"tags" : [
+			"analytics",
+			"chart",
+			"display",
+			"data",
+			"scatter plot"
+		]
+	},
+	"icon-stratification" : {
+		"tags" : [
+			"analytics",
+			"chart",
+			"display",
+			"data",
+			"stratification"
+		]
+	},
+	"icon-relationship" : {
+		"tags" : [
+			"analytics",
+			"chart",
+			"display",
+			"data",
+			"relationship"
+		]
+	},
+	"icon-margin-decomposition" : {
+		"tags" : [
+			"analytics",
+			"chart",
+			"display",
+			"data",
+			"margin decomposition"
+		]
+	},
+	"icon-comparison-chart" : {
+		"tags" : [
+			"analytics",
+			"chart",
+			"display",
+			"data",
+			"comparison",
+			"multiple"
+		]
+	},
+	"icon-increase" : {
+		"tags" : [
+			"increase",
+			"arrow",
+			"up",
+			"raise"
+		]
+	},
+	"icon-decrease" : {
+		"tags" : [
+			"decrease",
+			"arrow",
+			"down",
+			"lower"
+		]
+	},
+	"icon-approved" : {
+		"tags" : [
+			"checkmark",
+			"approved",
+			"tick",
+			"ok",
+			"checked"
+		]
+	},
+	"icon-partially-delivered" : {
+		"tags" : [
+			"partially delivered"
+		]
+	},
+	"icon-line-bar-chart" : {
+		"tags" : [
+			"analytics",
+			"chart",
+			"display",
+			"data",
+			"line bar chart"
+		]
+	},
+	"icon-expand-all" : {
+		"tags" : [
+			"expand all",
+			"plus"
+		]
+	},
+	"icon-submission" : {
+		"tags" : [
+			"money",
+			"submission",
+			"exclamation",
+			"circle"
+		]
+	},
+	"icon-change-request" : {
+		"tags" : [
+			"change",
+			"request",
+			"pencil",
+			"file",
+			"edit",
+			"write",
+			"new",
+			"pen"
+		]
+	},
+	"icon-column-unselected" : {
+		"tags" : [
+			"column",
+			"unselected",
+			"circle"
+		]
+	},
+	"icon-column-selected" : {
+		"tags" : [
+			"column",
+			"selected",
+			"circle"
+		]
+	},
+	"icon-row-unselected" : {
+		"tags" : [
+			"row",
+			"unselected",
+			"circle"
+		]
+	},
+	"icon-row-selected" : {
+		"tags" : [
+			"row",
+			"selected",
+			"circle"
+		]
+	},
+	"icon-marked-for-deletion" : {
+		"tags" : [
+			"clock",
+			"time",
+			"bin",
+			"trash can",
+			"rubbish",
+			"deletion",
+			"marked",
+			"to be deleted"
+		]
+	},
+	"icon-bullet-chart" : {
+		"tags" : [
+			"bullet chart",
+			"analytics",
+			"chart",
+			"display",
+			"data"
+		]
+	},
+	"icon-remove-filter" : {
+		"tags" : [
+			"filter",
+			"organise",
+			"aggregate",
+			"data",
+			"clear",
+			"delete",
+			"remove",
+			"cancel"
+		]
+	},
+	"icon-vip-customer" : {
+		"tags" : [
+			"person",
+			"individual",
+			"user",
+			"customer",
+			"human",
+			"circle",
+			"profile",
+			"me",
+			"favorite",
+			"favourite",
+			"star"
+		]
+	},
+	"icon-undesirable-customer" : {
+		"tags" : [
+			"person",
+			"individual",
+			"user",
+			"customer",
+			"human",
+			"circle",
+			"profile",
+			"me",
+			"star",
+			"unfavourite",
+			"remove"
+		]
+	},
+	"icon-draw-freehand" : {
+		"tags" : [
+			"draw",
+			"shape",
+			"create",
+			"freehand"
+		]
+	},
+	"icon-draw-circle" : {
+		"tags" : [
+			"draw",
+			"shape",
+			"create",
+			"circle"
+		]
+	},
+	"icon-completed" : {
+		"tags" : [
+			"status",
+			"done",
+			"completed",
+			"accept",
+			"approve",
+			"correct",
+			"checkmark",
+			"tick",
+			"affirmative"
+		]
+	},
+	"icon-answered" : {
+		"tags" : [
+			"answered",
+			"bubble"
+		]
+	},
+	"icon-traffic-jam" : {
+		"tags" : [
+			"traffic",
+			"logistics",
+			"traffic jam",
+			"road conjestion"
+		]
+	},
+	"icon-truck-driver" : {
+		"tags" : [
+			"traffic",
+			"logistics",
+			"driver",
+			"truck",
+			"person"
+		]
+	},
+	"icon-keep-segment" : {
+		"tags" : [
+			"segments",
+			"data",
+			"marketing",
+			"campaign",
+			"keep",
+			"approve"
+		]
+	},
+	"icon-exclude-segment" : {
+		"tags" : [
+			"segments",
+			"data",
+			"marketing",
+			"campaign",
+			"clear",
+			"approve",
+			"remove",
+			"cancel",
+			"x"
+		]
+	},
+	"icon-separate-segments" : {
+		"tags" : [
+			"segments",
+			"data",
+			"marketing",
+			"campaign",
+			"separate"
+		]
+	},
+	"icon-distribute-segments" : {
+		"tags" : [
+			"segments",
+			"data",
+			"marketing",
+			"campaign",
+			"distribute"
+		]
+	},
+	"icon-outbound-delivery" : {
+		"tags" : [
+			"arrow",
+			"truck",
+			"move",
+			"delivery",
+			"forward"
+		]
+	},
+	"icon-set-as-default" : {
+		"tags" : [
+			"tick",
+			"setting",
+			"yes"
+		]
+	},
+	"icon-face-very-bad" : {
+		"tags" : [
+			"smiley",
+			"emotions",
+			"emoji",
+			"bad"
+		]
+	},
+	"icon-face-bad" : {
+		"tags" : [
+			"smiley",
+			"emotions",
+			"emoji",
+			"sad"
+		]
+	},
+	"icon-face-skeptical" : {
+		"tags" : [
+			"smiley",
+			"emotions",
+			"emoji",
+			"skeptical"
+		]
+	},
+	"icon-face-neutral" : {
+		"tags" : [
+			"smiley",
+			"emotions",
+			"emoji",
+			"neutral"
+		]
+	},
+	"icon-face-astonished" : {
+		"tags" : [
+			"smiley",
+			"emotions",
+			"emoji",
+			"astonished"
+		]
+	},
+	"icon-face-happy" : {
+		"tags" : [
+			"face",
+			"emoticon",
+			"smile",
+			"positive",
+			"round"
+		]
+	},
+	"icon-face-very-happy" : {
+		"tags" : [
+			"face",
+			"emoticon",
+			"smile",
+			"positive",
+			"round"
+		]
+	},
+	"icon-face-awful" : {
+		"tags" : [
+			"face",
+			"sad",
+			"emoticon",
+			"negative",
+			"round"
+		]
+	},
+	"icon-face-devastated" : {
+		"tags" : [
+			"face",
+			"sad",
+			"emoticon",
+			"negative",
+			"round"
+		]
+	},
+	"icon-face-okey-dokey" : {
+		"tags" : [
+			"face",
+			"emoticon",
+			"smile",
+			"blink",
+			"positive",
+			"round"
+		]
+	},
+	"icon-alarm" : {
+		"tags" : [
+			"attention",
+			"bell",
+			"noise"
+		]
+	},
+	"icon-activate" : {
+		"tags" : [
+			"magic",
+			"wand",
+			"select"
+		]
+	},
+	"iicon-segment-preview-reference-objects" : {
+		"tags" : [
+			"dots"
+		]
+	},
+	"icon-radius" : {
+		"tags" : [
+			"plus",
+			"add"
+		]
+	},
+	"icon-polygon-black" : {
+		"tags" : [
+			"geometric body",
+			"measurement",
+			"geometry"
+		]
+	},
+	"icon-polygon-white" : {
+		"tags" : [
+			"geometric body",
+			"measurement",
+			"geometry"
+		]
+	},
+	"icon-polygon" : {
+		"tags" : [
+			"connection",
+			"geometry",
+			"network",
+			"connected",
+			"dots"
+		]
+	},
+	"icon-no-filter" : {
+		"tags" : [
+			"remove",
+			"minus",
+			"no"
+		]
+	},
+	"icon-grip" : {
+		"tags" : [
+			"pattern",
+			"move",
+			"grab",
+			"take",
+			"drag"
+		]
+	},
+	"icon-component" : {
+		"tags" : [
+			"plus",
+			"add"
+		]
+	},
+	"icon-water" : {
+		"tags" : [
+			"drop",
+			"oil",
+			"energy"
+		]
+	},
+	"icon-gas" : {
+		"tags" : [
+			"fire",
+			"flame",
+			"energy"
+		]
+	},
+	"icon-liquid" : {
+		"tags" : [
+			"drop",
+			"water",
+			"energy"
+		]
+	},
+	"icon-gas-2" : {
+		"tags" : [
+			"fire",
+			"flame",
+			"energy",
+			"cooker"
+		]
+	},
+	"icon-water-2" : {
+		"tags" : [
+			"drop",
+			"tap",
+			"oil",
+			"control",
+			"close",
+			"open"
+		]
+	},
+	"icon-operator" : {
+		"tags" : [
+			"person",
+			"individual",
+			"user",
+			"customer",
+			"human",
+			"me",
+			"security",
+			"helmet"
+		]
+	},
+	"icon-target-filter" : {
+		"tags" : [
+			"round",
+			"circle",
+			"cross",
+			"segment"
+		]
+	},
+	"icon-equipment" : {
+		"tags" : [
+			"pump",
+			"engine",
+			"pipeline",
+			"generator"
+		]
+	},
+	"icon-gis-layer" : {
+		"tags" : [
+			"world",
+			"round",
+			"map"
+		]
+	},
+	"icon-section" : {
+		"tags" : [
+			"people",
+			"person",
+			"group",
+			"team",
+			"selection",
+			"part"
+		]
+	},
+	"icon-kohorte" : {
+		"tags" : [
+			"people",
+			"person",
+			"group",
+			"team",
+			"selection",
+			"part",
+			"data",
+			"folder",
+			"index",
+			"card"
+		]
+	},
+	"icon-female" : {
+		"tags" : [
+			"cross",
+			"gender"
+		]
+	},
+	"icon-male" : {
+		"tags" : [
+			"arrow",
+			"gender"
+		]
+	},
+	"icon-model" : {
+		"tags" : [
+			"pump",
+			"engine",
+			"pipeline",
+			"generator",
+			"sheet",
+			"dataset"
+		]
+	},
+	"icon-hourglass" : {
+		"tags" : [
+			"sand",
+			"diabolo"
+		]
+	},
+	"icon-plain-grid-layout" : {
+		"tags" : [
+			"square",
+			"grid",
+			"division",
+			"partition",
+			"split"
+		]
+	},
+	"icon-top-panel-layout" : {
+		"tags" : [
+			"square",
+			"grid",
+			"division",
+			"partition",
+			"split"
+		]
+	},
+	"icon-1x2-grid-layout" : {
+		"tags" : [
+			"square",
+			"grid",
+			"division",
+			"partition",
+			"split"
+		]
+	},
+	"icon-side-panel-left-layout" : {
+		"tags" : [
+			"square",
+			"grid",
+			"division",
+			"partition",
+			"split"
+		]
+	},
+	"icon-2x2-grid-layout" : {
+		"tags" : [
+			"square",
+			"grid",
+			"division",
+			"partition",
+			"split"
+		]
+	},
+	"icon-inverse-t-layout" : {
+		"tags" : [
+			"square",
+			"grid",
+			"division",
+			"partition",
+			"split"
+		]
+	},
+	"icon-t-layout" : {
+		"tags" : [
+			"square",
+			"grid",
+			"division",
+			"partition",
+			"split"
+		]
+	},
+	"icon-top-side-panel-layout" : {
+		"tags" : [
+			"square",
+			"grid",
+			"division",
+			"partition",
+			"split"
+		]
+	},
+	"icon-side-top-panel-layout" : {
+		"tags" : [
+			"square",
+			"grid",
+			"division",
+			"partition",
+			"split"
+		]
+	},
+	"icon-4x4-grid-layout" : {
+		"tags" : [
+			"square",
+			"grid",
+			"division",
+			"partition",
+			"split"
+		]
+	},
+	"icon-add-point" : {
+		"tags" : [
+			"plus",
+			"circle",
+			"ball"
+		]
+	},
+	"icon-add-polyline" : {
+		"tags" : [
+			"plus",
+			"share",
+			"price"
+		]
+	},
+	"icon-add-polygone" : {
+		"tags" : [
+			"plus",
+			"layer",
+			"window",
+			"rectangle"
+		]
+	},
+	"icon-email-send-delayed" : {
+		"tags" : [
+			"clock",
+			"timer",
+			"time",
+			"watch"
+		]
+	},
+	"icon-email-not-opened" : {
+		"tags" : [
+			"warning",
+			"exclamation mark",
+			"reminder",
+			"attention"
+		]
+	},
+	"icon-link-not-clicked" : {
+		"tags" : [
+			"warning",
+			"exclamation mark",
+			"reminder",
+			"attention"
+		]
+	},
+	"icon-sms-send-delayed" : {
+		"tags" : [
+			"clock",
+			"timer",
+			"time",
+			"watch",
+			"speech bubble",
+			"conversation",
+			"chat"
+		]
+	},
+	"icon-ab-testing" : {
+		"tags" : [
+			"mail",
+			"duplicate",
+			"store"
+		]
+	},
+	"icon-tv" : {
+		"tags" : [
+			"screen",
+			"monitor",
+			"technical device",
+			"hi-fi",
+			"smart-tv",
+			"broadcast"
+		]
+	},
+	"icon-radio" : {
+		"tags" : [
+			"technical device",
+			"sound",
+			"tuner"
+		]
+	},
+	"icon-outdoor" : {
+		"tags" : [
+			"hills",
+			"mountains",
+			"sun",
+			"tree",
+			"image",
+			"landscape"
+		]
+	},
+	"icon-event" : {
+		"tags" : [
+			"cinema",
+			"keynote",
+			"party",
+			"workshop",
+			"team",
+			"beamer",
+			"announcement"
+		]
+	},
+	"icon-paid-search" : {
+		"tags" : [
+			"money",
+			"finder",
+			"lens",
+			"glass",
+			"finance",
+			"deposit"
+		]
+	},
+	"icon-display-ads" : {
+		"tags" : [
+			"screen",
+			"monitor",
+			"website",
+			"information",
+			"layout",
+			"screendesign",
+			"shopping",
+			"online",
+			"social media",
+			"facebook"
+		]
+	},
+	"icon-call-center" : {
+		"tags" : [
+			"person",
+			"individual",
+			"user",
+			"customer",
+			"human",
+			"headset",
+			"phones",
+			"microphone"
+		]
+	},
+	"icon-social" : {
+		"tags" : [
+			"people",
+			"person",
+			"group",
+			"team",
+			"conversation",
+			"chat",
+			"bubble",
+			"workshop"
+		]
+	},
+	"icon-event2" : {
+		"tags" : [
+			"calendar",
+			"time",
+			"clock",
+			"watch",
+			"date"
+		]
+	},
+	"icon-official-service-group" : {
+		"tags" : [
+			"bank",
+			"account",
+			"data",
+			"storage",
+			"folder",
+			"finance",
+			"money"
+		]
+	},
+	"icon-time-deposit" : {
+		"tags" : [
+			"clock",
+			"timer",
+			"money",
+			"bag"
+		]
+	},
+	"icon-early-widthdrawal-for-time-deposits" : {
+		"tags" : [
+			"clock",
+			"timer",
+			"money",
+			"bag"
+		]
+	},
+	"icon-aggregated-view" : {
+		"tags" : [
+			"sort",
+			"order",
+			"tree view"
+		]
+	},
+	"icon-detailed-view" : {
+		"tags" : [
+			"sort",
+			"order",
+			"tree view"
+		]
+	},
+	"icon-rescheduling" : {
+		"tags" : [
+			"change",
+			"replacement",
+			"placement",
+			"select",
+			"switch",
+			"move"
+		]
+	},
+	"icon-resequencing" : {
+		"tags" : [
+			"change",
+			"replacement",
+			"placement",
+			"select",
+			"switch",
+			"move"
+		]
+	},
+	"icon-movement-warning" : {
+		"tags" : [
+			"alert",
+			"attention",
+			"square"
+		]
+	},
+	"icon-multiple-warnings" : {
+		"tags" : [
+			"alert",
+			"attention",
+			"square"
+		]
+	},
+	"icon-box-truck" : {
+		"tags" : [
+			"load",
+			"cargo",
+			"freight",
+			"street",
+			"vehicle"
+		]
+	},
+	"icon-box-truck-empty" : {
+		"tags" : [
+			"load",
+			"cargo",
+			"freight",
+			"street",
+			"vehicle"
+		]
+	},
+	"icon-tractor" : {
+		"tags" : [
+			"load",
+			"cargo",
+			"freight",
+			"street",
+			"vehicle"
+		]
+	},
+	"icon-driver" : {
+		"tags" : [
+			"people",
+			"target-user",
+			"driver"
+		]
+	},
+	"icon-driver-warning" : {
+		"tags" : [
+			"people",
+			"target-user",
+			"warning",
+			"attention",
+			"driver"
+		]
+	},
+	"icon-overlap" : {
+		"tags" : [
+			"object",
+			"overlap",
+			"window"
+		]
+	},
+	"icon-expand-overlap" : {
+		"tags" : [
+			"object",
+			"overlap",
+			"window",
+			"hierarchy",
+			"expand"
+		]
+	},
+	"icon-collapse-overlap" : {
+		"tags" : [
+			"object",
+			"overlap",
+			"wiondow",
+			"hierarchy",
+			"expand"
+		]
+	},
+	"icon-utilization" : {
+		"tags" : [
+			"utilization",
+			"evaluation",
+			"usage"
+		]
+	},
+	"icon-expand-utilization" : {
+		"tags" : [
+			"utilization",
+			"evaluation",
+			"usage",
+			"expand",
+			"show"
+		]
+	},
+	"icon-collapse-utilization" : {
+		"tags" : [
+			"utilization",
+			"evaluation",
+			"usage",
+			"collapse",
+			"hide"
+		]
+	},
+	"icon-trailer" : {
+		"tags" : [
+			"vehicle",
+			"load",
+			"cargo",
+			"freight",
+			"trailer",
+			"street",
+			"transportation"
+		]
+	},
+	"icon-container-closed" : {
+		"tags" : [
+			"container",
+			"cargo",
+			"freight"
+		]
+	},
+	"icon-railcar" : {
+		"tags" : [
+			"vehicle",
+			"load",
+			"cargo",
+			"freight",
+			"railway",
+			"transportation"
+		]
+	},
+	"icon-warehouse" : {
+		"tags" : [
+			"building",
+			"warehouse",
+			"industry",
+			"repository",
+			"depository"
+		]
+	},
+	"icon-goods" : {
+		"tags" : [
+			"beverage",
+			"product",
+			"goods"
+		]
+	},
+	"icon-ship" : {
+		"tags" : [
+			"vehicle",
+			"load",
+			"cargo",
+			"freight",
+			"shipment",
+			"transportation"
+		]
+	},
+	"icon-truck-driver" : {
+		"tags" : [
+			"vehicle",
+			"truck",
+			"driver"
+		]
+	},
+	"icon-return delivery" : {
+		"tags" : [
+			"vehicle",
+			"load",
+			"cargo",
+			"deposit",
+			"depository"
+		]
+	},
+	"icon-return-order" : {
+		"tags" : [
+			"document",
+			"order",
+			"return",
+			"money",
+			"receipt"
+		]
+	},
+	"icon-contract" : {
+		"tags" : [
+			"document",
+			"order",
+			"contract",
+			"deal",
+			"agreement"
+		]
+	},
+	"icon-business-partner" : {
+		"tags" : [
+			"people",
+			"partner",
+			"collaboration",
+			"business-partner"
+		]
+	},
+	"icon-business-partner-verified" : {
+		"tags" : [
+			"people",
+			"partner",
+			"collaboration",
+			"business-partner",
+			"verification"
+		]
+	},
+	"icon-business-partner-anonymous" : {
+		"tags" : [
+			"people",
+			"partner",
+			"collaboration",
+			"business-partner",
+			"anonymous"
+		]
+	},
+	"icon-business-partner-self-identified" : {
+		"tags" : [
+			"people",
+			"partner",
+			"collaboration",
+			"business-partner",
+			"favorite"
+		]
+	},
+	"icon-money-withdrawal" : {
+		"tags" : [
+			"money",
+			"withdrawal",
+			"moneybag"
+		]
+	},
+	"icon-truck-load" : {
+		"tags" : [
+			"vehicle",
+			"load",
+			"cargo",
+			"freight",
+			"truck",
+			"street"
+		]
+	},
+	"icon-truck-unload" : {
+		"tags" : [
+			"vehicle",
+			"unload",
+			"deposit",
+			"cargo",
+			"freight",
+			"truck",
+			"street"
+		]
+	},
+	"icon-truck-load-unload" : {
+		"tags" : [
+			"vehicle",
+			"load",
+			"unload",
+			"cargo",
+			"freight",
+			"truck",
+			"street"
+		]
+	},
+	"icon-pharmacy" : {
+		"tags" : [
+			"health",
+			"medicine",
+			"pharmacy",
+			"making"
+		]
+	},
+	"icon-medicine-syrup" : {
+		"tags" : [
+			"health",
+			"medicine",
+			"pharmacy",
+			"medication",
+			"syrup"
+		]
+	},
+	"icon-reminder" : {
+		"tags" : [
+			"time",
+			"reminder",
+			"alarm",
+			"timer"
+		]
+	},
+	"icon-medicine-pill" : {
+		"tags" : [
+			"health",
+			"medicine",
+			"pharmacy",
+			"medication",
+			"pills"
+		]
+	},
+	"icon-medicine-ointment" : {
+		"tags" : [
+			"health",
+			"medicine",
+			"pharmacy",
+			"medication",
+			"ointment",
+			"salve"
+		]
+	},
+	"icon-medicine-drops" : {
+		"tags" : [
+			"health",
+			"medicine",
+			"pharmacy",
+			"medication",
+			"drops",
+			"tincture"
+		]
+	},
+	"icon-blood-test" : {
+		"tags" : [
+			"health",
+			"blood",
+			"test",
+			"examination",
+			"diagnose"
+		]
+	},
+	"icon-temperature" : {
+		"tags" : [
+			"health",
+			"temperature",
+			"test",
+			"examination",
+			"diagnose"
+		]
+	},
+	"icon-medicine-inhaler" : {
+		"tags" : [
+			"health",
+			"medicine",
+			"pharmacy",
+			"medication",
+			"inhaler"
+		]
+	},
+	"icon-food-steps" : {
+		"tags" : [
+			"human",
+			"foot",
+			"feet",
+			"foot-prints",
+			"steps"
+		]
+	},
+	"icon-weight" : {
+		"tags" : [
+			"health",
+			"weight",
+			"test",
+			"examination",
+			"diagnose"
+		]
+	},
+	"icon-health-tracking" : {
+		"tags" : [
+			"health",
+			"heart",
+			"test",
+			"examination",
+			"diagnose",
+			"heart-rate",
+			"activity-tracker"
+		]
+	},
+	"icon-blood-pressure" : {
+		"tags" : [
+			"health",
+			"blood",
+			"blood-pressure",
+			"test",
+			"examination",
+			"diagnose"
+		]
+	},
+	"icon-immunization" : {
+		"tags" : [
+			"health",
+			"medicine",
+			"pharmacy",
+			"immunization",
+			"vaccination",
+			"injection"
+		]
+	},
+	"icon-allergies" : {
+		"tags" : [
+			"health",
+			"allergies",
+			"diagnose"
+		]
+	},
+	"icon-rescheduling2" : {
+		"tags" : [
+			"planning",
+			"scheduling",
+			"rescheduling",
+			"time",
+			"sequence",
+			"steps"
+		]
+	},
+	"icon-resequencing2" : {
+		"tags" : [
+			"planning",
+			"scheduling",
+			"resequencing",
+			"time",
+			"sequence",
+			"steps"
+		]
+	},
+	"icon-no-time-changes" : {
+		"tags" : [
+			"planning",
+			"scheduling",
+			"change",
+			"time",
+			"sequence",
+			"steps"
+		]
+	},
+	"icon-time-change" : {
+		"tags" : [
+			"planning",
+			"scheduling",
+			"change-time",
+			"time",
+			"sequence",
+			"steps"
+		]
+	},
+	"icon-smart-matcher" : {
+		"tags" : [
+			"people",
+			"match",
+			"agreement"
+		]
+	},
+	"icon-3D" : {
+		"tags" : [
+			"object",
+			"cube",
+			"3d",
+			"box"
+		]
+	},
+	"icon-parallel-sequence" : {
+		"tags" : [
+			"planning",
+			"scheduling",
+			"process",
+			"parallel",
+			"sequence",
+			"flow"
+		]
+	},
+	"icon-alternative-sequence" : {
+		"tags" : [
+			"planning",
+			"scheduling",
+			"process",
+			"alternative-sequence",
+			"flow",
+			"decision"
+		]
+	},
+	"icon-main-sequence" : {
+		"tags" : [
+			"planning",
+			"scheduling",
+			"process",
+			"main-sequence",
+			"flow"
+		]
+	},
+	"icon-refinery" : {
+		"tags" : [
+			"building",
+			"factory",
+			"warehouse",
+			"industry",
+			"production"
+		]
+	},
+	"icon-terminal" : {
+		"tags" : [
+			"building",
+			"terminal",
+			"collecting-point",
+			"reloading-point",
+			"transshipment"
+		]
+	},
+	"icon-vessel" : {
+		"tags" : [
+			"vehicle",
+			"load",
+			"cargo",
+			"freight",
+			"shipment",
+			"vessel",
+			"transportation"
+		]
+	},
+	"icon-barge" : {
+		"tags" : [
+			"vehicle",
+			"load",
+			"cargo",
+			"freight",
+			"shipment",
+			"barge",
+			"transportation"
+		]
+	},
+	"icon-road" : {
+		"tags" : [
+			"vehicle",
+			"load",
+			"cargo",
+			"freight",
+			"truck",
+			"street",
+			"transportation"
+		]
+	},
+	"icon-pipeline" : {
+		"tags" : [
+			"pipeline",
+			"channel",
+			"tube",
+			"transportation"
+		]
+	},
+	"icon-delay" : {
+		"tags" : [
+			"time",
+			"reminder",
+			"timer",
+			"delay",
+			"warning"
+		]
+	},
+	"icon-legal-section" : {
+		"tags" : [
+			"document",
+			"legal",
+			"section"
+		]
+	},
+	"icon-causes" : {
+		"tags" : [
+			"analytics",
+			"evaluation",
+			"cog-wheel",
+			"cause"
+		]
+	},
+	"icon-effects" : {
+		"tags" : [
+			"analytics",
+			"evaluation",
+			"cog-wheel",
+			"effects"
+		]
+	},
+	"icon-shared-by-me" : {
+		"tags" : [
+			"people",
+			"team",
+			"group",
+			"shared",
+			"deliver"
+		]
+	},
+	"icon-shared-with-me" : {
+		"tags" : [
+			"people",
+			"team",
+			"group",
+			"shared",
+			"received"
+		]
+	},
+	"icon-main-milestone" : {
+		"tags" : [
+			"planning",
+			"goal",
+			"milestone",
+			"steps"
+		]
+	},
+	"icon-indicator-groups" : {
+		"tags" : [
+			"indicator",
+			"groups",
+			"status",
+			"time",
+			"folder"
+		]
+	},
+	"icon-alert-groups": {
+		"tags": [
+			"indicator",
+			"groups",
+			"alert",
+			"status",
+			"folder"
+	]
+  }
+}

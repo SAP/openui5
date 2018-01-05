@@ -1,0 +1,147 @@
+{
+	"groups": [
+		{
+			"name": "technical",
+			"text": "Technical",
+			"icons": [
+					{"name" :"technicalsystem"},
+					{"name" :"systemjava"},
+					{"name" :"systemabap"},
+					{"name" :"systemrecommendations"},
+					{"name" :"system"},
+					{"name" :"systemtrex"},
+					{"name" :"systemtracks"},
+					{"name" :"technicalscenario"},
+					{"name" :"technicalinstance"},
+					{"name" :"database-consistency"},
+					{"name" :"system-HANA"},
+					{"name" :"python"},
+					{"name" :"code1"},
+					{"name" :"code2"},
+					{"name" :"api"},
+					{"name" :"o-data"},
+					{"name" :"java"}
+			]
+		},
+		{
+			"name": "arrows",
+			"text": "Arrows",
+			"icons": [
+				{"name" : "systemtracks"},
+				{"name" : "throughput-backlog"},
+				{"name" : "intermediate-message"},
+				{"name" : "data-input-arrow"},
+				{"name" : "data-output-arrow"},
+				{"name" : "more"},
+				{"name" : "arrow"},
+				{"name" : "select"},
+				{"name" : "cursor"}
+			]
+		},
+		{
+			"name": "charts",
+			"text": "charts",
+			"icons": [
+				{"name" : "throughput-backlog"},
+				{"name" : "spike-arrest"}
+			]
+		},
+		{
+			"name": "documents",
+			"text": "Documents",
+			"icons": [
+				{"name": "batch-processing"},
+				{"name": "data"}
+			]
+		},
+		{
+			"name": "objects",
+			"text": "Objects",
+			"icons": [
+				{"name" : "batch-processing" },
+				{"name" : "database-consistency" },
+				{"name" : "intermediate-message" },
+				{"name" : "spike-arrest" },
+				{"name" : "throwing-message" },
+				{"name" : "catching-message" },
+				{"name" : "start-event" },
+				{"name" : "end-event" },
+				{"name" : "gateway" },
+				{"name" : "send-task" },
+				{"name" : "receive-task" },
+				{"name" : "script-task" },
+				{"name" : "marquee" },
+				{"name" : "pattern" },
+				{"name" : "task" },
+				{"name" : "data-store" },
+				{"name" : "pool" },
+				{"name" : "swimlane" },
+				{"name" : "value-mapping" },
+				{"name" : "terminate-end-event" },
+				{"name" : "parallel-gateway" },
+				{"name" : "exclusive-gateway" },
+				{"name" : "service-task" },
+				{"name" : "workflow-editor" },
+				{"name" : "boundary-interrupting" },
+				{"name" : "boundary-non-interrupting"}
+			]
+		},
+		{
+			"name": "actions",
+			"text": "Actions",
+			"icons": [
+				{"name" : "intermediate-message"},
+				{"name" : "raise-fault"},
+				{"name" : "code1"},
+				{"name" : "code2"},
+				{"name" : "verify-API"},
+				{"name" : "note"},
+				{"name" : "throwing-message"},
+				{"name" : "catching-message"},
+				{"name" : "sub-process-marker"},
+				{"name" : "ad-hoc-marker"},
+				{"name" : "manual-task"},
+				{"name" : "send-task"},
+				{"name" : "receive-task"},
+				{"name" : "script-task"},
+				{"name" : "marquee"},
+				{"name" : "more"},
+				{"name" : "pattern"},
+				{"name" : "task"},
+				{"name" : "pool"},
+				{"name" : "swimlane"},
+				{"name" : "select"},
+				{"name" : "cursor"},
+				{"name" : "service-task"}
+			]
+		},
+		{
+			"name": "status",
+			"text": "Status",
+			"icons": [
+				{"name" : "exceptions"},
+				{"name" : "raise-fault"},
+				{"name" : "start-event"},
+				{"name" : "end-event"},
+				{"name" : "terminate-end-event"}
+			]
+		},
+		{
+			"name": "text",
+			"text": "Text",
+			"icons": [
+				{"name": "code1"},
+				{"name": "code2"},
+				{"name": "note"},
+				{"name": "script-task"}
+			]
+		},
+		{
+			"name": "people",
+			"text": "People",
+			"icons": [
+				{"name": "user"}
+			]
+		}
+	]
+}
