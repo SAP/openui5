@@ -193,9 +193,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		// write button text
 		if (sText) {
-			// add tabindex = -1 since this causing the issue reported in BCP: 1780428239
-			// which is described here: https://w3c.github.io/using-aria/#label-support
-			oRm.write("<span tabindex=-1");
+			oRm.write("<span ");
 			oRm.addClass("sapMBtnContent");
 			// check if textDirection property is not set to default "Inherit" and add "dir" attribute
 			if (sTextDir !== sap.ui.core.TextDirection.Inherit) {
