@@ -363,7 +363,19 @@
 				  "Handling Custom URL Parameters",
 				  "Calling a Function Import"
 				]
-		    }
+		    },
+			{
+				"id": "sap.ui.core.tutorial.odatav4",
+				"name": "OData V4",
+				"category": "Tutorial",
+				"since": "1.54",
+				"formFactors": "-",
+				"description": "In this tutorial, we will show you how to build a simple application using an OData V4 service.",
+				"docuLink": "#docs/guide/bcdbde6911bd4fc68fd435cf8e306ed0.html",
+				"samplesAsSteps": [
+					"Set Up the Initial App"
+				]
+			}
 		],
 		"samples" : [
 			{
