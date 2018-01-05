@@ -14,7 +14,8 @@
 
 	> .sapMLabel {
 		max-width: calc(~"100% - 3rem");
-		padding-right: 0.0625rem;
+		// some browsers [ie] calcs rems different than the others 0.0625 is caled as 1.04 px in IE
+		padding-right: 1px;
 	}
 }
 
