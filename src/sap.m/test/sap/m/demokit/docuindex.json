@@ -1319,6 +1319,13 @@
 		  ]
 		},
 		{
+		  "id": "sap.m.ColorPalette",
+		  "name": "Color Palette",
+		  "category": "User Input",
+		  "since": "1.54",
+		  "samples": ["sap.m.sample.ColorPalette"]
+		},
+		{
 		  "id": "sap.m.tutorial.walkthrough",
 		  "name": "Walkthrough",
 		  "category": "Tutorial",
@@ -2876,7 +2883,12 @@
 		  "id": "sap.m.sample.ImageContent",
 		  "name": "ImageContent",
 		  "description": "Shows ImageContent that can include an icon, a profile image, or a logo with a tooltip."
-		}
+		},
+		{
+		  "id": "sap.m.sample.ColorPalette",
+		  "name": "ColorPalette",
+		  "description": "The ColorPalette represents a predefined range of colors for easier selection. The control can be embedded in a form or can be opened as popover (by use of thin wrapper control sap.m.ColorPalettePopover."
+		 }
 		]
 	}
 }
