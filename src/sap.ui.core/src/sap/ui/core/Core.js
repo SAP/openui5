@@ -876,6 +876,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		sHref = this._getThemePath(sLibName, sThemeName) + sLibFileName;
 		if ( sHref != oLink.href ) {
+			// jQuery.sap.includeStyleSheet has a special FOUC handling
+			// which enables once the attribute data-sap-ui-foucmarker is
+			// present on the link to be replaced (usage of the Promise
+			// API is not sufficient as it will change the sync behavior)
+			oLink.setAttribute("data-sap-ui-foucmarker", oLink.id);
 			// Replace the current <link> tag with a new one.
 			// Changing "oLink.href" would also trigger loading the new stylesheet but
 			// the load/error handlers would not get called which causes issues with the ThemeCheck
