@@ -5039,12 +5039,22 @@
 		};
 
 		// check for existence of the link
-		var oLink = _createLink(sUrl, mAttributes, fnLoadCallback, fnErrorCallback);
 		var oOld = jQuery.sap.domById(mAttributes && mAttributes.id);
+		var oLink = _createLink(sUrl, mAttributes, fnLoadCallback, fnErrorCallback);
 		if (oOld && oOld.tagName === "LINK" && oOld.rel === "stylesheet") {
 			// link exists, so we replace it - but only if a callback has to be attached or if the href will change. Otherwise don't touch it
 			if (fnLoadCallback || fnErrorCallback || oOld.href !== URI(String(sUrl), URI().search("") /* returns current URL without search params */ ).toString()) {
-				jQuery(oOld).replaceWith(oLink);
+				// if the attribute "data-sap-ui-foucmarker" exists and the value
+				// matches the id of the new link the new link will be put
+				// before the old link into the document and the id attribute
+				// will be removed from the old link (to avoid FOUC)
+				// => sap/ui/core/ThemeCheck removes these old links again once
+				//    the new theme has been fully loaded
+				if (oOld.getAttribute("data-sap-ui-foucmarker") === oLink.id) {
+					jQuery(oOld).removeAttr("id").before(oLink);
+				} else {
+					jQuery(oOld).replaceWith(oLink);
+				}
 			}
 		} else {
 			oOld = jQuery('#sap-ui-core-customcss');
@@ -5065,11 +5075,11 @@
 	 * @param {string|object}
 	 *          vUrl the URL of the stylesheet to load or a configuration object
 	 * @param {string}
-	 *            vUrl.url the URL of the stylesheet to load
+	 *          vUrl.url the URL of the stylesheet to load
 	 * @param {string}
-	 *            [vUrl.id] id that should be used for the link tag
+	 *          [vUrl.id] id that should be used for the link tag
 	 * @param {object}
-	 *            [vUrl.attributes] map of attributes that should be used for the script tag
+	 *          [vUrl.attributes] map of attributes that should be used for the script tag
 	 * @param {string|object}
 	 *          [vId] id that should be used for the link tag or map of attributes
 	 * @param {function}
