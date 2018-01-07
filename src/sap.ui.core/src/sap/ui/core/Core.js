@@ -1104,17 +1104,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	Core.prototype._executeOnInit = function() {
-		var oConfig = this.oConfiguration;
+		var vOnInit = this.oConfiguration.onInit;
 
 		// execute a configured init hook
-		if ( oConfig.onInit ) {
-			if ( typeof oConfig.onInit === "function" ) {
-				oConfig.onInit();
-			} else {
-				// DO NOT USE jQuery.globalEval as it executes async in FF!
-				jQuery.sap.globalEval(oConfig.onInit);
+		if ( vOnInit ) {
+			if ( typeof vOnInit === "function" ) {
+				vOnInit();
+			} else if (typeof vOnInit === "string") {
+				// determine onInit being a module name prefixed via module or a global name
+				var aResult = /^module\:((?:(?:[_$a-zA-Z][_$a-zA-Z0-9]*)\/?)*)$/.exec(vOnInit);
+				if (aResult && aResult[1]) {
+					// ensure that the require is done async and the Core is finally booted!
+					setTimeout(sap.ui.require.bind(sap.ui, [aResult[1]]), 0);
+				} else {
+					// lookup the name specified in onInit and try to call the function directly
+					var fn = jQuery.sap.getObject(vOnInit);
+					if (typeof fn === "function") {
+						fn();
+					} else {
+						// DO NOT USE jQuery.globalEval as it executes async in FF!
+						jQuery.sap.globalEval(vOnInit);
+					}
+				}
 			}
-			oConfig.onInit = undefined;
+			this.oConfiguration.onInit = undefined;
 		}
 	};
 
