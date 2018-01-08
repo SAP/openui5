@@ -1701,8 +1701,11 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._attachScrollHandler = function () {
-		this.$wrapper.on("scroll", this._onWrapperScroll.bind(this));
-		this.$wrapper.on("scroll", this._toggleHeaderOnScroll.bind(this));
+		this._onWrapperScrollReference = this._onWrapperScroll.bind(this);
+		this._toggleHeaderOnScrollReference = this._toggleHeaderOnScroll.bind(this);
+
+		this.$wrapper.on("scroll", this._onWrapperScrollReference);
+		this.$wrapper.on("scroll", this._toggleHeaderOnScrollReference);
 	};
 
 	/**
@@ -1711,7 +1714,8 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._detachScrollHandler = function () {
 		if (this.$wrapper) {
-			this.$wrapper.off("scroll");
+			this.$wrapper.off("scroll", this._onWrapperScrollReference);
+			this.$wrapper.off("scroll", this._toggleHeaderOnScrollReference);
 		}
 	};
 
