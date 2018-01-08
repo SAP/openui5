@@ -73,7 +73,6 @@ sap.ui.require([
 		assert.ok(oBinding.hasOwnProperty("sGroupId"));
 		assert.ok(oBinding.hasOwnProperty("oOperation"));
 		assert.ok(oBinding.hasOwnProperty("mQueryOptions"));
-		assert.ok(oBinding.hasOwnProperty("sRefreshGroupId"));
 		assert.ok(oBinding.hasOwnProperty("sUpdateGroupId"));
 
 		assert.deepEqual(oBinding.mAggregatedQueryOptions, {});
@@ -545,40 +544,19 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchValue: absolute binding (read required), with refresh", function (assert) {
-		var oBinding = this.oModel.bindContext("/absolute", undefined, {$$groupId : "$direct"}),
-			oBindingMock = this.mock(oBinding),
-			oPromise;
-
-		oBindingMock.expects("fireDataRequested").withExactArgs();
-		oBindingMock.expects("fireDataReceived").withExactArgs({data : {}});
-		this.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
-			.withExactArgs("myGroup", "bar", sinon.match.func, undefined)
-			.callsArg(2)
-			.returns(SyncPromise.resolve("value"));
-		oBinding.sRefreshGroupId = "myGroup";
-
-		oPromise = oBinding.fetchValue("/absolute/bar").then(function (vValue) {
-			assert.strictEqual(vValue, "value");
-		});
-
-		assert.strictEqual(oBinding.sRefreshGroupId, undefined);
-		return oPromise;
-	});
-
-	//*********************************************************************************************
 	QUnit.test("fetchValue: absolute binding (no read required)", function (assert) {
-		var oBinding = this.oModel.bindContext("/absolute", undefined, {$$groupId : "$direct"}),
+		var oBinding = this.oModel.bindContext("/absolute"),
 			oBindingMock = this.mock(oBinding);
 
 		oBindingMock.expects("fireDataRequested").never();
 		oBindingMock.expects("fireDataReceived").never();
 		this.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
-			.withExactArgs("$direct", "bar", sinon.match.func, undefined)
+			.withExactArgs("group", "bar", sinon.match.func, undefined)
 			// no read required! .callsArg(2)
 			.returns(SyncPromise.resolve("value"));
 
-		return oBinding.fetchValue("/absolute/bar").then(function (vValue) {
+		// code under test
+		return oBinding.fetchValue("/absolute/bar", undefined, "group").then(function (vValue) {
 			assert.strictEqual(vValue, "value");
 		});
 	});
@@ -621,34 +599,6 @@ sap.ui.require([
 			oContextMock,
 			oNestedBinding,
 			oListener = {},
-			oResult = {};
-
-		this.mock(oBinding).expects("getGroupId").never();
-		oBinding.initialize();
-		oContext = oBinding.getBoundContext();
-		oContextMock = this.mock(oContext);
-		oNestedBinding = this.oModel.bindContext("navigation", oContext);
-
-		oContextMock.expects("fetchValue")
-			.withExactArgs("/absolute/navigation/bar", sinon.match.same(oListener))
-			.returns(SyncPromise.resolve(oResult));
-
-		assert.strictEqual(
-			oNestedBinding.fetchValue("/absolute/navigation/bar", oListener).getResult(),
-			oResult);
-
-		assert.strictEqual(this.oModel.bindContext("navigation2").fetchValue("").getResult(),
-			undefined,
-			"Unresolved binding: fetchValue returns SyncPromise resolved with result undefined");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("fetchValue: relative binding", function (assert) {
-		var oBinding = this.oModel.bindContext("/absolute"),
-			oContext,
-			oContextMock,
-			oNestedBinding,
-			oListener = {},
 			sPath = "/absolute/navigation/bar",
 			oResult = {};
 
@@ -658,10 +608,17 @@ sap.ui.require([
 		oContextMock = this.mock(oContext);
 		oNestedBinding = this.oModel.bindContext("navigation", oContext);
 
-		oContextMock.expects("fetchValue").withExactArgs(sPath, sinon.match.same(oListener))
+		oContextMock.expects("fetchValue")
+			.withExactArgs(sPath, sinon.match.same(oListener), "group")
 			.returns(SyncPromise.resolve(oResult));
 
-		assert.strictEqual(oNestedBinding.fetchValue(sPath, oListener).getResult(), oResult);
+		assert.strictEqual(
+			oNestedBinding.fetchValue(sPath, oListener, "group").getResult(),
+			oResult);
+
+		assert.strictEqual(this.oModel.bindContext("navigation2").fetchValue("").getResult(),
+			undefined,
+			"Unresolved binding: fetchValue returns SyncPromise resolved with result undefined");
 	});
 
 	//*********************************************************************************************
@@ -685,10 +642,13 @@ sap.ui.require([
 
 		this.mock(oNestedBinding).expects("getRelativePath")
 			.withExactArgs(sPath).returns(undefined);
-		oContextMock.expects("fetchValue").withExactArgs(sPath, sinon.match.same(oListener))
+		oContextMock.expects("fetchValue")
+			.withExactArgs(sPath, sinon.match.same(oListener), "group")
 			.returns(SyncPromise.resolve(oResult));
 
-		assert.strictEqual(oNestedBinding.fetchValue(sPath, oListener).getResult(), oResult);
+		assert.strictEqual(
+			oNestedBinding.fetchValue(sPath, oListener, "group").getResult(),
+			oResult);
 	});
 
 	//*********************************************************************************************

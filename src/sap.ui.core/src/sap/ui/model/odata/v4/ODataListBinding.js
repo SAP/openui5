@@ -788,12 +788,15 @@ sap.ui.define([
 	 *   Some absolute path
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used for the request; it is hard-coded to "$cached" in case this
+	 *   binding's cache is used because requests must only be triggered via {@link #getContexts}
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.fetchValue = function (sPath, oListener) {
+	ODataListBinding.prototype.fetchValue = function (sPath, oListener, sGroupId) {
 		var that = this;
 
 		return this.oCachePromise.then(function (oCache) {
@@ -802,11 +805,11 @@ sap.ui.define([
 			if (oCache) {
 				sRelativePath = that.getRelativePath(sPath);
 				if (sRelativePath !== undefined) {
-					return oCache.fetchValue(undefined, sRelativePath, undefined, oListener);
+					return oCache.fetchValue("$cached", sRelativePath, undefined, oListener);
 				}
 			}
 			if (that.oContext) {
-				return that.oContext.fetchValue(sPath, oListener);
+				return that.oContext.fetchValue(sPath, oListener, sGroupId);
 			}
 		});
 	};

@@ -129,11 +129,11 @@ sap.ui.require([
 				oContextBindingMock = that.oSandbox.mock(oControl.getObjectBinding());
 				fnFetchValue = oContextBindingMock.expects("fetchValue");
 				fnFetchValue.exactly(iNoOfRequests || 1)
-					.withExactArgs("/EntitySet('foo')/property", sinon.match.object)
+					.withExactArgs("/EntitySet('foo')/property", sinon.match.object, undefined)
 					.returns(Promise.resolve("value"));
 				if (oError) {
 					oContextBindingMock.expects("fetchValue")
-						.withExactArgs("/EntitySet('foo')/property", sinon.match.object)
+						.withExactArgs("/EntitySet('foo')/property", sinon.match.object, undefined)
 						.returns(Promise.reject(oError));
 				}
 				oControl.bindProperty("text", {
@@ -479,8 +479,8 @@ sap.ui.require([
 					? Promise.reject(oTypeError) : SyncPromise.reject(oTypeError));
 			this.oLogMock.expects("warning")
 				.withExactArgs(oTypeError.message, "/Equipments(1)/SupplierIdentifier", sClassName);
-			oParentMock.expects("fetchValue")
-				.withExactArgs("/Equipments(1)/SupplierIdentifier", sinon.match.same(oBinding))
+			oParentMock.expects("fetchValue").withExactArgs("/Equipments(1)/SupplierIdentifier",
+					sinon.match.same(oBinding), undefined)
 				.returns(Promise.reject(oFetchValueError));
 			this.mock(oModel).expects("reportError")
 				.withExactArgs("Failed to read path /Equipments(1)/SupplierIdentifier", sClassName,
@@ -492,7 +492,7 @@ sap.ui.require([
 				.returns(bMetadataAsync ? Promise.resolve(oType) : SyncPromise.resolve(oType));
 			oParentMock.expects("fetchValue")
 				.withExactArgs("/Equipments(1)/EQUIPMENT_2_PRODUCT/SupplierIdentifier",
-					sinon.match.same(oBinding))
+					sinon.match.same(oBinding), undefined)
 				.returns(Promise.resolve(42));
 			oBinding.attachChange(function (oEvent) {
 				var sExpectedReason = iChange ? ChangeReason.Context : ChangeReason.Change;
@@ -610,6 +610,35 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("checkUpdate(): absolute with sGroupId", function (assert) {
+		var oBinding,
+			oCacheMock = this.getPropertyCacheMock();
+
+		oBinding = this.oModel.bindProperty("/EntitySet('foo')/property");
+		oBinding.setType(null, "any"); // avoid fetchUI5Type()
+		oCacheMock.expects("fetchValue")
+			.withExactArgs("group", undefined, sinon.match.func, oBinding)
+			.returns(SyncPromise.resolve());
+
+		// code under test
+		return oBinding.checkUpdate(false, undefined, "group");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdate(): relative with sGroupId", function (assert) {
+		var oContext = Context.create(this.oModel, {/*oParentBinding*/}, "/Me"),
+			oBinding = this.oModel.bindProperty("property", oContext);
+
+		oBinding.setType(null, "any"); // avoid fetchUI5Type()
+		this.mock(oContext).expects("fetchValue")
+			.withExactArgs("property", oBinding, "group")
+			.returns(SyncPromise.resolve());
+
+		// code under test
+		return oBinding.checkUpdate(false, undefined, "group");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("ManagedObject.bindProperty w/ relative path, then bindObject", function (assert) {
 		var oCacheMock = this.oSandbox.mock(_Cache),
 			done = assert.async(),
@@ -702,7 +731,7 @@ sap.ui.require([
 				} else {
 					sResolvedPath = sContextPath + "/" + sPath;
 					oContextBindingMock.expects("fetchValue")
-						.withExactArgs(sContextPath + "/" + sPath, sinon.match.object)
+						.withExactArgs(sContextPath + "/" + sPath, sinon.match.object, undefined)
 						.returns(Promise.resolve(oValue));
 				}
 				that.oSandbox.mock(that.oModel.getMetaModel()).expects("fetchUI5Type")

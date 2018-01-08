@@ -1052,7 +1052,7 @@ sap.ui.require([
 		this.mock(ODataListBinding.prototype).expects("getGroupId").never();
 		oControl.bindObject("/TEAMS('4711')");
 		this.mock(oControl.getObjectBinding()).expects("fetchValue").atLeast(1)
-			.withExactArgs("/TEAMS('4711')/TEAM_2_EMPLOYEES", undefined)
+			.withExactArgs("/TEAMS('4711')/TEAM_2_EMPLOYEES", undefined, undefined)
 			.returns(oPromise);
 		this.spy(ODataListBinding.prototype, "reset");
 
@@ -1260,8 +1260,8 @@ sap.ui.require([
 						sMessage);
 					//check delegation of fetchValue from context
 					oPromise = {}; // a fresh new object each turn around
-					oBindingMock.expects("fetchValue")
-						.withExactArgs("/EMPLOYEES/" + (iStart + i) + "/foo/bar/" + i, undefined)
+					oBindingMock.expects("fetchValue").withExactArgs(
+							"/EMPLOYEES/" + (iStart + i) + "/foo/bar/" + i, undefined, undefined)
 						.returns(oPromise);
 
 					assert.strictEqual(aContexts[i].fetchValue("foo/bar/" + i), oPromise);
@@ -1699,10 +1699,12 @@ sap.ui.require([
 		this.mock(oBinding).expects("getRelativePath")
 			.withExactArgs("/EMPLOYEES/42/bar").returns("42/bar");
 		this.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
-			.withExactArgs(undefined, "42/bar", undefined, sinon.match.same(oListener))
+			.withExactArgs("$cached", "42/bar", undefined, sinon.match.same(oListener))
 			.returns(SyncPromise.resolve(oReadResult));
 
-		oPromise = oBinding.fetchValue("/EMPLOYEES/42/bar", oListener);
+		// code under test
+		oPromise = oBinding.fetchValue("/EMPLOYEES/42/bar", oListener, "ignored");
+
 		assert.ok(oPromise.isFulfilled());
 		return oPromise.then(function (oResult) {
 			assert.strictEqual(oResult, oReadResult);
@@ -1720,10 +1722,11 @@ sap.ui.require([
 			oResult = {};
 
 		oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext);
-		this.mock(oContext).expects("fetchValue").withExactArgs(sPath, sinon.match.same(oListener))
+		this.mock(oContext).expects("fetchValue")
+			.withExactArgs(sPath, sinon.match.same(oListener), "group")
 			.returns(SyncPromise.resolve(oResult));
 
-		assert.strictEqual(oBinding.fetchValue(sPath, oListener).getResult(), oResult);
+		assert.strictEqual(oBinding.fetchValue(sPath, oListener, "group").getResult(), oResult);
 	});
 	//TODO provide iStart, iLength parameter to fetchValue to support paging on nested list
 
@@ -1752,7 +1755,8 @@ sap.ui.require([
 			{$$groupId : "group"});
 
 		this.mock(oBinding).expects("getRelativePath").withExactArgs(sPath).returns(undefined);
-		this.mock(oContext).expects("fetchValue").withExactArgs(sPath, undefined).returns(oResult);
+		this.mock(oContext).expects("fetchValue").withExactArgs(sPath, undefined, undefined)
+			.returns(oResult);
 
 		// code under test
 		assert.strictEqual(
