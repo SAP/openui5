@@ -1618,7 +1618,8 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 			} else {
 				delete this.mSettings[sKey];
 			}
-			if ( (oOldValue == null != oValue == null) || !jQuery.sap.equal(oOldValue, oValue) ) {
+			// report a change only if old and new value differ (null/undefined are treated as the same value)
+			if ( (oOldValue != null || oValue != null) && !jQuery.sap.equal(oOldValue, oValue) ) {
 				var mChanges = this.oConfiguration._collect();
 				mChanges[sKey] = oValue;
 				this.oConfiguration._endCollect();
