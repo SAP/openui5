@@ -49,6 +49,7 @@ sap.ui.define(['./BarInPageEnabler', 'sap/m/Toolbar'],
 			oRm.addClass("sapMTBInactive");
 		}
 
+		oRm.addClass("sapMTB" + oToolbar.getStyle());
 		oRm.addClass("sapMTB-" + oToolbar.getActiveDesign() + "-CTX");
 
 		var sWidth = oToolbar.getWidth();
