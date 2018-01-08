@@ -229,6 +229,11 @@
 			]
 		  },
 		  {
+			"pattern": "LICENSE.txt",
+			"name": "license",
+			"target": [ "license" ]
+		  },
+		  {
 			"pattern": "docs/guide/{id}",
 			"name": "topicIdLegacyRoute"
 		  },
@@ -351,6 +356,12 @@
 			},
 			"releaseNotes": {
 				"viewName": "ReleaseNotes",
+				"viewLevel": 2,
+				"viewId": "releaseNotes",
+				"controlAggregation": "detailPages"
+			},
+		  	"license": {
+				"viewName": "License",
 				"viewLevel": 2,
 				"viewId": "releaseNotes",
 				"controlAggregation": "detailPages"
