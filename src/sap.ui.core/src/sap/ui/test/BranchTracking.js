@@ -179,6 +179,12 @@
 				});
 				return true;
 
+			case "ExpressionStatement":
+				if (oNode.expression.type === "Literal"
+					&& oNode.expression.value === "use strict") {
+					return false; // do not instrument "use strict"; it would break it!
+				}
+				// fall through
 			case "DoWhileStatement":
 			case "ForInStatement":
 			case "ForStatement":
@@ -187,7 +193,6 @@
 				// Note: we assume block statements only (@see blanket._blockifyIf)
 			case "BreakStatement":
 			case "ContinueStatement":
-			case "ExpressionStatement":
 			case "FunctionDeclaration":
 			case "ReturnStatement":
 			case "SwitchStatement":
