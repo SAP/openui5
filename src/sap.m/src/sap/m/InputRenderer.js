@@ -104,9 +104,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		if (!description) {
 			this.writeValueHelpIcon(oRm, oControl);
 		} else {
-			oRm.write("<span id=\"" + oControl.getId() + "-Descr\">");
+			oRm.write("<span>");
 			this.writeValueHelpIcon(oRm, oControl);
-			oRm.write('<span class="sapMInputDescriptionText">');
+			oRm.write('<span id="' + oControl.getId() + '-Descr" class="sapMInputDescriptionText">');
 			oRm.writeEscaped(description);
 			oRm.write("</span></span>");
 		}
