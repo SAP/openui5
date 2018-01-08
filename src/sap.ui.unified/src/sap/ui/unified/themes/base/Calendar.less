@@ -625,7 +625,7 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 	width: 12.5rem;
 }
 
-.sapUiSizeCompact .sapUiCalItem,
+.sapUiSizeCompact .sapUiCalInt:not(.sapUiCalOneMonthInt) .sapUiCalItem,
 .sapUiSizeCompact .sapUiCalWeekNum{
 	height: 2rem;
 	line-height: 1.875rem;
@@ -667,8 +667,7 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 }
 
 /* Day names inside day */
-.sapUiSizeCompact.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalItemText,
-.sapUiSizeCompact .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalItemText{
+.sapUiSizeCompact .sapUiCalInt:not(.sapUiCalOneMonthInt) .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalItemText{
 	padding-top: 0;
 	padding-left: 50%;
 	line-height: inherit;
@@ -680,8 +679,7 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 	line-height: 1.6875rem;
 }
 
-.sapUiSizeCompact.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalDayName,
-.sapUiSizeCompact .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalDayName{
+.sapUiSizeCompact .sapUiCalInt:not(.sapUiCalOneMonthInt) .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalDayName{
 	left: 0;
 	height: 100%;
 	width: 50%;
@@ -693,25 +691,21 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 }
 
 html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
-	.sapUiSizeCompact.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalItemText,
-	.sapUiSizeCompact .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalItemText{
+	.sapUiSizeCompact .sapUiCalInt:not(.sapUiCalOneMonthInt) .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalItemText{
 		text-align: left;
 	}
 
-	.sapUiSizeCompact.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalDayName,
-	.sapUiSizeCompact .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalDayName{
+	.sapUiSizeCompact .sapUiCalInt:not(.sapUiCalOneMonthInt) .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalDayName{
 		text-align: right;
 	}
 }
 
 html[dir=rtl][data-sap-ui-browser ^= "ie"], html[dir=rtl][data-sap-ui-browser^="ed"] {
-	.sapUiSizeCompact.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalItemText,
-	.sapUiSizeCompact .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalItemText{
+	.sapUiSizeCompact .sapUiCalInt:not(.sapUiCalOneMonthInt) .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalItemText{
 		text-align: right;
 	}
 
-	.sapUiSizeCompact.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalDayName,
-	.sapUiSizeCompact .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalDayName{
+	.sapUiSizeCompact .sapUiCalInt:not(.sapUiCalOneMonthInt) .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalDayName{
 		text-align: left;
 	}
 }

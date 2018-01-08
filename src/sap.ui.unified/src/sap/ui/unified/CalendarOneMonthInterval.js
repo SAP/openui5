@@ -45,7 +45,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		 * @alias sap.ui.unified.CalendarOneMonthInterval
 		 */
 		var CalendarOneMonthInterval = CalendarDateInterval.extend("sap.ui.unified.CalendarOneMonthInterval", /** @lends sap.ui.unified.CalendarOneMonthInterval.prototype */  {
-			renderer: CalendarDateIntervalRenderer
 		});
 
 		CalendarOneMonthInterval.prototype.init = function() {
