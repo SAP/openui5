@@ -1037,7 +1037,6 @@ sap.ui.require([
 			if ($TH.attr("id") === oTable.getId() + "-dummycolhdr") {
 				assert.strictEqual($TH.attr("role"), "presentation", "role");
 			} else {
-				assert.strictEqual($TH.attr("role"), "columnheader", "role");
 				assert.strictEqual($TH.attr("scope"), "col", "scope");
 				var oColumn = oTable.getColumns()[$TH.attr("data-sap-ui-headcolindex")];
 				if (oColumn) {
