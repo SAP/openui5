@@ -375,7 +375,8 @@
 				"samplesAsSteps": [
 					"Set Up the Initial App",
 					"Data Access and Client-Server Communication",
-					"Automatic Type Detection"
+					"Automatic Type Detection",
+					"Filtering, Sorting, and Counting"
 				]
 			}
 		],
