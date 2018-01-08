@@ -409,6 +409,48 @@
         "type": "FIX",
         "text": " Theming Parameters: Parse inline params in MS Edge",
         "references": []
+      },
+      {
+        "id": "edafa896a75b125a050b5fbee51d859e48148e1e",
+        "type": "FEATURE",
+        "text": " Opa: display timeout value",
+        "references": []
+      },
+      {
+        "id": "321739b0f8943e113b4baaa09fd3be00af495711",
+        "type": "FIX",
+        "text": " Documentation typo corrected",
+        "references": []
+      },
+      {
+        "id": "05c18a63a245069436978487e748e79a36f361d0",
+        "type": "FIX",
+        "text": " Mockserver - update jsdoc",
+        "references": []
+      },
+      {
+        "id": "1ba0fe480402863f1c1b5976c8101c724d4366ad",
+        "type": "FIX",
+        "text": " analyticalBinding: handle null value from #getURIQueryOptionValue",
+        "references": []
+      },
+      {
+        "id": "d054bc161c0bac4e762c9e7c51e85ba59d1b2d43",
+        "type": "FIX",
+        "text": " core.routing: wait for the root view in case it\u0027s loaded async",
+        "references": []
+      },
+      {
+        "id": "e6d93d8d571bf51d09fc9111a395a4364f4ad08c",
+        "type": "FIX",
+        "text": " jquery.sap.resources: Fixed typo",
+        "references": []
+      },
+      {
+        "id": "95ea2b00484abb03dc5c9ad149f3ed24635cff1a",
+        "type": "FIX",
+        "text": " sap.ui.core.util.MockServer When the data for an entity is set",
+        "references": []
       }
     ]
   }

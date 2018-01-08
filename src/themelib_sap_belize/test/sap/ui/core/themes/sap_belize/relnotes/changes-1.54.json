@@ -91,6 +91,12 @@
         "type": "FEATURE",
         "text": " sap.m.TimePicker: 24:00 value is now supported",
         "references": []
+      },
+      {
+        "id": "2c5182ae242c6ae4384131ac224fa9ce28ceec00",
+        "type": "FEATURE",
+        "text": " sap.m.WizardStep: Optional step property added",
+        "references": []
       }
     ]
   }

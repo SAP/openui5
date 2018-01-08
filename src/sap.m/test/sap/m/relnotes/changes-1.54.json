@@ -865,6 +865,48 @@
         "type": "FIX",
         "text": " sap.m.Table: Selection column should be hidden from screen readers",
         "references": []
+      },
+      {
+        "id": "2c5182ae242c6ae4384131ac224fa9ce28ceec00",
+        "type": "FEATURE",
+        "text": " sap.m.WizardStep: Optional step property added",
+        "references": []
+      },
+      {
+        "id": "358cd7f87d4bb9585f19233a7c14a5f5b75bfb05",
+        "type": "FIX",
+        "text": " sap.m.Button: focus outline is visible on click",
+        "references": []
+      },
+      {
+        "id": "dd23d1e0c2cc297306ed9c1f89837f0d12b8e7c3",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: tokenUpdate documentation corrected",
+        "references": []
+      },
+      {
+        "id": "cb1d1b1e39d49b0a8c407b62143bf9d24a795fd6",
+        "type": "FIX",
+        "text": " sap.m.NavContainer: Fixed transition issue",
+        "references": []
+      },
+      {
+        "id": "362b423fe985f476bed15ed80046a54fc32c2135",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: explicit font size added to parent div",
+        "references": []
+      },
+      {
+        "id": "c5addd033d7adb61d8e2cbc81d92daab8a68ba06",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Label width is calculated wrong on IE",
+        "references": []
+      },
+      {
+        "id": "935c11e6d925cebe65c0c6d9649f0539314f2570",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Now correctly goes into overflow when used inside OverflowToolbar",
+        "references": []
       }
     ]
   }

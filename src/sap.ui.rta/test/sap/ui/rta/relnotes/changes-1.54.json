@@ -181,6 +181,18 @@
         "type": "FIX",
         "text": "sap.ui.rta: Show BusyIndicator to block app during reset of changes",
         "references": []
+      },
+      {
+        "id": "b548cbe1666b1cc3441484aebd3cee7677db85a1",
+        "type": "FIX",
+        "text": " Control Variants duplicate fileName length exceeding 64",
+        "references": []
+      },
+      {
+        "id": "2babb5a33f59a04a162620fe90cddda9838bdc11",
+        "type": "FIX",
+        "text": "sap.ui.rta: Local changes used when setting transports on reset",
+        "references": []
       }
     ]
   }
