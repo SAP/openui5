@@ -89,7 +89,12 @@ sap.ui.define([],
 			/**
 			 * Extension added to library.js files of every library that contains support rules
 			 */
-			SUPPORT_ASSISTANT_EXTENSION: "sap.ui.support"
+			SUPPORT_ASSISTANT_EXTENSION: "sap.ui.support",
+
+			/**
+			 * The maximum number of visible issues for selected rule (in the issues table)
+			 */
+			MAX_VISIBLE_ISSUES_FOR_RULE: 5
 
 		};
 
