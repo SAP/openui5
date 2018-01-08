@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ObjectIdentifier.
-sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/InvisibleText', 'sap/ui/core/library', 'sap/ui/Device'],
-	function(library, Control, IconPool, InvisibleText, coreLibrary, Device) {
+sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/InvisibleText', 'sap/ui/core/library', 'sap/ui/Device', 'sap/ui/base/ManagedObject'],
+	function(library, Control, IconPool, InvisibleText, coreLibrary, Device, ManagedObject) {
 	"use strict";
 
 
@@ -244,14 +244,14 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/
 			if (this.getProperty("titleActive")) {
 				oTitleControl = new sap.m.Link({
 					id : this.getId() + "-link",
-					text: this.getProperty("title"),
+					text: ManagedObject.escapeSettingsValue(this.getProperty("title")),
 					//Add a custom hidden role "ObjectIdentifier" with hidden text
 					ariaLabelledBy: this._oAriaCustomRole
 				});
 			} else {
 				oTitleControl = new sap.m.Text({
 					id : this.getId() + "-txt",
-					text: this.getProperty("title")
+					text: ManagedObject.escapeSettingsValue(this.getProperty("title"))
 				});
 			}
 			this.setAggregation("_titleControl", oTitleControl, true);
@@ -276,7 +276,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/
 			this.destroyAggregation("_titleControl", true);
 			oTitleControl = new sap.m.Link({
 				id : this.getId() + "-link",
-				text: this.getProperty("title"),
+				text: ManagedObject.escapeSettingsValue(this.getProperty("title")),
 				//Add a custom hidden role "ObjectIdentifier" with hidden text
 				ariaLabelledBy: this._oAriaCustomRole
 			});
@@ -285,7 +285,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/
 			this.destroyAggregation("_titleControl", true);
 			oTitleControl = new sap.m.Text({
 				id : this.getId() + "-txt",
-				text: this.getProperty("title")
+				text: ManagedObject.escapeSettingsValue(this.getProperty("title"))
 			});
 			this.setAggregation("_titleControl", oTitleControl, true);
 		}
@@ -313,7 +313,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/
 
 		if (!oTextControl) {
 			oTextControl = new sap.m.Text({
-				text: this.getProperty("text")
+				text: ManagedObject.escapeSettingsValue(this.getProperty("text"))
 			});
 			this.setAggregation("_textControl", oTextControl, true);
 		}

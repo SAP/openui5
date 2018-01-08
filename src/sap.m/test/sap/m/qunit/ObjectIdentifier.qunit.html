@@ -179,6 +179,35 @@
 		oObjectIdentifier.destroy();
 	});
 
+	QUnit.test("ObjectIdentifier title should be escaped upon creation", function(assert) {
+		// Arrange
+		var oEscapeSpy = this.spy(sap.ui.base.ManagedObject, "escapeSettingsValue"),
+			oObjectIdentifier = new sap.m.ObjectIdentifier ({
+			title: "Evil { string"
+		}).placeAt("qunit-fixture");
+
+		// Assert
+		assert.strictEqual(oEscapeSpy.callCount, 1, "escaped was called once for the setted Title");
+
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+
+	QUnit.test("ObjectIdentifier text should be escaped upon creation", function(assert) {
+		// Arrange
+		var oEscapeSpy = this.spy(sap.ui.base.ManagedObject, "escapeSettingsValue"),
+			oObjectIdentifier = new sap.m.ObjectIdentifier ({
+			text: "Evil { string"
+		}).placeAt("qunit-fixture");
+
+		// Assert
+		assert.strictEqual(oEscapeSpy.callCount, 1, "escaped was called once for the setted Text");
+
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+
+
 	QUnit.test("Should not rerender the ObjectIdentifier if the new  title is empty", function(assert) {
 		// Arrange
 		var sTextToSet = undefined,
