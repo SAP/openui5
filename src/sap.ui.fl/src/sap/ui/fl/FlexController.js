@@ -1166,7 +1166,9 @@ sap.ui.define([
 		this._updateControlsDependencies(mDependencies);
 		Object.keys(mDependencies).forEach(function(sDependencyKey) {
 			var oDependency = mDependencies[sDependencyKey];
-			if (oDependency[FlexController.PENDING] && oDependency.dependencies.length === 0 && !oDependency[FlexController.PROCESSING]) {
+			if (oDependency[FlexController.PENDING] && oDependency.dependencies.length === 0  &&
+				!(oDependency.controlsDependencies && oDependency.controlsDependencies.length > 0) &&
+				!oDependency[FlexController.PROCESSING]) {
 				oDependency[FlexController.PROCESSING] = true;
 				aPromises.push(
 					function() {
