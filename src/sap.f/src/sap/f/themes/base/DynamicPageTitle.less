@@ -207,6 +207,12 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 	.sapFDynamicPageTitleMainActions {
 		margin-left: auto;
 		min-width: 48px;
+
+      .sapFDynamicPageTitleActionsBar .sapMLabel.sapMLabelMaxWidth {
+          // overwriting the existing max-width constraint of sapMLabel
+          // because in this context the label parent should instead adjust its flex-basis with respect to its content width
+          max-width: none;
+      }
 	}
 
 	/* Override Title and Label styles, required by VD */
