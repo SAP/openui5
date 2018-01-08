@@ -175,8 +175,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 					if (sName.match("xmlns:")
 						&& sLocalName !== "xmlns:support"
 						&& sLocalName !== "mvc") {
-						for (var j = 0; j < oXMLView._xContent.children.length; j++) {
-							var sContent = oXMLView._xContent.children[j].outerHTML;
+						for (var j = 0; j < jQuery(oXMLView._xContent).children().length; j++) {
+							var oContent = jQuery(oXMLView._xContent).children()[j];
+							// get the xml code of the children as a string
+							// The outerHTML doesn't work with IE, so we used
+							// the XMLSerializer instead
+							var sContent = new XMLSerializer().serializeToString(oContent);
 
 							// check if there is a reference of this namespace inside the view
 							if (!sContent.match("<" + sLocalName + ":")) {
