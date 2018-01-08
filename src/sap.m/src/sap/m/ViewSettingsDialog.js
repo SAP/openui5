@@ -147,6 +147,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 			/**
 			 * The group item that is selected. It can be set by either passing a key or the item itself to the function setSelectedGroupItem.
+			 * By default 'None' is selected. You can restore back to 'None' by setting this association to empty value.
 			 */
 			selectedGroupItem : {type : "sap.m.ViewSettingsItem", multiple : false},
 
@@ -964,6 +965,11 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 				"Could not set selected group item. Item is not found: '" + vItemOrKey + "'"
 			);
 
+		// if no Item is found and the key is empty set the default "None" item as selected
+		// BCP: 1780536754
+		if (!oItem && !vItemOrKey) {
+			oItem = this._oGroupingNoneItem;
+		}
 		//change selected item only if it is found among the group items
 		if (validateViewSettingsItem(oItem)) {
 			// set selected = true for this item & selected = false for all others items
