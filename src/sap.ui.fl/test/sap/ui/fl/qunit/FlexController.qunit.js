@@ -77,7 +77,7 @@ function (
 	QUnit.module("sap.ui.fl.FlexController", {
 		beforeEach: function () {
 			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
-			this.oControl = new sap.ui.core.Control("existingId");
+			this.oControl = new Control("existingId");
 			this.oChange = new Change(labelChangeContent);
 		},
 		afterEach: function () {
@@ -186,7 +186,7 @@ function (
 		this.stub(JsControlTreeModifier, "bySelector").returns({});
 		this.stub(JsControlTreeModifier, "getControlType").returns("aType");
 
-		var oControl = new sap.ui.core.Control("testComponent---localeId");
+		var oControl = new Control("testComponent---localeId");
 
 		var mPropertyBagStub = {
 			view: oControl,
@@ -882,7 +882,7 @@ function (
 			}
 		});
 
-		this.oFlexController.createChange({}, new sap.ui.core.Control());
+		this.oFlexController.createChange({}, new Control());
 
 		sinon.assert.called(getChangeHandlerStub);
 		assert.equal(getChangeHandlerStub.callCount,1);
@@ -901,7 +901,7 @@ function (
 		this.stub(this.oFlexController, "_getChangeHandler").returns(oDummyChangeHandler);
 
 		assert.throws( function () {
-			this.oFlexController.createChange({}, new sap.ui.core.Control());
+			this.oFlexController.createChange({}, new Control());
 		});
 	});
 
@@ -921,7 +921,7 @@ function (
 			}
 		});
 
-		var oChange = this.oFlexController.createChange({}, new sap.ui.core.Control());
+		var oChange = this.oFlexController.createChange({}, new Control());
 
 		assert.deepEqual(oChange.getDefinition().selector.idIsLocal, false, "the selector flags the id as NOT local.");
 	});
@@ -1010,7 +1010,7 @@ function (
 
 	QUnit.module("_applyChangesOnControl", {
 		beforeEach: function () {
-			this.oControl = new sap.ui.core.Control("someId");
+			this.oControl = new Control("someId");
 			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
 			this.oCheckTargetAndApplyChangeStub = sandbox.stub(this.oFlexController, "checkTargetAndApplyChange").returns(new Utils.FakePromise(true));
 		},
@@ -1091,8 +1091,8 @@ function (
 	});
 
 	QUnit.test("_applyChangesOnControl dependency test 1", function (assert) {
-		var oControlForm1 = new sap.ui.core.Control("form1-1");
-		var oControlGroup1 = new sap.ui.core.Control("group1-1");
+		var oControlForm1 = new Control("form1-1");
+		var oControlGroup1 = new Control("group1-1");
 
 		var oChange0 = {
 			getId: function () {
@@ -1105,17 +1105,11 @@ function (
 		var oChange1 = {
 			getId: function () {
 				return "fileNameChange1";
-			},
-			getDependentIdList: function () {
-				return ["field3-2", "group3", "group2"];
 			}
 		};
 		var oChange2 = {
 			getId: function () {
 				return "fileNameChange2";
-			},
-			getDependentIdList: function () {
-				return ["field3-2", "group2", "group1-1"];
 			}
 		};
 
@@ -1155,31 +1149,22 @@ function (
 	});
 
 	QUnit.test("_applyChangesOnControl dependency test 2", function (assert) {
-		var oControlForm1 = new sap.ui.core.Control("form2-1");
-		var oControlGroup1 = new sap.ui.core.Control("group2-1");
+		var oControlForm1 = new Control("form2-1");
+		var oControlGroup1 = new Control("group2-1");
 
 		var oChange1 = {
 			getId: function () {
 				return "fileNameChange1";
-			},
-			getDependentIdList: function () {
-				return ["field3-2", "group3", "group2"];
 			}
 		};
 		var oChange2 = {
 			getId: function () {
 				return "fileNameChange2";
-			},
-			getDependentIdList: function () {
-				return ["field3-2", "group2", "group2-1"];
 			}
 		};
 		var oChange3 = {
 			getId: function () {
 				return "fileNameChange3";
-			},
-			getDependentIdList: function () {
-				return ["group2-1"];
 			}
 		};
 
@@ -1215,47 +1200,35 @@ function (
 		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange3, "the third change was processed first");
 		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange1, "the first change was processed second");
 		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(2).args[0], oChange2, "the second change was processed third");
+
+		oControlForm1.destroy();
+		oControlGroup1.destroy();
 	});
 
 	var fnDependencyTest3Setup = function() {
 		var oChange1 = {
 			getId: function () {
 				return "fileNameChange1";
-			},
-			getDependentIdList: function () {
-				return ["ReversalReasonName", "Reversal", "Dates"];
 			}
 		};
 		var oChange2 = {
 			getId: function () {
 				return "fileNameChange2";
-			},
-			getDependentIdList: function () {
-				return ["ReversalReasonName", "Dates", "GeneralLedgerDocument"];
 			}
 		};
 		var oChange3 = {
 			getId: function () {
 				return "fileNameChange3";
-			},
-			getDependentIdList: function () {
-				return ["ReversalReasonName"];
 			}
 		};
 		var oChange4 = {
 			getId: function () {
 				return "fileNameChange4";
-			},
-			getDependentIdList: function () {
-				return ["CompanyCode","ReversalReasonName"];
 			}
 		};
 		var oChange5 = {
 			getId: function () {
 				return "fileNameChange5";
-			},
-			getDependentIdList: function () {
-				return ["CompanyCode"];
 			}
 		};
 
@@ -1294,9 +1267,9 @@ function (
 	};
 
 	QUnit.test("_applyChangesOnControl dependency test 3", function (assert) {
-		var oControlForm1 = new sap.ui.core.Control("mainform");
-		var oControlField1 = new sap.ui.core.Control("ReversalReasonName");
-		var oControlField2 = new sap.ui.core.Control("CompanyCode");
+		var oControlForm1 = new Control("mainform");
+		var oControlField1 = new Control("ReversalReasonName");
+		var oControlField2 = new Control("CompanyCode");
 
 		var oDependencySetup = fnDependencyTest3Setup();
 		var fnGetChangesMap = function () {
@@ -1322,9 +1295,9 @@ function (
 	});
 
 	QUnit.test("_applyChangesOnControl dependency test 3 - mixed changehandler (sync, async, sync, async, sync)", function (assert) {
-		var oControlForm1 = new sap.ui.core.Control("mainform");
-		var oControlField1 = new sap.ui.core.Control("ReversalReasonName");
-		var oControlField2 = new sap.ui.core.Control("CompanyCode");
+		var oControlForm1 = new Control("mainform");
+		var oControlField1 = new Control("ReversalReasonName");
+		var oControlField2 = new Control("CompanyCode");
 
 		var oDependencySetup = fnDependencyTest3Setup();
 		var fnGetChangesMap = function () {
@@ -1363,9 +1336,9 @@ function (
 	});
 
 	QUnit.test("_applyChangesOnControl dependency test 3 - mixed changehandler (async, sync, async, sync, async)", function (assert) {
-		var oControlForm1 = new sap.ui.core.Control("mainform");
-		var oControlField1 = new sap.ui.core.Control("ReversalReasonName");
-		var oControlField2 = new sap.ui.core.Control("CompanyCode");
+		var oControlForm1 = new Control("mainform");
+		var oControlField1 = new Control("ReversalReasonName");
+		var oControlField2 = new Control("CompanyCode");
 
 		var oDependencySetup = fnDependencyTest3Setup();
 		var fnGetChangesMap = function () {
@@ -1404,22 +1377,16 @@ function (
 	});
 
 	QUnit.test("_applyChangesOnControl dependency test 4", function (assert) {
-		var oControlForm1 = new sap.ui.core.Control("form4");
+		var oControlForm1 = new Control("form4");
 
 		var oChange1 = {
 			getId: function () {
 				return "fileNameChange1";
-			},
-			getDependentIdList: function () {
-				return ["field3-2", "group1", "group2"];
 			}
 		};
 		var oChange2 = {
 			getId: function () {
 				return "fileNameChange2";
-			},
-			getDependentIdList: function () {
-				return ["field3-2", "group2", "group3"];
 			}
 		};
 
@@ -1452,35 +1419,28 @@ function (
 		assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 2, "all two changes for the control were processed");
 		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange1, "the first change was processed first");
 		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange2, "the second change was processed second");
+
+		oControlForm1.destroy();
 	});
 
 	QUnit.test("_applyChangesOnControl dependency test 5", function (assert) {
-		var oControlForm1 = new sap.ui.core.Control("form5");
-		var oControlField1 = new sap.ui.core.Control("field5");
+		var oControlForm1 = new Control("form5");
+		var oControlField1 = new Control("field5");
 		var iStubCalls = 0;
 
 		var oChange1 = {
 			getId: function () {
 				return "fileNameChange1";
-			},
-			getDependentIdList: function () {
-				return ["field3-2", "group1", "group2"];
 			}
 		};
 		var oChange2 = {
 			getId: function () {
 				return "fileNameChange2";
-			},
-			getDependentIdList: function () {
-				return ["field3-2", "group2", "group3"];
 			}
 		};
 		var oChange3 = {
 			getId: function () {
 				return "fileNameChange3";
-			},
-			getDependentIdList: function () {
-				return ["field3-2", "group3", "group4"];
 			}
 		};
 
@@ -1528,7 +1488,81 @@ function (
 		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange1, "the first change was processed first");
 		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange2, "the second change was processed second");
 		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(2).args[0], oChange3, "the third change was processed third");
+
+		oControlForm1.destroy();
+		oControlField1.destroy();
 	});
+
+	QUnit.test("_applyChangesOnControl dependency test 6 (with controlDependencies)", function (assert) {
+		var oControlForm1 = new Control("form6-1");
+		var oControlGroup1 = new Control("group6-1");
+
+		var oChange0 = {
+			getId: function () {
+				return "fileNameChange0";
+			}
+		};
+		var oChange1 = {
+			getId: function () {
+				return "fileNameChange1";
+			}
+		};
+		var oChange2 = {
+			getId: function () {
+				return "fileNameChange2";
+			}
+		};
+
+		var mChanges = {
+			"form6-1": [oChange2, oChange1],
+			"group6-1": [oChange0]
+		};
+
+		var mDependencies = {
+			"fileNameChange2": {
+				"changeObject": oChange2,
+				"dependencies": ["fileNameChange0", "fileNameChange1"],
+				"controlsDependencies": ["missingControl2"]
+			},
+			"fileNameChange1": {
+				"changeObject": oChange1,
+				"dependencies": [],
+				"controlsDependencies": ["missingControl1"]
+			}
+		};
+
+		var mDependentChangesOnMe = {
+			"fileNameChange0": ["fileNameChange2"],
+			"fileNameChange1": ["fileNameChange2"]
+		};
+
+		var fnGetChangesMap = function () {
+			return {
+				"mChanges": mChanges,
+				"mDependencies": mDependencies,
+				"mDependentChangesOnMe": mDependentChangesOnMe
+			};
+		};
+		var oAppComponent = {};
+
+		this.oFlexController._applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlGroup1);
+		this.oFlexController._applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlForm1);
+
+		assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 1, "only one change was processed");
+
+		var mChangesMap = fnGetChangesMap();
+		var oMissingControl1 = new Control("missingControl1");
+		this.oFlexController._iterateDependentQueue(mChangesMap.mDependencies, mChangesMap.mDependentChangesOnMe);
+		assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 2, "now two changes were processed");
+
+		var oMissingControl2 = new Control("missingControl2");
+		this.oFlexController._iterateDependentQueue(mChangesMap.mDependencies, mChangesMap.mDependentChangesOnMe);
+		assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 3, "now all changes are processed");
+
+		oMissingControl1.destroy();
+		oMissingControl2.destroy();
+	});
+
 
 	QUnit.module("[JS] checkTargetAndApplyChange / removeFromAppliedChanges with one change for a label", {
 		beforeEach: function (assert) {
