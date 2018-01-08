@@ -31,7 +31,7 @@ sap.ui.define([],
 							oIconTabBar = oIconTabHeader && oIconTabHeader.getParent(),
 							aContent = oControl.getContent() || [];
 
-						if (aContent.length > 0 && oIconTabBar) {
+						if (oIconTabHeader.oSelectedItem === oControl && aContent.length > 0 && oIconTabBar) {
 							return oIconTabBar.getDomRef("content");
 						}
 					},
