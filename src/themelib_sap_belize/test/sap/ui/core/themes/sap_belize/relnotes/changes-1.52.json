@@ -170,5 +170,28 @@
         "references": []
       }
     ]
+  },
+  "1.52.4": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "bb7444f6ee090f51027e7d56ae03fbc597b5b646",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: focus fixed for HCB",
+        "references": []
+      },
+      {
+        "id": "043be754b7dd77fcd97a81434e1ae80cb326c082",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Vertically aligned correctly alongside other controls",
+        "references": []
+      },
+      {
+        "id": "985af8bc3467e84c4691afbbdeffdb31d09cadbe",
+        "type": "FIX",
+        "text": " sap.m.Tile: Focus is cleared indicated in HCB and HCW",
+        "references": []
+      }
+    ]
   }
 }

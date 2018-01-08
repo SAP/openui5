@@ -186,5 +186,28 @@
         "references": []
       }
     ]
+  },
+  "1.52.4": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "9f1328dd1e5537d4f080a31a4f043568cba07265",
+        "type": "FIX",
+        "text": " GridTable: Keyboard Behavior on RowActions",
+        "references": []
+      },
+      {
+        "id": "1b3b69cd3d9d46cc3d28751aa501a2bf17e9bb80",
+        "type": "FIX",
+        "text": " Table: Horizontal scrolling with the touchpad",
+        "references": []
+      },
+      {
+        "id": "20f2dbde28e1ffb8f6a03280fd34ffc7c02e0e98",
+        "type": "FIX",
+        "text": " TreeTable: ACC Anouncement of selection state on data cells",
+        "references": []
+      }
+    ]
   }
 }

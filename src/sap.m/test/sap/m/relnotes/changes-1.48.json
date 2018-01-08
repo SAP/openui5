@@ -2585,5 +2585,52 @@
         "references": []
       }
     ]
+  },
+  "1.48.17": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "4b5f3cf568f6829109b4c23593be75a0ea3db81e",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: focus fixed for HCB",
+        "references": []
+      },
+      {
+        "id": "81863da6a016597cb12b01ceffaf09bb75dba15a",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: getAccessibilityInfo returns the tooltip also",
+        "references": []
+      },
+      {
+        "id": "4e43fa41c3ccfffd306ff72d655cb99d1e3db37c",
+        "type": "FIX",
+        "text": " sap.m.Page: Documentation updated",
+        "references": []
+      },
+      {
+        "id": "2cd53b094137815f07983ff8b5922afd7d48d872",
+        "type": "FIX",
+        "text": " sap.m.Page: showHeader property working correctly with floatingFooter",
+        "references": []
+      },
+      {
+        "id": "3dc08520e6f87637a5a68772626ddbec743eb9c6",
+        "type": "FIX",
+        "text": " sap.m.Slider: sap.m.RangeSlider exception fixed.",
+        "references": []
+      },
+      {
+        "id": "42e69620b459107aa7e6265cce8e7ccfaa2ce889",
+        "type": "FIX",
+        "text": " sap.m.Text: maxLines property is now working",
+        "references": []
+      },
+      {
+        "id": "5a616c93c4336e49743d90406c94b9698bca6010",
+        "type": "FIX",
+        "text": " sap.m: Replace non-breaking spaces with normal spaces",
+        "references": []
+      }
+    ]
   }
 }

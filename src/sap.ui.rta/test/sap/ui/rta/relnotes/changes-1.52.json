@@ -318,5 +318,22 @@
         "references": []
       }
     ]
+  },
+  "1.52.4": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "ff6a31ee6ccdf22c550eadd3c4b07ede12fa419e",
+        "type": "FIX",
+        "text": "sap.ui.rta: Local changes used when setting transports on reset",
+        "references": []
+      },
+      {
+        "id": "0d0e33de5002352c9c10dc081f5f619fb7997f3b",
+        "type": "FIX",
+        "text": "sap.ui.rta: Show BusyIndicator to block app during reset of changes",
+        "references": []
+      }
+    ]
   }
 }

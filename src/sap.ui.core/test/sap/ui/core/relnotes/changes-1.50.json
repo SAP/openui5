@@ -770,5 +770,58 @@
         "references": []
       }
     ]
+  },
+  "1.50.8": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "2d7f189e0183bf9e3caf5fb7b8a6741d4a43edb8",
+        "type": "FIX",
+        "text": " Component/Manifest: Remove css resources on destroy",
+        "references": []
+      },
+      {
+        "id": "5cec9b3d29a8f56b642387562bfc84a6e6d15a98",
+        "type": "FIX",
+        "text": " Fallback for libraries without custom theme",
+        "references": []
+      },
+      {
+        "id": "b7109c712b91a9fbf2d13d8b018c547028446e21",
+        "type": "FIX",
+        "text": " Filter/Sorter: Get comparator methods right",
+        "references": []
+      },
+      {
+        "id": "271110e1ba56c95c99a741a40fa1a8f113ac3bbc",
+        "type": "FIX",
+        "text": " Icon Font: No right-to-left mirroring of text-align icons",
+        "references": []
+      },
+      {
+        "id": "8c1a0c34abf73adf16cb00ae72d4c94ff6f40618",
+        "type": "FIX",
+        "text": " Opa: fix action focus when IE11 browser is not focused",
+        "references": []
+      },
+      {
+        "id": "7755ceeca100ae6b06e3e7cce3963178e54a2759",
+        "type": "FIX",
+        "text": " core/XMLTemplateProcessor: pass correct container to ExtensionPoint",
+        "references": []
+      },
+      {
+        "id": "a74902cb170edd8e86691185ce20530501cbe36a",
+        "type": "FIX",
+        "text": " sap.m.Label: Label is now read by JAWS when focus sap.m.Select",
+        "references": []
+      },
+      {
+        "id": "c0367d3273cc21b3a1ddca4c12b612e36eae8183",
+        "type": "FIX",
+        "text": " v2.ODataModel delete Entry messages",
+        "references": []
+      }
+    ]
   }
 }

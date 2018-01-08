@@ -478,5 +478,16 @@
         "references": []
       }
     ]
+  },
+  "1.48.17": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "4b5f3cf568f6829109b4c23593be75a0ea3db81e",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: focus fixed for HCB",
+        "references": []
+      }
+    ]
   }
 }
