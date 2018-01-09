@@ -87,7 +87,8 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.core,sap.ui.dt,sap.ui.model
 	 */
 	function SyncPromise(fnExecutor) {
-		var iState, // undefined: pending, -1: rejected, 0: resolved but pending, 1: fulfilled
+		var bCaught = false,
+			iState, // undefined: pending, -1: rejected, 0: resolved but pending, 1: fulfilled
 			fnReject,
 			fnResolve,
 			vResult,
@@ -100,6 +101,11 @@ sap.ui.define([
 		function reject(vReason) {
 			vResult = vReason;
 			iState = -1;
+
+			if (!bCaught && SyncPromise.listener) {
+				SyncPromise.listener(that, false);
+			}
+
 			if (fnReject) {
 				fnReject(vReason);
 				fnReject = fnResolve = null; // be nice to the garbage collector
@@ -122,10 +128,12 @@ sap.ui.define([
 					resolve(vResult0.getResult());
 					return;
 				} else if (vResult0.isRejected()) {
+					vResult0._caught(); // might have been uncaught so far
 					reject(vResult0.getResult());
 					return;
-				} else { // unwrap to access native thenable
-					vResult0 = vResult0.getResult();
+				} else {
+					vResult0._caught(); // make sure it will never count as uncaught
+					vResult0 = vResult0.getResult(); // unwrap to access native thenable
 				}
 			}
 
@@ -152,6 +160,62 @@ sap.ui.define([
 			}
 		}
 
+		/**
+		 * Marks this {@link sap.ui.base.SyncPromise} as caught and informs the optional
+		 * {@link sap.ui.base.SyncPromise.listener}.
+		 *
+		 * @private
+		 */
+		this._caught = function () {
+			if (!bCaught) {
+				bCaught = true; // MUST NOT become uncaught later on!
+				if (SyncPromise.listener && this.isRejected()) {
+					SyncPromise.listener(this, true);
+				}
+			}
+		};
+
+		/**
+		 * Returns the current "result" of this {@link sap.ui.base.SyncPromise}.
+		 *
+		 * @returns {any}
+		 *   The result in case this {@link sap.ui.base.SyncPromise} is already fulfilled, the
+		 *   reason if it is already rejected, or the wrapped thenable if it is still pending
+		 */
+		this.getResult = function () {
+			return vResult;
+		};
+
+		/**
+		 * Tells whether this {@link sap.ui.base.SyncPromise} is fulfilled.
+		 *
+		 * @returns {boolean}
+		 *   Whether this {@link sap.ui.base.SyncPromise} is fulfilled
+		 */
+		this.isFulfilled = function () {
+			return iState === 1;
+		};
+
+		/**
+		 * Tells whether this {@link sap.ui.base.SyncPromise} is still pending.
+		 *
+		 * @returns {boolean}
+		 *   Whether this {@link sap.ui.base.SyncPromise} is still pending
+		 */
+		this.isPending = function () {
+			return !iState;
+		};
+
+		/**
+		 * Tells whether this {@link sap.ui.base.SyncPromise} is rejected.
+		 *
+		 * @returns {boolean}
+		 *   Whether this {@link sap.ui.base.SyncPromise} is rejected
+		 */
+		this.isRejected = function () {
+			return iState === -1;
+		};
+
 		call(fnExecutor, resolve, reject);
 
 		if (iState === undefined) {
@@ -162,58 +226,17 @@ sap.ui.define([
 			});
 			vResult.catch(function () {}); // avoid "Uncaught (in promise)"
 		}
-
-		/**
-		 * Returns the current "result" of this {@link SyncPromise}.
-		 *
-		 * @returns {any}
-		 *   The result in case this {@link SyncPromise} is already fulfilled, the reason if it is
-		 *   already rejected, or the wrapped thenable if it is still pending
-		 */
-		this.getResult = function () {
-			return vResult;
-		};
-
-		/**
-		 * Tells whether this {@link SyncPromise} is fulfilled.
-		 *
-		 * @returns {boolean}
-		 *   Whether this {@link SyncPromise} is fulfilled
-		 */
-		this.isFulfilled = function () {
-			return iState === 1;
-		};
-
-		/**
-		 * Tells whether this {@link SyncPromise} is still pending.
-		 *
-		 * @returns {boolean}
-		 *   Whether this {@link SyncPromise} is still pending
-		 */
-		this.isPending = function () {
-			return !iState;
-		};
-
-		/**
-		 * Tells whether this {@link SyncPromise} is rejected.
-		 *
-		 * @returns {boolean}
-		 *   Whether this {@link SyncPromise} is rejected
-		 */
-		this.isRejected = function () {
-			return iState === -1;
-		};
 	}
 
 	/**
-	 * Returns a {@link SyncPromise} and deals with rejected cases only.
+	 * Returns a {@link sap.ui.base.SyncPromise} and deals with rejected cases only.
 	 * Same as <code>then(undefined, fnOnRejected)</code>.
 	 *
 	 * @param {function} [fnOnRejected]
-	 *   Callback function if this {@link SyncPromise} is rejected
-	 * @returns {SyncPromise}
-	 *   A new {@link SyncPromise}, or <code>this</code> in case it is settled and no corresponding
-	 *   callback function is given
+	 *   Callback function if this {@link sap.ui.base.SyncPromise} is rejected
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A new {@link sap.ui.base.SyncPromise}, or <code>this</code> in case it is settled and no
+	 *   corresponding callback function is given
 	 *
 	 * @see #then
 	 */
@@ -222,37 +245,43 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a {@link SyncPromise} and calls the given handler as applicable, like
+	 * Returns a {@link sap.ui.base.SyncPromise} and calls the given handler as applicable, like
 	 * <code>Promise.prototype.then</code>.
 	 *
 	 * @param {function} [fnOnFulfilled]
-	 *   Callback function if this {@link SyncPromise} is fulfilled
+	 *   Callback function if this {@link sap.ui.base.SyncPromise} is fulfilled
 	 * @param {function} [fnOnRejected]
-	 *   Callback function if this {@link SyncPromise} is rejected
-	 * @returns {SyncPromise}
-	 *   A new {@link SyncPromise}, or <code>this</code> in case it is settled and no corresponding
-	 *   callback function is given
+	 *   Callback function if this {@link sap.ui.base.SyncPromise} is rejected
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A new {@link sap.ui.base.SyncPromise}, or <code>this</code> in case it is settled and no
+	 *   corresponding callback function is given
 	 */
 	SyncPromise.prototype.then = function (fnOnFulfilled, fnOnRejected) {
 		var fnCallback = this.isFulfilled() ? fnOnFulfilled : fnOnRejected,
+			bCallbackIsFunction = typeof fnCallback === "function",
+			bPending = this.isPending(),
 			that = this;
 
-		if (!this.isPending()) {
-			return typeof fnCallback === "function"
+		if (bPending || bCallbackIsFunction) {
+			this._caught();
+		} // else: returns this
+
+		if (!bPending) {
+			return bCallbackIsFunction
 				? new SyncPromise(function (resolve, reject) {
 					resolve(fnCallback(that.getResult())); // Note: try/catch is present in c'tor!
 				})
-				: that;
+				: this;
 		}
 		return SyncPromise.resolve(this.getResult().then(fnOnFulfilled, fnOnRejected));
 	};
 
 	/**
-	 * Returns a string representation of this {@link SyncPromise}. If it is resolved, a string
-	 * representation of the result is returned; if it is rejected, a string representation of the
-	 * reason is returned.
+	 * Returns a string representation of this {@link sap.ui.base.SyncPromise}. If it is resolved, a
+	 * string representation of the result is returned; if it is rejected, a string representation
+	 * of the reason is returned.
 	 *
-	 * @return {string} A string description of this {@link SyncPromise}
+	 * @return {string} A string description of this {@link sap.ui.base.SyncPromise}
 	 */
 	SyncPromise.prototype.toString = function () {
 		if (this.isPending()) {
@@ -262,13 +291,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a new {@link SyncPromise} for the given array of values just like
+	 * Returns a new {@link sap.ui.base.SyncPromise} for the given array of values just like
 	 * <code>Promise.all(aValues)</code>.
 	 *
 	 * @param {any[]} aValues
 	 *   The values
-	 * @returns {SyncPromise}
-	 *   The {@link SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   The {@link sap.ui.base.SyncPromise}
 	 */
 	SyncPromise.all = function (aValues) {
 		return new SyncPromise(function (resolve, reject) {
@@ -300,12 +329,28 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a new {@link SyncPromise} that is rejected with the given reason.
+	 * Optional listener function which is called with a {@link sap.ui.base.SyncPromise} instance
+	 * and a boolean flag telling whether that instance became "caught" or not. An instance becomes
+	 * "uncaught" as soon as it is rejected and not yet "caught". It becomes "caught" as soon as an
+	 * "fnOnRejected" handler is given to {@link #then} for the first time.
+	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.base.SyncPromise.listener
+	 * @param {sap.ui.base.SyncPromise} oSyncPromise
+	 *   A rejected {@link sap.ui.base.SyncPromise}
+	 * @param {boolean} bCaught
+	 *   <code>false</code> if the {@link sap.ui.base.SyncPromise} instance just became "uncaught",
+	 *   <code>true</code> if it just became "caught"
+	 */
+
+	/**
+	 * Returns a new {@link sap.ui.base.SyncPromise} that is rejected with the given reason.
 	 *
 	 * @param {any} [vReason]
 	 *   The reason for rejection
-	 * @returns {SyncPromise}
-	 *   The {@link SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   The {@link sap.ui.base.SyncPromise}
 	 */
 	SyncPromise.reject = function (vReason) {
 		return new SyncPromise(function (resolve, reject) {
@@ -314,14 +359,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns <code>vResult</code> if it is already a {@link SyncPromise}, or a new
-	 * {@link SyncPromise} wrapping the given thenable <code>vResult</code> or fulfilling with the
-	 * given result.
+	 * Returns <code>vResult</code> if it is already a {@link sap.ui.base.SyncPromise}, or a new
+	 * {@link sap.ui.base.SyncPromise} wrapping the given thenable <code>vResult</code> or
+	 * fulfilling with the given result.
 	 *
 	 * @param {any} [vResult]
 	 *   The thenable to wrap or the result to synchronously fulfill with
-	 * @returns {SyncPromise}
-	 *   The {@link SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   The {@link sap.ui.base.SyncPromise}
 	 */
 	SyncPromise.resolve = function (vResult) {
 		return vResult instanceof SyncPromise
@@ -332,4 +377,4 @@ sap.ui.define([
 	};
 
 	return SyncPromise;
-}/*, bExport = false*/);
+}, /* bExport= */ true);
