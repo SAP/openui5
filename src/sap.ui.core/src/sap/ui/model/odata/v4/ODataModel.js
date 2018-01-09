@@ -546,7 +546,7 @@ sap.ui.define([
 	/**
 	 * Constructs a map of query options from the given binding parameters.
 	 * Parameters starting with '$$' indicate binding-specific parameters, which must not be part
-	 * of a back end query; they are ignored and not added to the map.
+	 * of a back-end query; they are ignored and not added to the map.
 	 * The following query options are disallowed:
 	 * <ul>
 	 * <li> System query options (key starts with "$"), unless

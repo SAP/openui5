@@ -823,8 +823,8 @@ sap.ui.define([
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into
 	 * @param {function} [fnDataRequested]
-	 *   The function is called just before the back end request is sent.
-	 *   If no back end request is needed, the function is not called.
+	 *   The function is called just before the back-end request is sent.
+	 *   If no back-end request is needed, the function is not called.
 	 * @param {object} [oListener]
 	 *   An optional change listener that is added for the given path. Its method
 	 *   <code>onChange</code> is called with the new value if the property at that path is modified
@@ -949,8 +949,8 @@ sap.ui.define([
 	 * @param {string} [sGroupId]
 	 *   ID of the group to associate the requests with
 	 * @param {function} [fnDataRequested]
-	 *   The function is called just before a back end request is sent.
-	 *   If no back end request is needed, the function is not called.
+	 *   The function is called just before a back-end request is sent.
+	 *   If no back-end request is needed, the function is not called.
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the requested range given as an OData response object (with
 	 *   "@odata.context" and the rows as an array in the property <code>value</code>, enhanced
@@ -1040,7 +1040,7 @@ sap.ui.define([
 	 * @param {string} sGroupId
 	 *   The group ID
 	 * @param {function} [fnDataRequested]
-	 *   The function is called when the back end requests have been sent.
+	 *   The function is called when the back-end requests have been sent.
 	 */
 	CollectionCache.prototype.requestElements = function (iStart, iEnd, sGroupId, fnDataRequested) {
 		var sDelimiter = this.sQueryString ? "&" : "?",
@@ -1119,8 +1119,8 @@ sap.ui.define([
 	 * @param {number} iIndex
 	 *   The index of the element to be refreshed
 	 * @param {function} [fnDataRequested]
-	 *   The function is called just before the back end request is sent.
-	 *   If no back end request is needed, the function is not called.
+	 *   The function is called just before the back-end request is sent.
+	 *   If no back-end request is needed, the function is not called.
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which which resolves with <code>undefined</code> when the entity is updated in
 	 *   the cache.
@@ -1209,8 +1209,8 @@ sap.ui.define([
 	 * @param {string} [sPath]
 	 *   ignored for property caches, should be empty
 	 * @param {function} [fnDataRequested]
-	 *   The function is called just before the back end request is sent.
-	 *   If no back end request is needed, the function is not called.
+	 *   The function is called just before the back-end request is sent.
+	 *   If no back-end request is needed, the function is not called.
 	 * @param {object} [oListener]
 	 *   An optional change listener that is added for the given path. Its method
 	 *   <code>onChange</code> is called with the new value if the property at that path is modified
@@ -1288,8 +1288,8 @@ sap.ui.define([
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into
 	 * @param {function} [fnDataRequested]
-	 *   The function is called just before the back end request is sent.
-	 *   If no back end request is needed, the function is not called.
+	 *   The function is called just before the back-end request is sent.
+	 *   If no back-end request is needed, the function is not called.
 	 * @param {object} [oListener]
 	 *   An optional change listener that is added for the given path. Its method
 	 *   <code>onChange</code> is called with the new value if the property at that path is modified
