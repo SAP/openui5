@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.m.GrowingEnablement
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/NumberFormat', 'sap/m/library', 'sap/ui/model/ChangeReason', 'sap/ui/base/ManagedObjectMetadata'],
-	function(jQuery, BaseObject, NumberFormat, library, ChangeReason, ManagedObjectMetadata) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/NumberFormat', 'sap/m/library', 'sap/ui/model/ChangeReason', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui/core/HTML'],
+	function(jQuery, BaseObject, NumberFormat, library, ChangeReason, ManagedObjectMetadata, HTML) {
 	"use strict";
 
 
@@ -201,7 +201,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				id: sTriggerID,
 				busyIndicatorDelay: 0,
 				type: ListType.Active,
-				content: new sap.ui.core.HTML({
+				content: new HTML({
 					content:	'<div class="sapMGrowingListTrigger">' +
 									'<div class="sapMSLITitleDiv sapMGrowingListTriggerText">' +
 										'<span class="sapMSLITitle" id="' + sTriggerID + 'Text">' + jQuery.sap.encodeHTML(sTriggerText) + '</span>' +
