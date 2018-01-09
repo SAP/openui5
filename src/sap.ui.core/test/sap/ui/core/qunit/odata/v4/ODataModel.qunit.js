@@ -110,6 +110,7 @@ sap.ui.require([
 		var oMetadataRequestor = {},
 			oMetaModel,
 			oModel,
+			oModelPrototypeMock = this.mock(ODataModel.prototype),
 			mModelOptions = {};
 
 		assert.throws(function () {
@@ -128,6 +129,7 @@ sap.ui.require([
 			return new ODataModel({operationMode : OperationMode.Auto, serviceUrl : "/foo/",
 				synchronizationMode : "None"});
 		}, new Error("Unsupported operation mode: Auto"), "Unsupported OperationMode");
+		oModelPrototypeMock.expects("initializeSecurityToken").never();
 
 		// code under test: operation mode Server must not throw an error
 		oModel = createModel("", {operationMode : OperationMode.Server, serviceUrl : "/foo/",
@@ -140,9 +142,11 @@ sap.ui.require([
 		this.mock(_MetadataRequestor).expects("create")
 			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", sinon.match.same(mModelOptions))
 			.returns(oMetadataRequestor);
+		this.mock(ODataMetaModel.prototype).expects("fetchEntityContainer").withExactArgs(true);
+		oModelPrototypeMock.expects("initializeSecurityToken").withExactArgs();
 
 		// code under test
-		oModel = createModel("", {annotationURI : ["my/annotations.xml"]});
+		oModel = createModel("", {earlyRequests : true, annotationURI : ["my/annotations.xml"]});
 
 		assert.strictEqual(oModel.sServiceUrl, getServiceUrl());
 		assert.strictEqual(oModel.toString(), sClassName + ": " + getServiceUrl());
@@ -160,14 +164,14 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Early Bird", function (assert) {
+	QUnit.test("Early requests: $metadata and annotations", function (assert) {
 		var oFetchEntityContainerExpectation
 			= this.mock(ODataMetaModel.prototype).expects("fetchEntityContainer")
 				.withExactArgs(true),
 			oModel;
 
 		// code under test
-		oModel = createModel("", {earlyBird : true});
+		oModel = createModel("", {earlyRequests : true});
 
 		assert.ok(oFetchEntityContainerExpectation.alwaysCalledOn(oModel.getMetaModel()));
 	});
@@ -1377,6 +1381,16 @@ sap.ui.require([
 			"/");
 		// Note: we do not go this far; JsDoc of @return wins: (string|undefined), nothing else!
 		assert.strictEqual(Model.prototype.resolve(null), null);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("initializeSecurityToken", function (assert) {
+		var oModel = createModel("");
+
+		this.mock(oModel.oRequestor).expects("refreshSecurityToken").withExactArgs();
+
+		// code under test
+		oModel.initializeSecurityToken();
 	});
 });
 //TODO constructor: test that the service root URL is absolute?

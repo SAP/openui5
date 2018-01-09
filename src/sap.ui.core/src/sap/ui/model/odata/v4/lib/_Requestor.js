@@ -722,6 +722,57 @@ sap.ui.define([
 			oRequest,
 			that = this;
 
+		function executeRequest() {
+			return new Promise(function (fnResolve, fnReject) {
+				var sCurrentCSRFToken = that.mHeaders["X-CSRF-Token"];
+				// Adding query parameters could have been the responsibility of submitBatch,
+				// but doing it here makes the $batch recognition easier.
+				jQuery.ajax(that.sServiceUrl + sResourcePath
+						+ (bIsBatch ? that.sQueryParams : ""), {
+					data : sPayload,
+					headers : jQuery.extend({},
+						that.mPredefinedRequestHeaders,
+						that.mHeaders,
+						mHeaders,
+						bIsBatch ? oBatchRequest.headers : that.mFinalHeaders),
+					method : sMethod
+				}).then(function (oPayload, sTextStatus, jqXHR) {
+					try {
+						that.doCheckVersionHeader(jqXHR.getResponseHeader, sResourcePath);
+					} catch (oError) {
+						fnReject(oError);
+						return;
+					}
+					that.mHeaders["X-CSRF-Token"]
+						= jqXHR.getResponseHeader("X-CSRF-Token") || that.mHeaders["X-CSRF-Token"];
+					if (bIsBatch) {
+						fnResolve(_Batch.deserializeBatchResponse(
+							jqXHR.getResponseHeader("Content-Type"), oPayload));
+					} else {
+						try {
+							fnResolve(that.doConvertResponse(oPayload));
+						} catch (oError) {
+							fnReject(oError);
+						}
+					}
+				}, function (jqXHR, sTextStatus, sErrorMessage) {
+					var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
+					if (!bIsFreshToken && jqXHR.status === 403
+							&& sCsrfToken && sCsrfToken.toLowerCase() === "required") {
+						// refresh CSRF token and repeat original request
+						that.refreshSecurityToken(sCurrentCSRFToken).then(function () {
+							// no fnSubmit, it has been called already
+							// no fnCancel, it is only relevant while the request is in the queue
+							fnResolve(that.request(sMethod, sResourcePath, sGroupId, mHeaders,
+								oPayload, undefined, undefined, true));
+						}, fnReject);
+					} else {
+						fnReject(_Helper.createError(jqXHR));
+					}
+				});
+			});
+		}
+
 		if (sGroupId === "$cached") {
 			throw new Error("Unexpected request: " + sMethod + " " + sResourcePath);
 		}
@@ -771,53 +822,10 @@ sap.ui.define([
 			}
 		}
 
-		return new Promise(function (fnResolve, fnReject) {
-			var sCurrentCSRFToken = that.mHeaders["X-CSRF-Token"];
-			// Adding query parameters could have been the responsibility of submitBatch, but doing
-			// it here makes the $batch recognition easier.
-			jQuery.ajax(that.sServiceUrl + sResourcePath + (bIsBatch ? that.sQueryParams : ""), {
-				data : sPayload,
-				headers : jQuery.extend({},
-					that.mPredefinedRequestHeaders,
-					that.mHeaders,
-					mHeaders,
-					bIsBatch ? oBatchRequest.headers : that.mFinalHeaders),
-				method : sMethod
-			}).then(function (oPayload, sTextStatus, jqXHR) {
-				try {
-					that.doCheckVersionHeader(jqXHR.getResponseHeader, sResourcePath);
-				} catch (oError) {
-					fnReject(oError);
-					return;
-				}
-				that.mHeaders["X-CSRF-Token"]
-					= jqXHR.getResponseHeader("X-CSRF-Token") || that.mHeaders["X-CSRF-Token"];
-				if (bIsBatch) {
-					fnResolve(_Batch.deserializeBatchResponse(
-						jqXHR.getResponseHeader("Content-Type"), oPayload));
-				} else {
-					try {
-						fnResolve(that.doConvertResponse(oPayload));
-					} catch (oError) {
-						fnReject(oError);
-					}
-				}
-			}, function (jqXHR, sTextStatus, sErrorMessage) {
-				var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
-				if (!bIsFreshToken && jqXHR.status === 403
-						&& sCsrfToken && sCsrfToken.toLowerCase() === "required") {
-					// refresh CSRF token and repeat original request
-					that.refreshSecurityToken(sCurrentCSRFToken).then(function () {
-						// no fnSubmit, it has been called already
-						// no fnCancel, it is only relevant while the request is in the queue
-						fnResolve(that.request(sMethod, sResourcePath, sGroupId, mHeaders, oPayload,
-							undefined, undefined, true));
-					}, fnReject);
-				} else {
-					fnReject(_Helper.createError(jqXHR));
-				}
-			});
-		});
+		if (this.oSecurityTokenPromise && sMethod !== "GET") {
+			return this.oSecurityTokenPromise.then(executeRequest);
+		}
+		return executeRequest();
 	};
 
 	/**

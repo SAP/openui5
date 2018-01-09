@@ -56,6 +56,7 @@
 				"dataSource" : "default",
 				"settings" : {
 					"autoExpandSelect" : true,
+					"earlyRequests": true,
 					"groupProperties" : {
 						"FavoriteProductGroup" : {"submit" : "Auto"},
 						"myAutoGroup" : {"submit" : "Auto"},
@@ -67,6 +68,11 @@
 				}
 			}
 		},
-		"rootView" : "Main.view.xml"
+		"rootView" : "Main.view.xml",
+		"resources": {
+			"js": [{
+				"uri": "SalesOrdersSandbox.js"
+			}]
+		}
 	}
 }
