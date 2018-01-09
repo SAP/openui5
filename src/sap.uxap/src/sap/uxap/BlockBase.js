@@ -24,24 +24,24 @@ sap.ui.define([
 		var BlockBaseFormAdjustment = library.BlockBaseFormAdjustment;
 
 		/**
-		 * Constructor for a new BlockBase.
+		 * Constructor for a new <code>BlockBase</code>.
 		 *
-		 * @param {string} [sId] id for the new control, generated automatically if no id is given
-		 * @param {object} [mSettings] initial settings for the new control
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
 		 *
 		 * A block is the main element that will be displayed, mainly in an object page, but not necessarily
 		 * only there.
 		 *
-		 * A block is a control that use an XML view for storing its internal control tree.
-		 * A block is a control that has modes and a view associated to each modes.
+		 * A block is a control that uses an XML view for storing its internal control tree.
+		 * A block is a control that has modes and a view associated to every mode.
 		 * At rendering time, the view associated to the mode is rendered.
 		 *
 		 * <b>Note:</b> The control supports only XML views.
 		 *
-		 * As any UI5 views, the XML view can have a controller which automatically comes a this.oParentBlock attribute (so that the controller can interacts with the block).
-		 * If the controller implements the onParentBlockModeChange method, this method will get called with the sMode parameter when the view is used or re-used by the block.
+		 * As any UI5 view, the XML view can have a controller which automatically comes with a <code>this.oParentBlock</code> attribute (so that the controller can interact with the block).
+		 * If the controller implements the <code>onParentBlockModeChange</code> method, this method will be called with the <code>sMode</code> parameter when the view is used or reused by the block.
 		 *
 		 * @extends sap.ui.core.Control
 		 * @author SAP SE
