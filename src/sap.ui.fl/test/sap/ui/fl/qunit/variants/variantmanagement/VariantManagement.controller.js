@@ -6,134 +6,136 @@ sap.ui.define([
 	return Controller.extend("sap.ui.fl.sample.variantmanagement.VariantManagement", {
 
 		onInit: function() {
+
+			var oModelData = {
+				currentVariant: "2",
+				defaultVariant: "2",
+				originalDefaultVariant: "2",
+				modified: false,
+				variantsEditable: true,
+				showFavorites: true,
+				variants: [
+					{
+						key: "Standard",
+						title: "Standard",
+						author: "A",
+						favorite: true,
+						originalFavorite: true,
+						remove: false,
+						rename: true,
+						executeOnSelect: false,
+						originalExecuteOnSelect: false,
+						visible: true,
+						change: true
+					}, {
+						key: "1",
+						title: "One",
+						author: "A",
+						share: false,
+						favorite: true,
+						originalFavorite: true,
+						remove: true,
+						rename: true,
+						executeOnSelect: false,
+						originalExecuteOnSelect: false,
+						visible: true,
+						change: true
+					}, {
+						key: "2",
+						title: "Two",
+						author: "B",
+						favorite: true,
+						originalFavorite: true,
+						remove: true,
+						rename: true,
+						executeOnSelect: false,
+						originalExecuteOnSelect: false,
+						visible: true,
+						change: true
+					}, {
+						key: "3",
+						title: "Three",
+						share: true,
+						toBeDeleted: false,
+						favorite: true,
+						originalFavorite: true,
+						remove: false,
+						rename: false,
+						executeOnSelect: false,
+						originalExecuteOnSelect: false,
+						visible: true,
+						change: false
+					}, {
+						key: "4",
+						title: "Four",
+						favorite: true,
+						originalFavorite: true,
+						remove: true,
+						rename: true,
+						executeOnSelect: false,
+						originalExecuteOnSelect: false,
+						visible: true,
+						change: true
+					}, {
+						key: "5",
+						title: "Five",
+						favorite: true,
+						originalFavorite: true,
+						remove: true,
+						rename: true,
+						executeOnSelect: false,
+						originalExecuteOnSelect: false,
+						visible: true,
+						change: true
+					}, {
+						key: "6",
+						title: "Six",
+						favorite: true,
+						originalFavorite: true,
+						remove: true,
+						rename: true,
+						executeOnSelect: false,
+						originalExecuteOnSelect: false,
+						visible: true,
+						change: true
+					}, {
+						key: "7",
+						title: "Seven",
+						favorite: true,
+						originalFavorite: true,
+						remove: false,
+						rename: false,
+						executeOnSelect: false,
+						originalExecuteOnSelect: false,
+						visible: true,
+						change: false
+					}, {
+						key: "8",
+						title: "Eight",
+						favorite: true,
+						originalFavorite: true,
+						remove: true,
+						rename: true,
+						executeOnSelect: false,
+						originalExecuteOnSelect: false,
+						visible: true,
+						change: true
+					}, {
+						key: "9",
+						title: "Nine",
+						favorite: true,
+						originalFavorite: true,
+						remove: false,
+						rename: false,
+						executeOnSelect: false,
+						originalExecuteOnSelect: false,
+						visible: true,
+						change: false
+					}
+				]
+			};
+
 			this.oModel = new VariantModel({
-				"MyContext": {
-					currentVariant: "2",
-					defaultVariant: "2",
-					originalDefaultVariant: "2",
-					modified: false,
-					variantsEditable: true,
-					showFavorites: true,
-					variants: [
-						{
-							key: "Standard",
-							title: "Standard",
-							author: "A",
-							favorite: true,
-							originalFavorite: true,
-							remove: false,
-							rename: true,
-							executeOnSelect: false,
-							originalExecuteOnSelect: false,
-							visible: true,
-							change: true
-						}, {
-							key: "1",
-							title: "One",
-							author: "A",
-							share: false,
-							favorite: true,
-							originalFavorite: true,
-							remove: true,
-							rename: true,
-							executeOnSelect: false,
-							originalExecuteOnSelect: false,
-							visible: true,
-							change: true
-						}, {
-							key: "2",
-							title: "Two",
-							author: "B",
-							favorite: true,
-							originalFavorite: true,
-							remove: true,
-							rename: true,
-							executeOnSelect: false,
-							originalExecuteOnSelect: false,
-							visible: true,
-							change: true
-						}, {
-							key: "3",
-							title: "Three",
-							share: true,
-							toBeDeleted: false,
-							favorite: true,
-							originalFavorite: true,
-							remove: false,
-							rename: false,
-							executeOnSelect: false,
-							originalExecuteOnSelect: false,
-							visible: true,
-							change: false
-						}, {
-							key: "4",
-							title: "Four",
-							favorite: true,
-							originalFavorite: true,
-							remove: true,
-							rename: true,
-							executeOnSelect: false,
-							originalExecuteOnSelect: false,
-							visible: true,
-							change: true
-						}, {
-							key: "5",
-							title: "Five",
-							favorite: true,
-							originalFavorite: true,
-							remove: true,
-							rename: true,
-							executeOnSelect: false,
-							originalExecuteOnSelect: false,
-							visible: true,
-							change: true
-						}, {
-							key: "6",
-							title: "Six",
-							favorite: true,
-							originalFavorite: true,
-							remove: true,
-							rename: true,
-							executeOnSelect: false,
-							originalExecuteOnSelect: false,
-							visible: true,
-							change: true
-						}, {
-							key: "7",
-							title: "Seven",
-							favorite: true,
-							originalFavorite: true,
-							remove: false,
-							rename: false,
-							executeOnSelect: false,
-							originalExecuteOnSelect: false,
-							visible: true,
-							change: false
-						}, {
-							key: "8",
-							title: "Eight",
-							favorite: true,
-							originalFavorite: true,
-							remove: true,
-							rename: true,
-							executeOnSelect: false,
-							originalExecuteOnSelect: false,
-							visible: true,
-							change: true
-						}, {
-							key: "9",
-							title: "Nine",
-							favorite: true,
-							originalFavorite: true,
-							remove: false,
-							rename: false,
-							executeOnSelect: false,
-							originalExecuteOnSelect: false,
-							visible: true,
-							change: false
-						}
-					]
-				},
 
 				M1: {
 					defaultVariant: "3",
@@ -149,13 +151,16 @@ sap.ui.define([
 // this.oData[sVariantMgmtRef].currentVariant = sNewVariantRef;
 // }; // overrule default
 
+			this._sModelName = "Sample";
+
 			this.oVM = this.getView().byId("idVariantManagementCtrl");
-			this.oModel.registerToModel = function() {
-			};
 
-			this.oVM.setModel(this.oModel, "$FlexVariants");
+			this.oVM.setModelName(this._sModelName);
 
-			var oCurrentVariantChangeBinding = this.oModel.bindProperty("currentVariant", this.oVM.getBindingContext("$FlexVariants"));
+			this.oModel.oData[this.oVM.getId()] = oModelData;
+			this.oVM.setModel(this.oModel, this._sModelName);
+
+			var oCurrentVariantChangeBinding = this.oModel.bindProperty("currentVariant", this.oVM.getBindingContext(this._sModelName));
 			oCurrentVariantChangeBinding.attachChange(function(oEvent) {
 				MessageToast.show("currentVariant: " + oEvent.oSource.oValue);
 			});
@@ -171,19 +176,18 @@ sap.ui.define([
 			// var bShowDef = this.oVM.getShowAsDefault();
 
 			this.oVM.destroy();
-			var oVM = new VariantManagement(sVMId);
-			oVM._getLocalId = function() {
-				return this.getId();
-			};
+			var oVM = new VariantManagement(sVMId, {
+				modelName: this._sModelName
+			});
 			oParent.addContent(oVM);
 
 			this.oVM = this.getView().byId("idVariantManagementCtrl");
 			this.oVM.setShowExecuteOnSelection(bShowExe);
 			// this.oVM.setShowAsDefault(bShowDef);
 
-			this.oVM.setModel(this.oModel, "$FlexVariants");
+			this.oVM.setModel(this.oModel, this._sModelName);
 
-			var oCurrentVariantChangeBinding = this.oModel.bindProperty("currentVariant", this.oVM.getBindingContext("$FlexVariants"));
+			var oCurrentVariantChangeBinding = this.oModel.bindProperty("currentVariant", this.oVM.getBindingContext(this._sModelName));
 			oCurrentVariantChangeBinding.attachChange(function(oEvent) {
 				MessageToast.show("currentVariant: " + oEvent.oSource.oValue);
 			});
@@ -200,8 +204,8 @@ sap.ui.define([
 			this.oVM.setShowSetAsDefault(!this.oVM.getShowSetAsDefault());
 		},
 		onToggleFavoritesBtn: function(oEvent) {
-			var oModel = this.oVM.getModel("$FlexVariants");
-			var oData = this.oVM.getBindingContext("$FlexVariants").getObject();
+			var oModel = this.oVM.getModel(this._sModelName);
+			var oData = this.oVM.getBindingContext(this._sModelName).getObject();
 
 			oData.showFavorites = !oData.showFavorites;
 
@@ -214,8 +218,8 @@ sap.ui.define([
 
 		onToggleEditableVariantsBtn: function(oEvent) {
 
-			var oModel = this.oVM.getModel("$FlexVariants");
-			var oData = this.oVM.getBindingContext("$FlexVariants").getObject();
+			var oModel = this.oVM.getModel(this._sModelName);
+			var oData = this.oVM.getBindingContext(this._sModelName).getObject();
 
 			oData.variantsEditable = !this.oVM.getEditable();
 
@@ -242,8 +246,8 @@ sap.ui.define([
 		},
 		onManage: function(oEvent) {
 
-			var oModel = this.oVM.getModel("$FlexVariants");
-			var oData = this.oVM.getBindingContext("$FlexVariants").getObject();
+			var oModel = this.oVM.getModel(this._sModelName);
+			var oData = this.oVM.getBindingContext(this._sModelName).getObject();
 
 			oData["variants"] = oData["variants"].filter(function(oItem) {
 				return oItem.visible;
