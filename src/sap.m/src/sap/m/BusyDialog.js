@@ -485,6 +485,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/D
 			return this._oDialog && this._oDialog.getDomRef();
 		};
 
+		//Forward methods to the inner dialog: addStyleClass, removeStyleClass, hasStyleClass, toggleStyleClass
+		["addStyleClass", "removeStyleClass", "toggleStyleClass", "hasStyleClass"].forEach(function (sActionName) {
+			BusyDialog.prototype[sActionName] = function () {
+				if (this._oDialog && this._oDialog[sActionName]) {
+					return this._oDialog[sActionName].apply(this._oDialog, arguments);
+				}
+			};
+		});
+
 		//private functions
 
 		/**
