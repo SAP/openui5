@@ -1177,11 +1177,11 @@ sap.ui.define([
 	 *   A context
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that gets resolved with an object having the following properties:
-	 *   <li>
-	 *    <ul><code>editUrl</code>: The edit URL or undefined if the entity is transient
-	 *    <ul><code>entityPath</code>: The resolved, absolute path of the entity to be PATCHed
-	 *    <ul><code>propertyPath</code>: The path of the property relative to the entity
-	 *   </li>
+	 *   <ul>
+	 *    <li><code>editUrl</code>: The edit URL or undefined if the entity is transient
+	 *    <li><code>entityPath</code>: The resolved, absolute path of the entity to be PATCHed
+	 *    <li><code>propertyPath</code>: The path of the property relative to the entity
+	 *   </ul>
 	 *
 	 * @private
 	 */
