@@ -1498,6 +1498,14 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	 */
 	MultiInput.prototype.getDomRefForValueStateMessage = MultiInput.prototype.getPopupAnchorDomRef;
 
+	/**
+	 * Updates the inner input field.
+	 *
+	 * @protected
+	 */
+	MultiInput.prototype.updateInputField = function() {
+		Input.prototype.updateInputField.call(this, '');
+	};
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
