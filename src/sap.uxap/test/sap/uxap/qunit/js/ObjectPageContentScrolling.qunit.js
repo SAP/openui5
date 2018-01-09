@@ -266,6 +266,24 @@
 		oObjectPageContentScrollingView.destroy();
 	});
 
+	QUnit.test("ScrollEnablement private API", function (assert) {
+		var oObjectPageContentScrollingView = sap.ui.xmlview("UxAP-objectPageContentScrolling", {
+			viewName: "view.UxAP-ObjectPageContentScrolling"
+		});
+
+		// arrange
+		oObjectPageContentScrollingView.placeAt('qunit-fixture');
+		sap.ui.getCore().applyChanges();
+
+		var oObjectPage = oObjectPageContentScrollingView.byId("ObjectPageLayout");
+
+		oObjectPage._initializeScroller();
+
+		assert.ok(oObjectPage._oScroller._$Container, "ScrollEnablement private API is OK.");
+
+		oObjectPageContentScrollingView.destroy();
+	});
+
 	function isObjectPageHeaderStickied(oObjectPage) {
 		var oHeaderTitle = jQuery.sap.byId(oObjectPage.getId() + "-headerTitle");
 		var oHeaderContent = jQuery.sap.byId(oObjectPage.getId() + "-headerContent");
