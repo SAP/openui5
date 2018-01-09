@@ -8,6 +8,7 @@ sap.ui.define([
 		onInit: function() {
 
 			var oModelData = {
+				popoverTitle: "{i18n>POP_OVER_TITLE}",
 				currentVariant: "2",
 				defaultVariant: "2",
 				originalDefaultVariant: "2",
@@ -18,6 +19,7 @@ sap.ui.define([
 					{
 						key: "Standard",
 						title: "Standard",
+						originalTitle: "Standard",
 						author: "A",
 						favorite: true,
 						originalFavorite: true,
@@ -30,6 +32,7 @@ sap.ui.define([
 					}, {
 						key: "1",
 						title: "One",
+						originalTitle: "One",
 						author: "A",
 						share: false,
 						favorite: true,
@@ -43,6 +46,7 @@ sap.ui.define([
 					}, {
 						key: "2",
 						title: "Two",
+						originalTitle: "Two",
 						author: "B",
 						favorite: true,
 						originalFavorite: true,
@@ -55,6 +59,7 @@ sap.ui.define([
 					}, {
 						key: "3",
 						title: "Three",
+						originalTitle: "Three",
 						share: true,
 						toBeDeleted: false,
 						favorite: true,
@@ -68,6 +73,7 @@ sap.ui.define([
 					}, {
 						key: "4",
 						title: "Four",
+						originalTitle: "Four",
 						favorite: true,
 						originalFavorite: true,
 						remove: true,
@@ -79,6 +85,7 @@ sap.ui.define([
 					}, {
 						key: "5",
 						title: "Five",
+						originalTitle: "Five",
 						favorite: true,
 						originalFavorite: true,
 						remove: true,
@@ -90,6 +97,7 @@ sap.ui.define([
 					}, {
 						key: "6",
 						title: "Six",
+						originalTitle: "Six",
 						favorite: true,
 						originalFavorite: true,
 						remove: true,
@@ -101,6 +109,7 @@ sap.ui.define([
 					}, {
 						key: "7",
 						title: "Seven",
+						originalTitle: "Seven",
 						favorite: true,
 						originalFavorite: true,
 						remove: false,
@@ -112,17 +121,19 @@ sap.ui.define([
 					}, {
 						key: "8",
 						title: "Eight",
+						originalTitle: "Eight",
 						favorite: true,
 						originalFavorite: true,
 						remove: true,
 						rename: true,
 						executeOnSelect: false,
 						originalExecuteOnSelect: false,
-						visible: true,
+						visible: false,
 						change: true
 					}, {
 						key: "9",
 						title: "Nine",
+						originalTitle: "Nine",
 						favorite: true,
 						originalFavorite: true,
 						remove: false,
@@ -135,6 +146,14 @@ sap.ui.define([
 				]
 			};
 
+			var sResourceUrl = "i18n/i18n.properties";
+			var sLocale = sap.ui.getCore().getConfiguration().getLanguage();
+			var oResourceModel = new sap.ui.model.resource.ResourceModel({
+				bundleUrl: sResourceUrl,
+				bundleLocale: sLocale
+			});
+			this.getView().setModel(oResourceModel, "i18n");
+
 			this.oModel = new VariantModel({
 
 				M1: {
@@ -146,10 +165,6 @@ sap.ui.define([
 					variants: []
 				}
 			});
-
-// this.oModel.updateCurrentVariant = function(sVariantMgmtRef, sNewVariantRef) {
-// this.oData[sVariantMgmtRef].currentVariant = sNewVariantRef;
-// }; // overrule default
 
 			this._sModelName = "Sample";
 
