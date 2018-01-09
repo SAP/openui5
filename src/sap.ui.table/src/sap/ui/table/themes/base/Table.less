@@ -168,7 +168,8 @@
 }
 
 .sapUiTableOverlayArea:focus,
-.sapUiTableCtrlEmpty:focus {
+.sapUiTableCtrlEmpty:focus,
+.sapUiTableCnt > .sapUiLocalBusyIndicator:focus {
 	outline-width: @_sap_ui_table_FocusOutlineWidth;
 	outline-style: dotted;
 	outline-offset: -3px;
@@ -178,12 +179,14 @@
 html[data-sap-ui-browser^="ie"], html[data-sap-ui-browser^="ed"] {
 
 	.sapUiTableOverlayArea:focus,
-	.sapUiTableCtrlEmpty:focus {
+	.sapUiTableCtrlEmpty:focus,
+	.sapUiTableCnt > .sapUiLocalBusyIndicator:focus {
 		outline-width: 0;
 	}
 
 	.sapUiTableOverlayArea:focus:before,
-	.sapUiTableCtrlEmpty:focus:before {
+	.sapUiTableCtrlEmpty:focus:before,
+	.sapUiTableCnt > .sapUiLocalBusyIndicator:focus:before {
 		position: absolute;
 		top: 2px;
 		left: 2px;
