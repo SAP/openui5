@@ -176,6 +176,14 @@ sap.ui.define([
 				"mode" : {
 					type: "string",
 					defaultValue: "adaptation"
+				},
+
+				/**
+				 * Defines designtime metadata scope
+				 */
+				"metadataScope": {
+					type: "string",
+					defaultValue: "default"
 				}
 			},
 			events : {
@@ -499,8 +507,9 @@ sap.ui.define([
 
 				jQuery.sap.measure.start("rta.dt.startup","Measurement of RTA: DesignTime start up");
 				this._oDesignTime = new DesignTime({
-					rootElements : [this._oRootControl],
-					plugins : aPlugins
+					rootElements: [this._oRootControl],
+					plugins: aPlugins,
+					scope: this.getMetadataScope()
 				});
 
 				jQuery(Overlay.getOverlayContainer()).addClass("sapUiRta");
@@ -1506,6 +1515,20 @@ sap.ui.define([
 		}
 	};
 
-	return RuntimeAuthoring;
+	/**
+	 * Setter for property 'metadataScope'.
+	 * @param {string} sScope The new value for the 'metadataScope' property
+	 */
+	RuntimeAuthoring.prototype.setMetadataScope = function (sScope) {
+		// We do not support scope change after creation of DesignTime instance
+		// as this requires reinitialization of all overlays
+		if (this._oDesignTime) {
+			jQuery.sap.log.error("sap.ui.rta: Failed to set metadata scope on RTA instance after RTA is started");
+			return;
+		}
 
+		this.setProperty('metadataScope', sScope);
+	};
+
+	return RuntimeAuthoring;
 }, /* bExport= */true);
