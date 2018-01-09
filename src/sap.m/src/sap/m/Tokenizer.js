@@ -719,8 +719,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	Tokenizer.prototype._getAsyncValidationCallback = function(aValidators, iValidatorIndex, sInitialText,
 															   oSuggestionObject, fValidateCallback) {
-		var that = this,
-			bAddTokenSuccess;
+		var that = this;
 
 		return function(oToken) {
 			if (oToken) { // continue validating
@@ -731,15 +730,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					suggestionObject : oSuggestionObject,
 					validationCallback : fValidateCallback
 				}, aValidators);
-				bAddTokenSuccess = that._addUniqueToken(oToken, fValidateCallback);
 
-				if (bAddTokenSuccess) {
-					that.fireTokenUpdate({
-						addedTokens : [oToken],
-						removedTokens : [],
-						type : Tokenizer.TokenUpdateType.Added
-					});
-				}
+				that._addUniqueToken(oToken, fValidateCallback);
 			} else {
 				if (fValidateCallback) {
 					fValidateCallback(false);
