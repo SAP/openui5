@@ -1436,7 +1436,7 @@ sap.ui.require([
 
 		this.mock(oBinding.oCachePromise.getResult()).expects("_delete")
 			.withExactArgs("$direct", "EMPLOYEES('1')", "42", sinon.match.same(fnCallback))
-			.returns(Promise.resolve());
+			.returns(SyncPromise.resolve());
 		oModelMock.expects("isAutoGroup").withExactArgs("$direct").returns(false);
 		oModelMock.expects("isDirectGroup").withExactArgs("$direct").returns(true);
 
@@ -1677,8 +1677,8 @@ sap.ui.require([
 					oCachePromise : SyncPromise.resolve(oCache)
 				}),
 				oCreateResult = {},
-				oCreatePromise = bCancel ? Promise.reject(oCreateError) : Promise.resolve(
-					oCreateResult),
+				oCreatePromise = SyncPromise.resolve(
+					bCancel ? Promise.reject(oCreateError) : oCreateResult),
 				fnCancel = function () {},
 				oInitialData = {};
 
@@ -1762,7 +1762,7 @@ sap.ui.require([
 				.withExactArgs("updateGroupId", vPostPath, "", sinon.match.same(oInitialData),
 					sinon.match.same(fnCancel), /*fnErrorCallback*/sinon.match.func)
 				// we only want to observe fnErrorCallback, hence we neither resolve, nor reject
-				.returns(new Promise(function () {}));
+				.returns(new SyncPromise(function () {}));
 
 			// code under test
 			oBinding.createInCache("updateGroupId", vPostPath, "", oInitialData, fnCancel);

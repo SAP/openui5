@@ -309,7 +309,7 @@ sap.ui.define([
 
 		/**
 		 * Returns the contexts that result from iterating over the binding's path/context.
-		 * @returns {SyncPromise} A promise that is resolved with an array of contexts
+		 * @returns {sap.ui.base.SyncPromise} A promise that is resolved with an array of contexts
 		 *
 		 * @private
 		 */
@@ -648,7 +648,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.Context} oContext
 	 *   OData V4 context object for which the canonical path is requested; it must point to an
 	 *   entity
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved with the canonical path (for example "/EMPLOYEES('1')") in
 	 *   case of success, or rejected with an instance of <code>Error</code> in case of failure
 	 *
@@ -674,7 +674,7 @@ sap.ui.define([
 	 *   Whether to just read the $metadata document and annotations, but not yet convert them from
 	 *   XML to JSON; this is useful at most once in an early call that precedes all other normal
 	 *   calls and ignored after the first call without this.
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved with the $metadata "JSON" object as soon as the entity
 	 *   container is fully available, or rejected with an error. In case of
 	 *   <code>bPrefetch</code> in an early call, <code>null</code> is returned.
@@ -713,7 +713,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sModuleName
 	 *   The name of the module to fetch (e.g. sap.ui.model.odata.type.Int16)
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved with the requested module as soon as it is available
 	 *
 	 * @private
@@ -741,7 +741,7 @@ sap.ui.define([
 	 *   Optional (binding) parameters; if they are given, <code>oContext</code> cannot be omitted
 	 * @param {object} [mParameters.scope]
 	 *   Optional scope for lookup of aliases for computed annotations (since 1.43.0)
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved with the requested metadata object as soon as it is available
 	 *
 	 * @private
@@ -1100,7 +1100,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath
 	 *   An absolute path to an OData property within the OData data model
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that gets resolved with the corresponding UI5 type from
 	 *   {@link sap.ui.model.odata.type} or rejected with an error; if no specific type can be
 	 *   determined, a warning is logged and {@link sap.ui.model.odata.type.Raw} is used
@@ -1175,7 +1175,7 @@ sap.ui.define([
 	 *   A path of a property in the OData data model, relative to <code>oContext</code>.
 	 * @param {sap.ui.model.odata.v4.Context} oContext
 	 *   A context
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that gets resolved with an object having the following properties:
 	 *   <li>
 	 *    <ul><code>editUrl</code>: The edit URL or undefined if the entity is transient
@@ -1330,7 +1330,7 @@ sap.ui.define([
 	 *   observed
 	 * @param {object} oProperty
 	 *   The property in the data service
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that gets resolved with a map containing all "ValueListMapping" annotations in
 	 *   the metadata of the given model by qualifier.
 	 *
@@ -1400,7 +1400,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sPropertyPath
 	 *   An absolute path to an OData property within the OData data model
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that is resolved with the type of the value list. It is rejected if the property
 	 *   cannot be found in the metadata.
 	 *

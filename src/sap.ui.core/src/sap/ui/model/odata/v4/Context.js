@@ -24,7 +24,7 @@ sap.ui.define([
 	 * @param {boolean} [bExternalFormat=false]
 	 *   If <code>true</code>, the value is returned in external format using a UI5 type for the
 	 *   given property path that formats corresponding to the property's EDM type and constraints.
-	 * @returns {SyncPromise} a promise on the formatted value
+	 * @returns {sap.ui.base.SyncPromise} a promise on the formatted value
 	 */
 	function fetchPrimitiveValue(oContext, sPath, bExternalFormat) {
 		var oError,
@@ -209,7 +209,7 @@ sap.ui.define([
 	/**
 	 * Returns a promise for the "canonical path" of the entity for this context.
 	 *
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved with the canonical path (e.g. "/SalesOrderList('0500000000')")
 	 *   in case of success, or rejected with an instance of <code>Error</code> in case of failure,
 	 *   e.g. if the given context does not point to an entity
@@ -228,7 +228,7 @@ sap.ui.define([
 	 *   A path (absolute or relative to this context)
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the binding's <code>fetchValue</code> call
 	 *
 	 * @private
@@ -626,7 +626,7 @@ sap.ui.define([
 	 * @param {string} sPath The path; either relative to the context or absolute containing
 	 *   the cache's request path (it will become absolute when forwarding the request to the
 	 *   parent binding)
-	 * @returns {SyncPromise} A sync promise on the result of the processor
+	 * @returns {sap.ui.base.SyncPromise} A sync promise on the result of the processor
 	 */
 	Context.prototype.withCache = function (fnProcessor, sPath) {
 		if (this.iIndex === -2) {

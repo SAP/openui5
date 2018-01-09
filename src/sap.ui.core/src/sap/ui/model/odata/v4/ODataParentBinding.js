@@ -189,7 +189,7 @@ sap.ui.define([
 	 *   The initial data for the created entity
 	 * @param {function} fnCancelCallback
 	 *   A function which is called after a transient entity has been canceled from the cache
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   The create Promise which is resolved without data when the POST request has been
 	 *   successfully sent and the entity has been marked as non-transient
 	 *
@@ -305,7 +305,7 @@ sap.ui.define([
 	 * @param {function} fnCallback
 	 *   A function which is called after the entity has been deleted from the server and from the
 	 *   cache; the index of the entity is passed as parameter
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure
 	 * @throws {Error}
@@ -347,10 +347,10 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Context} oContext The child binding's context
 	 * @param {string} sChildPath The child binding's binding path
-	 * @param {SyncPromise} oChildQueryOptionsPromise Promise resolving with the child binding's
-	 *   (aggregated) query options
-	 * @returns {SyncPromise} A promise resolved with a boolean value indicating whether the child
-	 *   binding can use this binding's or an ancestor binding's cache.
+	 * @param {sap.ui.base.SyncPromise} oChildQueryOptionsPromise Promise resolving with the child
+	 *   binding's (aggregated) query options
+	 * @returns {sap.ui.base.SyncPromise} A promise resolved with a boolean value indicating whether
+	 *   the child binding can use this binding's or an ancestor binding's cache.
 	 *
 	 * @private
 	 */
@@ -368,7 +368,7 @@ sap.ui.define([
 		/*
 		 * Fetches the property that is reached by the calculated meta path and (if necessary) its
 		 * type.
-		 * @returns {SyncPromise} A promise that is resolved with the property
+		 * @returns {sap.ui.base.SyncPromise} A promise that is resolved with the property
 		 */
 		function fetchPropertyAndType() {
 			return oMetaModel.fetchObject(sFullMetaPath).then(function (oProperty) {

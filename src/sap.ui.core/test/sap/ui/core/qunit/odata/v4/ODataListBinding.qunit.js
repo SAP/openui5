@@ -88,7 +88,7 @@ sap.ui.require([
 	 *   simulate drill-down, i.e. resolve with unwrapped array
 	 * @param {number} [iCount]
 	 *   the  value for "$count", remains unset if undefined
-	 * @return {SyncPromise}
+	 * @return {sap.ui.base.SyncPromise}
 	 *   the promise which is fulfilled as specified
 	 */
 	function createResult(iLength, iStart, bDrillDown, iCount) {
@@ -110,7 +110,7 @@ sap.ui.require([
 	 *   simulate drill-down, i.e. resolve with unwrapped array
 	 * @param {number} [iCount]
 	 *   the  value for "$count", remains unset if undefined
-	 * @return {SyncPromise}
+	 * @return {sap.ui.base.SyncPromise}
 	 *   the promise which is fulfilled as specified
 	 */
 	function createSyncResult(iLength, iStart, bDrillDown, iCount) {
@@ -900,7 +900,7 @@ sap.ui.require([
 			// code under test
 			assert.strictEqual(oBinding.getLength(), iExpectedLength);
 
-			oCacheMock.expects("create").returns(Promise.resolve({}));
+			oCacheMock.expects("create").returns(SyncPromise.resolve(Promise.resolve({})));
 			oContext = oBinding.create();
 
 			// code under test
@@ -913,7 +913,8 @@ sap.ui.require([
 					iExpectedLength + (oFixture.$count ? 2 : 1),
 					"after successful POST");
 
-				oCacheMock.expects("_delete").callsArgWith(3, -1).returns(Promise.resolve());
+				oCacheMock.expects("_delete").callsArgWith(3, -1)
+					.returns(SyncPromise.resolve());
 				return oBinding._delete("$direct", "EMPLOYEES('42')", oContext).then(function () {
 					// code under test
 					assert.strictEqual(oBinding.getLength(), iExpectedLength,
@@ -2768,7 +2769,7 @@ sap.ui.require([
 			.withExactArgs("update", "EMPLOYEES", "", sinon.match.same(oInitialData),
 				sinon.match.func, sinon.match.func)
 			// we only want to observe fnCancelCallback, hence we neither resolve, nor reject
-			.returns(new Promise(function () {}));
+			.returns(new SyncPromise(function () {}));
 
 		// code under test
 		oContext = oBinding.create(oInitialData);
@@ -2814,7 +2815,7 @@ sap.ui.require([
 			oCacheMock.expects("create")
 				.withExactArgs(oFixture.sUpdateGroupId, "EMPLOYEES", "",
 					sinon.match.same(oFixture.oInitialData), sinon.match.func, sinon.match.func)
-				.returns(Promise.resolve());
+				.returns(SyncPromise.resolve(Promise.resolve()));
 			oBinding.attachEventOnce("change", function (oEvent) {
 				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Add);
 				assert.ok(oBinding.aContexts[-1], "transient context exists");

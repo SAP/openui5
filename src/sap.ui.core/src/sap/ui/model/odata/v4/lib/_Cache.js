@@ -112,7 +112,7 @@ sap.ui.define([
 	 *   A function which is called after a transient entity has been deleted from the cache or
 	 *   after the entity has been deleted from the server and from the cache; the index of the
 	 *   entity and the entity list are passed as parameter
-	 * @returns {Promise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise for the DELETE request
 	 */
 	Cache.prototype._delete = function (sGroupId, sEditUrl, sPath, fnCallback) {
@@ -290,7 +290,7 @@ sap.ui.define([
 	 *   A function which is called after a transient entity has been canceled from the cache
 	 * @param {function} fnErrorCallback
 	 *   A function which is called with an Error object each time a POST request fails
-	 * @returns {Promise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved without data when the POST request has been successfully sent
 	 *   and the entity has been marked as non-transient
 	 */
@@ -461,7 +461,7 @@ sap.ui.define([
 	 * them into a map from type to meta path. Checks the types' key properties and puts their types
 	 * into the map, too, if they are complex.
 	 *
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that is resolved with a map from resource path + entity path to the type
 	 */
 	Cache.prototype.fetchTypes = function () {
@@ -829,7 +829,7 @@ sap.ui.define([
 	 *   An optional change listener that is added for the given path. Its method
 	 *   <code>onChange</code> is called with the new value if the property at that path is modified
 	 *   via {@link #update} later.
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the requested data.
 	 *
 	 *   The promise is rejected if the cache is inactive (see {@link #setActive}) when the response
@@ -860,7 +860,7 @@ sap.ui.define([
 	 * an option to enlarge the array to accommodate <code>iEnd - 1</code>, the promise is also
 	 * stored in <code>aElements.$tail</code>.
 	 *
-	 * @param {SyncPromise} oPromise
+	 * @param {sap.ui.base.SyncPromise} oPromise
 	 *   The promise
 	 * @param {number} iStart
 	 *   The start index
@@ -951,7 +951,7 @@ sap.ui.define([
 	 * @param {function} [fnDataRequested]
 	 *   The function is called just before a back end request is sent.
 	 *   If no back end request is needed, the function is not called.
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the requested range given as an OData response object (with
 	 *   "@odata.context" and the rows as an array in the property <code>value</code>, enhanced
 	 *   with a number property <code>$count</code> representing the element count on server-side;
@@ -1121,7 +1121,7 @@ sap.ui.define([
 	 * @param {function} [fnDataRequested]
 	 *   The function is called just before the back end request is sent.
 	 *   If no back end request is needed, the function is not called.
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which which resolves with <code>undefined</code> when the entity is updated in
 	 *   the cache.
 	 *
@@ -1215,7 +1215,7 @@ sap.ui.define([
 	 *   An optional change listener that is added for the given path. Its method
 	 *   <code>onChange</code> is called with the new value if the property at that path is modified
 	 *   via {@link #update} later.
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the element.
 	 *
 	 *   The promise is rejected if the cache is inactive (see {@link #setActive}) when the response
@@ -1294,7 +1294,7 @@ sap.ui.define([
 	 *   An optional change listener that is added for the given path. Its method
 	 *   <code>onChange</code> is called with the new value if the property at that path is modified
 	 *   via {@link #update} later.
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the element.
 	 *
 	 *   The promise is rejected if the cache is inactive (see {@link #setActive}) when the response
@@ -1342,7 +1342,7 @@ sap.ui.define([
 	 *   The data to be sent with the POST request
 	 * @param {string} [sETag]
 	 *   The ETag to be sent as "If-Match" header with the POST request.
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the result of the request.
 	 * @throws {Error}
 	 *   If the cache does not allow POST or another POST is still being processed.
