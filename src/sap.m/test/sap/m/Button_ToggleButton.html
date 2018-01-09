@@ -22,6 +22,42 @@
 	jQuery.sap.require("sap.ui.core.HTML");
 	jQuery.sap.require("sap.ui.core.IconPool");
 
+	function toggleCompact() {
+		jQuery("body").toggleClass("sapUiSizeCompact");
+	};
+
+	new sap.ui.core.HTML({content: "<div id='top'>&nbsp;</div>"}).placeAt("controlArea");
+
+	var oButtonc = new sap.m.Button("toggle_mode", {
+		text: "Toggle Compact Mode",
+		press: toggleCompact
+	}).placeAt("controlArea");
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("controlArea");
+
+	var oButtoncHCB = new sap.m.Button("hcb_mode", {
+		text: "HCB Theme",
+		press: function(){
+			sap.ui.getCore().applyTheme("sap_belize_hcb");
+		}
+	}).placeAt("controlArea");
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("controlArea");
+
+	var oButtonBelize = new sap.m.Button("belize_mode", {
+		text: "Belize Theme",
+		press: function(){
+			sap.ui.getCore().applyTheme("sap_belize");
+		}
+	}).placeAt("controlArea");
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("controlArea");
+
+	var oButtonRTL = new sap.m.Button("rtl_mode", {
+		text: "toggle RTL",
+		press: function(){
+			sap.ui.getCore().getConfiguration().setRTL(!sap.ui.getCore().getConfiguration().getRTL());
+		}
+	}).placeAt("controlArea");
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("controlArea");
+
 	new sap.ui.core.HTML({content: "</br>Default type Buttons</br>"}).placeAt("standAloneBtn");
 	////////////////////////// DEFAULT //////////////////////////////////
 	var oButton1 = new sap.m.Button({
@@ -228,8 +264,7 @@
 		enabled: false
 	}).placeAt("standAloneBtn");
 
-
-	new sap.ui.core.HTML({content: "</br></br>Emphasized type Buttons</br>"}).placeAt("standAloneBtn");
+	new sap.ui.core.HTML({content: "</br></br><span>Emphasized type Buttons</span></br>"}).placeAt("standAloneBtn");
 
 	////////////////////////// Emphasized //////////////////////////////////
 	var oButton25 = new sap.m.Button({
@@ -385,8 +420,7 @@
 	}).placeAt("standAloneBtn");
 
 
-
-	new sap.ui.core.HTML({content: "</br></br>Unstyled type Buttons</br>"}).placeAt("standAloneBtn");
+	new sap.ui.core.HTML({content: "</br></br>Unstyled type Buttons</br></br>"}).placeAt("standAloneBtn");
 
 	////////////////////////// Unstyled //////////////////////////////////
 	var oButton43 = new sap.m.Button({
@@ -438,7 +472,7 @@
 	}).placeAt("standAloneBtn");
 
 
-	new sap.ui.core.HTML({content: "</br>Default type Buttons</br>"}).placeAt("standAloneBtn");
+	new sap.ui.core.HTML({content: "</br><span>Default type ToggleButtons</span></br>"}).placeAt("standAloneBtn");
 	////////////////////////// DEFAULT //////////////////////////////////
 	var oToggleButton1 = new sap.m.ToggleButton({
 		type: sap.m.ButtonType.Default,
@@ -719,7 +753,7 @@
 		pressed: true
 	}).placeAt("standAloneBtn");
 
-	new sap.ui.core.HTML({content: "</br></br>Emphasized type ToggleButtons</br>"}).placeAt("standAloneBtn");
+	new sap.ui.core.HTML({content: "</br><span>Emphasized type ToggleButtons</span></br>"}).placeAt("standAloneBtn");
 
 	////////////////////////// Emphasized //////////////////////////////////
 	var oToggleButton25 = new sap.m.ToggleButton({
@@ -983,7 +1017,7 @@
 		enabled: false
 	}).placeAt("standAloneBtn");
 
-	new sap.ui.core.HTML({content: "</br></br>Bar</br>"}).placeAt("barBtn");
+	new sap.ui.core.HTML({content: "<span id='bars1'>Bar</span></br>"}).placeAt("barBtn");
 
 	var b = new sap.m.Bar({
 		contentLeft: [
@@ -998,6 +1032,18 @@
 				icon: "sap-icon://home",
 				text: "Btn Def Dis",
 				enabled: false
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Accept,
+				icon: "sap-icon://home",
+				text: "Btn Accept",
+				enabled: false
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Accept,
+				icon: "sap-icon://home",
+				text: "Btn Accept",
+				enabled: true
 			}),
 			new sap.m.ToggleButton({
 				type: sap.m.ButtonType.Default,
@@ -1035,9 +1081,23 @@
 			new sap.m.ToggleButton({
 				type: sap.m.ButtonType.Reject,
 				icon: "sap-icon://home",
-				text: "ToggleBtn Reject Dis",
+				text: "ToggleBtn Reject",
 				enabled: true,
 				pressed: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Accept,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Accept",
+				enabled: true,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Accept,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Accept",
+				enabled: false,
+				pressed: true
 			})
 		]
 	}).placeAt('barBtn');
@@ -1082,6 +1142,19 @@
 				enabled: false,
 				pressed: true
 			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Ghost,
+				icon: "sap-icon://home",
+				text: "Btn Ghost",
+				enabled: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Ghost,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Ghost",
+				enabled: true,
+				pressed: true
+			}),
 			new sap.m.ToggleButton({
 				type: sap.m.ButtonType.Emphasized,
 				icon: "sap-icon://home",
@@ -1121,6 +1194,19 @@
 				icon: "sap-icon://home",
 				text: "ToggleBtn Trans",
 				enabled: true
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Ghost,
+				icon: "sap-icon://home",
+				text: "Btn Ghost",
+				enabled: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Ghost,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Ghost",
+				enabled: true,
+				pressed: false
 			}),
 			new sap.m.ToggleButton({
 				type: sap.m.ButtonType.Transparent,
@@ -1206,6 +1292,26 @@
 				text: "ToggleBtn Reject",
 				enabled: true,
 				pressed: true
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Up,
+				icon: "sap-icon://home",
+				text: "Btn Up",
+				enabled: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Up,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Up",
+				enabled: true,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Back,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Back",
+				enabled: true,
+				pressed: false
 			})
 		]
 	}).placeAt('barBtn');
@@ -1225,6 +1331,19 @@
 				icon: "sap-icon://home",
 				text: "Btn Trans Dis",
 				enabled: false
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Ghost,
+				icon: "sap-icon://home",
+				text: "Btn Ghost",
+				enabled: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Ghost,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Ghost",
+				enabled: true,
+				pressed: false
 			}),
 			new sap.m.ToggleButton({
 				type: sap.m.ButtonType.Transparent,
@@ -1269,7 +1388,7 @@
 		]
 	}).placeAt('barBtn');
 
-	new sap.ui.core.HTML({content: "</br></br>ToolBar</br>"}).placeAt("barBtn");
+	new sap.ui.core.HTML({content: "<span id='bars2'>ToolBar</span></br>"}).placeAt("barBtn");
 
 	var b7 = new sap.m.Toolbar({
 		content: [
@@ -1283,6 +1402,18 @@
 				type: sap.m.ButtonType.Default,
 				icon: "sap-icon://home",
 				text: "Btn Default Dis",
+				enabled: false
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Accept,
+				icon: "sap-icon://home",
+				text: "Btn Accept",
+				enabled: true
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Reject,
+				icon: "sap-icon://home",
+				text: "Btn Reject Dis",
 				enabled: false
 			}),
 			new sap.m.ToggleButton({
@@ -1341,6 +1472,19 @@
 				icon: "sap-icon://home",
 				text: "Btn Transparent",
 				enabled: false
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Ghost,
+				icon: "sap-icon://home",
+				text: "Btn Ghost",
+				enabled: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Ghost,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Ghost",
+				enabled: true,
+				pressed: false
 			}),
 			new sap.m.ToggleButton({
 				type: sap.m.ButtonType.Transparent,
@@ -1402,6 +1546,18 @@
 				text: "Btn Default Dis",
 				enabled: false
 			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Accept,
+				icon: "sap-icon://home",
+				text: "Btn Accept",
+				enabled: true
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Reject,
+				icon: "sap-icon://home",
+				text: "Btn Reject Dis",
+				enabled: false
+			}),
 			new sap.m.ToggleButton({
 				type: sap.m.ButtonType.Default,
 				icon: "sap-icon://home",
@@ -1459,6 +1615,19 @@
 				icon: "sap-icon://home",
 				text: "Btn Transparent",
 				enabled: false
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Ghost,
+				icon: "sap-icon://home",
+				text: "Btn Ghost",
+				enabled: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Ghost,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Ghost",
+				enabled: true,
+				pressed: false
 			}),
 			new sap.m.ToggleButton({
 				type: sap.m.ButtonType.Transparent,
@@ -1520,6 +1689,18 @@
 				text: "Btn Default Dis",
 				enabled: false
 			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Accept,
+				icon: "sap-icon://home",
+				text: "Btn Accept",
+				enabled: true
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Accept,
+				icon: "sap-icon://home",
+				text: "Btn Accept",
+				enabled: false
+			}),
 			new sap.m.ToggleButton({
 				type: sap.m.ButtonType.Default,
 				icon: "sap-icon://home",
@@ -1578,6 +1759,19 @@
 				text: "Btn Transparent",
 				enabled: false
 			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Ghost,
+				icon: "sap-icon://home",
+				text: "Btn Ghost",
+				enabled: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Ghost,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Ghost",
+				enabled: true,
+				pressed: false
+			}),
 			new sap.m.ToggleButton({
 				type: sap.m.ButtonType.Transparent,
 				icon: "sap-icon://home",
@@ -1620,12 +1814,51 @@
 			})
 		]
 	}).placeAt('barBtn');
+
+	new sap.ui.core.HTML({content: "</br><span>RTL specific buttons</span></br>"}).placeAt("RTLBtn");
+
+	var oButton1RTL = new sap.m.Button({
+		type: sap.m.ButtonType.Default,
+		icon: "sap-icon://home",
+		text: "(Button Type Default)",
+		enabled: true
+	}).placeAt("RTLBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("RTLBtn");
+
+	var oButton2RTL = new sap.m.Button({
+		type: sap.m.ButtonType.Default,
+		text: "(Button Type Default)",
+		enabled: true
+	}).placeAt("RTLBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("RTLBtn");
+
+	var oButton3RTL = new sap.m.Button({
+		type: sap.m.ButtonType.Default,
+		icon: "sap-icon://home",
+		text: "(עִבְרִית‬ עִבְרִית‬ עִבְרִית‬)",
+		enabled: true
+	}).placeAt("RTLBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("RTLBtn");
+
+	var oButton4RTL = new sap.m.Button({
+		type: sap.m.ButtonType.Default,
+		text: "(עִבְרִית‬ עִבְרִית‬ עִבְרִית‬)",
+		enabled: true
+	}).placeAt("RTLBtn");
 </script>
 
 </head>
 <body id="body" class="sapUiBody">
+<div id="controlArea"></div>
+<hr>
+<br>
 <div id="standAloneBtn"></div>
-</br></br>
+<br><br>
 <div id="barBtn"></div>
+<br><br>
+<div id="RTLBtn"></div>
 </body>
 </html>
