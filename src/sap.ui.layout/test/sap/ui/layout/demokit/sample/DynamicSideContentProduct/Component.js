@@ -22,6 +22,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					files : [
 						"DynamicSideContent.view.xml",
 						"DynamicSideContent.controller.js",
+						"feed.json",
 						"style.css"
 					]
 				}

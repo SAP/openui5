@@ -20,7 +20,8 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 				sample : {
 					files : [
 						"Grid.view.xml",
-						"Grid.controller.js"
+						"Grid.controller.js",
+						"persons.json"
 					]
 				}
 			}

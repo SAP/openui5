@@ -19,7 +19,9 @@ sap.ui.define([
 			config: {
 				sample: {
 					files: [
-						"Grid.view.xml", "Grid.controller.js"
+						"Grid.view.xml",
+						"Grid.controller.js",
+						"information.json"
 					]
 				}
 			}

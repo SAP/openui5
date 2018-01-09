@@ -15,7 +15,8 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 					stretch: true,
 					files: [
 						"ObjectPageDynamicHeader.view.xml",
-						"ObjectPageDynamicHeader.controller.js"
+						"ObjectPageDynamicHeader.controller.js",
+						"HRData.json"
 					]
 				}
 			}

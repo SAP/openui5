@@ -51,7 +51,8 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 						"../SharedBlocks/personal/PersonalBlockPart2.view.xml",
 						"employee.json",
 						"products.json",
-						"Popover.fragment.xml"
+						"Popover.fragment.xml",
+						"PopoverLock.fragment.xml"
 					]
 				}
 			}
