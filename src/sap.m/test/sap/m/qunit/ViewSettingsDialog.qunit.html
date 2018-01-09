@@ -2728,6 +2728,83 @@
 			oVSD.destroy();
 		});
 
+		QUnit.test("ViewSettingsDialog escapes Filter items on creation", function (assert) {
+			//arrange
+			var oEscapeSpy = this.spy(sap.ui.base.ManagedObject, "escapeSettingsValue"),
+				filterItems = [
+					new sap.m.ViewSettingsFilterItem({
+					text : "aaa { bbb"
+					})
+				],
+				oVSD = new sap.m.ViewSettingsDialog("testVsd", {
+							title: "View Setting Dialog",
+							filterItems : filterItems
+						});
+
+			//act
+			oVSD.open();
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			assert.strictEqual(oEscapeSpy.callCount, 1, "escape was called once for the setted Filter Item");
+
+			//clean
+			oVSD.destroy();
+		});
+
+		QUnit.test("ViewSettingsDialog escapes Filter Detail items on creation", function (assert) {
+			//arrange
+			var oEscapeSpy = this.spy(sap.ui.base.ManagedObject, "escapeSettingsValue"),
+				filterItems = [
+					new sap.m.ViewSettingsFilterItem({
+					text : "filter item",
+					items : [
+							new sap.m.ViewSettingsItem({
+								text : "aaa { bbb"
+							})
+						]
+					})
+				],
+				oVSD = new sap.m.ViewSettingsDialog("testVsd", {
+							title: "View Setting Dialog",
+							filterItems : filterItems
+						});
+
+			//act
+			oVSD.open();
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			assert.strictEqual(oEscapeSpy.callCount, 1, "escape was called once for the setted Filter Detail Item");
+
+			//clean
+			oVSD.destroy();
+		});
+
+		QUnit.test("ViewSettingsDialog escapes Group items on creation", function (assert) {
+			//arrange
+			var oEscapeSpy = this.spy(sap.ui.base.ManagedObject, "escapeSettingsValue"),
+				groupItems = [
+					new sap.m.ViewSettingsItem({
+							text : "aaa { bbb"
+					})
+				],
+				oVSD = new sap.m.ViewSettingsDialog("testVsd", {
+							title: "View Setting Dialog",
+							groupItems : groupItems
+						});
+
+			//act
+			oVSD.open();
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			assert.strictEqual(oEscapeSpy.callCount, 1, "escape was called once for the setted Group Item");
+
+			//clean
+			oVSD.destroy();
+		});
+
 		QUnit.module("Accessibility", {
 			beforeEach : function () {
 				this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
