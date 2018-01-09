@@ -30,7 +30,12 @@
 		}
   	},
 	"sap.ui5": {
-		"rootView": "sap.ui.demo.nav.view.App",
+		"rootView": {
+			"viewName": "sap.ui.demo.nav.view.App",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
 		"dependencies": {
 			"minUI5Version": "1.30",
 			"libs": {

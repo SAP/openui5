@@ -23,7 +23,11 @@
 	},
 
 	"sap.ui5": {
-	"rootView": "sap.ui.rta.test.variantManagement.view.Root",
+		"rootView": {
+			"viewName": "sap.ui.rta.test.variantManagement.view.Root",
+			"type": "XML",
+			"async": true,
+		},
 		"handleValidation": true,
 		"dependencies": {
 			"minUI5Version": "${project.version}",
