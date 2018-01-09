@@ -19,7 +19,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo',
 		types: [],
 		interfaces: [],
 		controls: [
-			"sap.ui.documentation.sdk.controls.Search"
+			"sap.ui.documentation.sdk.controls.Search",
+			"sap.ui.documentation.sdk.controls.ObjectPageSubSection"
 		],
 		elements: [],
 		noLibraryCSS: true
