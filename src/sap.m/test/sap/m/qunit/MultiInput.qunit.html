@@ -1089,6 +1089,23 @@
 		assert.ok(oChangeFireSpy.calledBefore(oValidatorSpy), "fireChange is fired before Validator");
 	});
 
+	QUnit.test("Selecting an item should not leave a text in the input", function (assert) {
+		// arrange
+		var oItem = new sap.ui.core.ListItem({
+			key: '1',
+			text: '1 Item 1'
+		});
+
+		this.multiInput1.addSuggestionItem(oItem);
+		sap.ui.getCore().applyChanges();
+
+		// act
+		this.multiInput1.setSelectionItem(oItem, true);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(this.multiInput1.getValue(), "", "Value of the input should be empty");
+	});
 
 	QUnit.module("Mobile", {});
 
