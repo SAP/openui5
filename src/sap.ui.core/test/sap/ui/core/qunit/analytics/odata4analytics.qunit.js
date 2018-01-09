@@ -1062,5 +1062,636 @@ sap.ui.require([
 		// this.oODataModel.getServiceMetadata()...
 		// this.oODataModel.getMetaModel().getODataProperty(oEntityType, sPath);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("EntityType - static members, constructor and getters", function (assert) {
+		var sNamespace = "http://www.sap.com/Protocols/SAPData",
+			oFilterRestrictions,
+			oHierarchy,
+			oKey0 = {
+				extensions : [
+					{ namespace : sNamespace, name : "filterable", value : "true" },
+					{ namespace : sNamespace, name : "filter-restriction", value : "interval" },
+					{ namespace : sNamespace, name : "required-in-filter", value : "true" },
+					{ namespace : sNamespace, name : "sortable", value : "false" }
+				],
+				name : "key0"
+			},
+			oKey1 = {
+				extensions : [
+					{ namespace : sNamespace, name : "filterable", value : "false" },
+					{ namespace : sNamespace, name : "hierarchy-level-for", value : "property0" },
+					{ namespace : sNamespace, name : "hierarchy-node-external-key-for",
+						value : "property0"},
+					{ namespace : sNamespace, name : "required-in-filter", value : "false" },
+					{ namespace : sNamespace, name : "sortable", value : "true" }
+				],
+				name : "key1"
+			},
+			oProperty0 = {
+				extensions : [
+					{ namespace : "Foo", name : "filterable", value : "false" }, // unsupported NS
+					{ namespace : sNamespace, name : "filter-restriction", value : "invalid" },
+					{ namespace : sNamespace, name : "hierarchy-node-for", value : "key0" },
+					{ namespace : sNamespace, name : "required-in-filter", value : "true" },
+					{ namespace : "Foo", name : "sortable", value : "false" } // unsupported NS
+				],
+				name : "property0"
+			},
+			oProperty1 = {
+				extensions : [
+					{ namespace : sNamespace, name : "filter-restriction", value : "single-value" },
+					{ namespace : sNamespace, name : "hierarchy-parent-node-for",
+						value : "property0" }
+				],
+				name : "property1"
+			},
+			oProperty2 = {
+				extensions : [
+					{ namespace : sNamespace, name : "filter-restriction", value : "multi-value" },
+					// workaround for GW bug
+					{ namespace : sNamespace, name : "hierarchy-parent-nod", value : "property3" }
+				],
+				name : "property2"
+			},
+			oProperty3 = {
+				extensions : [
+					{ namespace : sNamespace, name : "hierarchy-node-for", value : "key1" }
+				],
+				name : "property3"
+			},
+			oProperty4 = {
+				extensions : [
+					{ namespace : sNamespace, name : "hierarchy-drill-state-for",
+						value : "property2" }
+					],
+					name : "property4"
+			},
+			oDataJSEntityType = {
+				key : {
+					propertyRef : [oKey0, oKey1]
+				},
+				name : "EntityType",
+				property : [oKey0, oKey1, oProperty0, oProperty1, oProperty2, oProperty3,
+					oProperty4]
+			},
+			oModel = {},
+			oProperties,
+			oSchema = { namespace : "Schema.Namespace"},
+			oEntityType = new odata4analytics.EntityType(oModel, oSchema, oDataJSEntityType);
+
+		// static members
+		assert.deepEqual(odata4analytics.EntityType.propertyFilterRestriction, {
+				SINGLE_VALUE : "single-value",
+				MULTI_VALUE : "multi-value",
+				INTERVAL : "interval"
+			}, "static mempers");
+
+		// values provided in constructor
+		assert.strictEqual(oEntityType.getModel(), oModel, "provided by constructor");
+		assert.strictEqual(oEntityType.getSchema(), oSchema);
+		assert.strictEqual(oEntityType.getTypeDescription(), oDataJSEntityType);
+		assert.strictEqual(oEntityType.getQName(), "Schema.Namespace.EntityType");
+
+		// content derived from oDataJSEntityType
+		assert.deepEqual(oEntityType.getKeyProperties(), ["key0", "key1"], "keys");
+		oProperties = oEntityType.getProperties();
+		assert.strictEqual(Object.keys(oProperties).length, 7, "properties");
+		assert.strictEqual(oProperties["key0"], oKey0);
+		assert.strictEqual(oProperties["key1"], oKey1);
+		assert.strictEqual(oProperties["property0"], oProperty0);
+		assert.strictEqual(oProperties["property1"], oProperty1);
+		assert.strictEqual(oProperties["property2"], oProperty2);
+		assert.strictEqual(oProperties["property3"], oProperty3);
+		assert.strictEqual(oProperties["property4"], oProperty4);
+		assert.deepEqual(oEntityType.getFilterablePropertyNames(),
+			["key0", "property0", "property1", "property2", "property3", "property4"],
+			"filterable properties");
+		assert.deepEqual(oEntityType.getSortablePropertyNames(),
+			["key1", "property0", "property1", "property2", "property3", "property4"],
+			"sortable properties");
+		assert.deepEqual(oEntityType.getRequiredFilterPropertyNames(), ["key0", "property0"],
+			"required-in-filter properties");
+		oFilterRestrictions = oEntityType.getPropertiesWithFilterRestrictions();
+		assert.strictEqual(Object.keys(oFilterRestrictions).length, 3, "filter restrictions");
+		assert.strictEqual(oFilterRestrictions["key0"], "interval");
+		assert.strictEqual(oFilterRestrictions["property1"], "single-value");
+		assert.strictEqual(oFilterRestrictions["property2"], "multi-value");
+		// hierarchies
+		assert.strictEqual(oEntityType.getHierarchy("bar"), null, "hierarchies");
+		assert.strictEqual(oEntityType._aHierarchyPropertyNames, null);
+		assert.strictEqual(oEntityType.getAllHierarchyPropertyNames(),
+			oEntityType._aHierarchyPropertyNames, "array of hierarchy properties stored");
+		assert.ok(oEntityType.getAllHierarchyPropertyNames().indexOf("key0") >= 0);
+		assert.ok(oEntityType.getAllHierarchyPropertyNames().indexOf("key1") >= 0);
+
+		oHierarchy = oEntityType.getHierarchy("key0");
+		assert.strictEqual(oHierarchy.getNodeExternalKeyProperty(), oKey1, "Hierarchy - key0");
+		assert.strictEqual(oHierarchy.getNodeIDProperty(), oProperty0);
+		assert.strictEqual(oHierarchy.getParentNodeIDProperty(), oProperty1);
+		assert.strictEqual(oHierarchy.getNodeLevelProperty(), oKey1);
+		assert.strictEqual(oHierarchy.getNodeValueProperty(), oKey0);
+		oHierarchy = oEntityType.getHierarchy("key1");
+		assert.strictEqual(oHierarchy.getNodeExternalKeyProperty(), undefined, "Hierarchy - key1");
+		assert.strictEqual(oHierarchy.getNodeIDProperty(), oProperty3);
+		assert.strictEqual(oHierarchy.getParentNodeIDProperty(), oProperty2);
+		assert.strictEqual(oHierarchy.getNodeLevelProperty(), undefined);
+		assert.strictEqual(oHierarchy.getNodeValueProperty(), oKey1);
+		oHierarchy = oEntityType.getHierarchy("property2");
+		assert.strictEqual(oHierarchy.getNodeExternalKeyProperty(), undefined,
+			"Hierarchy - property2");
+		assert.strictEqual(oHierarchy.getNodeIDProperty(), oProperty2);
+		assert.strictEqual(oHierarchy.getParentNodeIDProperty(), undefined);
+		assert.strictEqual(oHierarchy.getNodeLevelProperty(), undefined);
+		assert.strictEqual(oHierarchy.getNodeValueProperty(), oProperty2);
+
+
+		// private members at prototype
+		assert.strictEqual(odata4analytics.EntityType.prototype._oEntityType, null,
+			"prototype members");
+		assert.strictEqual(odata4analytics.EntityType.prototype._oSchema, null);
+		assert.strictEqual(odata4analytics.EntityType.prototype._oModel, null);
+		assert.strictEqual(odata4analytics.EntityType.prototype._sQName, null);
+		assert.strictEqual(odata4analytics.EntityType.prototype._aKeyProperties, null);
+		assert.strictEqual(odata4analytics.EntityType.prototype._oPropertySet, null);
+		assert.strictEqual(odata4analytics.EntityType.prototype._aFilterablePropertyNames, null);
+		assert.strictEqual(odata4analytics.EntityType.prototype._aRequiredFilterPropertyNames,
+			null);
+		assert.strictEqual(odata4analytics.EntityType.prototype._oPropertyFilterRestrictionSet,
+			null);
+		assert.strictEqual(odata4analytics.EntityType.prototype._aHierarchyPropertyNames, null);
+		assert.strictEqual(odata4analytics.EntityType.prototype._oRecursiveHierarchySet, null);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("RecursiveHierarchy - constructor and getters", function (assert) {
+		var oEntityType = {},
+			oNodeIDProperty = {},
+			oParentNodeIDProperty = {},
+			oNodeLevelProperty = {},
+			oNodeValueProperty = {},
+			oNodeExternalKeyProperty = {},
+			oRecursiveHierarchy = new odata4analytics.RecursiveHierarchy(oEntityType,
+				oNodeIDProperty, oParentNodeIDProperty, oNodeLevelProperty, oNodeValueProperty,
+				oNodeExternalKeyProperty);
+
+		// static values
+		assert.strictEqual(oRecursiveHierarchy.isRecursiveHierarchy(), true, "static values");
+		assert.strictEqual(oRecursiveHierarchy.isLeveledHierarchy(), false);
+
+		// values provided in constructor
+		assert.strictEqual(oRecursiveHierarchy._oEntityType, oEntityType,
+			"provided by constructor");
+		assert.strictEqual(oRecursiveHierarchy.getNodeIDProperty(), oNodeIDProperty);
+		assert.strictEqual(oRecursiveHierarchy.getParentNodeIDProperty(), oParentNodeIDProperty);
+		assert.strictEqual(oRecursiveHierarchy.getNodeLevelProperty(), oNodeLevelProperty);
+		assert.strictEqual(oRecursiveHierarchy.getNodeValueProperty(), oNodeValueProperty);
+		assert.strictEqual(oRecursiveHierarchy.getNodeExternalKeyProperty(),
+			oNodeExternalKeyProperty);
+
+		// private members at prototype
+		assert.strictEqual(odata4analytics.RecursiveHierarchy.prototype._oEntityType, null,
+			"prototype members");
+		assert.strictEqual(odata4analytics.RecursiveHierarchy.prototype._oNodeIDProperty, null);
+		assert.strictEqual(odata4analytics.RecursiveHierarchy.prototype._oParentNodeIDProperty,
+			null);
+		assert.strictEqual(odata4analytics.RecursiveHierarchy.prototype._oNodeLevelProperty, null);
+		assert.strictEqual(odata4analytics.RecursiveHierarchy.prototype._oNodeValueProperty, null);
+		assert.strictEqual(odata4analytics.RecursiveHierarchy.prototype._oNodeExternalKeyProperty,
+			null);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("QueryResultRequest - constructor and getters/setters", function (assert) {
+		var oAnyValue = {},
+			oParameterizationRequest = {},
+			oQueryResult = {},
+			oQueryResultRequest = new odata4analytics.QueryResultRequest(oQueryResult,
+				oParameterizationRequest);
+
+		// parameters given in the constructor
+		assert.strictEqual(oQueryResultRequest.getQueryResult(), oQueryResult);
+		assert.strictEqual(oQueryResultRequest.getParameterizationRequest(),
+			oParameterizationRequest);
+
+		// initial member values after constructor call
+		assert.deepEqual(oQueryResultRequest._oAggregationLevel, {}, "initial member values");
+		assert.deepEqual(oQueryResultRequest._oDimensionHierarchies, {});
+		assert.deepEqual(oQueryResultRequest._oMeasures, {});
+		assert.strictEqual(oQueryResultRequest._bIncludeEntityKey, false);
+		assert.strictEqual(oQueryResultRequest._oFilterExpression, null);
+		assert.strictEqual(oQueryResultRequest._oSortExpression, null);
+		assert.strictEqual(oQueryResultRequest._oSelectedPropertyNames, null);
+
+		// simple getter/setter
+		oQueryResultRequest.setParameterizationRequest(oAnyValue);
+		assert.strictEqual(oQueryResultRequest.getParameterizationRequest(), oAnyValue,
+			"simple Getter/Setter");
+
+
+		// private members at prototype
+		assert.strictEqual(odata4analytics.QueryResultRequest.prototype._oQueryResult, null,
+			"prototype members");
+		assert.strictEqual(odata4analytics.QueryResultRequest.prototype._oParameterizationRequest,
+			null);
+		assert.strictEqual(odata4analytics.QueryResultRequest.prototype._sResourcePath, null);
+		assert.strictEqual(odata4analytics.QueryResultRequest.prototype._oAggregationLevel, null);
+		assert.strictEqual(odata4analytics.QueryResultRequest.prototype._oDimensionHierarchies,
+			null);
+		assert.strictEqual(odata4analytics.QueryResultRequest.prototype._oMeasures, null);
+		assert.strictEqual(odata4analytics.QueryResultRequest.prototype._bIncludeEntityKey, null);
+		assert.strictEqual(odata4analytics.QueryResultRequest.prototype._bIncludeCount, null);
+		assert.strictEqual(odata4analytics.QueryResultRequest.prototype._bReturnNoEntities, null);
+		assert.strictEqual(odata4analytics.QueryResultRequest.prototype._oFilterExpression, null);
+		assert.strictEqual(odata4analytics.QueryResultRequest.prototype._oSortExpression, null);
+		assert.strictEqual(odata4analytics.QueryResultRequest.prototype._iSkipRequestOption, null);
+		assert.strictEqual(odata4analytics.QueryResultRequest.prototype._iTopRequestOption, null);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("QueryResultRequest#addRecursiveHierarchy", function (assert) {
+		var oDimension = {
+				getHierarchy : function () {}
+			},
+			oDimensionMock = sinon.mock(oDimension),
+			oHierarchy = {},
+			bIncludeExternalKey = {/* object instead of boolean to test same instance*/},
+			bIncludeText = {/* object instead of boolean to test same instance*/},
+			sName = "HierarchyDimensionName",
+			oQueryResult = {
+				findDimensionByName : function () {}
+			},
+			oQueryResultMock = sinon.mock(oQueryResult),
+			oQueryResultRequest = new odata4analytics.QueryResultRequest(oQueryResult);
+
+		oQueryResultMock.expects("findDimensionByName").never();
+
+		// code under test
+		oQueryResultRequest.addRecursiveHierarchy();
+
+		oQueryResultMock.expects("findDimensionByName").withExactArgs(sName).returns();
+
+		// code under test
+		assert.throws(function () {
+			oQueryResultRequest.addRecursiveHierarchy(sName);
+		}, new Error("'" + sName + "' is not a dimension property"));
+
+		oQueryResultMock.expects("findDimensionByName")
+			.withExactArgs(sName)
+			.returns(oDimension);
+		oDimensionMock.expects("getHierarchy").withExactArgs().returns(null);
+
+		// code under test - given name is a dimension without a hierarchy
+		assert.throws(function () {
+			oQueryResultRequest.addRecursiveHierarchy(sName);
+		}, new Error("Dimension '" + sName + "' does not have a hierarchy"));
+
+		oQueryResultRequest._oSelectedPropertyNames = {};
+		oQueryResultRequest._oDimensionHierarchies = {};
+
+		oQueryResultMock.expects("findDimensionByName")
+			.withExactArgs(sName)
+			.returns(oDimension);
+		oDimensionMock.expects("getHierarchy").withExactArgs().returns(oHierarchy);
+
+		// code under test - success
+		oQueryResultRequest.addRecursiveHierarchy(sName, bIncludeExternalKey, bIncludeText);
+
+		assert.strictEqual(oQueryResultRequest._oSelectedPropertyNames, null,
+			"compiled list of selected properties reset");
+		assert.deepEqual(oQueryResultRequest._oDimensionHierarchies[sName], {
+			id : true,
+			externalKey : bIncludeExternalKey,
+			text : bIncludeText
+		});
+		assert.strictEqual(oQueryResultRequest._oDimensionHierarchies[sName].externalKey,
+			bIncludeExternalKey);
+		assert.strictEqual(oQueryResultRequest._oDimensionHierarchies[sName].text, bIncludeText);
+
+		oDimensionMock.verify();
+		oQueryResultMock.verify();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("QueryResultRequest#getURIQueryOptionValue: $select - aggregation level",
+			function (assert) {
+		var mDimensions,
+			oQueryResult = {
+				findDimensionByName : function (sName) {
+					return mDimensions[sName];
+				}
+			},
+			oDimension0 = new odata4analytics.Dimension(oQueryResult, {name : "dimension0"}),
+			oDimension1 = new odata4analytics.Dimension(oQueryResult, {name : "dimension1"}),
+			oDimension2 = new odata4analytics.Dimension(oQueryResult, {name : "dimension2"}),
+			oDimension0Mock = sinon.mock(oDimension0),
+			oDimension2Mock = sinon.mock(oDimension2),
+			oQueryResultRequest = new odata4analytics.QueryResultRequest(oQueryResult);
+
+		mDimensions = { // do initialization here to avoid eslint warning
+			dimension0 : oDimension0,
+			dimension1 : oDimension1,
+			dimension2 : oDimension2
+		};
+
+		assert.strictEqual(oQueryResultRequest._oSelectedPropertyNames, null, "Check precondition");
+
+		// code under test - no selects
+		assert.strictEqual(oQueryResultRequest.getURIQueryOptionValue("$select"), null);
+
+		// prepare test data
+		oQueryResultRequest._oAggregationLevel = {
+			dimension0 : {text : true}, // but no text property -> not part of select
+			dimension1 : {key : true},
+			dimension2 : {key : true, text : true, attributes : ["dimension1", "attribute1"]}
+		};
+
+		oDimension0Mock.expects("getTextProperty").withExactArgs().returns(null);
+		oDimension2Mock.expects("getTextProperty")
+			.withExactArgs()
+			.returns({name : "dimension2Text"});
+		oDimension2Mock.expects("findAttributeByName")
+			.withExactArgs("dimension1")
+			.returns({getName : function () { return "dimension1"; }});
+		oDimension2Mock.expects("findAttributeByName")
+			.withExactArgs("attribute1")
+			.returns({getName : function () { return "attribute1"; }});
+
+		// code under test - with selects
+		assert.strictEqual(oQueryResultRequest.getURIQueryOptionValue("$select"),
+			"dimension1,dimension2,dimension2Text,attribute1");
+		assert.deepEqual(oQueryResultRequest._oSelectedPropertyNames, {
+			attribute1 : true,
+			dimension1 : true,
+			dimension2 : true,
+			dimension2Text : true
+		});
+
+		oDimension0Mock.verify();
+		oDimension2Mock.verify();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("QueryResultRequest#getURIQueryOptionValue: $select - measures", function (assert) {
+		var mMeasures,
+			oQueryResult = {
+				findMeasureByName : function (sName) {
+					return mMeasures[sName];
+				}
+			},
+			oMeasure0 = new odata4analytics.Measure(oQueryResult, {name : "measure0"}),
+			oMeasure1 = new odata4analytics.Measure(oQueryResult, {name : "measure1"}),
+			oMeasure2 = new odata4analytics.Measure(oQueryResult, {name : "measure2"}),
+			oMeasure0Mock = sinon.mock(oMeasure0),
+			oMeasure1Mock = sinon.mock(oMeasure1),
+			oMeasure2Mock = sinon.mock(oMeasure2),
+			oQueryResultRequest = new odata4analytics.QueryResultRequest(oQueryResult);
+
+		mMeasures = { // do initialization here to avoid eslint warning
+			measure0 : oMeasure0,
+			measure1 : oMeasure1,
+			measure2 : oMeasure2
+		};
+
+		// prepare test data
+		oQueryResultRequest._oMeasures = {
+			// neither a formatted value nor a unit property -> not part of select
+			measure0 : {text : true, unit : true},
+			measure1 : {value : true},
+			measure2 : {value : true, text : true, unit : true}
+		};
+
+		oMeasure1Mock.expects("getRawValueProperty")
+			.withExactArgs()
+			.returns({name : "measure1"});
+		oMeasure2Mock.expects("getRawValueProperty")
+			.withExactArgs()
+			.returns({name : "measure2"});
+		oMeasure0Mock.expects("getFormattedValueProperty").withExactArgs().returns(null);
+		oMeasure2Mock.expects("getFormattedValueProperty")
+			.withExactArgs()
+			.returns({name : "measure2Text"});
+		oMeasure0Mock.expects("getUnitProperty").withExactArgs().returns(null);
+		oMeasure2Mock.expects("getUnitProperty")
+			.withExactArgs()
+			.returns({name : "measure2Unit"});
+
+		// code under test
+		assert.strictEqual(oQueryResultRequest.getURIQueryOptionValue("$select"),
+			"measure1,measure2,measure2Text,measure2Unit");
+		assert.deepEqual(oQueryResultRequest._oSelectedPropertyNames, {
+			measure1 : true,
+			measure2 : true,
+			measure2Text : true,
+			measure2Unit : true
+		});
+
+		oMeasure0Mock.verify();
+		oMeasure1Mock.verify();
+		oMeasure2Mock.verify();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("QueryResultRequest#getURIQueryOptionValue: $select - keys", function (assert) {
+		var oKeyProperty0 = {name : "key0"},
+			oKeyProperty1 = {name : "key1"},
+			oQueryResult = {
+				getEntityType : function () {
+					return {
+						getTypeDescription : function () {
+							return {
+								key : {
+									propertyRef : [oKeyProperty0, oKeyProperty1]
+								}
+							};
+						}
+					};
+				}
+			},
+			oQueryResultRequest = new odata4analytics.QueryResultRequest(oQueryResult);
+
+		// prepare test data
+		oQueryResultRequest._bIncludeEntityKey = true;
+
+		// code under test
+		assert.strictEqual(oQueryResultRequest.getURIQueryOptionValue("$select"), "key0,key1");
+
+		// keys are not added to _oSelectedPropertyNames - why?
+		assert.deepEqual(oQueryResultRequest._oSelectedPropertyNames, {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("QueryResultRequest#getURIQueryOptionValue: $select - dimension hierarchies",
+			function (assert) {
+		var oEntityType = {getTextPropertyOfProperty : function () {}},
+			oEntityTypeMock = sinon.mock(oEntityType),
+			mHierarchy,
+			oHierarchy0 = new odata4analytics.RecursiveHierarchy({/*EntityType*/},
+				{/*oNodeIDProperty*/
+					name : "nodeId0"
+				}, {/*oParentNodeIDProperty*/}, {/*oNodeLevelProperty*/},
+				{/*oNodeValueProperty*/},
+				{/*oNodeExternalKeyProperty*/
+					name : "externalKey0"
+				}),
+			oHierarchy1 = new odata4analytics.RecursiveHierarchy({},
+				{
+					name : "nodeId1"
+				}, {}, {}, {}, {}),
+			oHierarchy2 = new odata4analytics.RecursiveHierarchy({},
+				{
+					name : "nodeId2"
+				}, {}, {}, {}, {}),
+			oQueryResult = {
+				findDimensionByName : function (sName) {
+					return {
+						getHierarchy : function () {
+							return mHierarchy[sName] || null;
+						}
+					};
+				},
+				getEntityType : function () { return oEntityType; }
+			},
+			oQueryResultRequest = new odata4analytics.QueryResultRequest(oQueryResult);
+
+		mHierarchy = { // do initialization here to avoid eslint warning
+			dimension0 : oHierarchy0,
+			dimension1 : oHierarchy1,
+			dimension2 : oHierarchy2
+		};
+
+		// prepare test data
+		oQueryResultRequest._oDimensionHierarchies = {
+			dimension0 : {id : true, externalKey : true, text : true}, // but no text property
+			dimension1 : {id : true, text : true},
+			dimension2 : {}
+		};
+
+		oEntityTypeMock.expects("getTextPropertyOfProperty")
+			.withExactArgs("nodeId0")
+			.returns(null);
+		oEntityTypeMock.expects("getTextPropertyOfProperty")
+			.withExactArgs("nodeId1")
+			.returns({name : "nodeIdText1"});
+
+		// code under test
+		assert.strictEqual(oQueryResultRequest.getURIQueryOptionValue("$select"),
+			"nodeId0,externalKey0,nodeId1,nodeIdText1");
+
+		assert.deepEqual(oQueryResultRequest._oSelectedPropertyNames, {
+			externalKey0 : true,
+			nodeId0 : true,
+			nodeId1 : true,
+			nodeIdText1 : true
+		});
+
+		oEntityTypeMock.verify();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("QueryResultRequest#getURIQueryOptionValue: $select - mixed", function (assert) {
+		var mDimensions,
+			oKeyProperty = {name : "key"},
+			mMeasures,
+			oEntityType = {
+				getTextPropertyOfProperty : function () {},
+				getTypeDescription : function () {
+					return {
+						key : {
+							propertyRef : [oKeyProperty]
+						}
+					};
+				}
+			},
+			oQueryResult = {
+				findDimensionByName : function (sName) {
+					return mDimensions[sName];
+				},
+				findMeasureByName : function (sName) {
+					return mMeasures[sName];
+				},
+				getEntityType : function () {
+					return oEntityType;
+				}
+			},
+			oDimension = new odata4analytics.Dimension(oQueryResult, {name : "dimension"}),
+			oDimensionMock = sinon.mock(oDimension),
+			oEntityTypeMock = sinon.mock(oEntityType),
+			oHierarchy = new odata4analytics.RecursiveHierarchy({/*EntityType*/},
+					{/*oNodeIDProperty*/
+						name : "nodeId"
+					}, {/*oParentNodeIDProperty*/}, {/*oNodeLevelProperty*/},
+					{/*oNodeValueProperty*/},
+					{/*oNodeExternalKeyProperty*/
+						name : "externalKey"
+					}),
+			oHierarchyDimension = new odata4analytics.Dimension(oQueryResult,
+				{name : "hierarchyDimension"}),
+			oHierarchyDimensionMock = sinon.mock(oHierarchyDimension),
+			oMeasure = new odata4analytics.Measure(oQueryResult, {name : "measure"}),
+			oMeasureMock = sinon.mock(oMeasure),
+			oQueryResultRequest = new odata4analytics.QueryResultRequest(oQueryResult);
+
+		mDimensions = { // do initialization here to avoid eslint warning
+			dimension : oDimension,
+			hierarchyDimension : oHierarchyDimension
+		};
+		mMeasures = { // do initialization here to avoid eslint warning
+			measure : oMeasure
+		};
+
+		// prepare test data
+		oQueryResultRequest._bIncludeEntityKey = true;
+		oQueryResultRequest._oAggregationLevel = {
+			dimension : {key : true, text : true, attributes : ["attribute"]}
+		};
+		oQueryResultRequest._oDimensionHierarchies = {
+			hierarchyDimension : {id : true, externalKey : true, text : true}
+		};
+		oQueryResultRequest._oMeasures = {
+			measure : {value : true, text : true, unit : true}
+		};
+
+		oDimensionMock.expects("getTextProperty").withExactArgs().returns({name : "dimensionText"});
+		oDimensionMock.expects("findAttributeByName")
+			.withExactArgs("attribute")
+			.returns({getName : function () { return "attribute"; }});
+		oHierarchyDimensionMock.expects("getHierarchy").withExactArgs().returns(oHierarchy);
+		oMeasureMock.expects("getRawValueProperty")
+			.withExactArgs()
+			.returns({name : "measure"});
+		oMeasureMock.expects("getFormattedValueProperty")
+			.withExactArgs()
+			.returns({name : "measureText"});
+		oMeasureMock.expects("getUnitProperty")
+			.withExactArgs()
+			.returns({name : "dimension"});
+		oEntityTypeMock.expects("getTextPropertyOfProperty")
+			.withExactArgs("nodeId")
+			.returns({name : "nodeIdText"});
+
+		// code under test - with selects
+		assert.strictEqual(oQueryResultRequest.getURIQueryOptionValue("$select"),
+			"dimension,dimensionText,attribute,measure,measureText,nodeId,externalKey,nodeIdText,"
+				+ "key");
+
+		assert.deepEqual(oQueryResultRequest._oSelectedPropertyNames, {
+			attribute : true,
+			dimension : true,
+			dimensionText : true,
+			externalKey : true,
+			measure : true,
+			measureText : true,
+			nodeId : true,
+			nodeIdText : true
+		});
+
+		oDimensionMock.verify();
+		oEntityTypeMock.verify();
+		oHierarchyDimensionMock.verify();
+		oMeasureMock.verify();
+	});
 });
+//TODO QueryResultRequest: aggregation level and measure handling, setResourcePath,
+// includeDimensionKeyTextAttributes, includeMeasureRawFormattedValueUnit
 //TODO odata4analytics.QueryResult
