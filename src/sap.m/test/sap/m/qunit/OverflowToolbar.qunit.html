@@ -1787,6 +1787,55 @@
 			assert.strictEqual(sSize, 333);
 		});
 
+		QUnit.module("Content size measurement");
+
+		QUnit.test("Size of content is reported correctly", function (assert) {
+			var oButton1 = new sap.m.Button({
+						text: "Test1",
+						layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.AlwaysOverflow})
+					}),
+					oButton2 = new sap.m.Button({text: "Test2"}),
+					oOverflowTB = new sap.m.OverflowToolbar({width: 'auto', content: [oButton1, oButton2]}),
+					fnCheckContentSize = function(oEvent) {
+
+						var iButton2Width = oOverflowTB._aControlSizes[oButton2.getId()],
+								iOverflowButtonWidth = oOverflowTB._getOverflowButtonSize(),
+								iExpectedContentSize = iButton2Width + iOverflowButtonWidth;
+
+						assert.ok(oEvent.getParameter("contentSize"), iExpectedContentSize);
+						done();
+					},
+					done = assert.async();
+
+			oOverflowTB.placeAt("qunit-fixture");
+			oOverflowTB.attachEventOnce("_contentSizeChange", fnCheckContentSize);
+			sap.ui.getCore().applyChanges();
+		});
+
+		QUnit.test("Presence of overflow button is checked correctly", function (assert) {
+			var oButton1 = new sap.m.Button({text: "Test1"}),
+					oButton2 = new sap.m.Button({text: "Test2"}),
+					oOverflowTB = new sap.m.OverflowToolbar({width: 'auto', content: [oButton1, oButton2]}),
+					fnCheckContentSize = function(oEvent) {
+
+						var iButton2Width = oOverflowTB._aControlSizes[oButton2.getId()],
+								iOverflowButtonWidth = oOverflowTB._getOverflowButtonSize(),
+								iExpectedContentSize = iButton2Width + iOverflowButtonWidth;
+
+						assert.ok(oEvent.getParameter("contentSize"), iExpectedContentSize);
+						done();
+					},
+					done = assert.async();
+
+			oOverflowTB.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oOverflowTB.addContent(oButton1.clone());
+			oButton1.setLayoutData(new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.AlwaysOverflow}));
+			oOverflowTB.attachEventOnce("_contentSizeChange", fnCheckContentSize);
+			sap.ui.getCore().applyChanges();
+		});
+
 		QUnit.module("Control destroy");
 
 		QUnit.test("Popover is not re-created on layoutDataChange after Toolbar is destroyed", function (assert) {
