@@ -730,16 +730,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		this._sSelectedValue = sNewValue;
 
-		// update the input field
-		if (this._bUseDialog) {
-			this._oPopupInput.setValue(sNewValue);
-			this._oPopupInput._doSelect();
-		} else {
-			// call _getInputValue to apply the maxLength to the typed value
-			sNewValue = this._getInputValue(sNewValue);
-			this.setDOMValue(sNewValue);
-			this.onChange(null, null, sNewValue);
-		}
+		this.updateInputField(sNewValue);
 
 		this._iPopupListSelectedIndex = -1;
 
@@ -909,16 +900,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		this._sSelectedValue = sNewValue;
 
-		// update the input field
-		if (this._bUseDialog) {
-			this._oPopupInput.setValue(sNewValue);
-			this._oPopupInput._doSelect();
-		} else {
-			// call _getInputValue to apply the maxLength to the typed value
-			sNewValue = this._getInputValue(sNewValue);
-			this.setDOMValue(sNewValue);
-			this.onChange(null, null, sNewValue);
-		}
+		this.updateInputField(sNewValue);
+
 		this._iPopupListSelectedIndex = -1;
 
 		if (!(this._bUseDialog && this instanceof sap.m.MultiInput && this._isMultiLineMode)) {
@@ -3093,6 +3076,23 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 */
 	Input.prototype.getDOMValue = function() {
 		return this._$input.val();
+	};
+
+	/**
+	 * Updates the inner input field.
+	 *
+	 * @protected
+	 */
+	Input.prototype.updateInputField = function(sNewValue) {
+		if (this._bUseDialog) {
+			this._oPopupInput.setValue(sNewValue);
+			this._oPopupInput._doSelect();
+		} else {
+			// call _getInputValue to apply the maxLength to the typed value
+			sNewValue = this._getInputValue(sNewValue);
+			this.setDOMValue(sNewValue);
+			this.onChange(null, null, sNewValue);
+		}
 	};
 
 	/**
