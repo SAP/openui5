@@ -15,8 +15,7 @@
 							items="{
 							path: '/People',
 							parameters: {
-								$count: true,
-								$$updateGroupId : 'peopleGroup'
+								$count: true
 							}
 						}"
 							mode="SingleSelectMaster"
@@ -63,17 +62,17 @@
 						<items>
 							<ColumnListItem>
 								<cells>
-									<Input value="{UserName}" liveChange="onInputChange"/>
+									<Input value="{UserName}"/>
 								</cells>
 
 								<cells>
-									<Input value="{FirstName}" liveChange="onInputChange"/>
+									<Input value="{FirstName}"/>
 								</cells>
 								<cells>
-									<Input value="{LastName}" liveChange="onInputChange"/>
+									<Input value="{LastName}"/>
 								</cells>
 								<cells>
-									<Input value="{Age}" liveChange="onAgeChange"/>
+									<Input value="{Age}"/>
 								</cells>
 							</ColumnListItem>
 						</items>
