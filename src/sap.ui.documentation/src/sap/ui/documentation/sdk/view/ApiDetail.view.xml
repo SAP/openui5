@@ -258,8 +258,8 @@
 														<m:ObjectStatus text="Visibility: {visibility}" state="{= ${visibility} === 'public' ? 'Success' : 'Warning'}"/>
 
 														<m:MessageStrip
-															visible="{=${descriptionSince} !== undefined}"
-															text="{descriptionSince}"
+															visible="{=${deprecatedText} !== undefined}"
+															text="{deprecatedText}"
 															type="Error"
 															showIcon="true"
 															showCloseButton="false"
