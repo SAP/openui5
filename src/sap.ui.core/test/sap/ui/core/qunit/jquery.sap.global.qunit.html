@@ -223,7 +223,6 @@
 			});
 
 
-
 			//****************************************************
 			// includeStylesheet tests
 			//****************************************************
@@ -440,6 +439,51 @@
 				} catch (ex) {
 					assert.ok(false, "No exception must occur when using null as parameter!");
 				}
+			});
+
+
+			QUnit.test("FOUC marker", function(assert) {
+				function getHrefForUrl(sUrl) {
+					return new URI(sUrl).absoluteTo(document.location).query("").toString();
+				}
+				var done = assert.async();
+				jQuery.sap.includeStyleSheet({
+					url: "testdata/testA.css",
+					id: "mylink-fouc",
+					attributes: {
+						"data-sap-ui-foucmarker": "mylink-fouc"
+					}
+				}).then(function() {
+					return jQuery.sap.includeStyleSheet({
+						url: "testdata/testB.css",
+						id: "mylink-fouc"
+					});
+				}).then(function() {
+					// due to the FOUC marker the old stylesheet should still be in the head
+					// and the the new link should be added before the old link
+					var oLinkA = document.querySelectorAll("link[data-sap-ui-foucmarker='mylink-fouc']")[0];
+					assert.notOk(oLinkA.hasAttribute("id"), "The id attribute has been removed from the old link.");
+					assert.equal(oLinkA.parentNode, document.head, "Old link is still in the head.");
+					assert.equal(oLinkA.href, getHrefForUrl("testdata/testA.css"), "Href of old link is correct.");
+					var oLinkB = document.getElementById("mylink-fouc");
+					assert.equal(oLinkB.parentNode, document.head, "New link has been added into the head.");
+					assert.equal(oLinkB.href, getHrefForUrl("testdata/testB.css"), "Href of new link is correct.");
+					assert.equal(oLinkA.previousSibling, oLinkB, "New link has been added before the old link.");
+					oLinkA.parentNode.removeChild(oLinkA);
+					return jQuery.sap.includeStyleSheet({
+						url: "testdata/testA.css",
+						id: "mylink-fouc"
+					});
+				}).then(function() {
+					// Counter check to validate the proper removal of the old link without the marker
+					var oLinkA = document.getElementById("mylink-fouc");
+					assert.equal(oLinkA.parentNode, document.head, "New link has been added into the head.");
+					assert.equal(oLinkA.href, getHrefForUrl("testdata/testA.css"), "Href of new link is correct.");
+					var oLinkB = document.querySelectorAll("link[data-sap-ui-foucmarker='mylink-fouc']")[0];
+					assert.notOk(oLinkB, "Old link has been removed.");
+					oLinkA.parentNode.removeChild(oLinkA);
+					done();
+				});
 			});
 
 
