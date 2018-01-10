@@ -5,9 +5,10 @@
 /*global history */
 sap.ui.define([
 		"jquery.sap.global",
+		"sap/ui/Device",
 		"sap/ui/documentation/sdk/controller/MasterTreeBaseController",
 		"sap/m/library"
-	], function (jQuery, MasterTreeBaseController, mobileLibrary) {
+	], function (jQuery, Device, MasterTreeBaseController, mobileLibrary) {
 		"use strict";
 
 
@@ -74,6 +75,12 @@ sap.ui.define([
 				if (masterTree) {
 					selectedItem = masterTree.getSelectedItem();
 					selectedItem && selectedItem.setSelected(false);
+				}
+
+				if (!Device.system.phone) {
+					jQuery.sap.delayedCall(0, this, function () {
+						this.getView().byId("searchField").getFocusDomRef().focus();
+					});
 				}
 			},
 
