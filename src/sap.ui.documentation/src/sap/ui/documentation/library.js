@@ -39,6 +39,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo',
 
 	var _libraryInfoSingleton;
 
+	thisLibrary._getLicense = function () {
+		var sUrl = "./LICENSE.txt";
+
+		return jQuery.ajax({
+			url: sUrl,
+			dataType: "text"
+		});
+	};
+
 	thisLibrary._getAppInfo = function(fnCallback) {
 		var sUrl = sap.ui.resource("", "sap-ui-version.json");
 
