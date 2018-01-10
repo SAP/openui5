@@ -1,0 +1,58 @@
+<mvc:View
+    controllerName="sap.ui.core.sample.MessageManager.BasicODataMessages.Controller"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+    height="100%">
+
+    <Page
+        showHeader="false">
+        <content>
+            <VBox class="sapUiSmallMargin">
+        		<f:SimpleForm id="SimpleFormToolbar"
+        			editable="true"
+        			layout="ResponsiveGridLayout" >
+        			<f:content>
+
+        				<Label text="First Name" />
+        				<Input value="{FirstName}" />
+
+                        <Label text="Last Name" />
+        				<Input value="{LastName}" />
+
+                        <Label text="ZIP Code/City" />
+        				<Input value="{PostalCode}">
+        					<layoutData>
+        						<l:GridData span="L3 M4 S4" />
+        					</layoutData>
+        				</Input>
+        				<Input value="{City}" />
+
+        			</f:content>
+        		</f:SimpleForm>
+        	</VBox>
+        </content>
+
+        <footer>
+            <OverflowToolbar id="otbFooter">
+                <Button
+                    icon="sap-icon://alert"
+                    text="{=${message>/}.length}"
+                    visible="{=${message>/}.length > 0}"
+                    type="Emphasized"
+                    press="onMessagePopoverPress">
+                </Button>
+
+                <ToolbarSpacer/>
+
+                <Button text="Delete" press="onDelete" type="Reject"/>
+                <Button text="Clear" press="onClearPress"/>
+
+            </OverflowToolbar>
+        </footer>
+
+    </Page>
+
+</mvc:View>

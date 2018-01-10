@@ -1,0 +1,72 @@
+<mvc:View
+	controllerName="sap.ui.core.sample.MessageManager.ODataBackendMessagesComp.controller.Employee"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.ui.layout.form"
+	displayBlock="true">
+	<Page title="Employee">
+		<content>
+			<f:SimpleForm
+				id="form"
+				busy="{view>/busy}"
+				minWidth="1024"
+				maxContainerCols="2"
+				editable="true"
+				layout="ResponsiveGridLayout"
+				labelSpanL="3" labelSpanM="3"
+				emptySpanL="4" emptySpanM="4"
+				columnsL="1" columnsM="1">
+
+				<f:content>
+
+					<Label text="First Name" required="true"/>
+					<Input value="{FirstName}" required="true"/>
+
+					<Label text="Last Name" required="true"/>
+					<Input value="{LastName}"/>
+
+					<Label text="Birthday"/>
+					<DatePicker
+						value="{
+							path:'BirthDate',
+							type: 'sap.ui.model.type.Date',
+							formatOptions: {
+								style: 'medium',
+								strictParsing: true
+							}
+						}"/>
+
+					<Label text="Hire Date" />
+					<DatePicker
+						value="{
+							path:'HireDate',
+							type:'sap.ui.model.type.Date',
+							formatOptions: {
+								style: 'medium',
+								strictParsing: true
+							}
+						}"/>
+				</f:content>
+			</f:SimpleForm>
+
+		</content>
+		<footer>
+			<OverflowToolbar
+				id="otbFooter">
+				<Button
+					icon="sap-icon://alert"
+					text="{=${message>/}.length}"
+					visible="{=${message>/}.length > 0}"
+					type="Emphasized"
+					press="onMessagePopoverPress"/>
+
+				<ToolbarSpacer/>
+
+				<Button text="Save" type="Accept" enabled="{view>/dirty}" press="onSave"/>
+				<Button text="Revert Changes" type="Reject" press="onRevertChanges"/>
+				<Button text="Has pending changes" press="onCheckHasPendingChanges"/>
+
+			</OverflowToolbar>
+		</footer>
+	</Page>
+</mvc:View>

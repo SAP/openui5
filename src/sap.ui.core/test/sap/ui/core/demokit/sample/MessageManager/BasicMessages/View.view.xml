@@ -1,0 +1,136 @@
+<mvc:View
+    controllerName="sap.ui.core.sample.MessageManager.BasicMessages.Controller"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.ui.layout.form"
+    height="100%"
+    displayBlock="true">
+
+    <Page
+        id="page"
+        showHeader="false"
+        class="sapUiContentPadding">
+        <content>
+            <f:Form
+                id="form"
+                editable="true"
+                title="UI Messages">
+                <f:layout>
+                    <f:ResponsiveGridLayout />
+                </f:layout>
+                <f:formContainers>
+                    <f:FormContainer
+                        id="formContainer"
+                        title="Fields">
+
+                        <f:FormElement>
+                            <f:label>
+                                <Label
+                                    text="String\{3,10\}"
+                                    required="true"/>
+                            </f:label>
+                            <f:fields>
+                                <Input
+                                    id="mandatoryInput"
+                                    value="{
+                                        path: '/MandatoryInputValue',
+                                        type: 'sap.ui.model.type.String',
+                                        constraints: {
+                                            minLength: 3,
+                                            maxLength: 10
+                                        }
+                                    }"/>
+                            </f:fields>
+                        </f:FormElement>
+
+                        <f:FormElement>
+                            <f:label>
+                                <Label text="DatePicker"/>
+                            </f:label>
+                            <f:fields>
+                                <DatePicker
+                                    id="date"
+                                    value="{
+                                        path:'/DateValue',
+                                        type:'sap.ui.model.type.Date',
+                                        formatOptions: {
+                                            style: 'short',
+                                            strictParsing: true
+                                        },
+                                        constraints: { }
+                                    }" />
+                            </f:fields>
+                        </f:FormElement>
+
+                        <f:FormElement>
+                            <f:label>
+                                <Label text="Integer 0-100"/>
+                            </f:label>
+                            <f:fields>
+                                <Input
+                                    id="int"
+                                    value="{
+                                        path: '/IntegerValue',
+                                        type:'sap.ui.model.type.Integer',
+                                        constraints: {
+                                            minimum: 0,
+                                            maximum: 100
+                                        }
+                                    }"/>
+                            </f:fields>
+                        </f:FormElement>
+
+                        <f:FormElement>
+                            <f:label>
+                                <Label text="Message Buttons"/>
+                            </f:label>
+                            <f:fields>
+                                <Input
+                                    id="dummy"
+                                    value="{/Dummy}"/>
+                            </f:fields>
+                        </f:FormElement>
+
+                        <f:FormElement>
+                            <f:label>
+                                <Label text="ValueState Only"/>
+                            </f:label>
+                            <f:fields>
+                                <Input
+                                    id="valuesStateOnly"
+                                    value="{/ValueStateOnly}"/>
+                            </f:fields>
+                        </f:FormElement>
+
+                    </f:FormContainer>
+                </f:formContainers>
+            </f:Form>
+        </content>
+
+        <footer>
+            <Toolbar
+                id="otbFooter">
+
+                <Button
+                    icon="sap-icon://alert"
+                    text="{= ${message>/}.length }"
+                    visible="{= ${message>/}.length > 0 }"
+                    type="Emphasized"
+                    press="onMessagePopoverPress" />
+
+                <ToolbarSpacer/>
+
+                <Button type="Accept" text="Success" press="onSuccessPress"/>
+                <Button type="Reject" text="Error" press="onErrorPress"/>
+                <Button text="Warning" press="onWarningPress"/>
+                <Button text="Info" press="onInfoPress"/>
+                <Button text="ValueState" press="onValueStatePress"/>
+                <Button text="Clear" press="onClearPress"/>
+
+            </Toolbar>
+        </footer>
+
+    </Page>
+
+</mvc:View>
