@@ -26,7 +26,8 @@
 		"rootView": {
 			"viewName": "sap.ui.rta.test.variantManagement.view.Root",
 			"type": "XML",
-			"async": true
+			"async": true,
+			"id": "app"
 		},
 		"handleValidation": true,
 		"dependencies": {

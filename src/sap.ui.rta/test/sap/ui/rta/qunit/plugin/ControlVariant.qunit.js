@@ -102,8 +102,14 @@ sap.ui.require([
 						defaultVariant : "variant1",
 						variantsEditable : true,
 						variants: [
-							{key: "variant1"},
-							{key: "variant2"}
+							{
+								key: "variant1",
+								title: "Variant 1"
+							},
+							{
+								key: "variant2",
+								title: "Variant 2"
+							}
 						]
 					}
 				};
@@ -231,46 +237,60 @@ sap.ui.require([
 		});
 
 		QUnit.test("when isVariantSwitchAvailable is called with VariantManagement overlay", function(assert) {
-			var bAvailable = this.oControlVariantPlugin.isVariantSwitchAvailable(this.oVariantManagementOverlay);
-			assert.ok(bAvailable, "then variant switch is available for VariantManagement control");
+			var bVMAvailable = this.oControlVariantPlugin.isVariantSwitchAvailable(this.oVariantManagementOverlay);
+			var bButtonAvailable = this.oControlVariantPlugin.isVariantSwitchAvailable(this.oButtonOverlay);
+			assert.ok(bVMAvailable, "then variant switch is available for VariantManagement control");
+			assert.notOk(bButtonAvailable, "then variant switch not available for a non VariantManagement control overlay");
 		});
 
 		QUnit.test("when isVariantSwitchEnabled is called with VariantManagement overlay", function(assert) {
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
-			var bEnabled = this.oControlVariantPlugin.isVariantSwitchEnabled(this.oVariantManagementOverlay);
-			assert.ok(bEnabled, "then variant switch is enabled for VariantManagement control");
+			var bVMEnabled = this.oControlVariantPlugin.isVariantSwitchEnabled(this.oVariantManagementOverlay);
+			var bButtonEnabled = this.oControlVariantPlugin.isVariantSwitchEnabled(this.oButtonOverlay);
+			assert.ok(bVMEnabled, "then variant switch is enabled for VariantManagement control");
+			assert.notOk(bButtonEnabled, "then variant switch is not enabled for a non VariantManagement control");
 		});
 
 		QUnit.test("when isVariantDuplicateAvailable is called with different overlays", function(assert) {
 			assert.notOk(this.oControlVariantPlugin.isVariantDuplicateAvailable(this.oObjectPageLayoutOverlay), "then duplicate not available for a non VariantManagement control overlay with variantReference");
-			assert.ok(this.oControlVariantPlugin.isVariantDuplicateAvailable(this.oVariantManagementOverlay), "then duplicate available for a VariantManagement control overlay withvariantReference");
+			assert.ok(this.oControlVariantPlugin.isVariantDuplicateAvailable(this.oVariantManagementOverlay), "then duplicate available for a VariantManagement control overlay with variantReference");
 			assert.notOk(this.oControlVariantPlugin.isVariantDuplicateAvailable(this.oLayoutOuterOverlay), "then duplicate not available for a non VariantManagement control overlay without variantReference");
 		});
 
 		QUnit.test("when isVariantDuplicateEnabled is called with VariantManagement overlay", function(assert) {
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
-			var bEnabled = this.oControlVariantPlugin.isVariantDuplicateEnabled(this.oVariantManagementOverlay);
-			assert.ok(bEnabled, "then variant duplicate is enabled for VariantManagement control");
+			var bVMEnabled = this.oControlVariantPlugin.isVariantDuplicateEnabled(this.oVariantManagementOverlay);
+			var bButtonEnabled = this.oControlVariantPlugin.isVariantDuplicateEnabled(this.oButtonOverlay);
+			assert.ok(bVMEnabled, "then variant duplicate is enabled for VariantManagement control");
+			assert.notOk(bButtonEnabled, "then variant duplicate is not enabled for a non VariantManagement control");
 		});
 
 		QUnit.test("when isVariantRenameAvailable is called with VariantManagement overlay", function(assert) {
-			var bAvailable = this.oControlVariantPlugin.isRenameAvailable(this.oVariantManagementOverlay);
-			assert.ok(bAvailable, "then variant rename is available for VariantManagement control");
+			var bVMAvailable = this.oControlVariantPlugin.isRenameAvailable(this.oVariantManagementOverlay);
+			var bButtonAvailable = this.oControlVariantPlugin.isRenameAvailable(this.oButtonOverlay);
+			assert.ok(bVMAvailable, "then variant rename is available for VariantManagement control");
+			assert.notOk(bButtonAvailable, "then variant rename is not available for non VariantManagement control");
 		});
 
 		QUnit.test("when isVariantRenameEnabled is called with VariantManagement overlay", function(assert) {
-			var bEnabled = this.oControlVariantPlugin.isRenameEnabled(this.oVariantManagementOverlay);
-			assert.ok(bEnabled, "then variant rename is enabled for VariantManagement control");
+			var bVMEnabled = this.oControlVariantPlugin.isRenameEnabled(this.oVariantManagementOverlay);
+			var bButtonEnabled = this.oControlVariantPlugin.isRenameEnabled(this.oButtonOverlay);
+			assert.ok(bVMEnabled, "then variant rename is enabled for VariantManagement control");
+			assert.notOk(bButtonEnabled, "then variant rename is not enabled for a non VariantManagement control");
 		});
 
 		QUnit.test("when isVariantConfigureAvailable is called with VariantManagement overlay", function(assert) {
-			var bAvailable = this.oControlVariantPlugin.isVariantConfigureAvailable(this.oVariantManagementOverlay);
-			assert.ok(bAvailable, "then variant configure is available for VariantManagement control");
+			var bVMAvailable = this.oControlVariantPlugin.isVariantConfigureAvailable(this.oVariantManagementOverlay);
+			var bButtonAvailable = this.oControlVariantPlugin.isVariantConfigureAvailable(this.oButtonOverlay);
+			assert.ok(bVMAvailable, "then variant configure is available for VariantManagement control");
+			assert.notOk(bButtonAvailable, "then variant configure is not available for non VariantManagement control");
 		});
 
 		QUnit.test("when isVariantConfigureEnabled is called with VariantManagement overlay", function(assert) {
-			var bEnabled = this.oControlVariantPlugin.isVariantConfigureEnabled(this.oVariantManagementOverlay);
-			assert.ok(bEnabled, "then variant configure is enabled for VariantManagement control");
+			var bVMEnabled = this.oControlVariantPlugin.isVariantConfigureEnabled(this.oVariantManagementOverlay);
+			var bButtonEnabled = this.oControlVariantPlugin.isVariantConfigureEnabled(this.oButtonOverlay);
+			assert.ok(bVMEnabled, "then variant configure is enabled for VariantManagement control");
+			assert.notOk(bButtonEnabled, "then variant configure is not enabled for a non VariantManagement control");
 		});
 
 		QUnit.test("when switchVariant is called", function(assert) {
@@ -374,113 +394,69 @@ sap.ui.require([
 		});
 
 		QUnit.test("when retrieving the context menu items", function(assert){
-			var bDuplicateAvailable = true;
-
 			// Rename
-			sandbox.stub(this.oControlVariantPlugin, "isRenameAvailable", function(oOverlay){
-				assert.deepEqual(oOverlay, this.oButtonOverlay, "the 'available' function calls isRenameAvailable with the correct overlay");
-				return true;
-			}.bind(this));
 			sandbox.stub(this.oControlVariantPlugin, "renameVariant", function(){
 				assert.ok(true, "the 'handler' function calls the renameVariant method");
 			});
-			sandbox.stub(this.oControlVariantPlugin, "isRenameEnabled", function(oOverlay){
-				assert.deepEqual(oOverlay, this.oButtonOverlay, "the 'enabled' function calls isRenameEnabled with the correct overlay");
-			}.bind(this));
 
 			// Duplicate
-			sandbox.stub(this.oControlVariantPlugin, "isVariantDuplicateAvailable", function(oOverlay){
-				assert.deepEqual(oOverlay, this.oButtonOverlay, "the 'available' function calls isVariantDuplicateAvailable with the correct overlay");
-				return bDuplicateAvailable;
-			}.bind(this));
 			sandbox.stub(this.oControlVariantPlugin, "duplicateVariant", function(oOverlay){
-				assert.deepEqual(oOverlay, this.oButtonOverlay, "the 'handler' function calls duplicateVariant with the correct overlay");
-			}.bind(this));
-			sandbox.stub(this.oControlVariantPlugin, "isVariantDuplicateEnabled", function(oOverlay){
-				assert.deepEqual(oOverlay, this.oButtonOverlay, "the 'enabled' function calls isVariantDuplicateEnabled with the correct overlay");
+				assert.deepEqual(oOverlay, this.oVariantManagementOverlay, "the 'handler' function calls duplicateVariant with the correct overlay");
 			}.bind(this));
 
 			// Configure
-			sandbox.stub(this.oControlVariantPlugin, "isVariantConfigureAvailable", function(oOverlay){
-				assert.deepEqual(oOverlay, this.oButtonOverlay, "the 'available' function calls isVariantConfigureAvailable with the correct overlay");
-				return true;
-			}.bind(this));
 			sandbox.stub(this.oControlVariantPlugin, "configureVariants", function(){
 				assert.ok(true, "the 'handler' function calls the configureVariants method");
 			});
-			sandbox.stub(this.oControlVariantPlugin, "isVariantConfigureEnabled", function(oOverlay){
-				assert.deepEqual(oOverlay, this.oButtonOverlay, "the 'enabled' function calls isVariantConfigureEnabled with the correct overlay");
-			}.bind(this));
 
 			// Switch SubMenu
 			var oItem = {
 				eventItem: {
 					data: function () {
 						return {
-							targetOverlay: "dummyOverlay",
-							key: "dummyKey",
-							current: "dummyCurrent"
+							id: "CTX_VARIANT_SWITCH_SUBMENU",
+							key: "variant2"
 						};
 					}
 				}
 			};
-			var sVariantModelName = '$FlexVariants';
-			this.oButtonOverlay.getVariantManagement = function(){
-				return "dummyManagementReferenceId";
+			this.oVariantManagementOverlay.getVariantManagement = function(){
+				return "varMgtKey";
 			};
-			var oModel = {
-				getData : function() {
-					return {
-						dummyManagementReferenceId : {
-							currentVariant : "dummyCurrentVariant",
-							variants : "dummyVariants"
-						}
-					};
-				}
-			};
-			sandbox.stub(this.oControlVariantPlugin, "isVariantSwitchAvailable", function(oOverlay){
-				assert.deepEqual(oOverlay, this.oButtonOverlay, "the 'available' function calls isVariantSwitchAvailable with the correct overlay");
-				return true;
-			}.bind(this));
-			sandbox.stub(this.oControlVariantPlugin, "switchVariant", function(oTargetOverlay, sNewVariantKey, sCurrentVariantKey){
-				assert.equal(oTargetOverlay, "dummyOverlay", "the 'handler' function calls the switchVariant method with the correct oTargetOverlay");
-				assert.equal(sNewVariantKey, "dummyKey", "the 'handler' function calls the switchVariant method with the correct sNewVariantKey");
-				assert.equal(sCurrentVariantKey, "dummyCurrent", "the 'handler' function calls the switchVariant method with the correct sCurrentVariantKey");
-			});
-			sandbox.stub(this.oControlVariantPlugin, "isVariantSwitchEnabled", function(oOverlay){
-				assert.deepEqual(oOverlay, this.oButtonOverlay, "the 'enabled' function calls isVariantSwitchEnabled with the correct overlay");
+			var aExpectedSubmenu = [
+				{id: "variant1", text: "Variant 1", icon: "sap-icon://accept", enabled: false},
+				{id: "variant2", text: "Variant 2", icon: "", enabled: true}
+			];
+
+			sandbox.stub(this.oControlVariantPlugin, "switchVariant", function(oTargetOverlay, sNewVariantReference, sCurrentVariantReference){
+				assert.equal(oTargetOverlay, this.oVariantManagementOverlay, "the 'handler' function calls the switchVariant method with the correct oTargetOverlay");
+				assert.equal(sNewVariantReference, "variant2", "the 'handler' function calls the switchVariant method with the correct sNewVariantKey");
+				assert.equal(sCurrentVariantReference, "variant1", "the 'handler' function calls the switchVariant method with the correct sCurrentVariantKey");
 			}.bind(this));
 
-			var aMenuItems = this.oControlVariantPlugin.getMenuItems(this.oButtonOverlay);
+			var aMenuItems = this.oControlVariantPlugin.getMenuItems(this.oVariantManagementOverlay);
 
 			assert.equal(aMenuItems[0].id, "CTX_VARIANT_SET_TITLE", "there is an entry for rename variant");
 			assert.equal(aMenuItems[0].rank, 210, "and the entry has the correct rank");
-			aMenuItems[0].handler([this.oButtonOverlay]);
-			aMenuItems[0].enabled(this.oButtonOverlay);
+			aMenuItems[0].handler([this.oVariantManagementOverlay]);
+			assert.ok(aMenuItems[0].enabled(this.oVariantManagementOverlay), "and the entry is enabled");
+
 			assert.equal(aMenuItems[1].id, "CTX_VARIANT_DUPLICATE", "there is an entry for duplicate variant");
 			assert.equal(aMenuItems[1].rank, 220, "and the entry has the correct rank");
-			aMenuItems[1].handler([this.oButtonOverlay]);
-			aMenuItems[1].enabled(this.oButtonOverlay);
+			aMenuItems[1].handler([this.oVariantManagementOverlay]);
+			assert.ok(aMenuItems[1].enabled(this.oVariantManagementOverlay), "and the entry is enabled");
+
 			assert.equal(aMenuItems[2].id, "CTX_VARIANT_CONFIGURE", "there is an entry for configure variant");
 			assert.equal(aMenuItems[2].rank, 230, "and the entry has the correct rank");
-			aMenuItems[2].handler([this.oButtonOverlay]);
-			aMenuItems[2].enabled(this.oButtonOverlay);
+			aMenuItems[2].handler([this.oVariantManagementOverlay]);
+			assert.ok(aMenuItems[2].enabled(this.oVariantManagementOverlay), "and the entry is enabled");
 			assert.equal(aMenuItems[2].startSection, true, "the configure variant starts a new section on the menu");
 
 			assert.equal(aMenuItems[3].id, "CTX_VARIANT_SWITCH_SUBMENU", "there is a submenu for switch variant");
 			assert.equal(aMenuItems[3].rank, 240, "and the entry has the correct rank");
-			assert.equal(aMenuItems[3].submenu.id, "{" + sVariantModelName + ">key}", "the submenu id is correct");
-			assert.equal(aMenuItems[3].submenu.text, "{" + sVariantModelName + ">title}", "the submenu text is correct");
-			assert.equal(aMenuItems[3].submenu.model, sVariantModelName, "the submenu model is correct");
-			assert.equal(aMenuItems[3].submenu.current(this.oButtonOverlay, oModel), "dummyCurrentVariant", "the 'current' function returns the correct variant");
-			assert.equal(aMenuItems[3].submenu.items(this.oButtonOverlay, oModel), "dummyVariants", "the 'items' function returns the correct variants");
-			aMenuItems[3].handler([this.oButtonOverlay], oItem);
-			aMenuItems[3].enabled(this.oButtonOverlay);
-
-			bDuplicateAvailable = false;
-			assert.equal(this.oControlVariantPlugin.getMenuItems(this.oButtonOverlay).length,
-				3,
-				"then if e.g. duplicate variant is not available, its menu item is not returned");
+			assert.ok(aMenuItems[3].enabled(this.oVariantManagementOverlay), "and the entry is enabled");
+			assert.propEqual(aMenuItems[3].submenu, aExpectedSubmenu, "and the submenu array is correct");
+			aMenuItems[3].handler([this.oVariantManagementOverlay], oItem);
 		});
 
 		QUnit.module("Given _emitLabelChangeEvent is called after renaming (blur or click events)", {

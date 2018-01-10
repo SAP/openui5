@@ -7,14 +7,12 @@ sap.ui.define([
 	'jquery.sap.global',
 	'./library',
 	'sap/ui/unified/Menu',
-	'sap/ui/unified/MenuItem',
-	'sap/ui/fl/Utils'
+	'sap/ui/unified/MenuItem'
 ], function(
 	jQuery,
 	library,
 	Menu,
-	MenuItem,
-	flUtils
+	MenuItem
 ) {
 	"use strict";
 
@@ -84,37 +82,30 @@ sap.ui.define([
 		Menu.prototype.addStyleClass.apply(this, arguments);
 	};
 
-	ContextMenuControl.prototype._createSubMenuWithBinding = function(oRootMenuItem, oTargetOverlay, bEnabled) {
-		var oAppComponent = flUtils.getAppComponentForControl(oTargetOverlay.getElementInstance()),
-			oSubmenuModel = oAppComponent.getModel(oRootMenuItem.submenu.model),
-			sCurrentItemKey = oRootMenuItem.submenu.current(oTargetOverlay, oSubmenuModel),
-			aSubmenuItems = oRootMenuItem.submenu.items(oTargetOverlay, oSubmenuModel);
+	ContextMenuControl.prototype._createSubMenuWithBinding = function(aItems, sRootMenuItemId, bEnabled) {
+		var oSubmenu = new Menu({
+			enabled: bEnabled
+		});
 
-		var aMenuItems = aSubmenuItems.map(function(oSubmenuItem) {
-			var bCurrentItem = (sCurrentItemKey === oSubmenuItem.key),
-				sIcon = bCurrentItem ? "sap-icon://accept" : "";
-			var oMenuItemTemplate = new MenuItem({
-				text: oSubmenuItem.title,
-				icon: sIcon,
-				enabled: !bCurrentItem
+		aItems.forEach(function(oItem) {
+			var oSubmenuItem = new MenuItem({
+				text: oItem.text,
+				icon: oItem.icon,
+				enabled: oItem.enabled
 			});
-			return oMenuItemTemplate.data({
-				id: oRootMenuItem.id,
-				key: oSubmenuItem.key,
-				current: sCurrentItemKey,
-				targetOverlay: oTargetOverlay
+			oSubmenuItem.data({
+				id: sRootMenuItemId,
+				key: oItem.id
 			});
-		}, this);
 
-		var oSubMenu = new Menu({
-			enabled: bEnabled,
-			items: aMenuItems
+			oSubmenu.addItem(oSubmenuItem);
 		});
 
 		this.aStyleClasses.forEach(function(sStyleClass) {
-			oSubMenu.addStyleClass(sStyleClass);
+			oSubmenu.addStyleClass(sStyleClass);
 		});
-		return oSubMenu;
+
+		return oSubmenu;
 	};
 
 	/**
@@ -153,9 +144,9 @@ sap.ui.define([
 				});
 
 				// create new subMenu with Binding
-				if (oItem.type === "subMenuWithBinding") {
-					var oSubMenu = this._createSubMenuWithBinding(oItem, oTargetOverlay, bEnabled);
-					oMenuItem.setSubmenu(oSubMenu);
+				if (oItem.submenu) {
+					var oSubmenu = this._createSubMenuWithBinding(oItem.submenu, oItem.id, bEnabled);
+					oMenuItem.setSubmenu(oSubmenu);
 				}
 
 				oMenuItem.data({

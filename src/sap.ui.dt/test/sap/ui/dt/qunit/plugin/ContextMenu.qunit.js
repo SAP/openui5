@@ -100,15 +100,13 @@ sap.ui.require([
 				handler : sinon.spy()
 			};
 
-			var VARIANT_MODEL_NAME = "variantModelName",
-				oMockedAppComponent = {
+			var	oMockedAppComponent = {
 					getModel: function () { return {}; }
 				},
 				aVariantItems = [
-					{key: "variant0", title: "titleVariant0"},
-					{key: "variant1", title: "titleVariant1"}
-				],
-				sCurrentVariant = "currentVariant";
+					{id: "variant0", text: "titleVariant0", enabled: true},
+					{id: "variant1", text: "titleVariant1", enabled: false}
+				];
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 
 			this.oMenuEntries.startSubMenu = {
@@ -118,14 +116,7 @@ sap.ui.require([
 				handler: sinon.spy(),
 				available : function() { return true; },
 				enabled : function() { return true; },
-				submenu : {
-					id: "{" + VARIANT_MODEL_NAME + ">key}",
-					text: "{" + VARIANT_MODEL_NAME + ">title}",
-					model: VARIANT_MODEL_NAME,
-					current: function() { return sCurrentVariant; },
-					items: function() { return aVariantItems; }
-				},
-				type: "subMenuWithBinding"
+				submenu : aVariantItems
 			};
 
 			this.oContextMenuPlugin = new ContextMenu();
@@ -187,15 +178,11 @@ sap.ui.require([
 		var oSubMenu = oContextMenu.getItems()[6].getSubmenu();
 		assert.equal(oSubMenu.getItems().length, 2, " 2 submenu items are available");
 		assert.equal(oSubMenu.getItems()[0].data().id, this.oMenuEntries.startSubMenu.id, " 1. submenu item id is there");
-		assert.equal(oSubMenu.getItems()[0].data().key, this.oMenuEntries.startSubMenu.submenu.items()[0].key, " 1. submenu item key is there");
-		assert.equal(oSubMenu.getItems()[0].data().current, this.oMenuEntries.startSubMenu.submenu.current(), " 1. submenu item currentVariant is there");
-		assert.equal(oSubMenu.getItems()[0].data().targetOverlay.getId(), this.oButton1Overlay.getId(), " 1. submenu item targetOverlay is there");
-		assert.equal(oSubMenu.getItems()[0].getText(), this.oMenuEntries.startSubMenu.submenu.items()[0].title, " 1. subMenu item text is set");
+		assert.equal(oSubMenu.getItems()[0].data().key, this.oMenuEntries.startSubMenu.submenu[0].id, " 1. submenu item key is there");
+		assert.equal(oSubMenu.getItems()[0].getText(), this.oMenuEntries.startSubMenu.submenu[0].text, " 1. subMenu item text is set");
 		assert.equal(oSubMenu.getItems()[1].data().id, this.oMenuEntries.startSubMenu.id, " 2. submenu item id is there");
-		assert.equal(oSubMenu.getItems()[1].data().key, this.oMenuEntries.startSubMenu.submenu.items()[1].key, " 2. submenu item key is there");
-		assert.equal(oSubMenu.getItems()[1].data().current, this.oMenuEntries.startSubMenu.submenu.current(), " 2. submenu item currentVariant is there");
-		assert.equal(oSubMenu.getItems()[1].data().targetOverlay.getId(), this.oButton1Overlay.getId(), " 2. submenu item targetOverlay is there");
-		assert.equal(oSubMenu.getItems()[1].getText(), this.oMenuEntries.startSubMenu.submenu.items()[1].title, " 2. subMenu item text is set");
+		assert.equal(oSubMenu.getItems()[1].data().key, this.oMenuEntries.startSubMenu.submenu[1].id, " 2. submenu item key is there");
+		assert.equal(oSubMenu.getItems()[1].getText(), this.oMenuEntries.startSubMenu.submenu[1].text, " 2. subMenu item text is set");
 	});
 
 	QUnit.test("when context menu is opened (via mouse) for button 2 ...", function(assert) {
@@ -224,15 +211,11 @@ sap.ui.require([
 		var oSubMenu = oContextMenu.getItems()[7].getSubmenu();
 		assert.equal(oSubMenu.getItems().length, 2, " 2 submenu items are available");
 		assert.equal(oSubMenu.getItems()[0].data().id, this.oMenuEntries.startSubMenu.id, " 1. submenu item id is there");
-		assert.equal(oSubMenu.getItems()[0].data().key, this.oMenuEntries.startSubMenu.submenu.items()[0].key, " 1. submenu item key is there");
-		assert.equal(oSubMenu.getItems()[0].data().current, this.oMenuEntries.startSubMenu.submenu.current(), " 1. submenu item currentVariant is there");
-		assert.equal(oSubMenu.getItems()[0].data().targetOverlay.getId(), this.oButton2Overlay.getId(), " 1. submenu item targetOverlay is there");
-		assert.equal(oSubMenu.getItems()[0].getText(), this.oMenuEntries.startSubMenu.submenu.items()[0].title, " 1. subMenu item text is set");
+		assert.equal(oSubMenu.getItems()[0].data().key, this.oMenuEntries.startSubMenu.submenu[0].id, " 1. submenu item key is there");
+		assert.equal(oSubMenu.getItems()[0].getText(), this.oMenuEntries.startSubMenu.submenu[0].text, " 1. subMenu item text is set");
 		assert.equal(oSubMenu.getItems()[1].data().id, this.oMenuEntries.startSubMenu.id, " 2. submenu item id is there");
-		assert.equal(oSubMenu.getItems()[1].data().key, this.oMenuEntries.startSubMenu.submenu.items()[1].key, " 2. submenu item key is there");
-		assert.equal(oSubMenu.getItems()[1].data().current, this.oMenuEntries.startSubMenu.submenu.current(), " 2. submenu item currentVariant is there");
-		assert.equal(oSubMenu.getItems()[1].data().targetOverlay.getId(), this.oButton2Overlay.getId(), " 2. submenu item targetOverlay is there");
-		assert.equal(oSubMenu.getItems()[1].getText(), this.oMenuEntries.startSubMenu.submenu.items()[1].title, " 2. subMenu item text is set");
+		assert.equal(oSubMenu.getItems()[1].data().key, this.oMenuEntries.startSubMenu.submenu[1].id, " 2. submenu item key is there");
+		assert.equal(oSubMenu.getItems()[1].getText(), this.oMenuEntries.startSubMenu.submenu[1].text, " 2. subMenu item text is set");
 	});
 
 	QUnit.test("when context menu is opened (via mouse) for unselectable overlay ...", function(assert) {
