@@ -1,7 +1,5 @@
 <core:FragmentDefinition 
 	xmlns="sap.m" 
 	xmlns:core="sap.ui.core">
-	<SelectList items="{$this>myItems}">
-		<core:AggregationProxy type="sap.ui.core.Item"></core:AggregationProxy>
-	</SelectList>
+	<SelectList id="selectList"/>
 </core:FragmentDefinition>

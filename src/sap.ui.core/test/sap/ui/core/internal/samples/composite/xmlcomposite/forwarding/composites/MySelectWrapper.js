@@ -7,7 +7,8 @@ sap.ui.define(['sap/ui/core/XMLComposite'],
 					fcItems: {
 						type: "sap.ui.core.Item",
 						multiple: true,
-						bindable: "bindable"
+						bindable: "bindable",
+						forwarding: { idSuffix: "--mySelect", aggregation: "myItems"}
 					}
 				},
 				defaultAggregation: "fcItems"
