@@ -5,7 +5,21 @@
 /**
  * Initialization Code and shared classes of library sap.uxap.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/base/DataType", "sap/ui/Device", "sap/m/library", "sap/ui/layout/library"], function(jQuery, Core, DataType, Device) {
+sap.ui.define([
+	"jquery.sap.global",
+	"sap/ui/core/Core",
+	"sap/ui/base/DataType",
+	"sap/ui/Device",
+	"sap/uxap/changeHandler/MoveObjectPageSection",
+	"sap/m/library",
+	"sap/ui/layout/library"
+], function(
+	jQuery,
+	Core,
+	DataType,
+	Device,
+	MoveObjectPageSection
+) {
 	"use strict";
 
 	/**
@@ -58,7 +72,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/base/DataType", 
 				"sap.uxap.ObjectPageHeader" : "sap/uxap/flexibility/ObjectPageHeader",
 				"sap.uxap.ObjectPageLayout": {
 					"moveControls": {
-						"changeHandler": "default",
+						"changeHandler": MoveObjectPageSection,
 						"layers": {
 							"USER": true
 						}
