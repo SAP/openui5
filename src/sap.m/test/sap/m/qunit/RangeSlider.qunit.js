@@ -201,6 +201,60 @@
 		assert.strictEqual(this.rangeSlider.getValue2(), 0, "Value should be limited to the MIN properly");
 	});
 
+	QUnit.test("set/getStep()", function (assert) {
+		//arrange
+		var fnLogWarning = this.spy(jQuery.sap.log, "warning"),
+			sWarningText = "Warning: The step could not be negative on ";
+
+		assert.strictEqual(this.rangeSlider._iDecimalPrecision, 0, "The decimal precision should be 0 initially");
+
+		//act
+		this.rangeSlider.setStep(0.05);
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.strictEqual(this.rangeSlider.getStep(), 0.05, "The step should be set properly within the range");
+		assert.strictEqual(this.rangeSlider._iDecimalPrecision, 2, "The decimal precision should be 2");
+		assert.strictEqual(fnLogWarning.callCount, 0, "No warnings were logged");
+
+		//act
+		this.rangeSlider.setStep(-0.5);
+
+		//assert
+		assert.strictEqual(this.rangeSlider.getStep(), -0.5, "The step should be set properly within the range");
+		assert.strictEqual(this.rangeSlider._iDecimalPrecision, 1, "The decimal precision should be 1");
+		assert.strictEqual(fnLogWarning.callCount, 1, "One warning was logged");
+		assert.strictEqual(fnLogWarning.getCalls()[0].args[0], sWarningText, "The correct warning was fired");
+	});
+
+	QUnit.test("set/getValue() with decimal precision", function (assert) {
+		//arrange
+		this.rangeSlider.setStep(0.05);
+		sap.ui.getCore().applyChanges();
+
+		//act
+		this.rangeSlider.setValue(0.150000000000000001);
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.deepEqual(this.rangeSlider.getRange(), [0.15, 100], "The value should be set properly within the range");
+		assert.strictEqual(this.rangeSlider.getValue(), 0.15, "The value should be set with its proper decimal precision");
+	});
+
+	QUnit.test("set/getValue2() with decimal precision", function (assert) {
+		//arrange
+		this.rangeSlider.setStep(0.05);
+		sap.ui.getCore().applyChanges();
+
+		//act
+		this.rangeSlider.setValue2(0.150000000000000001);
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.deepEqual(this.rangeSlider.getRange(), [0, 0.15], "The value should be set properly within the range");
+		assert.strictEqual(this.rangeSlider.getValue2(), 0.15, "The value should be set with its proper decimal precision");
+	});
+
 	QUnit.test("Invalid range starting value of -20 (where min is 0)", function (assert) {
 		this.rangeSlider.setRange([-20, 50]);
 		sap.ui.getCore().applyChanges();
