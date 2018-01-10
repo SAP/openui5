@@ -31,6 +31,18 @@ sap.ui.define(["sap/uxap/library"],
 				},
 				actions : {
 					move : "moveControls"
+				},
+				beforeMove : function (ObjectPageLayout) {
+					if (ObjectPageLayout){
+						ObjectPageLayout._suppressScroll();
+					}
+				},
+				afterMove : function (ObjectPageLayout) {
+					if (ObjectPageLayout){
+						ObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+							ObjectPageLayout._resumeScroll(false);
+						});
+					}
 				}
 			},
 			headerContent : {
