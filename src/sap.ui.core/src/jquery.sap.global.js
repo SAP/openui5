@@ -4895,6 +4895,18 @@
 		}
 	}
 
+	function cloneMap(oSource) {
+		var oObject = {};
+		if (oSource) {
+			for (var sKey in oSource) {
+				if (oSource.hasOwnProperty(sKey)) {
+					oObject[sKey] = oSource[sKey];
+				}
+			}
+		}
+		return oObject;
+	}
+
 	function _includeScript(sUrl, mAttributes, fnLoadCallback, fnErrorCallback) {
 		var oScript = window.document.createElement("script");
 		oScript.src = sUrl;
@@ -4907,14 +4919,14 @@
 			});
 		}
 
-		if (fnLoadCallback) {
+		if (typeof fnLoadCallback === "function") {
 			jQuery(oScript).load(function() {
 				fnLoadCallback();
 				jQuery(oScript).off("load");
 			});
 		}
 
-		if (fnErrorCallback) {
+		if (typeof fnErrorCallback === "function") {
 			jQuery(oScript).error(function() {
 				fnErrorCallback();
 				jQuery(oScript).off("error");
@@ -4959,17 +4971,18 @@
 	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
 	 */
 	jQuery.sap.includeScript = function includeScript(vUrl, vId, fnLoadCallback, fnErrorCallback) {
+		var mAttributes;
 		if (typeof vUrl === "string") {
-			var mAttributes = typeof vId === "string" ? {id: vId} : vId;
+			mAttributes = typeof vId === "string" ? {id: vId} : vId;
 			_includeScript(vUrl, mAttributes, fnLoadCallback, fnErrorCallback);
 		} else {
 			jQuery.sap.assert(typeof vUrl === 'object' && vUrl.url, "vUrl must be an object and requires a URL");
+			mAttributes = cloneMap(vUrl.attributes);
 			if (vUrl.id) {
-				vUrl.attributes = vUrl.attributes || {};
-				vUrl.attributes.id = vUrl.id;
+				mAttributes.id = vUrl.id;
 			}
 			return new Promise(function(fnResolve, fnReject) {
-				_includeScript(vUrl.url, vUrl.attributes, fnResolve, fnReject);
+				_includeScript(vUrl.url, mAttributes, fnResolve, fnReject);
 			});
 		}
 	};
@@ -4993,14 +5006,14 @@
 
 			var fnError = function() {
 				jQuery(oLink).attr("data-sap-ui-ready", "false").off("error");
-				if (fnErrorCallback) {
+				if (typeof fnErrorCallback === "function") {
 					fnErrorCallback();
 				}
 			};
 
 			var fnLoad = function() {
 				jQuery(oLink).attr("data-sap-ui-ready", "true").off("load");
-				if (fnLoadCallback) {
+				if (typeof fnLoadCallback === "function") {
 					fnLoadCallback();
 				}
 			};
@@ -5043,7 +5056,8 @@
 		var oLink = _createLink(sUrl, mAttributes, fnLoadCallback, fnErrorCallback);
 		if (oOld && oOld.tagName === "LINK" && oOld.rel === "stylesheet") {
 			// link exists, so we replace it - but only if a callback has to be attached or if the href will change. Otherwise don't touch it
-			if (fnLoadCallback || fnErrorCallback || oOld.href !== URI(String(sUrl), URI().search("") /* returns current URL without search params */ ).toString()) {
+			if (typeof fnLoadCallback === "function" || typeof fnErrorCallback === "function" ||
+				oOld.href !== URI(String(sUrl), URI().search("") /* returns current URL without search params */ ).toString()) {
 				// if the attribute "data-sap-ui-foucmarker" exists and the value
 				// matches the id of the new link the new link will be put
 				// before the old link into the document and the id attribute
@@ -5101,17 +5115,18 @@
 	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
 	 */
 	jQuery.sap.includeStyleSheet = function includeStyleSheet(vUrl, vId, fnLoadCallback, fnErrorCallback) {
+		var mAttributes;
 		if (typeof vUrl === "string") {
-			var mAttributes = typeof vId === "string" ? {id: vId} : vId;
+			mAttributes = typeof vId === "string" ? {id: vId} : vId;
 			_includeStyleSheet(vUrl, mAttributes, fnLoadCallback, fnErrorCallback);
 		} else {
 			jQuery.sap.assert(typeof vUrl === 'object' && vUrl.url, "vUrl must be an object and requires a URL");
+			mAttributes = cloneMap(vUrl.attributes);
 			if (vUrl.id) {
-				vUrl.attributes = vUrl.attributes || {};
-				vUrl.attributes.id = vUrl.id;
+				mAttributes.id = vUrl.id;
 			}
 			return new Promise(function(fnResolve, fnReject) {
-				_includeStyleSheet(vUrl.url, vUrl.attributes, fnResolve, fnReject);
+				_includeStyleSheet(vUrl.url, mAttributes, fnResolve, fnReject);
 			});
 		}
 	};

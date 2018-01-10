@@ -223,6 +223,25 @@
 			});
 
 
+			QUnit.test("custom attributes (immutable)", function(assert) {
+
+				var done = assert.async();
+				var mAttributes = {
+					"data-sap-ui-attr": "attrval"
+				};
+
+				jQuery.sap.includeScript({
+					url: "testdata/dummy.js",
+					id : "myscript-immutable",
+					attributes: mAttributes
+				}).then(function() {
+					assert.notOk(mAttributes.id, "attributes should not be modified");
+					done();
+				});
+
+			});
+
+
 			//****************************************************
 			// includeStylesheet tests
 			//****************************************************
@@ -484,6 +503,25 @@
 					oLinkA.parentNode.removeChild(oLinkA);
 					done();
 				});
+			});
+
+
+			QUnit.test("custom attributes (immutable)", function(assert) {
+
+				var done = assert.async();
+				var mAttributes = {
+					"data-sap-ui-attr": "attrval"
+				};
+
+				jQuery.sap.includeStyleSheet({
+					url: "testdata/testA.css",
+					id : "mylink-immutable",
+					attributes: mAttributes
+				}).then(function() {
+					assert.notOk(mAttributes.id, "attributes should not be modified");
+					done();
+				});
+
 			});
 
 
