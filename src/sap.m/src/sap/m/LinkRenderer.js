@@ -35,7 +35,9 @@
 			oAccAttributes =  {
 				role: 'link',
 				labelledby: bShouldHaveOwnLabelledBy ? {value: oControl.getId(), append: true } : undefined
-			};
+			},
+			sHref = oControl.getHref(),
+			bIsValid = sHref && oControl._isHrefValid(sHref);
 
 		// Link is rendered as a "<a>" element
 		oRm.write("<a");
@@ -82,8 +84,8 @@
 		}
 
 		/* set href only if link is enabled - BCP incident 1570020625 */
-		if (oControl.getHref() && oControl.getEnabled()) {
-			oRm.writeAttributeEscaped("href", oControl.getHref());
+		if (bIsValid && oControl.getEnabled()) {
+			oRm.writeAttributeEscaped("href", sHref);
 		}
 
 		if (oControl.getTarget()) {
