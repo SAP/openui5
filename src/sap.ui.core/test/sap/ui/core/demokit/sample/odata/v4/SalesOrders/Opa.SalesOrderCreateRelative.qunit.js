@@ -62,14 +62,15 @@ sap.ui.require([
 		When.onTheMainPage.selectSalesOrderItemWithPosition("");
 		When.onTheMainPage.pressSaveSalesOrderButton();
 		When.onTheSuccessInfo.confirm();
-		Then.onTheMainPage.checkSalesOrderItemsCount(1);
-		Then.onTheMainPage.checkNewSalesOrderItemProductName(bRealOData ? "Notebook Basic 15" : "");
-		// update note of new sales order item
-		When.onTheMainPage.changeSalesOrderLineItemNote(0, "Line Item Note Changed - 1");
-		When.onTheMainPage.pressSaveSalesOrderButton();
-		Then.onTheMainPage.checkSalesOrderLineItemNote(0, "Line Item Note Changed - 1");
+		Then.onTheMainPage.checkSalesOrderItemsCount(bRealOData ? 1 : 0);
 
 		if (bRealOData) {
+			Then.onTheMainPage.checkNewSalesOrderItemProductName("Notebook Basic 15");
+			// update note of new sales order item
+			When.onTheMainPage.changeSalesOrderLineItemNote(0, "Line Item Note Changed - 1");
+			When.onTheMainPage.pressSaveSalesOrderButton();
+			Then.onTheMainPage.checkSalesOrderLineItemNote(0, "Line Item Note Changed - 1");
+
 			// check correct error handling of multiple changes in one $batch
 			When.onTheMainPage.changeSalesOrderLineItemNote(0, "Line Item Note Changed - 2");
 			When.onTheMainPage.changeSalesOrderLineItemQuantity(0, "0.0");
@@ -111,15 +112,34 @@ sap.ui.require([
 			// change Note in details afterwarts is now possible again
 			When.onTheMainPage.changeNoteInDetails("Sales Order Details Note Changed - 3");
 			When.onTheMainPage.pressSaveSalesOrderButton();
+
+			// delete persisted sales order item
+			When.onTheMainPage.deleteSelectedSalesOrderLineItem();
+			When.onTheSalesOrderLineItemDeletionConfirmation.confirm();
+			When.onTheSuccessInfo.confirm();
+			Then.onTheMainPage.checkTableLength(0, "SalesOrderLineItems");
 		}
 
-		// delete persisted sales order item
-		When.onTheMainPage.deleteSelectedSalesOrderLineItem();
-		When.onTheSalesOrderLineItemDeletionConfirmation.confirm();
+		// test refresh single
+		// preparation
+		When.onTheMainPage.pressRefreshSalesOrdersButton();
+		When.onTheMainPage.pressCreateSalesOrdersButton();
+		When.onTheCreateNewSalesOrderDialog.confirmDialog();
+		When.onTheMainPage.pressSaveSalesOrdersButton();
 		When.onTheSuccessInfo.confirm();
-		Then.onTheMainPage.checkTableLength(0, "SalesOrderLineItems");
+		When.onTheMainPage.rememberCreatedSalesOrder();
+		// test: refresh single reads expands
+		When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();
+		Then.onTheMainPage.checkCompanyName(0, "SAP");
+		When.onTheMainPage.pressCreateSalesOrderItemButton();
+		When.onTheMainPage.pressSaveSalesOrderButton();
+		When.onTheSuccessInfo.confirm();
+		Then.onTheMainPage.checkTableLength(bRealOData ? 1 : 0, "SalesOrderLineItems");
+		// test: refresh single refreshes also dependent bindings
+		When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();
+		Then.onTheMainPage.checkTableLength(bRealOData ? 1 : 0, "SalesOrderLineItems");
 
-		// delete the last created SalesOrder again
+		// delete the all created SalesOrders again
 		When.onAnyPage.cleanUp("SalesOrders");
 		Then.onAnyPage.checkLog(bRealOData ? [{
 			component : "sap.ui.model.odata.v4.ODataPropertyBinding",

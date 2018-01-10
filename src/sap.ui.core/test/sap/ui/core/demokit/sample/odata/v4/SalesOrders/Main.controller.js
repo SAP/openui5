@@ -473,32 +473,25 @@ sap.ui.define([
 		},
 
 		onSaveSalesOrder : function () {
-			var bRealOData = this.getView().getModel("ui").getProperty("/bRealOData"),
-				oSubmitBatchPromise,
-				that = this;
+			var that = this;
 
-			oSubmitBatchPromise = this.submitBatch("SalesOrderUpdateGroup");
-			if (bRealOData) {
-				// do refresh only with real data to avoid lots of configurations for the OData V4
-				// mock server
-				oSubmitBatchPromise.then(function () {
-					// wait until created handler (if any) is processed
-					return that.oSalesOrderLineItemCreated;
-				}).then(function () {
-					var oObjectPage = that.getView().byId("ObjectPage"),
-						oSelectedSalesOrderContext =
-							oObjectPage.getObjectBinding().getContext();
+			this.submitBatch("SalesOrderUpdateGroup").then(function () {
+				// wait until created handler (if any) is processed
+				return that.oSalesOrderLineItemCreated;
+			}).then(function () {
+				var oObjectPage = that.getView().byId("ObjectPage"),
+					oSelectedSalesOrderContext =
+						oObjectPage.getObjectBinding().getContext();
 
-					if (oSelectedSalesOrderContext.hasPendingChanges()) {
-						MessageToast.show("Cannot refresh due to unsaved changes"
-								+ ", reset changes before refresh");
-					} else {
-						// Trigger refresh for the corresponding entry in the SalesOrderList to get
-						// the new ETag also there. This refreshes also all dependent bindings.
-						oSelectedSalesOrderContext.refresh();
-					}
-				});
-			}
+				if (oSelectedSalesOrderContext.hasPendingChanges()) {
+					MessageToast.show("Cannot refresh due to unsaved changes"
+							+ ", reset changes before refresh");
+				} else {
+					// Trigger refresh for the corresponding entry in the SalesOrderList to get
+					// the new ETag also there. This refreshes also all dependent bindings.
+					oSelectedSalesOrderContext.refresh();
+				}
+			});
 		},
 
 		onSaveSalesOrderList : function () {
