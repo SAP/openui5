@@ -99,9 +99,31 @@ jQuery.sap.require("sap.f.FlexibleColumnLayoutSemanticHelper");
 
 	QUnit.test("Instantiation", function (assert) {
 		this.oFCL = oFactory.createFCL();
-
 		assert.ok(this.oFCL, "Instantiated successfully");
 		assert.ok(this.oFCL.$().length, "In the DOM");
+
+		// Assert backgroundDesign
+		assert.strictEqual(this.oFCL.getBackgroundDesign(), "Transparent", "The default backgroundDesign is Transparent");
+		assert.ok(!this.oFCL.$().hasClass("sapFFCLBackgroundDesignTranslucent"), "Translucent background is Not set in the  DOM");
+		assert.ok(!this.oFCL.$().hasClass("sapFFCLBackgroundDesignSolid"), "Solid background is Not set in the  DOM");
+
+		// Act: change backgroundDesign to Solid
+		this.oFCL.setBackgroundDesign("Solid");
+
+		oCore.applyChanges();
+
+		// Assert backgroundDesign
+		assert.ok(this.oFCL.$().hasClass("sapFFCLBackgroundDesignSolid"), "Solid background is set in the  DOM");
+		assert.ok(!this.oFCL.$().hasClass("sapFFCLBackgroundDesignTranslucent"), "Translucent background is Not set in the  DOM");
+
+		// Act: change backgroundDesign to Translucent
+		this.oFCL.setBackgroundDesign("Translucent");
+
+		oCore.applyChanges();
+
+		// Assert backgroundDesign
+		assert.ok(this.oFCL.$().hasClass("sapFFCLBackgroundDesignTranslucent"), "Translucent background is set in the  DOM");
+		assert.ok(!this.oFCL.$().hasClass("sapFFCLBackgroundDesignSolid"), "Solid background is Not set in the  DOM");
 	});
 
 	QUnit.test("Layout: OneColumn", function (assert) {
