@@ -244,7 +244,7 @@ sap.ui.define([
 			if (that.oContext.getIndex() === -2) {
 				bForceUpdate = false; // no "change" event for virtual parent context
 			}
-			return that.oContext.fetchValue(that.sPath, that);
+			return that.oContext.fetchValue(that.sPath, that, sGroupId);
 		});
 		aPromises.push(oReadPromise.then(function (vValue) {
 			if (vValue && typeof vValue === "object") {

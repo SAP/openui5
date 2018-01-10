@@ -109,7 +109,6 @@ sap.ui.define([
 				// auto-$expand/$select: promises to wait until child bindings have provided
 				// their path and query options
 				this.aChildCanUseCachePromises = [];
-				this.sRefreshGroupId = undefined;
 				this.sUpdateGroupId = undefined;
 
 				if (iPos >= 0) { // deferred operation binding
@@ -540,24 +539,25 @@ sap.ui.define([
 	 *   Some absolute path
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used for the request; defaults to this binding's group ID in case this
+	 *   binding's cache is used
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
 	 *
 	 * @private
 	 */
-	ODataContextBinding.prototype.fetchValue = function (sPath, oListener) {
+	ODataContextBinding.prototype.fetchValue = function (sPath, oListener, sGroupId) {
 		var that = this;
 
 		return this.oCachePromise.then(function (oCache) {
 			var bDataRequested = false,
-				sGroupId,
 				sRelativePath;
 
 			if (oCache) {
 				sRelativePath = that.getRelativePath(sPath);
 				if (sRelativePath !== undefined) {
-					sGroupId = that.sRefreshGroupId || that.getGroupId();
-					that.sRefreshGroupId = undefined;
+					sGroupId = sGroupId || that.getGroupId();
 					return oCache.fetchValue(sGroupId, sRelativePath, function () {
 						bDataRequested = true;
 						that.fireDataRequested();
@@ -577,7 +577,7 @@ sap.ui.define([
 				}
 			}
 			if (!that.oOperation && that.oContext && that.oContext.fetchValue) {
-				return that.oContext.fetchValue(sPath, oListener);
+				return that.oContext.fetchValue(sPath, oListener, sGroupId);
 			}
 		});
 	};
@@ -612,7 +612,6 @@ sap.ui.define([
 			if (!that.oOperation) {
 				if (oCache) {
 					that.fetchCache(that.oContext);
-					that.sRefreshGroupId = sGroupId;
 					that.mCacheByContext = undefined;
 					// Do not fire a change event, or else ManagedObject destroys and recreates the
 					// binding hierarchy causing a flood of events
