@@ -258,7 +258,11 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './l
 		var oRoutingManifestEntry = this._getManifestEntry("/sap.ui5/routing", true) || {},
 			oRoutingConfig = oRoutingManifestEntry.config || {},
 			vRoutes = oRoutingManifestEntry.routes;
-
+		if (this.getComponentData() && this.getComponentData().routePatternPrefix) {
+			for (var i=0; i<vRoutes.length; i++) {
+				vRoutes[i].pattern = this.getComponentData().routePatternPrefix + vRoutes[i].pattern;
+			}
+		}
 		// create the router for the component instance
 		if (vRoutes) {
 			var Router = sap.ui.requireSync("sap/ui/core/routing/Router");
@@ -301,6 +305,10 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './l
 		// notify Component initialization callback handler
 		if (typeof UIComponent._fnOnInstanceInitialized === "function") {
 			UIComponent._fnOnInstanceInitialized(this);
+		}
+		// onInstanceInitialized function from parent component passed through componentData.
+		if(this.getComponentData() && typeof this.getComponentData().onInstanceInitialized === "function") {
+			this.getComponentData().onInstanceInitialized(this);
 		}
 
 	};
