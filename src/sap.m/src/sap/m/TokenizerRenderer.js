@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/Device'],
-	function(Device) {
+sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
+	function(Device, InvisibleText) {
 	"use strict";
 
 
@@ -53,7 +53,7 @@ sap.ui.define(['sap/ui/Device'],
 
 		//ARIA attributes
 		oAccAttributes.labelledby = {
-			value: oControl._sAriaTokenizerLabelId,
+			value: InvisibleText.getStaticId("sap.m", "TOKENIZER_ARIA_LABEL"),
 			append: true
 		};
 

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Button.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/Device', 'sap/ui/core/ContextMenuSupport', 'sap/ui/core/library', 'sap/ui/core/InvisibleText', 'jquery.sap.keycodes'],
-	function(jQuery, library, Control, EnabledPropagator, IconPool, Device, ContextMenuSupport, coreLibrary, InvisibleText) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/Device', 'sap/ui/core/ContextMenuSupport', 'sap/ui/core/library', 'jquery.sap.keycodes'],
+	function(jQuery, library, Control, EnabledPropagator, IconPool, Device, ContextMenuSupport, coreLibrary) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -557,47 +557,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		return sTooltip;
-	};
-
-	Button.prototype.setType = function(sType) {
-
-		this.setProperty("type", sType);
-
-		// Aria desciption for type
-		var sTypeText = "";
-		var oRb;
-
-		switch (sType) {
-		case ButtonType.Accept:
-			if (!Button._oStaticAcceptText) {
-				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-				sTypeText = oRb.getText("BUTTON_ARIA_TYPE_ACCEPT");
-				Button._oStaticAcceptText = new InvisibleText({text: sTypeText});
-				Button._oStaticAcceptText.toStatic(); //Put to Static UiArea
-			}
-			break;
-		case ButtonType.Reject:
-			if (!Button._oStaticRejectText) {
-				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-				sTypeText = oRb.getText("BUTTON_ARIA_TYPE_REJECT");
-				Button._oStaticRejectText = new InvisibleText({text: sTypeText});
-				Button._oStaticRejectText.toStatic(); //Put to Static UiArea
-			}
-			break;
-		case ButtonType.Emphasized:
-			if (!Button._oStaticEmphasizedText) {
-				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-				sTypeText = oRb.getText("BUTTON_ARIA_TYPE_EMPHASIZED");
-				Button._oStaticEmphasizedText = new InvisibleText({text: sTypeText});
-				Button._oStaticEmphasizedText.toStatic(); //Put to Static UiArea
-			}
-			break;
-		default: // No need to do anything for other button types
-			break;
-		}
-
-		return this;
-
 	};
 
 	/**

@@ -475,12 +475,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-		// Init static hidden text for ARIA
-		if (!Input._sAriaPopupLabelId) {
-			Input._sAriaPopupLabelId = new InvisibleText({
-				text: this._oRb.getText("INPUT_AVALIABLE_VALUES")
-			}).toStatic().getId();
-		}
 	};
 
 	/**
@@ -1092,52 +1086,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 */
 	Input.prototype.closeSuggestions = function() {
 		this._closeSuggestionPopup();
-	};
-
-	/**
-	 * Shows the value help.
-	 *
-	 * @name sap.m.Input.setShowValueHelp
-	 * @method
-	 * @public
-	 * @param {boolean} bShowValueHelp Indication for showing the value help.
-	 * @returns {sap.m.Input} this pointer for chaining.
-	 */
-	Input.prototype.setShowValueHelp = function(bShowValueHelp) {
-
-		this.setProperty("showValueHelp", bShowValueHelp);
-
-		if (bShowValueHelp && !Input.prototype._sAriaValueHelpLabelId) {
-			// create an F4 ARIA announcement and remember its ID for later use in the renderer:
-			Input.prototype._sAriaValueHelpLabelId = new InvisibleText({
-				text: this._oRb.getText("INPUT_VALUEHELP")
-			}).toStatic().getId();
-		}
-		return this;
-
-	};
-
-	/**
-	 * Sets the value help.
-	 *
-	 * @name sap.m.Input.setValueHelpOnly
-	 * @method
-	 * @public
-	 * @param {boolean} bValueHelpOnly New value for the value help.
-	 * @returns {sap.m.Input} this pointer for chaining.
-	 */
-	Input.prototype.setValueHelpOnly = function(bValueHelpOnly) {
-
-		this.setProperty("valueHelpOnly", bValueHelpOnly);
-
-		if (bValueHelpOnly && !Input.prototype._sAriaInputDisabledLabelId) {
-			// create an F4 ARIA announcement and remember its ID for later use in the renderer:
-			Input.prototype._sAriaInputDisabledLabelId = new InvisibleText({
-				text: this._oRb.getText("INPUT_DISABLED")
-			}).toStatic().getId();
-		}
-		return this;
-
 	};
 
 	/**
@@ -2230,7 +2178,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				}));
 
 			oInput._oSuggestionPopup.addStyleClass("sapMInputSuggestionPopup");
-			oInput._oSuggestionPopup.addAriaLabelledBy(Input._sAriaPopupLabelId);
+			oInput._oSuggestionPopup.addAriaLabelledBy(InvisibleText.getStaticId("sap.m", "INPUT_AVALIABLE_VALUES"));
 
 			// add popup as dependent to also propagate the model and bindings to the content of the popover
 			oInput.addDependent(oInput._oSuggestionPopup);

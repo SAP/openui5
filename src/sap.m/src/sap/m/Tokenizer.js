@@ -146,11 +146,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-	// create an ARIA announcement and remember its ID for later use in the renderer:
-	Tokenizer.prototype._sAriaTokenizerLabelId = new InvisibleText({
-		text: oRb.getText("TOKENIZER_ARIA_LABEL")
-	}).toStatic().getId();
-
 	///**
 	// * This file defines behavior for the control,
 	// */

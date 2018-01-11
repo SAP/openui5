@@ -3,8 +3,8 @@
  */
 
 // Provides helper sap.m.BarInPageEnabler
-sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/InvisibleText', 'sap/m/library', 'jquery.sap.global'],
-	function(Object, InvisibleText, library, jQuery) {
+sap.ui.define(['sap/ui/base/Object', 'sap/m/library', 'jquery.sap.global'],
+	function(Object, library, jQuery) {
 	"use strict";
 
 	// shortcut for sap.m.IBarHTMLTag
