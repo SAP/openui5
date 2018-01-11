@@ -201,7 +201,12 @@ sap.ui.define([
 							.then(function () {
 
 								this._bindData(this._sTopicid);
-								this._bindEntityData(this._sTopicid);
+
+								this._oEntityData.appComponent = this._oControlData.component || this.NOT_AVAILABLE;
+								this._oEntityData.hasSample = this._oControlData.hasSample;
+								this._oEntityData.sample = this._oControlData.hasSample ? this._sTopicid : this.NOT_AVAILABLE;
+
+								this._buildHeaderLayout(this._oControlData, this._oEntityData);
 
 								if (oControlData) {
 									oControlData.hasMethods && this._createMethodsSummary();
@@ -264,7 +269,7 @@ sap.ui.define([
 			_createMethodsSummary: function () {
 				var oSection = this.byId("methods"),
 					aSubSections = oSection.getSubSections(),
-					oControlData = this._oModel.getData(),
+					oControlData = this._oControlData,
 					bBorrowedOnly = oControlData.hasMethods && !oControlData.hasOwnMethods;
 
 				if (aSubSections.length > 0 && (aSubSections[0].getTitle() === "Summary" || aSubSections[0].getTitle() === "Methods" || bBorrowedOnly)) {
@@ -361,7 +366,7 @@ sap.ui.define([
 			_createEventsSummary: function () {
 				var oSection = this.byId("events"),
 					aSubSections = oSection.getSubSections(),
-					oControlData = this._oModel.getData(),
+					oControlData = this._oControlData,
 					bBorrowedOnly = oControlData.hasEvents && !oControlData.hasOwnEvents;
 
 				if (aSubSections.length > 0 && (aSubSections[0].getTitle() === "Summary" || aSubSections[0].getTitle() === "Events" || bBorrowedOnly)) {
@@ -573,29 +578,6 @@ sap.ui.define([
 				}
 			},
 
-			/**
-			 * Creates the <code>Entity</code> model,
-			 * based on the <code>ControlsInfo</code> data.
-			 * <b>Note:</b>
-			 * The method is called in the <code>_onControlsInfoLoaded</code> callBack
-			 * just once, when the <code>ControlsInfo</code> is loaded.
-			 * After that, the method is called in <code>_onTopicMatched</code>,
-			 * whenever a different topic has been selected.
-			 */
-			_bindEntityData: function (sTopicId) {
-
-				ControlsInfo.loadData().then(function (oControlsData) {
-					var oEntityData,
-						oEntitySampleData = this._getEntitySampleData(sTopicId, oControlsData);
-
-					oEntityData = jQuery.extend({}, this._oEntityData, oEntitySampleData);
-
-					// Builds the header layout, when all the needed data is ready
-					this._buildHeaderLayout(this._oModel.getData(), oEntityData);
-				}.bind(this));
-
-			},
-
 			_bindData: function (sTopicId) {
 				var aLibsData = this._aLibsData,
 					oControlData,
@@ -690,6 +672,7 @@ sap.ui.define([
 
 				// Main model data
 				this._oModel.setData(oControlData);
+				this._oControlData = oControlData;
 
 				if (this.extHookbindData) {
 					this.extHookbindData(sTopicId, oModel);
@@ -917,27 +900,6 @@ sap.ui.define([
 						aHeaderColumn.forEach(oVL.addContent, oVL);
 					}
 				}, this);
-			},
-
-			/**
-			 * Retrieves the <code>Entity</code> sample and component data.
-			 * @param {Object} sEntityName
-			 * @param {Object} oControlsData
-			 * @return {Object}
-			 */
-			_getEntitySampleData: function (sEntityName, oControlsData) {
-				var aFilteredEntities = oControlsData.entities.filter(function (entity) {
-					return entity.id === sEntityName;
-				});
-				var oEntity = aFilteredEntities.length ? aFilteredEntities[0] : undefined;
-
-				var sAppComponent = this._getControlComponent(sEntityName, oControlsData);
-
-				return {
-					appComponent: sAppComponent || this.NOT_AVAILABLE,
-					sample: (oEntity && sEntityName) || this.NOT_AVAILABLE,
-					hasSample: !!(oEntity && oEntity.sampleCount > 0)
-				};
 			},
 
 			buildBorrowedModel: function (oControlData) {
