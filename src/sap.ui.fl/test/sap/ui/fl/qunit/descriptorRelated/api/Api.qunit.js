@@ -1395,7 +1395,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 					"id" : "a.id",
 					"reference": "a.reference",
 					"fileName":	"manifest",
-					"fileType":	"appdescr_variant",
+					"fileType":	"cdmapp_config",
 					"isAppVariantRoot":	false,
 					"layer": "CUSTOMER",
 					"namespace": "apps/a.reference/appVariants/a.id/",
@@ -1414,7 +1414,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 					"id" : "a.id",
 					"reference": "a.reference",
 					"fileName":	"manifest",
-					"fileType":	"appdescr_variant",
+					"fileType":	"cdmapp_config",
 					"isAppVariantRoot":	false,
 					"layer": "CUSTOMER",
 					"namespace": "apps/a.reference/appVariants/a.id/",
@@ -1444,7 +1444,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 					"id" : "a.id",
 					"reference": "a.reference",
 					"fileName":	"manifest",
-					"fileType":	"appdescr_variant",
+					"fileType":	"cdmapp_config",
 					"isAppVariantRoot":	false,
 					"layer": "CUSTOMER",
 					"namespace": "apps/a.reference/appVariants/a.id/",
@@ -1495,6 +1495,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 					assert.equal(oDescriptorVariant._reference, "a.reference");
 					assert.equal(oDescriptorVariant._mode, "NEW");
 					assert.equal(oDescriptorVariant._layer, "CUSTOMER");
+					assert.equal(oDescriptorVariant._getMap().fileType, "appdescr_variant");
 				});
 	});
 
