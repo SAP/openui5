@@ -657,7 +657,7 @@ sap.ui.define([
 		 */
 		BlockBase.prototype.setVisible = function (bValue, bSuppressInvalidate) {
 			this.setProperty("visible", bValue, bSuppressInvalidate);
-			this._getObjectPageLayout() && this._getObjectPageLayout()._adjustLayoutAndUxRules();
+			this._getObjectPageLayout() && this._getObjectPageLayout()._requestAdjustLayoutAndUxRules();
 
 			return this;
 		};
