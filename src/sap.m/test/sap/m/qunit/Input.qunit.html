@@ -2858,6 +2858,8 @@
   		sap.ui.getCore().applyChanges();
   		assert.equal(oInputWithDes.$().find("input").outerWidth(), "100", "input field has 100px width");
 
+		assert.equal(oInputWithDes.$('Descr').text(), "EUR", "Description ID is set to the correct span");
+
   		oInputWithDes.destroy();
 	});
 
