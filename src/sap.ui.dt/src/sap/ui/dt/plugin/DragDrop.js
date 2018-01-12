@@ -289,19 +289,19 @@ function(
 		var oTouchedOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 
 
-	    var fnDetachTouchHandlers = function() {
+		var fnDetachTouchHandlers = function() {
 			oTouchedOverlay.detachBrowserEvent("touchmove", fnTouchMoveHandler, this);
 			oTouchedOverlay.detachBrowserEvent("touchend", fnTouchEndHandler, this);
 			oTouchedOverlay.detachBrowserEvent("contextmenu", fnTouchEndHandler, this);
-	    };
+		};
 
-	    var fnGetMoveDistance = function(touchMoveX, touchMoveY) {
+		var fnGetMoveDistance = function(touchMoveX, touchMoveY) {
 			var distanceX = touchStartX - touchMoveX;
 			var distanceY = touchStartY - touchMoveY;
-	        return Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
-	    };
+			return Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
+		};
 
-	    fnTouchMoveHandler = function(oEvent) {
+		fnTouchMoveHandler = function(oEvent) {
 			var touchMoveX = oEvent.touches[0].pageX;
 			var touchMoveY = oEvent.touches[0].pageY;
 			var movedDistance = fnGetMoveDistance(touchMoveX, touchMoveY);
@@ -313,7 +313,7 @@ function(
 			}
 		};
 
-	    fnTouchEndHandler = function(oEvent) {
+		fnTouchEndHandler = function(oEvent) {
 			fnDetachTouchHandlers.call(this);
 			bPreventScrollOnTouch = false;
 		};
