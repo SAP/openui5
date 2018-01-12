@@ -2140,7 +2140,11 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._onUpdateScreenSize = function (oEvent) {
 		var oTitle = this.getHeaderTitle(),
-			iCurrentWidth = oEvent.size.width;
+			iCurrentWidth = oEvent.size.width,
+			iCurrentHeight = oEvent.size.height,
+			iOldHeight = oEvent.oldSize.height,
+			bHeightChange = (iCurrentHeight !== iOldHeight),
+			sSelectedSectionId;
 
 		if (oEvent.size.height === 0 || oEvent.size.width === 0) {
 			jQuery.sap.log.info("ObjectPageLayout :: not triggering calculations if height or width is 0");
@@ -2174,6 +2178,17 @@ sap.ui.define([
 
 			if (this.getFooter() && this.getShowFooter()) {
 				this._shiftFooter();
+			}
+
+			sSelectedSectionId = this.getSelectedSection();
+			// if the page was hidden (its iOldHeight === 0)
+			// AND its selectedSection changed *while* the page was hidden
+			// => the page could not update its scrollPosition to match its newly selectedSection
+			// (because changes to scrollTop of a hidden container are ignored by the browser)
+			// => we need to restore the correct scroll position
+			if ((iOldHeight === 0) && bHeightChange && !this._isClosestScrolledSection(sSelectedSectionId)) {
+				this.scrollToSection(sSelectedSectionId, 0);
+				return;
 			}
 
 			this._scrollTo(this._$opWrapper.scrollTop(), 0);
