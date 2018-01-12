@@ -1762,7 +1762,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 		for (var i = 0; i < aSubFilters.length; i++) {
 			// use name if there is no key defined
 			oListItem = new StandardListItem({
-				title : aSubFilters[i].getText(),
+				title : ManagedObject.escapeSettingsValue(aSubFilters[i].getText()),
 				type : ListType.Active,
 				selected : aSubFilters[i].getSelected()
 			}).data("item", aSubFilters[i]);
@@ -1842,7 +1842,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 			aGroupItems.forEach(function (oItem) {
 				oListItem = new StandardListItem({
 					id: oItem.getId() + LIST_ITEM_SUFFIX,
-					title: oItem.getText(),
+					title: ManagedObject.escapeSettingsValue(oItem.getText()),
 					type: ListType.Active,
 					selected: oItem.getSelected()
 				}).data("item", oItem);
@@ -1945,7 +1945,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 			aPresetFilterItems.forEach(function(oItem) {
 				oListItem = new StandardListItem({
 					id: oItem.getId() + LIST_ITEM_SUFFIX,
-					title: oItem.getText(),
+					title: ManagedObject.escapeSettingsValue(oItem.getText()),
 					type: ListType.Active,
 					selected: oItem.getSelected()
 				}).data("item", oItem);
@@ -1969,7 +1969,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 				oListItem = new StandardListItem(
 					{
 						id: oItem.getId() + LIST_ITEM_SUFFIX,
-						title : oItem.getText(),
+						title : ManagedObject.escapeSettingsValue(oItem.getText()),
 						type : ListType.Active,
 						press : (function(oItem) {
 							return function(oEvent) {
