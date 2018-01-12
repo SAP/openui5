@@ -323,8 +323,6 @@ sap.ui.define([
 		this._iResizeId = ResizeHandler.register(this, this._onUpdateScreenSize.bind(this));
 
 		this._oABHelper = new ABHelper(this);
-
-		this._bSuppressLayoutCalculations = false;	// used to temporarily suppress layout/ux rules functionality for bulk updates
 	};
 
 	/**
@@ -964,6 +962,11 @@ sap.ui.define([
 	 ************************************************************************************/
 
 	ObjectPageLayout.prototype.setShowAnchorBarPopover = function (bValue, bSuppressInvalidate) {
+		var bOldValue = this.getProperty("showAnchorBarPopover"),
+			bValue = this.validateProperty("showAnchorBarPopover", bValue);
+		if (bValue === bOldValue) {
+			return;
+		}
 		this._oABHelper._buildAnchorBar();
 		this._oABHelper._getAnchorBar().setShowPopover(bValue);
 		return this.setProperty("showAnchorBarPopover", bValue, true /* don't re-render the whole objectPageLayout */);
@@ -995,18 +998,16 @@ sap.ui.define([
 	/**
 	 * Schedules for execution a layout adjustment task.
 	 * This task is throttled by default (unless the bImmediate parameter is specified).
-	 * @param {Object} oEvent
 	 * @param {Boolean} bImmediate - whether the task should be executed immediately, rather than throttled
-	 * @param {Boolean} bNeedLazyLoading - parameter for the layout adjustment task
 	 * @returns {Promise} - promise that will be resolved upon the task execution
 	 * @since 1.44
 	 * @private
 	 */
-	ObjectPageLayout.prototype._requestAdjustLayout = function (oEvent, bImmediate, bNeedLazyLoading) {
+	ObjectPageLayout.prototype._requestAdjustLayout = function (bImmediate) {
 
 		if (!this._oLayoutTask) {
 			this._oLayoutTask = new ThrottledTask(
-				this._executeAdjustLayout, //function to execute
+				this._updateScreenHeightSectionBasesAndSpacer, //function to execute
 				ObjectPageLayout.DOM_CALC_DELAY, // throttle delay
 				this); // context
 		}
@@ -1014,25 +1015,26 @@ sap.ui.define([
 			jQuery.sap.log.debug("ObjectPageLayout :: _requestAdjustLayout", "delayed by " + ObjectPageLayout.DOM_CALC_DELAY + " ms because of dom modifications");
 		}
 
-		return this._oLayoutTask.reSchedule(bImmediate, {needLazyLoading: !!bNeedLazyLoading}).catch(function(reason) {
+		return this._oLayoutTask.reSchedule(bImmediate, {}).catch(function(reason) {
 			// implement catch function to prevent uncaught errors message
 		}); // returns promise
 	};
 
-	/**
-	 * Adjust the layout includes recalculation of the dom positions and heights of the page components
-	 * Should not be called directly, but throttled via ObjectPageLayout.prototype._requestAdjustLayout
-	 * @private
-	 */
-	ObjectPageLayout.prototype._executeAdjustLayout = function (oOptions) { // this is an expensive function and is called often, so should not be called directly, but throttled via ObjectPageLayout.prototype._requestAdjustLayout
+	ObjectPageLayout.prototype._requestAdjustLayoutAndUxRules = function (bImmediate) {
 
-		var bNeedLazyLoading = oOptions.needLazyLoading,
-			bSuccess = this._updateScreenHeightSectionBasesAndSpacer();
-
-		if (bSuccess && bNeedLazyLoading) {
-			this._oLazyLoading.doLazyLoading();
+		if (!this._oUxRulesTask) {
+			this._oUxRulesTask = new ThrottledTask(
+				this._adjustLayoutAndUxRules, //function to execute
+				ObjectPageLayout.DOM_CALC_DELAY, // throttle delay
+				this); // context
 		}
-		return bSuccess;
+		if (!bImmediate) {
+			jQuery.sap.log.debug("ObjectPageLayout :: _requestAdjustLayoutAndUxRules", "delayed by " + ObjectPageLayout.DOM_CALC_DELAY + " ms because of dom modifications");
+		}
+
+		return this._oUxRulesTask.reSchedule(bImmediate, {}).catch(function(reason) {
+			// implement catch function to prevent uncaught errors message
+		}); // returns promise
 	};
 
 	/**
@@ -1042,11 +1044,6 @@ sap.ui.define([
 	 */
 
 	ObjectPageLayout.prototype._adjustLayoutAndUxRules = function () {
-
-		// Skip all calculations (somebody called _suppressLayoutCalculations and will call _resumeLayoutCalculations once all updates are done)
-		if (this._bSuppressLayoutCalculations) {
-			return;
-		}
 
 		var sSelectedSectionId,
 			oSelectedSection;
@@ -1068,8 +1065,11 @@ sap.ui.define([
 			if (this.getUseIconTabBar()) {
 				this._setCurrentTabSection(oSelectedSection);
 			}
-			this._requestAdjustLayout(null, false, true /* requires a check on lazy loading */)
-				.then(function () { // scrolling must be done after the layout adjustment is done (so the latest section positions are determined)
+			this._requestAdjustLayout(true)
+				.then(function (bSuccess) { // scrolling must be done after the layout adjustment is done (so the latest section positions are determined)
+					if (bSuccess) {
+						this._oLazyLoading.doLazyLoading();
+					}
 					this._adjustSelectedSectionByUXRules(); //section may have changed again from the app before the promise completed => ensure adjustment
 					sSelectedSectionId = this.getSelectedSection();
 					if (!this._isClosestScrolledSection(sSelectedSectionId)) {
@@ -1086,25 +1086,6 @@ sap.ui.define([
 			sClosestSectionId = this._getClosestScrolledSectionId(iScrollTop, iPageHeight);
 
 		return sClosestSectionId && (sSectionId === sClosestSectionId);
-	};
-
-	/**
-	 * Stop layout calculations temporarily (f.e. to do bulk updates on the object page)
-	 * @private
-	 * @sap-restricted
-	 */
-	ObjectPageLayout.prototype._suppressLayoutCalculations = function () {
-		this._bSuppressLayoutCalculations = true;
-	};
-
-	/**
-	 * Resume layout calculations and call _adjustLayoutAndUxRules (f.e. once buld updates are over)
-	 * @private
-	 * @sap-restricted
-	 */
-	ObjectPageLayout.prototype._resumeLayoutCalculations = function () {
-		this._bSuppressLayoutCalculations = false;
-		this._adjustLayoutAndUxRules();
 	};
 
 	ObjectPageLayout.prototype._setSelectedSectionId = function (sSelectedSectionId) {
@@ -1234,7 +1215,7 @@ sap.ui.define([
 
 		oSection._expandSection();
 		//call _requestAdjustLayout synchronously to make extra sure we have the right positionTops for all sectionBase before scrolling
-		this._requestAdjustLayout(null, true);
+		this._requestAdjustLayout(true);
 
 		iDuration = this._computeScrollDuration(iDuration, oSection);
 
@@ -1730,7 +1711,7 @@ sap.ui.define([
 		var oSelectedSection = this.oCore.byId(this.getSelectedSection()),
 			iScrollTop;
 
-		this._requestAdjustLayout(null, true);
+		this._requestAdjustLayout(true);
 
 		iScrollTop = oSelectedSection ? this._computeScrollPosition(oSelectedSection) : 0;
 
@@ -1848,7 +1829,7 @@ sap.ui.define([
 
 			this._adjustHeaderHeights();
 
-			this._requestAdjustLayout(null, true);
+			this._requestAdjustLayout(true);
 
 			if (this.getFooter() && this.getShowFooter()) {
 				this._shiftFooter();
@@ -1981,10 +1962,15 @@ sap.ui.define([
 			bTraverseSubSections = bSubSectionsOnly || this._bMobileScenario;
 
 		jQuery.each(this._oSectionInfo, function (sId, oInfo) {
+			var section, sectionParent, isParentHiddenSection;
 			// on desktop/tablet, skip subsections
 			// BCP 1680331690. Should skip subsections that are in a section with lower importance, which makes them hidden.
-			var sectionParent = this.oCore.byId(sId).getParent(),
-				isParentHiddenSection = sectionParent instanceof ObjectPageSection && sectionParent._getIsHidden();
+			section = this.oCore.byId(sId);
+			if (!section) {
+				return;
+			}
+			sectionParent = section.getParent();
+			isParentHiddenSection = sectionParent instanceof ObjectPageSection && sectionParent._getIsHidden();
 
 			if (oInfo.isSection || (bTraverseSubSections && !isParentHiddenSection)) {
 				//we need to set the sClosest to the first section for handling the scrollTop = 0

@@ -151,9 +151,8 @@
 		var oSection = this.oObjectPage.getSections()[0];
 
 		oSection.setTitle("my updated title again");
+		this.clock.tick(iRenderingDelay);
 
-		// allow for re-render
-		sap.ui.getCore().applyChanges();
 		var oSectionButton = this.oObjectPage.getAggregation("_anchorBar").getContent()[0];
 
 		assert.strictEqual(oSectionButton.getText(), "my updated title again", "section title set updates anchor bar button");
@@ -163,8 +162,8 @@
 		var oSection = this.oObjectPage.getSections()[3];
 
 		oSection.bindProperty("title", "/sections/3/title");
+		this.clock.tick(iRenderingDelay);
 
-		sap.ui.getCore().applyChanges();
 		var oSectionButton = this.oObjectPage.getAggregation("_anchorBar").getContent()[3];
 
 		assert.equal(oSectionButton.getProperty("text"), "my fourth section", "Property must return model value");
@@ -178,14 +177,14 @@
 			mode: "OneTime"
 		});
 
-		sap.ui.getCore().applyChanges();
+		this.clock.tick(iRenderingDelay);
 		var oSectionButton = this.oObjectPage.getAggregation("_anchorBar").getContent()[3];
 
 		assert.equal(oSectionButton.getProperty("text"), "my fourth section", "Property must return model value");
 
 		oModel.setProperty("/sections/3/title", "newvalue");
 
-		sap.ui.getCore().applyChanges();
+		this.clock.tick(iRenderingDelay);
 
 		oSectionButton = this.oObjectPage.getAggregation("_anchorBar").getContent()[3];
 		assert.equal(oSectionButton.getProperty("text"), "my fourth section", "New model value must not be reflected");
@@ -199,14 +198,14 @@
 			path: "/sections/3/title"
 		});
 
-		sap.ui.getCore().applyChanges();
+		this.clock.tick(iRenderingDelay);
 		var oSectionButton = this.oObjectPage.getAggregation("_anchorBar").getContent()[3];
 
 		assert.equal(oSectionButton.getProperty("text"), "my fourth section", "Property must return model value");
 
 		oModel.setProperty("/sections/3/title", "newvalue");
 
-		sap.ui.getCore().applyChanges();
+		this.clock.tick(iRenderingDelay);
 
 		oSectionButton = this.oObjectPage.getAggregation("_anchorBar").getContent()[3];
 		assert.equal(oSectionButton.getProperty("text"), "newvalue", "New model value must not be reflected");

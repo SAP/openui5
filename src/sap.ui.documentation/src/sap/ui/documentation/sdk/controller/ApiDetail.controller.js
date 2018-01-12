@@ -155,21 +155,17 @@ sap.ui.define([
 			 * @private
 			 */
 			_onTopicMatched: function (oEvent) {
-				var oApiDetailObjectPage = this.byId("apiDetailObjectPage");
-
 				this._sTopicid = oEvent.getParameter("arguments").id;
 				this._sEntityType = oEvent.getParameter("arguments").entityType;
 				this._sEntityId = oEvent.getParameter("arguments").entityId;
 
 				this.getOwnerComponent().fetchAPIInfoAndBindModels().then(function () {
 
-					oApiDetailObjectPage._suppressLayoutCalculations();
 					this._bindData(this._sTopicid);
 					this._bindEntityData(this._sTopicid);
 					this._createMethodsSummary();
 					this._createEventsSummary();
 					this._createAnnotationsSummary();
-					oApiDetailObjectPage._resumeLayoutCalculations();
 
 					if (this._sEntityType) {
 						this._scrollToEntity(this._sEntityType, this._sEntityId);

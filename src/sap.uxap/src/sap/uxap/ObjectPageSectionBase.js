@@ -238,7 +238,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/TitleLev
 	 */
 	ObjectPageSectionBase.prototype._notifyObjectPageLayout = function () {
 		if (this._getObjectPageLayout() && this._getObjectPageLayout().$().length){
-			this._getObjectPageLayout()._adjustLayoutAndUxRules();
+			this._getObjectPageLayout()._requestAdjustLayoutAndUxRules();
 		}
 	};
 
@@ -268,7 +268,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/TitleLev
 
 		this.setProperty("visible", bValue, true);
 		/* handle invalidation ourselves in adjustLayoutAndUxRules */
-		this._getObjectPageLayout()._adjustLayoutAndUxRules();
+		this._getObjectPageLayout()._requestAdjustLayoutAndUxRules();
 		this.invalidate();
 		return this;
 	};
