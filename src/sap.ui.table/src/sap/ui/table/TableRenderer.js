@@ -114,15 +114,20 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.addClass("sapUiTableCnt");
 		rm.writeClasses();
 
-		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "CONTENT");
-
 		// Define group for F6 handling
 		rm.writeAttribute("data-sap-ui-fastnavgroup", "true");
+		rm.write(">");
+
+		rm.write("<div");
+		rm.writeAttribute("id", oTable.getId() + "-sapUiTableGridCnt");
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "CONTENT");
 		rm.write(">");
 
 		this.renderColRsz(rm, oTable);
 		this.renderColHdr(rm, oTable);
 		this.renderTable(rm, oTable);
+
+		rm.write("</div>");
 
 		oTable._getAccRenderExtension().writeHiddenAccTexts(rm, oTable);
 

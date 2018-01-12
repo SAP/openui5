@@ -1021,11 +1021,11 @@ sap.ui.require([
 	});
 
 	QUnit.test("ARIA Attributes of Content Element", function(assert) {
-		var $Elem = oTable.$("sapUiTableCnt");
+		var $Elem = oTable.$("sapUiTableGridCnt");
 		assert.strictEqual($Elem.attr("role"), "grid", "role");
 		assert.strictEqual($Elem.attr("aria-multiselectable"), "true", "aria-multiselectable");
 		assert.strictEqual($Elem.attr("aria-labelledby"), oTable.getAriaLabelledBy() + " " + oTable.getTitle().getId(), "aria-labelledby");
-		$Elem = oTreeTable.$("sapUiTableCnt");
+		$Elem = oTreeTable.$("sapUiTableGridCnt");
 		assert.strictEqual($Elem.attr("role"), "treegrid", "role");
 		assert.ok(!$Elem.attr("aria-multiselectable"), "aria-multiselectable");
 	});
