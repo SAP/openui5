@@ -8,7 +8,7 @@ sap.ui.require([
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
 ], function (jQuery, DateFormat, DateType, ODataType, TestUtils) {
-	/*global QUnit, sinon */
+	/*global QUnit */
 	/*eslint no-warning-comments: 0 */ //no ESLint warning for TODO list
 	"use strict";
 
@@ -41,13 +41,12 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Date", {
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
 		afterEach : function () {
-			this.oLogMock.verify();
 			sap.ui.getCore().getConfiguration().setLanguage(this.sDefaultLanguage);
 		},
 

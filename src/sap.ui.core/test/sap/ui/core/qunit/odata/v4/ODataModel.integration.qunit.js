@@ -19,7 +19,7 @@ sap.ui.require([
 	"sap/ui/table/Table"
 ], function (jQuery, ColumnListItem, CustomListItem, Text, Controller, ChangeReason, Filter,
 		FilterOperator, OperationMode, ODataListBinding, ODataModel, Sorter, TestUtils) {
-	/*global QUnit, sinon */
+	/*global QUnit*/
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
@@ -124,9 +124,8 @@ sap.ui.require([
 			// (see PropertyBinding#_toExternalValue). Ensure that this result is predictable.
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 
-			this.oSandbox = sinon.sandbox.create();
 			// These metadata files are _always_ faked, the query option "realOData" is ignored
-			TestUtils.useFakeServer(this.oSandbox, "/sap/ui/core/qunit", {
+			TestUtils.useFakeServer(this._oSandbox, "/sap/ui/core/qunit", {
 				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata"
 					: {source : "model/GWSAMPLE_BASIC.metadata.xml"},
 				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
@@ -140,7 +139,7 @@ sap.ui.require([
 				"/special/cases/$metadata"
 					: {source : "odata/v4/data/metadata_special_cases.xml"}
 			});
-			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 
@@ -160,7 +159,6 @@ sap.ui.require([
 		},
 
 		afterEach : function () {
-			this.oSandbox.verifyAndRestore();
 			if (this.oView) {
 				// avoid calls to formatters by UI5 localization changes in later tests
 				this.oView.destroy();
@@ -411,9 +409,10 @@ sap.ui.require([
 
 			this.oModel = oModel || createTeaBusiModel();
 			if (this.oModel.submitBatch) {
+				// stubs used to replace unwanted functionality in _Requestor
 				//TODO basically, we should rather stub the requestor's jQuery.ajax() call only
 				for (sName in mRequestorStubs) {
-					sinon.stub(this.oModel.oRequestor, sName, mRequestorStubs[sName]);
+					this.stub(this.oModel.oRequestor, sName).callsFake(mRequestorStubs[sName]);
 				}
 				this.oModel.oRequestor.restore = function () {
 					for (sName in mRequestorStubs) {
@@ -575,7 +574,7 @@ sap.ui.require([
 				fnOriginalFormatter = oBindingInfo.formatter,
 				that = this;
 
-			oControl.getBindingInfo("text").formatter = function (sValue) {
+			oBindingInfo.formatter = function (sValue) {
 				var sExpectedValue = fnOriginalFormatter
 						? fnOriginalFormatter.apply(this, arguments)
 						: sValue;
@@ -3313,7 +3312,7 @@ sap.ui.require([
 	</ColumnListItem>\
 </Table>';
 
-		this.oSandbox.stub(ODataListBinding.prototype, "getContexts",
+		this.mock(ODataListBinding.prototype).expects("getContexts").atLeast(1).callsFake(
 			function (iStart, iLength, iMaximumPrefetchSize) {
 				// this is how the call by sap.chart.Chart should look like --> GET w/o $top!
 				return fnGetContexts.call(this, iStart, iLength, Infinity);

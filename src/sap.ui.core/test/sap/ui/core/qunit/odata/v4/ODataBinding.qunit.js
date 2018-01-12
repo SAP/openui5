@@ -29,13 +29,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataBinding", {
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-		},
-
-		afterEach : function () {
-			this.oLogMock.verify();
 		}
 	});
 
@@ -1300,17 +1296,19 @@ sap.ui.require([
 						: SyncPromise.resolve(oCache)
 				}),
 				oCallbackResult = {},
-				fnCallback = sinon.stub().returns(oCallbackResult),
+				oProcessor = {
+					fnCallback : function () {}
+				},
 				oPromise;
 
 			this.mock(oBinding).expects("getRelativePath").withExactArgs("foo").returns("~");
+			this.mock(oProcessor).expects("fnCallback")
+				.withExactArgs(sinon.match.same(oCache), "~", sinon.match.same(oBinding))
+				.returns(oCallbackResult);
 
 			// code under test
-			oPromise = oBinding.withCache(fnCallback, "foo").then(function (oResult) {
+			oPromise = oBinding.withCache(oProcessor.fnCallback, "foo").then(function (oResult) {
 				assert.strictEqual(oResult, oCallbackResult);
-
-				sinon.assert.calledWithExactly(fnCallback, sinon.match.same(oCache), "~",
-					sinon.match.same(oBinding));
 			});
 			if (!bAsync) {
 				assert.strictEqual(oPromise.isFulfilled(), true);
@@ -1330,17 +1328,19 @@ sap.ui.require([
 				oContext : oContext
 			}),
 			oCallbackResult = {},
-			fnCallback = sinon.stub().returns(oCallbackResult);
+			oProcessor = {
+				fnCallback : function () {}
+			};
 
 		this.mock(oBinding).expects("getRelativePath").withExactArgs("").returns("");
 		this.mock(oContext).expects("withCache").never();
+		this.mock(oProcessor).expects("fnCallback")
+			.withExactArgs(sinon.match.same(oCache), "", sinon.match.same(oBinding))
+			.returns(oCallbackResult);
 
 		// code under test
-		return oBinding.withCache(fnCallback).then(function (oResult) {
+		return oBinding.withCache(oProcessor.fnCallback).then(function (oResult) {
 			assert.strictEqual(oResult, oCallbackResult);
-
-			sinon.assert.calledWithExactly(fnCallback, sinon.match.same(oCache), "",
-				sinon.match.same(oBinding));
 		});
 	});
 

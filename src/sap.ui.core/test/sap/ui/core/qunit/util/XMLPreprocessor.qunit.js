@@ -154,24 +154,21 @@ sap.ui.require([
 	 */
 	function _withBalancedBindAggregation(that, assert, fnCodeUnderTest) {
 		var fnBindAggregation = ManagedObject.prototype.bindAggregation,
-			fnUnbindAggregation;
+			oBindAggregationExpectation,
+			fnUnbindAggregation = ManagedObject.prototype.unbindAggregation,
+			oUnbindAggregationExpectation;
 
-		that.stub(ManagedObject.prototype, "bindAggregation",
-			function (sName, oBindingInfo) {
-				assert.strictEqual(sName, "list");
-				assert.strictEqual(oBindingInfo.mode, BindingMode.OneTime);
-				fnBindAggregation.apply(this, arguments);
-			});
-		fnUnbindAggregation = that.spy(ManagedObject.prototype, "unbindAggregation");
+		oBindAggregationExpectation = that.mock(ManagedObject.prototype).expects("bindAggregation")
+			.atLeast(0).withExactArgs("list", sinon.match({mode : BindingMode.OneTime}))
+			.callsFake(fnBindAggregation);
+		oUnbindAggregationExpectation = that.mock(ManagedObject.prototype)
+			.expects("unbindAggregation").atLeast(0).withExactArgs("list", true)
+			.callsFake(fnUnbindAggregation);
 
 		fnCodeUnderTest();
 
-		assert.strictEqual(fnUnbindAggregation.callCount,
-			ManagedObject.prototype.bindAggregation.callCount,
-			"balance of bind and unbind");
-		if (fnUnbindAggregation.callCount) {
-			assert.ok(fnUnbindAggregation.alwaysCalledWith("list", true));
-		}
+		assert.strictEqual(oUnbindAggregationExpectation.callCount,
+			oBindAggregationExpectation.callCount, "balance of bind and unbind");
 	}
 	//TODO test with exception during bindAggregation, e.g. via sorter
 
@@ -185,39 +182,41 @@ sap.ui.require([
 	 *   code under test
 	 */
 	function _withBalancedBindProperty(that, assert, fnCodeUnderTest) {
-		var fnBindProperty = ManagedObject.prototype.bindProperty;
+		var fnBindProperty = ManagedObject.prototype.bindProperty,
+			oBindPropertyExpectation,
+			fnUnbindProperty = ManagedObject.prototype.unbindProperty,
+			oUnbindPropertyExpectation;
 
-		that.stub(ManagedObject.prototype, "bindProperty",
-			function (sName, oBindingInfo) {
-				var aParts = oBindingInfo.parts;
+		function checkBindingMode(oBindingInfo) {
+			var aParts = oBindingInfo.parts;
 
-				assert.strictEqual(sName, "any");
-				assert.strictEqual(oBindingInfo.mode, BindingMode.OneTime);
-				if (aParts) {
-					aParts.forEach(function (oInfoPart) {
-						assert.strictEqual(oInfoPart.mode, BindingMode.OneTime);
-					});
-				}
-				fnBindProperty.apply(this, arguments);
-			});
-		that.spy(ManagedObject.prototype, "unbindProperty");
+			if (oBindingInfo.mode !== BindingMode.OneTime) {
+				return false;
+			}
+			if (aParts) {
+				return aParts.every(function (oInfoPart) {
+					return oInfoPart.mode === BindingMode.OneTime;
+				});
+			}
+			return true;
+		}
+
+		oBindPropertyExpectation = that.mock(ManagedObject.prototype).expects("bindProperty")
+			.atLeast(0).withExactArgs("any", sinon.match(checkBindingMode))
+			.callsFake(fnBindProperty);
+		oUnbindPropertyExpectation = that.mock(ManagedObject.prototype).expects("unbindProperty")
+			.atLeast(0).withExactArgs("any", true).callsFake(fnUnbindProperty);
 
 		fnCodeUnderTest();
 
-		assert.strictEqual(ManagedObject.prototype.unbindProperty.callCount,
-			ManagedObject.prototype.bindProperty.callCount,
+		assert.strictEqual(oUnbindPropertyExpectation.callCount, oBindPropertyExpectation.callCount,
 			"balance of bind and unbind");
-		if (ManagedObject.prototype.unbindProperty.callCount) {
-			assert.ok(ManagedObject.prototype.unbindProperty.alwaysCalledWith("any", true));
-		}
 	}
 
 	//*********************************************************************************************
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.util.XMLPreprocessor", {
 		afterEach : function () {
-			this.oLogMock.verify();
-
 			sap.ui.core.CustomizingConfiguration = this.oCustomizingConfiguration;
 			jQuery.sap.log.setLevel(iOldLogLevel, sComponent);
 			delete window.foo;
@@ -228,7 +227,7 @@ sap.ui.require([
 			// do not rely on ERROR vs. DEBUG due to minified sources
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG, sComponent);
 
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("debug").atLeast(0); // do not flood the console ;-)
@@ -1194,9 +1193,10 @@ sap.ui.require([
 			 * @param {number} i
 			 */
 			function checkInterfaceForPart(oInterface, i) {
-				var fnCreateBindingContext,
+				var oCreateBindingContextExpectation,
 					oInterface2Part,
-					oModel = oInterface.getModel(i);
+					oModel = oInterface.getModel(i),
+					fnCreateBindingContext = oModel.createBindingContext;
 
 				// interface to ith part
 				oInterface2Part = oInterface.getInterface(i);
@@ -1244,7 +1244,8 @@ sap.ui.require([
 				assert.strictEqual(oInterface2Part.getSetting("bindTexts"), true, "settings");
 
 				try {
-					fnCreateBindingContext = that.spy(oModel, "createBindingContext");
+					oCreateBindingContextExpectation = that.mock(oModel)
+						.expects("createBindingContext").callsFake(fnCreateBindingContext);
 
 					// "drill-down" into ith part with absolute path
 					oInterface2Part = oInterface.getInterface(i, "/absolute/path");
@@ -1252,15 +1253,14 @@ sap.ui.require([
 					assert.strictEqual(oInterface2Part.getModel(), oModel);
 					assert.strictEqual(oInterface2Part.getPath(), "/absolute/path");
 					assert.strictEqual(oInterface2Part.getSetting("bindTexts"), true, "settings");
-					assert.strictEqual(fnCreateBindingContext.callCount, 1,
-						fnCreateBindingContext.printf("%C"));
 				} finally {
-					fnCreateBindingContext.restore();
+					oCreateBindingContextExpectation.restore();
 				}
 
 				try {
 					// simulate a model which creates the context asynchronously
-					fnCreateBindingContext = that.stub(oModel, "createBindingContext");
+					oCreateBindingContextExpectation = that.mock(oModel)
+						.expects("createBindingContext").twice();
 
 					oInterface2Part = oInterface.getInterface(i, "String");
 
@@ -1269,7 +1269,7 @@ sap.ui.require([
 					assert.strictEqual(e.message,
 						"Model could not create binding context synchronously: " + oModel);
 				} finally {
-					fnCreateBindingContext.restore();
+					oCreateBindingContextExpectation.restore();
 				}
 			}
 
@@ -2347,7 +2347,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("template:alias", function (assert) {
 		var fnComplexParser = BindingParser.complexParser,
-			fnGetObject = jQuery.sap.getObject;
+			fnGetObject = jQuery.sap.getObject,
+			jQuerySapMock = this.mock(jQuery.sap);
 
 		window.foo = {
 			Helper : {
@@ -2374,18 +2375,16 @@ sap.ui.require([
 			}
 		};
 
-		this.stub(jQuery.sap, "getObject", function (sName, iNoCreates, oContext) {
-			// make sure we do not create namespaces!
-			assert.strictEqual(iNoCreates, undefined, sName);
-			return fnGetObject.apply(this, arguments);
-		});
-		this.stub(BindingParser, "complexParser",
-			function (s, o, b1, bTolerateFunctionsNotFound, bStaticContext) {
-				assert.strictEqual(bTolerateFunctionsNotFound, true, JSON.stringify(arguments));
-				assert.strictEqual(bStaticContext, true, JSON.stringify(arguments));
-				return fnComplexParser.apply(this, arguments);
-			}
-		);
+		// make sure we do not create namespaces!
+		jQuerySapMock.expects("getObject").atLeast(1).withExactArgs(sinon.match.string)
+			.callsFake(fnGetObject);
+		jQuerySapMock.expects("getObject").atLeast(1)
+			.withExactArgs(sinon.match.string, /*iNoCreates*/undefined, sinon.match.object)
+			.callsFake(fnGetObject);
+		this.mock(BindingParser).expects("complexParser").atLeast(1)
+			.withExactArgs(sinon.match.string, sinon.match.object, sinon.match.bool,
+				/*bTolerateFunctionsNotFound*/true, /*bStaticContext*/true)
+			.callsFake(fnComplexParser);
 
 		// Note: <Label text="..."> remains unresolved, <Text text="..."> MUST be resolved
 		this.check(assert, [

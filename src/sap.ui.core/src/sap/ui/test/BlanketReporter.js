@@ -315,11 +315,11 @@ sap.ui.define([
 	 *   Lines of context to show
 	 * @param {number} iThreshold
 	 *   Threshold for KPIs as a percentage
-	 * @param {string} [sSelectedFile]
-	 *   The selected file from "modules" in the query string
+	 * @param {string[]} [aTestedFiles]
+	 *   The tested files (derived from the module names) or undefined if all tests were run
 	 * @returns {JSONModel} The JSON model
 	 */
-	function createModel(oCoverageData, iLinesOfContext, iThreshold, sSelectedFile) {
+	function createModel(oCoverageData, iLinesOfContext, iThreshold, aTestedFiles) {
 		var oTotal = {
 				files : [],
 				lines : {
@@ -382,8 +382,10 @@ sap.ui.define([
 			oTotal.branches.missed += oFileSummary.branches.missed;
 		}
 
-		if (sSelectedFile && (sSelectedFile in oCoverageData.files)) {
-			summarize(sSelectedFile);
+		if (aTestedFiles) {
+			aTestedFiles.filter(function (sFile) {
+				return sFile in oCoverageData.files;
+			}).forEach(summarize);
 			oTotal.filterThreshold = false;
 		} else {
 			Object.keys(oCoverageData.files).sort().forEach(summarize);
@@ -425,20 +427,20 @@ sap.ui.define([
 		document.head.appendChild(oStyle);
 	}
 
-	function selectedFile() {
-		var sModule = jQuery.sap.getUriParameters().get("module");
-		return sModule && jQuery.sap.getResourceName(sModule);
+	function convertToFile(sModule) {
+		return jQuery.sap.getResourceName(sModule);
 	}
 
-	return function (oScript, oCoverageData) {
-		var iLinesOfContext, iThreshold;
+	return function (oScript, fnGetTestedModules, oCoverageData) {
+		var iLinesOfContext, aTestedModules, iThreshold;
 
 		// Sometimes, when refreshing, this function is called twice. Ignore the 2nd call.
 		if (!document.getElementById("blanket-view")) {
 			iLinesOfContext = getAttributeAsInteger(oScript, "data-lines-of-context", 3);
 			iThreshold = Math.min(getAttributeAsInteger(oScript, "data-threshold", 0), 100);
+			aTestedModules = fnGetTestedModules();
 			placeView(createView(createModel(oCoverageData, iLinesOfContext, iThreshold,
-				selectedFile())));
+				aTestedModules && aTestedModules.map(convertToFile))));
 		}
 	};
 }, /* bExport= */ false);

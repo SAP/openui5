@@ -88,18 +88,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Requestor", {
 		beforeEach : function () {
-			this.oSandbox = sinon.sandbox.create();
-			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 
 			// workaround: Chrome extension "UI5 Inspector" calls this method which loads the
 			// resource "sap-ui-version.json" and thus interferes with mocks for jQuery.ajax
-			this.oSandbox.stub(sap.ui, "getVersionInfo");
-		},
-
-		afterEach : function () {
-			this.oSandbox.verifyAndRestore();
+			this.mock(sap.ui).expects("getVersionInfo").atLeast(0);
 		}
 	});
 
@@ -238,7 +233,7 @@ sap.ui.require([
 				"foo" : "URL params are ignored for normal requests"
 			}),
 			oResult = {},
-			fnSubmit = sinon.spy();
+			fnSubmit = this.spy();
 
 		this.mock(_Requestor).expects("cleanPayload")
 			.withExactArgs(sinon.match.same(oPayload)).returns(oChangedPayload);
@@ -734,27 +729,28 @@ sap.ui.require([
 				.withExactArgs(sinon.match.same(oTokenRequiredResponse))
 				.returns(oError);
 
-			this.stub(jQuery, "ajax", function (sUrl, oSettings) {
-				var jqXHR;
+			this.mock(jQuery).expects("ajax").twice()
+				.withExactArgs("/Service/?sap-client=123", sinon.match({
+					headers : {"X-CSRF-Token" : "Fetch"},
+					method : "HEAD"
+				}))
+				.callsFake(function () {
+					var jqXHR;
 
-				assert.strictEqual(sUrl, "/Service/?sap-client=123");
-				assert.strictEqual(oSettings.headers["X-CSRF-Token"], "Fetch");
-				assert.strictEqual(oSettings.method, "HEAD");
+					if (bSuccess) {
+						jqXHR = createMock(assert, undefined, "nocontent", {
+							"OData-Version" : "4.0",
+							"X-CSRF-Token" : "abc123"
+						});
+					} else {
+						jqXHR = new jQuery.Deferred();
+						setTimeout(function () {
+							jqXHR.reject(oTokenRequiredResponse);
+						}, 0);
+					}
 
-				if (bSuccess) {
-					jqXHR = createMock(assert, undefined, "nocontent", {
-						"OData-Version" : "4.0",
-						"X-CSRF-Token" : "abc123"
-					});
-				} else {
-					jqXHR = new jQuery.Deferred();
-					setTimeout(function () {
-						jqXHR.reject(oTokenRequiredResponse);
-					}, 0);
-				}
-
-				return jqXHR;
-			});
+					return jqXHR;
+				});
 			assert.strictEqual("X-CSRF-Token" in oRequestor.mHeaders, false);
 
 			// code under test
@@ -762,8 +758,6 @@ sap.ui.require([
 
 			assert.strictEqual(oRequestor.refreshSecurityToken(undefined), oPromise,
 				"promise reused");
-			assert.strictEqual(jQuery.ajax.callCount, 1,
-				"only one HEAD request underway at any time");
 			assert.strictEqual(oRequestor.oSecurityTokenPromise, oPromise,
 				"promise stored at requestor instance so that request method can use it");
 
@@ -779,14 +773,11 @@ sap.ui.require([
 				return oRequestor.refreshSecurityToken("some_old_token").then(function () {
 					var oNewPromise;
 
-					assert.strictEqual(jQuery.ajax.callCount, 1, "no new HEAD request");
-
 					// code under test
 					oNewPromise = oRequestor.refreshSecurityToken(
 						oRequestor.mHeaders["X-CSRF-Token"]);
 
 					assert.notStrictEqual(oNewPromise, oPromise, "new promise");
-					assert.strictEqual(jQuery.ajax.callCount, 2, "new HEAD request");
 					// avoid "Uncaught (in promise)"
 					return oNewPromise.catch(function () {
 						assert.ok(!bSuccess, "certain failure");
@@ -816,12 +807,13 @@ sap.ui.require([
 	}].forEach(function (o) {
 		QUnit.test("request: " + o.sTitle, function (assert) {
 			var oError = {},
+				oExpectation,
 				oReadFailure = {},
 				oRequestor = _Requestor.create("/Service/", oModelInterface,
 					{"X-CSRF-Token" : "Fetch"}),
 				oRequestPayload = {},
 				oResponsePayload = {},
-				fnSubmit = sinon.spy(),
+				fnSubmit = this.spy(),
 				bSuccess = o.bRequestSucceeds !== false && !o.bReadFails && !o.bDoNotDeliverToken,
 				oTokenRequiredResponse = {
 					getResponseHeader : function (sName) {
@@ -841,32 +833,34 @@ sap.ui.require([
 			// with <code>bRequestSucceeds === true</code>, "request" always succeeds,
 			// else "request" first fails due to missing CSRF token which can be fetched via
 			// "ODataModel#refreshSecurityToken".
-			this.stub(jQuery, "ajax", function (sUrl0, oSettings) {
-				var jqXHR;
+			this.mock(jQuery).expects("ajax").atLeast(1)
+				.withExactArgs("/Service/foo", sinon.match({
+					data : JSON.stringify(oRequestPayload),
+					headers : {"foo" : "bar"},
+					method : "FOO"
+				}))
+				.callsFake(function (sUrl, oSettings) {
+					var jqXHR;
 
-				assert.strictEqual(sUrl0, "/Service/foo");
-				assert.strictEqual(oSettings.data, JSON.stringify(oRequestPayload));
-				assert.strictEqual(oSettings.method, "FOO");
-				assert.strictEqual(oSettings.headers.foo, "bar");
+					if (o.bRequestSucceeds === true
+						|| o.bRequestSucceeds === undefined
+						&& oSettings.headers["X-CSRF-Token"] === "abc123") {
+						jqXHR = createMock(assert, oResponsePayload, "OK");
+					} else {
+						jqXHR = new jQuery.Deferred();
+						setTimeout(function () {
+							jqXHR.reject(oTokenRequiredResponse);
+						}, 0);
+					}
 
-				if (o.bRequestSucceeds === true
-					|| o.bRequestSucceeds === undefined
-					&& oSettings.headers["X-CSRF-Token"] === "abc123") {
-					jqXHR = createMock(assert, oResponsePayload, "OK");
-				} else {
-					jqXHR = new jQuery.Deferred();
-					setTimeout(function () {
-						jqXHR.reject(oTokenRequiredResponse);
-					}, 0);
-				}
+					return jqXHR;
+				});
 
-				return jqXHR;
-			});
-
+			oExpectation = this.mock(oRequestor).expects("refreshSecurityToken");
 			if (o.bRequestSucceeds !== undefined) {
-				this.mock(oRequestor).expects("refreshSecurityToken").never();
+				oExpectation.never();
 			} else {
-				this.stub(oRequestor, "refreshSecurityToken", function (sOldSecurityToken) {
+				oExpectation.callsFake(function (sOldSecurityToken) {
 					assert.strictEqual(sOldSecurityToken, "Fetch");
 					return new Promise(function (fnResolve, fnReject) {
 						setTimeout(function () {
@@ -934,40 +928,41 @@ sap.ui.require([
 
 		// "request" first fails due to missing CSRF token which can be fetched via
 		// "ODataModel#refreshSecurityToken".
-		this.stub(jQuery, "ajax", function (sUrl0, oSettings) {
-			var jqXHR;
+		this.mock(jQuery).expects("ajax").twice()
+			.withExactArgs("/Service/$batch?sap-client=111", sinon.match({
+				data : oBatchRequest.body,
+				method : "FOO"
+			}))
+			.callsFake(function (sUrl, oSettings) {
+				var jqXHR;
 
-			assert.strictEqual(sUrl0, "/Service/$batch?sap-client=111");
-			assert.strictEqual(oSettings.data, oBatchRequest.body);
-			assert.strictEqual(oSettings.method, "FOO");
+				if (oSettings.headers["X-CSRF-Token"] === "abc123") {
+					jqXHR = createMock(assert, oResponsePayload, "OK", {
+							"Content-Type" : sResponseContentType,
+							"OData-Version" : "4.0"
+						});
+				} else {
+					jqXHR = new jQuery.Deferred();
+					setTimeout(function () {
+						jqXHR.reject(oTokenRequiredResponse);
+					}, 0);
+				}
 
-			if (oSettings.headers["X-CSRF-Token"] === "abc123") {
-				jqXHR = createMock(assert, oResponsePayload, "OK", {
-						"Content-Type" : sResponseContentType,
-						"OData-Version" : "4.0"
-					});
-			} else {
-				jqXHR = new jQuery.Deferred();
-				setTimeout(function () {
-					jqXHR.reject(oTokenRequiredResponse);
-				}, 0);
-			}
+				delete oSettings.headers["X-CSRF-Token"];
+				assert.deepEqual(oSettings.headers, {
+					"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
+					"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
+					"MIME-Version" : "1.0",
+					"OData-MaxVersion" : "4.0",
+					"OData-Version" : "4.0",
+					"_foo" : "_bar",
+					"foo" : "bar"
+				});
 
-			delete oSettings.headers["X-CSRF-Token"];
-			assert.deepEqual(oSettings.headers, {
-				"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
-				"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
-				"MIME-Version" : "1.0",
-				"OData-MaxVersion" : "4.0",
-				"OData-Version" : "4.0",
-				"_foo" : "_bar",
-				"foo" : "bar"
+				return jqXHR;
 			});
 
-			return jqXHR;
-		});
-
-		this.stub(oRequestor, "refreshSecurityToken", function () {
+		this.mock(oRequestor).expects("refreshSecurityToken").callsFake(function () {
 			return new Promise(function (fnResolve, fnReject) {
 				setTimeout(function () {
 					oRequestor.mHeaders["X-CSRF-Token"] = "abc123";
@@ -997,7 +992,7 @@ sap.ui.require([
 			iHeadRequestCount = 0,
 			oRequestor = _Requestor.create("/Service/", oModelInterface);
 
-		this.stub(jQuery, "ajax", function (sUrl0, oSettings) {
+		this.mock(jQuery).expects("ajax").atLeast(1).callsFake(function (sUrl0, oSettings) {
 			var jqXHR,
 				oTokenRequiredResponse = {
 					getResponseHeader : function (sName) {
@@ -1169,10 +1164,10 @@ sap.ui.require([
 	QUnit.test("submitBatch(...): merge PATCH requests", function (assert) {
 		var aPromises = [],
 			oRequestor = _Requestor.create("/", oModelInterface),
-			fnSubmit0 = sinon.spy(),
-			fnSubmit1 = sinon.spy(),
-			fnSubmit2 = sinon.spy(),
-			fnSubmit3 = sinon.spy();
+			fnSubmit0 = this.spy(),
+			fnSubmit1 = this.spy(),
+			fnSubmit2 = this.spy(),
+			fnSubmit3 = this.spy();
 
 		aPromises.push(oRequestor
 			.request("PATCH", "Products('0')", "groupId", {}, {Name : null}));
@@ -1588,10 +1583,10 @@ sap.ui.require([
 
 	//*****************************************************************************************
 	QUnit.test("cancelChanges: various requests", function (assert) {
-		var fnCancel1 = sinon.spy(),
-			fnCancel2 = sinon.spy(),
-			fnCancel3 = sinon.spy(),
-			fnCancelPost = sinon.spy(),
+		var fnCancel1 = this.spy(),
+			fnCancel2 = this.spy(),
+			fnCancel3 = this.spy(),
+			fnCancelPost = this.spy(),
 			iCount = 1,
 			oPostData = {},
 			oPromise,
@@ -1633,7 +1628,7 @@ sap.ui.require([
 		// code under test
 		assert.strictEqual(oRequestor.hasPendingChanges(), true);
 
-		sinon.spy(oRequestor, "cancelChangesByFilter");
+		this.spy(oRequestor, "cancelChangesByFilter");
 
 		// code under test
 		oRequestor.cancelChanges("groupId");
@@ -1709,7 +1704,7 @@ sap.ui.require([
 
 	//*****************************************************************************************
 	QUnit.test("removePatch", function (assert) {
-		var fnCancel = sinon.spy(),
+		var fnCancel = this.spy(),
 			oPromise,
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oTestPromise;
@@ -1733,7 +1728,7 @@ sap.ui.require([
 
 	//*****************************************************************************************
 	QUnit.test("removePatch: various requests", function (assert) {
-		var fnCancel = sinon.spy(),
+		var fnCancel = this.spy(),
 			oPromise,
 			aPromises,
 			oRequestor = _Requestor.create("/Service/", oModelInterface);
@@ -1803,12 +1798,12 @@ sap.ui.require([
 	//*****************************************************************************************
 	QUnit.test("removePost", function (assert) {
 		var oBody = {},
-			fnCancel1 = sinon.spy(),
-			fnCancel2 = sinon.spy(),
+			fnCancel1 = this.spy(),
+			fnCancel2 = this.spy(),
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oTestPromise;
 
-		sinon.spy(oRequestor, "cancelChangesByFilter");
+		this.spy(oRequestor, "cancelChangesByFilter");
 		oTestPromise = Promise.all([
 			oRequestor.request("POST", "Products", "groupId", {}, oBody, undefined, fnCancel1)
 				.then(function () {
@@ -1845,7 +1840,7 @@ sap.ui.require([
 	//*****************************************************************************************
 	QUnit.test("removePost with only one POST", function (assert) {
 		var oBody = {},
-			fnCancel = sinon.spy(),
+			fnCancel = this.spy(),
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oTestPromise;
 
@@ -1889,7 +1884,7 @@ sap.ui.require([
 	QUnit.test("relocate", function (assert) {
 		var oBody1 = {},
 			oBody2 = {},
-			fnCancel = sinon.spy(),
+			fnCancel = this.spy(),
 			oExpectedHeader = {
 				"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 				"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
@@ -1901,7 +1896,7 @@ sap.ui.require([
 			oError = new Error("Post failed"),
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oRequestorMock = this.mock(oRequestor),
-			fnSubmit = sinon.spy();
+			fnSubmit = this.spy();
 
 		oCreatePromise1 = oRequestor.request("POST", "Employees", "$parked.$auto", oHeaders, oBody1,
 			fnSubmit, fnCancel);

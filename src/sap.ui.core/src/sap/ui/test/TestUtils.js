@@ -92,10 +92,19 @@ sap.ui.define([
 	function pushDeeplyContains(oActual, oExpected, sMessage, bExpectSuccess) {
 		try {
 			deeplyContains(oActual, oExpected, "/");
-			QUnit.assert.push(bExpectSuccess, oActual, oExpected, sMessage);
+			QUnit.assert.pushResult({
+				result: bExpectSuccess,
+				actual:oActual,
+				expected : oExpected,
+				message : sMessage
+			});
 		} catch (ex) {
-			QUnit.assert.push(!bExpectSuccess, oActual, oExpected,
-				(sMessage || "") + " failed because of " + ex.message);
+			QUnit.assert.pushResult({
+				result : !bExpectSuccess,
+				actual : oActual,
+				expected : oExpected,
+				message : (sMessage || "") + " failed because of " + ex.message
+			});
 		}
 	}
 
@@ -421,7 +430,8 @@ sap.ui.define([
 					sUrl;
 
 				// set up the fake server
-				oServer = oSandbox.useFakeServer();
+				oServer = sinon.fakeServer.create();
+				oSandbox.add(oServer);
 				oServer.autoRespond = true;
 
 				for (sUrl in mUrls) {
@@ -507,11 +517,13 @@ sap.ui.define([
 		 * @since 1.27.1
 		 */
 		withNormalizedMessages : function (fnCodeUnderTest) {
-			sinon.test(function () {
+			var oSandbox = sinon.sandbox.create();
+
+			try {
 				var oCore = sap.ui.getCore(),
 					fnGetBundle = oCore.getLibraryResourceBundle;
 
-				this.stub(oCore, "getLibraryResourceBundle").returns({
+				oSandbox.stub(oCore, "getLibraryResourceBundle").returns({
 					getText : function (sKey, aArgs) {
 						var sResult = sKey,
 							sText = fnGetBundle.call(oCore).getText(sKey),
@@ -527,8 +539,9 @@ sap.ui.define([
 				});
 
 				fnCodeUnderTest.apply(this);
-
-			}).apply({}); // give Sinon a "this" to enrich
+			} finally {
+				oSandbox.verifyAndRestore();
+			}
 		},
 
 		/**

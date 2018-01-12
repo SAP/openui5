@@ -256,15 +256,50 @@
 		}
 	}
 
+	/**
+	 * Listens on QUnit and delivers a function that returns the tested modules.
+	 *
+	 * @returns {function} A function that delivers the tested modules or <code>undefined</code> if
+	 *   all modules have been tested
+	 */
+	function listenOnQUnit() {
+		var mModules = {},
+			aTestedModules = [],
+			iTotalModules;
+
+		QUnit.begin(function (oDetails) {
+			iTotalModules = oDetails.modules.length;
+			oDetails.modules.forEach(function (oModule) {
+				mModules[oModule.name] = oModule;
+			});
+		});
+
+		QUnit.moduleStart(function (oModule) {
+			// Why, oh why, is the module name different here?
+			aTestedModules = aTestedModules.concat(
+				Object.keys(mModules).filter(function (sModuleName) {
+					return mModules[sModuleName].tests === oModule.tests;
+				})
+			);
+		});
+
+		return function () {
+			return aTestedModules.length < iTotalModules ? aTestedModules : undefined;
+		};
+	}
+
 	if (window.blanket) {
 		window._$blanket = {}; // maps a file's name to its statistics array
 		blanket.$b = branchTracking;
 		blanket.$l = lineTracking;
 		blanket.instrument = instrument; // self-made "plug-in" ;-)
 
+		var fnGetTestedModules = listenOnQUnit();
+
 		// Note: instrument() MUST have been replaced before!
 		sap.ui.require(["sap/ui/test/BlanketReporter"], function (BlanketReporter) {
-			blanket.options("reporter", BlanketReporter.bind(null, getScriptTag()));
+			blanket.options("reporter",
+				BlanketReporter.bind(null, getScriptTag(), fnGetTestedModules));
 		});
 	}
 

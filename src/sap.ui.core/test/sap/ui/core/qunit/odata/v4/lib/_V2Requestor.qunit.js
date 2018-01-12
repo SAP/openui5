@@ -16,13 +16,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._V2Requestor", {
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-		},
-
-		afterEach : function () {
-			this.oLogMock.verify();
 		}
 	});
 
@@ -709,7 +705,7 @@ sap.ui.require([
 	QUnit.test("doConvertSystemQueryOptions: $filter", function (assert) {
 		var sFilter = "foo eq 'bar'",
 			oRequestor = {},
-			fnResultHandlerSpy = sinon.spy();
+			fnResultHandlerSpy = this.spy();
 
 		asV2Requestor(oRequestor);
 

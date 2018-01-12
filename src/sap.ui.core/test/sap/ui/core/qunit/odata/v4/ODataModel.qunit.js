@@ -90,18 +90,12 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataModel", {
 		beforeEach : function () {
-			this.oSandbox = sinon.sandbox.create();
-			TestUtils.setupODataV4Server(this.oSandbox, mFixture, undefined, sServiceUrl);
-			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			TestUtils.setupODataV4Server(this._oSandbox, mFixture, undefined, sServiceUrl);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-			this.oSandbox.mock(sap.ui.getCore().getConfiguration()).expects("getLanguageTag")
-				.atLeast(0).returns("ab-CD");
-		},
-
-		afterEach : function () {
-			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
-			this.oSandbox.verifyAndRestore();
+			this.mock(sap.ui.getCore().getConfiguration()).expects("getLanguageTag").atLeast(0)
+				.returns("ab-CD");
 		}
 	});
 
@@ -597,7 +591,7 @@ sap.ui.require([
 
 		oModelMock.expects("checkDeferredGroupId").withExactArgs("groupId");
 		oModelMock.expects("_submitBatch").never(); // not yet
-		this.stub(sap.ui.getCore(), "addPrerenderingTask", function (fnCallback) {
+		this.mock(sap.ui.getCore()).expects("addPrerenderingTask").callsFake(function (fnCallback) {
 			setTimeout(function () {
 				// make sure that _submitBatch is called within fnCallback
 				oModelMock.expects("_submitBatch").withExactArgs("groupId")

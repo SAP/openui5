@@ -69,7 +69,7 @@ sap.ui.require([
 			QUnit.test(sTitle + " : " + oFixture.expression + " --> " + oFixture.result,
 				function (assert) {
 					if (fnInit) {
-						fnInit(this); //call initializer with sandbox
+						fnInit.call(this);
 					}
 					check(assert, oFixture.expression, oFixture.result);
 				}
@@ -80,12 +80,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.base.ExpressionParser", {
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-		},
-		afterEach : function () {
-			this.oLogMock.verify();
 		},
 		/**
 		 * Checks that the code throws an expected error.
@@ -264,7 +261,7 @@ sap.ui.require([
 				"odata.fillUriTemplate('http://foo/{t},{m}', {t: ${/mail}, 'm': ${/tel}})",
 				result: "http://foo/mail,tel" }
 		],
-		function (oSandbox) {
+		function () {
 			var mGlobals = {
 					odata: {
 						fillUriTemplate: function (sTemplate, mParameters) {
@@ -290,7 +287,7 @@ sap.ui.require([
 				fnOriginalParse = ExpressionParser.parse;
 
 			//use test globals in expression parser
-			oSandbox.stub(ExpressionParser, "parse",
+			this.mock(ExpressionParser).expects("parse").callsFake(
 				function (fnResolveBinding, sInput, iStart) {
 					return fnOriginalParse.call(null, fnResolveBinding, sInput, iStart, mGlobals);
 				}
