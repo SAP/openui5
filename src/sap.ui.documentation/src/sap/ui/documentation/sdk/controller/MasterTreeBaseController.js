@@ -94,6 +94,7 @@ sap.ui.define([
 			onTreeFilter: function (oEvent) {
 				var oTree = this.byId("tree");
 				var sFilterArgument = oEvent.getParameter("newValue").trim();
+				var sFilterArgumentJoined = sFilterArgument.replace(/\s/g, '');
 				var oBinding = oTree.getBinding("items");
 
 				if (this._filterTimeout) {
@@ -113,6 +114,11 @@ sap.ui.define([
 					if (sFilterArgument) {
 						var oNameFilter = new Filter("name", FilterOperator.Contains, sFilterArgument);
 						aFilters.push(oNameFilter);
+					}
+
+					if (sFilterArgumentJoined) {
+						var oNameFilterJoined = new Filter("name", FilterOperator.Contains, sFilterArgumentJoined);
+						aFilters.push(oNameFilterJoined);
 					}
 
 					oBinding.filter(aFilters);
