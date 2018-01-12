@@ -12,6 +12,7 @@ module.exports = [
 	"CheckBox.spec.js",
 	"ComboBox.spec.js",
 	"ContextMenuSupportIntegration.spec.js",
+	"DateTimePicker.spec.js",
 	"Dialog.spec.js",
 	"IconTabBar.spec.js",
 	"Image.spec.js",
