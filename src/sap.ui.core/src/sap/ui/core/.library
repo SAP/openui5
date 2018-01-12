@@ -95,6 +95,7 @@
         <raw-module name="sap/ui/thirdparty/sinon-qunit.js" depends="sap/ui/thirdparty/qunit.js,sap/ui/thirdparty/sinon.js,sap/ui/thirdparty/sinon-ie.js" />
         <raw-module name="sap/ui/thirdparty/sinon-server.js" depends="sap/ui/thirdparty/sinon.js" />
         <raw-module name="sap/ui/thirdparty/sinon.js" />
+        <raw-module name="sap/ui/thirdparty/sinon-4.js" />
         <raw-module name="sap/ui/thirdparty/swipe-view.js" />
         <raw-module name="sap/ui/thirdparty/unorm.js" />
         <raw-module name="sap/ui/thirdparty/unormdata.js" depends="sap/ui/thirdparty/unorm.js" />
@@ -172,6 +173,7 @@
         <exclude name="sap/ui/thirdparty/require.js" />
         <exclude name="sap/ui/thirdparty/SecondLevelDomains.js" />
         <!-- <exclude name="sap/ui/thirdparty/signals.js" /> -->
+        <exclude name="sap/ui/thirdparty/sinon-4.js" />
         <exclude name="sap/ui/thirdparty/sinon-ie.js" />
         <exclude name="sap/ui/thirdparty/sinon-qunit.js" />
         <exclude name="sap/ui/thirdparty/sinon-server.js" />
