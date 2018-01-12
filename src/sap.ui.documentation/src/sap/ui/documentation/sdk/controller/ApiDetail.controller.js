@@ -645,7 +645,7 @@ sap.ui.define([
 				}
 
 				oControlData.hasChildren = !!oControlData.nodes;
-				oControlData.hasConstructor = !!oControlData.constructor;
+				oControlData.hasConstructor = oControlData.hasOwnProperty("constructor") && !!oControlData.constructor;
 				oControlData.hasOwnEvents = !!oControlData.events;
 				oControlData.hasEvents = !!(oControlData.hasOwnEvents || (oControlData.borrowed && oControlData.borrowed.events.length > 0));
 				oControlData.hasMethods = !!(oControlData.hasOwnMethods || (oControlData.borrowed && oControlData.borrowed.methods.length > 0));
