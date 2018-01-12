@@ -2539,6 +2539,27 @@
 		oInput.destroy();
 	});
 
+	QUnit.test("Selected item from value help is set to the input", function(assert) {
+
+		var oInput = createInputWithSuggestions();
+		oInput.setShowValueHelp(true);
+		oInput.setType("Text");
+		oInput.setTextFormatMode("KeyValue");
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput._bUseDialog = true;
+		oInput.setSelectedKey("2");
+		assert.equal(oInput.getDOMValue(), "(2) Item 2", "Selected input value is " + oInput.getDOMValue());
+
+		oInput._bUseDialog = false;
+		oInput.setSelectedKey("3");
+		assert.equal(oInput.getDOMValue(), "(3) Item 3", "Selected input value is " + oInput.getDOMValue());
+
+		oInput.destroy();
+	});
+
 	QUnit.test("Set selection via API", function(assert) {
 		var oInput = createInputWithSuggestions(),
 				fnCallback = this.spy();
