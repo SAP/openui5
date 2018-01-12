@@ -81,6 +81,11 @@ sap.ui.define([
 
 				// register Feedback rating icons
 				this._registerFeedbackRatingIcons();
+
+				// attach to the afterMasterClose event of the splitApp to be able to toggle the hamburger button state on clicking anywhere
+				this.byId("splitApp").attachEvent("afterMasterClose", function (oEvent) {
+					oViewModel.setProperty("/bIsShownMaster", false);
+				}, this);
 			},
 
 			onBeforeRendering: function() {
