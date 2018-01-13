@@ -92,6 +92,7 @@ public class ConcatFilter implements Filter {
               IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/baseuri.js"), os, "UTF-8");
               IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/es6-promise.js"), os, "UTF-8");
               IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/es6-string-methods.js"), os, "UTF-8");
+              IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/es6-object-assign.js"), os, "UTF-8");
               IOUtils.write(this.loadResource("/resources/ui5loader.js"), os, "UTF-8");
               IOUtils.write(this.loadResource("/resources/ui5loader-autoconfig.js"), os, "UTF-8");
             } else {
@@ -125,6 +126,7 @@ public class ConcatFilter implements Filter {
               IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/baseuri.js"), os, "UTF-8");
               IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/es6-promise.js"), os, "UTF-8");
               IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/es6-string-methods.js"), os, "UTF-8");
+              IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/es6-object-assign.js"), os, "UTF-8");
               IOUtils.write(this.loadResource("/resources/ui5loader.js"), os, "UTF-8");
               IOUtils.write(this.loadResource("/resources/ui5loader-autoconfig.js"), os, "UTF-8");
             } else {

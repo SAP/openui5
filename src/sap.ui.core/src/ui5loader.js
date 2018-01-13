@@ -2165,6 +2165,7 @@
 		Module.get('sap/ui/thirdparty/es6-promise.js').ready(ES6Promise);
 	}
 	Module.get('sap/ui/thirdparty/es6-string-methods.js').ready(null); // no module value
+	// TODO: add sap/ui/thirdparty/es6-object-assign.js and sap/ui/thirdparty/baseuri.js here?
 
 	__global.sap = __global.sap || {};
 	sap.ui = sap.ui || {};
