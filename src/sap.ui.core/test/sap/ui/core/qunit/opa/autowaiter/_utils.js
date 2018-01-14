@@ -22,8 +22,13 @@ sap.ui.define([
 		QUnit.test("Should handle stack trace in IE if opaFrameIEStackTrace is " + paramValue, function (assert) {
 			var fnDone = assert.async();
 			$.sap.unloadResources("sap/ui/test/autowaiter/_utils.js", false, true, true);
-			var oSearchStub = sinon.stub(URI.prototype, "search");
-			oSearchStub.returns({opaFrameIEStackTrace: paramValue});
+			var fnOrig = URI.prototype.search;
+			var oSearchStub = sinon.stub(URI.prototype, "search", function(query) {
+				if ( query === true ) {
+					return {opaFrameIEStackTrace: paramValue};
+				}
+				return fnOrig.apply(this, arguments); // should use callThrough with sinon > 3.0
+			});
 			sap.ui.require(["sap/ui/test/autowaiter/_utils"], function callingFunction (_utils) {
 				var sTrace = _utils.resolveStackTrace();
 				assert.contains(sTrace, new Error().stack || paramValue === "true" ? "callingFunction" : "No stack trace available");
