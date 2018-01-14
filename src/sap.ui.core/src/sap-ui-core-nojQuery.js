@@ -52,6 +52,7 @@
 		document.write("<script>sap.ui.getCore().boot && sap.ui.getCore().boot();</script>");
 	}
 }([
+	"raw:sap/ui/thirdparty/baseuri.js",
 	"raw:sap/ui/thirdparty/es6-promise.js",
 	"raw:sap/ui/thirdparty/es6-string-methods.js",
 	"raw:ui5loader.js",
