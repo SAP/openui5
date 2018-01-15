@@ -1383,6 +1383,16 @@
 					oOverflowTB,
 					spy;
 
+			var oSelect = new sap.m.Select({
+				autoAdjustWidth: true,
+				items: [
+					new sap.ui.core.Item({id: "idItem1", text: "Item 1"}),
+					new sap.ui.core.Item({id: "idItem2", text: "This is an extremely long Item 2"}),
+				]
+			});
+
+			aContent.push(oSelect);
+
 			spy = this.spy(sap.m.OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
 
 			oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent);
@@ -1395,6 +1405,17 @@
 			this.clock.tick(1000);
 
 			var iInvalidationCountAfter = spy.callCount;
+
+			assert.strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 1, "Layout recalculation triggered (_resetAndInvalidateToolbar called)");
+
+			//Assert usage of sap.m.Select with autoAdjustWidth: true, causing control size change
+			iInvalidationCountBefore = spy.callCount;
+
+			oSelect.setSelectedItemId("idItem2");
+
+			this.clock.tick(1000);
+
+			iInvalidationCountAfter = spy.callCount;
 
 			assert.strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 1, "Layout recalculation triggered (_resetAndInvalidateToolbar called)");
 
