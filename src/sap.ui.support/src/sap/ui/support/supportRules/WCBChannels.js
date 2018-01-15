@@ -247,6 +247,13 @@ function () {
 		 * @type {string}
 		 * @const
 		 */
-		GET_NON_LOADED_RULE_SETS: "GET_NON_LOADED_RULE_SETS"
+		GET_NON_LOADED_RULE_SETS:   "GET_NON_LOADED_RULE_SETS",
+
+		/**
+		 * Progress of current loading process
+		 * @type {string}
+		 * @const
+		 */
+		CURRENT_LOADING_PROGRESS:   "CURRENT_LOADING_PROGRESS"
 	};
 }, true);

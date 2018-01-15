@@ -94,7 +94,12 @@ sap.ui.define([],
 			/**
 			 * The maximum number of visible issues for selected rule (in the issues table)
 			 */
-			MAX_VISIBLE_ISSUES_FOR_RULE: 5
+			MAX_VISIBLE_ISSUES_FOR_RULE: 5,
+
+			/**
+			 * Copy text for ruleset loading indicator
+			 */
+			RULESET_LOADING: "Loading ruleset files:"
 
 		};
 
