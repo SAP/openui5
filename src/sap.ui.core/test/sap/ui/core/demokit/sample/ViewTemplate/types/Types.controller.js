@@ -56,6 +56,7 @@ sap.ui.define([
 				}
 				this.getView().getModel().resetChanges();
 				this.getView().getModel().callFunction("/ResetEdmTypes", {
+					urlParameters : {ID : '1'},
 					method : "POST",
 					success : function () {
 						showSuccessMessage("reset");
