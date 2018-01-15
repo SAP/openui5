@@ -4,7 +4,7 @@
 
 // Provides functionality related to eventing.
 sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', 'jquery.sap.dom', 'jquery.sap.script', "sap/ui/thirdparty/jquery-mobile-custom"],
-	function(jQuery, Device/* , jQuerySap1, jQuerySap2 */ ) {
+	function(jQuery, Device/* , jQuerySapKeycodes, jQuerySapDom, jQuerySapScript */ ) {
 	"use strict";
 
 	var onTouchStart,

@@ -23,8 +23,8 @@
  */
 sap.ui.define([
 	'jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/XMLCompositeMetadata', 'sap/ui/model/base/ManagedObjectModel', 'sap/ui/core/util/XMLPreprocessor',
-	'sap/ui/model/json/JSONModel', 'sap/ui/core/Fragment', 'sap/ui/base/ManagedObject', 'sap/ui/base/DataType', 'sap/ui/core/AggregationProxy', 'sap/ui/model/base/XMLNodeAttributesModel'
-], function (jQuery, Control, XMLCompositeMetadata, ManagedObjectModel, XMLPreprocessor, JSONModel, Fragment, ManagedObject, DataType, Proxy, XMLNodeAttributesModel) {
+	'sap/ui/model/json/JSONModel', 'sap/ui/core/Fragment', 'sap/ui/base/ManagedObject', 'sap/ui/base/DataType', 'sap/ui/model/base/XMLNodeAttributesModel'
+], function (jQuery, Control, XMLCompositeMetadata, ManagedObjectModel, XMLPreprocessor, JSONModel, Fragment, ManagedObject, DataType, XMLNodeAttributesModel) {
 	"use strict";
 
 	// private functions
@@ -916,4 +916,4 @@ sap.ui.define([
 	XMLComposite.helper.runtimeListBinding.requiresIContext = true;
 	XMLComposite.helper.runtimeBinding.requiresIContext = true;
 	return XMLComposite;
-}, true);
+});

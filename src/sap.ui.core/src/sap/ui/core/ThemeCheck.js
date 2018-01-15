@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.ThemeCheck
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI', 'jquery.sap.script'],
-	function(jQuery, Device, Global, BaseObject, URI/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI', 'jquery.sap.script'],
+	function(jQuery, Device, BaseObject, URI/* , jQuerySapScript */) {
 	"use strict";
 
 
@@ -62,9 +62,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		try {
 
 			var bNoLinkElement = false,
-			    bLinkElementFinishedLoading = false,
-			    bSheet = false,
-			    bInnerHtml = false;
+				bLinkElementFinishedLoading = false,
+				bSheet = false,
+				bInnerHtml = false;
 
 			// Check if <link> element is missing (e.g. misconfigured library)
 			bNoLinkElement = !oStyle;

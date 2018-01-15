@@ -87,11 +87,11 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 			var oControl = this.oCore && this.oCore.byId(sControlId);
 			if (oControl) {
 				return {
-				    id : sControlId,
-				    control : oControl,
-				    info : oControl.getFocusInfo(),
-				    type : oControl.getMetadata().getName(),
-				    focusref : oControl.getFocusDomRef()
+					id : sControlId,
+					control : oControl,
+					info : oControl.getFocusInfo(),
+					type : oControl.getMetadata().getName(),
+					focusref : oControl.getFocusDomRef()
 				};
 			}
 			return null;
