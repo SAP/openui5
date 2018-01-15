@@ -11,12 +11,10 @@
 		<script src="../shared-config.js"></script>
 		<!-- minimal bootstrap code starts here -->
 		<!-- @see sap-ui-core.js, @see BootstrapMinimal.qunit.html -->
-		<script src="../../../../../resources/sap/ui/thirdparty/jquery.js"></script>
-		<script src="../../../../../resources/sap/ui/thirdparty/jqueryui/jquery-ui-position.js"></script>
-		<script src="../../../../../resources/sap/ui/Device.js"></script>
-		<script src="../../../../../resources/sap/ui/thirdparty/URI.js"></script>
 		<script src="../../../../../resources/sap/ui/thirdparty/es6-promise.js"></script>
-		<script src="../../../../../resources/jquery.sap.global.js"
+		<script src="../../../../../resources/sap/ui/thirdparty/es6-string-methods.js"></script>
+		<script src="../../../../../resources/ui5loader.js"></script>
+		<script src="../../../../../resources/ui5loader-autoconfig.js"
 			id="sap-ui-bootstrap"
 			data-sap-ui-compatversion="edge">
 		</script>
@@ -35,7 +33,7 @@
 			data-threshold="100"></script>
 		<script>
 			// Note: to cover "sap/ui/base", this MUST happen after "qunit-coverage.js" is included!
-			jQuery.sap.require("sap.ui.core.Core");
+			sap.ui.requireSync("sap/ui/core/Core");
 			// needed for bootstrap properties like data-sap-ui-libs
 			sap.ui.getCore().boot && sap.ui.getCore().boot();
 		</script>

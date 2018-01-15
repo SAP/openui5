@@ -92,8 +92,7 @@ public class ConcatFilter implements Filter {
               IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/es6-promise.js"), os, "UTF-8");
               IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/es6-string-methods.js"), os, "UTF-8");
               IOUtils.write(this.loadResource("/resources/ui5loader.js"), os, "UTF-8");
-              IOUtils.write(this.loadResource("/resources/ui5loader-bootconfig.js"), os, "UTF-8");
-              IOUtils.write("require.sync(\"sap/ui/core/Core\"); sap.ui.getCore().boot && sap.ui.getCore().boot();", os, "UTF-8");
+              IOUtils.write(this.loadResource("/resources/ui5loader-autoconfig.js"), os, "UTF-8");
             } else {
               IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/jquery.js"), os, "UTF-8");
               IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/jqueryui/jquery-ui-position.js"), os, "UTF-8");
@@ -101,8 +100,8 @@ public class ConcatFilter implements Filter {
               IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/URI.js"), os, "UTF-8");
               IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/es6-promise.js"), os, "UTF-8");
               IOUtils.write(this.loadResource("/resources/jquery.sap.global.js"), os, "UTF-8");
-              IOUtils.write("jQuery.sap.require(\"sap.ui.core.Core\"); sap.ui.getCore().boot && sap.ui.getCore().boot();", os, "UTF-8");
             }
+            IOUtils.write("sap.ui.requireSync(\"sap/ui/core/Core\"); sap.ui.getCore().boot && sap.ui.getCore().boot();", os, "UTF-8");
             IOUtils.closeQuietly(os);
 
             os.flush();
@@ -120,11 +119,18 @@ public class ConcatFilter implements Filter {
 
           if ("GET".equals(method)) {
             OutputStream os = response.getOutputStream();
-            IOUtils.write(this.loadResource("/resources/sap/ui/Device.js"), os, "UTF-8");
-            IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/URI.js"), os, "UTF-8");
-            IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/es6-promise.js"), os, "UTF-8");
-            IOUtils.write(this.loadResource("/resources/jquery.sap.global.js"), os, "UTF-8");
-            IOUtils.write("jQuery.sap.require(\"sap.ui.core.Core\"); sap.ui.getCore().boot && sap.ui.getCore().boot();", os, "UTF-8");
+            if (this.findResource("/resources/ui5loader.js") != null) {
+              IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/es6-promise.js"), os, "UTF-8");
+              IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/es6-string-methods.js"), os, "UTF-8");
+              IOUtils.write(this.loadResource("/resources/ui5loader.js"), os, "UTF-8");
+              IOUtils.write(this.loadResource("/resources/ui5loader-autoconfig.js"), os, "UTF-8");
+            } else {
+              IOUtils.write(this.loadResource("/resources/sap/ui/Device.js"), os, "UTF-8");
+              IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/URI.js"), os, "UTF-8");
+              IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/es6-promise.js"), os, "UTF-8");
+              IOUtils.write(this.loadResource("/resources/jquery.sap.global.js"), os, "UTF-8");
+            }
+            IOUtils.write("sap.ui.requireSync(\"sap/ui/core/Core\"); sap.ui.getCore().boot && sap.ui.getCore().boot();", os, "UTF-8");
             IOUtils.closeQuietly(os);
 
             os.flush();

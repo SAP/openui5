@@ -44,19 +44,17 @@
 			document.write("<script src=\"" + sSrc + "\"></script>");
 		} else if ( sSrc.indexOf("require:") === 0 ) {
 			sSrc = sSrc.slice(8);
-			bCoreRequired = bCoreRequired || sSrc === "sap.ui.core.Core";
-			document.write("<script>jQuery.sap.require(\"" + sSrc + "\");</script>");
+			bCoreRequired = bCoreRequired || sSrc === "sap/ui/core/Core";
+			document.write("<script>sap.ui.requireSync(\"" + sSrc + "\");</script>");
 		}
 	}
 	if ( bCoreRequired ) {
 		document.write("<script>sap.ui.getCore().boot && sap.ui.getCore().boot();</script>");
 	}
 }([
-	"raw:sap/ui/thirdparty/jquery.js",
-	"raw:sap/ui/thirdparty/jqueryui/jquery-ui-position.js",
-	"raw:sap/ui/Device.js",
-	"raw:sap/ui/thirdparty/URI.js",
 	"raw:sap/ui/thirdparty/es6-promise.js",
-	"raw:jquery.sap.global.js",
-	"require:sap.ui.core.Core"
+	"raw:sap/ui/thirdparty/es6-string-methods.js",
+	"raw:ui5loader.js",
+	"raw:ui5loader-autoconfig.js",
+	"require:sap/ui/core/Core"
 ]));
