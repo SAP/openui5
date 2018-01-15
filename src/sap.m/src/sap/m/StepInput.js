@@ -414,6 +414,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		StepInput.prototype.init = function () {
 			this._iRealPrecision = 0;
 			this._attachChange();
+			this._bPaste = false; //needed to indicate when a paste is made
 		};
 
 		/**
@@ -949,6 +950,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		 */
 		StepInput.prototype.onkeydown = function (oEvent) {
 			var bVerifyValue = false;
+
+			this._bPaste = (oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === jQuery.sap.KeyCodes.V);
+
 			if (oEvent.which === jQuery.sap.KeyCodes.ARROW_UP && !oEvent.altKey && oEvent.shiftKey &&
 				(oEvent.ctrlKey || oEvent.metaKey)) { //ctrl+shift+up
 				this._applyValue(this.getMax());
@@ -1194,7 +1198,47 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		 * @private
 		 */
 		StepInput.prototype._inputLiveChangeHandler = function (oEvent) {
-			this.setProperty("value", oEvent.getParameter("newValue"), true);
+			var iValue = this.getParent()._restrictCharsWhenDecimal(oEvent);
+
+			this.setProperty("value", iValue ? iValue : oEvent.getParameter("newValue"), true);
+		};
+
+		/**
+		 * Handles the value after the decimal point when user types or pastes.
+		 *
+		 * @param {sap.ui.base.Event} oEvent Event object
+		 * @private
+		 */
+		StepInput.prototype._restrictCharsWhenDecimal = function (oEvent) {
+			var iDecimalMark = oEvent.getParameter("value").indexOf("."),
+				iCharsSet = this.getDisplayValuePrecision(),
+				iValue;
+
+			if (iDecimalMark > 0 && iCharsSet > 0) { //only for decimals
+				var sEventValue = oEvent.getParameter("value"),
+					sEventValueAfterTheDecimal = sEventValue.split('.')[1],
+					iCharsAfterTheDecimalSign = sEventValueAfterTheDecimal ? sEventValueAfterTheDecimal.length : 0,
+					sEventSourceValue = oEvent.getSource().getProperty("value"),
+					sCharsBeforeTheEventDecimalValue = sEventValue.split('.')[0],
+					sCharsAfterTheEventDecimalValue =  sEventSourceValue.substring(sEventSourceValue.indexOf('.') + 1, sEventSourceValue.length);
+
+				//scenario 1 - user typing after the decimal mark:
+				if (!this._bPaste) {
+					//if the characters after the decimal are more than the displayValuePrecision -> keep the current value after the decimal
+					if (iCharsAfterTheDecimalSign > iCharsSet) {
+						iValue = sCharsBeforeTheEventDecimalValue + "." + sCharsAfterTheEventDecimalValue;
+					}
+					//scenario 2 - paste - cut the chars with length, bigger than displayValuePrecision
+				} else {
+					if (sEventValue.indexOf(".")){
+						iValue = sEventValue.split('.')[0] + "." + sEventValueAfterTheDecimal.substring(0, iCharsSet);
+					}
+					this._bPaste = false;
+				}
+			}
+
+			this._getInput().updateDomValue(iValue);
+			return iValue;
 		};
 
 		/**
