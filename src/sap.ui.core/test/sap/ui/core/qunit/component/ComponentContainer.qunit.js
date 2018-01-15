@@ -437,4 +437,37 @@ sap.ui.define([
 
 	});
 
+	QUnit.module("Race conditions");
+
+	QUnit.test("Component created event must be fired only once", function (assert) {
+
+		assert.expect(1);
+
+		var done = assert.async();
+		var iTimeout = setTimeout(function() {
+			assert.ok(false, 'Test timed out');
+			done();
+		}, 2000);
+
+		sap.ui.require(["sap/ui/core/Component", "sap/ui/core/ComponentContainer"], function(Component, ComponentContainer) {
+
+			var oComponentContainer = new ComponentContainer({
+				name: "samples.components.button",
+				async: true,
+				componentCreated: function(oEvent) {
+					assert.ok(true, "ComponentContainer notified that the Component has been created");
+					clearTimeout(iTimeout);
+					done();
+				}
+			});
+
+			// simulate rendering
+			oComponentContainer.onBeforeRendering();
+			// simulate a property update during load of component which causes re-rendering
+			oComponentContainer.onBeforeRendering();
+
+		});
+
+	});
+
 });
