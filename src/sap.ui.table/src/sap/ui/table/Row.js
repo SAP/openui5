@@ -130,8 +130,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context
 				}
 			}
 
-			var iFirstRow = oTable.getFirstVisibleRow();
-			return iFirstRow + iRowIndex;
+			return oTable._getFirstRenderedRowIndex() + iRowIndex;
 		}
 		return -1;
 	};
