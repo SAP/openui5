@@ -221,6 +221,20 @@
 			assert.ok(oLabel.isDisplayOnly(), "Label is display only");
 		});
 
+		QUnit.test("wrapping", function(assert) {
+			var oLabel = new sap.m.Label("L1", {text: "Label"})
+			oFormElement.setLabel(oLabel);
+			assert.ok(oLabel.isWrapping(), "Label gets wrapping as default");
+
+			oLabel.setWrapping(false);
+			assert.notOk(oLabel.isWrapping(), "Label gets it's own wrapping value");
+			oLabel.destroy();
+
+			oFormElement.setLabel("Label");
+			oLabel = oFormElement.getLabelControl();
+			assert.ok(oLabel.isWrapping(), "Label gets wrapping as default");
+		});
+
 		QUnit.test("destroy with Label as string", function(assert) {
 			oFormElement.setLabel("Test");
 			var oLabel = oFormElement.getLabelControl();

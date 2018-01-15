@@ -344,6 +344,26 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 
 		};
 
+		/**
+		 * Checks whether the <code>Label</code> should be rendered wrapped instead of trucated.
+		 *
+		 * In the standard case it just uses the <code>Wrapping</code> property of the <code>Label</code>.
+		 *
+		 * In the Form another type of logic is used.
+		 *
+		 * @protected
+		 * @returns {boolean} Returns if the Label should be rendered in display only mode
+		 */
+		oControl.isWrapping = function(){
+
+			if (this.getWrapping) {
+				return this.getWrapping();
+			} else {
+				return false;
+			}
+
+		};
+
 		// as in the Form the required change is checked, it'd not needed here
 		oControl.disableRequiredChangeCheck = function(bNoCheck){
 
