@@ -211,5 +211,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.4": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "af851d8f0c83399d54bb9b9c027063f74d43b0af",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarDateInterval: hide content overlay properly",
+        "references": []
+      }
+    ]
   }
 }

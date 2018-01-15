@@ -1104,5 +1104,16 @@
         "references": []
       }
     ]
+  },
+  "1.48.17": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "5cde739e8ab8155553d2e157e8f53906fd1125bf",
+        "type": "FIX",
+        "text": " ClientTreeBinding: Incorrect filtering when using \"arrayNames\" constrain",
+        "references": []
+      }
+    ]
   }
 }

@@ -1152,5 +1152,148 @@
         "references": []
       }
     ]
+  },
+  "1.52.4": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "76cdcb44da15a8675d9c86b18c908bc7ba9c60af",
+        "type": "FIX",
+        "text": " sap.m.BarInPageEnabler: remove extra aria-labelledby attribute",
+        "references": []
+      },
+      {
+        "id": "f71e5bfdbff350662c569c1f0a5e61715268479f",
+        "type": "FIX",
+        "text": " sap.m.Button: Reference to the text content of the button is added to the AriaLabelledBy only when the button has text",
+        "references": []
+      },
+      {
+        "id": "eede502c64b7e664e4f3e60b127147526aaaa210",
+        "type": "FIX",
+        "text": " sap.m.Button: fire press event on keydown for \u0027enter\u0027 and keyup for \u0027space\u0027",
+        "references": []
+      },
+      {
+        "id": "5677c9708f3f571bc68742579e6b2ee5005c1ddc",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Select All checkbox behavior fix after a search",
+        "references": []
+      },
+      {
+        "id": "adfbd3198bf5d2e80aa04f247a51592f364ed738",
+        "type": "FIX",
+        "text": " sap.m.HeaderContainer : The focus was getting trapped and not jump out of HeaderContainer when scroll button appears and on navigating using Tab Key.",
+        "references": []
+      },
+      {
+        "id": "674e5197132ff3bd0cff1526d6c596e4cbf07afc",
+        "type": "FIX",
+        "text": " sap.m.ListBase: Footer text should not be announced twice.",
+        "references": []
+      },
+      {
+        "id": "db804690c3d81520871f33ae5e95699feb56c4f6",
+        "type": "FIX",
+        "text": " sap.m.Menu: recreate menu if all items are removed",
+        "references": []
+      },
+      {
+        "id": "0b8d966caae594d2f3b14d399f2a4731c8e03070",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Selecting an item now clears the input field",
+        "references": []
+      },
+      {
+        "id": "db4373b439a32a3566e3e8bf7c66943f995492f3",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: ObjectAttribute with customContent now omit active property",
+        "references": []
+      },
+      {
+        "id": "bb7444f6ee090f51027e7d56ae03fbc597b5b646",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: focus fixed for HCB",
+        "references": []
+      },
+      {
+        "id": "a1151fd4f14b5f2052eace4db621c4c51ddaca8f",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: explicit font size added to parent div",
+        "references": []
+      },
+      {
+        "id": "cebfb57e5cdf61be64f24a7d337ed34f843c6999",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Neutral Status Color is correct now",
+        "references": []
+      },
+      {
+        "id": "edac8b013e676e0d435ab7856b03f2a9f472968a",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: getAccessibilityInfo returns the tooltip also",
+        "references": []
+      },
+      {
+        "id": "117e911be13e77e74950c1f077d413b70015d0e4",
+        "type": "FIX",
+        "text": " sap.m.Page: Documentation updated",
+        "references": []
+      },
+      {
+        "id": "043be754b7dd77fcd97a81434e1ae80cb326c082",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Vertically aligned correctly alongside other controls",
+        "references": []
+      },
+      {
+        "id": "62cbfc2ce27859f17f9f76ca64a352f7e8d369ab",
+        "type": "FIX",
+        "text": " sap.m.Slider: sap.m.RangeSlider exception fixed.",
+        "references": []
+      },
+      {
+        "id": "49fe23eb53f5183bad2d481a8d1606f4b4119856",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: fix height of the TabStrip",
+        "references": []
+      },
+      {
+        "id": "a59ed1e449ffa373bc908012521f37dd2998de72",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: fix removeItem with 0 as a parameter",
+        "references": []
+      },
+      {
+        "id": "0c7fbfbdfc45d36415e0c92ab0dab4e2e30b510e",
+        "type": "FIX",
+        "text": " sap.m.Table: Selection column should be hidden from screen readers",
+        "references": []
+      },
+      {
+        "id": "985af8bc3467e84c4691afbbdeffdb31d09cadbe",
+        "type": "FIX",
+        "text": " sap.m.Tile: Focus is cleared indicated in HCB and HCW",
+        "references": []
+      },
+      {
+        "id": "ca2f2da9d56bfb874f556c571adc95ef34874509",
+        "type": "FIX",
+        "text": " sap.m.Timepicker: position selection frame properly in DateTimepicker on small screens",
+        "references": []
+      },
+      {
+        "id": "ea1faf8c31dfe5825b56ca3fd329b4d002bc277d",
+        "type": "FIX",
+        "text": " sap.m.Token/Tokenizer: Not editable token text width in Safari",
+        "references": []
+      },
+      {
+        "id": "2b588254628ab343e284224ac845e41516e063af",
+        "type": "FIX",
+        "text": " sap.m: Replace non-breaking spaces with normal spaces",
+        "references": []
+      }
+    ]
   }
 }

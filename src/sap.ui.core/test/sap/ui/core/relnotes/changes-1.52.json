@@ -576,5 +576,28 @@
         "references": []
       }
     ]
+  },
+  "1.52.4": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "a177faebc874112f75e77fd5849daad2dd93d5bd",
+        "type": "FIX",
+        "text": " ClientTreeBinding: Incorrect filtering when using \"arrayNames\" constrain",
+        "references": []
+      },
+      {
+        "id": "d211105bd95eb600de6240da042fe92f929a4e1d",
+        "type": "FIX",
+        "text": " Component/Manifest: Remove css resources on destroy",
+        "references": []
+      },
+      {
+        "id": "9c1db7de189ad66dbd947a41ef29e94e18bfae20",
+        "type": "FIX",
+        "text": " ComponentContainer: component must be loaded only once",
+        "references": []
+      }
+    ]
   }
 }
