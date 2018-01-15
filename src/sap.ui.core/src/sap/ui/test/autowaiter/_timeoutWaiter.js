@@ -124,7 +124,7 @@ sap.ui.define([
         aBlockingTimeoutIds.forEach(function (iTimeoutID) {
 			sLogMessage += createLogForTimeout(iTimeoutID, mTimeouts[iTimeoutID],aBlockingTimeoutIds.some(function(currentValue){
 				return currentValue == iTimeoutID;
-			}),false);
+			}),true);
 		});
 		// show the pending timeout details into the timeout message
 		oHasPendingLogger.debug(sLogMessage);
@@ -136,7 +136,7 @@ sap.ui.define([
 				return currentValue == iTimeoutID;
 			}),true);
 		});
-		oLogger.trace(sTraceLogMessage);
+		oHasPendingLogger.trace(sTraceLogMessage);
 	}
 
     function isBlocking(iID) {
