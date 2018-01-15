@@ -520,8 +520,11 @@ function(
 
 		// timeout is needed to handle applyStyles
 		setTimeout(function() {
-			assert.deepEqual(that.oLayoutOverlay.$().offset(), that.oVerticalLayout.$().offset(), "g");
-			assert.deepEqual(that.oLabelOverlay1.$().offset(), that.oLabel1.$().offset(), "g");
+			// Math.ceil is needed for IE11
+			assert.deepEqual(Math.ceil(that.oLayoutOverlay.$().offset().top), Math.ceil(that.oVerticalLayout.$().offset().top), "top position of the Layout overlay is correct");
+			assert.deepEqual(Math.ceil(that.oLayoutOverlay.$().offset().left), Math.ceil(that.oVerticalLayout.$().offset().left), "left position of the Layout overlay is correct");
+			assert.deepEqual(Math.ceil(that.oLabelOverlay1.$().offset().top), Math.ceil(that.oLabel1.$().offset().top), "top position of the Label overlay is correct");
+			assert.deepEqual(Math.ceil(that.oLabelOverlay1.$().offset().left), Math.ceil(that.oLabel1.$().offset().left), "left position of the Label overlay is correct");
 
 			done();
 		}, 0);
