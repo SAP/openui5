@@ -33,8 +33,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 			 * The context menu will not be opened, if the configuration of the table does not allow it, or one of the event handlers attached to the
 			 * events <code>ColumnSelect</code> or <code>CellContextmenu</code> calls preventDefault().
 			 *
-			 * On mobile devices, when trying to open a column context menu, a column header cell menu is created instead with buttons to actually open
-			 * the column context menu or to resize the column. If this function is called when this cell menu already exists, then it is closed
+			 * On mobile devices, when trying to open a column context menu, a column header cell menu is created instead with buttons to actually
+			 * open the column context menu or to resize the column. If this function is called when this cell menu already exists, then it is closed
 			 * and the column context menu is opened.
 			 *
 			 * @param {sap.ui.table.Table} oTable Instance of the table.
@@ -390,6 +390,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 					var bCellMenuAlreadyExists = $Column.find(".sapUiTableColCellMenu").length > 0;
 
 					if (!bCellMenuAlreadyExists) {
+						MenuUtils.removeColumnHeaderCellMenu(oTable); // First remove any existing column header cell menu of another column.
 						$ColumnCell.hide();
 
 						var sColumnContextMenuButton = "";
