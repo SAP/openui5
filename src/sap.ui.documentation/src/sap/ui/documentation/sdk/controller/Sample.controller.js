@@ -161,8 +161,33 @@ sap.ui.define([
 				}, true);
 			},
 
+			/**
+			 * Extends the sSampleId with the relative path defined in sIframePath and returns the resulting path.
+			 * @param {string} sSampleId
+			 * @param {string} sIframe
+			 * @returns {string}
+			 * @private
+			 */
+			_resolveIframePath: function (sSampleId, sIframePath) {
+				var aIFramePathParts = sIframePath.split("/"),
+					i;
+
+				for (i = 0; i < aIFramePathParts.length - 1; i++) {
+					if (aIFramePathParts[i] == "..") {
+						// iframe path has parts pointing one folder up so remove last part of the sSampleId
+						sSampleId = sSampleId.substring(0, sSampleId.lastIndexOf("."));
+					} else {
+						// append the part of the iframe path to the sample's id
+						sSampleId += "." + aIFramePathParts[i];
+					}
+				}
+
+				return sSampleId;
+			},
+
 			_createIframe : function (oIframeContent, vIframe) {
 				var sSampleId = this._sId,
+					sIframePath = "",
 					rExtractFilename = /\/([^\/]*)$/,// extracts everything after the last slash (e.g. some/path/index.html -> index.html)
 					rStripUI5Ending = /\..+$/,// removes everything after the first dot in the filename (e.g. someFile.qunit.html -> .qunit.html)
 					aFileNameMatches,
@@ -170,14 +195,16 @@ sap.ui.define([
 					sFileEnding;
 
 				if (typeof vIframe === "string") {
+					sIframePath = this._resolveIframePath(sSampleId, vIframe);
+
 					// strip the file extension to be able to use jQuery.sap.getModulePath
 					aFileNameMatches = rExtractFilename.exec(vIframe);
 					sFileName = (aFileNameMatches && aFileNameMatches.length > 1 ? aFileNameMatches[1] : vIframe);
 					sFileEnding = rStripUI5Ending.exec(sFileName)[0];
-					var sIframeWithoutUI5Ending = vIframe.replace(rStripUI5Ending, "");
+					var sIframeWithoutUI5Ending = sFileName.replace(rStripUI5Ending, "");
 
 					// combine namespace with the file name again
-					this.sIFrameUrl = jQuery.sap.getModulePath(sSampleId + "." + sIframeWithoutUI5Ending, sFileEnding || ".html");
+					this.sIFrameUrl = jQuery.sap.getModulePath(sIframePath + "/" + sIframeWithoutUI5Ending, sFileEnding || ".html");
 				} else {
 					jQuery.sap.log.error("no iframe source was provided");
 					return;
