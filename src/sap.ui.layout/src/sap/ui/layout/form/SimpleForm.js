@@ -22,6 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 	var GridLayout;
 	var GridContainerData;
 	var GridElementData;
+	var ColumnLayout;
 
 	/**
 	 * Constructor for a new sap.ui.layout.form.SimpleForm.
@@ -85,7 +86,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 			 * Applies a device-specific and theme-specific line height and label alignment to the form rows if the form has editable content.
 			 * If set, all (not only the editable) rows of the form will get the line height of editable fields.
 			 *
-			 * <b>Note:</b> The setting of the property has no influence on the editable functionality of the form's content.
+			 * The labels inside the form will be rendered by default in the according mode.
+			 *
+			 * <b>Note:</b> The setting of this property does not change the content of the form.
+			 * For example, <code>Input</code> controls in a form with <code>editable</code> set to false are still editable.
+			 *
+			 * <b>Warning:</b> If this property is set wrong this could lead to visual issues, the labels are fields could be misaligned,
+			 * the labels could be rendered in the wrong mode, the spacing between the single controls could be wrong and control, not
+			 * fitting to the mode, could be rendered incorrect.
 			 */
 			editable : {type : "boolean", group : "Misc", defaultValue : null},
 
@@ -119,7 +127,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 			 * <b>Note:</b> If <code>adjustLabelSpanThis</code> is set, this property is only used if more than 1 <code>FormContainer</code> is in one line.
 			 * If only 1 <code>FormContainer</code> is in the line, then the <code>labelSpanM</code> value is used.
 			 *
-			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
+			 * <b>Note:</b> This property is only used if <code>ResponsiveGridLayout</code> or <code>ColumnLayout</code> is used as a layout.
+			 * If a <code>ColumnLayout</code> is used, this property defines the label size for large columns.
 			 * @since 1.16.3
 			 */
 			labelSpanL : {type : "int", group : "Misc", defaultValue : 4},
@@ -170,7 +179,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 			/**
 			 * Number of grid cells that are empty at the end of each line on large size.
 			 *
-			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
+			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> or a <code>ColumnLayout</code> is used as a layout.
+			 * If a <code>ColumnLayout</code> is used, this property defines the empty cells for large columns.
 			 * @since 1.16.3
 			 */
 			emptySpanL : {type : "int", group : "Misc", defaultValue : 0},
@@ -195,7 +205,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 			 * Form columns for extra large size.
 			 * The number of columns for extra large size must not be smaller than the number of columns for large size.
 			 *
-			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
+			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> or a <code>ColumnLayout</code> is used as a layout.
 			 * If the default value -1 is not overwritten with the meaningful one then the <code>columnsL</code> value is used (from the backward compatibility reasons).
 			 * @since 1.34.0
 			 */
@@ -205,7 +215,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 			 * Form columns for large size.
 			 * The number of columns for large size must not be smaller than the number of columns for medium size.
 			 *
-			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
+			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> or a <code>ColumnLayout</code> is used as a layout.
 			 * @since 1.16.3
 			 */
 			columnsL : {type : "int", group : "Misc", defaultValue : 2},
@@ -213,7 +223,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 			/**
 			 * Form columns for medium size.
 			 *
-			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
+			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> or a <code>ColumnLayout</code> is used as a layout.
 			 * @since 1.16.3
 			 */
 			columnsM : {type : "int", group : "Misc", defaultValue : 1},
@@ -430,7 +440,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 		_removeResize.call(this);
 
 		var oForm = this.getAggregation("form");
-		if (!this._bResponsiveLayoutRequested && !this._bGridLayoutRequested && !this._bResponsiveGridLayoutRequested) {
+		if (!this._bResponsiveLayoutRequested && !this._bGridLayoutRequested &&
+				!this._bResponsiveGridLayoutRequested && !this._bColumnLayoutRequested) {
 			// if Layout is still loaded do it after it is loaded
 			var bLayout = true;
 			if (!oForm.getLayout()) {
@@ -1165,6 +1176,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 					oLayout = new ResponsiveGridLayout(this.getId() + "--Layout");
 				}
 				break;
+			case SimpleFormLayout.ColumnLayout:
+				if (!ColumnLayout && !this._bColumnLayoutRequested) {
+					ColumnLayout = sap.ui.require("sap/ui/layout/form/ColumnLayout");
+					if (!ColumnLayout) {
+						sap.ui.require(["sap/ui/layout/form/ColumnLayout"], _ColumnLayoutLoaded.bind(this));
+						this._bColumnLayoutRequested = true;
+					}
+				}
+				if (ColumnLayout) {
+					oLayout = new ColumnLayout(this.getId() + "--Layout");
+				}
+				break;
 			// no default
 			}
 
@@ -1204,6 +1227,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 
 		ResponsiveGridLayout = fnResponsiveGridLayout;
 		this._bResponsiveGridLayoutRequested = false;
+
+		_updateLayoutAfterLoaded.call(this);
+
+	}
+
+	function _ColumnLayoutLoaded(fnColumnLayout) {
+
+		ColumnLayout = fnColumnLayout;
+		this._bColumnLayoutRequested = false;
 
 		_updateLayoutAfterLoaded.call(this);
 
@@ -1337,6 +1369,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 			oLayout.setBreakpointL(this.getBreakpointL());
 			oLayout.setBreakpointM(this.getBreakpointM());
 			break;
+		case SimpleFormLayout.ColumnLayout:
+			oLayout.setColumnsXL(this.getColumnsXL() > 0 ? this.getColumnsXL() : this.getColumnsL());
+			oLayout.setColumnsL(this.getColumnsL());
+			oLayout.setColumnsM(this.getColumnsM());
+			oLayout.setLabelCellsLarge(this.getLabelSpanL());
+			oLayout.setEmptyCellsLarge(this.getEmptySpanL());
+			break;
 			// no default
 		}
 
@@ -1395,6 +1434,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 		case SimpleFormLayout.ResponsiveGridLayout:
 			oLayoutData = FormLayout.prototype.getLayoutDataForElement(oField, "sap/ui/layout/GridData");
 			break;
+		case SimpleFormLayout.ColumnLayout:
+			oLayoutData = FormLayout.prototype.getLayoutDataForElement(oField, "sap/ui/layout/form/ColumnElementData");
+			break;
 			// no default
 		}
 
@@ -1404,7 +1446,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 
 	function _checkLayoutDataReady() {
 
-		if (this._bResponsiveLayoutRequested || this._bGridLayoutRequested || this._bResponsiveGridLayoutRequested) {
+		if (this._bResponsiveLayoutRequested || this._bGridLayoutRequested ||
+				this._bResponsiveGridLayoutRequested || this._bColumnLayoutRequested) {
 			// LayoutData waiting to be loaded -> are set after they are loaded
 			return false;
 		}

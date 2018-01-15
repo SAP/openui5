@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/librar
 	 * Constructor for a new sap.ui.layout.form.FormLayout.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * Base layout to render a <code>Form</code>.
@@ -54,6 +54,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/librar
 
 		if (library.form.FormHelper.bArrowKeySupport) {
 			jQuery(oControl.getFocusDomRef()).data("sap.InNavArea", true);
+		}
+
+		// In the visual designed layouts, the controls should have the size of the Form cells to align
+		// -> The width must be set to 100% (if no other width set)
+		if (oControl.getWidth && ( !oControl.getWidth() || oControl.getWidth() == "auto" ) &&
+				(!oControl.getFormDoNotAdjustWidth || !oControl.getFormDoNotAdjustWidth())) {
+			oControl.$().css("width", "100%");
 		}
 
 	};

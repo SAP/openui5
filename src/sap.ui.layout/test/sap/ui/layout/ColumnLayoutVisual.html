@@ -1,0 +1,196 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+		<title>ColumnLayout - sap.ui.layout.form</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.layout.form.ResponsiveLayout.gif">
+		<script src="shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+						data-sap-ui-libs="sap.ui.layout, sap.m"
+						src="../../../../resources/sap-ui-core.js"></script>
+
+		<style>
+			.myPadding {
+				margin-top: 1rem;
+			}
+		</style>
+
+		<script>
+
+		sap.ui.require([
+			"sap/ui/core/library",
+			"sap/ui/layout/library",
+			"sap/m/library",
+			"sap/ui/layout/form/SimpleForm",
+			"sap/ui/layout/form/ColumnLayout",
+			"sap/ui/layout/form/ColumnElementData",
+			"sap/ui/layout/form/ColumnContainerData",
+			"sap/ui/core/Title",
+			"sap/m/Toolbar",
+			"sap/m/ToolbarSpacer",
+			"sap/m/Title",
+			"sap/m/Label",
+			"sap/m/Text",
+			"sap/m/Input",
+			"sap/m/Link",
+			"sap/m/Button",
+			"sap/m/SegmentedButton",
+			"sap/m/SegmentedButtonItem",
+			"sap/m/App",
+			"sap/m/Page"
+			],
+			function(
+				CoreLib,
+				LayoutLib,
+				MLib,
+				SimpleForm,
+				ColumnLayout,
+				ColumnElementData,
+				ColumnContainerData,
+				Title,
+				Toolbar,
+				ToolbarSpacer,
+				mTitle,
+				Label,
+				Text,
+				Input,
+				Link,
+				Button,
+				SegmentedButton,
+				SegmentedButtonItem,
+				App,
+				Page
+				) {
+
+			var aContentEdit = [
+						new Title({text:"Person"}),
+						new Label({text:"Name"}),
+						new Input({value:"Max Mustermann", required: true}),
+						new Label({text:"Street/ No."}),
+						new Input({value:"Musterweg"}),
+						new Input({value:"10", layoutData: new ColumnElementData({cellsSmall: 2, cellsLarge: 1})}),
+						new Label({text:"PostCode / City"}),
+						new Input({value:"12345", layoutData: new ColumnElementData({cellsSmall: 3, cellsLarge: 2})}),
+						new Input({value:"Musterstadt"}),
+						new Toolbar({
+							content: [
+								new mTitle({text: "Contact", level: CoreLib.TitleLevel.H5, titleStyle: CoreLib.TitleLevel.H5, tooltip: "Title tooltip"}),
+								new ToolbarSpacer(),
+								new Button({icon: "sap-icon://sap-ui5"})
+							]
+						}),
+						new Label({text:"Phone"}),
+						new Input({value:"0123456789"}),
+						new Label({text:"Mail"}),
+						new Input({value:"max@mustermann.de"}),
+						new Label({text:"Web"}),
+						new Input({value:"http://www.mustermann.de"})
+						];
+
+			var aContentEditOneContainer = [
+						new Label({text:"Name"}),
+						new Input({value:"Max Mustermann", required: true}),
+						new Label({text:"Street/ No."}),
+						new Input({value:"Musterweg"}),
+						new Input({value:"10", layoutData: new ColumnElementData({cellsSmall: 2, cellsLarge: 1})}),
+						new Label({text:"PostCode / City"}),
+						new Input({value:"12345", layoutData: new ColumnElementData({cellsSmall: 3, cellsLarge: 2})}),
+						new Input({value:"Musterstadt"}),
+						];
+
+			var aContentDisplay = [
+						new Title({text:"Person"}),
+						new Label({text:"Name"}),
+						new Text({text:"Max Mustermann"}),
+						new Label({text:"Street/ No."}),
+						new Text({text:"Musterweg 10"}),
+						new Label({text:"PostCode / City"}),
+						new Text({text:"12345 Musterstadt"}),
+						new Title({text:"Contact"}),
+						new Label({text:"Phone"}),
+						new Text({text:"0123456789"}),
+						new Label({text:"Mail"}),
+						new Link({text:"max@mustermann.de", href:"mailto:max@mustermann.de"}),
+						new Label({text:"Web"}),
+						new Link({text:"http://www.mustermann.de", href: "http://www.mustermann.de"})
+						];
+
+			var oSimpleForm = new SimpleForm( "SF1", {
+				layout: sap.ui.layout.form.SimpleFormLayout.ColumnLayout,
+				width : "100%",
+				editable: true,
+				title: "Person data",
+				content: aContentEdit
+			});
+
+			var oSegmentedButton = new SegmentedButton("SB1", {
+				selectedKey: "B1",
+				items: [ 
+					new SegmentedButtonItem("B1", {key: "B1", text: "Edit"}),
+					new SegmentedButtonItem("B2", {key: "B2", text: "Display"}),
+					new SegmentedButtonItem("B3", {key: "B3", text: "more columns"}),
+					new SegmentedButtonItem("B4", {key: "B4", text: "one Container"})
+					],
+				select: function(oEvent) {
+					var aContent = [];
+					switch (oEvent.getParameter("key")) {
+					case "B1":
+						aContent = aContentEdit;
+						oSimpleForm.setEditable(true);
+						oSimpleForm.setBackgroundDesign(sap.ui.layout.BackgroundDesign.Translucent);
+						oSimpleForm.resetProperty("columnsM").resetProperty("columnsL").resetProperty("columnsXL");
+						break;
+
+					case "B2":
+						aContent = aContentDisplay;
+						oSimpleForm.setEditable(false);
+						oSimpleForm.setBackgroundDesign(sap.ui.layout.BackgroundDesign.Transparent);
+						oSimpleForm.resetProperty("columnsM").resetProperty("columnsL").resetProperty("columnsXL");
+						break;
+
+					case "B3":
+						aContent = aContentEdit;
+						oSimpleForm.setEditable(true);
+						oSimpleForm.setBackgroundDesign(sap.ui.layout.BackgroundDesign.Translucent);
+						oSimpleForm.setColumnsM(2).setColumnsL(3).setColumnsXL(4);
+						break;
+
+					case "B4":
+						aContent = aContentEditOneContainer;
+						oSimpleForm.setEditable(true);
+						oSimpleForm.setBackgroundDesign(sap.ui.layout.BackgroundDesign.Solid);
+						oSimpleForm.resetProperty("columnsM").resetProperty("columnsL").resetProperty("columnsXL");
+						break;
+
+					default:
+						break;
+					}
+					oSimpleForm.removeAllContent();
+					for (var i = 0; i < aContent.length; i++) {
+						var oControl = aContent[i];
+						oSimpleForm.addContent(oControl);
+					}
+				}
+			}).addStyleClass("myPadding");
+
+			var oApp = new App("myApp").placeAt("body");
+
+			var oPage = new Page({
+				title: "ColumnLayout",
+				content : [
+					oSimpleForm,
+					oSegmentedButton
+				]
+			});
+
+			oApp.addPage(oPage);
+
+		});
+		</script>
+
+	</head>
+	<body id="body" class="sapUiBody" role="application">
+	</body>
+</html>

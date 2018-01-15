@@ -35,7 +35,12 @@ sap.ui.define([
 			"sap.ui.layout.GridSpan",
 			"sap.ui.layout.BlockBackgroundType",
 			"sap.ui.layout.form.GridElementCells",
-			"sap.ui.layout.form.SimpleFormLayout"
+			"sap.ui.layout.form.SimpleFormLayout",
+			"sap.ui.layout.form.ColumnsXL",
+			"sap.ui.layout.form.ColumnsL",
+			"sap.ui.layout.form.ColumnsM",
+			"sap.ui.layout.form.ColumnCells",
+			"sap.ui.layout.form.EmptyCells"
 		],
 		interfaces: [],
 		controls: [
@@ -55,6 +60,7 @@ sap.ui.define([
 			"sap.ui.layout.form.Form",
 			"sap.ui.layout.form.FormLayout",
 			"sap.ui.layout.form.GridLayout",
+			"sap.ui.layout.form.ColumnLayout",
 			"sap.ui.layout.form.ResponsiveGridLayout",
 			"sap.ui.layout.form.ResponsiveLayout",
 			"sap.ui.layout.form.SimpleForm"
@@ -68,7 +74,9 @@ sap.ui.define([
 			"sap.ui.layout.form.GridContainerData",
 			"sap.ui.layout.PaneContainer",
 			"sap.ui.layout.SplitPane",
-			"sap.ui.layout.form.GridElementData"
+			"sap.ui.layout.form.GridElementData",
+			"sap.ui.layout.form.ColumnElementData",
+			"sap.ui.layout.form.ColumnContainerData"
 		],
 		extensions: {
 			flChangeHandlers: {
@@ -448,23 +456,30 @@ sap.ui.define([
 	sap.ui.layout.form.SimpleFormLayout = {
 
 		/**
-		 * Uses the <code>ResponsiveLayout</code> to render the <code>SimpleForm</code>
+		 * Uses the <code>ResponsiveLayout</code> layout to render the <code>SimpleForm</code> control
 		 * @public
 		 */
 		ResponsiveLayout : "ResponsiveLayout",
 
 		/**
-		 * Uses the <code>GridLayout</code> to render the <code>SimpleForm</code>
+		 * Uses the <code>GridLayout</code> layout to render the <code>SimpleForm</code> control
 		 * @public
 		 */
 		GridLayout : "GridLayout",
 
 		/**
-		 * Uses the <code>ResponsiveGridLayout</code> to render the <code>SimpleForm</code>
+		 * Uses the <code>ResponsiveGridLayout</code> layout to render the <code>SimpleForm</code> control
 		 * @public
 		 * @since 1.16.0
 		 */
-		ResponsiveGridLayout : "ResponsiveGridLayout"
+		ResponsiveGridLayout : "ResponsiveGridLayout",
+
+		/**
+		 * Uses the <code>ColumnLayout</code> layout to render the <code>SimpleForm</code> control
+		 * @public
+		 * @since 1.56.0
+		 */
+		ColumnLayout : "ColumnLayout"
 
 	};
 
@@ -555,6 +570,132 @@ sap.ui.define([
 		 */
 		Begin : "Begin"
 	};
+
+	/**
+	 * @classdesc An <code>int</code> type that defines how many columns a <code>Form</code> control using
+	 * the <code>ColumnLayout</code> as layout can have if it has extra-large size
+	 *
+	 * Allowed values are numbers from 1 to 4.
+	 *
+	 * @final
+	 * @namespace
+	 * @public
+	 * @since 1.56.0
+	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.layout.form.ColumnsXL = DataType.createType('sap.ui.layout.form.ColumnsXL', {
+		isValid : function(vValue) {
+			if (vValue > 0 && vValue <= 4) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+	},
+	DataType.getType('int')
+	);
+
+	/**
+	 * @classdesc An <code>int</code> type that defines how many columns a <code>Form</code> control using
+	 * the <code>ColumnLayout</code> as layout can have if it has large size
+	 *
+	 * Allowed values are numbers from 1 to 3.
+	 *
+	 * @final
+	 * @namespace
+	 * @public
+	 * @since 1.56.0
+	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.layout.form.ColumnsL = DataType.createType('sap.ui.layout.form.ColumnsL', {
+		isValid : function(vValue) {
+			if (vValue > 0 && vValue <= 3) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+	},
+	DataType.getType('int')
+	);
+
+	/**
+	 * @classdesc An <code>int</code> type that defines how many columns a <code>Form</code> control using
+	 * the <code>ColumnLayout</code> as layout can have if it has medium size
+	 *
+	 * Allowed values are numbers from 1 to 2.
+	 *
+	 * @final
+	 * @namespace
+	 * @public
+	 * @since 1.56.0
+	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.layout.form.ColumnsM = DataType.createType('sap.ui.layout.form.ColumnsM', {
+		isValid : function(vValue) {
+			if (vValue > 0 && vValue <= 2) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+	},
+	DataType.getType('int')
+	);
+
+	/**
+	 * @classdesc An <code>int</code> type that defines how many cells a control inside of a column
+	 * of a <code>Form</code> control using the <code>ColumnLayout</code> control as layout can use.
+	 *
+	 * Allowed values are numbers from 1 to 12.
+	 *
+	 * @final
+	 * @namespace
+	 * @public
+	 * @since 1.56.0
+	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.layout.form.ColumnCells = DataType.createType('sap.ui.layout.form.ColumnCells', {
+		isValid : function(vValue) {
+			if (vValue > 0 && vValue <= 12) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+	},
+	DataType.getType('int')
+	);
+
+	/**
+	 * @classdesc An <code>int</code> type that defines how many cells beside the controls
+	 * inside of a column of a <code>Form</code> control using the <code>ColumnLayout</code> control as layout
+	 * are empty.
+	 *
+	 * Allowed values are numbers from 0 to 11.
+	 *
+	 * @final
+	 * @namespace
+	 * @public
+	 * @since 1.56.0
+	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.layout.form.EmptyCells = DataType.createType('sap.ui.layout.form.EmptyCells', {
+		isValid : function(vValue) {
+			if (vValue >= 0 && vValue < 12) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+	},
+	DataType.getType('int')
+	);
 
 	// factory for Form to create labels and buttons to be overwritten by commons and mobile library
 	if (!sap.ui.layout.form.FormHelper) {

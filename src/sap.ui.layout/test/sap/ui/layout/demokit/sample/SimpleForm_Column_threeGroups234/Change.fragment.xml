@@ -1,0 +1,63 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+	<VBox class="sapUiSmallMargin">
+		<f:SimpleForm id="SimpleFormChangeColumn_threeGroups234"
+			editable="true"
+			layout="ColumnLayout"
+			title="Supplier"
+			columnsM="2"
+			columnsL="3"
+			columnsXL="4"
+			>
+			<f:content>
+				<core:Title text="Address" />
+				<Label text="Name" />
+				<Input id="name" value="{SupplierName}" />
+				<Label text="Street/No." />
+				<Input value="{Street}">
+				</Input>
+				<Input value="{HouseNumber}">
+					<layoutData>
+						<f:ColumnElementData cellsSmall="2" cellsLarge="1" />
+					</layoutData>
+				</Input>
+				<Label text="ZIP Code/City" />
+				<Input value="{ZIPCode}">
+					<layoutData>
+						<f:ColumnElementData cellsSmall="3" cellsLarge="2" />
+					</layoutData>
+				</Input>
+				<Input value="{City}" />
+				<Label text="Country" />
+				<Select id="country" selectedKey="{Country}">
+					<items>
+						<core:Item text="England" key="England"/>
+						<core:Item text="Germany" key="Germany"/>
+						<core:Item text="USA" key="USA"/>
+					</items>
+				</Select>
+				<Label text="Web" />
+				<Input value="{Url}" type="Url"/>
+				<core:Title text="Contact" />
+				<Label text="Twitter" />
+				<Input value="{Twitter}" />
+				<Label text="Email" />
+				<Input value="{Email}" type="Email"/>
+				<Label text="Tel." />
+				<Input value="{Tel}" type="Tel"/>
+				<core:Title text="Other" />
+				<Label text="SMS" />
+				<Input value="{Sms}" type="Tel"/>
+				<Label text="Mobile" />
+				<Input value="{Mobile}" type="Tel"/>
+				<Label text="Pager" />
+				<Input value="{Pager}" type="Tel"/>
+				<Label text="Fax" />
+				<Input value="{Fax}" type="Tel"/>
+			</f:content>
+		</f:SimpleForm>
+	</VBox>
+</core:FragmentDefinition>
