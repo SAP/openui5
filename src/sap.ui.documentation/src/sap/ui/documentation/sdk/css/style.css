@@ -626,6 +626,10 @@ code {
 	line-height: 1.25rem;
 }
 
+.sapUiDocumentationHeaderNavLinks .sapMFlexItem:nth-child(2) {
+	min-width: 1px !important;
+}
+
 .sapUiDocumentationAnnotationsText .sapMLnk {
 	margin-left: 0.25rem;
 }
@@ -1673,8 +1677,8 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
 }
 
 .sapUiDocumentationCommaList > div {
-    display: flex;
-    flex-wrap: nowrap;
+	display: flex;
+	flex-wrap: nowrap;
 }
 
 /* Or list */
