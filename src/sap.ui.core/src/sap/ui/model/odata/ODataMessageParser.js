@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/model/odata/ODataUtils", "sap/ui/Device", "sap/ui/core/library", "sap/ui/thirdparty/URI", "sap/ui/core/message/MessageParser", "sap/ui/core/message/Message"],
-	function(jQuery, ODataUtils, Device, coreLibrary, URI, MessageParser, Message) {
+sap.ui.define(["jquery.sap.global", "sap/ui/model/odata/ODataUtils", "sap/ui/core/library", "sap/ui/thirdparty/URI", "sap/ui/core/message/MessageParser", "sap/ui/core/message/Message"],
+	function(jQuery, ODataUtils, coreLibrary, URI, MessageParser, Message) {
 	"use strict";
 
 // shortcuts for enums

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['./Filter', 'jquery.sap.global', "jquery.sap.unicode"],
-	function(Filter, jQuery) {
+sap.ui.define(['./Filter', 'jquery.sap.global', 'jquery.sap.unicode'],
+	function(Filter, jQuery /* jQuerySapUnicode */) {
 	"use strict";
 
 	/**
