@@ -1280,7 +1280,7 @@
 	QUnit.test("Unit format: restricted list of accepted unit types", function(assert) {
 		var oLocale = new sap.ui.core.Locale("en");
 		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({
-			allowedUnitTypes: ["area-hectare", "duration-hour", "volume-cup"]
+			allowedUnits: ["area-hectare", "duration-hour", "volume-cup"]
 		}, oLocale);
 
 		// accepted units
@@ -1296,7 +1296,7 @@
 	QUnit.test("Unit parse: restricted list of accepted unit types", function(assert) {
 		var oLocale = new sap.ui.core.Locale("en");
 		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({
-			allowedUnitTypes: ["area-hectare", "duration-hour", "volume-cup"]
+			allowedUnits: ["area-hectare", "duration-hour", "volume-cup"]
 		}, oLocale);
 
 		// accepted units
@@ -1313,7 +1313,7 @@
 		// if ambiguous units are introduced by the application, we return undefined for the unit
 		var oLocale = new sap.ui.core.Locale("en");
 		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({
-			allowedUnitTypes: ["duration-century", "volume-cup"]
+			allowedUnits: ["duration-century", "volume-cup"]
 		}, oLocale);
 
 		assert.deepEqual(oFormat.parse("41.5 c"), [41.5, undefined], "volume-cup and duration-century are ambiguous");

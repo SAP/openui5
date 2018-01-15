@@ -44,7 +44,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 	 * @param {int} [oFormatOptions.groupingBaseSize] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the used decimal separator
 	 * @param {string} [oFormatOptions.unitCodeType] defines the unit code type (e.g. "CLDR" or "CUSTOM")
-	 * @param {array} [oFormatOptions.allowedUnitTypes] defines the allowed unit types for formatting and parsing, e.g. ["size-meter", "volume-liter", ...]
+	 * @param {array} [oFormatOptions.allowedUnits] defines the allowed unit types for formatting and parsing, e.g. ["size-meter", "volume-liter", ...]
 	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
 	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
 	 * @param {boolean} [oFormatOptions.parseAsString] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
@@ -276,7 +276,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 		showMeasure: true,
 		style: "standard",
 		unitCodeType: "CLDR",
-		allowedUnitTypes: undefined,
+		allowedUnits: undefined,
 		parseAsString: false,
 		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO,
 		emptyString: NaN,
@@ -832,9 +832,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 			jQuery.sap.assert(sPluralCategory, "Cannot find plural category for " + (sIntegerPart + "." + sFractionPart));
 
 			// a list of allowed unit types is given, so we check if the given measure is ok
-			var bUnitTypeAllowed = !oOptions.allowedUnitTypes || oOptions.allowedUnitTypes.indexOf(sMeasure) >= 0;
+			var bUnitTypeAllowed = !oOptions.allowedUnits || oOptions.allowedUnits.indexOf(sMeasure) >= 0;
 			if (!bUnitTypeAllowed) {
-				jQuery.sap.assert(bUnitTypeAllowed, "The given unit '" + sMeasure + "' is not part of the allowed unit types: [" + oOptions.allowedUnitTypes.join(",") + "].");
+				jQuery.sap.assert(bUnitTypeAllowed, "The given unit '" + sMeasure + "' is not part of the allowed unit types: [" + oOptions.allowedUnits.join(",") + "].");
 				return "";
 			}
 
@@ -974,10 +974,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 
 			var mUnitFormatPatterns = this.oLocaleData.getUnitFormats();
 			// filter allowed unit types
-			if (oOptions.allowedUnitTypes) {
+			if (oOptions.allowedUnits) {
 				var mFilteredUnits = {};
-				for (var i = 0; i < oOptions.allowedUnitTypes.length; i++) {
-					var sUnitType = oOptions.allowedUnitTypes[i];
+				for (var i = 0; i < oOptions.allowedUnits.length; i++) {
+					var sUnitType = oOptions.allowedUnits[i];
 					mFilteredUnits[sUnitType] = mUnitFormatPatterns[sUnitType];
 				}
 				mUnitFormatPatterns = mFilteredUnits;
