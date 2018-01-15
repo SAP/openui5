@@ -62,7 +62,8 @@ sap.ui.define([
 				this._mVariantManagement[sVariantManagementReference] = {};
 				var oVariantManagementReference = oChangeFileContent.changes.variantSection[sVariantManagementReference];
 				var aVariants = oVariantManagementReference.variants.concat().sort(this.compareVariants);
-				var sInitialVariant;
+				var sVariantFromUrl;
+				var aURLVariants = Utils.getTechnicalURLParameterValues(oComponent, "sap-ui-fl-control-variant-id");
 
 				var iIndex = -1;
 				aVariants.forEach(function (oVariant, index) {
@@ -76,16 +77,14 @@ sap.ui.define([
 						oVariant.content.content.visible = true;
 					}
 
-					if (!sInitialVariant){
-						var aURLVariants = Utils.getTechnicalParameterValuesFromURL(oComponent, "sap-ui-fl-control-variant-id");
-						// Only the first valid reference for that variant management id passed in the parameters is used to load the changes
-						aURLVariants.some(function(sURLVariant){
-							if (oVariant.content.fileName === sURLVariant){
-								sInitialVariant = oVariant.content.fileName;
-								return true;
-							}
-						});
-					}
+					// Only the first valid reference for that variant management id passed in the parameters is used to load the changes
+					aURLVariants.some(function(sURLVariant) {
+						if (oVariant.content.fileName === sURLVariant) {
+							sVariantFromUrl = oVariant.content.fileName;
+							return true;
+						}
+					});
+
 				});
 				if (iIndex > -1) {
 					var oStandardVariant = aVariants.splice(iIndex, 1)[0];
@@ -93,8 +92,8 @@ sap.ui.define([
 				}
 				this._mVariantManagement[sVariantManagementReference].variants = aVariants;
 				this._mVariantManagement[sVariantManagementReference].defaultVariant = sVariantManagementReference;
-				if (sInitialVariant){
-					this._mVariantManagement[sVariantManagementReference].initialVariant = sInitialVariant;
+				if (sVariantFromUrl){
+					this._mVariantManagement[sVariantManagementReference].initialVariant = sVariantFromUrl;
 				}
 				this._mVariantManagement[sVariantManagementReference].variantManagementChanges =
 					oChangeFileContent.changes.variantSection[sVariantManagementReference].variantManagementChanges;
@@ -403,13 +402,11 @@ sap.ui.define([
 			oVariantData[sKey] = {
 				//in case of no variant management change the standard variant is set as default
 				defaultVariant : this._mVariantManagement[sKey].defaultVariant,
-				originalDefaultVariant : this._mVariantManagement[sKey].defaultVariant,
 				variants : []
 			};
 			//if an initial variant exists, it should be set as current variant
 			if (this._mVariantManagement[sKey].initialVariant){
 				oVariantData[sKey].currentVariant = this._mVariantManagement[sKey].initialVariant;
-				oVariantData[sKey].originalCurrentVariant = this._mVariantManagement[sKey].initialVariant;
 				delete this._mVariantManagement[sKey].initialVariant;
 			}
 			this.getVariants(sKey).forEach(function(oVariant, index) {
