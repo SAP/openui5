@@ -247,7 +247,9 @@ sap.ui.define([
 			return that.oContext.fetchValue(that.sPath, that, sGroupId);
 		});
 		aPromises.push(oReadPromise.then(function (vValue) {
-			if (vValue && typeof vValue === "object") {
+			if (vValue && typeof vValue === "object"
+					&& (that.sInternalType !== "any"
+						|| that.sPath[that.sPath.lastIndexOf("/") + 1] !== "#")) {
 				jQuery.sap.log.error("Accessed value is not primitive", sResolvedPath, sClassName);
 				vValue = undefined;
 			}

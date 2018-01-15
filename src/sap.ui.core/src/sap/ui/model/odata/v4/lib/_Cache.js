@@ -452,7 +452,10 @@ sap.ui.define([
 			} else {
 				vValue = vValue[sSegment];
 			}
-			return vValue === undefined ? missingValue(oParentValue, sSegment, i + 1) : vValue;
+			// missing advertisement is not an error
+			return vValue === undefined && sSegment[0] !== "#"
+				? missingValue(oParentValue, sSegment, i + 1)
+				: vValue;
 		}, oData);
 	};
 

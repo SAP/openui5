@@ -1289,6 +1289,53 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("fetchIfChildCanUseCache, advertised action", function (assert) {
+		var oMetaModel = {
+				fetchObject : function () {},
+				getMetaPath : function () {}
+			},
+			oModel = {
+				getMetaModel : function () {return oMetaModel;}
+			},
+			oBinding = new ODataParentBinding({
+				mAggregatedQueryOptions : {$expand : { "foo" : {$select : ["bar"]}}},
+				// cache will be created, waiting for child bindings
+				oCachePromise : SyncPromise.resolve(Promise.resolve()),
+				aChildCanUseCachePromises : [],
+				doFetchQueryOptions : function () {
+					return SyncPromise.resolve({});
+				},
+				oModel : oModel,
+				bRelative : false
+			}),
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('2')"),
+			oMetaModelMock = this.mock(oMetaModel),
+			sPath = "/#foo.bar.AcFoo",
+			oPromise;
+
+		oMetaModelMock.expects("getMetaPath")
+			.withExactArgs("/EMPLOYEES('2')")
+			.returns("/EMPLOYEES");
+		oMetaModelMock.expects("getMetaPath")
+			.withExactArgs(sPath)
+			.returns(sPath);
+		oMetaModelMock.expects("fetchObject")
+			.withExactArgs("/EMPLOYEES/")
+			.returns(SyncPromise.resolve());
+		this.mock(oBinding).expects("selectKeyProperties")
+			.withExactArgs(sinon.match.object, "/EMPLOYEES");
+
+		// code under test
+		oPromise = oBinding.fetchIfChildCanUseCache(oContext, sPath.slice(1));
+
+		return oPromise.then(function (bUseCache) {
+			assert.strictEqual(bUseCache, true);
+			assert.deepEqual(oBinding.mAggregatedQueryOptions,
+				{$expand : {"foo" : {$select : ["bar"]}}, $select : ["foo.bar.AcFoo"]});
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("fetchIfChildCanUseCache: $count or instance annotation in child path",
 		function (assert) {
 			var oBinding = new ODataParentBinding({

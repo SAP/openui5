@@ -396,6 +396,47 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	["any", "int"].forEach(function (sType) {
+		[{
+			path : "/EntitySet('foo')/#com.sap.foo.AcFoo"
+		}, {
+			path : "#com.sap.foo.AcFoo",
+			contextPath: "/EntitySet('foo')"
+		}].forEach(function (oFixture) {
+			QUnit.test("checkUpdate: " + (oFixture.contextPath ? "relative path" : "absolute path")
+				+ ", targetType: " + sType + " - allow non primitive value for advertised actions",
+				function (assert) {
+					var oCacheMock = this.getPropertyCacheMock(),
+						oContext = oFixture.contextPath
+							? this.oModel.createBindingContext("/EntitySet('foo')")
+							: undefined,
+						oBinding = this.oModel.bindProperty(oFixture.path, oContext),
+						sResolvedPath = this.oModel.resolve(oFixture.path, oContext),
+						vValue = {};
+
+					oBinding.setType(null, sType);
+					oCacheMock.expects("fetchValue")
+						.withExactArgs("$auto", undefined, sinon.match.func, oBinding)
+						.returns(SyncPromise.resolve(vValue));
+					if (sType !== "any") {
+						this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
+							.withExactArgs(sResolvedPath)
+							.returns(SyncPromise.resolve());
+						this.oLogMock.expects("error")
+							.withExactArgs("Accessed value is not primitive",
+								sResolvedPath, sClassName);
+					}
+
+					// code under test
+					return oBinding.checkUpdate().then(function () {
+						assert.strictEqual(oBinding.getValue(),
+							sType === "any" ? vValue : undefined);
+					});
+				});
+		});
+	});
+
+	//*********************************************************************************************
 	// Unit test for scenario in
 	// ODataModel.integration.qunit, @sap.ui.table.Table with VisibleRowCountMode='Auto'
 	QUnit.test("checkUpdate(true): later checkUpdate call resets this.oContext", function (assert) {

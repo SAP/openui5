@@ -361,6 +361,7 @@ sap.ui.define([
 			oCanUseCachePromise,
 			sChildMetaPath,
 			sFullMetaPath,
+			bIsAdvertisement,
 			oMetaModel = this.oModel.getMetaModel(),
 			aPromises,
 			that = this;
@@ -368,9 +369,17 @@ sap.ui.define([
 		/*
 		 * Fetches the property that is reached by the calculated meta path and (if necessary) its
 		 * type.
-		 * @returns {sap.ui.base.SyncPromise} A promise that is resolved with the property
+		 * @returns {sap.ui.base.SyncPromise} A promise that is either resolved with the property
+		 *   or, in case of an action advertisement with the entity. If no property can be reached
+		 *   by the calculated meta path the promise is resolved with undefined.
 		 */
 		function fetchPropertyAndType() {
+			if (bIsAdvertisement) {
+				// Ensure entity type metadata is loaded even for advertisement so that sync access
+				// to key properties is possible
+				return oMetaModel.fetchObject(sFullMetaPath.slice(0,
+					sFullMetaPath.lastIndexOf("/") + 1));
+			}
 			return oMetaModel.fetchObject(sFullMetaPath).then(function (oProperty) {
 				if (oProperty && oProperty.$kind === "NavigationProperty") {
 					// Ensure that the target type of the navigation property is available
@@ -400,6 +409,7 @@ sap.ui.define([
 			|| this.oCachePromise.isFulfilled() && this.oCachePromise.getResult().bSentReadRequest;
 		sBaseMetaPath = oMetaModel.getMetaPath(oContext.getPath());
 		sChildMetaPath = oMetaModel.getMetaPath("/" + sChildPath).slice(1);
+		bIsAdvertisement = sChildMetaPath[0] === "#";
 		sFullMetaPath = _Helper.buildPath(sBaseMetaPath, sChildMetaPath);
 		aPromises = [
 			this.doFetchQueryOptions(this.oContext),
@@ -425,12 +435,16 @@ sap.ui.define([
 			if (Object.keys(that.mAggregatedQueryOptions).length === 0) {
 				that.mAggregatedQueryOptions = jQuery.extend(true, {}, mLocalQueryOptions);
 			}
+			if (bIsAdvertisement) {
+				mWrappedChildQueryOptions = {"$select" : [sChildMetaPath.slice(1)]};
+				return that.aggregateQueryOptions(mWrappedChildQueryOptions, bCacheImmutable);
+			}
 			if (sChildMetaPath === ""
 				|| oProperty
 				&& (oProperty.$kind === "Property" || oProperty.$kind === "NavigationProperty")) {
 				mWrappedChildQueryOptions = that.wrapChildQueryOptions(sBaseMetaPath,
 					sChildMetaPath, mChildQueryOptions);
-				if (mWrappedChildQueryOptions){
+				if (mWrappedChildQueryOptions) {
 					return that.aggregateQueryOptions(mWrappedChildQueryOptions, bCacheImmutable);
 				}
 				return false;

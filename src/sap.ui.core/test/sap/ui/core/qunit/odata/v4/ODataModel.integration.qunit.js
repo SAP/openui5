@@ -680,19 +680,38 @@ sap.ui.require([
 		}
 	});
 
-	/*
+	/**
+	 *
 	 * Creates a test with the given title and executes viewStart with the given parameters.
+	 *
+	 * @param {string} sTitle The title of the test case
+	 * @param {string} sView The XML snippet of the view
+	 * @param {object} mResponseByRequest A map containing the request as key
+	 *   and response as value
+	 * @param {object|object[]} mValueByControl A map or an array of maps containing control id as
+	 *   key and the expected control values as value
+	 * @param {sap.ui.model.odata.v4.ODataModel} [oModel] The model; it is attached to the view
+	 *   and to the test instance.
+	 *   If no model is given, the <code>TEA_BUSI</code> model is created and used.
 	 */
 	function testViewStart(sTitle, sView, mResponseByRequest, mValueByControl, oModel) {
 
 		QUnit.test(sTitle, function (assert) {
-			var sControlId, sRequest;
+			var sControlId, sRequest, that = this;
+
+			function expectChanges(mValueByControl) {
+				for (sControlId in mValueByControl) {
+					that.expectChange(sControlId, mValueByControl[sControlId]);
+				}
+			}
 
 			for (sRequest in mResponseByRequest) {
 				this.expectRequest(sRequest, mResponseByRequest[sRequest]);
 			}
-			for (sControlId in mValueByControl) {
-				this.expectChange(sControlId, mValueByControl[sControlId]);
+			if (Array.isArray(mValueByControl)) {
+				mValueByControl.forEach(expectChanges);
+			} else {
+				expectChanges(mValueByControl);
 			}
 			return this.createView(assert, sView, oModel);
 		});
@@ -3560,6 +3579,34 @@ sap.ui.require([
 	);
 
 	//*********************************************************************************************
+	// Scenario: Enable auto-$expand/$select mode for an ODataContextBinding with relative
+	// ODataPropertyBindings to a advertised action
+	testViewStart("Auto-$expand/$select: relative ODPB to advertised action",'\
+<FlexBox binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'AGE\'}}">\
+	<Text id="name" text="{Name}" />\
+	<Text id="adAction1"\
+		text="{= %{#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsOccupied}\
+			? \'set to occupied\' : \'\'}" />\
+	<Text id="adAction2"\
+		text="{= %{#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable}\
+			? \'set to available\' : \'\'}" />\
+</FlexBox>', {
+			"EMPLOYEES('2')?$select=AGE,ID,Name,com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable,com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsOccupied" : {
+				"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable": {},
+				"AGE": 32,
+				"Name": "Frederic Fall"
+			}
+		}, [{
+			"adAction1" : "",
+			"adAction2" : "set to available",
+			"name" : "Frederic Fall"
+		}, {
+			"adAction2" : "set to available",
+			"name" : "Frederic Fall"
+		}], createTeaBusiModel({autoExpandSelect : true})
+	);
+
+	//*********************************************************************************************
 	// Scenario: <FunctionImport m:HttpMethod="GET"> in V2 Adapter
 	// Usage of service: /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
 	QUnit.test("V2 Adapter: FunctionImport", function (assert) {
@@ -3621,4 +3668,5 @@ sap.ui.require([
 		});
 	});
 });
+
 //TODO test delete

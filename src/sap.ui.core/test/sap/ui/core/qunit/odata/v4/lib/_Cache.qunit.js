@@ -635,6 +635,9 @@ sap.ui.require([
 
 		assert.strictEqual(oCache.drillDown(oData, "0/foo/bar/toString"), undefined,
 			"0/foo/bar/toString");
+
+		assert.strictEqual(oCache.drillDown({/*no advertised action found*/}, "#com.sap.foo.AcFoo"),
+			undefined, "no error if advertised action is not found");
 	});
 
 	//*********************************************************************************************
