@@ -17,6 +17,12 @@
 				<Property Name="Byte" Type="Edm.Byte" />
 				<Property Name="Date" Type="Edm.DateTime" Precision="0"
 					sap:display-format="Date" sap:label="Date" />
+				<Property Name="TravelStartDate" Type="Edm.DateTime" Precision="0"
+					sap:display-format="Date" sap:label="Date"/>
+				<Property Name="TravelEndDate" Type="Edm.DateTime" Precision="0"
+					sap:display-format="Date" sap:label="Date" />
+				<Property Name="Date2" Type="Edm.DateTime" Precision="0"
+					sap:display-format="Date" sap:label="Date" />
 				<Property Name="DateTime" Type="Edm.DateTime" Precision="0"
 					sap:label="Time Stamp" />
 				<Property Name="DateTimeOffset" Type="Edm.DateTimeOffset"
