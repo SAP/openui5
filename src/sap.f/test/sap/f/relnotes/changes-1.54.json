@@ -37,6 +37,18 @@
         "type": "FEATURE",
         "text": " sap.m.DynamicPageTitle: Introduced stateChange event",
         "references": []
+      },
+      {
+        "id": "48c7cdd7b75376feed6da14030da7ec79bf9be04",
+        "type": "FEATURE",
+        "text": " sap.f.FlexibleColumnLayout: New property added",
+        "references": []
+      },
+      {
+        "id": "c9d342d0204d26773e8af1934b7ba4caab00b749",
+        "type": "FIX",
+        "text": " f.DynamicPage: Ensure only own scroll handlers are detached",
+        "references": []
       }
     ]
   }

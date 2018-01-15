@@ -25,6 +25,12 @@
         "type": "FEATURE",
         "text": " sap.m.MessagePage: Added new property and aggregation",
         "references": []
+      },
+      {
+        "id": "3112ac952611a0fbcf91609ee41d8a327ab67322",
+        "type": "FIX",
+        "text": " sap.m.Popover: correct header, subheader and footer DOM structure",
+        "references": []
       }
     ]
   }

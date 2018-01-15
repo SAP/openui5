@@ -451,6 +451,24 @@
         "type": "FIX",
         "text": " sap.ui.core.util.MockServer When the data for an entity is set",
         "references": []
+      },
+      {
+        "id": "5268b7ea41ceaa7fed2f9a4ac8c91b3b91ae2af7",
+        "type": "FEATURE",
+        "text": " Core#applyTheme: avoid flash of unstyled content (FOUC)",
+        "references": []
+      },
+      {
+        "id": "97a6adc1bc309b56bd4d221db17bfc0f650031e5",
+        "type": "FIX",
+        "text": " Configuration: Fix check whether a configuration value has changed",
+        "references": []
+      },
+      {
+        "id": "84e77c55b95c319f5905282aaf46f6a85194c749",
+        "type": "FIX",
+        "text": " Update theme URLs with query parameters on RTL change",
+        "references": []
       }
     ]
   }

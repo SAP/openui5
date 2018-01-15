@@ -97,6 +97,12 @@
         "type": "FEATURE",
         "text": " sap.m.WizardStep: Optional step property added",
         "references": []
+      },
+      {
+        "id": "94b2acc2137b52f7ca885388734a92f57ff22557",
+        "type": "FIX",
+        "text": " sap.m.RatingIndicator: Unselected icons used to have a wrong border color in contrast themes",
+        "references": []
       }
     ]
   }

@@ -907,6 +907,84 @@
         "type": "FIX",
         "text": " sap.m.SegmentedButton: Now correctly goes into overflow when used inside OverflowToolbar",
         "references": []
+      },
+      {
+        "id": "11e2fdefecc25c0526009bb8280dcb9c51977ebf",
+        "type": "FEATURE",
+        "text": " sap.m.Link: validateUrl property added",
+        "references": []
+      },
+      {
+        "id": "a04bfa8bcc940556862163b48ebb76bd6a60489e",
+        "type": "FIX",
+        "text": " sap.m.Input: Description is now read correctly by JAWS",
+        "references": []
+      },
+      {
+        "id": "5e085ff267a01bfae5f4253517aba8361009752d",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Selecting an item now clears the input field",
+        "references": []
+      },
+      {
+        "id": "cb9a7e6cde43f419b4c719c7c364a6cd54d5f294",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: Now escapes title and text of the inner controls",
+        "references": []
+      },
+      {
+        "id": "daff09d58236810b62986c676528b0ffb08b1c7a",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: OneMonthView in compact mode doesn\u0027t overlap dates",
+        "references": []
+      },
+      {
+        "id": "23440ad8ace02d24bf68cc233cd03be013ff268d",
+        "type": "FIX",
+        "text": " sap.m.Popover: beforeClose event is not fired when the Popover\u0027s closing animation is running or is already closed.",
+        "references": []
+      },
+      {
+        "id": "3112ac952611a0fbcf91609ee41d8a327ab67322",
+        "type": "FIX",
+        "text": " sap.m.Popover: correct header, subheader and footer DOM structure",
+        "references": []
+      },
+      {
+        "id": "9b72705b78908577bbb9aa10931e5a2f7a1805a6",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Correct decimal precision",
+        "references": []
+      },
+      {
+        "id": "e584fe15561cde76239f206e2965d2c822e7ab15",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Tooltip exception fixed.",
+        "references": []
+      },
+      {
+        "id": "f29e77c2547458f0a7872ea8ed509c4e7d8f44ee",
+        "type": "FIX",
+        "text": " sap.m.RatingIndicator: Invisible node for rating announcement changed from label to span",
+        "references": []
+      },
+      {
+        "id": "45ddc522033ca577ec043d4e6eea3a8e7378df34",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: updateToken validation called multiple times",
+        "references": []
+      },
+      {
+        "id": "15e8dae14ebc7f9658869164f4c413616c6e5b81",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Default None Grouping item can be set via setSelectedGroupItem API",
+        "references": []
+      },
+      {
+        "id": "73ab8e302d317374a7bd30ee2a7e7f431a6704a6",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Now escapes text of the inner controls",
+        "references": []
       }
     ]
   }

@@ -97,6 +97,12 @@
         "type": "FIX",
         "text": " Table: Horizontal scrolling with the touchpad",
         "references": []
+      },
+      {
+        "id": "d4b8c36ded9eb49d0be61d9def1afb132e5bae47",
+        "type": "FIX",
+        "text": " Table: Role \"row\" added to tr elements in the table header",
+        "references": []
       }
     ]
   }

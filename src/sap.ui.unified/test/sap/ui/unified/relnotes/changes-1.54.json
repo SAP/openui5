@@ -97,6 +97,18 @@
         "type": "FIX",
         "text": " sap.ui.unified.CalendarDateInterval: hide content overlay properly",
         "references": []
+      },
+      {
+        "id": "daff09d58236810b62986c676528b0ffb08b1c7a",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: OneMonthView in compact mode doesn\u0027t overlap dates",
+        "references": []
+      },
+      {
+        "id": "35a5609620b8919ecfe4d671c0e2242cae746c9e",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Compact mode of days fixed",
+        "references": []
       }
     ]
   }
