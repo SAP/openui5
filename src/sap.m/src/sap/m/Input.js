@@ -2850,7 +2850,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 * @protected
 	 */
 	Input.prototype.updateInputField = function(sNewValue) {
-		if (this._bUseDialog) {
+		if (this._oSuggestionPopup && this._oSuggestionPopup.isOpen() && this._bUseDialog) {
 			this._oPopupInput.setValue(sNewValue);
 			this._oPopupInput._doSelect();
 		} else {
