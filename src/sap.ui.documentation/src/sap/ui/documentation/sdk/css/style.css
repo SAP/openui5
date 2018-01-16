@@ -1730,9 +1730,23 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
 	white-space: nowrap;
 }
 
+.sapUiParamText.sapMLnk.depth-0 {
+	font-weight: normal;
+}
+
 .sapUiParamText .parameterDefault {
 	font-weight: normal;
 	padding-left: 0.3rem;
+}
+
+.sapUiParamText .deprecated {
+	font-weight: normal;
+	color: #bb0000;
+}
+
+.sapUiParamText .deprecated .deprecatedText {
+	vertical-align: top;
+	padding-left: 0.5rem;
 }
 
 html.sapUiMedia-Std-Phone .sapUiParamText,
