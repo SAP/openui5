@@ -68,6 +68,35 @@ sap.ui
 						rootUri: "string",
 
 						/**
+						 * Setter for property <code>recordRequests</code>. Defines whether or not the requests performed should be recorded (stored).
+						 *
+						 * Default value is <code>true</code>
+						 * @param {boolean} recordRequests new value for property <code>recordRequests</code>
+						 * @public
+						 * @name sap.ui.core.util.MockServer#setRecordRequests
+						 * @function
+						 */
+
+						/**
+						 * Getter for property <code>recordRequests</code>. Returns whether or not the requests performed should be recorded (stored).
+						 *
+						 * Default value is <code>true</code>
+						 *
+						 * @return {boolean} the value of property <code>recordRequests</code>
+						 * @public
+						 * @name sap.ui.core.util.MockServer#getRecordRequests
+						 * @function
+						 */
+
+						/**
+						 * Whether or not the requests performed should be recorded (stored).
+						 * This could be memory intense if each request is recorded.
+						 * For unit testing purposes it should be set to <code>true</code> to compare requests performed
+						 * otherwise this flag should be set to <code>false</code> e.g. for demonstration/app purposes.
+						 */
+						recordRequests: {type : "boolean", defaultValue : true},
+
+						/**
 						 * Setter for property <code>requests</code>.
 						 *
 						 * Default value is is <code>[]</code>
@@ -179,11 +208,22 @@ sap.ui
 				this._oServer = MockServer._getInstance();
 				this._aFilters = [];
 				var aRequests = this.getRequests();
-				var iLength = aRequests.length;
-				for (var i = 0; i < iLength; i++) {
-					var oRequest = aRequests[i];
-					this._addRequestHandler(oRequest.method, oRequest.path, oRequest.response);
-				}
+				var that = this;
+				aRequests.forEach(function(oRequest) {
+
+					var fnResponse;
+					if (that.getRecordRequests() === false && oRequest.response) {
+						fnResponse = function() {
+							oRequest.response.apply(this, arguments);
+							// reset recorded requests for memory savings as mockserver is also used for apps and not only testing
+							that._oServer.requests = [];
+						};
+					} else {
+						fnResponse = oRequest.response;
+					}
+
+					that._addRequestHandler(oRequest.method, oRequest.path, fnResponse);
+				});
 			};
 
 			/**

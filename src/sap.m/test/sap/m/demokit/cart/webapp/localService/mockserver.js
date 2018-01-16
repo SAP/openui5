@@ -21,7 +21,8 @@ sap.ui.define([
 				sMetadataUrl = jQuery.sap.getModulePath(_sMetadataPath, ".xml");
 
 			oMockServer = new MockServer({
-				rootUri : "/sap/opu/odata/IWBEP/EPM_DEVELOPER_SCENARIO_SRV/"
+				rootUri : "/sap/opu/odata/IWBEP/EPM_DEVELOPER_SCENARIO_SRV/",
+				recordRequests: false
 			});
 
 			// configure mock server with a delay of 100ms
