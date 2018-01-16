@@ -354,8 +354,9 @@ sap.ui.define([
 	P13nSortPanel.prototype.updateSortItems = function(sReason) {
 		this.updateAggregation("sortItems");
 
-		if (sReason == "change" && !this._bIgnoreBindCalls) {
+		if (sReason === "change" && !this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;
+            this.invalidate();
 		}
 	};
 
