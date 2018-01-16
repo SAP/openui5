@@ -14,7 +14,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library",
 				"./rules/Link.support",
 				"./rules/Panel.support",
 				"./rules/Select.support",
-				"./rules/SelectDialog.support"],
+				"./rules/SelectDialog.support",
+				"./rules/Tokenizer.support"],
 	function(jQuery, SupportLib,
 			BreadcrumbsSupport,
 			ButtonSupport,
@@ -25,7 +26,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library",
 			LinkSupport,
 			PanelSupport,
 			SelectSupport,
-			SelectDialogSupport) {
+			SelectDialogSupport,
+			TokenizerSupport) {
 	"use strict";
 
 	return {
@@ -41,7 +43,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library",
 			LinkSupport,
 			PanelSupport,
 			SelectSupport,
-			SelectDialogSupport
+			SelectDialogSupport,
+			TokenizerSupport
 		]
 	};
 
