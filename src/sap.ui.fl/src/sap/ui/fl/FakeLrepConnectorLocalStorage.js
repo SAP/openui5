@@ -325,12 +325,13 @@ sap.ui.define([
 	FakeLrepConnectorLocalStorage.prototype._fakeStandardVariant = function(sVariantManagementReference) {
 		return {
 				fileName: sVariantManagementReference,
-				title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl").getText("STANDARD_VARIANT_TITLE"),
 				fileType: "ctrl_variant",
 				layer: "VENDOR",
 				variantManagementReference: sVariantManagementReference,
 				variantReference: "",
-				content: {}
+				content: {
+					title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl").getText("STANDARD_VARIANT_TITLE")
+				}
 			};
 	};
 

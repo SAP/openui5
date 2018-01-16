@@ -81,7 +81,9 @@ function(
 	var oVariant = {
 		"content": {
 			"fileName":"variant0",
-			"title":"variant A",
+			"content": {
+				"title":"variant A"
+			},
 			"layer":"CUSTOMER",
 			"variantReference":"variant00",
 			"support":{
