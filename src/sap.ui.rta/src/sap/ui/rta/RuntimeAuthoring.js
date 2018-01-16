@@ -507,10 +507,11 @@ sap.ui.define([
 
 				jQuery.sap.measure.start("rta.dt.startup","Measurement of RTA: DesignTime start up");
 				this._oDesignTime = new DesignTime({
-					rootElements: [this._oRootControl],
-					plugins: aPlugins,
-					scope: this.getMetadataScope()
+					scope: this.getMetadataScope(),
+					plugins: aPlugins
 				});
+				//add root control is triggereing overlay creation, so we need to wait for the scope to be set.
+				this._oDesignTime.addRootElement(this._oRootControl);
 
 				jQuery(Overlay.getOverlayContainer()).addClass("sapUiRta");
 				if (this.getLayer() === "USER") {

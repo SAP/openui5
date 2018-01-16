@@ -90,7 +90,7 @@ sap.ui.require([
 			FakeLrepLocalStorage.deleteChanges();
 
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl")
+				rootControl : oComp.getAggregation("rootControl")
 			});
 
 			return Promise.all([
@@ -300,7 +300,7 @@ sap.ui.require([
 			});
 
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl")
+				rootControl : oComp.getAggregation("rootControl")
 			});
 		},
 		afterEach : function(assert) {
@@ -335,7 +335,7 @@ sap.ui.require([
 			FakeLrepLocalStorage.deleteChanges();
 
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
+				rootControl : oComp.getAggregation("rootControl"),
 				showToolbars : false
 			});
 
@@ -517,7 +517,7 @@ sap.ui.require([
 				var fnStackModifiedSpy = sinon.spy(function() {
 
 					// Start RTA with command stack
-					var oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
+					var oRootControl = oComp.getAggregation("rootControl");
 					this.oRta = new RuntimeAuthoring({
 						rootControl : oRootControl,
 						commandStack : this.oCommandStack,
@@ -822,7 +822,7 @@ sap.ui.require([
 			});
 
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
+				rootControl : oComp.getAggregation("rootControl"),
 				showToolbars : false,
 				plugins : {
 					remove : this.oRemovePlugin,
@@ -830,7 +830,7 @@ sap.ui.require([
 				}
 			});
 
-			this.fnDestroy = sinon.spy(this.oRta, "_destroyDefaultPlugins");
+			this.fnDestroy = sandbox.spy(this.oRta, "_destroyDefaultPlugins");
 
 			this.oRta.attachStart(function() {
 				done();
@@ -860,6 +860,46 @@ sap.ui.require([
 			assert.equal(this.fnDestroy.callCount, 2, " and _destroyDefaultPlugins have been called once again after oRta.stop()");
 			done();
 		}.bind(this));
+	});
+
+
+	QUnit.module("Given that RuntimeAuthoring is started with a scope set...", {
+		beforeEach : function(assert) {
+			var done = assert.async();
+			FakeLrepLocalStorage.deleteChanges();
+
+			this.oRta = new RuntimeAuthoring({
+				rootControl : oComp.getAggregation("rootControl"),
+				metadataScope : "someScope"
+			});
+
+			this.oRta.attachStart(function() {
+				done();
+			});
+			this.oRta.start();
+
+		},
+		afterEach : function(assert) {
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	});
+
+	QUnit.test("when RTA is started, then the overlay has the scoped metadata associated", function(assert) {
+		assert.equal(this.oRta.getMetadataScope(), "someScope", "then RTA knows the scope");
+		assert.equal(this.oRta._oDesignTime.getScope(), "someScope", "then designtime knows the scope");
+
+		var oOverlayWithInstanceSpecificMetadata = OverlayRegistry.getOverlay("Comp1---idMain1--Dates.SpecificFlexibility");
+		var mDesignTimeMetadata = oOverlayWithInstanceSpecificMetadata.getDesignTimeMetadata().getData();
+		assert.equal(mDesignTimeMetadata.newKey, "new", "New scoped key is added");
+		assert.equal(mDesignTimeMetadata.someKeyToOverwriteInScopes, "scoped", "Scope can overwrite keys");
+		assert.equal(mDesignTimeMetadata.some.deep, null, "Scope can delete keys");
+
+		var oRootOverlayWithInstanceSpecificMetadata = OverlayRegistry.getOverlay("Comp1---app");
+		var mDesignTimeMetadata2 = oRootOverlayWithInstanceSpecificMetadata.getDesignTimeMetadata().getData();
+		assert.equal(mDesignTimeMetadata2.newKey, "new", "New scoped key is added");
+		assert.equal(mDesignTimeMetadata2.someKeyToOverwriteInScopes, "scoped", "Scope can overwrite keys");
+		assert.equal(mDesignTimeMetadata2.some.deep, null, "Scope can delete keys");
 	});
 
 
