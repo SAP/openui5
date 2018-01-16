@@ -291,7 +291,8 @@
 
 														<m:MessageStrip
 															visible="{=${topics>deprecated} !== undefined}"
-															text="Deprecated since version {topics>deprecated/since}. {topics>deprecated/text}"
+															text="{parts: [{path: 'topics>deprecated/since'}, {path: 'topics>deprecated/text'}],
+																formatter: '.formatDeprecated'}"
 															type="Error"
 															showIcon="true"
 															showCloseButton="false"
