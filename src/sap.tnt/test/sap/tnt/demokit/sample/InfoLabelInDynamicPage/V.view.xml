@@ -1,0 +1,99 @@
+<mvc:View
+	controllerName="sap.tnt.sample.InfoLabelInDynamicPage.V"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:tnt="sap.tnt"
+	xmlns:c="sap.ui.core"
+	xmlns:sf="sap.ui.layout.form"
+	xmlns:f="sap.f"
+	xmlns:layout="sap.ui.layout"
+	height="100%">
+<f:DynamicPage id="dynamicPageId">
+			<!-- DynamicPage Title -->
+			<f:title>
+				<f:DynamicPageTitle>
+					<f:heading>
+						<Title text="Delivery order"/>
+					</f:heading>
+					<f:expandedContent>
+						<tnt:InfoLabel text="In transit"/>
+					</f:expandedContent>
+					<f:snappedContent>
+						<tnt:InfoLabel text="In transit"/>
+					</f:snappedContent>
+					<f:actions>
+						<Button
+								text="Edit"
+								type="Emphasized"
+								press="toggleAreaPriority"/>
+						<Button
+								text="Delete"
+								type="Transparent"/>
+						<Button
+								text="Copy"
+								type="Transparent"/>
+						<Button
+								text="Toggle Footer"
+								type="Transparent"
+								press="onToggleFooter"/>
+						<Button
+								icon="sap-icon://action"
+								type="Transparent"/>
+					</f:actions>
+				</f:DynamicPageTitle>
+			</f:title>
+			<!-- DynamicPage Header -->
+			<f:header>
+				<f:DynamicPageHeader pinnable="true">
+					<f:content>
+						<FlexBox
+								alignItems="Start"
+								justifyContent="SpaceBetween">
+							<items>
+								<Panel
+										backgroundDesign="Transparent"
+										class="sapUiNoContentPadding">
+									<content>
+										<layout:HorizontalLayout
+												allowWrapping="true">
+											<layout:VerticalLayout
+													class="sapUiMediumMarginEnd">
+												<ObjectAttribute title="Location" text="Warehouse A"/>
+												<ObjectAttribute title="Halway" text="23L"/>
+												<ObjectAttribute title="Rack" text="34"/>
+											</layout:VerticalLayout>
+										</layout:HorizontalLayout>
+									</content>
+								</Panel>
+							</items>
+						</FlexBox>
+					</f:content>
+				</f:DynamicPageHeader>
+			</f:header>
+			<f:content>
+			<layout:VerticalLayout>
+				<Text
+				renderWhitespace="true"
+				text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. In vehicula, nulla eget sagittis vulputate, sem dolor iaculis nisi, sit amet semper lectus nibh et leo. Nam luctus ac justo aliquet dignissim. Suspendisse ex magna, volutpat vitae neque ac, iaculis blandit mauris. Vestibulum at vestibulum nisl. Suspendisse eget finibus quam, nec maximus velit. Curabitur lacinia felis odio, quis bibendum nibh dignissim non. Nam consectetur ultricies massa, vel eleifend ligula iaculis in. Sed ac pretium mi, vel condimentum odio. Nulla facilisi. Etiam aliquet cursus tincidunt. Vivamus ex lorem, pharetra eget urna at, blandit mollis quam. Integer id libero et leo interdum egestas. Morbi bibendum turpis et velit malesuada, quis tincidunt lacus posuere. Donec et dui dignissim, tincidunt arcu pretium, tristique metus. Cras pharetra ante id ex gravida, in ultricies libero pretium. Donec mollis orci varius, blandit justo et, fringilla elit. Fusce lacinia porta diam, at ultrices magna gravida et. Sed accumsan tellus id turpis accumsan, sit amet finibus est sodales. Pellentesque tincidunt eu libero in tristique. Sed finibus vulputate enim, eget pulvinar lectus commodo quis. Curabitur porta erat massa, vitae semper nisi condimentum condimentum. Ut sollicitudin sollicitudin arcu, vel placerat tellus mattis a. Pellentesque maximus faucibus nibh, eu eleifend ante efficitur a.\n\n">
+				</Text>
+				<Text
+				text="Nunc placerat laoreet cursus. Phasellus porttitor tincidunt consequat. Integer ut elit sodales, tincidunt dolor eu, auctor massa. Aenean venenatis orci a nisi pulvinar, pulvinar sodales sapien tempor. Curabitur metus turpis, tempor quis orci a, luctus tempus turpis. Aenean ac quam venenatis, tempor justo in, imperdiet leo. Duis quis ex et sapien iaculis posuere eu quis eros. Duis semper hendrerit elementum. Etiam varius tellus sem, nec tincidunt lectus vehicula at. Donec consequat ex nec purus finibus, eget auctor risus porta.
+					Sed ornare elit sit amet consectetur venenatis. Morbi blandit vitae velit eu vulputate. Donec facilisis fringilla nisi, nec interdum ipsum placerat sit amet. Donec placerat, lacus ut volutpat varius, ipsum felis suscipit lectus, at ullamcorper lectus leo non leo. Duis sit amet condimentum risus. Quisque sed enim imperdiet, dictum tellus in, suscipit velit. Mauris in lacinia ex.">
+				</Text>
+				</layout:VerticalLayout>
+			</f:content>
+			<!-- DynamicPage Footer -->
+			<f:footer>
+				<OverflowToolbar>
+					<Button icon="sap-icon://message-popup"
+							text="{/messagesLength}"
+							type="Emphasized"
+							press="onMessageButtonPress"
+							visible="{= !!${/messagesLength}}"/>
+					<ToolbarSpacer/>
+					<Button type="Accept" text="Accept"/>
+					<Button type="Reject" text="Reject"/>
+				</OverflowToolbar>
+			</f:footer>
+		</f:DynamicPage>
+</mvc:View>
