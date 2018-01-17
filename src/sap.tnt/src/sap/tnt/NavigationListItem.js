@@ -388,6 +388,14 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 		 */
 		NavigationListItem.prototype.renderGroupItem = function (rm, control) {
 
+			var isListExpanded = control.getExpanded(),
+				text = this.getText(),
+				ariaProps = {
+					level: '1',
+					expanded: this.getExpanded()
+				},
+				sTooltip;
+
 			rm.write('<div');
 
 			rm.addClass("sapTntNavLIItem");
@@ -395,14 +403,27 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 
 			if (!this.getEnabled()) {
 				rm.addClass("sapTntNavLIItemDisabled");
-			} else if (control.getExpanded()) {
+			} else {
 				rm.write(' tabindex="-1"');
 			}
 
-			if (control.getExpanded()) {
-				var text = this.getText();
+			if (!isListExpanded) {
+				sTooltip = this.getTooltip_AsString() || text;
+				if (sTooltip) {
+					rm.writeAttributeEscaped("title", sTooltip);
+				}
 
-				var sTooltip = this.getTooltip_AsString() || text;
+				ariaProps.label = text;
+				ariaProps.role = 'button';
+				ariaProps.haspopup = true;
+			} else {
+				ariaProps.role = 'treeitem';
+			}
+
+			rm.writeAccessibilityState(ariaProps);
+
+			if (control.getExpanded()) {
+				sTooltip = this.getTooltip_AsString() || text;
 				if (sTooltip) {
 					rm.writeAttributeEscaped("title", sTooltip);
 				}
@@ -440,35 +461,12 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 				expanded = this.getExpanded(),
 				isListExpanded = control.getExpanded();
 
-			rm.write('<li');
+			rm.write('<li aria-hidden="true" ');
 			rm.writeElementData(this);
-			rm.writeAttribute("aria-expanded", this.getExpanded());
-			rm.writeAttribute("aria-level", 1);
 
 			if (this.getEnabled() && !isListExpanded) {
 				rm.write(' tabindex="-1"');
 			}
-
-			var text = this.getText();
-
-			// ARIA
-			if (!isListExpanded) {
-				var text = this.getText();
-
-				var sTooltip = this.getTooltip_AsString() || text;
-				if (sTooltip) {
-					rm.writeAttributeEscaped("title", sTooltip);
-				}
-
-				rm.writeAttributeEscaped("aria-label", text);
-
-				rm.writeAttribute("role", 'button');
-				rm.writeAttribute("aria-haspopup", true);
-			} else {
-				rm.writeAttribute("role", "treeitem");
-			}
-
-			rm.writeAttribute("tabindex", "0");
 
 			rm.write(">");
 
@@ -476,7 +474,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 
 			if (isListExpanded) {
 
-				rm.write("<ul");
+				rm.write('<ul aria-hidden="true" ');
 
 				rm.writeAttribute("role", "group");
 				rm.addClass("sapTntNavLIGroupItems");
