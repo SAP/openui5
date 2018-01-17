@@ -72,9 +72,7 @@ sap.ui.define([
 		if (!aMatches || !aMatches.length || !(aMatches.length === 2)) {
 			throw new Error("Could not find any user data in " + sBody);
 		}
-		var oUser = JSON.parse(aMatches[1]);
-
-		return oUser;
+		return JSON.parse(aMatches[1]);
 	}
 
 	/**
@@ -152,7 +150,7 @@ sap.ui.define([
 		var sFieldName,
 			sDirection,
 			aSortedUsers = [].concat(aResultSet), // work with a copy
-			aMatches = oXhr.url.match(/\$orderby=(\w*)(?:\%20(\w*))?/);
+			aMatches = oXhr.url.match(/\$orderby=(\w*)(?:%20(\w*))?/);
 
 		if (!aMatches || !aMatches.length || aMatches.length < 2) {
 			return aSortedUsers;
@@ -193,7 +191,7 @@ sap.ui.define([
 		var sFieldName,
 			sQuery,
 			aFilteredUsers = [].concat(aResultSet), // work with a copy
-			aMatches = oXhr.url.match(/\$filter\=.*\((.*),'(.*)'\)/);
+			aMatches = oXhr.url.match(/\$filter=.*\((.*),'(.*)'\)/);
 
 		// If the request contains a filter command, apply the filter
 		if (aMatches && aMatches.length && aMatches.length >= 3) {
@@ -436,10 +434,35 @@ sap.ui.define([
 	function handleBatchRequest(oXhr) {
 		var aResponse,
 			sResponseBody = "",
-			sBoundary = oXhr.requestBody.match(/(.*)/)[1], // First line of the body
-			aParts = oXhr.requestBody.split(sBoundary).slice(1, -1); // The individual requests
+			sOuterBoundary = oXhr.requestBody.match(/(.*)/)[1], // First line of the body
+			sInnerBoundary,
+			sPartBoundary,
+			aOuterParts = oXhr.requestBody.split(sOuterBoundary).slice(1, -1), // The individual requests
+			aParts,
+			aMatches;
 
-		aParts.forEach(function (sPart) {
+		aMatches = aOuterParts[0].match(/multipart\/mixed;boundary=(.+)/);
+		// If this request has several change sets, then we need to handle the inner and outer boundaries
+		// (change sets have an additional boundary)
+		if (aMatches && aMatches.length > 0) {
+			sInnerBoundary = aMatches[1];
+			aParts = aOuterParts[0].split("--" + sInnerBoundary).slice(1, -1);
+
+		} else  {
+			aParts = aOuterParts;
+		}
+
+		// If this request has several change sets, then our response must start with the outer boundary and
+		// content header
+		if (sInnerBoundary) {
+			sPartBoundary = "--" + sInnerBoundary;
+			sResponseBody += sOuterBoundary + "\r\n" +
+				"Content-Type: multipart/mixed; boundary=" + sInnerBoundary + "\r\n\r\n";
+		} else {
+			sPartBoundary = sOuterBoundary;
+		}
+
+		aParts.forEach(function (sPart, iIndex) {
 			// Construct the batch response body out of the single batch request parts.
 			// The RegExp looks for a request body at the end of the string, framed by two line breaks.
 			var aMatches = sPart.match(/(GET|DELETE|PATCH|POST) (\S+)(?:.|\r?\n)+\r?\n(.*)\r?\n$/);
@@ -448,10 +471,15 @@ sap.ui.define([
 				url : aMatches[2],
 				requestBody : aMatches[3]
 			});
-			sResponseBody += sBoundary + "\r\n" +
-				"Content-Type: application/http\r\n\r\n" +
-				"HTTP/1.1 " + aPartResponse[0] + "\r\n";
-			if (aPartResponse[1]) {
+			sResponseBody += sPartBoundary + "\r\n" +
+				"Content-Type: application/http\r\n";
+			// If there are several change sets, we need to add a Content ID header
+			if (sInnerBoundary) {
+				sResponseBody += "Content-ID:" + iIndex + ".0\r\n";
+			}
+			sResponseBody += "\r\nHTTP/1.1 " + aPartResponse[0] + "\r\n";
+			// Add any headers from the request - unless this response is 204 (no content)
+			if (aPartResponse[1] && aPartResponse[0] !== 204) {
 				for (var sHeader in aPartResponse[1]) {
 					sResponseBody += sHeader + ": " + aPartResponse[1][sHeader] + "\r\n";
 				}
@@ -463,14 +491,19 @@ sap.ui.define([
 			}
 			sResponseBody += "\r\n";
 		});
+
+		// Check if we need to add the inner boundary again at the end
+		if (sInnerBoundary) {
+			sResponseBody += "--" + sInnerBoundary + "--\r\n";
+		}
 		// Add a final boundary to the batch response body
-		sResponseBody += sBoundary + "--";
+		sResponseBody += sOuterBoundary + "--";
 
 		// Build the final batch response
 		aResponse = [
 			200,
 			{
-				"Content-Type" : "multipart/mixed;boundary=" + sBoundary.slice(2),
+				"Content-Type" : "multipart/mixed;boundary=" + sOuterBoundary.slice(2),
 				"OData-Version" : "4.0"
 			},
 			sResponseBody
