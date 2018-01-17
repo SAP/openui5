@@ -1010,12 +1010,20 @@ sap.ui.define([
 	 * @private
 	 */
 	OverflowToolbar._getControlPriority = function (vControl) {
+		// 1. Check if it is a group of controls (treated as a single entity in terms of overflow), rather a single control
 		if (vControl.length) {
 			return vControl._priority;
 		}
 
-		var oLayoutData = vControl.getLayoutData && vControl.getLayoutData();
+		// 2. Check if the control has custom priority given by implementing sap.m.IOverflowToolbarContent
+		var bImplementsIOTBContent = vControl.getMetadata().getInterfaces().indexOf("sap.m.IOverflowToolbarContent") > -1,
+			fnGetCustomImportance = bImplementsIOTBContent && vControl.getOverflowToolbarConfig().getCustomImportance;
+		if (bImplementsIOTBContent && typeof fnGetCustomImportance === "function") {
+			return fnGetCustomImportance();
+		}
 
+		// 3. Check for priority given by layout data (standard use case)
+		var oLayoutData = vControl.getLayoutData && vControl.getLayoutData();
 		if (oLayoutData && oLayoutData instanceof OverflowToolbarLayoutData) {
 
 			if (oLayoutData.getMoveToOverflow() === false) {
@@ -1039,6 +1047,7 @@ sap.ui.define([
 			return sPriority;
 		}
 
+		// 4. Default priority (High) as a fallback if nothing else was supplied
 		return OverflowToolbarPriority.High;
 	};
 
@@ -1066,7 +1075,10 @@ sap.ui.define([
 
 		oPriorityOrder[OverflowToolbarPriority.Disappear] = 1;
 		oPriorityOrder[OverflowToolbarPriority.Low] = 2;
-		oPriorityOrder[OverflowToolbarPriority.High] = 3;
+		// If a control sets custom priority (by implementing sap.m.IOverflowToolbarContent), the string "Medium" is
+		// also accepted along with the standard priority values, such as High, Low, NeverOverflow, etc... therefore "Medium" should also be mapped
+		oPriorityOrder["Medium"] = 3;
+		oPriorityOrder[OverflowToolbarPriority.High] = 4;
 
 		return oPriorityOrder;
 	})();

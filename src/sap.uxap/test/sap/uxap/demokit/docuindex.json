@@ -40,7 +40,8 @@
 		"since": "1.52",
 		"formFactors": "-",
 			"samples": [
-			  "sap.uxap.sample.ObjectPageWithDynamicHeader"
+			  "sap.uxap.sample.ObjectPageWithDynamicHeader",
+			  "sap.uxap.sample.ObjectPageHeaderActionButtons"
 			]
 	  },
 	  {
@@ -113,9 +114,9 @@
 	],
 	"samples": [
 	  {
-		"id": "sap.uxap.sample.ObjectPageWithDynamicHeader",
-		"name": "Object Page with Dynamic Header",
-		"description": "This example demonstrates ObjectPage with dynamic header achieved by using ObjectPageDynamicHeaderTitle for the headerContent aggregation."
+		"id": "sap.uxap.sample.ObjectPageHeaderActionButtons",
+		"name": "Object Page with ObjectPageHeaderActionButtons",
+		"description": "This example demonstrates ObjectPage with ObjectPageHeaderActionButtons in the header."
 	  },
 	  {
 		"id": "sap.uxap.sample.ObjectPageDynamicHeader",
