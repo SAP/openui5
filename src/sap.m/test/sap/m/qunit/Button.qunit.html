@@ -496,7 +496,11 @@
 		oButton.destroy();
 	});
 
-	test("AriaLabeledBy when the Button is associated with Label", function() {
+
+	// check if we have reference added to the text content of the button
+	// so it can be read otherwise it causes the issue reported in BCP: 1680223321
+	test("AriaLabeledBy when the Button is associated with Label and the button has text", function(assert) {
+		var sTextSpanId = "-content";
 		var oLabel = new sap.m.Label("L1", {
 			text:'Label'
 		});
@@ -509,7 +513,28 @@
 		oButton.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		equal(oButton.$().attr("aria-labelledby"), "L1 B1", "Label id and Button id are written inside aria-labelledby attribute");
+		equals(oButton.$().attr("aria-labelledby"), "L1 B1" + sTextSpanId, "Label id and Button content id are written inside aria-labelledby attribute");
+
+		oLabel.destroy();
+		oButton.destroy();
+	});
+
+	// in case of icon only button we souldn't have self reference otherwise
+	// it causes issue reported in BCP: 1780428239
+	test("AriaLabeledBy when the Button is associated with Label and the button has icon only", function(assert) {
+		var oLabel = new sap.m.Label("L1", {
+			text:'Label'
+		});
+		var oButton = new sap.m.Button("B1",{
+			icon: "sap-icon://edit",
+			ariaLabelledBy: "L1"
+		});
+
+		oLabel.placeAt("qunit-fixture");
+		oButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		equals(oButton.$().attr("aria-labelledby"), "L1", "Only Label id is written inside aria-labelledby attribute");
 
 		oLabel.destroy();
 		oButton.destroy();
