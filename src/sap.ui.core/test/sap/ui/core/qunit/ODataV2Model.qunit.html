@@ -771,7 +771,7 @@
 			start();
 		});
 	});
-	
+
 	asyncTest("test getProperty on label", function(){
 		oLabel.setText("testText");
 		var oModel = initModel(sURI, {json:false});
@@ -1531,7 +1531,7 @@
 			start();
 		});
 	});
-	
+
 	asyncTest("test setProperty on complex Types 2 (internal): change value, then setting same value",function(){
 		var oModel = initModel(sURI, {useBatch : true});
 		oModel.attachMetadataLoaded(function(){
@@ -1574,7 +1574,7 @@
 			start();
 		});
 	});
-	
+
 	asyncTest("test setProperty on complex Types 3 (internal): setting same value",function(){
 		var oModel = initModel(sURI, {useBatch : true});
 		oModel.attachMetadataLoaded(function(){
@@ -1614,7 +1614,7 @@
 			start();
 		});
 	});
-	
+
 	asyncTest("test setProperty on complex Types 4 (internal): change value, then setting same value",function(){
 		var oModel = initModel(sURI, {useBatch : true});
 		oModel.attachMetadataLoaded(function(){
@@ -1660,7 +1660,7 @@
 			start();
 		});
 	});
-	
+
 	asyncTest("createEntry with complex types wich have namespace with . characters", function() {
 		var oModel = initModel(sURI, {metadataUrlParams : {test: "complex"}});
 		oModel.metadataLoaded().then(function() {
@@ -2069,11 +2069,11 @@
 		}, true);
 
 		oModel.metadataLoaded().then(function(){
-		
+
 			oModel.setDeferredBatchGroups(["myId"]);
 			var oContext = oModel.createEntry("/Products",{properties:{ProductName:"Test"},
 					batchGroupId : "myId", urlParameters:{"Fail500" : true}});
-	
+
 			//oModel.deleteCreatedEntry(oContext);
 			oModel.submitChanges({
 				success : function(oData, oResponse) {
@@ -2083,7 +2083,7 @@
 					ok(true, "should not land here");
 				}
 			});
-			
+
 			oModel.attachRequestFailed(function(oError) {
 				//timeout because request handle will be aborted asynchronous
 				ok(oModel.hasPendingChanges(),"model should have pending changes");
@@ -2094,7 +2094,7 @@
 					start();
 				},0);
 			});
-			
+
 		});
 	});
 
@@ -2899,7 +2899,7 @@
 			}
 		});
 	});
-	
+
 	asyncTest("Event order (single request): bindElement - batch fails", function(){
 		expect(3);
 		cleanServiceDataCache();
@@ -2917,7 +2917,7 @@
 		}
 		oLabel.bindElement( {path:"/Categories(1)", parameters: {custom: {Batch500:"fail"}}, events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
 	});
-	
+
 	asyncTest("Event order (batch request): bindElement - batch fails --> refresh", function(){
 		expect(5);
 		cleanServiceDataCache();
@@ -2937,13 +2937,13 @@
 				bChanged = false;
 				bDataRequested = false;
 				bDataReceived = false;
-				start(); // resume normal testing			
+				start(); // resume normal testing
 			});
 			oLabel.getElementBinding().refresh();
 		}
 		oLabel.bindElement( {path:"/Categories(1)", parameters: {custom: {Batch500:"fail"}}, events:{change:fnChange, dataRequested:fnDataRequested, dataReceived: handler}});
 	});
-	
+
 	asyncTest("Event order: bindElement", function(){
 		expect(4);
 		cleanServiceDataCache();
@@ -4138,7 +4138,7 @@
 			}});
 		}});
 	});
-	
+
 	asyncTest("ListBinding: Custom params", function() {
 		expect(6);
 
@@ -4160,6 +4160,43 @@
 		});
 	});
 
+	asyncTest("ListBinding: Custom params (null parameter)", function(assert) {
+		assert.expect(4);
+
+		var oModel = initModel(sURI);
+		oModel.metadataLoaded().then(function() {
+			var spy = sinon.spy(oModel, "createCustomParams");
+			var oContext = oModel.createBindingContext("/Categories(1)", null, {custom: {"test":undefined}}, function() {
+				assert.equal(spy.callCount, 1 , "custom Params created");
+				assert.equal(spy.returnValues[0], "test" , "params created correctly");
+				var oContext2 = oModel.createBindingContext("/Categories(1)", null, {custom: {"hubel": "dubel","test":null}}, function() {
+					assert.equal(spy.callCount, 2 , "custom Params created");
+					assert.equal(spy.returnValues[1], "hubel=dubel&test" , "params created correctly");
+					oModel.createCustomParams.restore();
+					start();
+				}, true);
+			});
+		});
+	});
+
+	asyncTest("ListBinding: Custom params ('empty' string parameter)", function(assert) {
+		assert.expect(4);
+
+		var oModel = initModel(sURI);
+		oModel.metadataLoaded().then(function() {
+			var spy = sinon.spy(oModel, "createCustomParams");
+			var oContext = oModel.createBindingContext("/Categories(1)", null, {custom: {"test":''}}, function() {
+				assert.equal(spy.callCount, 1 , "custom Params created");
+				assert.equal(spy.returnValues[0], "test=" , "params created correctly");
+				var oContext2 = oModel.createBindingContext("/Categories(1)", null, {custom: {"hubel": "dubel","test":''}}, function() {
+					assert.equal(spy.callCount, 2 , "custom Params created");
+					assert.equal(spy.returnValues[1], "hubel=dubel&test=" , "params created correctly");
+					oModel.createCustomParams.restore();
+					start();
+				}, true);
+			});
+		});
+	});
 	</script>
 
 </head>
