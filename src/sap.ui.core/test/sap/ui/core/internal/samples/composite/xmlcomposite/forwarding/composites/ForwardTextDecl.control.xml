@@ -1,9 +1,7 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
 	<VBox>
-		<VBox items="{$forwardtext>textItems}">
-			<core:AggregationProxy type="sap.m.Text"></core:AggregationProxy>
-		</VBox>
-		<core:AggregationProxy ref="{$forwardtext>text}"></core:AggregationProxy>
+		<VBox id="innerVBox"/>
+		<core:AggregationProxySingle2 id="text"/>
 	</VBox>
 </core:FragmentDefinition>
 
