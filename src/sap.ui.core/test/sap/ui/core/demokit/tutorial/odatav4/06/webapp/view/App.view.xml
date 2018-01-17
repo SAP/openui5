@@ -1,0 +1,112 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:form="sap.ui.layout.form"
+		controllerName="sap.ui.demo.odatav4.controller.App"
+		displayBlock="true">
+	<App busy="{appView>/busy}" class="sapUiSizeCompact">
+		<pages>
+			<Page title="{i18n>peoplePageTitle}">
+				<content>
+					<Table
+						id="people"
+						growing="true"
+						growingThreshold="10"
+						items="{
+							path: '/People',
+							parameters: {
+								$count: true,
+								$$updateGroupId : 'peopleGroup'
+							}
+						}"
+						mode="SingleSelectMaster">
+						<headerToolbar>
+							<OverflowToolbar>
+								<content>
+									<ToolbarSpacer/>
+									<SearchField
+										id="search"
+										width="20%"
+										placeholder="{i18n>searchFieldPlaceholder}"
+										enabled="{= !${appView>/hasUIChanges}}"
+										search="onSearch"
+									/>
+									<Button
+										text="{i18n>createButtonText}"
+										enabled="{= !${appView>/hasUIChanges}}"
+										press="onCreate">
+										<layoutData>
+											<OverflowToolbarLayoutData priority="NeverOverflow"/>
+										</layoutData>
+									</Button>
+									<Button
+										icon="sap-icon://refresh"
+										enabled="{= !${appView>/hasUIChanges}}"
+										tooltip="{i18n>refreshButtonText}"
+										press="onRefresh"/>
+									<Button
+										press="onSort"
+										enabled="{= !${appView>/hasUIChanges}}"
+										tooltip="{i18n>sortButtonText}"
+										icon="sap-icon://sort"/>
+								</content>
+							</OverflowToolbar>
+						</headerToolbar>
+						<columns>
+							<Column>
+								<Text text="{i18n>userNameLabelText}"/>
+							</Column>
+							<Column>
+								<Text text="{i18n>firstNameLabelText}"/>
+							</Column>
+							<Column>
+								<Text text="{i18n>lastNameLabelText}"/>
+							</Column>
+							<Column>
+								<Text text="{i18n>ageLabelText}"/>
+							</Column>
+						</columns>
+						<items>
+							<ColumnListItem>
+								<cells>
+									<Input
+										value="{UserName}"
+										liveChange="onInputChange"/>
+								</cells>
+								<cells>
+									<Input
+										value="{FirstName}"
+										liveChange="onInputChange"/>
+								</cells>
+								<cells>
+									<Input
+										value="{LastName}"
+										liveChange="onInputChange"/>
+								</cells>
+								<cells>
+									<Input
+										value="{Age}"
+										liveChange="onInputChange"/>
+								</cells>
+							</ColumnListItem>
+						</items>
+					</Table>
+				</content>
+				<footer>
+					<Toolbar visible="{appView>/hasUIChanges}">
+						<ToolbarSpacer/>
+						<Button
+							id="saveButton"
+							type="Emphasized"
+							text="{i18n>saveButtonText}"
+							press="onSave" />
+						<Button
+							id="doneButton"
+							text="{i18n>cancelButtonText}"
+							press="onResetChanges" />
+					</Toolbar>
+				</footer>
+			</Page>
+		</pages>
+	</App>
+</mvc:View>
