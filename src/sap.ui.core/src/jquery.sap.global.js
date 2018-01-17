@@ -5016,6 +5016,14 @@
 				} else {
 					jQuery(oOld).replaceWith(oLink);
 				}
+			} else {
+				// in case of using without callbacks and applying the same URL
+				// the foucmarker has to be removed as the link will not be
+				// replaced with another link - otherwise the ThemeCheck would
+				// remove this link
+				if (oOld.getAttribute("data-sap-ui-foucmarker") === oLink.id) {
+					oOld.removeAttribute("data-sap-ui-foucmarker");
+				}
 			}
 		} else {
 			oOld = jQuery('#sap-ui-core-customcss');
