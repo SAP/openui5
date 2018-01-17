@@ -109,9 +109,9 @@ sap.ui.define([
 	};
 
 	VariantController.prototype.compareVariants = function (oVariantData1, oVariantData2) {
-		if (oVariantData1.content.title.toLowerCase() < oVariantData2.content.title.toLowerCase()) {
+		if (oVariantData1.content.content.title.toLowerCase() < oVariantData2.content.content.title.toLowerCase()) {
 			return -1;
-		} else if (oVariantData1.content.title.toLowerCase() > oVariantData2.content.title.toLowerCase()) {
+		} else if (oVariantData1.content.content.title.toLowerCase() > oVariantData2.content.content.title.toLowerCase()) {
 			return 1;
 		} else {
 			return 0;
@@ -192,8 +192,8 @@ sap.ui.define([
 		var aVariants = this._mVariantManagement[sVariantManagementReference].variants;
 		var oVariantData = aVariants[iPreviousIndex];
 		Object.keys(mChangedData).forEach(function (sProperty) {
-			if (oVariantData.content[sProperty]) {
-				oVariantData.content[sProperty] = mChangedData[sProperty];
+			if (oVariantData.content.content[sProperty]) {
+				oVariantData.content.content[sProperty] = mChangedData[sProperty];
 			}
 		});
 
@@ -351,7 +351,7 @@ sap.ui.define([
 				case "setTitle":
 					oActiveChange = this._getActiveChange(sChangeType, mVariantChanges);
 					if (oActiveChange) {
-						oVariant.content.title = oActiveChange.getText("title");
+						oVariant.content.content.title = oActiveChange.getText("title");
 					}
 					break;
 				case "setFavorite":
@@ -367,7 +367,7 @@ sap.ui.define([
 					}
 					break;
 				default:
-					Utils.log.error("No valid changes on variant " + oVariant.content.title + " available");
+					Utils.log.error("No valid changes on variant " + oVariant.content.content.title + " available");
 			}
 		}.bind(this));
 	};
@@ -413,7 +413,7 @@ sap.ui.define([
 				this._applyChangesOnVariant(oVariant);
 				oVariantData[sKey].variants[index] = {
 					key : oVariant.content.fileName,
-					title : oVariant.content.title,
+					title : oVariant.content.content.title,
 					//author : oVariant.content.support.user, //TODO: get value from backend
 					layer : oVariant.content.layer,
 					favorite : oVariant.content.content.favorite,

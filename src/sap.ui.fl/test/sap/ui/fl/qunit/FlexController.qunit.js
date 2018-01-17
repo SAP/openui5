@@ -451,8 +451,10 @@ function (
 		var oVariantSpecificData = {
 			content: {
 				fileName: "idOfVariantManagementReference",
-				title: "Standard",
 				fileType: "variant",
+				content: {
+					title: "Standard"
+				},
 				variantManagementReference: "idOfVariantManagementReference"
 			}
 		};

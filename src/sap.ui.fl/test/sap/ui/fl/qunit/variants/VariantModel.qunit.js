@@ -407,11 +407,12 @@ sap.ui.require([
 		var oSourceVariant = {
 			"content": {
 				"fileName":"variant0",
-				"title":"variant A",
 				"fileType":"ctrl_variant",
 				"variantManagementReference":"variantMgmtId1",
 				"variantReference":"variant2",
-				"content":{},
+				"content":{
+					"title":"variant A"
+				},
 				"selector":{},
 				"layer":"CUSTOMER",
 				"namespace":"Dummy.Component"
@@ -428,7 +429,7 @@ sap.ui.require([
 
 		var fnGetVariantTitleStub = sandbox.stub(this.oModel, "getVariantTitle").returns("Variant B");
 		var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
-		oSourceVariantCopy.content.title = "Variant B" + " Copy";
+		oSourceVariantCopy.content.content.title = "Variant B" + " Copy";
 		oSourceVariantCopy.content.fileName = "newVariant";
 		sandbox.stub(Utils, "isLayerAboveCurrentLayer").returns(0);
 		sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
@@ -441,11 +442,12 @@ sap.ui.require([
 		var oSourceVariant = {
 			"content": {
 				"fileName":"variant0",
-				"title":"variant A",
 				"fileType":"ctrl_variant",
 				"variantManagementReference":"variantMgmtId1",
 				"variantReference":"variant2",
-				"content":{},
+				"content":{
+					"title":"variant A"
+				},
 				"selector":{},
 				"layer":"VENDOR",
 				"namespace":"Dummy.Component"
@@ -461,7 +463,7 @@ sap.ui.require([
 		};
 
 		var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
-		oSourceVariantCopy.content.title = oSourceVariant.content.title + " Copy";
+		oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
 		oSourceVariantCopy.content.fileName = "newVariant";
 		oSourceVariantCopy.content.variantReference = "variant0";
 		sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
@@ -476,11 +478,12 @@ sap.ui.require([
 		var oSourceVariant = {
 			"content": {
 				"fileName":"variant0",
-				"title":"variant A",
 				"fileType":"ctrl_variant",
 				"variantManagementReference":"variantMgmtId1",
 				"variantReference":"variant2",
-				"content":{},
+				"content":{
+					"title":"variant A"
+				},
 				"selector":{},
 				"layer":"VENDOR",
 				"namespace":"Dummy.Component"
@@ -498,11 +501,11 @@ sap.ui.require([
 		sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
 
 		var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
-		var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
-		oSourceVariantCopy.content.title = oSourceVariant.content.title + " Copy";
+		oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
 		oSourceVariantCopy.content.fileName = "newVariant";
 		oSourceVariantCopy.content.variantReference = "variant0";
 		oSourceVariantCopy.controlChanges.splice(1, 1);
+		var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
 
 		oSourceVariantCopy.controlChanges.forEach( function (oCopiedChange, iIndex) {
 			oCopiedChange.variantReference = "newVariant";
@@ -523,11 +526,12 @@ sap.ui.require([
 		var oSourceVariant = {
 			"content": {
 				"fileName":"variant0",
-				"title":"variant A",
 				"fileType":"ctrl_variant",
 				"variantManagementReference":"variantMgmtId1",
 				"variantReference":"variant2",
-				"content":{},
+				"content":{
+					"title":"variant A"
+				},
 				"selector":{},
 				"layer":"CUSTOMER",
 				"namespace":"Dummy.Component"
@@ -544,10 +548,10 @@ sap.ui.require([
 
 		sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
 
-		var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
 		var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
-		oSourceVariantCopy.content.title = oSourceVariant.content.title + " Copy";
+		oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
 		oSourceVariantCopy.content.fileName = "newVariant";
+		var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
 
 		oSourceVariantCopy.controlChanges.forEach( function (oCopiedChange, iIndex) {
 			oCopiedChange.variantReference = "newVariant";
@@ -567,13 +571,14 @@ sap.ui.require([
 		var oVariantData = {
 			"content": {
 				"fileName":"variant0",
-					"title":"variant A",
 					"fileType":"ctrl_variant",
 					"variantManagementReference":"variantMgmtId1",
 					"variantReference":"",
 					"reference":"Dummy.Component",
 					"packageName":"$TMP",
-					"content":{},
+					"content":{
+						"title":"variant A"
+					},
 				"selector":{},
 				"layer":"CUSTOMER",
 					"texts":{

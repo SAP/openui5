@@ -157,16 +157,18 @@ sap.ui.require([
 						"variants" : [{
 							"content" : {
 								"fileName": "variant0",
-								"title": "variant 0",
-								"content": {}
+								"content": {
+									"title": "variant 0"
+								}
 							},
 							"controlChanges" : []
 						},
 						{
 							"content" : {
 								"fileName": "variant1",
-								"title": "variant 1",
-								"content": {}
+								"content": {
+									"title": "variant 1"
+								}
 							},
 							"controlChanges" : [oChangeContent0, oChangeContent1]
 						}],
@@ -221,17 +223,19 @@ sap.ui.require([
 						"variants" : [{
 							"content" : {
 								"fileName": "variant0",
-								"title": "variant 0",
-								"content": {}
+								"content": {
+									"title": "variant 0"
+								}
 							},
 							"controlChanges" : [oChangeContent0, oChangeContent1, oChangeContent2]
 						},
 						{
 							"content" : {
 								"fileName": "variant1",
-								"title": "variant 1",
 								"variantReference":"variant0",
-								"content": {}
+								"content": {
+									"title": "variant 1"
+								}
 							},
 							"controlChanges" : [oChangeContent0, oChangeContent3, oChangeContent4]
 						}],
@@ -297,8 +301,8 @@ sap.ui.require([
 		assert.ok(oVariantController._mVariantManagement["idMain1--variantManagementOrdersTable"].variants[0].content.content.visible, "then visible property of variant set to true");
 		assert.equal(oVariantController._mVariantManagement["idMain1--variantManagementOrdersTable"].defaultVariant, "variant0", "then visible property of variant set to true");
 		assert.ok(typeof oVariantController._mVariantManagement["idMain1--variantManagementOrdersTable"].variantManagementChanges === 'object', "then variant management changes object exists");
-		assert.ok(oVariantController._mVariantManagement["idMain1--variantManagementOrdersTable"].variants[1].content.title <
-			oVariantController._mVariantManagement["idMain1--variantManagementOrdersTable"].variants[2].content.title, "then the variants at indices 1 and 2 are sorted alphabetically");
+		assert.ok(oVariantController._mVariantManagement["idMain1--variantManagementOrdersTable"].variants[1].content.content.title <
+			oVariantController._mVariantManagement["idMain1--variantManagementOrdersTable"].variants[2].content.content.title, "then the variants at indices 1 and 2 are sorted alphabetically");
 		assert.ok(fnApplyChangesOnVariantManagementSpy.calledTwice, "_applyChangesOnVariantManagement called twice, once per variant management reference");
 	});
 
@@ -316,12 +320,13 @@ sap.ui.require([
 							{
 								"content": {
 									"fileName":"variant0",
-									"title":"variant A",
 									"layer":"CUSTOMER",
 									"support":{
 										"user":"Me"
 									},
-									"content": {}
+									"content": {
+										"title":"variant A"
+									}
 								},
 								"controlChanges" : [
 									{
@@ -338,12 +343,13 @@ sap.ui.require([
 							{
 								"content": {
 									"fileName":"variant1",
-									"title":"variant B",
 									"layer":"CUSTOMER",
 									"support":{
 										"user":"Me"
 									},
-									"content": {}
+									"content": {
+										"title":"variant B"
+									}
 								},
 								"controlChanges" : [
 									{
@@ -360,12 +366,13 @@ sap.ui.require([
 							{
 								"content": {
 									"fileName":"variantMgmtId1",
-									"title":"Standard",
 									"layer":"VENDOR",
 									"support":{
 										"user":"SAP"
 									},
-									"content": {}
+									"content": {
+										"title":"Standard"
+									}
 								},
 								"controlChanges" : [
 									{
@@ -443,12 +450,13 @@ sap.ui.require([
 							{
 								"content": {
 									"fileName":"variant0",
-									"title":"variant A",
 									"layer":"CUSTOMER",
 									"support":{
 										"user":"Me"
 									},
-									"content": {}
+									"content": {
+										"title":"variant A"
+									}
 								},
 								"controlChanges" : [],
 								"variantChanges" : {}
@@ -456,12 +464,13 @@ sap.ui.require([
 							{
 								"content": {
 									"fileName":"variantMgmtId1",
-									"title":"Standard",
 									"layer":"VENDOR",
 									"support":{
 										"user":"SAP"
 									},
-									"content": {}
+									"content": {
+										"title":"Standard"
+									}
 								},
 								"controlChanges" : [],
 								"variantChanges" : {}
@@ -517,12 +526,12 @@ sap.ui.require([
 							{
 								"content": {
 									"fileName":"variant0",
-									"title":"variant A",
 									"layer":"CUSTOMER",
 									"support":{
 										"user":"Me"
 									},
 									"content": {
+										"title":"variant A",
 										"favorite": true
 									}
 								},
@@ -577,10 +586,10 @@ sap.ui.require([
 			}
 		};
 		var oVariantController = new VariantController("MyComponent", "1.2.3", oFakeVariantResponse);
-		assert.strictEqual(oVariantController._mVariantManagement["variantMgmtId1"].variants[0].content.title, "variant A", "then title of the variant is set to the intiial value");
+		assert.strictEqual(oVariantController._mVariantManagement["variantMgmtId1"].variants[0].content.content.title, "variant A", "then title of the variant is set to the intiial value");
 		assert.ok(oVariantController._mVariantManagement["variantMgmtId1"].variants[0].content.content.favorite, "then variant set as favorite initially");
 		oVariantController._applyChangesOnVariant(oVariantController._mVariantManagement["variantMgmtId1"].variants[0]);
-		assert.strictEqual(oVariantController._mVariantManagement["variantMgmtId1"].variants[0].content.title, "New Variant Title2", "then title of the variant is set to the last change in the setTitle array");
+		assert.strictEqual(oVariantController._mVariantManagement["variantMgmtId1"].variants[0].content.content.title, "New Variant Title2", "then title of the variant is set to the last change in the setTitle array");
 		assert.notOk(oVariantController._mVariantManagement["variantMgmtId1"].variants[0].content.content.favorite, "then variant set as not a favorite after");
 	});
 
@@ -622,7 +631,9 @@ sap.ui.require([
 
 		var oFakeVariantData1 = {
 			"content" : {
-				"title": "AA",
+				"content": {
+					"title": "AA"
+				},
 				"fileName": "newVariant1"
 			},
 			"controlChanges" : [oChangeContent0]
@@ -630,7 +641,9 @@ sap.ui.require([
 
 		var oFakeVariantData2 = {
 			"content" : {
-				"title": "ZZ",
+				"content": {
+					"title": "ZZ"
+				},
 				"fileName": "newVariant2"
 			},
 			"controlChanges" : [oChangeContent1]
@@ -692,9 +705,11 @@ sap.ui.require([
 
 		var oFakeVariantData1 = {
 			"content" : {
-				"title": "AA",
 				"fileName": "newVariant1",
-				"variantReference": "variant0"
+				"variantReference": "variant0",
+				"content": {
+					"title": "AA"
+				}
 			},
 			"controlChanges" : [oChangeContent0]
 		};
@@ -719,10 +734,11 @@ sap.ui.require([
 
 		var oFakeVariantData1 = {
 			"content" : {
-				"title": "AA",
 				"fileName": "newVariant1",
 				"variantReference": "variant0",
-				"content": {}
+				"content": {
+					"title": "AA"
+				}
 			},
 			"controlChanges" : [oChangeContent0]
 		};
@@ -958,25 +974,28 @@ sap.ui.require([
 							"variants" : [{
 								"content" : {
 									"fileName": "variant0",
-									"title": "variant 0",
-									"content": {}
+									"content": {
+										"title": "variant 0"
+									}
 								},
 								"controlChanges" : [this.oChangeContent0, this.oChangeContent1]
 							},
 							{
 								"content" : {
 									"fileName": "variant1",
-									"title": "variant 1",
 									"variantReference": "variant0",
-									"content": {}
+									"content": {
+										"title": "variant 1"
+									}
 								},
 								"controlChanges" : []
 							},
 							{
 								"content" : {
 									"fileName": "variantManagementId",
-									"title": "variant default",
-									"content": {}
+									"content": {
+										"title": "variant default"
+									}
 								},
 								"controlChanges" : [this.oChangeContent3]
 							}],
@@ -1084,16 +1103,18 @@ sap.ui.require([
 			"variants" : [{
 				"content" : {
 					"fileName": "variant02",
-					"title": "variant 02",
-					"content": {}
+					"content": {
+						"title": "variant 02"
+					}
 				},
 				"controlChanges" : [this.oChangeContent4]
 			},
 			{
 				"content" : {
 					"fileName": "variantManagementId2",
-					"title": "variant default2",
-					"content": {}
+					"content": {
+						"title": "variant default2"
+					}
 				},
 				"controlChanges" : [this.oChangeContent5]
 			}],
@@ -1127,16 +1148,18 @@ sap.ui.require([
 			"variants" : [{
 				"content" : {
 					"fileName": "variant02",
-					"title": "variant 02",
-					"content": {}
+					"content": {
+						"title": "variant 02"
+					}
 				},
 				"controlChanges" : [this.oChangeContent4]
 			},
 			{
 				"content" : {
 					"fileName": "variantManagementId2",
-					"title": "variant default2",
-					"content": {}
+					"content": {
+						"title": "variant default2"
+					}
 				},
 				"controlChanges" : [this.oChangeContent5]
 			}],

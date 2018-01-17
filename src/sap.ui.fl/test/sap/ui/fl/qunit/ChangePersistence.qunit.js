@@ -87,17 +87,19 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 					"variantManagementId" : {
 						"variants" : [{
 							"content" : {
-								"content" : {},
-								"fileName": "variant0",
-								"title": "variant 0"
+								"content" : {
+									"title": "variant 0"
+								},
+								"fileName": "variant0"
 							},
 							"changes" : []
 						},
 							{
 								"content" : {
-									"content" : {},
-									"fileName": "variant1",
-									"title": "variant 1"
+									"content" : {
+										"title": "variant 1"
+									},
+									"fileName": "variant1"
 								},
 								"changes" : []
 							}]

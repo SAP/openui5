@@ -247,7 +247,6 @@ sap.ui.define([
 
 		var iCurrentLayerComp = Utils.isLayerAboveCurrentLayer(oSourceVariant.content.layer);
 
-		var sTitle;
 		Object.keys(oSourceVariant.content).forEach(function(sKey) {
 			if (sKey === "fileName") {
 				oDuplicateVariant.content[sKey] = sNewVariantReference;
@@ -259,9 +258,10 @@ sap.ui.define([
 				}
 			} else if (sKey === "layer") {
 				oDuplicateVariant.content[sKey] = mPropertyBag.layer;
-			} else if (sKey === "title") {
-				sTitle = this.getVariantTitle(sSourceVariantReference);
-				oDuplicateVariant.content[sKey] = mPropertyBag.title || sTitle + " Copy";
+			} else if (sKey === "content") {
+				oDuplicateVariant.content[sKey] = oSourceVariant.content[sKey];
+				var sTitle = this.getVariantTitle(sSourceVariantReference);
+				oDuplicateVariant.content.content.title = mPropertyBag.title || sTitle + " Copy";
 			} else {
 				oDuplicateVariant.content[sKey] = oSourceVariant.content[sKey];
 			}
@@ -305,8 +305,8 @@ sap.ui.define([
 //			author: mPropertyBag.layer,
 			key: oDuplicateVariantData.content.fileName,
 			layer: mPropertyBag.layer,
-			title: oDuplicateVariantData.content.title,
-			originalTitle: oDuplicateVariantData.content.title,
+			title: oDuplicateVariantData.content.content.title,
+			originalTitle: oDuplicateVariantData.content.content.title,
 			favorite: true,
 			originalFavorite: true,
 			rename: true,
@@ -662,12 +662,13 @@ sap.ui.define([
 						{
 							content: {
 								fileName: sVariantManagementReference,
-								title: this._oResourceBundle.getText("STANDARD_VARIANT_TITLE"),
 								fileType: "ctrl_variant",
 								layer: "VENDOR",
 								variantManagementReference: sVariantManagementReference,
 								variantReference: "",
-								content: {}
+								content: {
+									title: this._oResourceBundle.getText("STANDARD_VARIANT_TITLE")
+								}
 							},
 							controlChanges: [],
 							variantChanges: {}
