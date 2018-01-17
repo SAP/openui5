@@ -1660,7 +1660,23 @@ sap.ui.require([
 
 	QUnit.test("Default Test Table", function(assert) {
 		oTable.setFixedColumnCount(0);
+		var oInput = new sap.ui.table.test.TestInputControl({tabbable: true});
+		oTable.addExtension(oInput);
 		sap.ui.getCore().applyChanges();
+
+		var iPreventDefaultCount = 0;
+		oTable.addEventDelegate({
+			onsaphome: function(oEvent) {
+				if (oEvent.isDefaultPrevented()) {
+					iPreventDefaultCount++;
+				}
+			},
+			onsapend: function(oEvent) {
+				if (oEvent.isDefaultPrevented()) {
+					iPreventDefaultCount++;
+				}
+			}
+		});
 
 		/* Test on column header */
 
@@ -1670,28 +1686,36 @@ sap.ui.require([
 		// *HOME* -> SelectAll
 		qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
 		oElem = checkFocus(getSelectAll(), assert);
+		assert.ok(iPreventDefaultCount === 1, "Event default prevented");
 
 		// *HOME* -> SelectAll
 		qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
 		checkFocus(getSelectAll(), assert);
+		assert.ok(iPreventDefaultCount === 2, "Event default prevented");
 
 		// *END* -> First cell
 		qutils.triggerKeydown(oElem, Key.END, false, false, false);
 		oElem = checkFocus(getColumnHeader(0), assert);
+		assert.ok(iPreventDefaultCount === 3, "Event default prevented");
 
 		// *END* -> Last cell
 		qutils.triggerKeydown(oElem, Key.END, false, false, false);
 		oElem = checkFocus(getColumnHeader(iNumberOfCols - 1), assert);
+		assert.ok(iPreventDefaultCount === 4, "Event default prevented");
 
 		// *END* -> Last cell
 		qutils.triggerKeydown(oElem, Key.END, false, false, false);
 		oElem = checkFocus(getColumnHeader(iNumberOfCols - 1), assert);
+		assert.ok(iPreventDefaultCount === 5, "Event default prevented");
 
 		// *HOME* -> First cell
 		qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
 		checkFocus(getColumnHeader(0), assert);
+		assert.ok(iPreventDefaultCount === 6, "Event default prevented");
 
 		/* Test on first content row */
+
+		iPreventDefaultCount = 0;
 
 		// First cell
 		oElem = checkFocus(getCell(0, 0, true), assert);
@@ -1699,30 +1723,37 @@ sap.ui.require([
 		// *HOME* -> Selection cell
 		qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
 		oElem = checkFocus(getRowHeader(0), assert);
+		assert.ok(iPreventDefaultCount === 1, "Event default prevented");
 
 		// *HOME* -> Selection cell
 		qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
 		checkFocus(getRowHeader(0), assert);
+		assert.ok(iPreventDefaultCount === 2, "Event default prevented");
 
 		// *END* -> First cell
 		qutils.triggerKeydown(oElem, Key.END, false, false, false);
 		oElem = checkFocus(getCell(0, 0), assert);
+		assert.ok(iPreventDefaultCount === 3, "Event default prevented");
 
 		// *END* -> Last cell
 		qutils.triggerKeydown(oElem, Key.END, false, false, false);
 		oElem = checkFocus(getCell(0, iNumberOfCols - 1), assert);
+		assert.ok(iPreventDefaultCount === 4, "Event default prevented");
 
 		// *END* -> Last cell
 		qutils.triggerKeydown(oElem, Key.END, false, false, false);
 		oElem = checkFocus(getCell(0, iNumberOfCols - 1), assert);
+		assert.ok(iPreventDefaultCount === 5, "Event default prevented");
 
 		// *HOME* -> First cell
 		qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
 		checkFocus(getCell(0, 0), assert);
+		assert.ok(iPreventDefaultCount === 6, "Event default prevented");
 
 		/* Test on row actions */
 
 		initRowActions(oTable, 2, 2);
+		iPreventDefaultCount = 0;
 
 		// Row Action
 		oElem = checkFocus(getRowAction(0, true), assert);
@@ -1730,18 +1761,37 @@ sap.ui.require([
 		// *END* -> Row Action
 		qutils.triggerKeydown(oElem, Key.END, false, false, false);
 		oElem = checkFocus(getRowAction(0), assert);
+		assert.ok(iPreventDefaultCount === 1, "Event default prevented");
 
 		// *HOME* -> First cell
 		qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
 		oElem = checkFocus(getCell(0, 0), assert);
+		assert.ok(iPreventDefaultCount === 2, "Event default prevented");
 
 		// *END* -> Last cell
 		qutils.triggerKeydown(oElem, Key.END, false, false, false);
 		oElem = checkFocus(getCell(0, iNumberOfCols - 1), assert);
+		assert.ok(iPreventDefaultCount === 3, "Event default prevented");
 
 		// *END* -> Row Action
 		qutils.triggerKeydown(oElem, Key.END, false, false, false);
 		checkFocus(getRowAction(0), assert);
+		assert.ok(iPreventDefaultCount === 4, "Event default prevented");
+
+		// Focus not on table element
+
+		iPreventDefaultCount = 0;
+
+		oInput.focus();
+		oElem = checkFocus(oInput.getDomRef(), assert);
+
+		qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
+		oElem = checkFocus(oElem, assert);
+		assert.ok(iPreventDefaultCount === 0, "Event default not prevented");
+
+		qutils.triggerKeydown(oElem, Key.END, false, false, false);
+		oElem = checkFocus(oElem, assert);
+		assert.ok(iPreventDefaultCount === 0, "Event default not prevented");
 	});
 
 	QUnit.test("No Row Header", function(assert) {
