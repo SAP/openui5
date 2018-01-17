@@ -173,7 +173,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 
 			if (this._resizeListenerId) {
-				Device.resize.detachHandler(this._onResize);
+				Device.resize.detachHandler(this._onResize, this);
 				ResizeHandler.deregister(this._resizeListenerId);
 				this._resizeListenerId = null;
 			}
@@ -215,7 +215,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._$lightBox = this.$();
 
 			if (!this._resizeListenerId) {
-				Device.resize.attachHandler(this._onResize.bind(this));
+				Device.resize.attachHandler(this._onResize, this);
 				this._resizeListenerId = ResizeHandler.register(this, this._onResize.bind(this));
 			}
 		};
@@ -261,7 +261,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 
 			if (this._resizeListenerId) {
-				Device.resize.detachHandler(this._onResize);
+				Device.resize.detachHandler(this._onResize, this);
 				ResizeHandler.deregister(this._resizeListenerId);
 				this._resizeListenerId = null;
 			}
@@ -323,7 +323,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 */
 		LightBox.prototype.close = function () {
 			if (this._resizeListenerId) {
-				Device.resize.detachHandler(this._onResize);
+				Device.resize.detachHandler(this._onResize, this);
 				ResizeHandler.deregister(this._resizeListenerId);
 				this._resizeListenerId = null;
 			}
