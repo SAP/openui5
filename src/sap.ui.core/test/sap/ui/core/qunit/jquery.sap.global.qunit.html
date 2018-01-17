@@ -506,6 +506,32 @@
 			});
 
 
+			QUnit.test("FOUC marker (same URL)", function(assert) {
+				function getHrefForUrl(sUrl) {
+					return new URI(sUrl).absoluteTo(document.location).query("").toString();
+				}
+				var done = assert.async();
+				jQuery.sap.includeStyleSheet({
+					url: "testdata/testA.css",
+					id: "mylink-fouc",
+					attributes: {
+						"data-sap-ui-foucmarker": "mylink-fouc"
+					}
+				}).then(function() {
+					jQuery.sap.includeStyleSheet("testdata/testA.css", "mylink-fouc");
+				}).then(function() {
+					// ensure to not mark the link with the foucmarker if not a new link is added
+					var aFOUCLinks = document.querySelectorAll("link[data-sap-ui-foucmarker='mylink-fouc']");
+					assert.equal(aFOUCLinks.length, 0, "The FOUC marker should have been removed from the link.");
+					var oLink = document.getElementById("mylink-fouc");
+					assert.equal(oLink.parentNode, document.head, "Link is still included in the head.");
+					assert.equal(oLink.href, getHrefForUrl("testdata/testA.css"), "Href of link is correct.");
+					oLink.parentNode.removeChild(oLink);
+					done();
+				});
+			});
+
+
 			QUnit.test("custom attributes (immutable)", function(assert) {
 
 				var done = assert.async();
