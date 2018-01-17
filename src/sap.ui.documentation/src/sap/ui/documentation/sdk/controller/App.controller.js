@@ -174,6 +174,7 @@ sap.ui.define([
 					sTabId = this.oRouter.getRoute(sRouteName)._oConfig.target[0] + "Tab",
 					oTabToSelect = this._oView.byId(sTabId),
 					sKey = oTabToSelect ? oTabToSelect.getKey() : "home",
+					bPhone = Device.system.phone,
 					oViewModel = this.getModel("appView"),
 					bHasMaster = this.getOwnerComponent().getConfigUtil().hasMasterView(sRouteName),
 					oMasterView,
@@ -185,7 +186,7 @@ sap.ui.define([
 
 				this._toggleTabHeaderClass();
 
-				if (bHasMaster) { // on phone and tablet(portrait) we need the id of the master view (for navigation)
+				if (bPhone && bHasMaster) { // on phone we need the id of the master view (for navigation)
 					oMasterView = this.getOwnerComponent().getConfigUtil().getMasterView(sRouteName);
 					sMasterViewId = oMasterView && oMasterView.getId();
 					oViewModel.setProperty("/sMasterViewId", sMasterViewId);
@@ -208,17 +209,11 @@ sap.ui.define([
 					isShowHideMode = oSplitApp.getMode() === SplitAppMode.ShowHideMode,
 					isHideMode = oSplitApp.getMode() === SplitAppMode.HideMode,
 					sMasterViewId = this.getModel("appView").getProperty("/sMasterViewId"),
-					sSearchFieldId = sMasterViewId + "--searchField",
 					fnToggle;
 
 				if (!bPhone && (isShowHideMode || isHideMode)) {
 					fnToggle = (bPressed) ? oSplitApp.showMaster : oSplitApp.hideMaster;
 					fnToggle.call(oSplitApp);
-					if (bPressed) {
-						jQuery.sap.delayedCall(0, this, function () {
-							sap.ui.getCore().byId(sSearchFieldId).getFocusDomRef().focus();
-						});
-					}
 					return;
 				}
 
@@ -226,9 +221,6 @@ sap.ui.define([
 				if (bPhone) {
 					if (bPressed) {
 						oSplitApp.to(sMasterViewId);
-						jQuery.sap.delayedCall(0, this, function () {
-							sap.ui.getCore().byId(sSearchFieldId).getFocusDomRef().focus();
-						});
 					} else {
 						oSplitApp.backDetail();
 					}
