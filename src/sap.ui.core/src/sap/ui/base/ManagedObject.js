@@ -1737,8 +1737,15 @@ sap.ui.define([
 	 */
 	ManagedObject.prototype.removeAllAssociation = function(sAssociationName, bSuppressInvalidate){
 		var aIds = this.mAssociations[sAssociationName];
-		if (!aIds)	{
+		if (!aIds) {
 			return [];
+		}
+
+		delete this.mAssociations[sAssociationName];
+
+		// maybe there is no association to remove
+		if (!aIds.length) {
+			return aIds;
 		}
 
 		// set suppress invalidate flag
@@ -1746,7 +1753,6 @@ sap.ui.define([
 			this.iSuppressInvalidate++;
 		}
 
-		delete this.mAssociations[sAssociationName];
 		if (this._observer) {
 			this._observer.associationChange(this, sAssociationName, "remove", aIds);
 		}
@@ -2238,8 +2244,15 @@ sap.ui.define([
 		}
 
 		var aChildren = this.mAggregations[sAggregationName];
-		if (!aChildren)	{
+		if (!aChildren) {
 			return [];
+		}
+
+		delete this.mAggregations[sAggregationName];
+
+		// maybe there is no aggregation to remove
+		if (!aChildren.length) {
+			return aChildren;
 		}
 
 		// set suppress invalidate flag
@@ -2247,7 +2260,6 @@ sap.ui.define([
 			this.iSuppressInvalidate++;
 		}
 
-		delete this.mAggregations[sAggregationName];
 		for (var i = 0; i < aChildren.length; i++) {
 			aChildren[i].setParent(null);
 		}
@@ -2298,11 +2310,6 @@ sap.ui.define([
 			return this;
 		}
 
-		// set suppress invalidate flag
-		if (bSuppressInvalidate) {
-			this.iSuppressInvalidate++;
-		}
-
 		// Deleting the aggregation here before destroying the children is a BUG:
 		//
 		// The destroy() method on the children calls _removeChild() on this instance
@@ -2317,6 +2324,16 @@ sap.ui.define([
 		// as well, the fix has been abandoned.
 		//
 		delete this.mAggregations[sAggregationName]; //FIXME DESTROY: should be removed here
+
+		// maybe there is no aggregation to destroy
+		if (Array.isArray(aChildren) && !aChildren.length) {
+			return this;
+		}
+
+		// set suppress invalidate flag
+		if (bSuppressInvalidate) {
+			this.iSuppressInvalidate++;
+		}
 
 		if (aChildren instanceof ManagedObject) {
 			// FIXME DESTROY: this._removeChild(aChildren, sAggregationName, bSuppressInvalidate); // (optional, done by destroy())
