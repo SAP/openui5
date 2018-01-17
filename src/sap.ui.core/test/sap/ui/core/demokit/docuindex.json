@@ -387,7 +387,10 @@
 					"Set Up the Initial App",
 					"Data Access and Client-Server Communication",
 					"Automatic Type Detection",
-					"Filtering, Sorting, and Counting"
+					"Filtering, Sorting, and Counting",
+					"Batch Groups",
+					"Create and Edit",
+					"Delete"
 				]
 			}
 		],
