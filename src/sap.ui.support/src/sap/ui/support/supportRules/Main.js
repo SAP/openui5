@@ -19,11 +19,12 @@ sap.ui.define([
 	"sap/ui/support/supportRules/report/DataCollector",
 	"sap/ui/support/supportRules/WCBChannels",
 	"sap/ui/support/supportRules/Constants",
-	"sap/ui/support/supportRules/RuleSetLoader"
+	"sap/ui/support/supportRules/RuleSetLoader",
+	"sap/ui/support/supportRules/report/AnalysisHistoryFormatter"
 ],
 function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		  ExecutionScope, Highlighter, CommunicationBus, RuleSerializer,
-		  RuleSet, IssueManager, DataCollector, channelNames, constants, RuleSetLoader) {
+		  RuleSet, IssueManager, DataCollector, channelNames, constants, RuleSetLoader, AnalysisHistoryFormatter) {
 	"use strict";
 
 	var IFrameController = null;
@@ -117,21 +118,14 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 					 * @method
 					 * @name sap.ui.support.Main.getFormattedAnalysisHistory
 					 * @memberof sap.ui.support.Main
-					 * @returns {Promise|undefined} Analyzed and formatted history as string
+					 * @returns {string} Analyzed and formatted history
 					 */
 					getFormattedAnalysisHistory: function () {
 						if (that._oAnalyzer.running()) {
-							return;
+							return "";
 						}
 
-						// Lazily, asynchronously load the IssueFormatter
-						return new Promise(
-							function (resolve, reject) {
-								sap.ui.require(["sap/ui/support/supportRules/report/AnalysisHistoryFormatter"], function (AnalysisHistoryFormatter) {
-									resolve(AnalysisHistoryFormatter.format(IssueManager.getConvertedHistory()));
-								});
-							}
-						);
+						return AnalysisHistoryFormatter.format(IssueManager.getConvertedHistory());
 					}
 				};
 
