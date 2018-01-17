@@ -1273,7 +1273,7 @@ sap.ui.define([
 				delete that.mHierarchyDetailsByName[sNodeIDName];
 				if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.INFO, sClassName)) {
 					jQuery.sap.log.info("No level specified for hierarchy node '" + sNodeIDName
-						+ "'; ignored hierarchy", "", sClassName);
+						+ "'; ignoring hierarchy", "", sClassName);
 				}
 			} else if (!that.oDimensionDetailsSet[sNodeIDName]) {
 				// also add it as regular dimension, which is a precondition to integrate

@@ -1630,7 +1630,7 @@ sap.ui.require([
 		dimensionDetails : {},
 		hierarchyDetails : {},
 		maxAggregationLevel : [],
-		message : "No level specified for hierarchy node 'CostCenter_NodeID'; ignored hierarchy"
+		message : "No level specified for hierarchy node 'CostCenter_NodeID'; ignoring hierarchy"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("updateAnalyticalInfo: hierarchy dimensions tests - " + i, function (assert) {
 			var done = assert.async(),
