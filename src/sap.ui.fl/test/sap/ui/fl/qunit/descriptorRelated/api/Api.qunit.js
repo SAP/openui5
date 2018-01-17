@@ -1239,22 +1239,6 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		});
 	});
 
-	QUnit.test("create_flp_setFccApp", function(assert) {
-		return DescriptorInlineChangeFactory.create_flp_setFccApp({
-			"fccApp" : "ASSIGNABLE"
-		}).then(function(oDescriptorInlineChange) {
-			assert.notEqual(oDescriptorInlineChange, null);
-		});
-	});
-
-	QUnit.test("create_flp_setFccApp failure", function (assert) {
-		assert.throws(function(){
-			DescriptorInlineChangeFactory.create_flp_setFccApp({
-				"fccApp" : { }
-			});
-		});
-	});
-
 	QUnit.test("create_url_setUri", function(assert) {
 		return DescriptorInlineChangeFactory.create_url_setUri({
 			"uri" : "uri.com"

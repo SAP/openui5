@@ -63,7 +63,7 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 		        "appdescr_app_setTitle", "appdescr_app_setSubTitle", "appdescr_app_setShortTitle", "appdescr_app_setDescription", "appdescr_app_setInfo",
 		        "appdescr_app_setDestination", "appdescr_app_setKeywords", "appdescr_app_setAch", "appdescr_ui5_addNewModel", "appdescr_ui5_replaceComponentUsage",
 		        "appdescr_smb_addNamespace", "appdescr_smb_changeNamespace", "appdescr_ui_generic_app_setMainPage", "appdescr_ui_setIcon",
-		        "appdescr_ui5_addLibraries", "appdescr_flp_setFccApp", "appdescr_url_setUri"];
+		        "appdescr_ui5_addLibraries", "appdescr_url_setUri"];
 	};
 
 	DescriptorInlineChangeFactory.createNew = function(sChangeType,mParameters,mTexts) {
@@ -758,22 +758,6 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	DescriptorInlineChangeFactory.create_ui_setIcon = function(mParameters) {
 		Utils.checkParameterAndType(mParameters, "icon", "string");
 		return this._createDescriptorInlineChange('appdescr_ui_setIcon', mParameters);
-	};
-
-	/**
-	 * Creates an inline change of change type appdescr_flp_setFccApp
-	 *
-	 * @param {object} mParameters parameters of the change type
-	 * @param {object} mParameters.fccApp the fccApp string
-	 *
-	 * @return {Promise} resolving when creating the descriptor inline change was successful (without backend access)
-	 *
-	 * @private
-	 * @sap-restricted
-	 */
-	DescriptorInlineChangeFactory.create_flp_setFccApp = function(mParameters) {
-		Utils.checkParameterAndType(mParameters, "fccApp", "string");
-		return this._createDescriptorInlineChange('appdescr_flp_setFccApp', mParameters);
 	};
 
 	/**
