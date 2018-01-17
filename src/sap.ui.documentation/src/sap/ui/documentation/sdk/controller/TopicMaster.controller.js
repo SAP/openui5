@@ -55,7 +55,7 @@ sap.ui.define([
 				this._collapseAllNodes();
 				this._clearSelection();
 
-				if (!Device.system.phone) {
+				if (Device.system.desktop) {
 					jQuery.sap.delayedCall(0, this, function () {
 						this.getView().byId("searchField").getFocusDomRef().focus();
 					});

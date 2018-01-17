@@ -268,9 +268,6 @@ sap.ui.define([
 			_onControlsMasterMatched: function(event) {
 				this.showMasterSide();
 				if (!Device.system.phone) {
-					jQuery.sap.delayedCall(0, this, function () {
-						this.getView().byId("searchField").getFocusDomRef().focus();
-					});
 					this.getRouter().navTo("controls");
 				}
 			},
@@ -305,7 +302,7 @@ sap.ui.define([
 				this.showMasterSide();
 				this._resetListSelection();
 
-				if (!Device.system.phone) {
+				if (Device.system.desktop) {
 					jQuery.sap.delayedCall(0, this, function () {
 						this.getView().byId("searchField").getFocusDomRef().focus();
 					});
