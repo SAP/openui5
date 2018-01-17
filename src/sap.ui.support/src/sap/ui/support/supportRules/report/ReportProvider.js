@@ -260,7 +260,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/handlebars', 'sap/ui/supp
 		try {
 			var groupNumber = 1;
 
-			content += '<table class="sapUiTable"><tbody><tr><th>Name</th><th>Description</th></tr></tbody>';
+			content += '<table class="sapUiTable"><tbody><tr><th>Name</th><th>Description</th><th>Categories</th><th>Audiences</th></tr></tbody>';
 
 			for (var group in groups) {
 				var rules = groups[group];
@@ -282,7 +282,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/handlebars', 'sap/ui/supp
 				for (var rule in rules) {
 					var issueCountElement = rules[rule].selected ? ' (' + rules[rule].issueCount + ' issues)' : '';
 					var checked = '<span class="checked" style="' + (rules[rule].selected ? '' : 'visibility: hidden;') + '"> &#10004; </span>';
-					rulesTable += '<tr><td>' + checked + rules[rule].title + issueCountElement + '</td><td>' + rules[rule].description + '</td></tr>';
+					rulesTable += '<tr>';
+					rulesTable += '<td>' + checked + rules[rule].title + issueCountElement + '</td>';
+					rulesTable += '<td>' + rules[rule].description + '</td>';
+					rulesTable += '<td>' + rules[rule].categories.join(', ') + '</td>';
+					rulesTable += '<td>' + rules[rule].audiences.join(', ') + '</td>';
+					rulesTable += '</tr>';
 				}
 
 				content += '<tbody id="section-selected-rules-group' + groupNumber + '">' + rulesTable + '</tbody>';
