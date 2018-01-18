@@ -69,7 +69,7 @@ sap.ui.define([
 
 		// Assertions
 		Then.onTheWorklistPage.iShouldSeeTheTable().
-		and.iTeardownMyAppFrame();
+			and.iTeardownMyAppFrame();
 	});
 
 });

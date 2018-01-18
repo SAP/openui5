@@ -38,14 +38,15 @@
 			"desktop": true,
 			"tablet": true,
 			"phone": true
-		},
-		"supportedThemes": [
-			"sap_hcb",
-			"sap_belize"
-		]
+		}
 	},
 	"sap.ui5": {
-		"rootView": "mycompany.myapp.view.App",
+		"rootView": {
+			"viewName": "mycompany.myapp.view.App",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
 		"dependencies": {
 			"minUI5Version": "1.30.0",
 			"libs": {
@@ -83,7 +84,8 @@
 				"controlAggregation": "pages",
 				"bypassed": {
 					"target": "notFound"
-				}
+				},
+				"async": true
 			},
 			"routes": [
 				{

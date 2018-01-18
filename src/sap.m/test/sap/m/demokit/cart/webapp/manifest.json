@@ -34,18 +34,14 @@
 			"desktop": true,
 			"tablet": true,
 			"phone": true
-		},
-		"supportedThemes": [
-			"sap_hcb",
-			"sap_belize"
-		]
+		}
 	},
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.demo.cart.view.App",
 			"type": "XML",
-			"id": "app",
-			"async": true
+			"async": true,
+			"id": "app"
 		},
 		"dependencies": {
 			"minUI5Version": "1.36.0",

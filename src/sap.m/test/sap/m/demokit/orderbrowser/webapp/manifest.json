@@ -39,16 +39,13 @@
 			"desktop": true,
 			"tablet": true,
 			"phone": true
-		},
-		"supportedThemes": [
-			"sap_hcb",
-			"sap_belize"
-		]
+		}
 	},
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.demo.orderbrowser.view.App",
 			"type": "XML",
+			"async": true,
 			"id": "app"
 		},
 		"dependencies": {

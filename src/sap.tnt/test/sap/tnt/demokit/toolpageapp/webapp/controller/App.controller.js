@@ -81,7 +81,7 @@ sap.ui.define([
 			onUserNamePress: function(oEvent) {
 				var oBundle = this.getModel("i18n").getResourceBundle();
 				// close message popover
-				var oMessagePopover = this.getView().byId("errorMessagePopover");
+				var oMessagePopover = this.byId("errorMessagePopover");
 				if (oMessagePopover && oMessagePopover.isOpen()) {
 					oMessagePopover.destroy();
 				}
@@ -128,14 +128,14 @@ sap.ui.define([
 			},
 
 			onSideNavButtonPress: function() {
-				var oToolPage = this.getView().byId("app");
+				var oToolPage = this.byId("app");
 				var bSideExpanded = oToolPage.getSideExpanded();
 				this._setToggleButtonTooltip(bSideExpanded);
 				oToolPage.setSideExpanded(!oToolPage.getSideExpanded());
 			},
 
 			_setToggleButtonTooltip : function(bSideExpanded) {
-				var oToggleButton = this.getView().byId('sideNavigationToggleButton');
+				var oToggleButton = this.byId('sideNavigationToggleButton');
 				if (bSideExpanded) {
 					oToggleButton.setTooltip('Large Size Navigation');
 				} else {
@@ -145,7 +145,7 @@ sap.ui.define([
 
 			// Errors Pressed
 			onMessagePopoverPress: function (oEvent) {
-				if (!this.getView().byId("errorMessagePopover")) {
+				if (!this.byId("errorMessagePopover")) {
 					var oMessagePopover = new MessagePopover(this.getView().createId("errorMessagePopover"), {
 						placement: sap.m.VerticalPlacementType.Bottom,
 						items: {
@@ -156,7 +156,7 @@ sap.ui.define([
 							oMessagePopover.destroy();
 						}
 					});
-					this.getView().byId("app").addDependent(oMessagePopover);
+					this.byId("app").addDependent(oMessagePopover);
 					// forward compact/cozy style into dialog
 					jQuery.sap.syncStyleClass(this.getView().getController().getOwnerComponent().getContentDensityClass(), this.getView(), oMessagePopover);
 					oMessagePopover.openBy(oEvent.getSource());
@@ -171,7 +171,7 @@ sap.ui.define([
 			onNotificationPress: function (oEvent) {
 				var oBundle = this.getModel("i18n").getResourceBundle();
 				// close message popover
-				var oMessagePopover = this.getView().byId("errorMessagePopover");
+				var oMessagePopover = this.byId("errorMessagePopover");
 				if (oMessagePopover && oMessagePopover.isOpen()) {
 					oMessagePopover.destroy();
 				}
@@ -194,7 +194,7 @@ sap.ui.define([
 						oNotificationPopover.destroy();
 					}
 				});
-				this.getView().byId("app").addDependent(oNotificationPopover);
+				this.byId("app").addDependent(oNotificationPopover);
 				// forward compact/cozy style into dialog
 				jQuery.sap.syncStyleClass(this.getView().getController().getOwnerComponent().getContentDensityClass(), this.getView(), oNotificationPopover);
 				oNotificationPopover.openBy(oEvent.getSource());
