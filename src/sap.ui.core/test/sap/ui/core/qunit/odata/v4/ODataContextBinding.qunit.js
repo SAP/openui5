@@ -623,31 +623,29 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("fetchValue: relative binding w/ cache, mismatch", function (assert) {
-		var oBinding = this.oModel.bindContext("/absolute"),
-			oContext,
-			oContextMock,
-			oNestedBinding,
+		var oBinding,
+			oContext = {
+				fetchValue : function () {},
+				getPath : function () {return "/absolute";}
+			},
 			oListener = {},
 			sPath = "/absolute/bar",
 			oResult = {};
 
-		this.mock(oBinding).expects("getGroupId").never();
-		this.stub(ODataContextBinding.prototype, "fetchCache", function () {
-			this.oCachePromise = SyncPromise.resolve({});
+		this.stub(ODataContextBinding.prototype, "fetchCache", function (oContext0) {
+			// Note: c'tor calls this.applyParameters() before this.setContext()
+			this.oCachePromise = SyncPromise.resolve(oContext0 ? {} : undefined);
 		});
-		oBinding.initialize();
-		oContext = oBinding.getBoundContext();
-		oContextMock = this.mock(oContext);
-		oNestedBinding = this.oModel.bindContext("navigation", oContext, {$$groupId : "$direct"});
+		oBinding = this.oModel.bindContext("navigation", oContext, {$$groupId : "$direct"});
 
-		this.mock(oNestedBinding).expects("getRelativePath")
+		this.mock(oBinding).expects("getRelativePath")
 			.withExactArgs(sPath).returns(undefined);
-		oContextMock.expects("fetchValue")
+		this.mock(oContext).expects("fetchValue")
 			.withExactArgs(sPath, sinon.match.same(oListener), "group")
 			.returns(SyncPromise.resolve(oResult));
 
 		assert.strictEqual(
-			oNestedBinding.fetchValue(sPath, oListener, "group").getResult(),
+			oBinding.fetchValue(sPath, oListener, "group").getResult(),
 			oResult);
 	});
 

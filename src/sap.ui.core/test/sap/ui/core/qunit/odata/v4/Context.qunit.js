@@ -438,7 +438,8 @@ sap.ui.require([
 			this.mock(oCache).expects("update")
 				.withExactArgs("updateGroupId", sinon.match.same(oUpdateData.propertyPath),
 					vValueExpected, sinon.match.func, sinon.match.same(oUpdateData.editUrl),
-					sinon.match.same(sPropertyPath));
+					sinon.match.same(sPropertyPath))
+				.returns(SyncPromise.resolve());
 
 			//code under test
 			oCreatedContext.setProperty(sPropertyPath, vValue);

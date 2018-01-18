@@ -2454,6 +2454,8 @@ sap.ui.require([
 	QUnit.test("CollectionCache: create entity without initial data", function (assert) {
 		var oCache = _Cache.create(this.oRequestor, "Employees");
 
+		this.oRequestorMock.expects("request").returns(Promise.resolve({}));
+
 		// code under test
 		oCache.create("updateGroup", "Employees", "");
 

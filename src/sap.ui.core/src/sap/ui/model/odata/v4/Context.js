@@ -598,9 +598,9 @@ sap.ui.define([
 
 		this.getModel().getMetaModel().fetchUpdateData(sPath, this).then(function (oResult) {
 			return that.getBinding().withCache(function (oCache, sCachePath, oBinding) {
-				oCache.update(oBinding.getUpdateGroupId(),
-					oResult.propertyPath, vTargets, reportError, oResult.editUrl,
-					sCachePath)["catch"](reportError);
+				oCache.update(oBinding.getUpdateGroupId(), oResult.propertyPath, vTargets,
+						reportError, oResult.editUrl, sCachePath)
+					["catch"](reportError);
 			}, oResult.entityPath);
 		})["catch"](reportError);
 	};
