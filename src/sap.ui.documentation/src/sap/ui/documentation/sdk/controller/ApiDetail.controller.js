@@ -47,21 +47,27 @@ sap.ui.define([
 				this.setModel(this._oModel);
 
 				this._objectPage.attachEvent("_sectionChange", function (oEvent) {
-					var sSection = oEvent.getParameter("section").getTitle().toLowerCase(),
-						sSubSection = (oEvent.getParameter("subsection") && oEvent.getParameter("subsection").getTitle() !== 'Overview') ? oEvent.getParameter("subsection").getTitle() : '';
-					if (sSection === 'properties') {
-						sSection = 'controlProperties';
+					var sSection = oEvent.getParameter("section"),
+						sSubSection = oEvent.getParameter("subSection");
+
+					if (this._oNavigatingTo) {
+						if (this._oNavigatingTo === sSubSection) {
+							// Destination is reached
+							this._oNavigatingTo = null;
+						}
+
+						return;
 					}
-					if (sSection === 'fields') {
-						sSection = 'properties';
-					}
-					this.getRouter().stop();
-					this.getRouter().navTo("apiId", {
-						id: this._sTopicid,
-						entityType: sSection,
-						entityId: sSubSection
-					}, true);
-					this.getRouter().initialize(true);
+
+					this._modifyURL(sSection, sSubSection, false);
+				}, this);
+
+				this._objectPage.attachEvent("navigate", function (oEvent) {
+					var sSection = oEvent.getParameter("section"),
+						sSubSection = oEvent.getParameter("subSection");
+
+					this._oNavigatingTo = sSubSection;
+					this._modifyURL(sSection, sSubSection, true);
 				}, this);
 			},
 
@@ -80,6 +86,7 @@ sap.ui.define([
 			onJSDocLinkClick: function (oEvent) {
 				var oClassList = oEvent.target.classList,
 					bJSDocLink = oClassList.contains("jsdoclink"),
+					sLinkTarget = oEvent.target.getAttribute("data-sap-ui-target"),
 					sEntityType;
 
 				// Not a JSDocLink - we do nothing
@@ -96,7 +103,8 @@ sap.ui.define([
 					return;
 				}
 
-				this._scrollToEntity(sEntityType, oEvent.target.getAttribute("data-sap-ui-target"));
+				this._scrollToEntity(sEntityType, sLinkTarget);
+				this._navigateRouter(sEntityType, sLinkTarget, true);
 			},
 
 			/* =========================================================== */
@@ -258,6 +266,30 @@ sap.ui.define([
 
 				oParent && oParent.removeAggregation("subSection", oSummaryTableReference, true);
 				oSummaryTableReference.destroy();
+			},
+
+			_navigateRouter: function(sEntityType, sEntityId, bShouldStoreToHistory) {
+				this.getRouter().stop();
+				this.getRouter().navTo("apiId", {
+					id: this._sTopicid,
+					entityType: sEntityType,
+					entityId: sEntityId
+				}, !bShouldStoreToHistory);
+				this.getRouter().initialize(true);
+			},
+
+			_modifyURL: function(sSection, sSubSection, bShouldStoreToHistory) {
+				sSection = sSection.getTitle().toLowerCase();
+				sSubSection = (sSubSection && sSubSection.getTitle() !== 'Overview') ? sSubSection.getTitle() : '';
+
+				if (sSection === 'properties') {
+					sSection = 'controlProperties';
+				}
+				if (sSection === 'fields') {
+					sSection = 'properties';
+				}
+
+				this._navigateRouter(sSection, sSubSection, bShouldStoreToHistory);
 			},
 
 			_prettify: function () {

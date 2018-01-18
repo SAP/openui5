@@ -299,7 +299,12 @@ sap.ui.define([
 						/**
 						 * The selected section object.
 						 */
-						section: {type: "sap.uxap.ObjectPageSection"}
+						section: {type: "sap.uxap.ObjectPageSection"},
+
+						/**
+						 * The selected subsection object.
+						 */
+						subSection: {type: "sap.uxap.ObjectPageSubSection"}
 					}
 				}
 			},
@@ -1484,7 +1489,10 @@ sap.ui.define([
 		}
 
 		if (bIsTabClicked) {
-			this.fireNavigate({section: ObjectPageSection._getClosestSection(oSection)});
+			this.fireNavigate({
+				section: ObjectPageSection._getClosestSection(oSection),
+				subSection: oSection instanceof ObjectPageSubSection ? oSection : oSection.getSubSections()[0]
+			});
 		}
 
 		if (this._bHeaderInTitleArea && !this._shouldPreserveHeaderInTitleArea()) {
@@ -2291,7 +2299,10 @@ sap.ui.define([
 
 			if (sClosestSubSectionId !== this._sScrolledSubSectionId) {
 				this._sScrolledSubSectionId = sClosestSubSectionId;
-				this.fireEvent("_sectionChange", {section: this.oCore.byId(sClosestId), subsection: this.oCore.byId(sClosestSubSectionId)});
+				this.fireEvent("_sectionChange", {
+					section: this.oCore.byId(sClosestId),
+					subSection: this.oCore.byId(sClosestSubSectionId)
+				});
 			}
 		}
 
