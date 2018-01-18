@@ -2,7 +2,25 @@
  * ${copyright}
  */
 
-sap.ui.define([	"jquery.sap.global", "sap/ui/fl/Utils", "sap/ui/fl/transport/Transports", "sap/ui/fl/transport/TransportDialog", "sap/ui/fl/registry/Settings" ], function(jQuery, Utils, Transports, TransportDialog, FlexSettings) {
+sap.ui.define([
+	"jquery.sap.global",
+	"sap/ui/fl/Utils",
+	"sap/m/MessageBox",
+	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/transport/Transports",
+	"sap/ui/fl/transport/TransportDialog",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/core/BusyIndicator"
+], function(
+	jQuery,
+	Utils,
+	MessageBox,
+	FlexControllerFactory,
+	Transports,
+	TransportDialog,
+	FlexSettings,
+	BusyIndicator
+) {
 	"use strict";
 	/**
 	 * @public
@@ -347,6 +365,86 @@ sap.ui.define([	"jquery.sap.global", "sap/ui/fl/Utils", "sap/ui/fl/transport/Tra
 
 			that.selectTransport(oObject, fnOkay, fnError, false, oControl, sStyleClass);
 		});
+	};
+
+	/**
+	 * Checks transport info object
+	 *
+	 * @param {Object} [oTransportInfo] - transport info object
+	 * @returns {boolean} returns true if transport info is complete
+	 * @public
+	 */
+	TransportSelection.prototype.checkTransportInfo = function(oTransportInfo) {
+		return oTransportInfo && oTransportInfo.transport && oTransportInfo.packageName !== "$TMP";
+	};
+
+	/**
+	 * Prepare all changes and assign them to an existing transport.
+	 *
+	 * @public
+	 * @param {Object} oTransportInfo - object containing the package name and the transport
+	 * @param {string} oTransportInfo.packageName - name of the package
+	 * @param {string} oTransportInfo.transport - ID of the transport
+	 * @param {Array} aAllLocalChanges - array that includes all local changes
+	 * @returns {Promise} Returns a Promise which resolves without parameters
+	 */
+	TransportSelection.prototype._prepareChangesForTransport = function(oTransportInfo, aAllLocalChanges) {
+		if (aAllLocalChanges.length > 0) {
+			// Pass list of changes to be transported with transport request to backend
+			var oTransports = new Transports();
+			var aTransportData = oTransports._convertToChangeTransportData(aAllLocalChanges);
+			var oTransportParams = {};
+			//packageName is '' in CUSTOMER layer (no package input field in transport dialog)
+			oTransportParams.package = oTransportInfo.packageName;
+			oTransportParams.transportId = oTransportInfo.transport;
+			oTransportParams.changeIds = aTransportData;
+
+			return oTransports.makeChangesTransportable(oTransportParams).then(function() {
+
+				// remove the $TMP package from all changes; has been done on the server as well,
+				// but is not reflected in the client cache until the application is reloaded
+				aAllLocalChanges.forEach(function(oChange) {
+
+					if (oChange.getPackage() === '$TMP') {
+						var oDefinition = oChange.getDefinition();
+						oDefinition.packageName = oTransportInfo.packageName;
+						oChange.setResponse(oDefinition);
+					}
+				});
+			});
+		}
+	};
+
+	TransportSelection.prototype.transportAllUIChanges = function(oRootControl, sStyleClass, sLayer) {
+		var fnHandleAllErrors = function (oError) {
+			BusyIndicator.hide();
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+			var sMessage = oResourceBundle.getText("MSG_TRANSPORT_ERROR", oError ? [oError.message || oError] : undefined);
+			var sTitle = oResourceBundle.getText("HEADER_TRANSPORT_ERROR");
+			Utils.log.error("transport error" + oError);
+			MessageBox.show(sMessage, {
+				icon: MessageBox.Icon.ERROR,
+				title: sTitle,
+				styleClass: sStyleClass
+			});
+			return "Error";
+		};
+
+		return this.openTransportSelection(null, oRootControl, sStyleClass)
+			.then(function(oTransportInfo) {
+				if (this.checkTransportInfo(oTransportInfo)) {
+					BusyIndicator.show(0);
+					var oFlexController = FlexControllerFactory.createForControl(oRootControl);
+					oFlexController.getComponentChanges({currentLayer: sLayer, includeCtrlVariants: true})
+						.then(function(aAllLocalChanges) {
+							return this._prepareChangesForTransport(oTransportInfo, aAllLocalChanges)
+								.then(function() {
+									BusyIndicator.hide();
+								});
+						}.bind(this));
+				}
+			}.bind(this))
+			['catch'](fnHandleAllErrors);
 	};
 
 	return TransportSelection;
