@@ -550,10 +550,16 @@ sap.ui.require([
 		 * @param {string} sControlId The (symbolic) control ID for which changes are expected
 		 */
 		setFormatter : function (assert, oControl, sControlId) {
-			var that = this;
+			var oBindingInfo = oControl.getBindingInfo("text"),
+				fnOriginalFormatter = oBindingInfo.formatter,
+				that = this;
 
-			oControl.getBindingInfo("text").formatter = function (sValue) {
-				that.checkValue(assert, sValue, sControlId);
+			oBindingInfo.formatter = function (sValue) {
+				var sExpectedValue = fnOriginalFormatter
+						? fnOriginalFormatter.apply(this, arguments)
+						: sValue;
+
+				that.checkValue(assert, sExpectedValue, sControlId);
 			};
 		},
 
@@ -567,10 +573,16 @@ sap.ui.require([
 		 * @param {string} sControlId The control ID for which changes are expected
 		 */
 		setFormatterInList : function (assert, oControl, sControlId) {
-			var that = this;
+			var oBindingInfo = oControl.getBindingInfo("text"),
+				fnOriginalFormatter = oBindingInfo.formatter,
+				that = this;
 
 			oControl.getBindingInfo("text").formatter = function (sValue) {
-				that.checkValue(assert, sValue, sControlId,
+				var sExpectedValue = fnOriginalFormatter
+						? fnOriginalFormatter.apply(this, arguments)
+						: sValue;
+
+				that.checkValue(assert, sExpectedValue, sControlId,
 					this.getBindingContext()
 					&& (this.getBindingContext().getIndex
 						? this.getBindingContext().getIndex()
@@ -3479,5 +3491,27 @@ sap.ui.require([
 
 		return this.createView(assert, sView, oModel);
 	});
+
+	//*********************************************************************************************
+	// Scenario: Support expression binding in ODataModel.integration.qunit
+	testViewStart("Expression binding",
+		'<Text id="text" text="{= \'Hello, \' + ${/EMPLOYEES(\'2\')/Name} }" />',
+		{"EMPLOYEES('2')/Name" : {"value" : "Frederic Fall"}},
+		{"text" : "Hello, Frederic Fall"}
+	);
+
+	//*********************************************************************************************
+	// Scenario: Support expression binding on a list in ODataModel.integration.qunit
+	// Note: Use "$\{Name}" to avoid that Maven replaces "${Name}"
+	testViewStart("Expression binding in a list", '\
+<Table items="{/EMPLOYEES}">\
+	<ColumnListItem>\
+		<Text id="text" text="{= \'Hello, \' + $\{Name} }" />\
+	</ColumnListItem>\
+</Table>',
+		{"EMPLOYEES?$skip=0&$top=100" :
+			{"value" : [{"Name" : "Frederic Fall"}, {"Name" : "Jonathan Smith"}]}},
+		{"text" : ["Hello, Frederic Fall", "Hello, Jonathan Smith"]}
+	);
 });
 //TODO test delete
