@@ -23,7 +23,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/unified/calendar/CalendarDate', '
 
 	};
 
-	DatesRowRenderer.getClass = function(oDatesRow){
+	DatesRowRenderer.getClass = function(oRm, oDatesRow){
 
 		var sClasses = "sapUiCalDatesRow sapUiCalRow";
 
