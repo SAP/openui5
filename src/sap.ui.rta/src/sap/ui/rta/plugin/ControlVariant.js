@@ -216,15 +216,24 @@ sap.ui.define([
 	 * @public
 	 */
 	ControlVariant.prototype.isVariantSwitchEnabled = function(oOverlay) {
+		var aVariants = [];
 		if (this._isVariantManagementControl(oOverlay)) {
 			var oElement = oOverlay.getElementInstance(),
 				sVariantManagementReference = oOverlay.getVariantManagement ? oOverlay.getVariantManagement() : undefined;
 			if (!sVariantManagementReference) {
 				return false;
 			}
-			var oModel = this._getVariantModel(oElement),
-				aVariants = oModel ? oModel.getData()[sVariantManagementReference].variants : [],
-				bEnabled = aVariants.length > 1;
+			var oModel = this._getVariantModel(oElement);
+			if (oModel) {
+				aVariants = oModel.getData()[sVariantManagementReference].variants.reduce(function(aReducedVariants, oVariant) {
+					if (oVariant.visible) {
+						return aReducedVariants.concat(oVariant);
+					} else {
+						return aReducedVariants;
+					}
+				}, []);
+			}
+			var bEnabled = aVariants.length > 1;
 			return bEnabled;
 		} else {
 			return false;
@@ -553,15 +562,20 @@ sap.ui.define([
 			var oModel = this._getVariantModel(oOverlay.getElementInstance());
 			var sManagementReferenceId = oOverlay.getVariantManagement();
 
-			var aSubmenuItems = oModel.getData()[sManagementReferenceId].variants.map(function(oVariant) {
-				var bCurrentItem = oModel.getData()[sManagementReferenceId].currentVariant === oVariant.key;
-				return {
-					id: oVariant.key,
-					text: oVariant.title,
-					icon: bCurrentItem ? "sap-icon://accept" : "",
-					enabled: !bCurrentItem
-				};
-			});
+			var aSubmenuItems = oModel.getData()[sManagementReferenceId].variants.reduce(function(aReducedVariants, oVariant) {
+				if (oVariant.visible) {
+					var bCurrentItem = oModel.getData()[sManagementReferenceId].currentVariant === oVariant.key;
+					var oItem = {
+						id: oVariant.key,
+						text: oVariant.title,
+						icon: bCurrentItem ? "sap-icon://accept" : "",
+						enabled: !bCurrentItem
+					};
+					return aReducedVariants.concat(oItem);
+				} else {
+					return aReducedVariants;
+				}
+			}, []);
 
 			aMenuItems.push({
 				id: "CTX_VARIANT_SWITCH_SUBMENU",

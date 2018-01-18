@@ -224,10 +224,10 @@ sap.ui.define([
 		return this.oFlexController.revertChangesOnControl(aDirtyChanges.reverse(), oAppComponent);
 	};
 
-	VariantModel.prototype._getVariantLabelCount = function(sNexText, sVariantManagementReference) {
+	VariantModel.prototype._getVariantLabelCount = function(sNewText, sVariantManagementReference) {
 		var oData = this.getData();
 		return oData[sVariantManagementReference].variants.reduce( function (iCount, oVariant) {
-			if (sNexText === oVariant.title) {
+			if (sNewText === oVariant.title && oVariant.visible) {
 				iCount++;
 			}
 			return iCount;
@@ -259,7 +259,7 @@ sap.ui.define([
 			} else if (sKey === "layer") {
 				oDuplicateVariant.content[sKey] = mPropertyBag.layer;
 			} else if (sKey === "content") {
-				oDuplicateVariant.content[sKey] = oSourceVariant.content[sKey];
+				oDuplicateVariant.content[sKey] = JSON.parse(JSON.stringify(oSourceVariant.content[sKey]));
 				var sTitle = this.getVariantTitle(sSourceVariantReference);
 				oDuplicateVariant.content.content.title = mPropertyBag.title || sTitle + " Copy";
 			} else {
@@ -453,7 +453,7 @@ sap.ui.define([
 		}
 
 		if (iVariantIndex > -1) {
-			var iSortedIndex = this.oVariantController._setVariantData(mNewChangeData, sVariantManagementReference, iVariantIndex);
+			var iSortedIndex = this.oVariantController._setVariantData(mAdditionalChangeContent, sVariantManagementReference, iVariantIndex);
 			oData[sVariantManagementReference].variants.splice(iVariantIndex, 1);
 			oData[sVariantManagementReference].variants.splice(iSortedIndex, 0, oVariant);
 		} else if (this.oVariantController._mVariantManagement[sVariantManagementReference]){
