@@ -59,6 +59,7 @@ sap.ui.define([
 			}
 
 			return sap.ui.view({
+				async : true,
 				models : {
 					undefined : oModel
 				},
