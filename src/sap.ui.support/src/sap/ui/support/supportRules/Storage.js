@@ -186,6 +186,7 @@ function (RuleSerializer, constants) {
 		 */
 		removeAllData: function() {
 			localStorage.removeItem(constants.LOCAL_STORAGE_TEMP_RULES_KEY);
+			localStorage.removeItem(constants.LOCAL_STORAGE_SELECTED_RULES_KEY);
 			localStorage.removeItem(constants.LOCAL_STORAGE_SELECTED_CONTEXT_KEY);
 			localStorage.removeItem(constants.LOCAL_STORAGE_SELECTED_CONTEXT_COMPONENT_KEY);
 		},

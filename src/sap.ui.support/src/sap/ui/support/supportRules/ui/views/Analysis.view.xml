@@ -44,7 +44,8 @@
 							</m:subHeader>
 						<t:TreeTable
 								id="ruleList"
-								selectionMode="Multi"
+								collapseRecursive="false"
+								selectionMode="MultiToggle"
 								enableColumnReordering="false"
 								expandFirstLevel="true"
 								rows="{path: '/treeViewModel'}"
@@ -53,7 +54,9 @@
 								visible="{= ${/selectedSetPreviewKey} === 'availableRules' }"
 								visibleRowCountMode="Auto"
 								selectionBehavior="RowSelector"
-								rowActionCount="1">
+								rowActionCount="1"
+								toggleOpenState="onToggleOpenState"
+								rowSelectionChange="onRowSelectionChange">
 							<t:columns>
 								<t:Column label="Rules">
 									<t:template>
