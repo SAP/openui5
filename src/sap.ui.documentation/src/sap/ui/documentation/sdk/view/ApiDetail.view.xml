@@ -129,7 +129,7 @@
 											<m:ColumnListItem>
 												<m:cells>
 
-													<m:Text class="sapUiDocumentationParamBold" text="{name}" wrapping="false"/>
+													<custom:ParamText class="sapUiDocumentationParamBold" text="{name}"/>
 
 													<layout:VerticalLayout visible="{= ${deprecated} !== undefined }">
 														<m:ObjectStatus icon="sap-icon://message-error" state="Error" text="Deprecated"/>
@@ -244,7 +244,7 @@
 											<m:ColumnListItem>
 												<m:cells>
 
-													<m:Text class="sapUiDocumentationParamBold" text="{name}" wrapping="false"/>
+													<custom:ParamText class="sapUiDocumentationParamBold" text="{name}"/>
 
 													<m:Link text="{type}"
 															href="#/api/{= ${type}.replace('[]', '') }"
@@ -346,7 +346,7 @@
 											<m:ColumnListItem visible="{visibility === 'public'}">
 												<m:cells>
 													<m:VBox>
-														<m:Text class="sapUiDocumentationParamBold" text="{name}" wrapping="false"/>
+														<custom:ParamText class="sapUiDocumentationParamBold" text="{name}"/>
 														<m:ObjectStatus visible="{= ${deprecated} !== undefined }" icon="sap-icon://message-error" state="Error" text="Deprecated"/>
 													</m:VBox>
 													<m:Text text="{cardinality}" wrapping="false"/>
@@ -570,7 +570,7 @@
 										<m:items>
 											<m:ColumnListItem>
 												<m:cells>
-													<m:Text class="sapUiDocumentationParamBold" text="{name}" wrapping="false"/>
+													<custom:ParamText class="sapUiDocumentationParamBold" text="{name}"/>
 													<m:Link text="{type}"
 															href="#/api/{type}"
 															enabled="{= !!${linkEnabled} }"/>
