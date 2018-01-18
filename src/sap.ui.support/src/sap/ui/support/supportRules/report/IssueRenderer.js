@@ -89,7 +89,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 		}
 
 		try {
-			content += '<table class="sapUiTable"><tr><th>Title</th><th>Categories</th><th>Audiences</th></tr>';
+			content += '<table class="sapUiTable"><tr><th>Name</th><th>Categories</th><th>Audiences</th></tr>';
 
 			for (var group in groups) {
 				content += renderGroup(group, groups[group], 'group' + groupNumber, groupNumber);
