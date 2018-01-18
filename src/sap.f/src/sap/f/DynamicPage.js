@@ -439,6 +439,23 @@ sap.ui.define([
 	};
 
 	/**
+	 * Toggles header content visibility style depending on the snapped/expanded state to exclude/include it from the tab chain.
+	 * @param {boolean} bTabbable
+	 * @private
+	 */
+
+	DynamicPage.prototype._toggleHeaderInTabChain = function (bTabbable) {
+		var oDynamicPageTitle = this.getTitle(),
+			oDynamicPageHeader = this.getHeader();
+
+		if (!exists(oDynamicPageTitle) || !exists(oDynamicPageHeader)) {
+			return;
+		}
+
+		oDynamicPageHeader.$().css("visibility", bTabbable ? "visible" : "hidden");
+	};
+
+	/**
 	 * Converts the header to collapsed (snapped) mode.
 	 * @param {boolean} bAppendHeaderToContent
 	 * @param {boolean} bUserInteraction - indicates if snapping was caused by user interaction (scroll, collapse button press, etc.)
@@ -474,6 +491,8 @@ sap.ui.define([
 			this.$titleArea.addClass("sapFDynamicPageTitleSnapped");
 			this._updateToggleHeaderVisualIndicators();
 		}
+
+		this._toggleHeaderInTabChain(false);
 	};
 
 	/**
@@ -484,6 +503,7 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._expandHeader = function (bAppendHeaderToTitle, bUserInteraction) {
 		var oDynamicPageTitle = this.getTitle();
+
 		jQuery.sap.log.debug("DynamicPage :: expand header", this);
 
 		if (exists(oDynamicPageTitle)) {
@@ -505,6 +525,8 @@ sap.ui.define([
 			this.$titleArea.removeClass("sapFDynamicPageTitleSnapped");
 			this._updateToggleHeaderVisualIndicators();
 		}
+
+		this._toggleHeaderInTabChain(true);
 	};
 
 	/**
@@ -531,6 +553,8 @@ sap.ui.define([
 			oDynamicPageHeader.$().toggleClass("sapFDynamicPageHeaderHidden", !bShow);
 			this._updateScrollBar();
 		}
+
+		this._toggleHeaderInTabChain(bShow);
 	};
 
 	/**
