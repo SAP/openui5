@@ -6,12 +6,14 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Change",
-	"sap/ui/fl/Variant"
+	"sap/ui/fl/Variant",
+	"sap/ui/fl/Cache"
 ], function (
 	jQuery,
 	Utils,
 	Change,
-	Variant
+	Variant,
+	Cache
 ) {
 	"use strict";
 
@@ -64,6 +66,7 @@ sap.ui.define([
 				var aVariants = oVariantManagementReference.variants.concat().sort(this.compareVariants);
 				var sVariantFromUrl;
 				var aURLVariants = Utils.getTechnicalURLParameterValues(oComponent, "sap-ui-fl-control-variant-id");
+				var oCacheEntry;
 
 				var iIndex = -1;
 				aVariants.forEach(function (oVariant, index) {
@@ -100,6 +103,8 @@ sap.ui.define([
 
 				//to set default variant from setDefault variantManagement changes
 				this._applyChangesOnVariantManagement(this._mVariantManagement[sVariantManagementReference]);
+				oCacheEntry = Cache.getEntry(this.getComponentName(), this.getAppVersion());
+				oCacheEntry.file.changes.variantSection = this._mVariantManagement;
 			}.bind(this));
 		}
 	};

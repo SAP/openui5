@@ -130,8 +130,8 @@ sap.ui.define([
 		}
 
 		function _isControlVariantChange () {
-			if ((oChangeContent.fileType === "ctrl_variant") || (oChangeContent.fileType === "ctrl_variant_change")){
-				return oChangeContent.variantManagementReference || oChangeContent.variantReference;
+			if ((oChangeContent.fileType === "ctrl_variant") || (oChangeContent.fileType === "ctrl_variant_change") || (oChangeContent.fileType === "ctrl_variant_management_change")){
+				return oChangeContent.variantManagementReference || oChangeContent.variantReference || (oChangeContent.selector && oChangeContent.selector.id);
 			}
 		}
 
@@ -194,6 +194,11 @@ sap.ui.define([
 				aChanges = aChanges.concat(aVariantChanges);
 			}
 
+			var bIncludeControlVariants = mPropertyBag && mPropertyBag.includeCtrlVariants;
+			if (bIncludeControlVariants && oWrappedChangeFileContent.changes.variantSection) {
+				aChanges = aChanges.concat(this._getAllCtrlVariantChanges(oWrappedChangeFileContent.changes.variantSection));
+			}
+
 			var sCurrentLayer = mPropertyBag && mPropertyBag.currentLayer;
 			if (sCurrentLayer) {
 				var aCurrentLayerChanges = [];
@@ -222,7 +227,6 @@ sap.ui.define([
 					resolve(aChanges.filter(this._preconditionsFulfilled.bind(this, aActiveContexts, bIncludeVariants)).map(createChange));
 				}.bind(this));
 			}.bind(this));
-
 		}.bind(this));
 
 		function createChange(oChangeContent) {
@@ -230,6 +234,31 @@ sap.ui.define([
 			change.setState(Change.states.PERSISTED);
 			return change;
 		}
+	};
+
+	ChangePersistence.prototype._getAllCtrlVariantChanges = function(mVariantManagementReference) {
+		var aCtrlVariantChanges = [];
+		Object.keys(mVariantManagementReference).forEach(function(sVariantManagementReference) {
+			var oVariantManagementContent = mVariantManagementReference[sVariantManagementReference];
+			//variant_management_change
+			Object.keys(oVariantManagementContent.variantManagementChanges).forEach(function(sVariantManagementChange) {
+				aCtrlVariantChanges = aCtrlVariantChanges.concat(oVariantManagementContent.variantManagementChanges[sVariantManagementChange].slice(-1)[0]); /*last change*/
+			});
+
+			oVariantManagementContent.variants.forEach( function(oVariant) {
+				//control_change
+				aCtrlVariantChanges = aCtrlVariantChanges.concat(oVariant.controlChanges);
+				//variant_change
+				Object.keys(oVariant.variantChanges).forEach(function(sVariantChange) {
+					aCtrlVariantChanges = aCtrlVariantChanges.concat(oVariant.variantChanges[sVariantChange].slice(-1)[0]); /*last change*/
+				});
+				//variant - don't copy standard variant
+				aCtrlVariantChanges = (oVariant.content.fileName !== sVariantManagementReference) ?
+											aCtrlVariantChanges.concat([oVariant.content]) :
+											aCtrlVariantChanges;
+			});
+		});
+		return aCtrlVariantChanges;
 	};
 
 	/**
@@ -773,7 +802,12 @@ sap.ui.define([
 
 		return function() {
 			if (!bSkipUpdateCache) {
-				if (oDirtyChange.getPendingAction() === "NEW" && oDirtyChange.getFileType() !== "ctrl_variant_change") {
+				if (oDirtyChange.getPendingAction() === "NEW" &&
+					oDirtyChange.getFileType() !== "ctrl_variant_change" &&
+					oDirtyChange.getFileType() !== "ctrl_variant_management_change" &&
+					oDirtyChange.getFileType() !== "ctrl_variant" &&
+					!oDirtyChange.getVariantReference()
+				) {
 					Cache.addChange(that._mComponent, oDirtyChange.getDefinition());
 				} else if (oDirtyChange.getPendingAction() === "DELETE") {
 					Cache.deleteChange(that._mComponent, oDirtyChange.getDefinition());
