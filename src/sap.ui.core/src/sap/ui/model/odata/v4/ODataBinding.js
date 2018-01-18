@@ -349,7 +349,8 @@ sap.ui.define([
 
 	/**
 	 * Refreshes the binding. Prompts the model to retrieve data from the server using the given
-	 * group ID and notifies the control that new data is available.
+	 * group ID and notifies the control that new data is available. The method does nothing for a
+	 * suspended binding.
 	 *
 	 * Refresh is supported for bindings which are not relative to a
 	 * {@link sap.ui.model.odata.v4.Context}.
@@ -376,6 +377,8 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
+	 * @see sap.ui.model.odata.v4.ODataContextBinding#suspend
+	 * @see sap.ui.model.odata.v4.ODataListBinding#suspend
 	 * @see #hasPendingChanges
 	 * @see #resetChanges
 	 * @since 1.37.0
@@ -389,6 +392,9 @@ sap.ui.define([
 			throw new Error("Cannot refresh due to pending changes");
 		}
 		this.oModel.checkGroupId(sGroupId);
+		if (this.bSuspended) {
+			return;
+		}
 
 		// The actual refresh is specific to the binding and is implemented in each binding class.
 		this.refreshInternal(sGroupId, true);
@@ -490,34 +496,6 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.resetInvalidDataState = function () {
-	};
-
-	/**
-	 * Method not supported
-	 *
-	 * @throws {Error}
-	 *
-	 * @public
-	 * @see sap.ui.model.Binding#resume
-	 * @since 1.37.0
-	 */
-	// @override sap.ui.model.Binding#resume
-	ODataBinding.prototype.resume = function () {
-		throw new Error("Unsupported operation: resume");
-	};
-
-	/**
-	 * Method not supported
-	 *
-	 * @throws {Error}
-	 *
-	 * @public
-	 * @see sap.ui.model.Binding#suspend
-	 * @since 1.37.0
-	 */
-	// @override sap.ui.model.Binding#suspend
-	ODataBinding.prototype.suspend = function () {
-		throw new Error("Unsupported operation: suspend");
 	};
 
 	/**

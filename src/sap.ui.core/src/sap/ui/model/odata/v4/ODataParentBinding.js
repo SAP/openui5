@@ -519,8 +519,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Initializes the OData list binding. Fires a 'change' event in case the binding has a
-	 * resolved path.
+	 * Initializes the OData list binding: Fires a 'change' event in case the binding has a
+	 * resolved path and it is not suspended.
 	 *
 	 * @protected
 	 * @see sap.ui.model.Binding#initialize
@@ -528,7 +528,7 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.Binding#initialize
 	ODataParentBinding.prototype.initialize = function () {
-		if (!this.bRelative || this.oContext) {
+		if ((!this.bRelative || this.oContext) && !this.bSuspended) {
 			this._fireChange({reason : ChangeReason.Change});
 		}
 	};
@@ -640,6 +640,32 @@ sap.ui.define([
 	};
 
 	/**
+	 * Resumes this binding. The binding can again fire change events and trigger data service
+	 * requests.
+	 *
+	 * @throws {Error}
+	 *   If this binding is relative to a {@link sap.ui.model.odata.v4.Context} or if it is an
+	 *   operation binding
+	 *
+	 * @public
+	 * @see sap.ui.model.Binding#resume
+	 * @see #suspend
+	 * @since 1.53.0
+	 */
+	// @override sap.ui.model.Binding#resume
+	ODataParentBinding.prototype.resume = function () {
+		if (this.oOperation) {
+			throw new Error("Cannot resume an operation binding: " + this);
+		}
+		if (this.bRelative && (!this.oContext || this.oContext.fetchValue)) {
+			throw new Error("Cannot resume a relative binding: " + this);
+		}
+
+		this.bSuspended = false;
+		this._fireChange({reason : ChangeReason.Change});
+	};
+
+	/**
 	 * Adds the key properties of the entity reached by the given navigation property path to
 	 * $select of the query options. Expects that the type has already been loaded so that it can
 	 * be accessed synchronously.
@@ -660,6 +686,31 @@ sap.ui.define([
 				return vKey;
 			}));
 		}
+	};
+
+	/**
+	 * Suspends this binding. A suspended binding does not fire change events nor does it trigger
+	 * data service requests. Call {@link #resume} to resume the binding.
+	 *
+	 * @throws {Error}
+	 *   If this binding is relative to a {@link sap.ui.model.odata.v4.Context} or if it is an
+	 *   operation binding
+	 *
+	 * @public
+	 * @see sap.ui.model.Binding#suspend
+	 * @see #resume
+	 * @since 1.53.0
+	 */
+	// @override sap.ui.model.Binding#suspend
+	ODataParentBinding.prototype.suspend = function () {
+		if (this.oOperation) {
+			throw new Error("Cannot suspend an operation binding: " + this);
+		}
+		if (this.bRelative && (!this.oContext || this.oContext.fetchValue)) {
+			throw new Error("Cannot suspend a relative binding: " + this);
+		}
+
+		this.bSuspended = true;
 	};
 
 	/**

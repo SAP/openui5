@@ -1039,11 +1039,19 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("forbidden", function (assert) {
-		var oPropertyBinding = this.oModel.bindProperty("Name");
+		var oBinding = this.oModel.bindProperty("Name");
 
 		assert.throws(function () {
-			oPropertyBinding.refresh();
+			oBinding.refresh();
 		}, new Error("Refresh on this binding is not supported"));
+
+		assert.throws(function () {
+			oBinding.resume();
+		}, new Error("Unsupported operation: resume"));
+
+		assert.throws(function () {
+			oBinding.suspend();
+		}, new Error("Unsupported operation: suspend"));
 	});
 
 	//*********************************************************************************************

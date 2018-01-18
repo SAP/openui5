@@ -124,14 +124,6 @@ sap.ui.require([
 		assert.throws(function () { //TODO implement
 			oBinding.isInitial();
 		}, new Error("Unsupported operation: isInitial"));
-
-		assert.throws(function () { //TODO implement
-			oBinding.resume();
-		}, new Error("Unsupported operation: resume"));
-
-		assert.throws(function () { //TODO implement
-			oBinding.suspend();
-		}, new Error("Unsupported operation: suspend"));
 	});
 
 	//*********************************************************************************************
@@ -190,6 +182,25 @@ sap.ui.require([
 		assert.throws(function () {
 			oBinding.refresh("$invalid");
 		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refresh: does nothing for suspended binding", function (assert) {
+		var oBinding = new ODataBinding({
+				bSuspended : true,
+				oModel : {
+					checkGroupId : function () {}
+				},
+				refreshInternal : function () {}
+			});
+
+		this.mock(oBinding).expects("isRefreshable").withExactArgs().returns(true);
+		this.mock(oBinding).expects("hasPendingChanges").returns(false);
+		this.mock(oBinding.oModel).expects("checkGroupId");
+		this.mock(oBinding).expects("refreshInternal").never();
+
+		// code under test
+		oBinding.refresh("groupId");
 	});
 
 	//*********************************************************************************************

@@ -1915,4 +1915,141 @@ sap.ui.require([
 			assert.deepEqual(oBinding.mAggregatedQueryOptions, oFixture.result);
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("suspend: absolute binding", function (assert) {
+		var oBinding = new ODataParentBinding({sPath : "/Employees"});
+
+		// code under test
+		oBinding.suspend();
+
+		assert.strictEqual(oBinding.bSuspended, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("suspend: quasi-absolute binding", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oContext : {/* sap.ui.model.Context */},
+				sPath : "SO_2_SCHEDULE",
+				bRelative : true
+			});
+
+		// code under test
+		oBinding.suspend();
+
+		assert.strictEqual(oBinding.bSuspended, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("suspend: error on operation binding", function (assert) {
+		assert.throws(function () {
+			// code under test
+			new ODataParentBinding({
+				sPath : "/operation",
+				oOperation : {},
+				toString : function () { return "~"; }
+			}).suspend();
+		}, new Error("Cannot suspend an operation binding: ~"));
+	});
+
+	//*********************************************************************************************
+	[
+		undefined, // unresolved
+		{/* sap.ui.model.odata.v4.Context */fetchValue : function () {}} // resolved
+	].forEach(function (oContext, i) {
+		QUnit.test("suspend: error on relative binding, " + i, function (assert) {
+			assert.throws(function () {
+				// code under test
+				new ODataParentBinding({
+					oContext : oContext,
+					sPath : "SO_2_SCHEDULE",
+					bRelative : true,
+					toString : function () { return "~"; }
+				}).suspend();
+			}, new Error("Cannot suspend a relative binding: ~"));
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("initialize: no change event for suspended binding", function (assert) {
+		var oBinding = new ODataParentBinding({
+				_fireChange : function () {},
+				sPath : "/Employees",
+				bRelative : false
+			});
+
+		oBinding.suspend();
+		this.mock(oBinding).expects("_fireChange").never();
+
+		// code under test
+		oBinding.initialize();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resume: absolute binding", function (assert) {
+		var oBinding = new ODataParentBinding({
+				_fireChange : function () {},
+				sPath : "/Employees",
+				bRelative : false
+			});
+
+		oBinding.suspend();
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
+
+		// code under test
+		oBinding.resume();
+
+		assert.strictEqual(oBinding.bSuspended, false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resume: quasi-absolute binding", function (assert) {
+		var oBinding = new ODataParentBinding({
+				_fireChange : function () {},
+				oContext : {/* sap.ui.model.Context */},
+				sPath : "SO_2_SCHEDULE",
+				bRelative : true
+			});
+
+		oBinding.suspend();
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
+
+		// code under test
+		oBinding.resume();
+
+		assert.strictEqual(oBinding.bSuspended, false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resume: error on operation binding", function (assert) {
+		assert.throws(function () {
+			// code under test
+			new ODataParentBinding({
+				sPath : "/operation",
+				oOperation : {},
+				toString : function () { return "~"; }
+			}).resume();
+		}, new Error("Cannot resume an operation binding: ~"));
+	});
+
+	//*********************************************************************************************
+	[
+		undefined, // unresolved
+		{/* sap.ui.model.odata.v4.Context */fetchValue : function () {}} // resolved
+	].forEach(function (oContext, i) {
+		QUnit.test("resume: error on relative binding, " + i, function (assert) {
+			assert.throws(function () {
+				// code under test
+				new ODataParentBinding({
+					oContext : oContext,
+					sPath : "SO_2_SCHEDULE",
+					bRelative : true,
+					toString : function () { return "~"; }
+				}).resume();
+			}, new Error("Cannot resume a relative binding: ~"));
+		});
+	});
+	//TODO ODCB#fetchValue rejects with canceled Error for suspended binding
+	//TODO error handling for write APIs, refresh
+	//TODO Relative bindings inherit the suspended state from its parent binding
 });

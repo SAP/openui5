@@ -184,6 +184,8 @@ sap.ui.define([
 				this.byId("SalesOrders").getItems()[oContext.getIndex()]);
 			this._setSalesOrderBindingContext(oContext);
 
+			// resume binding to BusinessPartnerList to trigger request when dialog is opened
+			this.byId("NewBuyerID").getBinding("suggestionItems").resume();
 			oCreateSalesOrderDialog.setBindingContext(oContext);
 			oCreateSalesOrderDialog.open();
 

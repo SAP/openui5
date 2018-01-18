@@ -66,10 +66,9 @@
 							maxLength="10"
 							placeholder="Enter Buyer ID starting with '0'..."
 							showSuggestion="true"
-							suggestionItems="{/BusinessPartnerList}"
+							suggestionItems="{path : '/BusinessPartnerList', suspended : true}"
 							type="Text"
 							value="0100000000">
-							<!-- TODO: implement lazy loading of BusinessPartners -->
 							<suggestionItems>
 								<core:ListItem key="{BusinessPartnerID}"
 									additionalText="{CompanyName}"
