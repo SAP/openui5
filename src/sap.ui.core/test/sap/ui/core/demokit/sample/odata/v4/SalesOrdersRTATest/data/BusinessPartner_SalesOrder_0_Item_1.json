@@ -1,0 +1,30 @@
+{
+	"@odata.context" : "../$metadata#FOO1",
+	"@odata.etag" : "W/\"20160613065313.0000000\"",
+	"BusinessPartnerID" : "0100000001",
+	"CompanyName" : "Becker Berlin",
+	"LegalForm" : "GmbH",
+	"PhoneNumber" : "3088530",
+	"BP_2_CONTACT" : [{
+		"DateOfBirth" : null,
+		"EmailAddress" : "dagmar.schulze@beckerberlin.de",
+		"FirstName" : "Dagmar",
+		"LastName" : "Schulze",
+		"PhoneNumber" : "3088530",
+		"ContactGUID" : "005056ba-526b-1ee6-a6b8-90f8ab931b14"
+	}, {
+		"DateOfBirth" : null,
+		"EmailAddress" : "ursula.wexler@beckerberlin.de",
+		"FirstName" : "Ursula",
+		"LastName" : "Wexler",
+		"PhoneNumber" : "3088529",
+		"ContactGUID" : "005056ba-526b-1ee6-a6b8-90f8ab933b14"
+	}, {
+		"DateOfBirth" : null,
+		"EmailAddress" : "foo.bar@beckerberlin.de",
+		"FirstName" : "Foo",
+		"LastName" : "Bar",
+		"PhoneNumber" : "123456",
+		"ContactGUID" : "005056ba-526b-1ee6-a6b8-343959048528"
+	}]
+}

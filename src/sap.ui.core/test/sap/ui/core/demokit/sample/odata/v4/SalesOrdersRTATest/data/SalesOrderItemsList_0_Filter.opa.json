@@ -1,0 +1,71 @@
+{
+	"@odata.context" : "../$metadata#SOLineItemList(SOITEM_2_PRODUCT(PRODUCT_2_BP(BusinessPartnerID,CompanyName,LegalForm,PhoneNumber)))",
+	"value" : [
+		{
+			"SalesOrderID" : "0500000000",
+			"ItemPosition" : "0000000020",
+			"Note" : "EPM DG: SO ID 0500000000 Item 0000000020",
+			"NoteLanguage" : "E",
+			"CurrencyCode" : "EUR",
+			"GrossAmount" : "2972.62",
+			"NetAmount" : "2498.00",
+			"TaxAmount" : "474.62",
+			"DeliveryDate" : "2016-06-26T22:00:00Z",
+			"Quantity" : "2",
+			"QuantityUnit" : "EA",
+			"ProductID" : "HT-1001",
+			"SOITEM_2_PRODUCT" : {
+				"ProductID" : "HT-1001",
+				"TypeCode" : "PR",
+				"Category" : "Notebooks",
+				"Name" : "modified by QUnit test",
+				"NameLanguage" : "DE",
+				"Description" : "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+				"DescriptionLanguage" : "DE",
+				"SupplierID" : "0100000001",
+				"SupplierName" : "Becker Berlin",
+				"TaxTarifCode" : 1,
+				"MeasureUnit" : "EA",
+				"WeightMeasure" : "4.500",
+				"WeightUnit" : "KG",
+				"CurrencyCode" : "EUR",
+				"Price" : "1249.00",
+				"Width" : "29.000",
+				"Depth" : "17.000",
+				"Height" : "3.100",
+				"DimUnit" : "CM",
+				"CreatedAt" : "2016-06-13T06:53:13.000000Z",
+				"ChangedAt" : "2016-06-17T12:40:14.131122Z",
+				"PRODUCT_2_BP" : {
+					"@odata.etag" : "W/\"20160613065313.0000000\"",
+					"BusinessPartnerID" : "0100000001",
+					"CompanyName" : "Becker Berlin",
+					"LegalForm" : "GmbH",
+					"PhoneNumber" : "3088530",
+					"BP_2_CONTACT" : [{
+						"DateOfBirth" : null,
+						"EmailAddress" : "dagmar.schulze@beckerberlin.de",
+						"FirstName" : "Dagmar",
+						"LastName" : "Schulze",
+						"PhoneNumber" : "3088530",
+						"ContactGUID" : "005056ba-526b-1ee6-a6b8-90f8ab931b14"
+					}, {
+						"DateOfBirth" : null,
+						"EmailAddress" : "ursula.wexler@beckerberlin.de",
+						"FirstName" : "Ursula",
+						"LastName" : "Wexler",
+						"PhoneNumber" : "3088529",
+						"ContactGUID" : "005056ba-526b-1ee6-a6b8-90f8ab933b14"
+					}, {
+						"DateOfBirth" : null,
+						"EmailAddress" : "foo.bar@beckerberlin.de",
+						"FirstName" : "Foo",
+						"LastName" : "Bar",
+						"PhoneNumber" : "123456",
+						"ContactGUID" : "005056ba-526b-1ee6-a6b8-343959048528"
+					}]
+				}
+			}
+		}
+	]
+}

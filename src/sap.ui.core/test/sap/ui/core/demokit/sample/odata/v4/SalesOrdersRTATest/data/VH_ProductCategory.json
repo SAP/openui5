@@ -1,0 +1,44 @@
+{
+	"@odata.context" : "$metadata#H_EPM_PD_CATS_SH_SET",
+	"value" : [{
+		"CATEGORY" : "Accessories"
+	}, {
+		"CATEGORY" : "Camcorders"
+	}, {
+		"CATEGORY" : "Computer System Accessories"
+	}, {
+		"CATEGORY" : "Flat Screen Monitors"
+	}, {
+		"CATEGORY" : "Flat Screen TVs"
+	}, {
+		"CATEGORY" : "Graphic Cards"
+	}, {
+		"CATEGORY" : "Headsets"
+	}, {
+		"CATEGORY" : "Ink Jet Printers"
+	}, {
+		"CATEGORY" : "Keyboards"
+	}, {
+		"CATEGORY" : "Laser Printers"
+	}, {
+		"CATEGORY" : "MP3 Players"
+	}, {
+		"CATEGORY" : "Mice"
+	}, {
+		"CATEGORY" : "Mousepads"
+	}, {
+		"CATEGORY" : "Multifunction Printers"
+	}, {
+		"CATEGORY" : "Notebooks"
+	}, {
+		"CATEGORY" : "PCs"
+	}, {
+		"CATEGORY" : "PDAs & Organizers"
+	}, {
+		"CATEGORY" : "Portable Players"
+	}, {
+		"CATEGORY" : "Projectors"
+	}, {
+		"CATEGORY" : "Scanners"
+	}]
+}
