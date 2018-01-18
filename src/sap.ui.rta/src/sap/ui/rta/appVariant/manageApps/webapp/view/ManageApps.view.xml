@@ -78,8 +78,8 @@
 					<Text text="{description}" />
 
 					<Button text="{i18n>MAA_DIALOG_COPY_ID}" press="copyId"/>
-					<Button text="{i18n>MAA_DIALOG_ADAPT_UI}" enabled="{adaptUIButtonVisibility}" press="handleUiAdaptation" />
-					<Button text="{i18n>MAA_DIALOG_SAVE_AS_APP}" tooltip="{i18n>TOOLTIP_MAA_DIALOG_SAVE_AS_APP}" press="saveAsAppVariant" />
+					<Button text="{i18n>MAA_DIALOG_ADAPT_UI}" enabled="{adaptUIButtonVisibility}" press="handleUiAdaptation" visible="{isKeyUser}" />
+					<Button text="{i18n>MAA_DIALOG_SAVE_AS_APP}" tooltip="{i18n>TOOLTIP_MAA_DIALOG_SAVE_AS_APP}" press="saveAsAppVariant" visible="{isKeyUser}" />
 
 				</cells>
 			</ColumnListItem>

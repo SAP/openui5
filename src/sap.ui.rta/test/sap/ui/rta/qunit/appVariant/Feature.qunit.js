@@ -77,11 +77,37 @@ sap.ui.require([
 
 			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.resolve(aAppVariantOverviewAttributes));
 
-			return RtaAppVariantFeature.onGetOverview().then(function(oAppVariantOverviewDialog) {
+			return RtaAppVariantFeature.onGetOverview(true).then(function(oAppVariantOverviewDialog) {
 				assert.ok(true, "the the promise got resolved and AppVariant Overview Dialog is opened");
 				oAppVariantOverviewDialog.fireCancel();
 				done();
 			});
+		});
+
+		QUnit.test("when isOverviewExtended() is called when the query parameter is given and is true,", function(assert) {
+			var oMockedUriParams = {
+				mParams: {
+					"sap-ui-xx-app-variant-overview-extended": ["true"]
+				}
+			};
+
+			sandbox.stub(jQuery.sap, "getUriParameters").returns(oMockedUriParams);
+			assert.equal(RtaAppVariantFeature.isOverviewExtended(), true, "then the app variant overview is shown both for key user and SAP developer");
+		});
+
+		QUnit.test("when isOverviewExtended() is called when the query parameter is given and is false,", function(assert) {
+			var oMockedUriParams = {
+				mParams: {
+					"sap-ui-xx-app-variant-overview-extended": ["false"]
+				}
+			};
+
+			sandbox.stub(jQuery.sap, "getUriParameters").returns(oMockedUriParams);
+			assert.equal(RtaAppVariantFeature.isOverviewExtended(), false, "then the app variant overview is shown only for key user");
+		});
+
+		QUnit.test("when isOverviewExtended() is called when the query parameter is not given at all,", function(assert) {
+			assert.equal(RtaAppVariantFeature.isOverviewExtended(), false, "then the app variant overview is shown only for key user");
 		});
 
 		QUnit.test("when isPlatFormEnabled() is called for FLP apps on S/4 Hana platform with feature flag 'sap-ui-xx-rta-save-as' equal to true", function(assert) {

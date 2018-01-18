@@ -818,6 +818,8 @@ sap.ui.define([
 				fnConstructor = StandaloneToolbar;
 			}
 
+			var bExtendedOverview = bIsAppVariantSupported ? RtaAppVariantFeature.isOverviewExtended() : false;
+
 			if (this.getLayer() === "USER") {
 				this.addDependent(new fnConstructor({
 					textResources: this._getTextResources(),
@@ -830,7 +832,8 @@ sap.ui.define([
 					modeSwitcher: this.getMode(),
 					publishVisible: bPublishAvailable,
 					textResources: this._getTextResources(),
-					appVariantFeaturesSupported: bIsAppVariantSupported,
+					appVariantFeatureForDeveloperSupported: bIsAppVariantSupported && bExtendedOverview,
+					appVariantFeatureForKeyUserSupported: bIsAppVariantSupported && !bExtendedOverview,
 					//events
 					exit: this.stop.bind(this, false, false),
 					transport: this._onTransport.bind(this),
@@ -838,7 +841,8 @@ sap.ui.define([
 					undo: this._onUndo.bind(this),
 					redo: this._onRedo.bind(this),
 					modeChange: this._onModeChange.bind(this),
-					manageApps: RtaAppVariantFeature.onGetOverview.bind(null),
+					manageApps: RtaAppVariantFeature.onGetOverview.bind(null, true),
+					appVariantOverview: this._onGetAppVariantOverview.bind(this),
 					saveAs: RtaAppVariantFeature.onSaveAsFromRtaToolbar.bind(null, true, true)
 				}), 'toolbar');
 			}
@@ -849,6 +853,13 @@ sap.ui.define([
 				this.getToolbar().setRestoreEnabled(bResult);
 			}.bind(this));
 		}
+	};
+
+	RuntimeAuthoring.prototype._onGetAppVariantOverview = function(oEvent) {
+		var oItem = oEvent.getParameter("item");
+
+		var bTriggeredForKeyUser = oItem.getId() === 'keyUser';
+		return RtaAppVariantFeature.onGetOverview(bTriggeredForKeyUser);
 	};
 
 	/**

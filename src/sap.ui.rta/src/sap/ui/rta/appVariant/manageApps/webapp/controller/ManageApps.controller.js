@@ -26,10 +26,11 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var _sIdRunningApp, sModulePath, oI18n;
+	var _sIdRunningApp, _bKeyUser, sModulePath, oI18n;
 	return Controller.extend("sap.ui.rta.appVariant.manageApps.webapp.controller.ManageApps", {
 		onInit: function() {
 			_sIdRunningApp = this.getOwnerComponent().getIdRunningApp();
+			_bKeyUser = this.getOwnerComponent().getIsOverviewForKeyUser();
 
 			sModulePath = jQuery.sap.getModulePath( "sap.ui.rta.appVariant.manageApps.webapp" );
 			oI18n = jQuery.sap.resources({
@@ -37,17 +38,34 @@ sap.ui.define([
 			});
 
 			BusyIndicator.show();
-			return AppVariantOverviewUtils.getAppVariantOverview(_sIdRunningApp).then(function(aAppVariantOverviewAttributes) {
+			return AppVariantOverviewUtils.getAppVariantOverview(_sIdRunningApp, _bKeyUser).then(function(aAppVariantOverviewAttributes) {
 				BusyIndicator.hide();
-				return this._arrangeOverviewDataAndBindToModel(aAppVariantOverviewAttributes).then(function(aAppVariantOverviewAttributes) {
-					return this._highlightNewCreatedAppVariant(aAppVariantOverviewAttributes);
-				}.bind(this));
+				if (aAppVariantOverviewAttributes.length) {
+					return this._arrangeOverviewDataAndBindToModel(aAppVariantOverviewAttributes).then(function(aAppVariantOverviewAttributes) {
+						return this._highlightNewCreatedAppVariant(aAppVariantOverviewAttributes);
+					}.bind(this));
+				} else {
+					AppVariantUtils.publishEventBus();
+					return this._showMessageWhenNoAppVariantsExist();
+				}
 			}.bind(this))["catch"](function(oError) {
 				AppVariantUtils.publishEventBus();
 				var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_MANAGE_APPS_FAILED", oError);
 				oErrorInfo.overviewDialog = true;
 				BusyIndicator.hide();
 				return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
+			});
+		},
+		_showMessageWhenNoAppVariantsExist: function() {
+			var sMessage = oI18n.getText("MSG_APP_VARIANT_OVERVIEW_SAP_DEVELOPER");
+			var sTitle = oI18n.getText("TITLE_APP_VARIANT_OVERVIEW_SAP_DEVELOPER");
+			return new Promise(function(resolve) {
+				MessageBox.show(sMessage, {
+					icon: MessageBox.Icon.INFORMATION,
+					title : sTitle,
+					onClose : resolve,
+					styleClass: RtaUtils.getRtaStyleClassName()
+				});
 			});
 		},
 		_highlightNewCreatedAppVariant: function(aAppVariantOverviewAttributes) {

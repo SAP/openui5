@@ -13,7 +13,8 @@ sap.ui.define([
 	FlexUtils,
 	AppVariantUtils,
 	MessageBox,
-	BusyIndicator) {
+	BusyIndicator
+) {
   "use strict";
 
 	var oAppVariantOverviewDialog,
@@ -95,7 +96,7 @@ sap.ui.define([
 
 	return {
 		// To see the overview of app variants, a key user has created from an app
-		onGetOverview : function() {
+		onGetOverview : function(bAsKeyUser) {
 			var oDescriptor = fnGetDescriptor();
 
 			return new Promise(function(resolve) {
@@ -105,7 +106,8 @@ sap.ui.define([
 				sap.ui.require(["sap/ui/rta/appVariant/AppVariantOverviewDialog"], function(AppVariantOverviewDialog) {
 					if (!oAppVariantOverviewDialog) {
 						oAppVariantOverviewDialog = new AppVariantOverviewDialog({
-							idRunningApp: oDescriptor["sap.app"].id
+							idRunningApp: oDescriptor["sap.app"].id,
+							isOverviewForKeyUser: bAsKeyUser
 						});
 					}
 
@@ -118,6 +120,27 @@ sap.ui.define([
 					oAppVariantOverviewDialog.open();
 				});
 			});
+		},
+		/**
+		 * @returns {boolean} returns a boolean value
+		 * @description The app variant overview is modified to be shown for SAP developer and a key user
+		 * The calculation of which control (a button or a drop down menu button) should be shown on the UI is done here
+		 * This calculation is done with the help of a query parameter 'sap-ui-xx-app-variant-overview-extended'
+		 * When this method returns true then a drop down menu button on the UI is shown where a user can choose app variant overview for either a key user or SAP developer
+		 * When this method returns false, an app variant overview is shown only for a key user
+		 */
+		isOverviewExtended: function() {
+			var oUriParams = jQuery.sap.getUriParameters();
+			if (!oUriParams.mParams["sap-ui-xx-app-variant-overview-extended"]) {
+				return false;
+			} else {
+				var aMode = oUriParams.mParams["sap-ui-xx-app-variant-overview-extended"];
+
+				if (aMode && aMode.length) {
+					var string = aMode[0].toLowerCase();
+					return string === 'true';
+				}
+			}
 		},
 		/**
 		 * @param {object, string, object} oRootControl sCurrentLayer oLrepSerializer
@@ -151,7 +174,7 @@ sap.ui.define([
 							}
 
 							if (oInboundInfo) {
-								return aUriLayer[0] === 'true' ? true : false;
+								return aUriLayer[0] === 'true';
 							}
 						}
 					}

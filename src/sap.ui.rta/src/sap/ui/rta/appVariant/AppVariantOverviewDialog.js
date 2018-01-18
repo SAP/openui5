@@ -26,7 +26,10 @@ sap.ui.define([
 	var AppVariantOverviewDialog = Dialog.extend("sap.ui.rta.appVariant.AppVariantOverviewDialog", {
 		metadata : {
 			properties: {
-				"idRunningApp" : "string"
+				"idRunningApp" : "string",
+				isOverviewForKeyUser: {
+					type: "boolean"
+				}
 			},
 			events : {
 				cancel : {}
@@ -38,7 +41,8 @@ sap.ui.define([
 
 			// Create manage apps component
 			this.oManageAppsComponent = new ManageAppsComponent("manageApps", {
-				idRunningApp : this.getIdRunningApp()
+				idRunningApp : this.getIdRunningApp(),
+				isOverviewForKeyUser: this.getIsOverviewForKeyUser()
 			});
 
 			// Place component in container and display
@@ -49,6 +53,7 @@ sap.ui.define([
 			this.addContent(this.oManageAppsComponentContainer);
 			this._createButton();
 
+			this.setContentWidth("1000px");
 			this.setContentHeight("450px");
 
 			this.setHorizontalScrolling(false);
