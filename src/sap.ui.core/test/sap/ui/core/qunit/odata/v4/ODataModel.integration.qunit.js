@@ -7,7 +7,6 @@ sap.ui.require([
 	"sap/m/CustomListItem",
 	"sap/m/Text",
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/analytics/ODataModelAdapter",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
@@ -18,9 +17,8 @@ sap.ui.require([
 	"sap/ui/test/TestUtils",
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
-], function (jQuery, ColumnListItem, CustomListItem, Text, Controller, ODataModelAdapter,
-		ChangeReason, Filter, FilterOperator, OperationMode, ODataListBinding, ODataModel, Sorter,
-		TestUtils) {
+], function (jQuery, ColumnListItem, CustomListItem, Text, Controller, ChangeReason, Filter,
+		FilterOperator, OperationMode, ODataListBinding, ODataModel, Sorter, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -3305,8 +3303,7 @@ sap.ui.require([
 
 		this.oSandbox.stub(ODataListBinding.prototype, "getContexts",
 			function (iStart, iLength, iMaximumPrefetchSize) {
-				// this is how the call by sap.chart.Chart should look like (after ODataModelAdapter
-				// has tweaked it) --> GET w/o $top!
+				// this is how the call by sap.chart.Chart should look like --> GET w/o $top!
 				return fnGetContexts.call(this, iStart, iLength, Infinity);
 			});
 		this.expectRequest("TEAMS", {
@@ -3441,43 +3438,6 @@ sap.ui.require([
 
 			return that.waitForChanges(assert);
 		});
-	});
-
-	//*********************************************************************************************
-	// Scenario: an analytical control like sap.chart.Chart applies ODataModelAdapter to a V4 model
-	// in order to add analytical functionality
-	QUnit.test("ODataModelAdapter", function (assert) {
-		var oModel = createTeaBusiModel(),
-			sView = '\
-<Table id="table" items="{path : \'/TEAMS\', parameters : {\
-		analyticalInfo : [],\
-		noPaging : true,\
-		provideGrandTotals : false,\
-		provideTotalResultSize : false,\
-		reloadSingleUnitMeasures : true,\
-		useBatchRequests : true\
-	}}">\
-	<ColumnListItem>\
-		<Text id="id" text="{Team_Id}" />\
-	</ColumnListItem>\
-</Table>';
-
-		// Note: GET w/o $count and $top
-		this.expectRequest("TEAMS", {
-				"value" : [{
-					"Team_Id" : "TEAM_00"
-				}, {
-					"Team_Id" : "TEAM_01"
-				}, {
-					"Team_Id" : "TEAM_02"
-				}]
-			})
-			.expectChange("id", ["TEAM_00", "TEAM_01", "TEAM_02"]);
-
-		// code under test
-		ODataModelAdapter.apply(oModel);
-
-		return this.createView(assert, sView, oModel);
 	});
 });
 //TODO test delete
