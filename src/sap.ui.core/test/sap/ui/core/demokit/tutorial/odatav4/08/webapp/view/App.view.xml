@@ -1,7 +1,6 @@
 <mvc:View
 	controllerName="sap.ui.demo.odatav4.controller.App"
 	xmlns="sap.m"
-	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc"
 	displayBlock="true">
 	<App busy="{appView>/busy}" class="sapUiSizeCompact">
@@ -26,8 +25,7 @@
 								$$updateGroupId : 'peopleGroup'
 							}
 						}"
-						mode="SingleSelectMaster"
-						selectionChange="onSelect">
+						mode="SingleSelectMaster">
 						<headerToolbar>
 							<OverflowToolbar>
 								<content>
@@ -37,8 +35,7 @@
 										width="20%"
 										placeholder="{i18n>searchFieldPlaceholder}"
 										enabled="{= !${appView>/hasUIChanges}}"
-										search="onSearch"
-									/>
+										search="onSearch"/>
 									<Button
 										text="{i18n>createButtonText}"
 										enabled="{= !${appView>/hasUIChanges}}"
@@ -72,7 +69,6 @@
 							<Column>
 								<Text text="{i18n>userNameLabelText}"/>
 							</Column>
-
 							<Column>
 								<Text text="{i18n>firstNameLabelText}"/>
 							</Column>
@@ -90,7 +86,6 @@
 										value="{UserName}"
 										liveChange="onInputChange"/>
 								</cells>
-
 								<cells>
 									<Input
 										value="{FirstName}"
@@ -104,7 +99,7 @@
 								<cells>
 									<Input
 										value="{Age}"
-										liveChange="onAgeChange"/>
+										liveChange="onInputChange"/>
 								</cells>
 							</ColumnListItem>
 						</items>
