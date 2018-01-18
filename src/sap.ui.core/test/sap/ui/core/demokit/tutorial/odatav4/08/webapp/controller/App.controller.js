@@ -177,7 +177,6 @@ sap.ui.define([
 			return this.getOwnerComponent().getModel("i18n").getResourceBundle().getText(sTextId);
 		},
 
-
 		/**
 		 * Set hasUIChanges flag in View Model
 		 * @param {boolean} [bHasUIChanges] - set or clear hasUIChanges
