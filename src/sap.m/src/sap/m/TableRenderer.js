@@ -10,6 +10,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 	// shortcut for sap.m.ListKeyboardMode
 	var ListKeyboardMode = library.ListKeyboardMode;
 
+	// shortcut for sap.m.Sticky
+	var Sticky = library.Sticky;
+
 
 	/**
 	 * List renderer.
@@ -54,6 +57,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 			createBlankCell = function(cls, id, bAriaHidden) {
 				rm.write("<");
 				rm.write(cellTag);
+				if (cellTag === "th") {
+					rm.addClass("sapMTableTH");
+				}
 				bAriaHidden && rm.writeAttribute("aria-hidden", "true");
 				id && rm.writeAttribute("id", idPrefix + id);
 				rm.addClass(clsPrefix + cls);
@@ -66,12 +72,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 
 		rm.write("<" + groupTag + ">");
 		rm.write("<tr");
+
 		rm.writeAttribute("tabindex", -1);
 		rm.writeAttribute("id", oTable.addNavSection(idPrefix + type + "er" ));
 
 		if (isHeaderHidden) {
 			rm.addClass("sapMListTblHeaderNone");
 		} else {
+			if (type === "Head" && oTable.getSticky() === Sticky.ColumnHeaders) {
+				rm.addClass("sapMListTblStickyColHdr");
+			}
 			rm.addClass("sapMListTblRow sapMLIBFocusable sapMListTbl" + type + "er");
 			ColumnListItemRenderer.addLegacyOutlineClass.call(ColumnListItemRenderer, rm);
 		}
@@ -84,6 +94,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 		if (iModeOrder == -1) {
 			if (mode == "MultiSelect" && type == "Head" && !isHeaderHidden) {
 				rm.write("<th");
+				rm.addClass("sapMTableTH");
 				rm.writeAttribute("aria-hidden", "true");
 				rm.addClass(clsPrefix + "SelCol");
 				rm.writeClasses();
@@ -123,6 +134,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 
 			if (type === "Head") {
 				rm.writeElementData(oColumn);
+				rm.addClass("sapMTableTH");
 				// adding ColumnHeader specific class in order to overwrite the padding of the cell
 				if (control instanceof ColumnHeader) {
 					rm.addClass(clsPrefix + "CellCH");

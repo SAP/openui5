@@ -16,6 +16,9 @@
 				<content>
 					<Title text="Products" level="H2"/>
 					<ToolbarSpacer />
+					<ToggleButton id="stickyColHdr"
+						text="Sticky Column Headers"
+						press="onToggleStickyColHdr" />
 					<ComboBox id="idPopinLayout"
 						placeholder="Popin layout options"
 						change="onPopinLayoutChanged">
