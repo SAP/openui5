@@ -248,6 +248,14 @@ function(
 		this._checkHighlight();
 	};
 
+	ListItemBase.prototype.invalidate = function() {
+		if (!this.bOutput) {
+			return;
+		}
+
+		Control.prototype.invalidate.apply(this, arguments);
+	};
+
 	/*
 	 * Returns the binding context path via checking the named model of parent
 	 *

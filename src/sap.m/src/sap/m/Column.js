@@ -186,6 +186,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 
 	Column.prototype.onsapenter = Column.prototype.onsapspace;
 
+	Column.prototype.invalidate = function() {
+		var oParent = this.getParent();
+		if (!oParent || !oParent.bOutput) {
+			return;
+		}
+
+		Element.prototype.invalidate.apply(this, arguments);
+	};
+
 	Column.prototype._clearMedia = function() {
 		if (this._media && this._minWidth) {
 			this._detachMediaContainerWidthChange(this._notifyResize, this, this.getId());
@@ -293,15 +302,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			return oControl;
 		}
 
-		oControl.setProperty("textAlign", sAlign, true);
-		var oDomRef = oControl.getDomRef();
-		sAlign = this.getCssAlign(sAlign);
-
-		if (oDomRef && sAlign) {
-			oDomRef.style.textAlign = sAlign;
-		}
-
-		return oControl;
+		return oControl.setTextAlign(sAlign);
 	};
 
 
