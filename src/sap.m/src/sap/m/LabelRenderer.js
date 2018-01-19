@@ -49,7 +49,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/m/library', 'sap/ui/core/library'],
 		rm.addClass("sapUiSelectable");
 
 		// label wrapping
-		if (oLabel.getWrapping()) {
+		if (oLabel.isWrapping()) {
 			rm.addClass("sapMLabelWrapped");
 		}
 		// set design to bold
