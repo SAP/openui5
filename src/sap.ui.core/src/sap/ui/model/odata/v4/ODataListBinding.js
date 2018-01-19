@@ -1490,8 +1490,9 @@ sap.ui.define([
 
 	/**
 	 * Updates the binding's "$apply" parameter based on the given analytical information as
-	 * "groupby((&lt;dimension_1,...,dimension_N>),aggregate(&lt;measure_1,...,measure_M>))" where
-	 * the "aggregate" part is only present if measures are given.
+	 * "groupby((&lt;dimension_1,...,dimension_N,unit_or_text_1,...,unit_or_text_K>),
+	 * aggregate(&lt;measure_1,...,measure_M>))" where the "aggregate" part is only present if
+	 * measures are given.
 	 *
 	 * Analytical information is the mapping of UI columns to properties in the bound OData entity
 	 * set. Every column object contains at least the <code>name</code> of the bound property.
@@ -1508,13 +1509,15 @@ sap.ui.define([
 	 *       <li><code>total</code>: its presence is used to detect a measure</li>
 	 *     </ul>
 	 *   </li>
+	 *   <li>A column bound to neither a dimension nor a measure property, but for instance
+	 *   bound to a text property or in some cases to a unit property, has no further boolean
+	 *   properties</li>
 	 * </ol>
 	 *
 	 * @param {object[]} aColumns
 	 *   An array with objects holding the analytical information for every column, from left to
 	 *   right
-	 * @throws {Error} In case a column is neither a dimension nor a measure, or both a dimension
-	 *   and a measure
+	 * @throws {Error} In case a column is both a dimension and a measure
 	 *
 	 * @protected
 	 * @see sap.ui.model.analytics.AnalyticalBinding#updateAnalyticalInfo
@@ -1523,7 +1526,8 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.updateAnalyticalInfo = function (aColumns) {
 		var aAggregate = [],
-			aGroupBy = [];
+			aGroupBy = [],
+			aGroupByNoDimension = [];
 
 		aColumns.forEach(function (oColumn) {
 			if ("total" in oColumn) { // measure
@@ -1536,11 +1540,11 @@ sap.ui.define([
 					aGroupBy.push(oColumn.name);
 				}
 			} else {
-				throw new Error("Neither dimension nor measure: " + oColumn.name);
+				aGroupByNoDimension.push(oColumn.name);
 			}
 		});
 
-		this.changeParameters({$apply : "groupby((" + aGroupBy.join(",")
+		this.changeParameters({$apply : "groupby((" + aGroupBy.concat(aGroupByNoDimension).join(",")
 			+ (aAggregate.length ? "),aggregate(" + aAggregate.join(",") + "))" : "))")});
 	};
 

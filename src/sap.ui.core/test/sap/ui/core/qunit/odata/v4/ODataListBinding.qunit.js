@@ -4134,8 +4134,12 @@ sap.ui.require([
 			"inResult" : true,
 			"name" : "BillToParty"
 		}, {
+			"name" : "UnitProperty"
+		}, {
 			"name" : "GrossAmountInTransactionCurrency",
 			"total" : false
+		}, {
+			"name" : "TextProperty"
 		}, {
 			"grouped" : false,
 			"name" : "TransactionCurrency",
@@ -4149,7 +4153,7 @@ sap.ui.require([
 			"name" : "IgnoreThisDimension",
 			"visible" : false
 		}],
-		sApply : "groupby((BillToParty,TransactionCurrency)"
+		sApply : "groupby((BillToParty,TransactionCurrency,UnitProperty,TextProperty)"
 			+ ",aggregate(GrossAmountInTransactionCurrency,NetAmountInTransactionCurrency))"
 	}].forEach(function (oFixture) {
 		QUnit.test("updateAnalyticalInfo with " + oFixture.sApply, function (assert) {
@@ -4160,18 +4164,6 @@ sap.ui.require([
 
 			oBinding.updateAnalyticalInfo(oFixture.aColumns);
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("updateAnalyticalInfo: neither dimension nor measure", function (assert) {
-		var oBinding = this.oModel.bindList("/EMPLOYEES");
-
-		assert.throws(function () {
-			oBinding.updateAnalyticalInfo([{
-				"inResult" : true,
-				"name" : "NeitherDimensionNorMeasure"
-			}]);
-		}, new Error("Neither dimension nor measure: NeitherDimensionNorMeasure"));
 	});
 
 	//*********************************************************************************************
