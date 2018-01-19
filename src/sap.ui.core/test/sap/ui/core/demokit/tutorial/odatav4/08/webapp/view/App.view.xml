@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.ui.demo.odatav4.controller.App"
+	controllerName="sap.ui.core.tutorial.odatav4.controller.App"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	displayBlock="true">
@@ -8,6 +8,7 @@
 			<Page title="{i18n>peoplePageTitle}">
 				<headerContent>
 					<Button
+						id="resetChangesButton"
 						text="{i18n>resetChangesButtonText}"
 						press="onResetDataSource"
 						type="Emphasized">
@@ -15,7 +16,7 @@
 				</headerContent>
 				<content>
 					<Table
-						id="people"
+						id="peopleList"
 						growing="true"
 						growingThreshold="10"
 						items="{
@@ -31,13 +32,15 @@
 								<content>
 									<ToolbarSpacer/>
 									<SearchField
-										id="search"
+										id="searchField"
 										width="20%"
 										placeholder="{i18n>searchFieldPlaceholder}"
 										enabled="{= !${appView>/hasUIChanges}}"
 										search="onSearch"/>
 									<Button
-										text="{i18n>createButtonText}"
+										id="addUserButton"
+										icon="sap-icon://add"
+										tooltip="{i18n>createButtonText}"
 										enabled="{= !${appView>/hasUIChanges}}"
 										press="onCreate">
 										<layoutData>
@@ -45,7 +48,9 @@
 										</layoutData>
 									</Button>
 									<Button
-										text="{i18n>deleteButtonText}"
+										id="deleteUserButton"
+										icon="sap-icon://delete"
+										tooltip="{i18n>deleteButtonText}"
 										enabled="{= !${appView>/hasUIChanges}}"
 										press="onDelete">
 										<layoutData>
@@ -53,11 +58,13 @@
 										</layoutData>
 									</Button>
 									<Button
+										id="refreshUsersButton"
 										icon="sap-icon://refresh"
 										enabled="{= !${appView>/hasUIChanges}}"
 										tooltip="{i18n>refreshButtonText}"
 										press="onRefresh"/>
 									<Button
+										id="sortUsersButton"
 										press="onSort"
 										enabled="{= !${appView>/hasUIChanges}}"
 										tooltip="{i18n>sortButtonText}"
@@ -66,16 +73,16 @@
 							</OverflowToolbar>
 						</headerToolbar>
 						<columns>
-							<Column>
+							<Column id="userNameColumn">
 								<Text text="{i18n>userNameLabelText}"/>
 							</Column>
-							<Column>
+							<Column id="firstNameColumn">
 								<Text text="{i18n>firstNameLabelText}"/>
 							</Column>
-							<Column>
+							<Column id="lastNameColumn">
 								<Text text="{i18n>lastNameLabelText}"/>
 							</Column>
-							<Column>
+							<Column id="ageColumn">
 								<Text text="{i18n>ageLabelText}"/>
 							</Column>
 						</columns>

@@ -1,7 +1,7 @@
 {
 	"_version": "1.8.0",
 	"sap.app": {
-		"id": "sap.ui.demo.odatav4",
+		"id": "sap.ui.core.tutorial.odatav4",
 		"type": "application",
 		"i18n": "i18n/i18n.properties",
 		"applicationVersion": {
@@ -12,7 +12,7 @@
 		"ach": "ach",
 		"dataSources": {
 			"default": {
-				"uri": "http://services.odata.org/TripPinRESTierService/(S(euc2jaq2ryeoswu4hs4unp33))/",
+				"uri": "http://services.odata.org/TripPinRESTierService/(S(id))/",
 				"type": "OData",
 				"settings": {
 					"odataVersion": "4.0"
@@ -30,7 +30,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.ui.demo.odatav4.view.App",
+			"viewName": "sap.ui.core.tutorial.odatav4.view.App",
 			"type": "XML",
 			"async": true,
 			"displayBlock": true,
@@ -53,7 +53,7 @@
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "sap.ui.demo.odatav4.i18n.i18n"
+					"bundleName": "sap.ui.core.tutorial.odatav4.i18n.i18n"
 				}
 			},
 			"": {

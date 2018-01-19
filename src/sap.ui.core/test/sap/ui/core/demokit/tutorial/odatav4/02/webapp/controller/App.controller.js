@@ -5,7 +5,7 @@ sap.ui.define([
 ], function (Controller, MessageBox, JSONModel) {
 	"use strict";
 
-	return Controller.extend("sap.ui.demo.odatav4.controller.App", {
+	return Controller.extend("sap.ui.core.tutorial.odatav4.controller.App", {
 
 		/**
 		 *  Hook for initializing the controller
@@ -18,15 +18,17 @@ sap.ui.define([
 			this.getView().setModel(oModel, "appView");
 		},
 
+
 		/* =========================================================== */
 		/*           begin: event handlers                             */
 		/* =========================================================== */
+
 
 		/**
 		 * Refresh the data.
 		 */
 		onRefresh : function () {
-			var oBinding = this.byId("people").getBinding("items");
+			var oBinding = this.byId("peopleList").getBinding("items");
 
 			if (oBinding && oBinding.hasPendingChanges()) {
 				MessageBox.error(this._getText("refreshFailedMessage"));
@@ -34,6 +36,7 @@ sap.ui.define([
 			}
 			oBinding.refresh();
 		},
+
 
 		/* =========================================================== */
 		/*           end: event handlers                               */

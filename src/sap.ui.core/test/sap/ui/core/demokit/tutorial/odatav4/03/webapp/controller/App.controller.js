@@ -1,10 +1,8 @@
 sap.ui.define([
-	"sap/m/MessageBox",
-	"sap/m/MessageToast",
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/Sorter",
+	"sap/m/MessageBox",
 	"sap/ui/model/json/JSONModel"
-], function (MessageBox, MessageToast, Controller, Sorter, JSONModel) {
+], function (Controller, MessageBox, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.tutorial.odatav4.controller.App", {
@@ -14,8 +12,7 @@ sap.ui.define([
 		 */
 		onInit : function () {
 			var oJSONData = {
-				busy : false,
-				hasUIChanges : false
+				busy : false
 			};
 			var oModel = new JSONModel(oJSONData);
 			this.getView().setModel(oModel, "appView");
@@ -26,11 +23,12 @@ sap.ui.define([
 		/*           begin: event handlers                             */
 		/* =========================================================== */
 
+
 		/**
 		 * Refresh the data.
 		 */
 		onRefresh : function () {
-			var oBinding = this.byId("people").getBinding("items");
+			var oBinding = this.byId("peopleList").getBinding("items");
 
 			if (oBinding && oBinding.hasPendingChanges()) {
 				MessageBox.error(this._getText("refreshFailedMessage"));
@@ -38,6 +36,7 @@ sap.ui.define([
 			}
 			oBinding.refresh();
 		},
+
 
 		/* =========================================================== */
 		/*           end: event handlers                               */

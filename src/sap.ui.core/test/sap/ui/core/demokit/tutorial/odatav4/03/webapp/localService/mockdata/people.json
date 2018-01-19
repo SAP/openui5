@@ -1,5 +1,5 @@
 {
-	"@odata.context": "http://services.odata.org/TripPinRESTierService/(S(wvvfknry4cjwbizu4lk12tj1))/$metadata#People(Age,FirstName,LastName,UserName)",
+	"@odata.context": "http://services.odata.org/TripPinRESTierService/(S(id))/$metadata#People(Age,FirstName,LastName,UserName)",
 	"value": [
 		{
 			"Age": 23,
@@ -20,7 +20,6 @@
 			"UserName": "elainestewart"
 		},
 		{
-			"@odata.type": "#Microsoft.OData.Service.Sample.TrippinInMemory.Models.Manager",
 			"Age": 37,
 			"FirstName": "Genevieve",
 			"LastName": "Reeves",
@@ -51,7 +50,6 @@
 			"UserName": "keithpinckney"
 		},
 		{
-			"@odata.type": "#Microsoft.OData.Service.Sample.TrippinInMemory.Models.Employee",
 			"Age": 30,
 			"FirstName": "Krista",
 			"LastName": "Kemp",

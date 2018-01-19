@@ -5,12 +5,10 @@ sap.ui.define([
 	"use strict";
 
 	var oSandbox = sinon.sandbox.create(),
-		aUsers,
-		sMetadata,
-		sBaseUrl = "http://services.odata.org/TripPinRESTierService/(S(euc2jaq2ryeoswu4hs4unp33))/",
-		// Need to escape the brackets in the base URL for using it in a RegExp
-		sEscapedBaseUrl = sBaseUrl.replace(/\(/g, "\\(").replace(/\)/g, "\\)").replace(/\./g, "\\."),
-		rBaseUrl = new RegExp(sEscapedBaseUrl);
+		aUsers, // The array that holds the cached user data
+		sMetadata,  // The string that holds the cached mock service metadata
+		sLogComponent = "sap.ui.core.tutorial.odatav4.mockserver", // Component for writing logs into the console
+		rBaseUrl = /services.odata.org\/TripPinRESTierService/;
 
 	return {
 
@@ -36,6 +34,9 @@ sap.ui.define([
 				// We only want to fake requests that go to 'our' service.
 				return !rBaseUrl.test(sUrl);
 			});
+
+			// Set the logging level for console entries from the mock server
+			jQuery.sap.log.setLevel(3, sLogComponent);
 		},
 
 		/**
@@ -50,9 +51,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the base URL from a given URL.
+	 * @param {string} sUrl - the complete URL
+	 * @returns {string} the base URL
+	 */
+	function getBaseUrl(sUrl) {
+		var aMatches = sUrl.match(/http.+\(S\(.+\)\)\//);
+
+		if (!Array.isArray(aMatches) || aMatches.length < 1) {
+			throw new Error("Could not find a base URL in " + sUrl);
+		}
+
+		return aMatches[0];
+	}
+
+	/**
 	 * Looks for a user with a given user name and returns its index in the user array.
-	 * @param {String} sUserName - the user name to look for.
-	 * @returns {Integer} index of that user in the array, or undefined.
+	 * @param {string} sUserName - the user name to look for.
+	 * @returns {int} index of that user in the array, or undefined.
 	 */
 	function findUserIndex(sUserName) {
 		for (var i = 0; i < aUsers.length; i++) {
@@ -64,12 +80,12 @@ sap.ui.define([
 
 	/**
 	 * Retrieves any user data from a given http request body.
-	 * @param {String} sBody - the http request body.
+	 * @param {string} sBody - the http request body.
 	 * @returns {Object} the parsed user data.
 	 */
 	function getUserDataFromRequestBody(sBody) {
 		var aMatches = sBody.match(/({.+})/);
-		if (!aMatches || !aMatches.length || !(aMatches.length === 2)) {
+		if (!Array.isArray(aMatches) || aMatches.length !== 2) {
 			throw new Error("Could not find any user data in " + sBody);
 		}
 		return JSON.parse(aMatches[1]);
@@ -77,12 +93,12 @@ sap.ui.define([
 
 	/**
 	 * Retrieves a user name from a given request URL.
-	 * @param {String} sUrl - the request URL.
-	 * @returns {String} the user name.
+	 * @param {string} sUrl - the request URL.
+	 * @returns {string} the user name.
 	 */
 	function getUserKeyFromUrl(sUrl) {
 		var aMatches = sUrl.match(/People\('(.+)'\)/);
-		if (!aMatches || !aMatches.length || !(aMatches.length === 2)) {
+		if (!Array.isArray(aMatches) || aMatches.length !== 2) {
 			throw new Error("Could not find a user key in " + sUrl);
 		}
 		return aMatches[1];
@@ -130,7 +146,7 @@ sap.ui.define([
 			aReducedUsers = [].concat(aResultSet),
 			aMatches = oXhr.url.match(/\$skip=(\d+)&\$top=(\d+)/);
 
-		if (aMatches && aMatches.length && aMatches.length >= 3) {
+		if (Array.isArray(aMatches) && aMatches.length >= 3) {
 			iSkip = aMatches[1];
 			iTop = aMatches[2];
 			return aResultSet.slice(iSkip, iSkip + iTop);
@@ -152,7 +168,7 @@ sap.ui.define([
 			aSortedUsers = [].concat(aResultSet), // work with a copy
 			aMatches = oXhr.url.match(/\$orderby=(\w*)(?:%20(\w*))?/);
 
-		if (!aMatches || !aMatches.length || aMatches.length < 2) {
+		if (!Array.isArray(aMatches) || aMatches.length < 2) {
 			return aSortedUsers;
 		} else {
 			sFieldName = aMatches[1];
@@ -194,7 +210,7 @@ sap.ui.define([
 			aMatches = oXhr.url.match(/\$filter=.*\((.*),'(.*)'\)/);
 
 		// If the request contains a filter command, apply the filter
-		if (aMatches && aMatches.length && aMatches.length >= 3) {
+		if (Array.isArray(aMatches) && aMatches.length >= 3) {
 			sFieldName = aMatches[1];
 			sQuery = aMatches[2];
 
@@ -261,7 +277,7 @@ sap.ui.define([
 			sCount = '"@odata.count": ' + iCount + ',';
 		}
 
-		sResponse = '{"@odata.context": "' + sBaseUrl + '$metadata#People(Age,FirstName,LastName,UserName)",' +
+		sResponse = '{"@odata.context": "' + getBaseUrl(oXhr.url) + '$metadata#People(Age,FirstName,LastName,UserName)",' +
 			sCount +
 			'"value": ' + JSON.stringify(aResult) +
 			"}";
@@ -345,11 +361,7 @@ sap.ui.define([
 		oUser = getUserDataFromRequestBody(oXhr.requestBody);
 		aUsers.push(oUser);
 
-		sResponse = '{"@odata.context": "' + sBaseUrl + '/$metadata#People/$entity",';
-		// for (var sField in oUser) {
-		// 	sResponse += JSON.stringify()
-		// }
-		// sResponse += '}';
+		sResponse = '{"@odata.context": "' + getBaseUrl(oXhr.url) + '$metadata#People/$entity",';
 		sResponse += JSON.stringify(oUser).slice(1);
 
 		// The response to POST requests is http 201 (Created)
@@ -382,7 +394,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Builds a responds to direct (= non-batch) requests.
+	 * Builds a response to direct (= non-batch) requests.
 	 * Supports GET, PATCH, DELETE and POST requests.
 	 * @param {Object} oXhr - the Sinon fake XMLHttpRequest
 	 * @returns {Array} an array with the response information needed by Sinon's respond() function
@@ -425,7 +437,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Builds a responds to batch requests.
+	 * Builds a response to batch requests.
 	 * Unwraps batch request, gets a response for each individual part and
 	 * constructs a fitting batch response.
 	 * @param {Object} oXhr - the Sinon fake XMLHttpRequest
@@ -447,8 +459,7 @@ sap.ui.define([
 		if (aMatches && aMatches.length > 0) {
 			sInnerBoundary = aMatches[1];
 			aParts = aOuterParts[0].split("--" + sInnerBoundary).slice(1, -1);
-
-		} else  {
+		} else {
 			aParts = aOuterParts;
 		}
 
@@ -468,7 +479,7 @@ sap.ui.define([
 			var aMatches = sPart.match(/(GET|DELETE|PATCH|POST) (\S+)(?:.|\r?\n)+\r?\n(.*)\r?\n$/);
 			var aPartResponse = handleDirectRequest({
 				method : aMatches[1],
-				url : aMatches[2],
+				url : getBaseUrl(oXhr.url) + aMatches[2],
 				requestBody : aMatches[3]
 			});
 			sResponseBody += sPartBoundary + "\r\n" +
@@ -524,7 +535,8 @@ sap.ui.define([
 		// Log the request
 		jQuery.sap.log.info(
 			"Mockserver: Received " + oXhr.method + " request to URL " + oXhr.url,
-			oXhr.requestBody ? "Request body is:\n" + oXhr.requestBody : "No request body.");
+			( oXhr.requestBody ? "Request body is:\n" + oXhr.requestBody : "No request body." ) + "\n",
+			sLogComponent);
 
 		if (oXhr.method === "POST" && /\$batch$/.test(oXhr.url)) {
 			aResponse = handleBatchRequest(oXhr);
@@ -537,6 +549,7 @@ sap.ui.define([
 		// Log the response
 		jQuery.sap.log.info(
 			"Mockserver: Sent response with return code " + aResponse[0],
-			"Response headers: " + JSON.stringify(aResponse[1]) + "\n\nResponse body:\n" + aResponse[2]);
+			( "Response headers: " + JSON.stringify(aResponse[1]) + "\n\nResponse body:\n" + aResponse[2] ) + "\n",
+			sLogComponent);
 	}
 });
