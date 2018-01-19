@@ -1069,11 +1069,12 @@ sap.ui.define([
 			 * @returns {array} filtered elements list
 			 */
 			filterElements: function (aElements) {
-				var i = aElements.length,
+				var i,
+					iLength = aElements.length,
 					aNewElements = [],
 					oElement;
 
-				while (i--) {
+				for (i = 0; i < iLength; i++) {
 					oElement = aElements[i];
 					if (this._aAllowedMembers.indexOf(oElement.visibility) >= 0) {
 						aNewElements.push(oElement);
