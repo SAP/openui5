@@ -66,7 +66,10 @@ sap.ui.define([
 						width: {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "100%"},
 						/**
 						 * Specifies the path to the PDF file to display. Can be set to a relative or
-						 * an absolute path.
+						 * an absolute path.<br>
+						 * Optionally, this property can also be set to a data URI path or a blob URL
+						 * in all major web browsers except Internet Explorer and Microsoft Edge, provided
+						 * that this data URI or blob URL is whitelisted in advance.
 						 */
 						source: {type: "sap.ui.core.URI", group: "Misc", defaultValue: null},
 						/**
