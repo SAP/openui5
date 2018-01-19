@@ -747,7 +747,7 @@ sap.ui.define([
 									_getLink({
 										emphasized: true,
 										text: oEntityData.sample,
-										visible: oEntityData.hasSample,
+										visible: !!oEntityData.hasSample,
 										href: "#/entity/" + oControlData.name
 									}),
 									_getText({text: oEntityData.sample, visible: !oEntityData.hasSample})
