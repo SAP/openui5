@@ -448,7 +448,7 @@ sap.ui.require([
 			aMenuItems[1].handler([this.oVariantManagementOverlay]);
 			assert.ok(aMenuItems[1].enabled(this.oVariantManagementOverlay), "and the entry is enabled");
 
-			assert.equal(aMenuItems[2].id, "CTX_VARIANT_CONFIGURE", "there is an entry for configure variant");
+			assert.equal(aMenuItems[2].id, "CTX_VARIANT_MANAGE", "there is an entry for configure variant");
 			assert.equal(aMenuItems[2].rank, 230, "and the entry has the correct rank");
 			aMenuItems[2].handler([this.oVariantManagementOverlay]);
 			assert.ok(aMenuItems[2].enabled(this.oVariantManagementOverlay), "and the entry is enabled");
