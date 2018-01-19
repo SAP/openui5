@@ -2,7 +2,8 @@
  * ${copyright}
  */
 
-/*global JSZip, URI *///declare unusual global vars for JSLint/SAPUI5 validation
+/*global JSZip, URI */
+
 sap.ui.define(['jquery.sap.global',
 	'sap/ui/core/routing/History',
 	'sap/ui/core/Component', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/Controller',
@@ -13,7 +14,7 @@ sap.ui.define(['jquery.sap.global',
 
 	return Controller.extend("sap.ui.demokit.explored.view.code", {
 
-		_aMockFiles : ["products.json", "supplier.json", "img.json"],
+		_aMockFiles : ["products.json", "supplier.json", "img.json", "countriesCollection.json"],
 
 		onInit : function () {
 			this.router = UIComponent.getRouterFor(this);
