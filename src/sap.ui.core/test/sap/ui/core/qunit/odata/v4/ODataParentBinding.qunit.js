@@ -1048,7 +1048,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		SyncPromise.reject.bind(SyncPromise, {}),
+		SyncPromise.reject.bind(SyncPromise, {}), // "Failed to create cache..."
 		SyncPromise.resolve.bind(SyncPromise, { // cache sent read request
 			bSentReadRequest : true,
 			setQueryOptions : function () {}
@@ -1065,7 +1065,12 @@ sap.ui.require([
 					oCachePromise : oCachePromise,
 					aChildCanUseCachePromises : [],
 					doFetchQueryOptions : function () {},
-					oModel : {getMetaModel : function () {return oMetaModel;}}
+					oModel : {
+						getMetaModel : function () {
+							return oMetaModel;
+						},
+						reportError : function () {}
+					}
 				}),
 				oBindingMock = this.mock(oBinding),
 				mChildLocalQueryOptions = {},
@@ -1091,6 +1096,11 @@ sap.ui.require([
 					.returns(false);
 				if (oCachePromise.isFulfilled()) {
 					this.mock(oCachePromise.getResult()).expects("setQueryOptions").never();
+				} else {
+					this.mock(oBinding.oModel).expects("reportError")
+						.withExactArgs("Failed to update cache for binding " + oBinding,
+							"sap.ui.model.odata.v4.ODataParentBinding",
+							sinon.match.same(oCachePromise.getResult()));
 				}
 
 				// code under test
@@ -1100,9 +1110,10 @@ sap.ui.require([
 				return oPromise.then(function (bUseCache) {
 					assert.strictEqual(bUseCache, false);
 					assert.strictEqual(oBinding.aChildCanUseCachePromises[0], oPromise);
-					assert.strictEqual(oBinding.oCachePromise.getResult(),
-						oCachePromise.getResult());
-					oCachePromise.catch(function () {}); // avoid "Uncaught (in promise)"
+					if (oCachePromise.isFulfilled()) {
+						assert.strictEqual(oBinding.oCachePromise.getResult(),
+							oCachePromise.getResult());
+					}
 				});
 			}
 		);

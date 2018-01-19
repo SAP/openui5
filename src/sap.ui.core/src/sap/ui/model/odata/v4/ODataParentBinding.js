@@ -453,6 +453,9 @@ sap.ui.define([
 						that.mAggregatedQueryOptions));
 				}
 				return oCache;
+			})["catch"](function (oError) {
+				that.oModel.reportError("Failed to update cache for binding " + that, sClassName,
+					oError);
 			});
 		return oCanUseCachePromise;
 	};

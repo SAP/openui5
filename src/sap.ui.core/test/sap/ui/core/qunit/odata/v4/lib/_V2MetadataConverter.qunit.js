@@ -11,7 +11,8 @@ sap.ui.require([
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var sEdmx = '<edmx:Edmx Version="1.0" xmlns="http://schemas.microsoft.com/ado/2008/09/edm"'
+	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
+		sEdmx = '<edmx:Edmx Version="1.0" xmlns="http://schemas.microsoft.com/ado/2008/09/edm"'
 			+ ' xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"'
 			+ ' xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"'
 			+ ' xmlns:sap="http://www.sap.com/Protocols/SAPData">',
@@ -20,7 +21,6 @@ sap.ui.require([
 			"/GWSAMPLE_BASIC/annotations" : {source : "GWSAMPLE_BASIC.annotations.xml"},
 			"/GWSAMPLE_BASIC/metadata_v4.json" : {source : "GWSAMPLE_BASIC.metadata_v4.json"}
 		},
-		sModuleName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
 		sXmlnsEdm4 = "http://docs.oasis-open.org/odata/ns/edm",
 		sXmlnsEdmx4 = "http://docs.oasis-open.org/odata/ns/edmx";
 
@@ -631,7 +631,7 @@ sap.ui.require([
 	QUnit.test("convert: FunctionImport w/ sap:action-for", function (assert) {
 		this.oLogMock.expects("warning")
 			.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'Baz',"
-				+ " removing this FunctionImport", undefined, sModuleName);
+				+ " removing this FunctionImport", undefined, sClassName);
 
 		testConversion(assert, '\
 				<Schema Namespace="foo" Alias="f">\
@@ -707,13 +707,13 @@ sap.ui.require([
 			oLogMock.expects("warning")
 				.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'SalesOrder_" + sName
 						+ "', removing this FunctionImport", undefined,
-					sModuleName);
+					sClassName);
 		});
 		["filterable", "sortable"].forEach(function (sAnnotation) {
 			oLogMock.expects("warning")
 				.withExactArgs("Unsupported SAP annotation at a complex type in '" + sUrl + "'",
 					"sap:" + sAnnotation + " at property 'GWSAMPLE_BASIC.CT_String/String'",
-					sModuleName);
+					sClassName);
 		});
 
 		return Promise.all([
@@ -1079,7 +1079,7 @@ sap.ui.require([
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		this.oLogMock.expects("warning")
-			.withExactArgs("Unsupported semantic type: foo", undefined, sModuleName);
+			.withExactArgs("Unsupported semantic type: foo", undefined, sClassName);
 
 		testAnnotationConversion(assert, '\
 				<EntityType Name="Foo">\
@@ -1105,7 +1105,7 @@ sap.ui.require([
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		this.oLogMock.expects("warning")
-			.withExactArgs("Unsupported semantic type: foo", undefined, sModuleName);
+			.withExactArgs("Unsupported semantic type: foo", undefined, sClassName);
 
 		testAnnotationConversion(assert, '\
 				<EntityType Name="Foo">\
@@ -1403,7 +1403,7 @@ sap.ui.require([
 			if (oFixture.message) {
 				this.oLogMock.expects("warning")
 					.withExactArgs("Inconsistent metadata in '/foo/bar/$metadata'",
-						oFixture.message, sModuleName);
+						oFixture.message, sClassName);
 			}
 			testConversion(assert, sXML, oExpectedResult);
 		});
@@ -1944,31 +1944,31 @@ sap.ui.require([
 
 		this.oLogMock.expects("warning")
 			.withExactArgs("Unsupported SAP annotation at a complex type in '/foo/bar/$metadata'",
-				"sap:filterable at property 'GWSAMPLE_BASIC.0001.Address/Street'", sModuleName);
+				"sap:filterable at property 'GWSAMPLE_BASIC.0001.Address/Street'", sClassName);
 		this.oLogMock.expects("warning")
 			.withExactArgs("Unsupported SAP annotation at a complex type in '/foo/bar/$metadata'",
 				"sap:filter-restriction at property 'GWSAMPLE_BASIC.0001.Address/Street'",
-				sModuleName);
+				sClassName);
 		this.oLogMock.expects("warning")
 			.withExactArgs("Unsupported SAP annotation at a complex type in '/foo/bar/$metadata'",
 				"sap:required-in-filter at property 'GWSAMPLE_BASIC.0001.Address/Street'",
-				sModuleName);
+				sClassName);
 		this.oLogMock.expects("warning")
 			.withExactArgs("Unsupported SAP annotation at a complex type in '/foo/bar/$metadata'",
-				"sap:sortable at property 'GWSAMPLE_BASIC.0001.Address/Street'", sModuleName);
+				"sap:sortable at property 'GWSAMPLE_BASIC.0001.Address/Street'", sClassName);
 		this.oLogMock.expects("warning")
 			.withExactArgs("Inconsistent metadata in '/foo/bar/$metadata'",
 				"Use either 'sap:creatable' or 'sap:creatable-path' at navigation property"
-				+ " 'GWSAMPLE_BASIC.0001.BusinessPartner/ConflictA'", sModuleName);
+				+ " 'GWSAMPLE_BASIC.0001.BusinessPartner/ConflictA'", sClassName);
 		this.oLogMock.expects("warning")
 			.withExactArgs("Inconsistent metadata in '/foo/bar/$metadata'",
 				"Use either 'sap:creatable' or 'sap:creatable-path' at navigation property"
-				+ " 'GWSAMPLE_BASIC.0001.BusinessPartner/ConflictB'", sModuleName);
+				+ " 'GWSAMPLE_BASIC.0001.BusinessPartner/ConflictB'", sClassName);
 		this.oLogMock.expects("warning")
 			.withExactArgs("Inconsistent metadata in '/foo/bar/$metadata'",
 				'Unsupported sap:filter-restriction="unsupported" at property'
 				+ " 'GWSAMPLE_BASIC.0001.BusinessPartner/FilterRestrictionUnsupported'",
-				sModuleName);
+				sClassName);
 		testConversion(assert, sXML, oExpectedResult, /*bSubset*/true);
 	});
 	//TODO schema GWSAMPLE_BASIC.0000. with "forward reference" to EntityType processed later
@@ -2128,17 +2128,17 @@ sap.ui.require([
 		this.oLogMock.expects("warning").withExactArgs(
 			"Unsupported sap:semantics at sap:unit='InvalidUnit';"
 			+ " expected 'currency-code' or 'unit-of-measure'",
-			"GWSAMPLE_BASIC.0001.Product/Width", sModuleName);
+			"GWSAMPLE_BASIC.0001.Product/Width", sClassName);
 		this.oLogMock.expects("warning").withExactArgs(
 			"Path 'MissingUnit/Foo' for sap:unit cannot be resolved",
-			"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit1" , sModuleName);
+			"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit1" , sClassName);
 		this.oLogMock.expects("warning").withExactArgs(
 			"Path 'Parts/MissingUnit/Foo' for sap:unit cannot be resolved",
-			"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit0" , sModuleName);
+			"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit0" , sClassName);
 		this.oLogMock.expects("warning").withExactArgs(
 			"Unsupported annotation 'sap:semantics'",
 			sinon.match(/<Property.*sap:semantics="invalid".*\/>/),
-			sModuleName);
+			sClassName);
 
 		testConversion(assert, sXML, oExpectedResult, /*bSubset*/true);
 	});
@@ -2149,7 +2149,7 @@ sap.ui.require([
 
 		function warn(rElement, sName, sValue) {
 			oLogMock.expects("warning").withExactArgs("Unsupported annotation 'sap:" + sName + "'",
-				sinon.match(rElement), sModuleName);
+				sinon.match(rElement), sClassName);
 		}
 
 		warn(/<Schema.*sap:bar="baz".*>/, "bar");
@@ -2163,7 +2163,7 @@ sap.ui.require([
 		warn(/<EntitySet.*sap:bar="baz".*\/>/, "bar", "baz");
 		warn(/<FunctionImport.*sap:applicable-path="foo".*\/>/, "applicable-path", "foo");
 		oLogMock.expects("warning").withExactArgs("Unsupported 'sap:action-for' at FunctionImport"
-			+ " 'BoundFunction', removing this FunctionImport", undefined, sModuleName);
+			+ " 'BoundFunction', removing this FunctionImport", undefined, sClassName);
 
 		testConversion(assert, '\
 			<Schema Namespace="foo" sap:bar="baz">\

@@ -354,25 +354,43 @@
 
 		mHooks = mHooks || {};
 		fnAfterEach = mHooks.afterEach || function () {};
-		mHooks.afterEach = function (assert) {
-			fnAfterEach.apply(this, arguments);
-			checkUncaught(assert.ok.bind(assert, false));
-		};
 		fnBeforeEach = mHooks.beforeEach || function () {};
+
+		mHooks.afterEach = function (assert) {
+			var fnCheckUncaught = checkUncaught.bind(null, assert.ok.bind(assert, false));
+
+			function error(oError) {
+				fnCheckUncaught();
+				throw oError;
+			}
+
+			function success(vResult) {
+				if (vResult && typeof vResult.then === "function") {
+					return vResult.then(success, error);
+				}
+				fnCheckUncaught();
+				return vResult;
+			}
+
+			try {
+				return success(fnAfterEach.apply(this, arguments));
+			} catch (oError) {
+				error(oError);
+			}
+		};
+
 		mHooks.beforeEach = function () {
 			checkUncaught(); // cleans up what happened before
-			fnBeforeEach.apply(this, arguments);
+			return fnBeforeEach.apply(this, arguments);
 		};
 
 		fnModule(sTitle, mHooks);
 	}
 
-	if (QUnit && QUnit.module !== module && jQuery && jQuery.sap
-			// Note: we rely on jQuery.sap.log as well!
-			&& jQuery.sap.getUriParameters().get("uncaughtInSyncPromise")) {
+	if (QUnit && QUnit.module !== module) {
 		fnModule = QUnit.module.bind(QUnit);
 		QUnit.module = module;
-		sap.ui.require(["sap/ui/base/SyncPromise"], function (SyncPromise) {
+		sap.ui.require(["sap/ui/base/SyncPromise", "jquery.sap.global"], function (SyncPromise) {
 			bDebug = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG, sClassName);
 			SyncPromise.listener = listener;
 		});

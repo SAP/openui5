@@ -187,9 +187,12 @@ sap.ui.define([
 				if (oSyncPromise.isFulfilled()) {
 					return oSyncPromise.getResult();
 				} else if (bThrow) {
-					throw oSyncPromise.isRejected()
-						? oSyncPromise.getResult()
-						: new Error("Result pending");
+					if (oSyncPromise.isRejected()) {
+						oSyncPromise.caught();
+						throw oSyncPromise.getResult();
+					} else {
+						throw new Error("Result pending");
+					}
 				}
 			};
 		},

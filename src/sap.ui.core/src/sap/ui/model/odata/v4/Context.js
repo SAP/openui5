@@ -97,7 +97,7 @@ sap.ui.define([
 				this.iIndex = iIndex;
 			}
 		}),
-		sClassname = "sap.ui.model.odata.v4.Context",
+		sClassName = "sap.ui.model.odata.v4.Context",
 		rEndsWithODataBind = /@odata\.bind$/;
 
 	/**
@@ -372,9 +372,13 @@ sap.ui.define([
 			oSyncPromise = fetchPrimitiveValue(this, sPath, bExternalFormat);
 
 		if (oSyncPromise.isRejected()) {
+			oSyncPromise.caught();
 			oError = oSyncPromise.getResult();
 			if (oError.isNotPrimitive) {
 				throw oError;
+			} else {
+				// Note: errors due to data requests have already been logged
+				jQuery.sap.log.warning(oError.message, sPath, sClassName);
 			}
 		}
 		return oSyncPromise.isFulfilled() ? oSyncPromise.getResult() : undefined;
@@ -566,7 +570,7 @@ sap.ui.define([
 
 		function reportError (oError) {
 			that.oModel.reportError("Failed to set property for path: "
-				+ that.oModel.resolve(sPath, that), sClassname, oError);
+				+ that.oModel.resolve(sPath, that), sClassName, oError);
 		}
 
 		function getRelativePathOrThrowError(vTarget) {

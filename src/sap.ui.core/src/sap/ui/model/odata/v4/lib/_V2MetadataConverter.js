@@ -9,7 +9,7 @@ sap.ui.define([
 ], function (jQuery, _Helper, _MetadataConverter) {
 	"use strict";
 
-	var sModuleName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
+	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
 
 		// namespaces
 		sEdmxNamespace = "http://schemas.microsoft.com/ado/2007/06/edmx",
@@ -453,7 +453,7 @@ sap.ui.define([
 						"Use either 'sap:" + sConflictingV2Annotation + "' or 'sap:"
 							+ sConflictingV2Annotation + "-path'"
 							+ " at entity set '" + oAnnotatable.sPath + "'",
-						sModuleName);
+						sClassName);
 				} else {
 					oAnnotatable.convert(sName, {
 						$Path : sValue
@@ -601,7 +601,7 @@ sap.ui.define([
 								aResult.push(oV2toV4ComplexSemantic.v4EnumType + "/" + sTargetType);
 							} else {
 								jQuery.sap.log.warning("Unsupported semantic type: " + sType,
-									undefined, sModuleName);
+									undefined, sClassName);
 							}
 						});
 						if (aResult.length > 0) {
@@ -941,7 +941,7 @@ sap.ui.define([
 		}
 		if (this.consumeSapAnnotation("action-for")) {
 			jQuery.sap.log.warning("Unsupported 'sap:action-for' at FunctionImport '" + sName
-				+ "', removing this FunctionImport", undefined, sModuleName);
+				+ "', removing this FunctionImport", undefined, sClassName);
 			this.consumeSapAnnotation("applicable-path");
 		} else {
 			// add Function and FunctionImport to the result
@@ -1133,7 +1133,7 @@ sap.ui.define([
 			if (sCreatablePath) {
 				jQuery.sap.log.warning("Inconsistent metadata in '" + this.url + "'",
 					"Use either 'sap:creatable' or 'sap:creatable-path' at navigation property '"
-					+ this.oAnnotatable.sPath + "'", sModuleName);
+					+ this.oAnnotatable.sPath + "'", sClassName);
 			} else if (sCreatable === "true") {
 				oNavigationPropertyPath = null;
 			}
@@ -1196,7 +1196,7 @@ sap.ui.define([
 			} else {
 				jQuery.sap.log.warning("Unsupported SAP annotation at a complex type in '"
 					+ that.url + "'", "sap:" + sAnnotation + " at property '"
-					+ oAnnotatable.sPath + "'", sModuleName);
+					+ oAnnotatable.sPath + "'", sClassName);
 			}
 		}
 
@@ -1233,7 +1233,7 @@ sap.ui.define([
 				default:
 					jQuery.sap.log.warning("Inconsistent metadata in '" + this.url + "'",
 						"Unsupported sap:filter-restriction=\"" + sFilterRestriction
-						+ "\" at property '" + oAnnotatable.sPath + "'", sModuleName);
+						+ "\" at property '" + oAnnotatable.sPath + "'", sClassName);
 			}
 			if (sEnumMember) {
 				if (this.type.$kind === "EntityType") {
@@ -1251,7 +1251,7 @@ sap.ui.define([
 				} else {
 					jQuery.sap.log.warning("Unsupported SAP annotation at a complex type in '"
 						+ this.url + "'", "sap:filter-restriction at property '"
-						+ oAnnotatable.sPath + "'", sModuleName);
+						+ oAnnotatable.sPath + "'", sClassName);
 				}
 			}
 		}
@@ -1292,7 +1292,7 @@ sap.ui.define([
 				oUnitProperty = oType[aUnitPathSegments[i]];
 				if (!oUnitProperty) {
 					jQuery.sap.log.warning("Path '" + sUnitPath
-						+ "' for sap:unit cannot be resolved", sPropertyPath, sModuleName);
+						+ "' for sap:unit cannot be resolved", sPropertyPath, sClassName);
 					return;
 				}
 				if (i < n - 1) {
@@ -1304,7 +1304,7 @@ sap.ui.define([
 			if (!sUnitSemantics) {
 				jQuery.sap.log.warning("Unsupported sap:semantics at sap:unit='" + sUnitPath
 					+ "'; expected 'currency-code' or 'unit-of-measure'", sPropertyPath,
-					sModuleName);
+					sClassName);
 				return;
 			}
 
@@ -1456,7 +1456,7 @@ sap.ui.define([
 	V2MetadataConverter.prototype.warnUnsupportedSapAnnotations = function (oElement) {
 		Object.keys(this.mSapAnnotations).forEach(function (sName) {
 			jQuery.sap.log.warning("Unsupported annotation 'sap:" + sName + "'",
-				serializeSingleElement(oElement), sModuleName);
+				serializeSingleElement(oElement), sClassName);
 		});
 	};
 
