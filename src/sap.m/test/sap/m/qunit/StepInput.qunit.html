@@ -1994,23 +1994,45 @@
 			strictEqual(this.stepInput.getValue(), 0, "'value' still holds the old value");
 		});
 
-		QUnit.test("_inputLiveChangeHandler()", function () {
-			//prepare & act
-			var oSpy = sinon.spy(this.stepInput, "setProperty"),
-				oEvent = {};
-			oEvent.getParameter = function () {
-				return 63;
-			};
-			this.stepInput._inputLiveChangeHandler(oEvent);
+		QUnit.test("_inputLiveChangeHandler() & _restrictCharsWhenDecimal()", function () {
+			//prepare
+			var oSpy = sinon.spy(this.stepInput._getInput(), "setProperty"),
+				oRestrictSpy = sinon.spy(this.stepInput, "_restrictCharsWhenDecimal"),
+				oEvent = {
+					getParameter : function () {
+						return "1.2345";
+					},
+					getSource : function () {
+						return {
+							getProperty : function (){
+								return "1.234";
+							}
+						}
+					}
+				};
+
+			//act
+			this.stepInput.setDisplayValuePrecision(3);
+			this.stepInput._inputLiveChangeHandler.call(this.stepInput._getInput(), oEvent);
+
 			//assert
 			equal(oSpy.callCount, 1,
 				"_inputLiveChangeHandler always calls setProperty()");
+			equal(oRestrictSpy.callCount, 1,
+					"_inputLiveChangeHandler always calls _restrictCharsWhenDecimal");
 			strictEqual(oSpy.getCall(0).args[0], "value",
 				"setProperty is called and it's first parameter is 'value'");
-			strictEqual(oSpy.getCall(0).args[1], 63,
-				"setProperty is called and it's second parameter is 63");
+			strictEqual(oSpy.getCall(0).args[1], "1.234",
+				"setProperty is called and it's second parameter is 1.234");
 			strictEqual(oSpy.getCall(0).args[2], true,
 				"setProperty is called and it's third parameter is 'true'");
+
+			//act
+			this.stepInput._restrictCharsWhenDecimal(oEvent);
+
+			//assert
+			strictEqual(this.stepInput._getInput().$("inner").val(), "1.234",
+					"the digits's length is correct - equal to the displayValuePrecision");
 		});
 
 		QUnit.test("_iRealPrecision is updated on each value change", function () {
