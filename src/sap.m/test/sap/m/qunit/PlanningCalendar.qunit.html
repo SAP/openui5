@@ -3751,6 +3751,107 @@
 			//clean
 			oPC.destroy();
 		});
+
+		QUnit.module("Drag and Drop");
+
+		QUnit.test("_calcNewHoursAppPos: Calculate new position of the appointment in 'Hours' view", function(assert) {
+			//arrange
+			var oPCRow = new sap.m.PlanningCalendarRow(),
+				oRowStartDate = new Date(2017, 10, 13),
+				oAppStartDate = new Date(2017, 10, 13, 1, 0, 0),
+				oAppEndDate = new Date(2017, 10, 13, 2, 0, 0),
+				newAppPos;
+
+			//act
+			newAppPos = oPCRow._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 10);
+
+			//assert
+			assert.deepEqual(newAppPos.startDate, new Date(2017, 10, 13, 5, 0, 0), "Correct new start position");
+			assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 13, 6, 0, 0), "Correct new end position");
+
+			//act
+			newAppPos = oPCRow._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 16);
+
+			//assert
+			assert.deepEqual(newAppPos.startDate, new Date(2017, 10, 13, 8, 0, 0), "Correct new start position");
+			assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 13, 9, 0, 0), "Correct new end position");
+
+			//act
+			newAppPos = oPCRow._calcNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 8);
+
+			//assert
+			assert.deepEqual(newAppPos.startDate, new Date(2017, 10, 13, 4, 0, 0), "Correct new start position");
+			assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 13, 5, 0, 0), "Correct new end position");
+
+			//clean
+			oPCRow.destroy();
+		});
+
+		QUnit.test("_calcNewDaysAppPos: Calculate new position of the appointment in 'Days' view", function(assert) {
+			//arrange
+			var oPCRow = new sap.m.PlanningCalendarRow(),
+				oRowStartDate = new Date(2017, 10, 13),
+				oAppStartDate = new Date(2017, 10, 15, 1, 0, 0),
+				oAppEndDate = new Date(2017, 10, 15, 2, 0, 0),
+				newAppPos;
+
+			//act
+			newAppPos = oPCRow._calcNewDaysAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 4);
+
+			//assert
+			assert.deepEqual(newAppPos.startDate, new Date(2017, 10, 17, 1, 0, 0), "Correct new start position");
+			assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 17, 2, 0, 0), "Correct new end position");
+
+			//act
+			newAppPos = oPCRow._calcNewDaysAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 3);
+
+			//assert
+			assert.deepEqual(newAppPos.startDate, new Date(2017, 10, 16, 1, 0, 0), "Correct new start position");
+			assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 16, 2, 0, 0), "Correct new end position");
+
+			//act
+			newAppPos = oPCRow._calcNewDaysAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 6);
+
+			//assert
+			assert.deepEqual(newAppPos.startDate, new Date(2017, 10, 19, 1, 0, 0), "Correct new start position");
+			assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 19, 2, 0, 0), "Correct new end position");
+
+			//clean
+			oPCRow.destroy();
+		});
+
+		QUnit.test("_calcNewMonthsAppPos: Calculate new position of the appointment in 'Months' view", function(assert) {
+			//arrange
+			var oPCRow = new sap.m.PlanningCalendarRow(),
+				oRowStartDate = new Date(2017, 10, 13),
+				oAppStartDate = new Date(2017, 11, 13, 1, 0, 0),
+				oAppEndDate = new Date(2017, 11, 13, 2, 0, 0),
+				newAppPos;
+
+			//act
+			newAppPos = oPCRow._calcNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 3);
+
+			//assert
+			assert.deepEqual(newAppPos.startDate, new Date(2018, 1, 13, 1, 0, 0), "Correct new start position");
+			assert.deepEqual(newAppPos.endDate, new Date(2018, 1, 13, 2, 0, 0), "Correct new end position");
+
+			//act
+			newAppPos = oPCRow._calcNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 1);
+
+			//assert
+			assert.deepEqual(newAppPos.startDate, new Date(2017, 11, 13, 1, 0, 0), "Correct new start position");
+			assert.deepEqual(newAppPos.endDate, new Date(2017, 11, 13, 2, 0, 0), "Correct new end position");
+
+			//act
+			newAppPos = oPCRow._calcNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 2);
+
+			//assert
+			assert.deepEqual(newAppPos.startDate, new Date(2018, 0, 13, 1, 0, 0), "Correct new start position");
+			assert.deepEqual(newAppPos.endDate, new Date(2018, 0, 13, 2, 0, 0), "Correct new end position");
+
+			//clean
+			oPCRow.destroy();
+		});
 	</script>
 
 </head>

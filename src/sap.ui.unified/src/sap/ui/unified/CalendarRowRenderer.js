@@ -87,10 +87,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 		var sId = oRow.getId();
 		oRm.write("<div id=\"" + sId + "-Apps\" class=\"sapUiCalendarRowApps\">");
 
+		this.renderBeforeAppointments(oRm, oRow);
 		this.renderAppointments(oRm, oRow, aTypes);
+		this.renderAfterAppointments(oRm, oRow);
 
 		oRm.write("</div>");
 
+	};
+
+	/**
+	 * This hook method is reserved for derived classes to render more handles.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.unified.CalendarRow} oRow An object representation of the control that should be rendered.
+	 */
+	CalendarRowRenderer.renderBeforeAppointments = function(oRm, oRow) {
+	};
+
+	/**
+	 * This hook method is reserved for derived classes to render more handles.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.unified.CalendarRow} oRow An object representation of the control that should be rendered.
+	 */
+	CalendarRowRenderer.renderAfterAppointments = function(oRm, oRow) {
 	};
 
 	CalendarRowRenderer.renderAppointments = function(oRm, oRow, aTypes){
