@@ -1543,15 +1543,18 @@ sap.ui.define([
 			return;
 		}
 
-		oEvent.preventDefault(); // Prevent scrolling the page.
-
 		// If focus is on a group header, do nothing.
 		if (TableUtils.Grouping.isInGroupingRow(oEvent.target)) {
 			preventItemNavigation(oEvent);
+			oEvent.preventDefault(); // Prevent scrolling the page.
 			return;
 		}
 
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
+
+		if (oCellInfo.isOfType(CellType.ANY)) {
+			oEvent.preventDefault(); // Prevent scrolling the page.
+		}
 
 		if (oCellInfo.isOfType(CellType.DATACELL | CellType.ROWACTION | CellType.COLUMNHEADER)) {
 			var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
@@ -1581,10 +1584,9 @@ sap.ui.define([
 			return;
 		}
 
-		oEvent.preventDefault(); // Prevent scrolling the page.
-
 		// If focus is on a group header, do nothing.
 		if (TableUtils.Grouping.isInGroupingRow(oEvent.target)) {
+			oEvent.preventDefault(); // Prevent scrolling the page.
 			preventItemNavigation(oEvent);
 			return;
 		}
@@ -1592,6 +1594,8 @@ sap.ui.define([
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
 		if (oCellInfo.isOfType(CellType.ANY)) {
+			oEvent.preventDefault(); // Prevent scrolling the page.
+
 			var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
 			var iFocusedIndex = oFocusedItemInfo.cell;
 			var iColumnCount = oFocusedItemInfo.columnCount;

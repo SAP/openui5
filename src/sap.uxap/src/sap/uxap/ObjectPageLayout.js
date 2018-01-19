@@ -299,7 +299,12 @@ sap.ui.define([
 						/**
 						 * The selected section object.
 						 */
-						section: {type: "sap.uxap.ObjectPageSection"}
+						section: {type: "sap.uxap.ObjectPageSection"},
+
+						/**
+						 * The selected subsection object.
+						 */
+						subSection: {type: "sap.uxap.ObjectPageSubSection"}
 					}
 				}
 			},
@@ -510,7 +515,7 @@ sap.ui.define([
 
 		var bIsPageTop;
 
-		this._toggleHeaderTitle(false /* not expand */);
+		this._toggleHeaderTitle(false /* not expand */, true /* user interaction */);
 		this._moveAnchorBarToTitleArea();
 
 		if (bAppendHeaderToContent) {
@@ -542,7 +547,7 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._expandHeader = function (bAppendHeaderToTitle) {
 
-		this._toggleHeaderTitle(true /* expand */);
+		this._toggleHeaderTitle(true /* expand */, true /* user interaction */);
 		this._toggleHeaderVisibility(true);
 
 		if (bAppendHeaderToTitle) {
@@ -1008,16 +1013,16 @@ sap.ui.define([
 	 * Toggles visual rules on manually expand or collapses the sticky header
 	 * @private
 	 */
-	ObjectPageLayout.prototype._toggleHeaderTitle = function (bExpand) {
+	ObjectPageLayout.prototype._toggleHeaderTitle = function (bExpand, bUserInteraction) {
 		var oHeaderTitle = this.getHeaderTitle();
 
 		// note that <code>this._$headerTitle</code> is the placeholder [of the sticky area] where both the header title and header content are placed
 		this._$headerTitle.toggleClass("sapUxAPObjectPageHeaderStickied", !bExpand);
 
 		if (bExpand) {
-			oHeaderTitle && oHeaderTitle.unSnap();
+			oHeaderTitle && oHeaderTitle.unSnap(bUserInteraction);
 		} else {
-			oHeaderTitle && oHeaderTitle.snap();
+			oHeaderTitle && oHeaderTitle.snap(bUserInteraction);
 		}
 	};
 
@@ -1298,6 +1303,7 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._requestAdjustLayoutAndUxRules = function (bImmediate) {
+		this._setSectionInfoIsDirty(true);
 
 		if (!this._oUxRulesTask) {
 			this._oUxRulesTask = new ThrottledTask(
@@ -1349,9 +1355,10 @@ sap.ui.define([
 					}
 					this._adjustSelectedSectionByUXRules(); //section may have changed again from the app before the promise completed => ensure adjustment
 					sSelectedSectionId = this.getSelectedSection();
-					if (!this._isClosestScrolledSection(sSelectedSectionId)) {
+					// if the current scroll position is not at the selected section OR the ScrollEnablement is still scrolling due to an animation
+					if (!this._isClosestScrolledSection(sSelectedSectionId) || this._oScroller._$Container.is(":animated")) {
 						// then change the selection to match the correct section
-						this.scrollToSection(sSelectedSectionId);
+						this.scrollToSection(sSelectedSectionId, null, 0, false, true /* redirect scroll */);
 					}
 				}.bind(this));
 		}
@@ -1444,7 +1451,7 @@ sap.ui.define([
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	ObjectPageLayout.prototype.scrollToSection = function (sId, iDuration, iOffset, bIsTabClicked) {
+	ObjectPageLayout.prototype.scrollToSection = function (sId, iDuration, iOffset, bIsTabClicked, bRedirectScroll) {
 		var oSection = this.oCore.byId(sId);
 
 		if (!this.getDomRef()){
@@ -1482,7 +1489,10 @@ sap.ui.define([
 		}
 
 		if (bIsTabClicked) {
-			this.fireNavigate({section: ObjectPageSection._getClosestSection(oSection)});
+			this.fireNavigate({
+				section: ObjectPageSection._getClosestSection(oSection),
+				subSection: oSection instanceof ObjectPageSubSection ? oSection : oSection.getSubSections()[0]
+			});
 		}
 
 		if (this._bHeaderInTitleArea && !this._shouldPreserveHeaderInTitleArea()) {
@@ -1502,13 +1512,12 @@ sap.ui.define([
 
 		var iScrollTo = this._computeScrollPosition(oSection);
 
-		//avoid triggering twice the scrolling onto the same target section
-		if (this._sCurrentScrollId != sId) {
+		if (this._sCurrentScrollId != sId || bRedirectScroll) {
 			this._sCurrentScrollId = sId;
 
 			if (this._iCurrentScrollTimeout) {
 				clearTimeout(this._iCurrentScrollTimeout);
-				if (this._$contentContainer){
+				if (this._$contentContainer) {
 					this._$contentContainer.parent().stop(true, false);
 				}
 			}
@@ -1526,7 +1535,6 @@ sap.ui.define([
 
 			this._scrollTo(iScrollTo + iOffset, iDuration);
 		}
-
 	};
 
 	ObjectPageLayout.prototype._computeScrollDuration = function (iAppSpecifiedDuration, oTargetSection) {
@@ -1638,7 +1646,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._scrollTo = function (y, time) {
-		if (this._oScroller && this._bDomReady) {
+		if (this._oScroller && this._bDomReady && !this._bSuppressScroll) {
 			jQuery.sap.log.debug("ObjectPageLayout :: scrolling to " + y);
 
 			if ((time === 0) && this._shouldSnapHeaderOnScroll(y)) {
@@ -1832,6 +1840,9 @@ sap.ui.define([
 		}
 
 		this._updateCustomScrollerHeight(bStickyTitleMode);
+
+		this._setSectionInfoIsDirty(false);
+
 		return true; // return success flag
 	};
 
@@ -2137,7 +2148,11 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._onUpdateScreenSize = function (oEvent) {
 		var oTitle = this.getHeaderTitle(),
-			iCurrentWidth = oEvent.size.width;
+			iCurrentWidth = oEvent.size.width,
+			iCurrentHeight = oEvent.size.height,
+			iOldHeight = oEvent.oldSize.height,
+			bHeightChange = (iCurrentHeight !== iOldHeight),
+			sSelectedSectionId;
 
 		if (oEvent.size.height === 0 || oEvent.size.width === 0) {
 			jQuery.sap.log.info("ObjectPageLayout :: not triggering calculations if height or width is 0");
@@ -2171,6 +2186,17 @@ sap.ui.define([
 
 			if (this.getFooter() && this.getShowFooter()) {
 				this._shiftFooter();
+			}
+
+			sSelectedSectionId = this.getSelectedSection();
+			// if the page was hidden (its iOldHeight === 0)
+			// AND its selectedSection changed *while* the page was hidden
+			// => the page could not update its scrollPosition to match its newly selectedSection
+			// (because changes to scrollTop of a hidden container are ignored by the browser)
+			// => we need to restore the correct scroll position
+			if ((iOldHeight === 0) && bHeightChange && !this._isClosestScrolledSection(sSelectedSectionId)) {
+				this.scrollToSection(sSelectedSectionId, 0);
+				return;
 			}
 
 			this._scrollTo(this._$opWrapper.scrollTop(), 0);
@@ -2212,6 +2238,11 @@ sap.ui.define([
 		if (iPageHeight === 0) {
 			return; // page is hidden
 		}
+
+		if (this._getSectionInfoIsDirty()) {
+			return;
+		}
+
 		if (bShouldStick && !bShouldPreserveHeaderInTitleArea) {
 			iPageHeight -= (this.iAnchorBarHeight + this.iHeaderTitleHeightStickied);
 		}
@@ -2226,7 +2257,7 @@ sap.ui.define([
 
 		//don't apply parallax effects if there are not enough space for it
 		if (!bShouldPreserveHeaderInTitleArea && ((oHeader && this.getShowHeaderContent()) || this.getShowAnchorBar())) {
-			this._toggleHeader(bShouldStick);
+			this._toggleHeader(bShouldStick, !!(oEvent && oEvent.type === "scroll"));
 		}
 
 		if (!bShouldPreserveHeaderInTitleArea) {
@@ -2268,7 +2299,10 @@ sap.ui.define([
 
 			if (sClosestSubSectionId !== this._sScrolledSubSectionId) {
 				this._sScrolledSubSectionId = sClosestSubSectionId;
-				this.fireEvent("_sectionChange", {section: this.oCore.byId(sClosestId), subsection: this.oCore.byId(sClosestSubSectionId)});
+				this.fireEvent("_sectionChange", {
+					section: this.oCore.byId(sClosestId),
+					subSection: this.oCore.byId(sClosestSubSectionId)
+				});
 			}
 		}
 
@@ -2363,12 +2397,12 @@ sap.ui.define([
 	 * @param {boolean} bStick boolean true for fixing the header, false for keeping it moving
 	 * @private
 	 */
-	ObjectPageLayout.prototype._toggleHeader = function (bStick) {
+	ObjectPageLayout.prototype._toggleHeader = function (bStick, bUserInteraction) {
 		var oHeaderTitle = this.getHeaderTitle();
 
 		//switch to stickied
 		if (!this._shouldPreserveHeaderInTitleArea() && !this._bHeaderInTitleArea) {
-			this._toggleHeaderTitle(!bStick);
+			this._toggleHeaderTitle(!bStick, bUserInteraction);
 		}
 
 		if (!this._bStickyAnchorBar && bStick) {
@@ -2626,9 +2660,9 @@ sap.ui.define([
 			iHeight = $Clone.height();
 			$Clone.remove(); //clean dom
 		} else if (oTitle && oTitle.snap) {
-			oTitle.snap();
+			oTitle.snap(false);
 			iHeight = oTitle.$().outerHeight();
-			oTitle.unSnap();
+			oTitle.unSnap(false);
 		}
 
 		return iHeight;
@@ -2645,9 +2679,9 @@ sap.ui.define([
 			iHeight = $Clone.is(":visible") ? $Clone.height() - this.iAnchorBarHeight : 0;
 			$Clone.remove(); //clean dom
 		} else if (oTitle && oTitle.unSnap) {
-			oTitle.unSnap();
+			oTitle.unSnap(false);
 			iHeight = oTitle.$().outerHeight();
-			oTitle.snap();
+			oTitle.snap(false);
 		}
 
 		return iHeight;
@@ -3300,6 +3334,32 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Sets a flag to [temporarily] deactivate any scrolling requested with the <code>sap.uxap.ObjectPageLayout.prototype._scrollTo</code> function
+	 * This flag is used by RTA for the purpose of postponing the auto-scrolling of the ObjectPage to its selected section
+	 * so that the scrolling does not start before RTA operation fully completed
+	 * @sap-restricted
+	 * @private
+	 */
+	ObjectPageLayout.prototype._suppressScroll = function () {
+		this._bSuppressScroll = true;
+	};
+
+	/**
+	 * Un-sets the flag that deactivates scrolling requested with the <code>sap.uxap.ObjectPageLayout.prototype._scrollTo</code> function
+	 * This flag is used by RTA for the purpose of postponing/resuming the auto-scrolling of the ObjectPage to its selected section
+	 * so that the scrolling does not start before RTA operation fully completed
+	 * @param {Boolean} bRestoreState whether to also scroll to the currently selected section. If this value is <code>false</code> then the page will remain in an invalid state, as its scroll position may not comply to its selected section.
+	 * @sap-restricted
+	 * @private
+	 */
+	ObjectPageLayout.prototype._resumeScroll = function (bRestoreState) {
+		this._bSuppressScroll = false;
+		if (bRestoreState) {
+			this.scrollToSection(this.getSelectedSection());
+		}
+	};
+
 	ObjectPageLayout.prototype._addHoverClass = function() {
 		var $oObjectPage = this.$();
 
@@ -3328,6 +3388,24 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._getWidth = function (oControl) {
 		return !(oControl instanceof Control) ? 0 : oControl.$().outerWidth() || 0;
+	};
+
+	/**
+	 * Returns the bSectionInfoIsDirty flag indicating if the information in the this._oSectionInfo object is valid.
+	 * @returns {boolean}
+	 * @private
+	 */
+	ObjectPageLayout.prototype._getSectionInfoIsDirty = function () {
+		return this.bSectionInfoIsDirty;
+	};
+
+	/**
+	 * Sets the bSectionInfoIsDirty flag.
+	 * @param bDirty {boolean}
+	 * @private
+	 */
+	ObjectPageLayout.prototype._setSectionInfoIsDirty = function (bDirty) {
+		this.bSectionInfoIsDirty = bDirty;
 	};
 
 	function exists(vObject) {

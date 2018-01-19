@@ -389,18 +389,19 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	 *
 	 * @private
 	 * @param {object} oExecutionScope The scope of the analysis
-	 * @param {object[]|object} aRuleDescriptors An array with rules against which the analysis will be run
+	 * @param {object[]|object} [vRuleDescriptors=All rules] The rules against which the analysis will be run
 	 * @returns {Promise} Notifies the finished state by starting the Analyzer
 	 */
-	Main.prototype.analyze = function (oExecutionScope, aRuleDescriptors) {
+	Main.prototype.analyze = function (oExecutionScope, vRuleDescriptors) {
 		var that = this;
 
 		if (this._oAnalyzer && this._oAnalyzer.running()) {
 			return;
 		}
 
-		// Set default scope
+		// Set default values
 		oExecutionScope = oExecutionScope || {type: "global"};
+		vRuleDescriptors = vRuleDescriptors || RuleSetLoader.getAllRuleDescriptors();
 
 		if (!this._isExecutionScopeValid(oExecutionScope)) {
 			return;
@@ -421,7 +422,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 
 		IssueManager.clearIssues();
 
-		this._setSelectedRules(aRuleDescriptors);
+		this._setSelectedRules(vRuleDescriptors);
 
 		return this._oAnalyzer.start(this._aSelectedRules, this._oCoreFacade, this._oExecutionScope).then(function() {
 			that._done();
@@ -490,38 +491,46 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	 * Sets selected rules from rules descriptors.
 	 *
 	 * @private
-	 * @param {(array|object)} aRuleDescriptors Contains ruleDescriptors of selected rules.
-	 * If no ruleDescriptors are provided all rules will be selected.
+	 * @param {(object[]|object)} vRuleDescriptors Contains ruleDescriptors of selected rules.
 	 */
-	Main.prototype._setSelectedRules = function (aRuleDescriptors) {
+	Main.prototype._setSelectedRules = function (vRuleDescriptors) {
 		this._aSelectedRules = [];
 		this._oSelectedRulesIds = {};
 
-		var that = this;
-
-		if (aRuleDescriptors
-			&& typeof aRuleDescriptors === "object"
-			&& aRuleDescriptors.ruleId
-			&& aRuleDescriptors.libName) {
-			that._aSelectedRules.push(aRuleDescriptors);
-			that._oSelectedRulesIds[aRuleDescriptors.ruleId] = true;
-		} else if (Array.isArray(aRuleDescriptors)) {
-			aRuleDescriptors.forEach(function (oRuleDescriptor) {
-				var oLibWithRules = RuleSetLoader.getRuleSet(oRuleDescriptor.libName),
-					oSelectedRule = oLibWithRules.ruleset.getRules()[oRuleDescriptor.ruleId];
-				that._aSelectedRules.push(oSelectedRule);
-				that._oSelectedRulesIds[oRuleDescriptor.ruleId] = true;
-			});
-		} else {
-			Object.keys(RuleSetLoader.getRuleSets()).map(function (sLibName) {
-				var oRulesetRules = RuleSetLoader.getRuleSet(sLibName).ruleset.getRules();
-
-				Object.keys(oRulesetRules).map(function (sRuleId) {
-					that._aSelectedRules.push(oRulesetRules[sRuleId]);
-					that._oSelectedRulesIds[sRuleId] = true;
-				});
-			});
+		if (!vRuleDescriptors) {
+			return;
 		}
+
+		if (!Array.isArray(vRuleDescriptors)) {
+			vRuleDescriptors = [vRuleDescriptors];
+		}
+
+		vRuleDescriptors.forEach(function (oRuleDescriptor) {
+			var oRuleset,
+				mRules;
+
+			if (!oRuleDescriptor.libName || !oRuleDescriptor.ruleId) {
+				jQuery.sap.log.error("[" + constants.SUPPORT_ASSISTANT_NAME + "] Invalid Rule Descriptor.");
+				return;
+			}
+
+			oRuleset = RuleSetLoader.getRuleSet(oRuleDescriptor.libName);
+
+			if (!oRuleset || !oRuleset.ruleset) {
+				jQuery.sap.log.error("[" + constants.SUPPORT_ASSISTANT_NAME + "] Could not find Ruleset for library " + oRuleDescriptor.libName);
+				return;
+			}
+
+			mRules = oRuleset.ruleset.getRules();
+			if (!mRules || !mRules[oRuleDescriptor.ruleId]) {
+				jQuery.sap.log.error("[" + constants.SUPPORT_ASSISTANT_NAME + "] Could not find Rule with id " +
+					oRuleDescriptor.ruleId + " for library " + oRuleDescriptor.libName);
+				return;
+			}
+
+			this._aSelectedRules.push(mRules[oRuleDescriptor.ruleId]);
+			this._oSelectedRulesIds[oRuleDescriptor.ruleId] = true;
+		}, this);
 	};
 
 	/**

@@ -301,6 +301,12 @@ sap.ui.define([
 			_onControlsMatched: function() {
 				this.showMasterSide();
 				this._resetListSelection();
+
+				if (Device.system.desktop) {
+					jQuery.sap.delayedCall(0, this, function () {
+						this.getView().byId("searchField").getFocusDomRef().focus();
+					});
+				}
 			},
 
 			/* =========================================================== */

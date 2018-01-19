@@ -4,8 +4,8 @@
  */
 
 // Provides an abstraction for list bindings
-sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
-	function(jQuery, Binding, Filter, Sorter) {
+sap.ui.define(['./Binding', './Filter', './Sorter'],
+	function(Binding, Filter, Sorter) {
 	"use strict";
 
 
@@ -20,8 +20,8 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 	 * @param {string} sPath Binding path for this binding;
 	 *   a relative path will be resolved relative to a given context
 	 * @param {sap.ui.model.Context} oContext Context to be used to resolve a relative path
-	 * @param {array} [aSorters] Initial sort order (can be either a sorter or an array of sorters)
-	 * @param {array} [aFilters] Predefined filter/s (can be either a filter or an array of filters)
+	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [aSorters] Initial sort order (can be either a sorter or an array of sorters)
+	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters] Predefined filter/s (can be either a filter or an array of filters)
 	 * @param {object} [mParameters] Additional, implementation-specific parameters that should be used
 	 *   by the new list binding; this base class doesn't define any parameters, check the API reference
 	 *   for the concrete model implementations to learn about their supported parameters (if any)

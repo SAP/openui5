@@ -291,12 +291,16 @@ sap.ui.define(['jquery.sap.global', './ListBase', './TreeItemBase', './library',
 	};
 
 	Tree.prototype.getAccessbilityPosition = function(oItem) {
-		var iSetSize = 0,
-			iPosInset = 0,
+		var iSetSize,
+			iPosInset,
 			oNodeContext = oItem.getItemNodeContext();
 
-		iSetSize = oNodeContext.parent.children.length;
-		iPosInset = oNodeContext.positionInParent + 1;
+		if (oNodeContext.parent) {
+			iSetSize = oNodeContext.parent.children.length;
+		}
+		if (oNodeContext.positionInParent) {
+			iPosInset = oNodeContext.positionInParent + 1;
+		}
 
 		return {
 			setSize: iSetSize,
@@ -307,6 +311,10 @@ sap.ui.define(['jquery.sap.global', './ListBase', './TreeItemBase', './library',
 	Tree.prototype.onItemLongDragOver = function(oItem) {
 		var iIndex = this.indexOfItem(oItem);
 		this.getBinding("items").expand(iIndex);
+	};
+
+	Tree.prototype.isGrouped = function() {
+		return false;
 	};
 
 	return Tree;

@@ -589,7 +589,15 @@ sap.ui.define([
 		 * @private
 		 */
 		PDFViewer.prototype._getRenderHeight = function () {
-			return this._bIsPopupOpen ? '100%' : this.getHeight();
+			if (this._bIsPopupOpen) {
+				return '100%';
+			}
+
+			if (!this._isEmbeddedModeAllowed()) {
+				return 'auto';
+			}
+
+			return this.getHeight();
 		};
 
 		/**

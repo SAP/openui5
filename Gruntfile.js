@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2017 SAP SE
+ * Copyright (c) 2014-2018 SAP SE
  */
 
 'use strict';
@@ -169,6 +169,12 @@ module.exports = function(grunt) {
 	if (configExtensionFile) {
 		configExtensionFile.split(',').forEach(file => require(path.resolve(file))(grunt, gruntData));
 	}
+
+	// Normalize all library 'path' to individual 'src' and 'test' paths
+	gruntData.allLibraries.forEach(function(library) {
+		library.src = library.src || library.path + "/src";
+		library.test = library.test || library.path + "/test";
+	});
 
 	// determine set of libraries to use (specified by --libs option)
 	gruntData.libraries = !libs ? gruntData.allLibraries : gruntData.allLibraries.filter(function(library) {

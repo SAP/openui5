@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.StepInput.
-sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRenderer", "sap/ui/core/Control", "sap/ui/core/IconPool", "sap/ui/core/library", "sap/ui/core/Renderer", "sap/m/library", "jquery.sap.keycodes"],
-	function (jQuery, Icon, Input, InputRenderer, Control, IconPool, coreLibrary, Renderer, library) {
+sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRenderer", "sap/ui/core/Control", "sap/ui/core/IconPool", 'sap/ui/Device', "sap/ui/core/library", "sap/ui/core/Renderer", "sap/m/library", "jquery.sap.keycodes"],
+	function (jQuery, Icon, Input, InputRenderer, Control, IconPool, Device, coreLibrary, Renderer, library) {
 		"use strict";
 
 		// shortcut for sap.m.InputType
@@ -260,6 +260,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		StepInput.STEP_INPUT_INCREASE_BTN_TOOLTIP = oLibraryResourceBundle.getText("STEP_INPUT_INCREASE_BTN");
 		StepInput.STEP_INPUT_DECREASE_BTN_TOOLTIP = oLibraryResourceBundle.getText("STEP_INPUT_DECREASE_BTN");
+
+		StepInput.INITIAL_WAIT_TIMEOUT = 500;
+		StepInput.ACCELLERATION = 0.8;
+		StepInput.MIN_WAIT_TIMEOUT = 50;
+		StepInput.INITIAL_SPEED = 120; //milliseconds
+		StepInput._TOLERANCE = 10; // pixels
 
 		/**
 		 * Map between StepInput properties and their corresponding aria attributes.
@@ -588,15 +594,17 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		 * @private
 		 */
 		StepInput.prototype._createIncrementButton = function () {
-			var oIcon;
+			var oIcon,
+				that = this,
+				oIncrButton = new Icon({
+					src: IconPool.getIconURI("add"),
+					id: this.getId() + "-incrementBtn",
+					noTabStop: true,
+					press: this._handleButtonPress.bind(this, true),
+					tooltip: StepInput.STEP_INPUT_INCREASE_BTN_TOOLTIP
+				});
 
-			this.setAggregation("_incrementButton", new Icon({
-				src: IconPool.getIconURI("add"),
-				id: this.getId() + "-incrementBtn",
-				noTabStop: true,
-				press: this._handleButtonPress.bind(this, true),
-				tooltip: StepInput.STEP_INPUT_INCREASE_BTN_TOOLTIP
-			}));
+			this.setAggregation("_incrementButton", oIncrButton);
 
 			oIcon = this.getAggregation("_incrementButton");
 			oIcon.addEventDelegate({
@@ -604,6 +612,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 					// Set it to -1 so it still won't be part of the tabchain but can be document.activeElement
 					// see _change method, _isButtonFocused call
 					oIcon.$().attr("tabindex", "-1");
+					that._attachEvents(oIncrButton, true);
 				}
 			});
 
@@ -616,15 +625,17 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		 * @private
 		 */
 		StepInput.prototype._createDecrementButton = function() {
-			var oIcon;
+			var oIcon,
+				that = this,
+				oDecrButton = new Icon({
+					src: IconPool.getIconURI("less"),
+					id: this.getId() + "-decrementBtn",
+					noTabStop: true,
+					press: this._handleButtonPress.bind(this, false),
+					tooltip: StepInput.STEP_INPUT_DECREASE_BTN_TOOLTIP
+				});
 
-			this.setAggregation("_decrementButton", new Icon({
-				src: IconPool.getIconURI("less"),
-				id: this.getId() + "-decrementBtn",
-				noTabStop: true,
-				press: this._handleButtonPress.bind(this, false),
-				tooltip: StepInput.STEP_INPUT_DECREASE_BTN_TOOLTIP
-			}));
+			this.setAggregation("_decrementButton", oDecrButton);
 
 			oIcon = this.getAggregation("_decrementButton");
 			oIcon.addEventDelegate({
@@ -632,11 +643,13 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 					// Set it to -1 so it still won't be part of the tabchain but can be document.activeElement
 					// see _change method, _isButtonFocused call
 					oIcon.$().attr("tabindex", "-1");
+					that._attachEvents(oDecrButton, false);
 				}
 			});
 
 			return oIcon;
 		};
+
 
 		StepInput.prototype._getIsDisabledButton = function (sType) {
 			var bEnabled = this.getEnabled(),
@@ -693,13 +706,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 				fMin = this.getMin(),
 				fMax = this.getMax();
 
+			this._btndown = undefined;
 			this._disableButtons(oNewValue.displayValue, fMax, fMin);
 			this.setValue(oNewValue.value);
 			this._verifyValue();
 
-			if (this._iChangeEventTimer) {
-				jQuery.sap.clearDelayedCall(this._iChangeEventTimer);
-			}
 			if (this._sOldValue !== this.getValue()) {
 				this.fireChange({value: this.getValue()});
 			}
@@ -1311,6 +1322,99 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		 */
 		function isValidPrecisionValue(value) {
 			return (typeof (value) === 'number') && !isNaN(value) && value >= 0 && value <= 20;
+		}
+
+
+		// speed spin of values functionality
+
+		/*
+		 * Calculates the time which should be waited until _spinValues function is called.
+		 */
+		StepInput.prototype._calcWaitTimeout = function() {
+			this._speed *= StepInput.ACCELLERATION;
+			this._waitTimeout = ((this._waitTimeout - this._speed) < StepInput.MIN_WAIT_TIMEOUT ? StepInput.MIN_WAIT_TIMEOUT : (this._waitTimeout - this._speed));
+
+			return this._waitTimeout;
+		};
+
+		/*
+		 * Called when the increment or decrement button is pressed and held to set new value.
+		 * @param {boolean} bIncrementButton - is this the increment button or not so the values should be spin accordingly up or down
+		 */
+		StepInput.prototype._spinValues = function(bIncrementButton) {
+			var that = this;
+			if (this._btndown) {
+				this._spinTimeoutId = setTimeout(function () {
+					if (that._btndown) {
+						////////////////// just the code for setting a value, not firing an event
+						var oNewValue = that._calculateNewValue(1, bIncrementButton);
+
+						that.setValue(oNewValue.value);
+
+						if (that._getIsDisabledButton("sapMStepInputBtnIncrease") || that._getIsDisabledButton("sapMStepInputBtnDecrease")) {
+							_resetSpinValues.call(that);
+							// fire change event when the buttons get disabled since then no mouseup event is fired
+							that.fireChange({value: that.getValue()});
+						}
+
+						that._spinValues(bIncrementButton);
+					}
+				}, that._calcWaitTimeout());
+			}
+		};
+
+
+		/*
+		 * Attaches events to increment and decrement buttons.
+		 * @param {object} oBtn - button to which events will be attached
+		 * @param {boolean} bIncrementButton - is this the increment button or not so the values should be spin accordingly up or down
+		 */
+		StepInput.prototype._attachEvents = function (oBtn, bIncrementButton) {
+			var that = this;
+			// Desktop events
+			var oEvents = {
+					onmousedown: function (oEvent) {
+						// check if the left mouse button is pressed
+						if (oEvent.button === 0 && !that._btndown) {
+							that._waitTimeout = StepInput.INITIAL_WAIT_TIMEOUT;
+							that._speed = StepInput.INITIAL_SPEED;
+							that._btndown = true;
+							that._spinValues(bIncrementButton);
+						}
+					},
+					onmouseup: function (oEvent) {
+						if (that._btndown) {
+							_resetSpinValues.call(that);
+						}
+					},
+					onmouseout: function (oEvent) {
+						if (that._btndown) {
+							_resetSpinValues.call(that);
+							that.fireChange({value: that.getValue()});
+						}
+					},
+					oncontextmenu: function (oEvent) {
+						// Context menu is shown on "long-touch"
+						// so prevent of showing it while "long-touching" on the button
+						oEvent.stopImmediatePropagation(true);
+						oEvent.preventDefault();
+						oEvent.stopPropagation();
+					}
+				};
+
+				oBtn.addDelegate(oEvents, true);
+		};
+
+		/*
+		 * Resets timeouts and speed to initial values.
+		 */
+		function _resetSpinValues() {
+			if (this._btndown) {
+				this._btndown = undefined;
+				clearTimeout(this._spinTimeoutId);
+				this._waitTimeout = 500;
+				this._speed = 120;
+			}
 		}
 
 		return StepInput;

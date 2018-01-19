@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./DragDropBase", "../Element"],
-	function(DragDropBase, Element) {
+sap.ui.define(["./DragDropBase", "../Element", "jquery.sap.dom"],
+	function(DragDropBase, Element, jQuery) {
 	"use strict";
 
 	/**
@@ -250,4 +250,4 @@ sap.ui.define(["./DragDropBase", "../Element"],
 
 	return DragDropInfo;
 
-}, /* bExport= */ true);
+});

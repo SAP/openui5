@@ -3,7 +3,7 @@
  */
 
 // Provides the base class class for all drag and drop configurations.
-sap.ui.define(["../Element", '../library', './DragAndDrop'],
+sap.ui.define(['../Element', '../library', './DragAndDrop'],
 	function(Element, library /*, DragAndDrop */) {
 	"use strict";
 
@@ -61,4 +61,4 @@ sap.ui.define(["../Element", '../library', './DragAndDrop'],
 
 	return DragDropBase;
 
-}, /* bExport= */ true);
+});

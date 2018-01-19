@@ -137,6 +137,17 @@
 				]
 			},
 			{
+				"id": "sap.ui.core.message.MessageManager",
+				"name": "Message Manager",
+				"category": "Display",
+				"since": "1.30",
+				"samples": [
+					"sap.ui.core.sample.MessageManager.BasicMessages",
+					"sap.ui.core.sample.MessageManager.BasicODataMessages",
+					"sap.ui.core.sample.MessageManager.ODataBackendMessagesComp"
+				]
+			},
+			{
 				"id" : "sap.ui.test.gherkin",
 				"name" : "Gherkin",
 				"category" : "Testing",
@@ -363,7 +374,26 @@
 				  "Handling Custom URL Parameters",
 				  "Calling a Function Import"
 				]
-		    }
+		    },
+			{
+				"id": "sap.ui.core.tutorial.odatav4",
+				"name": "OData V4",
+				"category": "Tutorial",
+				"since": "1.54",
+				"formFactors": "-",
+				"description": "In this tutorial, we will show you how to build a simple application using an OData V4 service.",
+				"docuLink": "#docs/guide/bcdbde6911bd4fc68fd435cf8e306ed0.html",
+				"samplesAsSteps": [
+					"Set Up the Initial App",
+					"Data Access and Client-Server Communication",
+					"Automatic Type Detection",
+					"Filtering, Sorting, and Counting",
+					"Batch Groups",
+					"Create and Edit",
+					"Delete",
+					"Actions and Functions"
+				]
+			}
 		],
 		"samples" : [
 			{
@@ -610,6 +640,21 @@
 				"id": "sap.ui.core.sample.matcher.LabelFor",
 				"name": "Label For Matcher",
 				"description": "The LabelFor matcher searches for given control associated with labelFor property."
+			},
+			{
+				"id": "sap.ui.core.sample.MessageManager.BasicMessages",
+				"name": "Basic Messages",
+				"description": "Shows how to create messages on the frontend and display them afterwards. This can be used for form validation on the frontend."
+			},
+			{
+				"id": "sap.ui.core.sample.MessageManager.BasicODataMessages",
+				"name": "Basic OData Messages",
+				"description": "Uses the MockServer to simulate an OData response containing different types of server side messages (error, warning, info, success)."
+			},
+			{
+				"id": "sap.ui.core.sample.MessageManager.ODataBackendMessagesComp",
+				"name": "OData Messages Component",
+				"description": "Shows how to handle OData responses containing server side messages in component based apps. Also illustrates how the sap-message header works."
 			},
 			{
 				"id": "sap.ui.core.sample.OpaStartup.iStartMyUIComponent",

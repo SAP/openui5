@@ -362,9 +362,10 @@ sap.ui.define([
 	P13nGroupPanel.prototype.updateGroupItems = function(sReason) {
 		this.updateAggregation("groupItems");
 
-		if (sReason == "change" && !this._bIgnoreBindCalls) {
-			this._bUpdateRequired = true;
-		}
+        if (sReason === "change" && !this._bIgnoreBindCalls) {
+            this._bUpdateRequired = true;
+            this.invalidate();
+        }
 	};
 
 	P13nGroupPanel.prototype.removeGroupItem = function(oGroupItem) {

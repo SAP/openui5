@@ -218,7 +218,14 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 			 *
 			 * @since 1.54
 			 */
-			dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true, singularName : "dragDropConfig"}
+			dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true, singularName : "dragDropConfig"},
+
+			/**
+			 * Defines the context menu of the items.
+			 *
+			 * @since 1.54
+			 */
+			contextMenu : {type : "sap.ui.core.IContextMenu", multiple : false}
 		},
 		associations: {
 
@@ -420,6 +427,21 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 					 */
 					srcControl : {type : "sap.ui.core.Control"}
 				}
+			},
+
+			/**
+			 * Fired when the context menu is opened.
+			 * When the context menu is opened, the binding context of the item is set to the given <code>contextMenu</code>.
+			 * @since 1.54
+			 */
+			beforeOpenContextMenu : {
+				allowPreventDefault : true,
+				parameters : {
+					/**
+					 * Item in which the context menu was opened.
+					 */
+					listItem : {type : "sap.m.ListItemBase"}
+				}
 			}
 		},
 		designtime: "sap/m/designtime/ListBase.designtime"
@@ -533,8 +555,8 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 				// Wrap the event handler of the other party to add our handler.
 				var fOriginalHandler = oBindingInfo.events[sEventName];
 				oBindingInfo.events[sEventName] = function() {
-					fOriginalHandler.apply(this, arguments);
 					fHandler.apply(this, arguments);
+					fOriginalHandler.apply(this, arguments);
 				};
 			}
 		}
@@ -1523,8 +1545,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 			return this;
 		}
 
-		Control.prototype.invalidate.apply(this, arguments);
-		return this;
+		return Control.prototype.invalidate.apply(this, arguments);
 	};
 
 	ListBase.prototype.addItemGroup = function(oGroup, oHeader, bSuppressInvalidate) {
@@ -1595,14 +1616,12 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 		}
 
 		sDescription += this.getAccessibilityStates() + " ";
-		sDescription += this.getFooterText();
-
-		return sDescription.trim();
+		return sDescription;
 	};
 
 	ListBase.prototype.getAccessibilityInfo = function() {
 		return {
-			description: this.getAccessibilityDescription(),
+			description: this.getAccessibilityDescription().trim(),
 			focusable: true
 		};
 	};
@@ -1654,6 +1673,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 			sDescription += oBundle.getText("LIST_ITEM_POSITION", [mPosition.posInset, mPosition.setSize]) + " ";
 			sDescription += oAccInfo.description;
 			this.updateInvisibleText(sDescription, oItemDomRef);
+			return sDescription;
 		}
 	};
 
@@ -2050,10 +2070,45 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 		}
 	};
 
+	ListBase.prototype.onItemContextMenu = function(oLI, oEvent) {
+		var oContextMenu = this.getContextMenu();
+		if (!oContextMenu) {
+			return;
+		}
+
+		var bExecuteDefault = this.fireBeforeOpenContextMenu({
+			listItem: oLI,
+			column: sap.ui.getCore().byId(jQuery(oEvent.target).closest(".sapMListTblCell", this.getNavigationRoot()).attr("data-sap-ui-column"))
+		});
+		if (bExecuteDefault) {
+			oEvent.setMarked();
+			oEvent.preventDefault();
+
+			var oBindingContext,
+				oBindingInfo = this.getBindingInfo("items");
+			if (oBindingInfo) {
+				oBindingContext = oLI.getBindingContext(oBindingInfo.model);
+				oContextMenu.setBindingContext(oBindingContext);
+			}
+
+			oContextMenu.openAsContextMenu(oEvent, oLI);
+		}
+	};
+
 	// return true if grouping is enabled on the binding, else false
 	ListBase.prototype.isGrouped = function() {
 		var oBinding = this.getBinding("items");
 		return oBinding && oBinding.isGrouped();
+	};
+
+	// invalidation of the table list is not required for setting the context menu
+	ListBase.prototype.setContextMenu = function(oContextMenu) {
+		this.setAggregation("contextMenu", oContextMenu, true);
+	};
+
+	// invalidation of the table list is not required for destroying the context menu
+	ListBase.prototype.destroyContextMenu = function() {
+		this.destroyAggregation("contextMenu", true);
 	};
 
 	return ListBase;

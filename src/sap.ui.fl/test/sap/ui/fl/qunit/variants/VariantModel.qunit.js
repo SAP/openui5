@@ -117,7 +117,9 @@ sap.ui.require([
 			{
 				content:
 					{
-						title: this.oData["variantMgmtId1"].variants[2].title
+						content: {
+							title: this.oData["variantMgmtId1"].variants[2].title
+						}
 					}
 			}
 		);
@@ -318,6 +320,73 @@ sap.ui.require([
 		}.bind(this));
 	});
 
+	QUnit.test("when calling '_updateVariantInURL' with a valid 'sap-ui-fl-control-variant-id' URL parameter", function(assert) {
+		var aUrlTechnicalParameters = ["Dummy", "variantMgmtId1"];
+		var aModifiedUrlTechnicalParameters = ["Dummy", "variant0"];
+		sandbox.stub(Utils, "getUshellContainer").returns(true);
+		sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
+
+		var fnGetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "getTechnicalURLParameterValues").returns(aUrlTechnicalParameters);
+		var fnSetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "setTechnicalURLParameterValues");
+		this.oModel._updateVariantInURL("variantMgmtId1", "variant0");
+		assert.ok(fnGetTechnicalURLParameterValuesStub.calledWithExactly(this.oModel.oComponent, 'sap-ui-fl-control-variant-id'), "then 'sap-ui-fl-control-variant-id' parameter values are requested");
+		assert.ok(fnSetTechnicalURLParameterValuesStub.calledWithExactly('sap-ui-fl-control-variant-id', aModifiedUrlTechnicalParameters), "then the correct 'sap-ui-fl-control-variant-id' parameter value update called with the new value");
+	});
+
+	QUnit.test("when calling '_updateVariantInURL' with no 'sap-ui-fl-control-variant-id' URL parameter", function(assert) {
+		var aUrlTechnicalParameters = [];
+		var aModifiedUrlTechnicalParameters = ["variant0"];
+		sandbox.stub(Utils, "getUshellContainer").returns(true);
+		sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
+
+		var fnGetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "getTechnicalURLParameterValues").returns(aUrlTechnicalParameters);
+		var fnSetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "setTechnicalURLParameterValues");
+		this.oModel._updateVariantInURL("variantMgmtId1", "variant0");
+		assert.ok(fnGetTechnicalURLParameterValuesStub.calledWithExactly(this.oModel.oComponent, 'sap-ui-fl-control-variant-id'), "then 'sap-ui-fl-control-variant-id' parameter values are requested");
+		assert.ok(fnSetTechnicalURLParameterValuesStub.calledWithExactly('sap-ui-fl-control-variant-id', aModifiedUrlTechnicalParameters), "then the correct 'sap-ui-fl-control-variant-id' parameter value update called with the new value");
+	});
+
+	QUnit.test("when calling '_updateVariantInURL' with no 'sap-ui-fl-control-variant-id' URL parameter", function(assert) {
+		var aUrlTechnicalParameters = [];
+		var aModifiedUrlTechnicalParameters = ["variant0"];
+		sandbox.stub(Utils, "getUshellContainer").returns(true);
+		sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
+
+		var fnGetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "getTechnicalURLParameterValues").returns(aUrlTechnicalParameters);
+		var fnSetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "setTechnicalURLParameterValues");
+		this.oModel._updateVariantInURL("variantMgmtId1", "variant0");
+		assert.ok(fnGetTechnicalURLParameterValuesStub.calledWithExactly(this.oModel.oComponent, 'sap-ui-fl-control-variant-id'), "then 'sap-ui-fl-control-variant-id' parameter values are requested");
+		assert.ok(fnSetTechnicalURLParameterValuesStub.calledWithExactly('sap-ui-fl-control-variant-id', aModifiedUrlTechnicalParameters), "then the correct 'sap-ui-fl-control-variant-id' parameter value update called with the new value");
+	});
+
+	QUnit.test("when calling '_updateVariantInURL' without a ushell container", function(assert) {
+		sandbox.stub(Utils, "getUshellContainer").returns(false);
+
+		var fnGetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "getTechnicalURLParameterValues").returns([]);
+		var fnGetVariantIndexInURLSpy = sandbox.spy(this.oModel, "_getVariantIndexInURL");
+		var fnSetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "setTechnicalURLParameterValues");
+		this.oModel._updateVariantInURL("variantMgmtId1", "variant0");
+		assert.ok(fnGetTechnicalURLParameterValuesStub.calledWithExactly(this.oModel.oComponent, 'sap-ui-fl-control-variant-id'), "then 'getTechnicalURLParameterValues' not called");
+		assert.ok(fnGetVariantIndexInURLSpy.returned({parameters: ["variant0"], index: -1}), "then 'getTechnicalURLParameterValues' not called");
+		assert.ok(fnSetTechnicalURLParameterValuesStub.calledOnce, "then 'setTechnicalURLParameterValues' not called");
+	});
+
+	QUnit.test("when calling 'clearVariantInURLForControl'", function(assert) {
+		var aUrlTechnicalParameters = ["fakevariant", "variant0"];
+		var oDummyControl = {
+			getId : function() {}
+		};
+		var fnGetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "getTechnicalURLParameterValues").returns(aUrlTechnicalParameters);
+		var fnSetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "setTechnicalURLParameterValues");
+		sandbox.stub(this.oModel, "_getLocalId").returns("variantMgmtId1");
+		sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variant0").returns(true);
+		sandbox.stub(Utils, "getUshellContainer").returns(true);
+		this.oModel.clearVariantInURLForControl(oDummyControl);
+		assert.ok(fnGetTechnicalURLParameterValuesStub.calledWithExactly(this.oModel.oComponent, 'sap-ui-fl-control-variant-id'), "then 'sap-ui-fl-control-variant-id' parameter values are requested");
+		assert.ok(fnSetTechnicalURLParameterValuesStub.calledWithExactly('sap-ui-fl-control-variant-id', [aUrlTechnicalParameters[0]]), "then 'sap-ui-fl-control-variant-id' parameter value for the provided variant management control was cleared");
+	});
+
+
 	QUnit.test("when calling '_removeDirtyChanges'", function(assert) {
 		sandbox.stub(Utils, "getAppComponentForControl").returns(this.oComponent);
 		sandbox.stub(this.oFlexController._oChangePersistence, "getDirtyChanges").returns(
@@ -340,11 +409,12 @@ sap.ui.require([
 		var oSourceVariant = {
 			"content": {
 				"fileName":"variant0",
-				"title":"variant A",
 				"fileType":"ctrl_variant",
 				"variantManagementReference":"variantMgmtId1",
 				"variantReference":"variant2",
-				"content":{},
+				"content":{
+					"title":"variant A"
+				},
 				"selector":{},
 				"layer":"CUSTOMER",
 				"namespace":"Dummy.Component"
@@ -361,7 +431,7 @@ sap.ui.require([
 
 		var fnGetVariantTitleStub = sandbox.stub(this.oModel, "getVariantTitle").returns("Variant B");
 		var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
-		oSourceVariantCopy.content.title = "Variant B" + " Copy";
+		oSourceVariantCopy.content.content.title = "Variant B" + " Copy";
 		oSourceVariantCopy.content.fileName = "newVariant";
 		sandbox.stub(Utils, "isLayerAboveCurrentLayer").returns(0);
 		sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
@@ -374,11 +444,12 @@ sap.ui.require([
 		var oSourceVariant = {
 			"content": {
 				"fileName":"variant0",
-				"title":"variant A",
 				"fileType":"ctrl_variant",
 				"variantManagementReference":"variantMgmtId1",
 				"variantReference":"variant2",
-				"content":{},
+				"content":{
+					"title":"variant A"
+				},
 				"selector":{},
 				"layer":"VENDOR",
 				"namespace":"Dummy.Component"
@@ -394,7 +465,7 @@ sap.ui.require([
 		};
 
 		var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
-		oSourceVariantCopy.content.title = oSourceVariant.content.title + " Copy";
+		oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
 		oSourceVariantCopy.content.fileName = "newVariant";
 		oSourceVariantCopy.content.variantReference = "variant0";
 		sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
@@ -409,11 +480,12 @@ sap.ui.require([
 		var oSourceVariant = {
 			"content": {
 				"fileName":"variant0",
-				"title":"variant A",
 				"fileType":"ctrl_variant",
 				"variantManagementReference":"variantMgmtId1",
 				"variantReference":"variant2",
-				"content":{},
+				"content":{
+					"title":"variant A"
+				},
 				"selector":{},
 				"layer":"VENDOR",
 				"namespace":"Dummy.Component"
@@ -431,11 +503,11 @@ sap.ui.require([
 		sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
 
 		var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
-		var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
-		oSourceVariantCopy.content.title = oSourceVariant.content.title + " Copy";
+		oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
 		oSourceVariantCopy.content.fileName = "newVariant";
 		oSourceVariantCopy.content.variantReference = "variant0";
 		oSourceVariantCopy.controlChanges.splice(1, 1);
+		var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
 
 		oSourceVariantCopy.controlChanges.forEach( function (oCopiedChange, iIndex) {
 			oCopiedChange.variantReference = "newVariant";
@@ -456,11 +528,12 @@ sap.ui.require([
 		var oSourceVariant = {
 			"content": {
 				"fileName":"variant0",
-				"title":"variant A",
 				"fileType":"ctrl_variant",
 				"variantManagementReference":"variantMgmtId1",
 				"variantReference":"variant2",
-				"content":{},
+				"content":{
+					"title":"variant A"
+				},
 				"selector":{},
 				"layer":"CUSTOMER",
 				"namespace":"Dummy.Component"
@@ -477,10 +550,10 @@ sap.ui.require([
 
 		sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
 
-		var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
 		var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
-		oSourceVariantCopy.content.title = oSourceVariant.content.title + " Copy";
+		oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
 		oSourceVariantCopy.content.fileName = "newVariant";
+		var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
 
 		oSourceVariantCopy.controlChanges.forEach( function (oCopiedChange, iIndex) {
 			oCopiedChange.variantReference = "newVariant";
@@ -500,13 +573,14 @@ sap.ui.require([
 		var oVariantData = {
 			"content": {
 				"fileName":"variant0",
-					"title":"variant A",
 					"fileType":"ctrl_variant",
 					"variantManagementReference":"variantMgmtId1",
 					"variantReference":"",
 					"reference":"Dummy.Component",
 					"packageName":"$TMP",
-					"content":{},
+					"content":{
+						"title":"variant A"
+					},
 				"selector":{},
 				"layer":"CUSTOMER",
 					"texts":{

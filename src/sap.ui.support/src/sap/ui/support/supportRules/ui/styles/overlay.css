@@ -134,3 +134,7 @@ body {
 .sapUiSupportToolIssuesTreeTable .sapMFT {
 	overflow: hidden;
 }
+
+.selectedRuleTitle {
+	height: 2rem !important;
+}

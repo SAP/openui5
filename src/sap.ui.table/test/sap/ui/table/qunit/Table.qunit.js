@@ -1050,7 +1050,14 @@ sap.ui.require([
 					}
 				},
 				renderer: function(oRm, oControl) {
-					oRm.write("<div style='height: " + (oControl.getHeight() || "10px") + "; width: 100px; background-color: orange'");
+					oRm.write("<div");
+					oRm.addStyle("height", oControl.getHeight() || "10px");
+					oRm.addStyle("width", "100px");
+					oRm.addStyle("background-color", "orange");
+					oRm.addStyle("box-sizing", "border-box");
+					oRm.addStyle("border-top", "2px solid blue");
+					oRm.addStyle("border-bottom", "2px solid blue");
+					oRm.writeStyles();
 					oRm.writeControlData(oControl);
 					oRm.write("></div>");
 				},
@@ -1138,20 +1145,26 @@ sap.ui.require([
 		oTable.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		window.setTimeout(function() {
-			var iRowHeightsDelta = oTable._getScrollExtension()._iInnerVerticalScrollRange;
-			var oVsb = oTable._getScrollExtension().getVerticalScrollbar();
+		var oScrollExtension = oTable._getScrollExtension();
+		var iDefaultRowHeight = oTable._getDefaultRowHeight();
 
-			assert.equal(oTable.getFirstVisibleRow(), 1, "Initial FirstVisibleRow is correct");
-			assert.strictEqual(iRowHeightsDelta, 8321, "RowHeightsDelta is correct");
+		window.setTimeout(function() {
+			var oVsb = oScrollExtension.getVerticalScrollbar();
+
+			assert.equal(oTable.getFirstVisibleRow(), 1, "Initial firstVisibleRow is correct");
+			assert.equal(oScrollExtension.getVerticalScrollPosition(), iDefaultRowHeight, "Initial scroll position is correct");
+			assert.equal(oVsb.scrollTop, iDefaultRowHeight, "Initial scrollTop is correct");
+			assert.strictEqual(oTable.getDomRef("tableCCnt").scrollTop, 0, "Initial inner scroll position is correct");
 
 			oVsb.scrollTop = 1000000;
 
 			window.setTimeout(function() {
-				assert.equal(oTable.getFirstVisibleRow(), 29, "FirstVisibleRow is correct");
-				var iScrollRange = oTable._getTotalRowCount() * oTable._getDefaultRowHeight();
-				assert.equal(oVsb.scrollTop, iScrollRange - oVsb.clientHeight, "ScrollTop is at maximum and correct");
-				assert.equal(jQuery(".sapUiTableCCnt").scrollTop(), iRowHeightsDelta, "Table Correction is equal to RowHeightsDelta");
+				assert.equal(oTable.getFirstVisibleRow(), 39, "After setting scrollTop, firstVisibleRow is correct");
+				assert.equal(oScrollExtension.getVerticalScrollPosition(), iDefaultRowHeight * 31,
+					"After setting scrollTop, the scroll position is correct");
+				assert.equal(oVsb.scrollTop, iDefaultRowHeight * 31, "After setting scrollTop, scrollTop is correct");
+				assert.strictEqual(oTable.getDomRef("tableCCnt").scrollTop, 8321,
+					"After setting scrollTop, the inner scroll position is correct");
 				done();
 			}, 500);
 		}, 500);
@@ -1532,6 +1545,18 @@ sap.ui.require([
 
 		assert.strictEqual(ToolbarDesign.Solid, oToolbar.getDesign(), "Design property of the Toolbar is Solid");
 		assert.strictEqual(ToolbarDesign.Solid, oToolbar.getActiveDesign(), "Active design of the Toolbar is Solid as well");
+
+		oTable.destroy();
+	});
+
+	QUnit.test("Toolbar has style class sapMTBHeader-CTX", function(assert) {
+		var oToolbar = new Toolbar();
+		var oTable = new Table({
+			toolbar: oToolbar
+		}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oToolbar.hasStyleClass("sapMTBHeader-CTX"), "Toolbar has style class sapMTBHeader-CTX");
 
 		oTable.destroy();
 	});

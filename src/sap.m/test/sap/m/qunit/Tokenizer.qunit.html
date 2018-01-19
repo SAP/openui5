@@ -250,6 +250,28 @@
 		token1.destroy();
     });
 
+	QUnit.test("tokenUpdate event", function(assert) {
+		var eventType,
+			token1 = new sap.m.Token({key: "test", text: "test", selected: true}),
+			count = 0;
+
+		this.tokenizer.attachTokenUpdate(function(args) {
+			eventType = args.getParameter("type");
+			count++;
+		});
+
+		this.tokenizer._addUniqueToken(token1, function() {return true});
+		assert.strictEqual(eventType, sap.m.Tokenizer.TokenUpdateType.Added, "tokenUpdate event raised when token added");
+		assert.strictEqual(count, 1, "tokenUpdate event fired once upon adding unique token");
+
+		this.tokenizer._removeSelectedTokens();
+		assert.strictEqual(eventType, sap.m.Tokenizer.TokenUpdateType.Removed, "tokenUpdate event raised when token removed");
+		assert.strictEqual(count, 2, "tokenUpdate event fired once upon removing selected token");
+
+		// clean-up
+		token1.destroy();
+	});
+
 	QUnit.test("getSelectedTokens", function(assert) {
 		var token1 = new sap.m.Token({ selected : true });
 		var token2 = new sap.m.Token();

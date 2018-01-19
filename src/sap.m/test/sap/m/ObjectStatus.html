@@ -211,6 +211,11 @@
 				header: new sap.m.Text({
 					text : "Active ObjectStatus with icon"
 				})
+			}),
+			new sap.m.Column({
+				header: new sap.m.Text({
+					text : "ObjectStatus with icon"
+				})
 			})
 		]
 	});
@@ -248,11 +253,15 @@
 					}), new sap.m.ObjectStatus({
 						title : "Some title",
 						state: "Success",
-						icon: "sap-icon://pharmacy",
+						icon: "sap-icon://pharmacy"
 					}), new sap.m.ObjectStatus({
 						active : true,
 						state: "Error",
+						icon: "sap-icon://alert"
+					}), new sap.m.ObjectStatus({
+						state: "Error",
 						icon: "sap-icon://alert",
+						tooltip: "Alert"
 					})
 			]
 		});

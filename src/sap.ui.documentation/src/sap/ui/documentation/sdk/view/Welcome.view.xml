@@ -35,11 +35,21 @@
 							text="Discover New Enterprise-Grade Horizons"
 							width="100%"
 							textAlign="Center"/>
-						<Button
-							text="Get Started with UI5"
-							type="Emphasized"
-							press="onGetStarted"
-							class="actionButton"/>
+						<l:HorizontalLayout>
+							<Button
+								text="Get Started with UI5"
+								type="Emphasized"
+								press="onGetStarted"
+								class="actionButton"/>
+							<Button
+								class="actionButton sapContrast sapContrastPlus sapUiSmallMarginBegin"
+								visible="{=${welcomeView>/isOpenUI5} !== undefined}"
+								id="readMoreButton"
+								text="{i18n>downloadButtonText}"
+								type="Ghost"
+								press="onDownloadButtonPress">
+							</Button>
+						</l:HorizontalLayout>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>

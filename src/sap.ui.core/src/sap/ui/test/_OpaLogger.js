@@ -27,6 +27,9 @@ sap.ui.define([
 		getLogger: function (sComponent) {
 			aLoggerComponents.push(sComponent);
 			return $.sap.log.getLogger(sComponent, iLogLevel);
+		},
+		getLevel: function () {
+			return iLogLevel;
 		}
 	};
 

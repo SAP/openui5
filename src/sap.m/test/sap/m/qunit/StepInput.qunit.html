@@ -1087,6 +1087,245 @@
 				"The input's  value is set to min after page down");
 		});
 
+
+		function calcTime(oStepInput, val) {
+			var time = 0;
+			// initialize values needed for _calcWaitTimeout function
+			oStepInput._waitTimeout = sap.m.StepInput.INITIAL_WAIT_TIMEOUT;
+			oStepInput._speed = sap.m.StepInput.INITIAL_SPEED;
+
+			for (var i = 0; i <= val; i++) {
+				time = time + oStepInput._calcWaitTimeout();
+			}
+
+			return time;
+		}
+
+		function callIconDelegate(sEventName, oIcon) {
+			var oEvent = {
+					button : 0
+				};
+			oIcon.aBeforeDelegates[0].oDelegate[sEventName].call(oIcon, oEvent);
+		}
+
+		QUnit.module("Mouse events on increment/decrement button", {
+			beforeEach: function () {
+				this.oChangeSpy = sinon.spy();
+				this.stepInput = new sap.m.StepInput({
+					value: 4,
+					max: 10,
+					min: -4,
+					change: this.oChangeSpy
+				});
+
+				this.stepInput.placeAt('qunit-fixture');
+				oCore.applyChanges();
+			},
+			afterEach: function () {
+				this.oChangeSpy.reset();
+			}
+		});
+
+
+		QUnit.test("Mouse down on incrementButton", function (assert) {
+			// time for which the value will get from 4 to 9
+			var t = calcTime(this.stepInput, 4),
+				incBtn = this.stepInput.getAggregation("_incrementButton");
+
+			// Act - mouse down on increment button
+			callIconDelegate("onmousedown", incBtn);
+			// hold down the increment button enough time so the value can get to 9
+			this.clock.tick(t);
+
+			// Act - mouse up on increment button
+			callIconDelegate("onmouseup", incBtn);
+
+			// assert that the value get to 9
+			assert.equal(this.stepInput.getValue(), 9, "Input has value of 9");
+		});
+
+		QUnit.test("Mouse down on decrementButton", function (assert) {
+			// time for which the value will get from 4 to -1
+			var t = calcTime(this.stepInput, 4),
+				decBtn = this.stepInput.getAggregation("_decrementButton");
+
+			// Act - mouse down on decrement button
+			callIconDelegate("onmousedown", decBtn);
+			// hold down the decrement button enough time so the value can get to -1
+			this.clock.tick(t);
+
+			// Act - mouse up on decrement button
+			callIconDelegate("onmouseup", decBtn);
+
+			// assert that the value get to -1
+			assert.equal(this.stepInput.getValue(), -1, "Input has value of -1");
+		});
+
+		QUnit.test("Mouse down on incrementButton when having max value set", function (assert) {
+			// time for which the value will get from 4 to 7
+			var t = calcTime(this.stepInput, 2),
+				incBtn = this.stepInput.getAggregation("_incrementButton");
+
+			// Act - mouse down on increment button
+			callIconDelegate("onmousedown", incBtn);
+			// hold down the increment button enough time so the value can get to 7
+			this.clock.tick(t);
+
+			// assert that the value get to 7
+			assert.equal(this.stepInput.getValue(), 7, "Input has value of 7");
+
+			// keep holding until the max value of 10 is reached and the increase button will be disabled
+			this.clock.tick(2000);
+
+			// assert that the value is 10 and that the change event is fired
+			assert.ok(this.stepInput.getValue() === 10, "Input has reached the max value of 10");
+			assert.equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
+		});
+
+		QUnit.test("Mouse down on decrementButton when having min value set", function (assert) {
+			// time for which the value will get from 4 to 1
+			var t = calcTime(this.stepInput, 2),
+				decBtn = this.stepInput.getAggregation("_decrementButton");
+
+			// Act - mouse down on increment button
+			callIconDelegate("onmousedown", decBtn);
+			// hold down the decrement button enough time so the value can get to 1
+			this.clock.tick(t);
+
+			// assert that the value get to 1
+			assert.equal(this.stepInput.getValue(), 1, "Input has value of 1");
+
+			// keep holding until the min value of -4 is reached and the decrease button will be disabled
+			this.clock.tick(2000);
+
+			// assert that the value is 10 and that the change event is fired
+			assert.ok(this.stepInput.getValue() === -4, "Input has reached the min value of -4");
+			assert.equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
+		});
+
+		QUnit.test("Mouse down and mouse out on incrementButton", function (assert) {
+			// time for which the value will get from 4 to 9
+			var t = calcTime(this.stepInput, 4),
+				incBtn = this.stepInput.getAggregation("_incrementButton");
+
+			// Act - mouse down on increment button
+			callIconDelegate("onmousedown", incBtn);
+			// hold down the increment button enough time so the value can get to 7
+			this.clock.tick(t);
+
+			// Act - mouse out on increment button
+			callIconDelegate("onmouseout", incBtn);
+
+			// assert that the value get to 9
+			assert.equal(this.stepInput.getValue(), 9, "Input has value of 9");
+
+			assert.equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
+		});
+
+
+		QUnit.module("Touch events on increment/decrement button", {
+			beforeEach: function () {
+				this.oDeviceStub = sinon.sandbox;
+				this.oDeviceStub.stub(sap.ui.Device, "system", {
+					desktop : false,
+					phone : false,
+					tablet : true
+				});
+				this.oChangeSpy = sinon.spy();
+				this.stepInput = new sap.m.StepInput({
+					value: 4,
+					max: 10,
+					min: -4,
+					change: this.oChangeSpy
+				});
+
+				this.stepInput.placeAt('qunit-fixture');
+				oCore.applyChanges();
+			},
+			afterEach: function () {
+				this.oDeviceStub.restore();
+				this.oDeviceStub = null;
+				this.oChangeSpy.reset();
+			}
+		});
+
+		QUnit.test("Touch start on incrementButton", function (assert) {
+			// time for which the value will get from 4 to 9
+			var t = calcTime(this.stepInput, 4),
+				incBtn = this.stepInput.getAggregation("_incrementButton");
+
+			// Act - mouse down on increment button
+			callIconDelegate("onmousedown", incBtn);
+			// hold down the increment button enough time so the value can get to 9
+			this.clock.tick(t);
+
+			// Act - mouse up on increment button
+			callIconDelegate("onmouseup", incBtn);
+
+			// assert that the value get to 9
+			assert.equal(this.stepInput.getValue(), 9, "Input has value of 9");
+		});
+
+		QUnit.test("Touch start on decrementButton", function (assert) {
+			// time for which the value will get from 4 to -1
+			var t = calcTime(this.stepInput, 4),
+				decBtn = this.stepInput.getAggregation("_decrementButton");
+
+			// Act - mouse down on decrement button
+			callIconDelegate("onmousedown", decBtn);
+			// hold down the decrement button enough time so the value can get to -1
+			this.clock.tick(t);
+
+			// Act - mouse up on decrement button
+			callIconDelegate("onmouseup", decBtn);
+
+			// assert that the value get to -1
+			assert.equal(this.stepInput.getValue(), -1, "Input has value of -1");
+		});
+
+		QUnit.test("Touch start on incrementButton when having max value set", function (assert) {
+			// time for which the value will get from 4 to 7
+			var t = calcTime(this.stepInput, 2),
+				incBtn = this.stepInput.getAggregation("_incrementButton");
+
+			// Act - mouse down on increment button
+			callIconDelegate("onmousedown", incBtn);
+			// hold down the increment button enough time so the value can get to 7
+			this.clock.tick(t);
+
+			// assert that the value get to 7
+			assert.equal(this.stepInput.getValue(), 7, "Input has value of 7");
+
+			// keep holding until the max value of 10 is reached and the increase button will be disabled
+			this.clock.tick(2000);
+
+			// assert that the value is 10 and that the change event is fired
+			assert.ok(this.stepInput.getValue() === 10, "Input has reached the max value of 10");
+			assert.equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
+		});
+
+		QUnit.test("Mouse down on decrementButton when having min value set", function (assert) {
+			// time for which the value will get from 4 to 1
+			var t = calcTime(this.stepInput, 2),
+				decBtn = this.stepInput.getAggregation("_decrementButton");
+
+			// Act - mouse down on increment button
+			callIconDelegate("onmousedown", decBtn);
+			// hold down the decrement button enough time so the value can get to 1
+			this.clock.tick(t);
+
+			// assert that the value get to 1
+			assert.equal(this.stepInput.getValue(), 1, "Input has value of 1");
+
+			// keep holding until the min value of -4 is reached and the decrease button will be disabled
+			this.clock.tick(2000);
+
+			// assert that the value is 10 and that the change event is fired
+			assert.ok(this.stepInput.getValue() === -4, "Input has reached the min value of -4");
+			assert.equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
+		});
+
+
 		QUnit.module("Accessibility", {
 			beforeEach: function () {
 				this.stepInput = new sap.m.StepInput({

@@ -244,8 +244,9 @@ sap.ui.define([
 				var iColumnNumber = ExtensionHelper.getColumnIndexOfFocusedCell(oExtension) + 1; // +1 -> we want to announce a count and not the
 																								 // index, the action column is handled like a normal
 																								 // column
-				var iRowNumber = TableUtils.getRowIndexOfFocusedCell(oTable) + oTable.getFirstVisibleRow() + 1; // same here + take virtualization
-																												// into account
+				var iRowNumber = TableUtils.getRowIndexOfFocusedCell(oTable) + oTable._getFirstRenderedRowIndex() + 1; // same here + take
+																													   // virtualization
+																													   // into account
 				var iColCount = TableUtils.getVisibleColumnCount(oTable) + (TableUtils.hasRowActions(oTable) ? 1 : 0);
 				var iRowCount = TableUtils.isNoDataVisible(oTable) ? 0 : TableUtils.getTotalRowCount(oTable, true);
 
@@ -505,6 +506,8 @@ sap.ui.define([
 		modifyAccOfCOLUMNROWHEADER: function($Cell, bOnCellFocus) {
 			var oTable = this.getTable(),
 				bEnabled = $Cell.hasClass("sapUiTableSelAllEnabled");
+			oTable.$("sapUiTableGridCnt").removeAttr("role");
+
 			var mAttributes = ExtensionHelper.getAriaAttributesFor(
 				this, TableAccExtension.ELEMENTTYPES.COLUMNROWHEADER,
 				{enabled: bEnabled, checked: bEnabled && !oTable.$().hasClass("sapUiTableSelAll")}
@@ -738,9 +741,7 @@ sap.ui.define([
 					break;
 
 				case TableAccExtension.ELEMENTTYPES.COLUMNHEADER_ROW: //The area which contains the column headers
-					if (!TableUtils.hasRowHeader(oTable)) {
-						mAttributes["role"] = "row";
-					}
+					mAttributes["role"] = "row";
 					addAriaForOverlayOrNoData(oTable, mAttributes, true, false);
 					break;
 
@@ -750,7 +751,9 @@ sap.ui.define([
 
 				case TableAccExtension.ELEMENTTYPES.TH: //The "technical" column headers
 					var bHasFixedColumns = oTable.getFixedColumnCount() > 0;
-					mAttributes["role"] = bHasFixedColumns ? "columnheader" : "presentation";
+					if (!bHasFixedColumns) {
+						mAttributes["role"] = "presentation";
+					}
 					mAttributes["scope"] = "col";
 					if (bHasFixedColumns) {
 						if (mParams && mParams.column) {
@@ -945,6 +948,7 @@ sap.ui.define([
 			if (!oTable) {
 				return;
 			}
+			oTable.$("sapUiTableGridCnt").attr("role", ExtensionHelper.getAriaAttributesFor(this, "CONTENT", {}).role);
 			oTable._mTimeouts._cleanupACCExtension = jQuery.sap.delayedCall(100, this, function() {
 				var oTable = this.getTable();
 				if (!oTable) {

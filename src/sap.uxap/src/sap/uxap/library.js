@@ -318,26 +318,52 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/base/DataType", 
 
 	/**
 	 *
-	 *   Interface for controls that are eligible for the <code>headerTitle</code> aggregation of the {@link sap.uxap.ObjectPageLayout}.
+	 * Interface for controls that are eligible for the <code>headerTitle</code> aggregation
+	 * of the <code>{@link sap.uxap.ObjectPageLayout}</code>.
 	 *
+	 * Controls that implement this interface:
+	 * <ul>
+	 * <li><code>{@link sap.uxap.ObjectPageHeader}</code> - <code>ObjectPageLayout</code>'s classic header</code></li>
+	 * <li><code>{@link sap.uxap.ObjectPageDynamicHeaderTitle}</code> - <code>ObjectPageLayout</code>'s dynamic header</code></li>
+	 * </ul>
+	 *
+	 * For more information on the types of header available for the <code>{@link sap.uxap.ObjectPageLayout ObjectPageLayout}</code>,
+	 * see {@link topic:d2ef0099542d44dc868719d908e576d0 Object Page Headers}.
+	 *
+	 * For details regarding the differences and similarities between the available headers,
+	 * see {@link topic:9c9d94fd28284539a9a5a57e9caf82a8 Object Page Headers Comparison}.
 	 *
 	 * @since 1.52
 	 * @name sap.uxap.IHeaderTitle
 	 * @interface
 	 * @public
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 * @see {@link topic:d2ef0099542d44dc868719d908e576d0 Object Page Headers}
 	 */
 
 	/**
 	 *
-	 *   Interface for controls that are eligible for the <code>headerContent</code> aggregation of the {@link sap.uxap.ObjectPageLayout}.
+	 * Interface for controls that are eligible for the <code>headerContent</code> aggregation
+	 * of the <code>{@link sap.uxap.ObjectPageLayout}</code>.
 	 *
+	 * Controls that implement this interface:
+	 * <ul>
+	 * <li><code>{@link sap.uxap.ObjectPageHeaderContent}</code> - <code>ObjectPageLayout</code>'s classic header content</code></li>
+	 * <li><code>{@link sap.uxap.ObjectPageDynamicHeaderContent}</code> - <code>ObjectPageLayout</code>'s dynamic header content</code></li>
+	 * </ul>
+	 *
+	 * For more information on the types of header available for the <code>{@link sap.uxap.ObjectPageLayout ObjectPageLayout}</code>,
+	 * see {@link topic:d2ef0099542d44dc868719d908e576d0 Object Page Headers}.
+	 *
+	 * For details regarding the differences and similarities between the available headers,
+	 * see {@link topic:9c9d94fd28284539a9a5a57e9caf82a8 Object Page Headers Comparison}.
 	 *
 	 * @since 1.52
 	 * @name sap.uxap.IHeaderContent
 	 * @interface
 	 * @public
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 * @see {@link topic:d2ef0099542d44dc868719d908e576d0 Object Page Headers}
 	 */
 
 	return sap.uxap;

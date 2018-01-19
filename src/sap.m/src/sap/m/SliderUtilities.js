@@ -40,7 +40,7 @@ sap.ui.define(function () {
 	 * @param {float} fMin Min property of the Slider/RangeSlider.
 	 * @param {float} fMax Max property of the Slider/RangeSlider.
 	 * @private
-	 * @returns {float} percent
+	 * @return {float} percent
 	 */
 	SliderUtilities.getPercentOfValue = function (fValue, fMin, fMax) {
 		return ((fValue - fMin) / (fMax - fMin)) * 100;
@@ -51,14 +51,14 @@ sap.ui.define(function () {
 	 *
 	 * @param {HTMLElement} oDomRef A HTML element
 	 * @private
-	 * @returns {HTMLElement | undefined}
+	 * @return {HTMLElement}
 	 */
 	SliderUtilities.getElementScrollableParent = function (oDomRef) {
 		if (!oDomRef) {
-			return;
+			return document.body;
 		}
 
-		if (oDomRef.scrollHeight > oDomRef.clientHeight) {
+		if (oDomRef.scrollHeight >= oDomRef.clientHeight) {
 			return oDomRef;
 		}
 
@@ -71,9 +71,13 @@ sap.ui.define(function () {
 	 * @param {HTMLElement} oElement A Element to be checked
 	 * @param {HTMLElement} oContainer A container.
 	 * @private
-	 * @returns {boolean}
+	 * @return {boolean}
 	 */
 	SliderUtilities.isScrolledIntoView = function (oElement, oContainer) {
+		if (!(oElement || oElement.getBoundingClientRect) || !(oContainer || oContainer.getBoundingClientRect)) {
+			return false;
+		}
+
 		var oContainerRect = oContainer.getBoundingClientRect(),
 			oContainerTop = oContainerRect.top,
 			oElementTop = oElement.getBoundingClientRect().top,

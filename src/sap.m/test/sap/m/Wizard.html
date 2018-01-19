@@ -229,6 +229,7 @@
 					path: "/steps",
 					template: new sap.m.WizardStep({
 						title:"{title}",
+						optional: "{optional}",
 						content: new sap.m.Button({
 							text: "{button}"
 						})
@@ -244,6 +245,7 @@
 					},
 					{
 						title: "Second",
+						optional: true,
 						button: "22button22"
 					},
 					{
@@ -329,6 +331,7 @@
 			var step3 = new sap.m.WizardStep("Payment_Details",{
 				subsequentSteps: [step4, step5],
 				title: "Payment details",
+				optional: true,
 				validated: false,
 				complete: function () {
 					var nextId = sap.ui.getCore().byId("step3Next").getSelectedButton().getText();

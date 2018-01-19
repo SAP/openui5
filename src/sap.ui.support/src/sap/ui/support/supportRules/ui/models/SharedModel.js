@@ -86,9 +86,7 @@ sap.ui.define([
 		selectedRules: true,
 		filteredIssues: null,
 		issuesCount: 0,
-		visibleRowCountMode:"Auto",
-		visibleRowCount: 10,
-		heightDetailsArea: "inherit",
+		visibleRowCount: 5,
 		supportAssistantOrigin: "",
 		supportAssistantVersion: ""
 	});

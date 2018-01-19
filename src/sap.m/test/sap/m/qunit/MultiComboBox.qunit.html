@@ -2962,11 +2962,12 @@
 		oMultiComboBox.getFocusDomRef().focus();
 		sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), oItem.getText());
 		oMultiComboBox.getFocusDomRef().blur();
+		this.clock.tick(500);
 
 		// assertions
 		var aSelectedItems = oMultiComboBox.getSelectedItems();
 		assert.strictEqual(aSelectedItems.length, 0, "No token was selected on Focus Out");
-		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
+		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event was not fired");
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
 		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
 
@@ -4081,6 +4082,7 @@
 		// act
 		var oDomListItem = oMultiComboBox.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
 		var oListItem = sap.ui.getCore().byId(oDomListItem.id);
+		oListItem.focus();
 		sap.ui.test.qunit.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
 		});

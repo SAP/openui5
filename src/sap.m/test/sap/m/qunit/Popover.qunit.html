@@ -2114,24 +2114,38 @@
 			oPopover.destroy();
 		});
 
-		QUnit.test("Do not fire close events when destroyed", function (assert) {
+		QUnit.test("Do not fire close events when already closed.", function (assert) {
 			// Setup
 			var oPopover = new sap.m.Popover(),
+				oButton = new sap.m.Button(),
 				beforeCloseSpy = this.spy(),
 				afterCloseSpy = this.spy();
+
+			oPopover.oPopup.touchEnabled = true;
+			oButton.addDependent(oPopover);
+			oButton.placeAt("content");
+			sap.ui.getCore().applyChanges();
 
 			oPopover.attachBeforeClose(beforeCloseSpy);
 			oPopover.attachAfterClose(afterCloseSpy);
 
 			//Act
-			jQuery.sap.delayedCall(1000, oPopover, "destroy");
-			this.clock.tick(1001);
+			oPopover.openBy(oButton);
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(1000);
 
-			assert.strictEqual(beforeCloseSpy.called, false, "On destruction do not call beforeClose event");
-			assert.strictEqual(afterCloseSpy.called, false, "On destruction do not call afterClose event");
+			oPopover.oPopup.close();
+			oPopover.oPopup.close();
+			this.clock.tick(1000);
 
-			//Clean
-			oPopover.destroy();
+			// Assert
+			assert.strictEqual(beforeCloseSpy.callCount, 1, "Should be called only once during the first call.");
+			assert.strictEqual(afterCloseSpy.callCount, 1, "Should be called only once during the first call.");
+
+			// Cleanup
+			oButton.destroy();
+			oButton = null;
+			oPopover = null;
 		});
 	</script>
 </head>

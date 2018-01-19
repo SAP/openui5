@@ -37,8 +37,8 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/m/library', 'sap/ui/core/library'],
 			sTooltip = oLabel.getTooltip_AsString(),
 			labelForRendering = oLabel.getLabelForRendering(),
 			htmlTagToRender = labelForRendering ? "label" : "span",
-			bDisplayOnly = oLabel.isDisplayOnly();
-
+			bDisplayOnly = oLabel.isDisplayOnly(),
+			sVerticalAlign = oLabel.getVAlign();
 		// write the HTML into the render manager
 		// for accessibility reasons when a label doesn't have a "for" attribute, pointing at a HTML element it is rendered as span
 		rm.write("<" + htmlTagToRender);
@@ -93,6 +93,10 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/m/library', 'sap/ui/core/library'],
 
 		if (bDisplayOnly) {
 			rm.addClass("sapMLabelDisplayOnly");
+		}
+
+		if (sVerticalAlign != sap.ui.core.VerticalAlign.Inherit) {
+			rm.addStyle("vertical-align", sVerticalAlign.toLowerCase());
 		}
 
 		rm.writeStyles();

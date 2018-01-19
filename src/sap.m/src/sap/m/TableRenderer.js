@@ -83,7 +83,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 
 		if (iModeOrder == -1) {
 			if (mode == "MultiSelect" && type == "Head" && !isHeaderHidden) {
-				rm.write("<th class='" + clsPrefix + "SelCol'>");
+				rm.write("<th");
+				rm.writeAttribute("aria-hidden", "true");
+				rm.addClass(clsPrefix + "SelCol");
+				rm.writeClasses();
+				rm.write(">");
 				rm.renderControl(oTable._getSelectAllCheckbox());
 				rm.write("</th>");
 				index++;

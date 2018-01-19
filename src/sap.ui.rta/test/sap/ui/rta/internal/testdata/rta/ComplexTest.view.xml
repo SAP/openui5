@@ -6,6 +6,7 @@
 		   xmlns:html="http://www.w3.org/1999/xhtml"
 		   xmlns:sap.ui.layout="sap.ui.layout"
 		   xmlns:sap.ui.rta="sap.ui.rta"
+		   xmlns:sap.ui.dt="sap.ui.dt"
 		   xmlns:sap.ui.fl="sap.ui.fl"
 		   xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 		   controllerName="sap.ui.rta.test.ComplexTest">
@@ -107,7 +108,9 @@
 								<Input value="I am near the smartlink" id="FieldInGroupWithHorizontalLayout"/>
 							</sap.ui.layout:HorizontalLayout>
 						</smartForm:GroupElement>
-						<smartForm:GroupElement label="With specific flexibility definition" id="Dates.SpecificFlexibility" sap.ui.fl:flexibility="sap/ui/rta/test/GroupElementTest.flexibility">
+						<smartForm:GroupElement label="With specific flexibility definition" id="Dates.SpecificFlexibility" 
+							sap.ui.fl:flexibility="sap/ui/rta/test/GroupElementTest.flexibility"
+							sap.ui.dt:designtime="sap/ui/rta/test/InstanceSpecificScopedGroupElement.designtime">
 							<Input value="My label can only be renamed to capital letters" id="InputSpecificFlexibility"/>
 						</smartForm:GroupElement>
 					</smartForm:Group>

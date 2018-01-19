@@ -694,7 +694,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		var oManifestModels = this._getManifestEntry("/sap.ui5/models", true) || {};
 
 		// pass the models and data sources to the internal helper
-		this._initComponentModels(oManifestModels, oManifestDataSources);
+		this._initComponentModels(oManifestModels, oManifestDataSources, this._mCacheTokens);
 
 	};
 
@@ -704,17 +704,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 *
 	 * @param {object} mModels models configuration from manifest.json
 	 * @param {object} mDataSources data sources configuration from manifest.json
+	 * @param {object} mCacheTokens cache tokens for OData models
 	 *
 	 * @private
 	 */
-	Component.prototype._initComponentModels = function(mModels, mDataSources) {
+	Component.prototype._initComponentModels = function(mModels, mDataSources, mCacheTokens) {
 
 		var mAllModelConfigurations = Component._createManifestModelConfigurations({
 			models: mModels,
 			dataSources: mDataSources,
 			component: this,
 			mergeParent: true,
-			cacheTokens: this._mCacheTokens
+			cacheTokens: mCacheTokens
 		});
 
 		if (!mAllModelConfigurations) {

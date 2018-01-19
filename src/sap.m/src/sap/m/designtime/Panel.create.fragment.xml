@@ -1,6 +1,6 @@
 <core:FragmentDefinition xmlns="sap.m"
 	xmlns:core="sap.ui.core">
-	<Panel width="auto">
+	<Panel width="auto" expandable="true" expanded="true">
 		<headerToolbar>
 			<Toolbar>
 				<Title text="Header"/>

@@ -71,10 +71,8 @@ function(
 
 			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.resolve(aAppVariantOverviewAttributes));
 
-			var oRootControl = new sap.ui.core.Control();
-
 			oAppVariantOverviewDialog = new AppVariantOverviewDialog({
-				rootControl: oRootControl
+				idRunningApp: "id1"
 			});
 
 			oAppVariantOverviewDialog.open();
@@ -110,10 +108,8 @@ function(
 
 			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.resolve(aAppVariantOverviewAttributes));
 
-			var oRootControl = new sap.ui.core.Control();
-
 			oAppVariantOverviewDialog = new AppVariantOverviewDialog({
-				rootControl: oRootControl
+				idRunningApp: "id1"
 			});
 
 			oAppVariantOverviewDialog.open();
@@ -168,10 +164,8 @@ function(
 
 			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.resolve(aAppVariantOverviewAttributes));
 
-			var oRootControl = new sap.ui.core.Control();
-
 			oAppVariantOverviewDialog = new AppVariantOverviewDialog({
-				rootControl: oRootControl
+				idRunningApp: "id1"
 			});
 
 			oAppVariantOverviewDialog.open();
@@ -217,10 +211,8 @@ function(
 
 			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.resolve(aAppVariantOverviewAttributes));
 
-			var oRootControl = new sap.ui.core.Control();
-
 			oAppVariantOverviewDialog = new AppVariantOverviewDialog({
-				rootControl: oRootControl
+				idRunningApp: "id1"
 			});
 
 			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "getNewAppVariantId").returns("id2");

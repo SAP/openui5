@@ -25,26 +25,9 @@
 	white-space: pre-line;
 }
 
-.sapUiJSD {
-	font-size: 0.875rem;
-}
-
 pre.sapUiDocumentationAPICode,
 .sapUiJSD pre {
 	white-space: pre-wrap;
-}
-
-.sapUiJSD > p {
-	margin-top: 0.6em;
-	margin-bottom: 0.6em;
-}
-
-.sapUiJSD > p:first-child {
-	margin-top: 0.5rem;
-}
-
-.sapUiJSD > p:last-child {
-	margin-bottom: 0.5rem;
 }
 
 /* We remove margin for p tags in JsDoc when we are in the context of a table cell */
@@ -173,7 +156,6 @@ pre.sapUiDocumentationAPICode,
 	color: #333;
 	margin: 1.25rem 0;
 	font-size: .875rem;
-	font-family: BentonSansRegular, Arial, sans-serif;
 	line-height: 1.375rem;
 	orphans: 2;
 	padding: 0;
@@ -203,7 +185,6 @@ pre.sapUiDocumentationAPICode,
 	display: block;
 	box-sizing: border-box;
 	font-size: .875rem;
-	font-family: 'Benton Sans', Arial, sans-serif;
 	margin: 1.25rem 0;
 	word-wrap: break-word;
 }
@@ -237,7 +218,6 @@ pre.sapUiDocumentationAPICode,
 	padding-left: 2.5rem;
 	font-weight: 300;
 	color: #000;
-	font-family: 'Benton Sans', Arial, sans-serif;
 }
 
 #d4h5-main-container .restriction .title:before,
@@ -315,7 +295,6 @@ pre.sapUiDocumentationAPICode,
 #d4h5-main-container h2 {
 	break-after: avoid;
 	break-inside: avoid;
-	font-family: 'Open Sans', Arial, sans-serif;
 	font-weight: 600;
 	color: #4a4a4a;
 	font-size: 1.25rem;
@@ -329,7 +308,6 @@ pre.sapUiDocumentationAPICode,
 #d4h5-main-container span.uinolabel,
 #d4h5-main-container .emphasis,
 #d4h5-main-container strong {
-	font-family: 'Open Sans', Arial, sans-serif;
 	font-weight: 600;
 }
 
@@ -394,7 +372,6 @@ code, kbd, pre, samp {
 	page-break-after: avoid;
 	page-break-inside: avoid;
 	white-space: nowrap;
-	font-family: 'Open Sans', Arial, sans-serif;
 	font-size: .625rem;
 	font-weight: 300 !important;
 	margin-left: .125rem;
@@ -407,7 +384,6 @@ code, kbd, pre, samp {
 	font-weight: 300 !important;
 	color: #181818;
 	letter-spacing: -1px;
-	font-family: 'Benton Sans', Arial, sans-serif;
 	font-size: 1.25rem;
 	line-height: 1.75rem;
 	padding: 1rem 1rem .5rem 0;
@@ -416,7 +392,6 @@ code, kbd, pre, samp {
 #d4h5-main-container th .p {
 	margin: 0;
 	font-size: 1rem;
-	font-family: 'Benton Sans', Arial, sans-serif;
 }
 
 #d4h5-main-container td {
@@ -444,7 +419,6 @@ code, kbd, pre, samp {
 
 #d4h5-main-container span.figcap {
 	font-size: .5625rem;
-	font-family: 'Open Sans';
 }
 
 #d4h5-main-container ol,
@@ -454,7 +428,6 @@ code, kbd, pre, samp {
 }
 
 #d4h5-main-container li {
-	font-family: BentonSansRegular, Arial, sans-serif;
 	font-size: .875rem;
 	line-height: 1.375rem;
 	margin: .625rem;
@@ -1048,8 +1021,18 @@ html[data-sap-ui-browser="ie9"] .titlesHeader p {
 }
 
 /* correct split container right border */
-.sapUiDemokit .sapMSplitContainerMaster {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDemokit .sapMSplitContainerMaster {
 	border-right: 1px solid #4f667a;
+}
+
+html.sapUiTheme-sap_belize_hcb .sapUiDemokit .sapMSplitContainerMaster,
+html.sapUiTheme-sap_belize_hcw .sapUiDemokit .sapMSplitContainerMaster {
+	border-right: none;
+}
+
+html.sapUiTheme-sap_belize_hcb .sapUiDemokit .sapMSplitContainerMaster::before,
+html.sapUiTheme-sap_belize_hcw .sapUiDemokit .sapMSplitContainerMaster::before {
+	height: 100%;
 }
 
 /* control overflow for community links in horizontal layout */
@@ -1147,35 +1130,40 @@ html.sap-phone .sapMITHOverflowList.tabHeaderNoLeftMargin .sapMITBScrollContaine
 	object-fit: cover;
 }
 
-html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcw) .sapUiJSD p,
-html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcw) .sapUiJSD a {
+html.sapUiTheme-sap_belize_hcb .sapUiJSD p,
+html.sapUiTheme-sap_belize_hcb .sapUiJSD a {
 	color: #ffffff;
 }
 
-html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiJSD p,
-html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiJSD a {
+html.sapUiTheme-sap_belize_hcw .sapUiJSD p,
+html.sapUiTheme-sap_belize_hcw .sapUiJSD a {
 	color: #000000;
-}
-
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiJSD a,
-html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiJSD a:hover,
-html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcw) .sapUiJSD a:hover {
-	text-decoration: none;
 }
 
 html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiJSD a {
 	color: #0070b1;
 }
 
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiJSD a,
+html.sapUiTheme-sap_belize_hcb .sapUiJSD a:hover,
+html.sapUiTheme-sap_belize_hcw .sapUiJSD a:hover {
+	text-decoration: none;
+}
+
 html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiJSD a:hover {
 	text-decoration: underline;
 }
 
-html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcw) .sapUiJSD a:focus {
+html.sapUiTheme-sap_belize_hcb .sapUiJSD a:focus {
 	outline: 0.125rem dotted #ffffff;
 }
-html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiJSD a:focus {
+
+html.sapUiTheme-sap_belize_hcw .sapUiJSD a:focus {
 	outline: 0.125rem dotted #000000;
+}
+
+html:not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_belize_hcb) .sapUiJSD a:focus {
+	outline: 0.0625rem dotted #000000;
 }
 
 /* ==========================================================================
@@ -1682,11 +1670,15 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
  */
 
 /* Comma list */
-.sapUiDocumentationCommaList .sapMFlexItem:not(:last-child)::after {
+.sapUiDocumentationCommaList .sapMFlexItem:not(:first-child):not(:last-child)::after {
 	content: ",";
 	margin-right: 1px;
-	vertical-align: top;
 	line-height: 1.5rem;
+}
+
+.sapUiDocumentationCommaList > div {
+	display: flex;
+	flex-wrap: nowrap;
 }
 
 /* Or list */
@@ -1739,7 +1731,7 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
 
 .sapUiParamText .parameterDefault {
 	font-weight: normal;
-	padding-left: 1rem;
+	padding-left: 0.3rem;
 }
 
 html.sapUiMedia-Std-Phone .sapUiParamText,

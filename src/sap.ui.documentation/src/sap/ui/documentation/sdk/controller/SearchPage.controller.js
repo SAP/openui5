@@ -177,6 +177,21 @@ sap.ui.define([
 									category: sCategory
 								});
 								this.dataObject.APILength++;
+							} else if (sNavURL.indexOf("docs/api/modules/") === 0) {
+								sNavURL = sNavURL.substring("docs/api/modules/".length, sNavURL.lastIndexOf(".html")).replace(/_/g, ".");
+								sNavURL = "api/" + sNavURL;
+								bShouldAddToSearchResults = true;
+								sCategory = "API Reference";
+								this.dataObject.dataAPI.push({
+									index: this.dataObject.APILength,
+									title: oDoc.title ? oDoc.title : "Untitled",
+									path: sNavURL,
+									summary: oDoc.summary ? (oDoc.summary + "...") : "",
+									score: oDoc.score,
+									modified: sModified,
+									category: sCategory
+								});
+								this.dataObject.APILength++;
 							}
 
 							if (bShouldAddToSearchResults) {

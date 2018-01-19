@@ -3,8 +3,8 @@
  */
 
 //Provides control sap.m.DateTimePicker.
-sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/format/DateFormat', 'sap/ui/core/LocaleData', 'jquery.sap.keycodes'],
-		function(jQuery, DatePicker, Date1, library, Control, Device, DateFormat, LocaleData) {
+sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', 'sap/ui/unified/DateRange', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/format/DateFormat', 'sap/ui/core/LocaleData', 'jquery.sap.keycodes'],
+		function(jQuery, DatePicker, Date1, DateRange, library, Control, Device, DateFormat, LocaleData) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
@@ -476,6 +476,28 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 		if (bNoCalendar) {
 			this._oPopupContent.setCalendar(this._oCalendar);
 			this._oCalendar.attachSelect(_selectDate, this);
+
+			var that = this,
+				oHideMonthPicker = this._oCalendar._hideMonthPicker,
+				oHideYearPicker = this._oCalendar._hideYearPicker;
+
+			this._oCalendar._hideMonthPicker = function (bSkipFocus) {
+				oHideMonthPicker.apply(this, arguments);
+
+				if (!bSkipFocus) {
+					that._selectFocusedDateValue(new DateRange().setStartDate(this._getFocusedDate().toLocalJSDate()));
+
+				}
+			};
+
+			this._oCalendar._hideYearPicker = function (bSkipFocus) {
+				oHideYearPicker.apply(this, arguments);
+
+				if (!bSkipFocus) {
+					that._selectFocusedDateValue(new DateRange().setStartDate(this._getFocusedDate().toLocalJSDate()));
+
+				}
+			};
 		}
 
 		if (!this._oSliders) {
@@ -489,6 +511,15 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 	};
 
+	DateTimePicker.prototype._selectFocusedDateValue = function (oDateRange) {
+		var oCalendar = this._oCalendar;
+
+		oCalendar.removeAllSelectedDates();
+		oCalendar.addSelectedDate(oDateRange);
+
+		return this;
+	};
+
 	DateTimePicker.prototype._fillDateRange = function(){
 
 		var oDate = this.getDateValue();
@@ -496,8 +527,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 		if (oDate) {
 			oDate = new Date(oDate.getTime());
 		} else {
-			var oInitialFocusedDateValue = this.getInitialFocusedDateValue();
-			oDate = oInitialFocusedDateValue ? oInitialFocusedDateValue : new Date();
+			oDate = this._getInitialFocusedDateValue();
 			var iMaxTimeMillis = this._oMaxDate.getTime() + 86400000 /* one day in milliseconds */;
 
 			if (oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > iMaxTimeMillis) {
@@ -542,6 +572,10 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 	};
 
+	DateTimePicker.prototype._getInitialFocusedDateValue = function () {
+		return this.getInitialFocusedDateValue() || new Date();
+	};
+
 	DateTimePicker.prototype.getLocaleId = function(){
 
 		return sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
@@ -569,6 +603,8 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 		this.onsaphide(oEvent);
 
+		this._oCalendar.removeAllSelectedDates();
+		this._oCalendar.addSelectedDate(new DateRange().setStartDate(this._getInitialFocusedDateValue()));
 	}
 
 	function _handleBeforeOpen(oEvent){

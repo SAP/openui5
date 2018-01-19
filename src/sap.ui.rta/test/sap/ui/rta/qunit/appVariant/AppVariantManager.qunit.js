@@ -8,7 +8,9 @@ sap.ui.require([
 	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/rta/appVariant/S4HanaCloudBackend"
+	"sap/ui/rta/appVariant/S4HanaCloudBackend",
+	"sap/ui/rta/command/Stack",
+	"sap/ui/rta/command/LREPSerializer"
 ],
 function(
 	AppVariantManager,
@@ -16,7 +18,10 @@ function(
 	DescriptorVariantFactory,
 	sinon,
 	Settings,
-	S4HanaCloudBackend) {
+	S4HanaCloudBackend,
+	Stack,
+	LREPSerializer
+) {
 
 	"use strict";
 
@@ -25,11 +30,15 @@ function(
 
 	QUnit.module("Given an AppVariantManager is instantiated", {
 		beforeEach: function () {
-			this.oAppVariantManager = new AppVariantManager();
+			var oRootControl = new sap.ui.core.Control();
+			var oRtaCommandStack = new Stack();
+			var oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: oRootControl});
+			this.oAppVariantManager = new AppVariantManager({rootControl: oRootControl, commandSerializer: oCommandSerializer});
 		},
 
 		afterEach: function () {
 			sandbox.restore();
+			this.oAppVariantManager.destroy();
 		}
 	}, function() {
 		QUnit.test("When _openDialog() method is called and create event is triggered", function (assert) {
@@ -108,7 +117,11 @@ function(
 
 	QUnit.module("Given an AppVariantManager is instantiated for different platforms", {
 		beforeEach: function () {
-			this.oAppVariantManager = new AppVariantManager();
+			var oRootControl = new sap.ui.core.Control();
+			var oRtaCommandStack = new Stack();
+			var oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: oRootControl});
+			this.oAppVariantManager = new AppVariantManager({rootControl: oRootControl, commandSerializer: oCommandSerializer});
+
 			oServer = sinon.fakeServer.create();
 
 			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "getInboundInfo").returns({
@@ -134,6 +147,7 @@ function(
 
 		afterEach: function () {
 			sandbox.restore();
+			this.oAppVariantManager.destroy();
 			oServer.restore();
 		}
 	}, function() {
@@ -279,7 +293,10 @@ function(
 
 	QUnit.module("Given an AppVariantManager is instantiated for different platforms", {
 		beforeEach: function () {
-			this.oAppVariantManager = new AppVariantManager();
+			var oRootControl = new sap.ui.core.Control();
+			var oRtaCommandStack = new Stack();
+			var oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: oRootControl});
+			this.oAppVariantManager = new AppVariantManager({rootControl: oRootControl, commandSerializer: oCommandSerializer});
 			oServer = sinon.fakeServer.create();
 		},
 		afterEach: function () {
@@ -385,8 +402,6 @@ function(
 				})
 			));
 
-			var oRootControl = new sap.ui.core.Control();
-
 			sandbox.stub(sap.ui.fl.Utils, "getComponentClassName").returns("testComponent");
 
 			var oDescriptor = {
@@ -408,7 +423,7 @@ function(
 
 			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
 
-			return this.oAppVariantManager.copyUnsavedChangesToLREP("AppVariantId", oRootControl, true).then(function(bSuccess) {
+			return this.oAppVariantManager.copyUnsavedChangesToLREP("AppVariantId", true).then(function(bSuccess) {
 				assert.ok(bSuccess, "then the promise is resolved");
 			});
 		});
@@ -565,15 +580,13 @@ function(
 				})
 			));
 
-			var oRootControl = new sap.ui.core.Control();
-
 			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
 
 			return DescriptorVariantFactory.createNew({
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			}).then(function(oDescriptor) {
-				return this.oAppVariantManager.showSuccessMessageAndTriggerActionFlow(oDescriptor, true, oRootControl).then(function(bSuccess) {
+				return this.oAppVariantManager.showSuccessMessageAndTriggerActionFlow(oDescriptor, true).then(function(bSuccess) {
 					assert.ok(bSuccess, "then the app is navigated to FLP Homepage and the promise is resolved");
 					sap.ushell = originalUShell;
 					delete window.bUShellNavigationTriggered;
@@ -622,15 +635,13 @@ function(
 				})
 			));
 
-			var oRootControl = new sap.ui.core.Control();
-
 			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
 
 			return DescriptorVariantFactory.createNew({
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			}).then(function(oDescriptor) {
-				return this.oAppVariantManager.showSuccessMessageAndTriggerActionFlow(oDescriptor, true, oRootControl).then(function(bSuccess) {
+				return this.oAppVariantManager.showSuccessMessageAndTriggerActionFlow(oDescriptor, true).then(function(bSuccess) {
 					assert.ok(bSuccess, "then the app is navigated to FLP Homepage and the promise is resolved");
 					sap.ushell = originalUShell;
 					delete window.bUShellNavigationTriggered;
@@ -651,8 +662,6 @@ function(
 				})
 			));
 
-			var oRootControl = new sap.ui.core.Control();
-
 			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
 
 			var fnAppVariantFeatureSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").returns(Promise.resolve(true));
@@ -661,7 +670,7 @@ function(
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			}).then(function(oDescriptor) {
-				return this.oAppVariantManager.showSuccessMessageAndTriggerActionFlow(oDescriptor, false, oRootControl).then(function(bSuccess) {
+				return this.oAppVariantManager.showSuccessMessageAndTriggerActionFlow(oDescriptor, false).then(function(bSuccess) {
 					assert.ok(bSuccess, "then the app variant overview list gets opened");
 					assert.ok(fnAppVariantFeatureSpy.calledOnce, "then the onGetOverview() method is called once");
 					done();
@@ -681,8 +690,6 @@ function(
 				})
 			));
 
-			var oRootControl = new sap.ui.core.Control();
-
 			sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
 
 			var fnAppVariantFeatureSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").returns(Promise.resolve(true));
@@ -691,7 +698,7 @@ function(
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			}).then(function(oDescriptor) {
-				return this.oAppVariantManager.showSuccessMessageAndTriggerActionFlow(oDescriptor, false, oRootControl).then(function(bSuccess) {
+				return this.oAppVariantManager.showSuccessMessageAndTriggerActionFlow(oDescriptor, false).then(function(bSuccess) {
 					assert.ok(bSuccess, "then the app variant overview list gets opened");
 					assert.ok(fnAppVariantFeatureSpy.calledOnce, "then the onGetOverview() method is called once");
 					done();

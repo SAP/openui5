@@ -81,6 +81,11 @@ sap.ui.define([
 
 				// register Feedback rating icons
 				this._registerFeedbackRatingIcons();
+
+				// attach to the afterMasterClose event of the splitApp to be able to toggle the hamburger button state on clicking anywhere
+				this.byId("splitApp").attachEvent("afterMasterClose", function (oEvent) {
+					oViewModel.setProperty("/bIsShownMaster", false);
+				}, this);
 			},
 
 			onBeforeRendering: function() {
@@ -181,7 +186,7 @@ sap.ui.define([
 
 				this._toggleTabHeaderClass();
 
-				if (bPhone && bHasMaster) { // on phone we need the id of the master view (for mavigation)
+				if (bPhone && bHasMaster) { // on phone we need the id of the master view (for navigation)
 					oMasterView = this.getOwnerComponent().getConfigUtil().getMasterView(sRouteName);
 					sMasterViewId = oMasterView && oMasterView.getId();
 					oViewModel.setProperty("/sMasterViewId", sMasterViewId);

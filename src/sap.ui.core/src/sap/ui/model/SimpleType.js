@@ -3,8 +3,8 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['sap/ui/base/DataType', './FormatException', './ParseException', './Type', './ValidateException'],
-	function(DataType, FormatException, ParseException, Type, ValidateException) {
+sap.ui.define(['sap/ui/base/DataType', './Type', './FormatException', './ParseException', './ValidateException'],
+	function(DataType, Type /*, kept for compatibility with existing referers: FormatException, ParseException, ValidateException*/) {
 	"use strict";
 
 	var oModelFormat = {

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Serializer', './delegate/XML', 'sap/ui/thirdparty/vkbeautify'],
-	function(jQuery, EventProvider, Serializer, XML, vkbeautify) {
+sap.ui.define(['sap/ui/base/EventProvider', './Serializer', './delegate/XML', 'sap/ui/thirdparty/vkbeautify'],
+	function(EventProvider, Serializer, XML, vkbeautify) {
 	"use strict";
 
 	/**

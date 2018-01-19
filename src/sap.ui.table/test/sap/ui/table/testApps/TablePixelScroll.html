@@ -20,259 +20,316 @@
 	<script src="../Settings.js"></script>
 
 	<script>
-		var createData = function() {
-			var oDataSetA = {
-				lastName:       "Dente",
-				name:           "Alfred",
-				checked:        true,
-				linkText:       "www.sap.com",
-				href:           "http://www.sap.com",
-				src:            "images/Person.png",
-				gender:         "male",
-				rating:         4,
-				money:          5.67,
-				birthday:       "1968-05-06",
-				currency:       "EUR",
-				objStatusText:  "Name OK Text",
-				objStatusTitle: "Name OK Title",
-				objStatusState: "Success"
-			};
-
-			var sTextWrapper = "";
-			for (var i = 0; i < iRowHeight; i++) {
-				sTextWrapper += "\n";
-			}
-
-			var oDataSetB = {
-				lastName:       "Sum " + sTextWrapper + " mer",
-				name:           "Paige",
-				checked:        true,
-				linkText:       "www.spiegel.de",
-				href:           "http://www.spiegel.de",
-				src:            "images/Person.png",
-				gender:         "female",
-				rating:         3,
-				money:          5.67,
-				birthday:       "1968-01-01",
-				currency:       "EUR",
-				objStatusText:  "Name OK Text",
-				objStatusTitle: "Name OK Title",
-				objStatusState: "Success"
-			};
-
-			// Create the test data.
-			var aData = [];
-			var iRequiredIterations = Math.round(iDataRows / 2);
-			for (var i = 0; i < iRequiredIterations; i++) {
-				aData.push(jQuery.extend(true, {}, oDataSetA));
-				aData.push(jQuery.extend(true, {}, oDataSetB));
-			}
-			for (var i = 0; i < aData.length; i++) {
-				aData[i].lastName += " - " + (i + 1);
-				aData[i].birthdayDate = new Date(aData[i].birthday);
-			}
-			return aData;
-		};
-
 		// create table with supported sap.m controls
-		var oTable = new sap.ui.table.Table();
+		var oTable = new sap.ui.table.Table({
+			firstVisibleRow: 770000
+		});
 		oTable.setTitle("Title of the Table");
 		oTable.setFooter("Footer of the Table");
 		oTable.setSelectionMode(sap.ui.table.SelectionMode.MultiToggle);
 
 		var iScrollAutomationIntervalId = null;
-		var iReverseScrollAutomationIntervalId = -1;
-		var iScrollSpeed = 1;
-		var iDataRows = 100;
-		var iRowHeight = 0;
+		var iReverseScrollAutomationIntervalId = null;
+		var iScrollDelta = 1;
+		var iScrollInterval = 50;
 
 		oTable.setToolbar(new sap.m.OverflowToolbar({
 			content: [
 				new sap.m.Button({
-					text:  "Start/Stop Scroll Simulation",
+					text: "Start/Stop Scroll Simulation",
 					press: function(oEvent) {
 						window.clearInterval(iReverseScrollAutomationIntervalId);
 						iReverseScrollAutomationIntervalId = null;
 
-						if (iScrollAutomationIntervalId) {
+						if (iScrollAutomationIntervalId != null) {
 							window.clearInterval(iScrollAutomationIntervalId);
 							iScrollAutomationIntervalId = null;
 						} else {
 							iScrollAutomationIntervalId = window.setInterval(function() {
 								var oVsb = oTable._getScrollExtension().getVerticalScrollbar();
-								oVsb.scrollTop = oVsb.scrollTop + iScrollSpeed;
-							}, 50);
+								oVsb.scrollTop = oVsb.scrollTop + iScrollDelta;
+							}, iScrollInterval);
 						}
 					}
 				}),
 				new sap.m.Button({
-					text:  "Start/Stop Reverse Scroll Simulation",
+					text: "Start/Stop Reverse Scroll Simulation",
 					press: function(oEvent) {
 						window.clearInterval(iScrollAutomationIntervalId);
 						iScrollAutomationIntervalId = null;
 
-						if (iReverseScrollAutomationIntervalId) {
+						if (iReverseScrollAutomationIntervalId != null) {
 							window.clearInterval(iReverseScrollAutomationIntervalId);
 							iReverseScrollAutomationIntervalId = null;
 						} else {
 							iReverseScrollAutomationIntervalId = window.setInterval(function() {
 								var oVsb = oTable._getScrollExtension().getVerticalScrollbar();
-								oVsb.scrollTop = oVsb.scrollTop - iScrollSpeed;
-							}, 50);
+								oVsb.scrollTop = oVsb.scrollTop - iScrollDelta;
+							}, iScrollInterval);
 						}
 					}
 				}),
-				new sap.m.Label({
-					id:   "data-rows-label",
-					text: "Row Count"
+				new sap.m.HBox({
+					alignItems: "Center",
+					items: [
+						new sap.m.Label({
+							id: "row-count-label",
+							text: "Row Count"
+						}).addStyleClass("sapUiTinyMarginEnd"),
+						new sap.m.Input({
+							ariaLabelledBy: "row-count-label",
+							width: "200px",
+							value: "{/rowCount}"
+						})
+					]
 				}),
-				new sap.m.Slider({
-					ariaLabelledBy: "data-rows-label",
-					width:          "100px",
-					value:          100,
-					min:            1,
-					max:            200,
-					change:         function() {
-						iDataRows = this.getValue();
-						oModel.setData({modelData: createData()});
-					}
-				}),
-				new sap.m.Label({
-					id:   "row-height",
-					text: "Row Height"
-				}),
-				new sap.m.Slider({
-					ariaLabelledBy: "row-height",
-					width:          "100px",
-					value:          0,
-					min:            0,
-					max:            50,
-					change:         function() {
-						iRowHeight = this.getValue();
-						var data = createData();
-						oModel.setData({modelData: data});
-					}
+				new sap.m.HBox({
+					alignItems: "Center",
+					items: [
+						new sap.m.Label({
+							id: "row-height-label",
+							text: "Row Height"
+						}).addStyleClass("sapUiTinyMarginEnd"),
+						new sap.m.Slider({
+							ariaLabelledBy: "row-height-label",
+							width: "200px",
+							value: 0,
+							min: 0,
+							max: 250,
+							liveChange: function() {
+								oModel.setProperty("/customRowConfig/rowHeight", this.getValue() === 0 ? "auto" : this.getValue() + "px");
+								oTable.getBinding("rows").refresh(true);
+							}
+						}),
+						new sap.m.Text({
+							text: {
+								path: "/customRowConfig/rowHeight",
+								formatter: function(sRowHeight) {
+									return "(" + sRowHeight + ")";
+								}
+							}
+						})
+					]
 				})
 			]
 		}));
 
-		// Create the columns.
-		var oControl, oColumn;
-		// sap.m.Text
-		oControl = new sap.m.Text({text: "{lastName}"});
-		oColumn = new sap.ui.table.Column({
-			label:          new sap.m.Label({text: "m.Text"}),
-			template:       oControl,
-			sortProperty:   "lastName",
-			filterProperty: "lastName",
-			width:          "120px"
+		// Variable row heights test control
+		var VariableRowHeightControl = sap.ui.core.Control.extend("sap.ui.table.test.VariableRowHeightControl", {
+			metadata: {
+				properties: {
+					height: "string",
+					text: "string"
+				}
+			},
+			renderer: function(oRm, oControl) {
+				var sHeight = oControl.getHeight() || "auto";
+				var sText = oControl.getText() || "";
+
+				oRm.write("<div style='height: " + sHeight + "; position: relative; display: flex; align-items: center'");
+				oRm.writeControlData(oControl);
+				oRm.write(">");
+				oRm.write("<span style='position: absolute; top: 0'>" + sText + "</span>");
+				oRm.write("<span style='z-index: 1; background-color: white'>" + sText + "</span>");
+				oRm.write("<span style='position: absolute; bottom: 0'>" + sText + "</span>");
+				oRm.write("</div>");
+			},
+			setHeight: function(sHeight) {
+				this.setProperty("height", sHeight, true);
+
+				var oDomRef = this.getDomRef();
+				if (oDomRef != null) {
+					oDomRef.style.height = sHeight || "auto";
+				}
+			},
+			setText: function(sText) {
+				this.setProperty("text", sText, true);
+
+				var oDomRef = this.getDomRef();
+				if (oDomRef != null) {
+					var aSpans = oDomRef.children;
+					for (var i = 0; i < aSpans.length; i++) {
+						aSpans[i].innerHTML = sText || "";
+					}
+				}
+			}
 		});
-		oTable.addColumn(oColumn);
+
+		// Create the columns.
+
+		// VariableRowHeightControl
+		oTable.addColumn(new sap.ui.table.Column({
+			label: new sap.m.Label({text: "VariableRowHeightControl"}),
+			template: new VariableRowHeightControl({
+				height: "{rowHeight}",
+				text: {
+					path: "/firstRowIndex",
+					formatter: function(iFirstRowIndex) {
+						var oRow = this.getParent();
+
+						if (oRow == null) {
+							return "";
+						}
+
+						var oTable = oRow.getParent();
+						var iRowAggregationIndex = oTable.indexOfRow(oRow);
+						var iRowIndex = iFirstRowIndex + iRowAggregationIndex;
+						return "Row #" + (iRowIndex + 1);
+					}
+				}
+			}),
+			width: "150px"
+		}));
+
+		// sap.m.Text
+		oTable.addColumn(new sap.ui.table.Column({
+			label: new sap.m.Label({text: "m.Text"}),
+			template: new sap.m.Text({text: "Einstein"}),
+			width: "120px"
+		}));
 
 		// sap.m.Label
-		oControl = new sap.m.Label({text: "{name}"});
-		oColumn = new sap.ui.table.Column({
-			label:          new sap.m.Label({text: "m.Label"}),
-			template:       oControl,
-			sortProperty:   "name",
-			filterProperty: "name",
-			width:          "6em"
-		});
-		oTable.addColumn(oColumn);
+		oTable.addColumn(oColumn = new sap.ui.table.Column({
+			label: new sap.m.Label({text: "m.Label"}),
+			template: new sap.m.Label({text: "Albert"}),
+			width: "6em"
+		}));
 
 		// sap.m.ObjectStatus
-		oControl = new sap.m.ObjectStatus({text: "{objStatusText}", state: "{objStatusState}"});
-		oColumn = new sap.ui.table.Column({
-			label:          new sap.m.Label({text: "m.ObjectStatus"}),
-			template:       oControl,
-			sortProperty:   "objStatusState",
-			filterProperty: "objStatusState",
-			width:          "200px"
-		});
-		oTable.addColumn(oColumn);
+		oTable.addColumn(oColumn = new sap.ui.table.Column({
+			label: new sap.m.Label({text: "m.ObjectStatus"}),
+			template: new sap.m.ObjectStatus({text: "Success", state: "Success"}),
+			width: "200px"
+		}));
 
 		// sap.ui.core.Icon
-		oControl = new sap.ui.core.Icon({src: "sap-icon://account", decorative: false});
-		oColumn = new sap.ui.table.Column({
+		oTable.addColumn(oColumn = new sap.ui.table.Column({
 			resizable: false,
-			label:     new sap.m.Label({text: "core.Icon"}),
-			template:  oControl,
-			width:     "80px",
-			hAlign:    sap.ui.core.HorizontalAlign.Center
-		});
-		oTable.addColumn(oColumn);
+			label: new sap.m.Label({text: "core.Icon"}),
+			template: new sap.ui.core.Icon({src: "sap-icon://account", decorative: false}),
+			width: "80px",
+			hAlign: sap.ui.core.HorizontalAlign.Center
+		}));
 
 		// sap.m.Button
-		oControl = new sap.m.Button({text: "{gender}"});
-		oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Button"}), template: oControl, width: "100px"});
-		oTable.addColumn(oColumn);
+		oTable.addColumn(new sap.ui.table.Column({
+			label: new sap.m.Label({text: "m.Button"}),
+			template: new sap.m.Button({text: "Button"}),
+			width: "100px"
+		}));
 
 		// sap.m.Input
-		oControl = new sap.m.Input({value: "{name}"});
-		oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Input"}), template: oControl, width: "200px"});
-		oTable.addColumn(oColumn);
+		oTable.addColumn(new sap.ui.table.Column({
+			label: new sap.m.Label({text: "m.Input"}),
+			template: new sap.m.Input({value: "Theory of relativity"}),
+			width: "200px"
+		}));
 
 		// sap.m.DatePicker
-		oControl = new sap.m.DatePicker({dateValue: "{birthdayDate}"});
-		oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.DatePicker"}), template: oControl, width: "200px"});
-		oTable.addColumn(oColumn);
+		oTable.addColumn(new sap.ui.table.Column({
+			label: new sap.m.Label({text: "m.DatePicker"}),
+			template: new sap.m.DatePicker({dateValue: new Date("1879-03-14")}),
+			width: "200px"
+		}));
 
 		// sap.m.Select
-		oControl = new sap.m.Select({
-			items: [
-				new sap.ui.core.Item({key: "v1", text: "Value 1"}),
-				new sap.ui.core.Item({key: "v2", text: "Value 2"}),
-				new sap.ui.core.Item({key: "v3", text: "Value 3"}),
-				new sap.ui.core.Item({key: "v4", text: "Value 4"})
-			]
-		});
-		oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Select"}), template: oControl, width: "150px"});
-		oTable.addColumn(oColumn);
+		oTable.addColumn(new sap.ui.table.Column({
+			label: new sap.m.Label({text: "m.Select"}),
+			template: new sap.m.Select({
+				items: [
+					new sap.ui.core.Item({key: "v1", text: "Value 1"}),
+					new sap.ui.core.Item({key: "v2", text: "Value 2"}),
+					new sap.ui.core.Item({key: "v3", text: "Value 3"}),
+					new sap.ui.core.Item({key: "v4", text: "Value 4"})
+				]
+			}),
+			width: "150px"
+		}));
 
 		// sap.m.Select
-		oControl = new sap.m.ComboBox({
-			items: [
-				new sap.ui.core.Item({key: "v1", text: "Value 1"}),
-				new sap.ui.core.Item({key: "v2", text: "Value 2"}),
-				new sap.ui.core.Item({key: "v3", text: "Value 3"}),
-				new sap.ui.core.Item({key: "v4", text: "Value 4"})
-			]
-		});
-		oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.ComboBox"}), template: oControl, width: "150px"});
-		oTable.addColumn(oColumn);
+		oTable.addColumn(new sap.ui.table.Column({
+			label: new sap.m.Label({text: "m.ComboBox"}),
+			template: new sap.m.ComboBox({
+				items: [
+					new sap.ui.core.Item({key: "v1", text: "Value 1"}),
+					new sap.ui.core.Item({key: "v2", text: "Value 2"}),
+					new sap.ui.core.Item({key: "v3", text: "Value 3"}),
+					new sap.ui.core.Item({key: "v4", text: "Value 4"})
+				]
+			}),
+			width: "150px"
+		}));
 
 		// sap.m.Select
-		oControl = new sap.m.MultiComboBox({
-			items: [
-				new sap.ui.core.Item({key: "v1", text: "Value 1"}),
-				new sap.ui.core.Item({key: "v2", text: "Value 2"}),
-				new sap.ui.core.Item({key: "v3", text: "Value 3"}),
-				new sap.ui.core.Item({key: "v4", text: "Value 4"})
-			]
-		});
-		oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.MultiComboBox"}), template: oControl, width: "250px"});
-		oTable.addColumn(oColumn);
+		oTable.addColumn(new sap.ui.table.Column({
+			label: new sap.m.Label({text: "m.MultiComboBox"}),
+			template: new sap.m.MultiComboBox({
+				items: [
+					new sap.ui.core.Item({key: "v1", text: "Value 1"}),
+					new sap.ui.core.Item({key: "v2", text: "Value 2"}),
+					new sap.ui.core.Item({key: "v3", text: "Value 3"}),
+					new sap.ui.core.Item({key: "v4", text: "Value 4"})
+				]
+			}),
+			width: "250px"
+		}));
 
 		// sap.m.Checkbox
-		oControl = new sap.m.CheckBox({selected: "{checked}", text: "{lastName}"});
-		oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Checkbox"}), template: oControl, width: "50px"});
-		oTable.addColumn(oColumn);
+		oTable.addColumn(new sap.ui.table.Column({
+			label: new sap.m.Label({text: "m.Checkbox"}),
+			template: new sap.m.CheckBox({selected: true, text: "Genius"}),
+			width: "50px"
+		}));
 
 		// sap.m.Link
-		oControl = new sap.m.Link({href: "{href}", text: "{linkText}"});
-		oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Link"}), template: oControl, width: "150px"});
-		oTable.addColumn(oColumn);
+		oTable.addColumn(new sap.ui.table.Column({
+			label: new sap.m.Label({text: "m.Link"}),
+			template: new sap.m.Link({href: "http://www.sap.com", text: "www.sap.com"}),
+			width: "150px"
+		}));
 
 		// sap.ui.unified.Currency
-		oControl = new sap.ui.unified.Currency({value: "{money}", currency: "{currency}"});
-		oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "unified.Currency"}), template: oControl, width: "200px"});
-		oTable.addColumn(oColumn);
+		oTable.addColumn(new sap.ui.table.Column({
+			label: new sap.m.Label({text: "unified.Currency"}),
+			template: new sap.ui.unified.Currency({value: 123.45, currency: "EUR"}),
+			width: "200px"
+		}));
 
 		// set Model and bind Table
-		var oModel = new sap.ui.model.json.JSONModel();
-		oModel.setData({modelData: createData()});
+		var oModel = new sap.ui.model.json.JSONModel({
+			defaultRowConfig: {
+				rowHeight: undefined
+			},
+			customRowConfig: {
+				rowHeight: "auto"
+			},
+			rowCount: 1000000000,
+			firstRowIndex: 0
+		});
 		oTable.setModel(oModel);
-		oTable.bindRows("/modelData");
+		oTable.bindRows("/");
+		oTable.getBinding("rows").getLength = function() {
+			return parseInt(oModel.getProperty("/rowCount"), 10);
+		};
+		oTable.getBinding("rows").getContexts = function(iStartIndex, iLength) {
+			var aContexts = [];
+			var iBindingLength = this.getLength();
+			var iCount = iStartIndex + iLength > iBindingLength ? iBindingLength - iStartIndex : iLength;
+
+			for (var i = 0; i < iCount; i++) {
+				var iIndex = iStartIndex + i;
+				aContexts.push(new sap.ui.model.Context(oModel, iIndex % 2 === 0 ? "/defaultRowConfig" : "/customRowConfig"));
+			}
+
+			var iOldFirstRowIndex = oModel.getProperty("/firstRowIndex");
+			var iNewFirstRowIndex = iStartIndex;
+
+			if (iOldFirstRowIndex !== iNewFirstRowIndex) {
+				oModel.setProperty("/firstRowIndex", iNewFirstRowIndex, null, true);
+			}
+
+			return aContexts;
+		};
 		oTable.placeAt("table");
 		oTable._bVariableRowHeightEnabled = true;
 		oTable.setVisibleRowCountMode("Auto");

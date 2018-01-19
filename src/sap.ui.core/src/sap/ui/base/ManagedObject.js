@@ -672,20 +672,38 @@ sap.ui.define([
 	 *     {@link #unbindAggregation} can always be used. </li>
 	 * <li><code>forwarding: <i>object</i></code>
 	 *     If set, this defines a forwarding of objects added to this aggregation into an aggregation of another ManagedObject - typically to an inner control
-	 *     within a composite control. See {@link sap.ui.base.ManagedObjectMetadata.forwardAggregation} for more details on aggregation forwarding.
+	 *     within a composite control.
+	 *     This means that all adding, removal, or other operations happening on the source aggregation are actually called on the target instance.
+	 *     All elements added to the source aggregation will be located at the target aggregation (this means the target instance is their parent).
+	 *     Both, source and target element will return the added elements when asked for the content of the respective aggregation.
+	 *     If present, the named (non-generic) aggregation methods will be called for the target aggregation.
+	 *     Aggregations can only be forwarded to non-hidden aggregations of the same multiplicity (single/multiple).
+	 *     The target aggregation must also be "compatible" to the source aggregation in the sense that any items given to the source aggregation
+	 *     must also be valid in the target aggregation (otherwise the target element will throw a validation error).
+	 *     If the forwarded elements use data binding, the target element must be properly aggregated by the source element to make sure all models are available there
+	 *     as well.
+	 *     The aggregation target must remain the same instance across the entire lifetime of the source control.
+	 *     Aggregation forwarding will behave unexpectedly when the content in the target aggregation is modified by other actors (e.g. by the target element or by
+	 *     another forwarding from a different source aggregation). Hence, this is not allowed.
 	 *     The forwarding configuration object defines the target of the forwarding. The available settings are:
-	 *     <li><code>idSuffix: <i>string</i></code>A string which is appended to the ID of <i>this</i> ManagedObject to construct the ID of the target ManagedObject. This is
-	 *         one of the two options to specify the target. This option requires the target instance to be created in the init() method of this ManagedObject and to be
-	 *         always available.</li>
-	 *     <li><code>getter: <i>string</i></code>The name of the function on instances of this ManagedObject which returns the target instance. This second option
-	 *         to specify the target can be used for lazy instantiation of the target. Note that either idSuffix or getter must be given. Also note that the target
-	 *         instance returned by the getter must remain the same over the entire lifetime of this ManagedObject and the implementation assumes that all instances return
-	 *         the same type of object (at least the target aggregation must always be defined in the same class).</li>
-	 *     <li><code>aggregation: <i>string</i></code>The name of the aggregation on the target into which the objects shall be forwarded. The multiplicity of the target
-	 *         aggregation must be the same as the one of the source aggregation for which forwarding is defined.</li>
-	 *     <li><code>[forwardBinding]: <i>boolean</i></code>Whether any binding should happen on the forwarding target or not. Default if omitted is <code>false</code>,
-	 *         which means any bindings happen on the outer ManagedObject.</li>
-	 *     </li>
+	 *     <ul>
+	 *         <li><code>idSuffix: <i>string</i></code>A string which is appended to the ID of <i>this</i> ManagedObject to construct the ID of the target ManagedObject. This is
+	 *             one of the two options to specify the target. This option requires the target instance to be created in the init() method of this ManagedObject and to be
+	 *             always available.</li>
+	 *         <li><code>getter: <i>string</i></code>The name of the function on instances of this ManagedObject which returns the target instance. This second option
+	 *             to specify the target can be used for lazy instantiation of the target. Note that either idSuffix or getter must be given. Also note that the target
+	 *             instance returned by the getter must remain the same over the entire lifetime of this ManagedObject and the implementation assumes that all instances return
+	 *             the same type of object (at least the target aggregation must always be defined in the same class).</li>
+	 *         <li><code>aggregation: <i>string</i></code>The name of the aggregation on the target into which the objects shall be forwarded. The multiplicity of the target
+	 *             aggregation must be the same as the one of the source aggregation for which forwarding is defined.</li>
+	 *         <li><code>[forwardBinding]: <i>boolean</i></code>Whether any binding should happen on the forwarding target or not. Default if omitted is <code>false</code>,
+	 *             which means any bindings happen on the outer ManagedObject. When the binding is forwarded, all binding methods like updateAggregation, getBindingInfo,
+	 *             refreshAggregation etc. are called on the target element of the forwarding instead of being called on this element. The basic aggregation mutator methods
+	 *             (add/remove etc.) are only called on the forwarding target element. Without forwardBinding, they are called on this element, but forwarded to the forwarding
+	 *             target, where they actually modify the aggregation.
+	 *         </li>
+	 *     </ul>
+	 * </li>
 	 * <li><code>selector: <i>string</i></code> either can be omitted or set to a valid selector string as defined by the
 	 *     {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector Element.prototype.querySelector}
 	 *     method. The selector should locate the DOM element that surrounds the aggregation's content. It should only be

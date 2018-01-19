@@ -97,6 +97,13 @@
 		assert.ok(this.oVariantManagement);
 	});
 
+	QUnit.test("Check property 'updateVariantInURL'", function(assert) {
+		assert.ok(!this.oVariantManagement.getUpdateVariantInURL());
+
+		this.oVariantManagement.setUpdateVariantInURL(true);
+		assert.ok(this.oVariantManagement.getUpdateVariantInURL());
+	});
+
 	QUnit.test("Shall be destroyable", function(assert) {
 		assert.ok(this.oVariantManagement._oRb);
 		this.oVariantManagement.destroy();
@@ -479,7 +486,7 @@
 		assert.ok(aItems);
 		assert.equal(aItems.length, 5);
 
-		oItemDel.visible = false;
+		// oItemDel.visible = false;
 		oItemRen.title = "Not Three";
 
 		this.oVariantManagement._createManagementDialog();
@@ -487,6 +494,8 @@
 		sinon.stub(this.oVariantManagement.oManagementDialog, "open");
 
 		this.oVariantManagement._openManagementDialog();
+		this.oVariantManagement._handleManageDeletePressed(oItemDel);
+
 		var aRows = this.oVariantManagement.oManagementTable.getItems();
 		assert.ok(aRows);
 		assert.equal(aRows.length, 4);
@@ -535,6 +544,8 @@
 		this.oVariantManagement._createManagementDialog();
 		assert.ok(this.oVariantManagement.oManagementDialog);
 		sinon.stub(this.oVariantManagement.oManagementDialog, "open");
+
+		this.oVariantManagement._openManagementDialog();
 
 		var oItemRen = this.oVariantManagement._getItemByKey("3");
 		assert.ok(oItemRen);
@@ -598,6 +609,8 @@
 		this.oVariantManagement._createManagementDialog();
 		assert.ok(this.oVariantManagement.oManagementDialog);
 		sinon.stub(this.oVariantManagement.oManagementDialog, "open");
+
+		this.oVariantManagement._openManagementDialog();
 
 		var oItemRen = this.oVariantManagement._getItemByKey("3");
 		assert.ok(oItemRen);

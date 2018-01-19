@@ -216,15 +216,28 @@ sap.ui.define([
 	 * @public
 	 */
 	ControlVariant.prototype.isVariantSwitchEnabled = function(oOverlay) {
-		var oElement = oOverlay.getElementInstance(),
-			sVariantManagementReference = oOverlay.getVariantManagement ? oOverlay.getVariantManagement() : undefined;
-		if (!sVariantManagementReference) {
+		var aVariants = [];
+		if (this._isVariantManagementControl(oOverlay)) {
+			var oElement = oOverlay.getElementInstance(),
+				sVariantManagementReference = oOverlay.getVariantManagement ? oOverlay.getVariantManagement() : undefined;
+			if (!sVariantManagementReference) {
+				return false;
+			}
+			var oModel = this._getVariantModel(oElement);
+			if (oModel) {
+				aVariants = oModel.getData()[sVariantManagementReference].variants.reduce(function(aReducedVariants, oVariant) {
+					if (oVariant.visible) {
+						return aReducedVariants.concat(oVariant);
+					} else {
+						return aReducedVariants;
+					}
+				}, []);
+			}
+			var bEnabled = aVariants.length > 1;
+			return bEnabled;
+		} else {
 			return false;
 		}
-		var oModel = this._getVariantModel(oElement),
-			aVariants = oModel ? oModel.getData()[sVariantManagementReference].variants : [],
-			bEnabled = aVariants.length > 1;
-		return bEnabled;
 	};
 
 	/**
@@ -253,7 +266,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ControlVariant.prototype.isRenameEnabled = function(oOverlay) {
-		return true;
+		return this._isVariantManagementControl(oOverlay);
 	};
 
 	/**
@@ -507,16 +520,16 @@ sap.ui.define([
 	 * @return {object[]}          Returns array containing the items with required data
 	 */
 	ControlVariant.prototype.getMenuItems = function(oOverlay){
-		var VARIANT_MODEL_NAME = '$FlexVariants';
 		var aMenuItems = [];
 
 		if (this.isRenameAvailable(oOverlay)){
 			aMenuItems.push({
 				id: "CTX_VARIANT_SET_TITLE",
-				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_VARIANT_SET_TITLE'),
+				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_RENAME'),
 				handler: this.renameVariant.bind(this),
 				enabled: this.isRenameEnabled.bind(this),
-				rank: 210
+				rank: 210,
+				icon: "sap-icon://edit"
 			});
 		}
 
@@ -528,7 +541,8 @@ sap.ui.define([
 					return this.duplicateVariant(aOverlays[0]);
 				}.bind(this),
 				enabled: this.isVariantDuplicateEnabled.bind(this),
-				rank: 220
+				rank: 220,
+				icon: "sap-icon://duplicate"
 			});
 		}
 
@@ -539,37 +553,44 @@ sap.ui.define([
 				handler: this.configureVariants.bind(this),
 				enabled: this.isVariantConfigureEnabled.bind(this),
 				startSection: true,
-				rank: 230
+				rank: 230,
+				icon: "sap-icon://action-settings"
 			});
 		}
 
 		if (this.isVariantSwitchAvailable(oOverlay)){
+			var oModel = this._getVariantModel(oOverlay.getElementInstance());
+			var sManagementReferenceId = oOverlay.getVariantManagement();
+
+			var aSubmenuItems = oModel.getData()[sManagementReferenceId].variants.reduce(function(aReducedVariants, oVariant) {
+				if (oVariant.visible) {
+					var bCurrentItem = oModel.getData()[sManagementReferenceId].currentVariant === oVariant.key;
+					var oItem = {
+						id: oVariant.key,
+						text: oVariant.title,
+						icon: bCurrentItem ? "sap-icon://accept" : "",
+						enabled: !bCurrentItem
+					};
+					return aReducedVariants.concat(oItem);
+				} else {
+					return aReducedVariants;
+				}
+			}, []);
+
 			aMenuItems.push({
 				id: "CTX_VARIANT_SWITCH_SUBMENU",
 				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_VARIANT_SWITCH'),
 				handler: function(aOverlays, mPropertyBag){
 					var oData = mPropertyBag.eventItem.data(),
-						oTargetOverlay = oData.targetOverlay,
+						oTargetOverlay = aOverlays[0],
 						sNewVariantKey = oData.key,
-						sCurrentVariantKey = oData.current;
+						sCurrentVariantKey = oModel.getData()[sManagementReferenceId].currentVariant;
 					return this.switchVariant(oTargetOverlay, sNewVariantKey, sCurrentVariantKey);
 				}.bind(this),
 				enabled: this.isVariantSwitchEnabled.bind(this),
-				submenu: {
-					id: "{" + VARIANT_MODEL_NAME + ">key}",
-					text: "{" + VARIANT_MODEL_NAME + ">title}",
-					model: VARIANT_MODEL_NAME,
-					current: function(oOverlay, oModel) {
-						var sManagementReferenceId = oOverlay.getVariantManagement();
-						return oModel.getData()[sManagementReferenceId].currentVariant;
-					},
-					items: function(oOverlay, oModel) {
-						var sManagementReferenceId = oOverlay.getVariantManagement();
-						return oModel.getData()[sManagementReferenceId].variants;
-					}
-				},
-				type: "subMenuWithBinding",
-				rank: 240
+				submenu: aSubmenuItems,
+				rank: 240,
+				icon: "sap-icon://switch-views"
 			});
 		}
 

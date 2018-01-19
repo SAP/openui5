@@ -281,13 +281,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			footer : {type : "sap.ui.core.Control", altTypes : ["string"], multiple : false},
 
 			/**
-			 * Toolbar of the Table (if not set it will be hidden)
+			 * Toolbar of the Table
+			 * If not set, no toolbar area will be rendered.
+			 * Note: The CSS class sapMTBHeader-CTX is applied on the given toolbar.
 			 * @deprecated Since version 1.38. This aggregation is deprecated, use the <code>extension</code> aggregation instead.
 			 */
 			toolbar : {type : "sap.ui.core.Toolbar", multiple : false, deprecated: true},
 
 			/**
-			 * Extension section of the Table (if not set it will be hidden)
+			 * Extension section of the Table.
+			 * If not set, no extension area will be rendered.
+			 * Note: In case a <code>sap.m.Toolbar</code> is used as header the CSS class sapMTBHeader-CTX should be applied on this toolbar via <code>addStyleClass</code>.
 			 */
 			extension : {type : "sap.ui.core.Control", multiple : true, singularName : "extension"},
 
@@ -722,6 +726,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		this._bRowAggregationInvalid = true;
 		this._mTimeouts = {};
+		this._mAnimationFrames = {};
 
 		// TBD: Tooltips are not desired by Visual Design, discuss whether to switch it off by default
 		this._bHideStandardTooltips = false;
@@ -760,14 +765,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					that._updateRowHeights(that._aRowHeights, false); // table body rows
 
 					if (TableUtils.isVariableRowHeightEnabled(that)) {
-						that._getScrollExtension().updateInnerVerticalScrollRangeCache(that._aRowHeights);
-						that._iRenderedFirstVisibleRow = this.getFirstVisibleRow();
+						that._iRenderedFirstVisibleRow = this._getFirstRenderedRowIndex();
 					}
 					that._getScrollExtension().updateVerticalScrollbarVisibility();
-
-					if (TableUtils.isVariableRowHeightEnabled(that)) {
-						that._getScrollExtension().updateInnerVerticalScrollPosition(that._aRowHeights);
-					}
 				}
 
 				that._mTimeouts.bindingTimer = undefined;
@@ -1270,12 +1270,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype.onAfterRendering = function(oEvent) {
 		var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
 
-		if (bRenderedRows) {
-			var oScrollExtension = this._getScrollExtension();
-			oScrollExtension.updateVerticalScrollbarHeight();
-			oScrollExtension.updateVerticalScrollHeight();
-		}
-
 		this._bInvalid = false;
 		this._bOnAfterRendering = true;
 		var $this = this.$();
@@ -1365,8 +1359,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		this._resetColumnHeaderHeights();
 		this._aRowHeights = this._collectRowHeights(false);
 		var aColumnHeaderRowHeights = this._collectRowHeights(true);
+
 		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			this._getScrollExtension().updateInnerVerticalScrollRangeCache(this._aRowHeights);
+			// Necessary in case the visible row count does not change after a resize (for example, this is always the case
+			// if visibleRowCountMode is set to "Fixed"). The row heights might change due to decreased column widths, so the inner scroll position
+			// must be adjusted.
+			this._getScrollExtension().updateInnerVerticalScrollPosition();
 		}
 
 		var iRowContentSpace = null;
@@ -1663,11 +1661,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			iRowIndex = 0;
 		}
 		if (this._getTotalRowCount() > 0) {
-			var iMaxRowIndex = this._getMaxRowIndex();
-
-			if (TableUtils.isVariableRowHeightEnabled(this)) {
-				iMaxRowIndex++;
-			}
+			var iMaxRowIndex = this._getMaxFirstVisibleRowIndex();
 
 			if (iMaxRowIndex < iRowIndex) {
 				jQuery.sap.log.warning("The index of the first visible row must be lesser or equal than the scrollable row count minus the visible row count." +
@@ -1677,17 +1671,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		var bFirstVisibleRowChanged = this.getFirstVisibleRow() != iRowIndex;
+		var oScrollExtension = this._getScrollExtension();
 
 		if (bFirstVisibleRowChanged) {
+			var iOldFirstRenderedRowIndex = this._getFirstRenderedRowIndex();
 			// Prevent re-rendering of the table, just update the rows.
 			this.setProperty("firstVisibleRow", iRowIndex, true);
+			var bFirstRenderedRowChanged = this._getFirstRenderedRowIndex() !== iOldFirstRenderedRowIndex;
 
 			if (this.getBinding("rows")) {
-				var sReason = bOnScroll === true ? TableUtils.RowsUpdateReason.VerticalScroll : TableUtils.RowsUpdateReason.FirstVisibleRowChange;
-				this.updateRows(sReason);
+				if (bFirstRenderedRowChanged) {
+					var sReason = bOnScroll === true ? TableUtils.RowsUpdateReason.VerticalScroll : TableUtils.RowsUpdateReason.FirstVisibleRowChange;
+					this.updateRows(sReason);
+				}
 
+				// If changing the first visible row was initiated by a scroll action, the scroll position is already accurate.
+				// If the first visible row is set to the maximum row index, the table is scrolled to the bottom including the overflow.
 				if (!bOnScroll) {
-					this._getScrollExtension().updateVerticalScrollPosition();
+					oScrollExtension.updateVerticalScrollPosition();
 				}
 			}
 
@@ -1696,6 +1697,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					firstVisibleRow: iRowIndex
 				});
 			}
+		} else if (!bOnScroll) {
+			// Even if the first visible row was not changed, this row may not be visible because of the inner scroll position. Therefore the
+			// scroll position is adjusted to make it visible (by resetting the inner scroll position).
+			oScrollExtension.updateVerticalScrollPosition();
 		}
 
 		return this;
@@ -1997,7 +2002,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		bSuppressUpdate = bSuppressUpdate === true;
 		bSecondCall = bSecondCall === true;
 
-		var iFirstVisibleRow = this.getFirstVisibleRow();
+		var iFirstVisibleRow = this._getFirstRenderedRowIndex();
 		var iFixedRowCount = this.getFixedRowCount();
 		var iFixedBottomRowCount = this.getFixedBottomRowCount();
 		var iReceivedLength = 0;
@@ -2045,6 +2050,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// be requested the analytical binding would build the tree twice.
 		aTmpContexts = this._getContexts(iStartIndex, iLength, iThreshold);
 		var iBindingLength = this._updateTotalRowCount(!bSuppressUpdate);
+
 		// iLength is the number of rows which shall get filled. It might be more than the binding actually has data.
 		// Therefore Math.min is required to make sure to not request data again from the binding.
 		bReceivedLessThanRequested = aTmpContexts.length < Math.min(iLength, iBindingLength - iFixedBottomRowCount);
@@ -2067,19 +2073,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			fnMergeArrays(aContexts, aTmpContexts, iMergeOffsetBottomRow);
 		}
 
-		if (bReceivedLessThanRequested && !bSecondCall) {
-			if (iBindingLength > 0) {
-				var iMaxRowIndex = this._getMaxRowIndex();
+		var iMaxRowIndex = this._getMaxFirstRenderedRowIndex();
 
-				if (iMaxRowIndex < iFirstVisibleRow) {
-					iFirstVisibleRow = iMaxRowIndex;
-					this.setProperty("firstVisibleRow", iFirstVisibleRow, true);
+		if (bReceivedLessThanRequested
+			&& iBindingLength > 0
+			&& iMaxRowIndex < iFirstVisibleRow
+			&& !bSecondCall) {
 
-					// Get the contexts again, this time with the maximum possible value for the first visible row.
-					aContexts = this._getRowContexts(iVisibleRowCount, bSuppressUpdate, true);
-					iReceivedLength = aContexts.length;
-				}
-			}
+			iFirstVisibleRow = iMaxRowIndex;
+			this.setProperty("firstVisibleRow", iFirstVisibleRow, true);
+
+			// Get the contexts again, this time with the maximum possible value for the first visible row.
+			aContexts = this._getRowContexts(iVisibleRowCount, bSuppressUpdate, true);
 		}
 
 		return aContexts;
@@ -2300,14 +2305,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * cleanup the timers when not required anymore
+	 * cleanup the timers and animation frames when not required anymore
 	 * @private
 	 */
 	Table.prototype._cleanUpTimers = function() {
-		for (var sKey in this._mTimeouts) {
+		var sKey;
+
+		for (sKey in this._mTimeouts) {
 			if (this._mTimeouts[sKey]) {
 				window.clearTimeout(this._mTimeouts[sKey]);
 				delete this._mTimeouts[sKey];
+			}
+		}
+
+		for (sKey in this._mAnimationFrames) {
+			if (this._mAnimationFrames[sKey]) {
+				window.cancelAnimationFrame(this._mAnimationFrames[sKey]);
+				delete this._mAnimationFrames[sKey];
 			}
 		}
 	};
@@ -2444,12 +2458,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * Returns the number of rows the <code>rows</code> aggregation is bound to. The return value of this function is cached for performance
 	 * reasons. If the <code>rows</code> aggregation is not bound, always 0 is returned.
 	 *
+	 * @param {boolean} [bIgnoreCache=false] If set to <code>true</code>, the length will be requested from the binding, ignoring any cached value.
 	 * @returns {int} The total number of rows.
 	 * @see sap.ui.table.Table#_updateTotalRowCount
 	 * @private
 	 */
-	Table.prototype._getTotalRowCount = function() {
-		if (this._iBindingLength === null) {
+	Table.prototype._getTotalRowCount = function(bIgnoreCache) {
+		if (this._iBindingLength === null || bIgnoreCache === true) {
 			var oBinding = this.getBinding("rows");
 			return oBinding == null ? 0 : oBinding.getLength();
 		} else {
@@ -2468,25 +2483,53 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * Returns the amount of scrollable rows
-	 * @private
-	 */
-	Table.prototype._getScrollableRowCount = function() {
-		return Math.max(1, this.getVisibleRowCount() - this.getFixedRowCount() - this.getFixedBottomRowCount());
-	};
-
-	/**
 	 * Returns the maximum row index to which can be scrolled to
 	 * @private
 	 */
-	Table.prototype._getMaxRowIndex = function() {
-		var iMaxRowIndex = this._getTotalRowCount() - this.getVisibleRowCount();
+	Table.prototype._getMaxFirstVisibleRowIndex = function() {
+		var iMaxRowIndex;
 
 		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			iMaxRowIndex -= 1;
+			iMaxRowIndex = this._getTotalRowCount(true) - 1;
+		} else {
+			iMaxRowIndex = this._getTotalRowCount(true) - this.getVisibleRowCount();
 		}
 
 		return Math.max(0, iMaxRowIndex);
+	};
+
+	/**
+	 * Gets the maximum row index where rendering can start from.
+	 *
+	 * @returns {int} The maximum first rendered row index
+	 * @private
+	 */
+	Table.prototype._getMaxFirstRenderedRowIndex = function() {
+		var iMaxRowIndex;
+
+		if (TableUtils.isVariableRowHeightEnabled(this)) {
+			iMaxRowIndex = this._getTotalRowCount(true) - this.getVisibleRowCount() - 1;
+		} else {
+			iMaxRowIndex = this._getTotalRowCount(true) - this.getVisibleRowCount();
+		}
+
+		return Math.max(0, iMaxRowIndex);
+	};
+
+	/**
+	 * Gets the index of the first rendered row.
+	 *
+	 * @returns {int} The first rendered row index
+	 * @private
+	 */
+	Table.prototype._getFirstRenderedRowIndex = function() {
+		var iFirstVisibleRowIndex = this.getFirstVisibleRow();
+
+		if (TableUtils.isVariableRowHeightEnabled(this) && iFirstVisibleRowIndex > this._getMaxFirstRenderedRowIndex()) {
+			return this._getMaxFirstRenderedRowIndex();
+		} else {
+			return iFirstVisibleRowIndex;
+		}
 	};
 
 	/**
@@ -3373,7 +3416,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			return false;
 		}
 
-		// remove rows from aggregation if they are not needed anymore required
+		// Remove rows from the aggregation if they are no longer required.
 		for (i = aRows.length - 1; i >= iNumberOfRows; i--) {
 			this.removeAggregation("rows", i, true).destroy();
 		}
@@ -3547,7 +3590,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			jQuery(this.getDomRef("tableCCnt")).css("height", iDefaultRowHeight * this.getVisibleRowCount() + "px");
+			jQuery(this.getDomRef("tableCCnt")).css("height", iDefaultRowHeight * iVisibleRowCount + "px");
 		} else {
 			if ((sVisibleRowCountMode == VisibleRowCountMode.Fixed || sVisibleRowCountMode == VisibleRowCountMode.Interactive) && this.getRows().length > 0) {
 				jQuery(this.getDomRef("tableCtrlCnt")).css("height", "auto");

@@ -76,13 +76,14 @@
 				{
 					"content": {
 						"fileName":"variant0",
-						"title":"variant A",
 						"fileType":"ctrl_variant",
 						"variantManagementReference":"idMain1--variantManagementOrdersTable",
 						"variantReference":"",
 						"reference":"sap.ui.rta.test.Demo.md.Component",
 						"packageName":"$TMP",
-						"content":{},
+						"content":{
+							"title":"variant A"
+						},
 						"layer":"VENDOR",
 						"texts":{
 							"TextDemo": {
@@ -189,7 +190,6 @@
 				{
 					"content": {
 						"fileName":"idMain1--variantManagementOrdersTable",
-						"title":"Standard",
 						"fileType":"ctrl_variant",
 						"variantManagementReference":"idMain1--variantManagementOrdersTable",
 						"variantReference":"",
@@ -200,7 +200,9 @@
 							"service":"",
 							"user":"SAP"
 						},
-						"content": {}
+						"content": {
+							"title":"Standard"
+						}
 					},
 					"controlChanges" : [
 						{
@@ -257,13 +259,14 @@
 				{
 					"content": {
 						"fileName":"variant2",
-						"title":"variant AA",
 						"fileType":"ctrl_variant",
 						"variantManagementReference":"idMain1--variantManagementOrdersTable",
 						"variantReference":"variant0",
 						"reference":"sap.ui.rta.test.Demo.md.Component",
 						"packageName":"$TMP",
-						"content":{},
+						"content":{
+							"title":"variant AA"
+						},
 						"layer":"CUSTOMER",
 						"texts":{},
 						"namespace":"sap.ui.rta.test.Demo.md.Component",
@@ -348,13 +351,14 @@
 				{
 					"content": {
 						"fileName":"variant00",
-						"title":"variant A",
 						"fileType":"ctrl_variant",
 						"variantManagementReference":"variantManagementOrdersObjectPage",
 						"variantReference":"",
 						"reference":"sap.ui.rta.test.Demo.md.Component",
 						"packageName":"$TMP",
-						"content":{},
+						"content":{
+							"title":"variant A"
+						},
 						"layer":"CUSTOMER",
 						"texts":{},
 						"namespace":"sap.ui.rta.test.Demo.md.Component",
@@ -422,13 +426,14 @@
 				{
 					"content": {
 						"fileName":"variant11",
-						"title":"variant B",
 						"fileType":"ctrl_variant",
 						"variantManagementReference":"variantManagementOrdersObjectPage",
 						"variantReference":"",
 						"reference":"sap.ui.rta.test.Demo.md.Component",
 						"packageName":"$TMP",
-						"content":{},
+						"content":{
+							"title":"variant B"
+						},
 						"layer":"CUSTOMER",
 						"texts":{},
 						"namespace":"sap.ui.rta.test.Demo.md.Component",

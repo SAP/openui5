@@ -55,6 +55,54 @@
         "type": "FIX",
         "text": " sap.m.CheckBox: Focus outline fixed in grid and form",
         "references": []
+      },
+      {
+        "id": "ea796c83a9b921f2d33c201a1195aa55082d1ea1",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Vertically aligned correctly alongside other controls",
+        "references": []
+      },
+      {
+        "id": "aa5e44497461093e3a17b04277f93341dcc24e6a",
+        "type": "FIX",
+        "text": " sap.m.Slider/RangeSlider: Tooltips moved to the static area",
+        "references": []
+      },
+      {
+        "id": "7b81ef78c54b5bee9ef2d49fe512bf8a1c53e6f8",
+        "type": "FEATURE",
+        "text": " sap.m.MessagePage: Added new property and aggregation",
+        "references": []
+      },
+      {
+        "id": "82984b41bc5e18d70ce8733711179039b91f6f55",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: focus fixed for HCB",
+        "references": []
+      },
+      {
+        "id": "0e1cdb11481e9f67ecf3b6aa8f64e9f95b07f535",
+        "type": "FIX",
+        "text": " sap.m.Tile: Focus is cleared indicated in HCB and HCW",
+        "references": []
+      },
+      {
+        "id": "88b5e1a7dbbb3e646587544dbbaba324f3547b4f",
+        "type": "FEATURE",
+        "text": " sap.m.TimePicker: 24:00 value is now supported",
+        "references": []
+      },
+      {
+        "id": "2c5182ae242c6ae4384131ac224fa9ce28ceec00",
+        "type": "FEATURE",
+        "text": " sap.m.WizardStep: Optional step property added",
+        "references": []
+      },
+      {
+        "id": "94b2acc2137b52f7ca885388734a92f57ff22557",
+        "type": "FIX",
+        "text": " sap.m.RatingIndicator: Unselected icons used to have a wrong border color in contrast themes",
+        "references": []
       }
     ]
   }

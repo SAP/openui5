@@ -50,6 +50,7 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 
 	var I_TOUCH_DRAG_START_THRESHOLD_DISTANCE = 7;
 
+	var _bPluginIsBusy = false;
 	var bPreventScrollOnTouch = false;
 
 	// previous target overlay drag enter was called for
@@ -276,6 +277,7 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 			oEvent.originalEvent.dataTransfer.setData('text/plain', '');
 		}
 
+		_bPluginIsBusy = true;
 		this.showGhost(oOverlay, oEvent);
 		this.onDragStart(oOverlay);
 	};
@@ -298,6 +300,7 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 		var fnTouchMoveHandler, fnTouchEndHandler;
 
 		var oTouchedOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+
 
 	    var fnDetachTouchHandlers = function() {
 			oTouchedOverlay.detachBrowserEvent("touchmove", fnTouchMoveHandler, this);
@@ -528,6 +531,7 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 	 * @private
 	 */
 	DragDrop.prototype._onDragEnd = function(oEvent) {
+		_bPluginIsBusy = false;
 		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
 		this._removeGhost();
 
@@ -818,6 +822,14 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 		if (oDomRef) {
 			oDomRef.removeEventListener("dragover", this._dragScrollHandler, true);
 		}
+	};
+
+	/**
+	 * Indicates whether the Plugin is busy
+	 * @returns {boolean} true if the Plugin is busy at the moment
+	 */
+	DragDrop.prototype.isBusy = function () {
+		return _bPluginIsBusy;
 	};
 
 	return DragDrop;

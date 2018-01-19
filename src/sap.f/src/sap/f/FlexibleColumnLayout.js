@@ -10,10 +10,11 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/Control",
 	"sap/ui/core/InvisibleText",
+	"sap/m/library",
 	"sap/m/Button",
 	"sap/m/NavContainer",
 	"jquery.sap.events"
-], function (jQuery, library, Device, ResizeHandler, Control, InvisibleText, Button, NavContainer) {
+], function (jQuery, library, Device, ResizeHandler, Control, InvisibleText, mobileLibrary, Button, NavContainer) {
 	"use strict";
 
 
@@ -102,8 +103,13 @@ sap.ui.define([
 				 * Determines the type of the transition/animation to apply for the <code>End</code> column when <code>to()</code> is called without defining the
 				 * transition to use. The default is <code>slide</code>, other options are <code>fade</code>, <code>flip</code>, <code>show</code>, and the names of any registered custom transitions.
 				 */
-				defaultTransitionNameEndColumn : {type : "string", group : "Appearance", defaultValue : "slide"}
+				defaultTransitionNameEndColumn : {type : "string", group : "Appearance", defaultValue : "slide"},
 
+				/**
+				 * Specifies the background color of the content. The visualization of the different options depends on the used theme.
+				 * @since 1.54
+				 */
+				backgroundDesign: {type: "sap.m.BackgroundDesign",  group: "Appearance", defaultValue: mobileLibrary.BackgroundDesign.Transparent}
 			},
 			aggregations: {
 				/**
@@ -663,9 +669,7 @@ sap.ui.define([
 		oRm.destroy();
 	};
 
-
-
-	FlexibleColumnLayout.prototype.setLayout = function (sNewLayout){
+	FlexibleColumnLayout.prototype.setLayout = function (sNewLayout) {
 		sNewLayout = this.validateProperty("layout", sNewLayout);
 
 		var sCurrentLayout = this.getLayout();
@@ -679,6 +683,28 @@ sap.ui.define([
 
 		this._resizeColumns();
 		this._hideShowArrows();
+
+		return vResult;
+	};
+
+	FlexibleColumnLayout.prototype.setBackgroundDesign = function (sNewBackgroundDesign) {
+		sNewBackgroundDesign = this.validateProperty("backgroundDesign", sNewBackgroundDesign);
+
+		var sCurrentBackgroundDesign = this.getBackgroundDesign();
+
+		if (sCurrentBackgroundDesign === sNewBackgroundDesign) {
+			return this;
+		}
+
+		var vResult = this.setProperty("backgroundDesign", sNewBackgroundDesign, true);
+
+		if (sCurrentBackgroundDesign !== mobileLibrary.BackgroundDesign.Transparent) {
+			this.$().removeClass("sapFFCLBackgroundDesign" + sCurrentBackgroundDesign);
+		}
+
+		if (sNewBackgroundDesign !== mobileLibrary.BackgroundDesign.Transparent) {
+			this.$().addClass("sapFFCLBackgroundDesign" + sNewBackgroundDesign);
+		}
 
 		return vResult;
 	};

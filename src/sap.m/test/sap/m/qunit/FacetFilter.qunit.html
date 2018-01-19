@@ -4196,6 +4196,10 @@
 			this.testFacetFilterList(4);
 		});
 
+		QUnit.test("Facet filter no tabindex is set on container element", function (assert) {
+			assert.ok(!this.oFF.$().attr("tabindex"), "no tabindex is set");
+		});
+
 
 		QUnit.module("Other scenarios");
 

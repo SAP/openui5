@@ -669,42 +669,6 @@ sap.ui.require([
 		}
 	});
 
-	QUnit.test("when _createAndApplyChanges function is called and all promises are resolved", function(assert) {
-		var done = assert.async();
-		this.oCheckTargetAndApplyChangeStub.returns(Promise.resolve());
-		this.oSaveAllStub.returns(Promise.resolve());
-
-		var oPromiseReturn = this.oRta._createAndApplyChanges(this.aChangeSpecificData);
-
-		assert.ok(oPromiseReturn instanceof Promise, "then promise is returned");
-
-		oPromiseReturn.then(function() {
-			assert.strictEqual(this.oCheckTargetAndApplyChangeStub.callCount, 2, "then both changes are processed");
-			assert.strictEqual(this.oUtilsLogStub.callCount, 0, "then no errors occurred");
-			assert.ok(this.oSaveAllStub.calledOnce, "then process was finished");
-			done();
-		}.bind(this));
-	});
-
-	QUnit.test("when _createAndApplyChanges function is called with rejected promises", function(assert) {
-		var done = assert.async();
-		this.oCheckTargetAndApplyChangeStub.onCall(0).returns(Promise.resolve());
-		this.oCheckTargetAndApplyChangeStub.onCall(1).returns(Promise.reject());
-		this.oSaveAllStub.returns(Promise.reject());
-
-		var oPromiseReturn = this.oRta._createAndApplyChanges(this.aChangeSpecificData);
-
-		assert.ok(oPromiseReturn instanceof Promise, "then promise is returned");
-
-		oPromiseReturn.then(function() {
-			assert.strictEqual(this.oCheckTargetAndApplyChangeStub.callCount, 2, "then both changes are processed");
-			assert.strictEqual(this.oUtilsLogStub.callCount, 2, "then rejected errors are handled");
-			assert.ok(this.oSaveAllStub.calledOnce, "then process was finished");
-			assert.ok(this.oShowMessageStub.calledOnce, "then save error MessageToast called");
-			done();
-		}.bind(this));
-	});
-
 
 	QUnit.module("Given that RuntimeAuthoring is called and a Variant Management control is initialized", {
 		beforeEach : function(assert) {

@@ -40,4 +40,4 @@ sap.ui.define([
 
 	return sap.ui.fl;
 
-}, /* bExport= */true);
+});

@@ -64,13 +64,32 @@
 
 	QUnit.test("Selected button", function (assert) {
 		//select button programatically
-		var oLastSectionButton = this.oObjectPage.getAggregation("_anchorBar").getContent()[this.oObjectPage.getAggregation("_anchorBar").getContent().length - 1];
-		this.oObjectPage.getAggregation("_anchorBar").setSelectedButton(oLastSectionButton);
+		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
+			aAnchorBarContent = oAnchorBar.getContent(),
+			oFirstSectionButton = aAnchorBarContent[0],
+			oLastSectionButton = aAnchorBarContent[aAnchorBarContent.length - 1];
+
+		oAnchorBar.setSelectedButton(oLastSectionButton);
 
 		// allow for scroling
 		this.clock.tick(iRenderingDelay);
 
 		assert.strictEqual(oLastSectionButton.$().hasClass("sapUxAPAnchorBarButtonSelected"), true, "select button programmatically");
+		assert.strictEqual(oLastSectionButton.$().attr("aria-pressed"), "true", "ARIA pressed state should be true for the selected button");
+		assert.strictEqual(oFirstSectionButton.$().attr("aria-pressed"), "false", "ARIA pressed state should be false for the unselected button");
+	});
+
+	QUnit.test("Submenu button accessibility", function (assert) {
+		var	oButton = this.oObjectPage.getAggregation("_anchorBar").getContent()[1],
+			sSubSectionId = this.oObjectPage.getSections()[1].getSubSections()[0].getId();
+
+		oButton.firePress();
+
+		// allow for re-render
+		this.clock.tick(iRenderingDelay);
+
+		assert.strictEqual(jQuery(".sapUxAPAnchorBarPopover").find(".sapUxAPAnchorBarButton").first().attr("aria-controls"), sSubSectionId,
+				"ARIA controls attribute should match the corresponding SubSection ID");
 	});
 
 	QUnit.test("Phone view", function (assert) {
@@ -119,12 +138,14 @@
 	QUnit.test("When using the objectPageNavigation the 'navigate' event is fired with the appropriate arguments", function (assert) {
 		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
 			oExpectedSection = this.oObjectPage.getSections()[0],
+			oExpectedSubSection = oExpectedSection.getSubSections()[0],
 			navigateSpy = this.spy(this.oObjectPage, "fireNavigate");
 
 		this.oObjectPage.setShowAnchorBarPopover(false);
 		oAnchorBar.getContent()[0].firePress();
 
-		assert.ok(navigateSpy.calledWithMatch(sinon.match.has("section", oExpectedSection)), "Event fired has the correct parameters attached");
+		assert.ok(navigateSpy.calledWithMatch(sinon.match.has("section", oExpectedSection)), "Event fired has the correct section parameter attached");
+		assert.ok(navigateSpy.calledWithMatch(sinon.match.has("subSection", oExpectedSubSection)), "Event fired has the correct subSection parameter attached");
 	});
 
 	var oModel = new sap.ui.model.json.JSONModel({

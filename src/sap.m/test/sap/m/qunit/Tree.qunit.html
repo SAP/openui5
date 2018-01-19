@@ -372,7 +372,6 @@ QUnit.test("Right + Left key", function(assert){
 	var oArrowDomRef = oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander");
 
 	sap.ui.test.qunit.triggerKeydown(oArrowDomRef, jQuery.sap.KeyCodes.ARROW_RIGHT);
-	this.clock.tick(1);
 	assert.ok(oTree.getItems()[0].getExpanded(), "first node is expanded");
 	assert.ok(oToggleOpenStateEventSpy.calledOnce, "The toggleOpenState event was called once");
 	assertToggleOpenStateParameters(assert, 0, true, oToggleOpenStateEventSpy._mEventParameters);
@@ -381,7 +380,6 @@ QUnit.test("Right + Left key", function(assert){
 	assert.ok(oToggleOpenStateEventSpy.calledOnce, "The toggleOpenState event was not called as the node already was expanded");
 
 	sap.ui.test.qunit.triggerKeydown(oArrowDomRef, jQuery.sap.KeyCodes.ARROW_LEFT);
-	this.clock.tick(1);
 	assert.ok(!oTree.getItems()[0].getExpanded(), "first node is not expanded");
 	assert.ok(oToggleOpenStateEventSpy.calledTwice, "The toggleOpenState event was called twice");
 	assertToggleOpenStateParameters(assert, 0, false, oToggleOpenStateEventSpy._mEventParameters);

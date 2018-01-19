@@ -1,0 +1,264 @@
+<c:FragmentDefinition
+		xmlns:m="sap.m"
+		xmlns:l="sap.ui.layout"
+		xmlns:f="sap.ui.layout.form"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:t="sap.ui.table"
+		xmlns:c="sap.ui.core"
+		xmlns:tools="sap.ui.codeeditor">
+	<m:Page
+			id="ruleUpdatePage"
+			showHeader="false">
+		<m:content>
+			<m:Bar>
+				<m:contentLeft>
+					<m:Button
+							icon="sap-icon://arrow-left"
+							press="goToRuleProperties"
+							text="Back"/>
+				</m:contentLeft>
+				<m:contentMiddle>
+					<m:IconTabHeader
+							select="rulesToolbarEditITHSelect"
+							selectedKey="{/selectedRuleEditKey}"
+							class="customIconTabHeader">
+						<m:items>
+							<m:IconTabFilter key="ruleProperties" text="Rule properties" />
+							<m:IconTabFilter key="checkFunction" text="Check function" />
+							<m:IconTabFilter key="jsonOutput" text="Code" />
+						</m:items>
+					</m:IconTabHeader>
+				</m:contentMiddle>
+			</m:Bar>
+			<f:SimpleForm
+					visible="{= ${/selectedRuleEditKey} === 'ruleProperties' }"
+					editable="true">
+				<f:content>
+					<m:Label text="ID" />
+					<m:Input value="{/editRule/id}" required = "true" />
+					<m:Label text="Async" />
+					<m:HBox>
+						<m:items>
+							<m:RadioButton groupName="asyncEditContext" text="true" selected="{= ${/editRule/async} === true }" select="onAsyncSwitch">
+								<m:customData>
+									<c:CustomData key="asyncEditContext" value="true" />
+								</m:customData>
+							</m:RadioButton>
+							<m:RadioButton groupName="asyncEditContext" text="false" selected="{= ${/editRule/async} !== true }" select="onAsyncSwitch">
+								<m:customData>
+									<c:CustomData key="asyncEditContext" value="false" />
+								</m:customData>
+							</m:RadioButton>
+							<c:Icon
+								src="sap-icon://message-warning"
+								class="sapUiSmallMarginBegin sapUiTinyMarginEnd"
+								color="#E09D00"
+								visible="{= ${/editRule/async} === true }">
+								<c:layoutData>
+									<m:FlexItemData alignSelf="Center" />
+								</c:layoutData>
+							</c:Icon>
+							<m:Text text="{/resolveDescription}" visible="{= ${/editRule/async} === true }">
+								<m:layoutData>
+									<m:FlexItemData alignSelf="Center" />
+								</m:layoutData>
+							</m:Text>
+						</m:items>
+					</m:HBox>
+					<m:Label text="Categories" />
+					<m:MultiComboBox selectedKeys="{/editRule/categories}" items="{/categories}"  required = "true">
+						<c:Item key="{}" text="{}" />
+					</m:MultiComboBox>
+					<m:Label text="Audiences" />
+					<m:MultiComboBox selectedKeys="{/editRule/audiences}" items="{/audiences}"  required = "true">
+						<c:Item key="{}" text="{}" />
+					</m:MultiComboBox>
+					<m:Label text="Title" />
+					<m:Input type="Text" value="{/editRule/title}"  required = "true" />
+					<m:Label text="Description" />
+					<m:TextArea value="{/editRule/description}"  required = "true"/>
+					<m:Label text="Resolution" />
+					<m:TextArea value="{/editRule/resolution}"  required = "true"/>
+					<m:Label text="Min version" />
+					<m:TextArea value="{/editRule/minversion}"  required = "true"/>
+					<m:Label text="Resolution URLS" />
+					<l:VerticalLayout>
+						<l:HorizontalLayout>
+							<m:Input type="text" placeholder="Text" value="{/tempLink/text}" />
+							<m:Input type="text" placeholder="Href" value="{/tempLink/href}" />
+							<m:Button text="Add Link" press="addLinkToRule" icon="sap-icon://add" />
+						</l:HorizontalLayout>
+						<l:VerticalLayout
+								content="{/editRule/resolutionurls}">
+							<m:Link text="{text}" href="{href}" target="_blank"/>
+						</l:VerticalLayout>
+					</l:VerticalLayout>
+				</f:content>
+			</f:SimpleForm>
+			<m:Panel width="100%"
+						height="calc(100% - 2rem)"
+						visible="{= ${/selectedRuleEditKey} === 'checkFunction' }">
+				<tools:CodeEditor
+						id="codeEditorUpdate"
+						width="100%"
+						height="100%"
+						value="{/editRule/check}"
+						editable="true">
+				</tools:CodeEditor>
+			</m:Panel>
+			<m:Panel width="100%"
+						height="calc(100% - 2rem)"
+						visible="{= ${/selectedRuleEditKey} === 'jsonOutput' }">
+				<tools:CodeEditor
+						syntaxHints="false"
+						width="100%"
+						height="100%"
+						value="{/updateRuleStringified}"
+						editable="false"
+						type="javascript">
+				</tools:CodeEditor>
+			</m:Panel>
+		</m:content>
+		<m:footer>
+			<m:Bar>
+				<m:contentRight>
+					<m:Button
+							press="updateRule"
+							text="Update"
+							type="Emphasized" />
+				</m:contentRight>
+			</m:Bar>
+		</m:footer>
+	</m:Page>
+	<m:Page
+			id="rulesCreatePage"
+			showHeader="false">
+		<m:content>
+			<m:Bar>
+				<m:contentLeft>
+					<m:Button
+							icon="sap-icon://arrow-left"
+							press="goToRuleProperties"
+							text="Back"/>
+				</m:contentLeft>
+				<m:contentMiddle>
+					<m:IconTabHeader
+							select="rulesToolbarITHSelect"
+							selectedKey="{/selectedRuleCreateKey}"
+							class="customIconTabHeader">
+						<m:items>
+							<m:IconTabFilter key="ruleProperties" text="Rule properties" />
+							<m:IconTabFilter key="checkFunction" text="Check function" />
+							<m:IconTabFilter key="jsonOutput" text="Code" />
+						</m:items>
+					</m:IconTabHeader>
+				</m:contentMiddle>
+			</m:Bar>
+			<f:SimpleForm
+					visible="{= ${/selectedRuleCreateKey} === 'ruleProperties' }"
+					editable="true">
+				<f:content>
+					<m:Label text="ID" />
+					<m:Input value="{/newRule/id}"  required = "true"/>
+					<m:Label text="Async" />
+					<m:HBox>
+						<m:items>
+							<m:RadioButton groupName="asyncContext" text="true" selected="{= ${/newRule/async} === true }" select="onAsyncSwitch">
+								<m:customData>
+									<c:CustomData key="asyncContext" value="true" />
+								</m:customData>
+								<m:layoutData>
+									<m:FlexItemData alignSelf="Center" />
+								</m:layoutData>
+							</m:RadioButton>
+							<m:RadioButton groupName="asyncContext" text="false" selected="{= ${/newRule/async} !== true }" select="onAsyncSwitch">
+								<m:customData>
+									<c:CustomData key="asyncContext" value="false" />
+								</m:customData>
+								<m:layoutData>
+									<m:FlexItemData alignSelf="Center" />
+								</m:layoutData>
+							</m:RadioButton>
+							<c:Icon
+								src="sap-icon://message-warning"
+								class="sapUiSmallMarginBegin sapUiTinyMarginEnd"
+								color="#E09D00"
+								visible="{= ${/newRule/async} === true }">
+								<c:layoutData>
+									<m:FlexItemData alignSelf="Center" />
+								</c:layoutData>
+							</c:Icon>
+							<m:Text text="{/resolveDescription}" visible="{= ${/newRule/async} === true }">
+								<m:layoutData>
+									<m:FlexItemData alignSelf="Center" />
+								</m:layoutData>
+							</m:Text>
+						</m:items>
+					</m:HBox>
+					<m:Label text="Categories" />
+					<m:MultiComboBox selectedKeys="{/newRule/categories}" items="{/categories}"  required = "true">
+						<c:Item key="{}" text="{}" />
+					</m:MultiComboBox>
+					<m:Label text="Audiences" />
+					<m:MultiComboBox selectedKeys="{/newRule/audiences}" items="{/audiences}"  required = "true">
+						<c:Item key="{}" text="{}" />
+					</m:MultiComboBox>
+					<m:Label text="Title" />
+					<m:Input type="Text" value="{/newRule/title}"  required = "true"/>
+					<m:Label text="Description" />
+					<m:TextArea value="{/newRule/description}"  required = "true"/>
+					<m:Label text="Resolution" />
+					<m:TextArea value="{/newRule/resolution}"  required = "true"/>
+					<m:Label text="Min version" />
+					<m:TextArea value="{/newRule/minversion}"  required = "true"/>
+					<m:Label text="Resolution URLS" />
+					<l:VerticalLayout>
+						<l:HorizontalLayout>
+							<m:Input type="text" placeholder="Text" value="{/tempLink/text}" />
+							<m:Input type="text" placeholder="Href" value="{/tempLink/href}" />
+							<m:Button text="Add" press="addLinkToRule" icon="sap-icon://add" />
+						</l:HorizontalLayout>
+						<l:VerticalLayout
+								content="{/newRule/resolutionurls}">
+							<m:Link text="{text}" />
+						</l:VerticalLayout>
+					</l:VerticalLayout>
+				</f:content>
+			</f:SimpleForm>
+			<m:Panel width="100%"
+						height="calc(100% - 2rem)"
+						visible="{= ${/selectedRuleCreateKey} === 'checkFunction' }">
+				<tools:CodeEditor
+						id="codeEditorCreate"
+						width="100%"
+						height="100%"
+						value="{/newRule/check}"
+						editable="true">
+				</tools:CodeEditor>
+			</m:Panel>
+			<m:Panel width="100%"
+						height="calc(100% - 2rem)"
+						visible="{= ${/selectedRuleCreateKey} === 'jsonOutput' }">
+				<tools:CodeEditor
+						id="codeEditorJson"
+						syntaxHints="false"
+						width="100%"
+						height="100%"
+						value="{/newRuleStringified}"
+						editable="false"
+						type="javascript">
+				</tools:CodeEditor>
+			</m:Panel>
+		</m:content>
+		<m:footer>
+			<m:Bar>
+				<m:contentRight>
+					<m:Button
+							press="addNewRule"
+							text="Add Rule"
+							type="Emphasized" />
+				</m:contentRight>
+			</m:Bar>
+		</m:footer>
+	</m:Page>
+</c:FragmentDefinition>

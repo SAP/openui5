@@ -4,28 +4,31 @@
 
 // Provides control sap.ui.rta.appVariant.AppVariantOverviewDialog.
 sap.ui.define([
-		'sap/ui/core/ComponentContainer',
-		'sap/m/Dialog',
-		'sap/m/DialogRenderer',
-		'sap/ui/rta/appVariant/manageApps/webapp/Component',
-		"sap/ui/fl/Utils",
-		"sap/ui/rta/Utils"
+	'sap/ui/core/ComponentContainer',
+	'sap/m/Dialog',
+	'sap/m/DialogRenderer',
+	'sap/ui/rta/appVariant/manageApps/webapp/Component',
+	"sap/ui/fl/Utils",
+	"sap/ui/rta/Utils",
+	"sap/ui/rta/appVariant/AppVariantUtils"
 ], function(
-			ComponentContainer,
-			Dialog,
-			DialogRenderer,
-			ManageAppsComponent,
-			FlexUtils,
-			RtaUtils) {
+		ComponentContainer,
+		Dialog,
+		DialogRenderer,
+		ManageAppsComponent,
+		FlexUtils,
+		RtaUtils,
+		AppVariantUtils
+	) {
 
 	"use strict";
 
 	var AppVariantOverviewDialog = Dialog.extend("sap.ui.rta.appVariant.AppVariantOverviewDialog", {
 		metadata : {
 			properties: {
-				rootControl: {
-					name: "rootControl",
-					type: "object"
+				"idRunningApp" : "string",
+				isOverviewForKeyUser: {
+					type: "boolean"
 				}
 			},
 			events : {
@@ -36,11 +39,11 @@ sap.ui.define([
 			Dialog.prototype.constructor.apply(this, arguments);
 			this._oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 
-			var oRootControl = this.getRootControl();
-			var oAdaptedAppDescriptor = FlexUtils.getAppDescriptor(oRootControl);
-
 			// Create manage apps component
-			this.oManageAppsComponent = new ManageAppsComponent("manageApps", { idRunningApp : oAdaptedAppDescriptor["sap.app"].id, rootControlRunningApp: oRootControl });
+			this.oManageAppsComponent = new ManageAppsComponent("manageApps", {
+				idRunningApp : this.getIdRunningApp(),
+				isOverviewForKeyUser: this.getIsOverviewForKeyUser()
+			});
 
 			// Place component in container and display
 			this.oManageAppsComponentContainer = new ComponentContainer({
@@ -50,6 +53,7 @@ sap.ui.define([
 			this.addContent(this.oManageAppsComponentContainer);
 			this._createButton();
 
+			this.setContentWidth("1000px");
 			this.setContentHeight("450px");
 
 			this.setHorizontalScrolling(false);
@@ -58,9 +62,9 @@ sap.ui.define([
 			this.addStyleClass(RtaUtils.getRtaStyleClassName());
 		},
 		destroy: function() {
-			var sNewAppVarianId = sap.ui.rta.appVariant.AppVariantUtils.getNewAppVariantId();
+			var sNewAppVarianId = AppVariantUtils.getNewAppVariantId();
 			if (sNewAppVarianId) {
-				sap.ui.rta.appVariant.AppVariantUtils.setNewAppVariantId(null);
+				AppVariantUtils.setNewAppVariantId(null);
 			}
 			Dialog.prototype.destroy.apply(this, arguments);
 		},

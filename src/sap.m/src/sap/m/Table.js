@@ -98,6 +98,27 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library',
 			 */
 			columns : {type : "sap.m.Column", multiple : true, singularName : "column"}
 		},
+		events : {
+			/**
+			 * Fired when the context menu is opened.
+			 * When the context menu is opened, the binding context of the item is set to the given <code>contextMenu</code>.
+			 * @since 1.54
+			 */
+			beforeOpenContextMenu : {
+				allowPreventDefault : true,
+				parameters : {
+					/**
+					 * Item in which the context menu was opened.
+					 */
+					listItem : {type : "sap.m.ColumnListItem"},
+					/**
+					 * Column in which the context menu was opened.
+					 * <b>Note:</b> This parameter might be undefined for the items that are not part of a column definition.
+					 */
+					column : {type : "sap.m.Column"}
+				}
+			}
+		},
 		designtime: "sap/m/designtime/Table.designtime"
 	}});
 
@@ -510,6 +531,11 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library',
 	// returns accessibility role
 	Table.prototype.getAccessibilityType = function() {
 		return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TABLE");
+	};
+
+	// custom footer text announcement is only for tables
+	Table.prototype.getAccessibilityDescription = function() {
+		return ListBase.prototype.getAccessibilityDescription.call(this) + " " + this.getFooterText();
 	};
 
 	Table.prototype._setHeaderAnnouncement = function() {

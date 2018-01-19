@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.ThemeCheck
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI', 'jquery.sap.script'],
-	function(jQuery, Device, Global, BaseObject, URI/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI', 'jquery.sap.script'],
+	function(jQuery, Device, BaseObject, URI/* , jQuerySapScript */) {
 	"use strict";
 
 
@@ -62,9 +62,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		try {
 
 			var bNoLinkElement = false,
-			    bLinkElementFinishedLoading = false,
-			    bSheet = false,
-			    bInnerHtml = false;
+				bLinkElementFinishedLoading = false,
+				bSheet = false,
+				bInnerHtml = false;
 
 			// Check if <link> element is missing (e.g. misconfigured library)
 			bNoLinkElement = !oStyle;
@@ -133,6 +133,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		function checkLib(lib) {
 			var sStyleId = "sap-ui-theme-" + lib;
 			var currentRes = ThemeCheck.checkStyle(sStyleId, true);
+			if (currentRes) {
+
+				// removes all old stylesheets (multiple could exist if theme change was triggered
+				// twice in a short timeframe) once the new stylesheet has been loaded
+				var aOldStyles = document.querySelectorAll("link[data-sap-ui-foucmarker='" + sStyleId + "']");
+				if (aOldStyles.length > 0) {
+					for (var i = 0, l = aOldStyles.length; i < l; i++) {
+						aOldStyles[i].parentNode.removeChild(aOldStyles[i]);
+					}
+					jQuery.sap.log.debug("ThemeCheck: Old stylesheets removed for library: " + lib);
+				}
+
+			}
 			res = res && currentRes;
 			if (res) {
 
@@ -152,7 +165,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 
 						jQuery.sap.includeStyleSheet(sCustomCssPath, oThemeCheck._CUSTOMID);
 						oThemeCheck._customCSSAdded = true;
-						jQuery.sap.log.warning("ThemeCheck delivered custom CSS needs to be loaded, Theme not yet applied");
+						jQuery.sap.log.warning("ThemeCheck: delivered custom CSS needs to be loaded, Theme not yet applied");
 						oThemeCheck._themeCheckedForCustom = sThemeName;
 						res = false;
 						return false;
@@ -162,7 +175,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 						var customCssLink = jQuery("LINK[id='" +  oThemeCheck._CUSTOMID + "']");
 						if (customCssLink.length > 0) {
 							customCssLink.remove();
-							jQuery.sap.log.debug("Custom CSS removed");
+							jQuery.sap.log.debug("ThemeCheck: Custom CSS removed");
 						}
 						oThemeCheck._customCSSAdded = false;
 					}
@@ -195,7 +208,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 					var oStyle = document.getElementById(sStyleId);
 
 					jQuery.sap.log.warning(
-						"Custom theme '" + sThemeName + "' could not be loaded for library '" + lib + "'. " +
+						"ThemeCheck: Custom theme '" + sThemeName + "' could not be loaded for library '" + lib + "'. " +
 						"Falling back to its base theme '" + oThemeCheck._sFallbackTheme + "'."
 					);
 

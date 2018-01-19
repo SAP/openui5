@@ -13,6 +13,24 @@
         "type": "FEATURE",
         "text": " sap.m.TimePickerSliders: New control implemented",
         "references": []
+      },
+      {
+        "id": "ea796c83a9b921f2d33c201a1195aa55082d1ea1",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Vertically aligned correctly alongside other controls",
+        "references": []
+      },
+      {
+        "id": "7b81ef78c54b5bee9ef2d49fe512bf8a1c53e6f8",
+        "type": "FEATURE",
+        "text": " sap.m.MessagePage: Added new property and aggregation",
+        "references": []
+      },
+      {
+        "id": "3112ac952611a0fbcf91609ee41d8a327ab67322",
+        "type": "FIX",
+        "text": " sap.m.Popover: correct header, subheader and footer DOM structure",
+        "references": []
       }
     ]
   }

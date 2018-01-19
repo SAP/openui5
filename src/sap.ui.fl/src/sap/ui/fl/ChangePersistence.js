@@ -130,8 +130,8 @@ sap.ui.define([
 		}
 
 		function _isControlVariantChange () {
-			if ((oChangeContent.fileType === "ctrl_variant") || (oChangeContent.fileType === "ctrl_variant_change")){
-				return oChangeContent.variantManagementReference || oChangeContent.variantReference;
+			if ((oChangeContent.fileType === "ctrl_variant") || (oChangeContent.fileType === "ctrl_variant_change") || (oChangeContent.fileType === "ctrl_variant_management_change")){
+				return oChangeContent.variantManagementReference || oChangeContent.variantReference || (oChangeContent.selector && oChangeContent.selector.id);
 			}
 		}
 
@@ -194,6 +194,11 @@ sap.ui.define([
 				aChanges = aChanges.concat(aVariantChanges);
 			}
 
+			var bIncludeControlVariants = mPropertyBag && mPropertyBag.includeCtrlVariants;
+			if (bIncludeControlVariants && oWrappedChangeFileContent.changes.variantSection) {
+				aChanges = aChanges.concat(this._getAllCtrlVariantChanges(oWrappedChangeFileContent.changes.variantSection));
+			}
+
 			var sCurrentLayer = mPropertyBag && mPropertyBag.currentLayer;
 			if (sCurrentLayer) {
 				var aCurrentLayerChanges = [];
@@ -222,7 +227,6 @@ sap.ui.define([
 					resolve(aChanges.filter(this._preconditionsFulfilled.bind(this, aActiveContexts, bIncludeVariants)).map(createChange));
 				}.bind(this));
 			}.bind(this));
-
 		}.bind(this));
 
 		function createChange(oChangeContent) {
@@ -230,6 +234,31 @@ sap.ui.define([
 			change.setState(Change.states.PERSISTED);
 			return change;
 		}
+	};
+
+	ChangePersistence.prototype._getAllCtrlVariantChanges = function(mVariantManagementReference) {
+		var aCtrlVariantChanges = [];
+		Object.keys(mVariantManagementReference).forEach(function(sVariantManagementReference) {
+			var oVariantManagementContent = mVariantManagementReference[sVariantManagementReference];
+			//variant_management_change
+			Object.keys(oVariantManagementContent.variantManagementChanges).forEach(function(sVariantManagementChange) {
+				aCtrlVariantChanges = aCtrlVariantChanges.concat(oVariantManagementContent.variantManagementChanges[sVariantManagementChange].slice(-1)[0]); /*last change*/
+			});
+
+			oVariantManagementContent.variants.forEach( function(oVariant) {
+				//control_change
+				aCtrlVariantChanges = aCtrlVariantChanges.concat(oVariant.controlChanges);
+				//variant_change
+				Object.keys(oVariant.variantChanges).forEach(function(sVariantChange) {
+					aCtrlVariantChanges = aCtrlVariantChanges.concat(oVariant.variantChanges[sVariantChange].slice(-1)[0]); /*last change*/
+				});
+				//variant - don't copy standard variant
+				aCtrlVariantChanges = (oVariant.content.fileName !== sVariantManagementReference) ?
+											aCtrlVariantChanges.concat([oVariant.content]) :
+											aCtrlVariantChanges;
+			});
+		});
+		return aCtrlVariantChanges;
 	};
 
 	/**
@@ -707,9 +736,8 @@ sap.ui.define([
 			return aDirtyChangesClone.reduce(function (sequence, oDirtyChange) {
 				var saveAction = sequence.then(this._performSingleSaveAction(oDirtyChange).bind(this));
 				saveAction.then(this._updateCacheAndDirtyState(aDirtyChanges, oDirtyChange, bSkipUpdateCache));
-
 				return saveAction;
-			}.bind(this), Promise.resolve(true));
+			}.bind(this), Promise.resolve());
 		}
 	};
 
@@ -736,6 +764,12 @@ sap.ui.define([
 
 				oChange.setNamespace(sNamespace);
 				oChange.setComponent(sReferenceForChange);
+
+				// TODO: This is a temporary solution and will be removed ASAP
+				// Since this is a hook to mark the changes which are going to be taken over by an app variant.
+				// Later to bring the UI of the current app back to the former state, we are triggering undo (LREPSerializer#saveAsCommands) which in the last deletes a change (which was saved for App Variant) permanently in the persistence.
+				// To avoid this, we have a check 'isChangeRelevantForAppVariant' in (Change#markForDeletion), which stops the change to be deleted but manipulates the state of change to be already PERSISTED.
+				oChange.setChangeRelevantForAppVariant(true);
 			});
 
 			return this.saveDirtyChanges(true);
@@ -768,7 +802,12 @@ sap.ui.define([
 
 		return function() {
 			if (!bSkipUpdateCache) {
-				if (oDirtyChange.getPendingAction() === "NEW" && oDirtyChange.getFileType() !== "ctrl_variant_change") {
+				if (oDirtyChange.getPendingAction() === "NEW" &&
+					oDirtyChange.getFileType() !== "ctrl_variant_change" &&
+					oDirtyChange.getFileType() !== "ctrl_variant_management_change" &&
+					oDirtyChange.getFileType() !== "ctrl_variant" &&
+					!oDirtyChange.getVariantReference()
+				) {
 					Cache.addChange(that._mComponent, oDirtyChange.getDefinition());
 				} else if (oDirtyChange.getPendingAction() === "DELETE") {
 					Cache.deleteChange(that._mComponent, oDirtyChange.getDefinition());

@@ -62,6 +62,25 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		}
 	});
 
+	QUnit.test("ListBinding applyFilter with previous resetData", function(assert){
+		var done = assert.async();
+		oModel.metadataLoaded().then(function(){
+			var oBinding = oModel.bindList("/Categories");
+			var handler = function() {
+				oBinding.resetData();
+				oBinding.applyFilter();
+				assert.ok(true, "Filter does not cause an exception");
+				done(); // resume normal testing
+			};
+			oBinding.attachRefresh(function() {
+				oBinding.getContexts();
+			});
+			oBinding.attachChange(handler);
+			oBinding.initialize();
+			// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
+		});
+	});
+
 	QUnit.test("ListBinding getLength, getContexts", function(assert){
 		var done = assert.async();
 		oModel.metadataLoaded().then(function(){

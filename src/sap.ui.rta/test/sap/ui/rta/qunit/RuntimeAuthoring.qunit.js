@@ -8,6 +8,7 @@ sap.ui.require([
 	'sap/ui/comp/smartform/Group',
 	'sap/ui/comp/smartform/GroupElement',
 	'sap/ui/comp/smartform/SmartForm',
+	"sap/ui/core/BusyIndicator",
 	// internal
 	'sap/ui/Device',
 	'sap/ui/dt/plugin/ContextMenu',
@@ -20,6 +21,7 @@ sap.ui.require([
 	'sap/ui/fl/Utils',
 	'sap/ui/rta/Utils',
 	'sap/ui/fl/FakeLrepLocalStorage',
+	'sap/ui/fl/transport/TransportSelection',
 	'sap/ui/rta/RuntimeAuthoring',
 	'sap/ui/rta/command/Stack',
 	'sap/ui/rta/command/CommandFactory',
@@ -40,6 +42,7 @@ sap.ui.require([
 	Group,
 	GroupElement,
 	SmartForm,
+	BusyIndicator,
 	Device,
 	ContextMenu,
 	DesignTimeMetadata,
@@ -51,6 +54,7 @@ sap.ui.require([
 	Utils,
 	RtaUtils,
 	FakeLrepLocalStorage,
+	TransportSelection,
 	RuntimeAuthoring,
 	Stack,
 	CommandFactory,
@@ -86,7 +90,7 @@ sap.ui.require([
 			FakeLrepLocalStorage.deleteChanges();
 
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl")
+				rootControl : oComp.getAggregation("rootControl")
 			});
 
 			return Promise.all([
@@ -296,7 +300,7 @@ sap.ui.require([
 			});
 
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl")
+				rootControl : oComp.getAggregation("rootControl")
 			});
 		},
 		afterEach : function(assert) {
@@ -312,7 +316,8 @@ sap.ui.require([
 
 		return this.oRta.start().then(function () {
 			assert.equal(this.oRta.getToolbar().getControl('restore').getEnabled(), false, "then the Restore Button is disabled");
-			assert.equal(this.oRta.getToolbar().getControl('manageApps').getVisible(), false, "then the 'Manage Information' Icon Button is not visible");
+			assert.equal(this.oRta.getToolbar().getControl('manageApps').getVisible(), false, "then the 'AppVariant Overview' Icon Button is not visible");
+			assert.equal(this.oRta.getToolbar().getControl('appVariantOverview').getVisible(), false, "then the 'AppVariant Overview' Menu Button is not visible");
 		}.bind(this));
 	});
 
@@ -331,7 +336,7 @@ sap.ui.require([
 			FakeLrepLocalStorage.deleteChanges();
 
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
+				rootControl : oComp.getAggregation("rootControl"),
 				showToolbars : false
 			});
 
@@ -513,7 +518,7 @@ sap.ui.require([
 				var fnStackModifiedSpy = sinon.spy(function() {
 
 					// Start RTA with command stack
-					var oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
+					var oRootControl = oComp.getAggregation("rootControl");
 					this.oRta = new RuntimeAuthoring({
 						rootControl : oRootControl,
 						commandStack : this.oCommandStack,
@@ -733,6 +738,78 @@ sap.ui.require([
 		});
 	});
 
+	QUnit.test("when calling '_deleteChanges successfully', ", function(assert){
+		var fnDone = assert.async();
+
+		var fnShowBusyIndicatorSpy = sandbox.spy(BusyIndicator, "show");
+		var fnHideBusyIndicatorSpy = sandbox.spy(BusyIndicator, "hide");
+
+		sandbox.stub(this.oRta._getFlexController(), "discardChanges", function(aChanges){
+			assert.ok(fnShowBusyIndicatorSpy.calledOnce, "then the busy indicator is shown");
+			assert.equal(aChanges.length, 2, "then the changes are correctly passed to the Flex Controller");
+			return Promise.resolve();
+		});
+
+		sandbox.stub(this.oRta, "_reloadPage", function(){
+			assert.ok(fnHideBusyIndicatorSpy.calledOnce, "then the busy indicator is hidden");
+			assert.ok(true, "and page reload is triggered");
+			fnDone();
+		});
+
+		this.oRta._deleteChanges();
+	});
+
+	QUnit.test("when calling '_deleteChanges and there is an error', ", function(assert){
+		var fnDone = assert.async();
+
+		var fnShowBusyIndicatorSpy = sandbox.spy(BusyIndicator, "show");
+		var fnHideBusyIndicatorSpy = sandbox.spy(BusyIndicator, "hide");
+		var fnReloadPageSpy = sandbox.spy(this.oRta, "_reloadPage");
+
+		sandbox.stub(this.oRta._getFlexController(), "discardChanges", function(aChanges){
+			assert.ok(fnShowBusyIndicatorSpy.calledOnce, "then the busy indicator is shown");
+			return Promise.reject("Error");
+		});
+
+		sandbox.stub(RtaUtils, "_showMessageBox", function(sIconType, sHeader, sMessage, sError){
+			assert.ok(fnHideBusyIndicatorSpy.calledOnce, "then the busy indicator is hidden");
+			assert.ok(fnReloadPageSpy.notCalled, "then the page does not reload");
+			assert.equal(sError, "Error", "and a message box shows the error to the user");
+			fnDone();
+		});
+
+		this.oRta._deleteChanges();
+	});
+
+	QUnit.test("when calling '_deleteChanges and there are 2 LREP changes together with 2 local changes', ", function(assert){
+		var fnSetTransportCalled = assert.async();
+		var fnDone = assert.async();
+
+		sandbox.stub(Settings.prototype, "isProductiveSystem").returns(false);
+		sandbox.stub(Settings.prototype, "hasMergeErrorOccured").returns(false);
+
+		sandbox.stub(this.oRta._getFlexController(), "getComponentChanges", function(){
+			return Promise.resolve(['change1', 'change2']);
+		});
+
+		sandbox.stub(TransportSelection.prototype, "setTransports", function(aChanges, oRootControl){
+			assert.equal(aChanges.length, 2, "then only the 2 persisted changes are passed to the transport");
+			fnSetTransportCalled();
+			return Promise.resolve();
+		});
+
+		sandbox.stub(this.oRta._getFlexController(), "discardChanges", function(aChanges){
+			assert.equal(aChanges.length, 4, "then all 4 changes are correctly passed to the Flex Controller for deletion");
+			return Promise.resolve();
+		});
+
+		sandbox.stub(this.oRta, "_reloadPage", function(){
+			fnDone();
+		});
+
+		this.oRta._deleteChanges();
+	});
+
 	QUnit.module("Given that RuntimeAuthoring is started with different plugin sets...", {
 		beforeEach : function(assert) {
 			var done = assert.async();
@@ -746,7 +823,7 @@ sap.ui.require([
 			});
 
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
+				rootControl : oComp.getAggregation("rootControl"),
 				showToolbars : false,
 				plugins : {
 					remove : this.oRemovePlugin,
@@ -754,7 +831,7 @@ sap.ui.require([
 				}
 			});
 
-			this.fnDestroy = sinon.spy(this.oRta, "_destroyDefaultPlugins");
+			this.fnDestroy = sandbox.spy(this.oRta, "_destroyDefaultPlugins");
 
 			this.oRta.attachStart(function() {
 				done();
@@ -784,6 +861,46 @@ sap.ui.require([
 			assert.equal(this.fnDestroy.callCount, 2, " and _destroyDefaultPlugins have been called once again after oRta.stop()");
 			done();
 		}.bind(this));
+	});
+
+
+	QUnit.module("Given that RuntimeAuthoring is started with a scope set...", {
+		beforeEach : function(assert) {
+			var done = assert.async();
+			FakeLrepLocalStorage.deleteChanges();
+
+			this.oRta = new RuntimeAuthoring({
+				rootControl : oComp.getAggregation("rootControl"),
+				metadataScope : "someScope"
+			});
+
+			this.oRta.attachStart(function() {
+				done();
+			});
+			this.oRta.start();
+
+		},
+		afterEach : function(assert) {
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	});
+
+	QUnit.test("when RTA is started, then the overlay has the scoped metadata associated", function(assert) {
+		assert.equal(this.oRta.getMetadataScope(), "someScope", "then RTA knows the scope");
+		assert.equal(this.oRta._oDesignTime.getScope(), "someScope", "then designtime knows the scope");
+
+		var oOverlayWithInstanceSpecificMetadata = OverlayRegistry.getOverlay("Comp1---idMain1--Dates.SpecificFlexibility");
+		var mDesignTimeMetadata = oOverlayWithInstanceSpecificMetadata.getDesignTimeMetadata().getData();
+		assert.equal(mDesignTimeMetadata.newKey, "new", "New scoped key is added");
+		assert.equal(mDesignTimeMetadata.someKeyToOverwriteInScopes, "scoped", "Scope can overwrite keys");
+		assert.equal(mDesignTimeMetadata.some.deep, null, "Scope can delete keys");
+
+		var oRootOverlayWithInstanceSpecificMetadata = OverlayRegistry.getOverlay("Comp1---app");
+		var mDesignTimeMetadata2 = oRootOverlayWithInstanceSpecificMetadata.getDesignTimeMetadata().getData();
+		assert.equal(mDesignTimeMetadata2.newKey, "new", "New scoped key is added");
+		assert.equal(mDesignTimeMetadata2.someKeyToOverwriteInScopes, "scoped", "Scope can overwrite keys");
+		assert.equal(mDesignTimeMetadata2.some.deep, null, "Scope can delete keys");
 	});
 
 

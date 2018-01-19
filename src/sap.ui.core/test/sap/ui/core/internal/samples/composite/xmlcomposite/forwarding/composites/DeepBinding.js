@@ -12,7 +12,8 @@ sap.ui.define(['sap/ui/core/XMLComposite'],
 				aggregations: {
 					fcItems: {
 						type: "sap.ui.core.Control",
-						multiple: true
+						multiple: true,
+						forwarding: { idSuffix: "--innerVBox", aggregation: "items"}
 					}
 				},
 				defaultAggregation: "fcItems"

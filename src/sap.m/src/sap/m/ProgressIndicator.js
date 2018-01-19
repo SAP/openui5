@@ -92,7 +92,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * @since 1.50
 			 */
 			displayOnly : {type : "boolean", group : "Behavior", defaultValue : false}
-		}
+		},
+		designtime: "sap/m/designtime/ProgressIndicator.designtime"
 	}});
 
 	var bUseAnimations = sap.ui.getCore().getConfiguration().getAnimation();

@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/base/ManagedObject",
 	"sap/ui/rta/appVariant/AppVariantDialog",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/fl/FlexControllerFactory",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/ui/core/BusyIndicator"
 ], function(
+	ManagedObject,
 	AppVariantDialog,
 	AppVariantUtils,
 	FlexControllerFactory,
@@ -24,8 +26,38 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var AppVariantManager = function() {};
+	/**
+	 * Basic implementation for the AppVariantManager.
+	 *
+	 * @class
+	 * @extends sap.ui.base.ManagedObject
+	 * @author SAP SE
+	 * @version ${version}
+	 * @constructor
+	 * @private
+	 * @since 1.53
+	 * @alias sap.ui.rta.appVariant.AppVariantManager
+	 * @experimental Since 1.53. This class is experimental and provides only limited functionality. Also the API might be
+	 *               changed in future.
+	 */
+	var AppVariantManager = ManagedObject.extend("sap.ui.rta.appVariant.AppVariantManager", {
+		metadata : {
+			library : "sap.ui.rta",
+			properties : {
+				/** The root control which is needed for the Flex Controller */
+				"rootControl" : {
+					type : "sap.ui.core.Control"
+				},
+				"commandSerializer" : {
+					type : "object" // has to be of type sap.ui.rta.command.LrepSerializer
+				}
+			}
+		}
+	});
 
+	/**
+	 * Opens the 'Save As' dialog
+	 */
 	AppVariantManager.prototype._openDialog = function(fnCreate, fnCancel) {
 
 		var oDialog = new AppVariantDialog("appVariantDialog");
@@ -42,6 +74,9 @@ sap.ui.define([
 		return oDialog;
 	};
 
+	/**
+	 * Returns the info required to create an app variant descriptor
+	 */
 	AppVariantManager.prototype._prepareAppVariantData = function(oDescriptor, mParameters) {
 		return {
 			idRunningApp: oDescriptor["sap.app"].id,
@@ -53,7 +88,12 @@ sap.ui.define([
 		};
 	};
 
-
+	/**
+	 *
+	 * @param {Object} oAppVariantData
+	 * @returns {Promise[]} returns all the descriptor inline changes
+	 * @description Creates all the descriptor inline changes for different change types
+	 */
 	AppVariantManager.prototype.createAllInlineChanges = function(oAppVariantData) {
 		var sAppVariantId, aBackendOperations = [], oPropertyChange;
 
@@ -120,6 +160,9 @@ sap.ui.define([
 		return aBackendOperations;
 	};
 
+	/**
+	 * Populates the app variant descriptor's transport property with a local object or with the provided transport id
+	 */
 	AppVariantManager.prototype._onTransportInDialogSelected = function(oAppVariantDescriptor, oTransportInfo){
 		if (oTransportInfo){
 
@@ -144,6 +187,12 @@ sap.ui.define([
 		return Promise.resolve(false);
 	};
 
+	/**
+	 *
+	 * @param {Object} oAppVariantData
+	 * @returns {Promise} Returns a promise
+	 * @description Creates the descriptor variant from the descriptor inline changes and takes the transport id from the transport dialog
+	 */
 	AppVariantManager.prototype.createDescriptor = function(oAppVariantData) {
 		var aInlineChanges = this.createAllInlineChanges(oAppVariantData);
 
@@ -175,7 +224,14 @@ sap.ui.define([
 		});
 	};
 
-	AppVariantManager.prototype.processSaveAsDialog = function(oDescriptor, oRootControlRunningApp, bSaveAsTriggeredFromRtaToolbar) {
+	/**
+	 *
+	 * @param {Object} oDescriptor
+	 * @param {Boolean} bSaveAsTriggeredFromRtaToolbar
+	 * @returns {Object}
+	 * @description Consolidates the input parameters from the 'Save As' dialog as an object
+	 */
+	AppVariantManager.prototype.processSaveAsDialog = function(oDescriptor, bSaveAsTriggeredFromRtaToolbar) {
 		return new Promise(function(resolve) {
 			var fnCreate = function(oResult) {
 				var mParameters = oResult.getParameters();
@@ -186,7 +242,7 @@ sap.ui.define([
 
 			var fnCancel = function() {
 				if (!bSaveAsTriggeredFromRtaToolbar) {
-					return RtaAppVariantFeature.onGetOverview(oRootControlRunningApp);
+					return RtaAppVariantFeature.onGetOverview(true);
 				}
 			};
 			//open app variant creation dialog
@@ -194,6 +250,12 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	/**
+	 *
+	 * @param {Object} oAppVariantDescriptor
+	 * @returns {Promise} returns the server response
+	 * @description Persists the new created app variant into the layered repository
+	 */
 	AppVariantManager.prototype.saveAppVariantToLREP = function(oAppVariantDescriptor) {
 		return oAppVariantDescriptor.submit()["catch"](function(oError) {
 			var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_SAVE_APP_VARIANT_FAILED", oError, oAppVariantDescriptor.getId());
@@ -202,15 +264,24 @@ sap.ui.define([
 		});
 	};
 
-	// Unsaved changes get copied to app variant
-	AppVariantManager.prototype._copyDirtyChangesToAppVariant = function(sReferenceForChange, oRootControlRunningApp) {
-		var oFlexController = FlexControllerFactory.createForControl(oRootControlRunningApp);
-		return oFlexController.saveAs(sReferenceForChange);
+	/**
+	 * Dirty changes get taken over by an app variant
+	 */
+	AppVariantManager.prototype._takeOverDirtyChangesByAppVariant = function(sReferenceAppIdForChanges) {
+		return this.getCommandSerializer().saveAsCommands(sReferenceAppIdForChanges);
 	};
 
-	AppVariantManager.prototype.copyUnsavedChangesToLREP = function(sAppVariantId, oRootControlRunningApp, bCopyUnsavedChanges) {
-		if (bCopyUnsavedChanges) {
-			return this._copyDirtyChangesToAppVariant(sAppVariantId, oRootControlRunningApp)["catch"](function(oError) {
+	/**
+	 *
+	 * @param {String} sAppVariantId
+	 * @param {Boolean} bCopyUnsavedChanges
+	 * @returns {Promise} returns the server response
+	 * @description Books the unsaved changes for the new app variant and persist these changes in the layered repository
+	 */
+	AppVariantManager.prototype.copyUnsavedChangesToLREP = function(sAppVariantId, bCopyUnsavedChanges) {
+		var oCommandStack = this.getCommandSerializer().getCommandStack();
+		if (bCopyUnsavedChanges && oCommandStack.getAllExecutedCommands().length) {
+			return this._takeOverDirtyChangesByAppVariant(sAppVariantId)["catch"](function(oError) {
 				var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_COPY_UNSAVED_CHANGES_FAILED", oError, sAppVariantId);
 				BusyIndicator.hide();
 				return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
@@ -220,6 +291,12 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 *
+	 * @param {Object} oAppVariantDescriptor
+	 * @returns {Promise} returns the server response
+	 * @description Once the app variant is created, the app variant gets assigned to the same catalog(s) as of an original app
+	 */
 	AppVariantManager.prototype.triggerCatalogAssignment = function(oAppVariantDescriptor) {
 		if (AppVariantUtils.isS4HanaCloud(oAppVariantDescriptor.getSettings())) {
 			return AppVariantUtils.triggerCatalogAssignment(oAppVariantDescriptor.getId(), oAppVariantDescriptor.getReference())["catch"](function(oError) {
@@ -232,6 +309,13 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 *
+	 * @param {String} sIamId
+	 * @param {String} sAppVariantId
+	 * @description When the app variant creation and catalog assignment are executed successfully, this asynchronous process gets triggered.
+	 * It talks to the server every 2.5 secs and check whether the new FLP tile which represents the new created app variant is available
+	 */
 	AppVariantManager.prototype.notifyKeyUserWhenTileIsReady = function(sIamId, sAppVariantId) {
 		var oS4HanaCloudBackend = new S4HanaCloudBackend();
 
@@ -255,6 +339,9 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * Builds the success message text based on different platforms (i.e. S/4Hana Cloud Platfrom and S/4Hana on Premise)
+	 */
 	AppVariantManager.prototype._buildSuccessInfo = function(oAppVariantDescriptor, bSaveAsTriggeredFromRtaToolbar) {
 		var bCopyId = false;
 		var sMessage = AppVariantUtils.getText("SAVE_APP_VARIANT_SUCCESS_MESSAGE") + "\n\n";
@@ -280,6 +367,9 @@ sap.ui.define([
 		};
 	};
 
+	/**
+	 * Navigates to the Fiorilaunchpad
+	 */
 	AppVariantManager.prototype._navigateToFLPHomepage = function() {
 		var oApplication = sap.ushell.services.AppConfiguration.getCurrentApplication();
 		var oComponentInstance = oApplication.componentHandle.getInstance();
@@ -295,14 +385,23 @@ sap.ui.define([
 		return Promise.resolve(false);
 	};
 
-	AppVariantManager.prototype.showSuccessMessageAndTriggerActionFlow = function(oAppVariantDescriptor, bSaveAsTriggeredFromRtaToolbar, oRootControlRunningApp) {
+	/**
+	 *
+	 * @param {Object} oAppVariantDescriptor
+	 * @param {Boolean} bSaveAsTriggeredFromRtaToolbar
+	 * @returns {Promise}
+	 * @description Frames the success message depending on different platforms (S/4Hana Cloud Platform or S/4Hana on Premise) and show it on the dialog
+	 * If a user presses 'Save As' from RTA toolbar, it closes the current running app and navigates to the Fiorilaunchpad
+	 * If a user presses 'Save As' from an app variant overview dialog, it opens the app variant overview dialog again to show the 'Just Created' App variant
+	 */
+	AppVariantManager.prototype.showSuccessMessageAndTriggerActionFlow = function(oAppVariantDescriptor, bSaveAsTriggeredFromRtaToolbar) {
 		var oSuccessInfo = this._buildSuccessInfo(oAppVariantDescriptor, bSaveAsTriggeredFromRtaToolbar);
 		BusyIndicator.hide();
 		return AppVariantUtils.showRelevantDialog(oSuccessInfo, true).then(function() {
 			if (bSaveAsTriggeredFromRtaToolbar) {
 				return this._navigateToFLPHomepage();
 			} else {
-				return RtaAppVariantFeature.onGetOverview(oRootControlRunningApp);
+				return RtaAppVariantFeature.onGetOverview(true);
 			}
 		}.bind(this));
 	};

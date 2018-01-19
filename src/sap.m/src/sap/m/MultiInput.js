@@ -70,6 +70,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 		metadata: {
 
 			library: "sap.m",
+			designtime: "sap/m/designtime/MultiInput.designtime",
 			properties: {
 
 				/**
@@ -144,7 +145,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 				},
 
 				/**
-				 * Fired when the tokens aggregation changed (add / remove token)
+				 * Fired when the tokens aggregation changed due to a user interaction (add / remove token)
 				 */
 				tokenUpdate: {
 					allowPreventDefault : true,
@@ -1411,6 +1412,14 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	 */
 	MultiInput.prototype.getDomRefForValueStateMessage = MultiInput.prototype.getPopupAnchorDomRef;
 
+	/**
+	 * Updates the inner input field.
+	 *
+	 * @protected
+	 */
+	MultiInput.prototype.updateInputField = function() {
+		Input.prototype.updateInputField.call(this, '');
+	};
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo

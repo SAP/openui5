@@ -213,7 +213,7 @@ sap.ui.define(["sap/ui/fl/LrepConnector", "sap/ui/fl/Utils"], function (LrepConn
 				changes: {
 					changes: [],
 					contexts: [],
-					variantSection: {},
+					variantSection: {}, /* referenced in sap.ui.fl.variants.VariantController */
 					settings: {}
 				}
 			});

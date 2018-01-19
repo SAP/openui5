@@ -87,6 +87,7 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/m/library', 'sap/ui/Device'],
 		if (oHeaderTBar) {
 			oHeaderTBar.setDesign(ToolbarDesign.Transparent, true);
 			oHeaderTBar.addStyleClass("sapMListHdrTBar");
+			oHeaderTBar.addStyleClass("sapMTBHeader-CTX");
 			rm.renderControl(oHeaderTBar);
 		} else if (sHeaderText) {
 			rm.write("<header class='sapMListHdr'");
@@ -265,6 +266,7 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/m/library', 'sap/ui/Device'],
 	ListBaseRenderer.getAccessibilityState = function(oControl) {
 		return {
 			role : this.getAriaRole(oControl),
+			multiselectable : oControl._bSelectionMode ? oControl.getMode() == "MultiSelect" : undefined,
 			labelledby : {
 				value : this.getAriaLabelledBy(oControl),
 				append : true

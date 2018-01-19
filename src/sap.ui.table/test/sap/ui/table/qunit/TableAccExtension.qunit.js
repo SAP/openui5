@@ -1021,11 +1021,11 @@ sap.ui.require([
 	});
 
 	QUnit.test("ARIA Attributes of Content Element", function(assert) {
-		var $Elem = oTable.$("sapUiTableCnt");
+		var $Elem = oTable.$("sapUiTableGridCnt");
 		assert.strictEqual($Elem.attr("role"), "grid", "role");
 		assert.strictEqual($Elem.attr("aria-multiselectable"), "true", "aria-multiselectable");
 		assert.strictEqual($Elem.attr("aria-labelledby"), oTable.getAriaLabelledBy() + " " + oTable.getTitle().getId(), "aria-labelledby");
-		$Elem = oTreeTable.$("sapUiTableCnt");
+		$Elem = oTreeTable.$("sapUiTableGridCnt");
 		assert.strictEqual($Elem.attr("role"), "treegrid", "role");
 		assert.ok(!$Elem.attr("aria-multiselectable"), "aria-multiselectable");
 	});
@@ -1037,7 +1037,6 @@ sap.ui.require([
 			if ($TH.attr("id") === oTable.getId() + "-dummycolhdr") {
 				assert.strictEqual($TH.attr("role"), "presentation", "role");
 			} else {
-				assert.strictEqual($TH.attr("role"), "columnheader", "role");
 				assert.strictEqual($TH.attr("scope"), "col", "scope");
 				var oColumn = oTable.getColumns()[$TH.attr("data-sap-ui-headcolindex")];
 				if (oColumn) {

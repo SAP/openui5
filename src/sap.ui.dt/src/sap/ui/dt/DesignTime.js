@@ -67,7 +67,12 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 				 enabled: {
 					type: "boolean",
 					defaultValue: true
-				 }
+				},
+
+				scope: {
+					type: "string",
+					defaultValue: "default"
+				}
 			},
 			associations : {
 				/**
@@ -423,7 +428,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 				oElementOverlay.attachSelectionChange(this._onElementOverlaySelectionChange, this);
 			}
 
-			ElementUtil.loadDesignTimeMetadata(oElement).then(function(oDesignTimeMetadata) {
+			ElementUtil.loadDesignTimeMetadata(oElement, this.getScope()).then(function(oDesignTimeMetadata) {
 				// if oElement is already destroyed while designtime metadata is loading
 				if (!oElement || oElement.bIsDestroyed) {
 					return;
@@ -439,7 +444,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 				oElementOverlay.setDesignTimeMetadata(oElementDesignTimeMetadata);
 				this.fireElementOverlayCreated({elementOverlay : oElementOverlay});
 			}.bind(this)).catch(function(oError) {
-				jQuery.sap.log.error("exception occured in sap.ui.dt.DesignTime._createElementOverlay", oError.stack || oError);
+				jQuery.sap.log.error("exception occurred in sap.ui.dt.DesignTime._createElementOverlay", oError.stack || oError);
 				if (oError instanceof Error) {
 					this.fireSyncFailed();
 				}

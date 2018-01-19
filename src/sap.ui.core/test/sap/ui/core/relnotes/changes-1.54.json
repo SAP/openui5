@@ -253,6 +253,222 @@
         "type": "FIX",
         "text": " v2.ODataModel createBindingContext",
         "references": []
+      },
+      {
+        "id": "0e271c9db0fbbd8a04b4c5a5a0e6abad8ed11808",
+        "type": "FEATURE",
+        "text": " Async loading of manifest.json for ComponentMetadata",
+        "references": []
+      },
+      {
+        "id": "bd8add674a8d0847d51ebff4419ec2e2bc36aea6",
+        "type": "FEATURE",
+        "text": " Opa: configure autoWait parameters",
+        "references": []
+      },
+      {
+        "id": "fa3e7b4e10188f0f78dd308e1d7cc014a8c2f93c",
+        "type": "FEATURE",
+        "text": " Opa: use autoWait after app start",
+        "references": []
+      },
+      {
+        "id": "9f2bf05c22ea4cb989a625081236163401266657",
+        "type": "FEATURE",
+        "text": " cldr: update cldr version to v32.0.0",
+        "references": []
+      },
+      {
+        "id": "75d7f98dd54b9dd4cbf57a7b37e50ddb3bc38e79",
+        "type": "FIX",
+        "text": " Component/Manifest: Remove css resources on destroy",
+        "references": []
+      },
+      {
+        "id": "e87e32ce755ceed1a9964fe26de68365828517a0",
+        "type": "FIX",
+        "text": " Icon Font: No right-to-left mirroring of text-align icons",
+        "references": []
+      },
+      {
+        "id": "a08ef09f182a38bd97b4ac83bec1ffe8525763ee",
+        "type": "FIX",
+        "text": " Message handling createEntry",
+        "references": []
+      },
+      {
+        "id": "56d06f75999c9a849d377c218b244fdf6dd86842",
+        "type": "FIX",
+        "text": " NumberFormat.parse: support RTL characters",
+        "references": []
+      },
+      {
+        "id": "752961c69dab5e55de62973b4e6579e368a9cc09",
+        "type": "FIX",
+        "text": " NumberFormat: parsing of plural formats",
+        "references": []
+      },
+      {
+        "id": "78e1f7433de04253817cb13458d70d71cd55e69b",
+        "type": "FIX",
+        "text": " ODataListBinding: Change detection in combination with filtering",
+        "references": []
+      },
+      {
+        "id": "797bab33325f9a4d85bcb66517504e9c4379a62e",
+        "type": "FIX",
+        "text": " Opa: fix action focus when IE11 browser is not focused",
+        "references": []
+      },
+      {
+        "id": "f3c5ac17ff8c63343e8d9f1de1538f6db3d3733f",
+        "type": "FIX",
+        "text": " mvc/View: multiple preprocessors in async View",
+        "references": []
+      },
+      {
+        "id": "9a513ead0f828612c8d4fd2f18e73af6a8358f48",
+        "type": "FIX",
+        "text": " sap.m.Label: Label is now read by JAWS when focus sap.m.Select",
+        "references": []
+      },
+      {
+        "id": "4709e9a00d5dde52445e8637fa10a77a31ac1979",
+        "type": "FIX",
+        "text": " sap.ui.model.FilterProcessor: null check parameters",
+        "references": []
+      },
+      {
+        "id": "1cb59e78bc16b69228edbd0cc4f2f836c7166c66",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataParentBinding: Auto-$expand/$select works with annotation properties, e.g. @odata.etag",
+        "references": []
+      },
+      {
+        "id": "f170d08c13c828baf8030ecceb402c7cd6780fa7",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._V2Requestor: weaken OData version check",
+        "references": []
+      },
+      {
+        "id": "6e2dcc6f5e0768b58df9739fcece4f52eef640df",
+        "type": "FIX",
+        "text": " v2.ODataModel delete Entry messages",
+        "references": []
+      },
+      {
+        "id": "26f56ffc63fc0488b9bf9c8317bc6e801d2a45d7",
+        "type": "FEATURE",
+        "text": " Control: BusyIndicator animation default",
+        "references": []
+      },
+      {
+        "id": "d21b9a6f8183f42f8e81c34f33646a430eb5fb4f",
+        "type": "FEATURE",
+        "text": " NumberFormat: Support for unit of measures",
+        "references": []
+      },
+      {
+        "id": "c9aff73e69929441e6e27096912017d0b3ee13b2",
+        "type": "FIX",
+        "text": " Control: refactor fnHandleInteraction",
+        "references": []
+      },
+      {
+        "id": "dcf7ba46e7301d05557954e3f614674cbd6c0279",
+        "type": "FIX",
+        "text": " NumberFormat: percent with custom pattern",
+        "references": []
+      },
+      {
+        "id": "5124bec17ea3abae6e53ebf4b3e75a661327cf55",
+        "type": "FIX",
+        "text": " Removed debugger statement",
+        "references": []
+      },
+      {
+        "id": "a06e0a96aea5413c682e666311ec9f73d42574ce",
+        "type": "FIX",
+        "text": " sap.ui.model: fix documentation, visibility of Client- \u0026 JSONModel",
+        "references": []
+      },
+      {
+        "id": "f13eceb4ca68aff6494b6ad1e8b21874b24d0723",
+        "type": "FIX",
+        "text": " ClientTreeBinding: Incorrect filtering when using \"arrayNames\" constrain",
+        "references": []
+      },
+      {
+        "id": "f8582c2c45bcd93b6d7bcac072a09ef965098de4",
+        "type": "FIX",
+        "text": " NumberFormat: Demo page fix",
+        "references": []
+      },
+      {
+        "id": "5bab41ad00426a1af80ea83e1db49391dcf47723",
+        "type": "FIX",
+        "text": " Theming Parameters: Parse inline params in MS Edge",
+        "references": []
+      },
+      {
+        "id": "edafa896a75b125a050b5fbee51d859e48148e1e",
+        "type": "FEATURE",
+        "text": " Opa: display timeout value",
+        "references": []
+      },
+      {
+        "id": "321739b0f8943e113b4baaa09fd3be00af495711",
+        "type": "FIX",
+        "text": " Documentation typo corrected",
+        "references": []
+      },
+      {
+        "id": "05c18a63a245069436978487e748e79a36f361d0",
+        "type": "FIX",
+        "text": " Mockserver - update jsdoc",
+        "references": []
+      },
+      {
+        "id": "1ba0fe480402863f1c1b5976c8101c724d4366ad",
+        "type": "FIX",
+        "text": " analyticalBinding: handle null value from #getURIQueryOptionValue",
+        "references": []
+      },
+      {
+        "id": "d054bc161c0bac4e762c9e7c51e85ba59d1b2d43",
+        "type": "FIX",
+        "text": " core.routing: wait for the root view in case it\u0027s loaded async",
+        "references": []
+      },
+      {
+        "id": "e6d93d8d571bf51d09fc9111a395a4364f4ad08c",
+        "type": "FIX",
+        "text": " jquery.sap.resources: Fixed typo",
+        "references": []
+      },
+      {
+        "id": "95ea2b00484abb03dc5c9ad149f3ed24635cff1a",
+        "type": "FIX",
+        "text": " sap.ui.core.util.MockServer When the data for an entity is set",
+        "references": []
+      },
+      {
+        "id": "5268b7ea41ceaa7fed2f9a4ac8c91b3b91ae2af7",
+        "type": "FEATURE",
+        "text": " Core#applyTheme: avoid flash of unstyled content (FOUC)",
+        "references": []
+      },
+      {
+        "id": "97a6adc1bc309b56bd4d221db17bfc0f650031e5",
+        "type": "FIX",
+        "text": " Configuration: Fix check whether a configuration value has changed",
+        "references": []
+      },
+      {
+        "id": "84e77c55b95c319f5905282aaf46f6a85194c749",
+        "type": "FIX",
+        "text": " Update theme URLs with query parameters on RTL change",
+        "references": []
       }
     ]
   }

@@ -7,7 +7,8 @@ sap.ui.define(['sap/ui/core/XMLComposite'],
 					myItems: {
 						type: "sap.ui.core.Item",
 						multiple: true,
-						bindable: "bindable"
+						bindable: "bindable",
+						forwarding: { idSuffix: "--itemList", aggregation: "items"}
 					}
 				},
 				defaultAggregation: "myItems"

@@ -21,7 +21,11 @@
 		}
 	},
 	"sap.ui5": {
-		"rootView": "sap.ui.fl.support.apps.contentbrowser.view.MainView",
+		"rootView": {
+			"viewName": "sap.ui.fl.support.apps.contentbrowser.view.MainView",
+			"type": "XML",
+			"async": true
+		},
 		"dependencies": {
 			"minUI5Version": "1.45",
 			"libs": {

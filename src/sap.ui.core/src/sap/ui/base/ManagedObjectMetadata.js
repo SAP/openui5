@@ -3,8 +3,16 @@
  */
 
 // Provides class sap.ui.base.ManagedObjectMetadata
-sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
-	function(jQuery, DataType, Metadata) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./DataType',
+	'./Metadata'
+],
+function(
+	jQuery,
+	DataType,
+	Metadata
+) {
 	"use strict";
 
 	/**
@@ -922,31 +930,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * Both, source and target element will return the added elements when asked for the content of the respective aggregation.
 	 * If present, the named (non-generic) aggregation methods will be called for the target aggregation.
 	 *
-	 * @example <caption>A composite control <code>ComboBox</code> internally uses a control <code>List</code> to display the items added to
-	 * its own <code>items</code> aggregation. So it forwards the items to the <code>listItems</code> aggregation of the <code>List</code>.
-	 * At runtime, the internal <code>List</code> is always instantiated in the <code>init()</code> method of the <code>ComboBox</code> control
-	 * and its ID is created as concatenation of the ID of the <code>ComboBox</code> and the suffix "-internalList".</caption>
-	 *
-	 *   ComboBox.getMetadata().forwardAggregation(
-	 *      "items",
-	 *      {
-	 *          idSuffix: "-internalList", // internal control with the ID <control id> + "-internalList" always exists after init() has been called
-	 *          aggregation: "listItems"
-	 *      }
-	 *   );
-	 *
-	 * @example <caption>Same as above, but the internal <code>List</code> is not always instantiated initially. It is only lazily instantiated
-	 * in the method <code>ComboBox.prototype._getInternalList()</code>. Instead of the ID suffix, the getter function can be given.</caption>
-	 *
-	 *   ComboBox.getMetadata().forwardAggregation(
-	 *      "items",
-	 *      {
-	 *          getter: ComboBox.prototype._getInternalList, // the function returning (and instantiating if needed) the target at runtime
-	 *          aggregation: "listItems"
-	 *      }
-	 *   );
-	 *
-	 *
 	 * When the source aggregation is bound, the binding will by default take place there and the add/remove operations will be forwarded to the
 	 * target. However, optionally the binding can also be forwarded. The result is similar - all added/bound items will reside at the target -
 	 * but when the binding is forwarded, the updateAggregation method is called on the target element and the add/remove methods are only called
@@ -970,6 +953,30 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * For any given source aggregation this method may only be called once. Calling it again overrides the previous forwarding, but leaves
 	 * any already forwarded elements at their previous target.
 	 *
+	 * @example <caption>A composite control <code>ComboBox</code> internally uses a control <code>List</code> to display the items added to
+	 * its own <code>items</code> aggregation. So it forwards the items to the <code>listItems</code> aggregation of the <code>List</code>.
+	 * At runtime, the internal <code>List</code> is always instantiated in the <code>init()</code> method of the <code>ComboBox</code> control
+	 * and its ID is created as concatenation of the ID of the <code>ComboBox</code> and the suffix "-internalList".</caption>
+	 *
+	 *   ComboBox.getMetadata().forwardAggregation(
+	 *      "items",
+	 *      {
+	 *          idSuffix: "-internalList", // internal control with the ID <control id> + "-internalList" must always exist after init() has been called
+	 *          aggregation: "listItems"
+	 *      }
+	 *   );
+	 *
+	 * @example <caption>Same as above, but the internal <code>List</code> is not always instantiated initially. It is only lazily instantiated
+	 * in the method <code>ComboBox.prototype._getInternalList()</code>. Instead of the ID suffix, the getter function can be given.</caption>
+	 *
+	 *   ComboBox.getMetadata().forwardAggregation(
+	 *      "items",
+	 *      {
+	 *          getter: ComboBox.prototype._getInternalList, // the function returning (and instantiating if needed) the target list at runtime
+	 *          aggregation: "listItems"
+	 *      }
+	 *   );
+	 *
 	 * @param {string}
 	 *            sForwardedSourceAggregation The name of the aggregation to be forwarded
 	 * @param {object}
@@ -989,8 +996,11 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *
 	 * @since 1.54
 	 *
-	 * @protected
-	 * @experimental
+	 * @private
+	 * @ui5-restricted SAPUI5 Distribution libraries only
+	 * @experimental As of 1.54, this method is still in an experimental state. Its signature might change or it might be removed
+	 *   completely. Controls should prefer to declare aggregation forwarding in the metadata for the aggregation. See property
+	 *   <code>forwarding</code> in the documentation of {@link sap.ui.base.ManagedObject.extend ManagedObject.extend}.
 	 */
 	ManagedObjectMetadata.prototype.forwardAggregation = function(sForwardedSourceAggregation, mOptions) {
 
@@ -1464,8 +1474,8 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * @private
 	 */
 	function loadOwnDesignTime(oMetadata) {
-		if (typeof oMetadata._oDesignTime === "object" || !oMetadata._oDesignTime) {
-			return Promise.resolve(oMetadata._oDesignTime || null);
+		if (jQuery.isPlainObject(oMetadata._oDesignTime) || !oMetadata._oDesignTime) {
+			return Promise.resolve(oMetadata._oDesignTime || {});
 		}
 
 		return new Promise(function(fnResolve) {
@@ -1477,11 +1487,11 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 				sModule = jQuery.sap.getResourceName(oMetadata.getName(), ".designtime");
 			}
 			preloadDesigntimeLibrary(oMetadata).then(function(oLib) {
-				sap.ui.require([sModule], function(oDesignTime) {
-					oDesignTime.designtimeModule = sModule;
-					oMetadata._oDesignTime = oDesignTime;
-					oDesignTime._oLib = oLib;
-					fnResolve(oDesignTime);
+				sap.ui.require([sModule], function(mDesignTime) {
+					mDesignTime.designtimeModule = sModule;
+					oMetadata._oDesignTime = mDesignTime;
+					mDesignTime._oLib = oLib;
+					fnResolve(mDesignTime);
 				});
 			});
 		});
@@ -1495,9 +1505,9 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 */
 	function loadInstanceDesignTime(oInstance) {
 		var sInstanceSpecificModule =
-			typeof oInstance === "object" &&
-			typeof oInstance.data === "function" &&
-			oInstance.data("sap-ui-custom-settings")
+			oInstance instanceof jQuery.sap.getObject('sap.ui.base.ManagedObject')
+			&& typeof oInstance.data === "function"
+			&& oInstance.data("sap-ui-custom-settings")
 			&& oInstance.data("sap-ui-custom-settings")["sap.ui.dt"]
 			&& oInstance.data("sap-ui-custom-settings")["sap.ui.dt"].designtime;
 
@@ -1511,6 +1521,29 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 			return Promise.resolve({});
 		}
 	}
+
+	/**
+	 * Extracts metadata from metadata map by scope key
+	 * @param {object} mMetadata metadata map received from loader
+	 * @param {string} sScopeKey scope name to be extracted
+	 * @private
+	 */
+	function getScopeBasedDesignTime(mMetadata, sScopeKey) {
+		var mResult = mMetadata;
+
+		if ("default" in mMetadata) {
+			mResult = jQuery.sap.extend(
+				true,
+				{},
+				mMetadata.default,
+				sScopeKey !== "default" && mMetadata[sScopeKey] || null
+			);
+		}
+
+		return mResult;
+	}
+
+
 	/**
 	 * Load and returns the design time metadata asynchronously. It inherits/merges parent
 	 * design time metadata and if provided merges also instance specific design time
@@ -1521,36 +1554,43 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * you need to take care of identification yourself.
 	 *
 	 * @param {ManageObject} [oManagedObject] instance that could have instance specific design time metadata
+	 * @param {string} [sScopeKey] scope name for which metadata will be resolved, see sap.ui.base.ManagedObjectMetadataScope
 	 * @return {Promise} A promise which will return the loaded design time metadata
 	 * @private
 	 * @sap-restricted sap.ui.fl com.sap.webide
 	 * @since 1.48.0
 	 */
-	ManagedObjectMetadata.prototype.loadDesignTime = function(oManagedObject) {
+	ManagedObjectMetadata.prototype.loadDesignTime = function(oManagedObject, sScopeKey) {
+		sScopeKey = typeof sScopeKey === "string" && sScopeKey || "default";
+
 		var oInstanceDesigntimeLoaded = loadInstanceDesignTime(oManagedObject);
 
 		if (!this._oDesignTimePromise) {
-
 			// Note: parent takes care of merging its ancestors
 			var oWhenParentLoaded;
 			var oParent = this.getParent();
 			// check if the mixin is applied to the parent
 			if (oParent instanceof ManagedObjectMetadata) {
-				oWhenParentLoaded = oParent.loadDesignTime();
+				oWhenParentLoaded = oParent.loadDesignTime(null, sScopeKey);
 			} else {
-				oWhenParentLoaded = Promise.resolve(null);
+				oWhenParentLoaded = Promise.resolve({});
 			}
 			// Note that the ancestor designtimes and the own designtime will be loaded 'in parallel',
 			// only the merge is done in sequence by chaining promises
-			this._oDesignTimePromise = loadOwnDesignTime(this).then(function(oOwnDesignTime) {
-				return oWhenParentLoaded.then(function(oParentDesignTime) {
+			this._oDesignTimePromise = loadOwnDesignTime(this).then(function(mOwnDesignTime) {
+				return oWhenParentLoaded.then(function(mParentDesignTime) {
 					// we use jQuery.sap.extend to be able to also overwrite properties with null or undefined
 					// using deep extend to inherit full parent designtime, unwanted inherited properties have to be overwritten with undefined
-					if (!oOwnDesignTime) {
-						oOwnDesignTime = {};
-					}
-					oOwnDesignTime.designtimeModule = oOwnDesignTime.designtimeModule || undefined;
-					return jQuery.sap.extend(true, {}, oParentDesignTime, oOwnDesignTime);
+					return jQuery.sap.extend(
+						true,
+						{},
+						getScopeBasedDesignTime(mParentDesignTime, sScopeKey),
+						getScopeBasedDesignTime(mOwnDesignTime, sScopeKey),
+						{
+							designtimeModule: mOwnDesignTime.designtimeModule || undefined,
+							_oLib: mOwnDesignTime._oLib
+						}
+					);
 				});
 			});
 		}
@@ -1559,7 +1599,12 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 			.then(function(aData){
 				var oInstanceDesigntime = aData[0],
 					oDesignTime = aData[1];
-				return jQuery.sap.extend(true, {}, oDesignTime, oInstanceDesigntime);
+				return jQuery.sap.extend(
+					true,
+					{},
+					oDesignTime,
+					getScopeBasedDesignTime(oInstanceDesigntime || {}, sScopeKey)
+				);
 			});
 	};
 

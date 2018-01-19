@@ -904,7 +904,7 @@ sap.ui.define([
 	ObjectPageSubSection.prototype._getUseTitleOnTheLeft = function () {
 		var oObjectPageLayout = this._getObjectPageLayout();
 
-		return oObjectPageLayout.getSubSectionLayout() === ObjectPageSubSectionLayout.TitleOnLeft;
+		return oObjectPageLayout && (oObjectPageLayout.getSubSectionLayout() === ObjectPageSubSectionLayout.TitleOnLeft);
 	};
 
 	/**

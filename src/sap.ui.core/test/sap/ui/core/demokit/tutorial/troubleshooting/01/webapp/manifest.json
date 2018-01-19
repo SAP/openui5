@@ -38,7 +38,7 @@
 		"rootView": {
 			"viewName": "sap.ui.demo.HeapOfShards.view.App",
 			"type": "XML",
-			"async": "true",
+			"async": true,
 			"id": "app"
 		},
 		"dependencies": {

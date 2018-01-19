@@ -56,11 +56,12 @@ sap.ui.define([
 	 * <h3>Usage</h3>
 	 *
 	 * Different behavior and priorities can be set for each control inside the
-	 * <code>OverflowToolbar</code>, such as certain actions to appear only in the
+	 * <code>OverflowToolbar</code>, such as certain controls to appear only in the
 	 * overflow area or to never move there. For more information, see
 	 * {@link sap.m.OverflowToolbarLayoutData} and {@link sap.m.OverflowToolbarPriority}.
 	 *
-	 * Only the following controls can be moved in the overflow area:
+	 * <h3>Overflow Behavior</h3>
+	 * By default, only the following controls can move to the overflow area:
 	 *
 	 * <ul><li>{@link sap.m.Button}</li>
 	 * <li>{@link sap.m.CheckBox}</li>
@@ -70,7 +71,9 @@ sap.ui.define([
 	 * <li>{@link sap.m.DateTimePicker}</li>
 	 * <li>{@link sap.m.Input}</li>
 	 * <li>{@link sap.m.Label}</li>
+	 * <li>{@link sap.m.MenuButton}</li>
 	 * <li>{@link sap.m.OverflowToolbarButton}</li>
+	 * <li>{@link sap.m.OverflowToolbarToggleButton}</li>
 	 * <li>{@link sap.m.SearchField}</li>
 	 * <li>{@link sap.m.SegmentedButton}</li>
 	 * <li>{@link sap.m.Select}</li>
@@ -78,6 +81,9 @@ sap.ui.define([
 	 * <li>{@link sap.m.ToggleButton}</li>
 	 * <li>{@link sap.ui.comp.smartfield.SmartField}</li>
 	 * <li>{@link sap.ui.comp.smartfield.SmartLabel}</li></ul>
+	 *
+	 * Additionally, any control that implements the {@link sap.m.IOverflowToolbarContent} interface may define
+	 * its behavior (most importantly overflow behavior) when placed inside <code>OverflowToolbar</code>.
 	 *
 	 * <b>Note:</b> The <code>OverflowToolbar</code> is an adaptive container that checks the available
 	 * width and hides the part of its content that doesn't fit. It is intended that simple controls,
@@ -108,7 +114,8 @@ sap.ui.define([
 			aggregations: {
 				_overflowButton: {type: "sap.m.ToggleButton", multiple: false, visibility: "hidden"},
 				_popover: {type: "sap.m.Popover", multiple: false, visibility: "hidden"}
-			}
+			},
+			designtime: "sap/m/designtime/OverflowToolbar.designtime"
 		}
 	});
 
@@ -1009,12 +1016,20 @@ sap.ui.define([
 	 * @private
 	 */
 	OverflowToolbar._getControlPriority = function (vControl) {
+		// 1. Check if it is a group of controls (treated as a single entity in terms of overflow), rather a single control
 		if (vControl.length) {
 			return vControl._priority;
 		}
 
-		var oLayoutData = vControl.getLayoutData && vControl.getLayoutData();
+		// 2. Check if the control has custom priority given by implementing sap.m.IOverflowToolbarContent
+		var bImplementsIOTBContent = vControl.getMetadata().getInterfaces().indexOf("sap.m.IOverflowToolbarContent") > -1,
+			fnGetCustomImportance = bImplementsIOTBContent && vControl.getOverflowToolbarConfig().getCustomImportance;
+		if (bImplementsIOTBContent && typeof fnGetCustomImportance === "function") {
+			return fnGetCustomImportance();
+		}
 
+		// 3. Check for priority given by layout data (standard use case)
+		var oLayoutData = vControl.getLayoutData && vControl.getLayoutData();
 		if (oLayoutData && oLayoutData instanceof OverflowToolbarLayoutData) {
 
 			if (oLayoutData.getMoveToOverflow() === false) {
@@ -1038,6 +1053,7 @@ sap.ui.define([
 			return sPriority;
 		}
 
+		// 4. Default priority (High) as a fallback if nothing else was supplied
 		return OverflowToolbarPriority.High;
 	};
 
@@ -1065,7 +1081,10 @@ sap.ui.define([
 
 		oPriorityOrder[OverflowToolbarPriority.Disappear] = 1;
 		oPriorityOrder[OverflowToolbarPriority.Low] = 2;
-		oPriorityOrder[OverflowToolbarPriority.High] = 3;
+		// If a control sets custom priority (by implementing sap.m.IOverflowToolbarContent), the string "Medium" is
+		// also accepted along with the standard priority values, such as High, Low, NeverOverflow, etc... therefore "Medium" should also be mapped
+		oPriorityOrder["Medium"] = 3;
+		oPriorityOrder[OverflowToolbarPriority.High] = 4;
 
 		return oPriorityOrder;
 	})();

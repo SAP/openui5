@@ -608,6 +608,24 @@
 		assert.equal(sFlexBasis, "auto", "No flex-basis set");
 	});
 
+	QUnit.test("Actions toolbar is extended when its label content extends", function (assert) {
+		var oLabel = oFactory.getLabel("");
+		this.oDynamicPageTitle.addAction(oLabel);
+		core.applyChanges();
+		this.clock.tick(1000);
+
+		var iFlexBasisBefore = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"), 10);
+
+		// Act
+		oLabel.setText("Some non-empty text");
+		core.applyChanges();
+		this.clock.tick(1000);
+
+		// Assert
+		var sFlexBasisAfter = parseInt(this.oDynamicPageTitle.$("mainActions").css("flex-basis"), 10);
+		assert.ok(sFlexBasisAfter > iFlexBasisBefore + 50, "Flex-basis increased to show the new text");
+	});
+
 
 	/* --------------------------- DynamicPage Header API ---------------------------------- */
 	QUnit.module("DynamicPage Header - API ", {

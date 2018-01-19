@@ -174,14 +174,15 @@ sap.ui.require([
 		var oExpectedInfo = {
 			"content": {
 				"fileName": "variant0",
-				"title": "variant A",
 				"fileType": "ctrl_variant",
 				"reference": "sap.ui.rta.test.Demo.md.Component",
 				"variantManagementReference": "idMain1--variantManagementOrdersTable",
 				"variantReference": "",
 				"packageName": "$TMP",
 				"self": "sap.ui.rta.test.Demo.md.Componentvariant0.ctrl_variant",
-				"content": {},
+				"content": {
+					"title": "variant A"
+				},
 				"layer": "VENDOR",
 				"texts": {
 					"TextDemo": {
@@ -219,14 +220,15 @@ sap.ui.require([
 		var oExpectedInfo = {
 			"content": {
 				"fileName": "variant0",
-				"title": "variant A",
 				"fileType": "ctrl_variant",
 				"reference": "sap.ui.rta.test.Demo.md.Component",
 				"variantManagementReference": "idMain1--variantManagementOrdersTable",
 				"variantReference": "",
 				"packageName": "$TMP",
 				"self": "sap.ui.rta.test.Demo.md.Componentvariant0.ctrl_variant",
-				"content": {},
+				"content": {
+					"title": "variant A"
+				},
 				"layer": "VENDOR",
 				"texts": {
 					"TextDemo": {

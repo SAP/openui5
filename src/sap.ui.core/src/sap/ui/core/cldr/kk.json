@@ -3077,6 +3077,716 @@
 		"middle": "{0}, {1}",
 		"end": "{0}, {1}"
 	},
+	"units": {
+		"short": {
+			"per": {
+				"compoundUnitPattern": "{0}/{1}"
+			},
+			"acceleration-g-force": {
+				"displayName": "гравитациялық күш",
+				"unitPattern-count-one": "{0} G",
+				"unitPattern-count-other": "{0} G"
+			},
+			"acceleration-meter-per-second-squared": {
+				"displayName": "метр/сек²",
+				"unitPattern-count-one": "{0} м/с²",
+				"unitPattern-count-other": "{0} м/с²"
+			},
+			"angle-revolution": {
+				"displayName": "айн.",
+				"unitPattern-count-one": "{0} айн.",
+				"unitPattern-count-other": "{0} айн."
+			},
+			"angle-radian": {
+				"displayName": "радиан",
+				"unitPattern-count-one": "{0} рад",
+				"unitPattern-count-other": "{0} рад"
+			},
+			"angle-degree": {
+				"displayName": "градус",
+				"unitPattern-count-one": "{0}°",
+				"unitPattern-count-other": "{0}°"
+			},
+			"angle-arc-minute": {
+				"displayName": "аркмин",
+				"unitPattern-count-one": "{0} аркмин",
+				"unitPattern-count-other": "{0} аркмин"
+			},
+			"angle-arc-second": {
+				"displayName": "арксек",
+				"unitPattern-count-one": "{0} арксек",
+				"unitPattern-count-other": "{0} арксек"
+			},
+			"area-square-kilometer": {
+				"displayName": "км²",
+				"unitPattern-count-one": "{0} км²",
+				"unitPattern-count-other": "{0} км²",
+				"perUnitPattern": "{0}/км²"
+			},
+			"area-hectare": {
+				"displayName": "гектар",
+				"unitPattern-count-one": "{0} га",
+				"unitPattern-count-other": "{0} га"
+			},
+			"area-square-meter": {
+				"displayName": "метр²",
+				"unitPattern-count-one": "{0} м²",
+				"unitPattern-count-other": "{0} м²",
+				"perUnitPattern": "{0}/м²"
+			},
+			"area-square-centimeter": {
+				"displayName": "cм²",
+				"unitPattern-count-one": "{0} cм²",
+				"unitPattern-count-other": "{0} cм²",
+				"perUnitPattern": "{0}/см²"
+			},
+			"area-square-mile": {
+				"displayName": "шаршы миля",
+				"unitPattern-count-one": "{0} миля²",
+				"unitPattern-count-other": "{0} миля²",
+				"perUnitPattern": "{0}/миля²"
+			},
+			"area-acre": {
+				"displayName": "акр",
+				"unitPattern-count-one": "{0} акр",
+				"unitPattern-count-other": "{0} акр"
+			},
+			"area-square-yard": {
+				"displayName": "ярд²",
+				"unitPattern-count-one": "{0} ярд²",
+				"unitPattern-count-other": "{0} ярд²"
+			},
+			"area-square-foot": {
+				"displayName": "шаршы фут",
+				"unitPattern-count-one": "{0} фут²",
+				"unitPattern-count-other": "{0} фут²"
+			},
+			"area-square-inch": {
+				"displayName": "дюйм²",
+				"unitPattern-count-one": "{0} дюйм²",
+				"unitPattern-count-other": "{0} дюйм²",
+				"perUnitPattern": "{0}/дюйм²"
+			},
+			"concentr-karat": {
+				"displayName": "карат",
+				"unitPattern-count-one": "{0} КТ",
+				"unitPattern-count-other": "{0} КТ"
+			},
+			"concentr-milligram-per-deciliter": {
+				"displayName": "мг/дл",
+				"unitPattern-count-one": "{0} мг/дл",
+				"unitPattern-count-other": "{0} мг/дл"
+			},
+			"concentr-millimole-per-liter": {
+				"displayName": "ммоль/л",
+				"unitPattern-count-one": "{0} ммоль/л",
+				"unitPattern-count-other": "{0} ммоль/л"
+			},
+			"concentr-part-per-million": {
+				"displayName": "ppm",
+				"unitPattern-count-one": "{0} ppm",
+				"unitPattern-count-other": "{0} ppm"
+			},
+			"consumption-liter-per-kilometer": {
+				"displayName": "литр/км",
+				"unitPattern-count-one": "{0} л/км",
+				"unitPattern-count-other": "{0} л/км"
+			},
+			"consumption-liter-per-100kilometers": {
+				"displayName": "л/100 км",
+				"unitPattern-count-one": "{0} л/100 км",
+				"unitPattern-count-other": "{0} л/100 км"
+			},
+			"consumption-mile-per-gallon": {
+				"displayName": "миля/галлон",
+				"unitPattern-count-one": "{0} mpg",
+				"unitPattern-count-other": "{0} mpg"
+			},
+			"consumption-mile-per-gallon-imperial": {
+				"displayName": "mpg Imp.",
+				"unitPattern-count-one": "{0} mpg Imp.",
+				"unitPattern-count-other": "{0} mpg Imp."
+			},
+			"digital-terabyte": {
+				"displayName": "Тбайт",
+				"unitPattern-count-one": "{0} TБ",
+				"unitPattern-count-other": "{0} TБ"
+			},
+			"digital-terabit": {
+				"displayName": "Тбит",
+				"unitPattern-count-one": "{0} Tб",
+				"unitPattern-count-other": "{0} Tб"
+			},
+			"digital-gigabyte": {
+				"displayName": "Гбайт",
+				"unitPattern-count-one": "{0} ГБ",
+				"unitPattern-count-other": "{0} ГБ"
+			},
+			"digital-gigabit": {
+				"displayName": "Гбит",
+				"unitPattern-count-one": "{0} Гб",
+				"unitPattern-count-other": "{0} Гб"
+			},
+			"digital-megabyte": {
+				"displayName": "Мбайт",
+				"unitPattern-count-one": "{0} MБ",
+				"unitPattern-count-other": "{0} MБ"
+			},
+			"digital-megabit": {
+				"displayName": "Мбит",
+				"unitPattern-count-one": "{0} Mб",
+				"unitPattern-count-other": "{0} Mб"
+			},
+			"digital-kilobyte": {
+				"displayName": "кбайт",
+				"unitPattern-count-one": "{0} кБ",
+				"unitPattern-count-other": "{0} кБ"
+			},
+			"digital-kilobit": {
+				"displayName": "кбит",
+				"unitPattern-count-one": "{0} кб",
+				"unitPattern-count-other": "{0} кб"
+			},
+			"digital-byte": {
+				"displayName": "байт",
+				"unitPattern-count-one": "{0} байт",
+				"unitPattern-count-other": "{0} байт"
+			},
+			"digital-bit": {
+				"displayName": "бит",
+				"unitPattern-count-one": "{0} бит",
+				"unitPattern-count-other": "{0} бит"
+			},
+			"duration-century": {
+				"displayName": "ғ.",
+				"unitPattern-count-one": "{0} ғ.",
+				"unitPattern-count-other": "{0} ғ."
+			},
+			"duration-year": {
+				"displayName": "жыл",
+				"unitPattern-count-one": "{0} ж.",
+				"unitPattern-count-other": "{0} ж.",
+				"perUnitPattern": "{0}/ж."
+			},
+			"duration-month": {
+				"displayName": "ай",
+				"unitPattern-count-one": "{0} ай",
+				"unitPattern-count-other": "{0} ай",
+				"perUnitPattern": "{0}/ай"
+			},
+			"duration-week": {
+				"displayName": "апта",
+				"unitPattern-count-one": "{0} ап.",
+				"unitPattern-count-other": "{0} ап.",
+				"perUnitPattern": "{0}/ап."
+			},
+			"duration-day": {
+				"displayName": "күн",
+				"unitPattern-count-one": "{0} күн",
+				"unitPattern-count-other": "{0} күн",
+				"perUnitPattern": "{0}/күн"
+			},
+			"duration-hour": {
+				"displayName": "сағат",
+				"unitPattern-count-one": "{0} сағ",
+				"unitPattern-count-other": "{0} сағ",
+				"perUnitPattern": "{0}/сағ"
+			},
+			"duration-minute": {
+				"displayName": "мин",
+				"unitPattern-count-one": "{0} мин",
+				"unitPattern-count-other": "{0} мин",
+				"perUnitPattern": "{0}/мин"
+			},
+			"duration-second": {
+				"displayName": "с",
+				"unitPattern-count-one": "{0} с",
+				"unitPattern-count-other": "{0} с",
+				"perUnitPattern": "{0}/с"
+			},
+			"duration-millisecond": {
+				"displayName": "мс",
+				"unitPattern-count-one": "{0} мс",
+				"unitPattern-count-other": "{0} мс"
+			},
+			"duration-microsecond": {
+				"displayName": "мкс",
+				"unitPattern-count-one": "{0} мкс",
+				"unitPattern-count-other": "{0} мкс"
+			},
+			"duration-nanosecond": {
+				"displayName": "нс",
+				"unitPattern-count-one": "{0} нс",
+				"unitPattern-count-other": "{0} нс"
+			},
+			"electric-ampere": {
+				"displayName": "А",
+				"unitPattern-count-one": "{0} A",
+				"unitPattern-count-other": "{0} A"
+			},
+			"electric-milliampere": {
+				"displayName": "миллиампер",
+				"unitPattern-count-one": "{0} мA",
+				"unitPattern-count-other": "{0} мA"
+			},
+			"electric-ohm": {
+				"displayName": "Ом",
+				"unitPattern-count-one": "{0} Ом",
+				"unitPattern-count-other": "{0} Ом"
+			},
+			"electric-volt": {
+				"displayName": "вольт",
+				"unitPattern-count-one": "{0} В",
+				"unitPattern-count-other": "{0} В"
+			},
+			"energy-kilocalorie": {
+				"displayName": "ккал",
+				"unitPattern-count-one": "{0} ккал",
+				"unitPattern-count-other": "{0} ккал"
+			},
+			"energy-calorie": {
+				"displayName": "кал",
+				"unitPattern-count-one": "{0} кал",
+				"unitPattern-count-other": "{0} кал"
+			},
+			"energy-foodcalorie": {
+				"displayName": "кал",
+				"unitPattern-count-one": "{0} кал",
+				"unitPattern-count-other": "{0} кал"
+			},
+			"energy-kilojoule": {
+				"displayName": "килоджоуль",
+				"unitPattern-count-one": "{0} кДж",
+				"unitPattern-count-other": "{0} кДж"
+			},
+			"energy-joule": {
+				"displayName": "джоуль",
+				"unitPattern-count-one": "{0} Дж",
+				"unitPattern-count-other": "{0} Дж"
+			},
+			"energy-kilowatt-hour": {
+				"displayName": "кВт-сағ",
+				"unitPattern-count-one": "{0} кВт-сағ",
+				"unitPattern-count-other": "{0} кВт-сағ"
+			},
+			"frequency-gigahertz": {
+				"displayName": "ГГц",
+				"unitPattern-count-one": "{0} ГГц",
+				"unitPattern-count-other": "{0} ГГц"
+			},
+			"frequency-megahertz": {
+				"displayName": "МГц",
+				"unitPattern-count-one": "{0} MГц",
+				"unitPattern-count-other": "{0} MГц"
+			},
+			"frequency-kilohertz": {
+				"displayName": "кГц",
+				"unitPattern-count-one": "{0} кГц",
+				"unitPattern-count-other": "{0} кГц"
+			},
+			"frequency-hertz": {
+				"displayName": "Гц",
+				"unitPattern-count-one": "{0} Гц",
+				"unitPattern-count-other": "{0} Гц"
+			},
+			"length-kilometer": {
+				"displayName": "км",
+				"unitPattern-count-one": "{0} км",
+				"unitPattern-count-other": "{0} км",
+				"perUnitPattern": "{0}/км"
+			},
+			"length-meter": {
+				"displayName": "метр",
+				"unitPattern-count-one": "{0} м",
+				"unitPattern-count-other": "{0} м",
+				"perUnitPattern": "{0}/м"
+			},
+			"length-decimeter": {
+				"displayName": "дм",
+				"unitPattern-count-one": "{0} дм",
+				"unitPattern-count-other": "{0} дм"
+			},
+			"length-centimeter": {
+				"displayName": "см",
+				"unitPattern-count-one": "{0} см",
+				"unitPattern-count-other": "{0} см",
+				"perUnitPattern": "{0}/см"
+			},
+			"length-millimeter": {
+				"displayName": "мм",
+				"unitPattern-count-one": "{0} мм",
+				"unitPattern-count-other": "{0} мм"
+			},
+			"length-micrometer": {
+				"displayName": "мкм",
+				"unitPattern-count-one": "{0} мкм",
+				"unitPattern-count-other": "{0} мкм"
+			},
+			"length-nanometer": {
+				"displayName": "нм",
+				"unitPattern-count-one": "{0} нм",
+				"unitPattern-count-other": "{0} нм"
+			},
+			"length-picometer": {
+				"displayName": "пикометр",
+				"unitPattern-count-one": "{0} пм",
+				"unitPattern-count-other": "{0} пм"
+			},
+			"length-mile": {
+				"displayName": "миля",
+				"unitPattern-count-one": "{0} миля",
+				"unitPattern-count-other": "{0} миля"
+			},
+			"length-yard": {
+				"displayName": "ярд",
+				"unitPattern-count-one": "{0} ярд",
+				"unitPattern-count-other": "{0} ярд"
+			},
+			"length-foot": {
+				"displayName": "фут",
+				"unitPattern-count-one": "{0} фут",
+				"unitPattern-count-other": "{0} фут",
+				"perUnitPattern": "{0}/фут"
+			},
+			"length-inch": {
+				"displayName": "дюйм",
+				"unitPattern-count-one": "{0} дюйм",
+				"unitPattern-count-other": "{0} дюйм",
+				"perUnitPattern": "{0}/дюйм"
+			},
+			"length-parsec": {
+				"displayName": "парсек",
+				"unitPattern-count-one": "{0} пк",
+				"unitPattern-count-other": "{0} пк"
+			},
+			"length-light-year": {
+				"displayName": "жарық жылы",
+				"unitPattern-count-one": "{0} ж. ж.",
+				"unitPattern-count-other": "{0} ж. ж."
+			},
+			"length-astronomical-unit": {
+				"displayName": "а.б.",
+				"unitPattern-count-one": "{0} а.б.",
+				"unitPattern-count-other": "{0} а.б."
+			},
+			"length-furlong": {
+				"displayName": "fur",
+				"unitPattern-count-other": "{0} fur"
+			},
+			"length-fathom": {
+				"displayName": "fm",
+				"unitPattern-count-other": "{0} fm"
+			},
+			"length-nautical-mile": {
+				"displayName": "nmi",
+				"unitPattern-count-one": "{0} nmi",
+				"unitPattern-count-other": "{0} nmi"
+			},
+			"length-mile-scandinavian": {
+				"displayName": "smi",
+				"unitPattern-count-one": "{0} smi",
+				"unitPattern-count-other": "{0} smi"
+			},
+			"length-point": {
+				"displayName": "ұпай",
+				"unitPattern-count-one": "{0} ұпай",
+				"unitPattern-count-other": "{0} ұпай"
+			},
+			"light-lux": {
+				"displayName": "люкс",
+				"unitPattern-count-one": "{0} лк",
+				"unitPattern-count-other": "{0} лк"
+			},
+			"mass-metric-ton": {
+				"displayName": "т",
+				"unitPattern-count-one": "{0} т",
+				"unitPattern-count-other": "{0} т"
+			},
+			"mass-kilogram": {
+				"displayName": "кг",
+				"unitPattern-count-one": "{0} кг",
+				"unitPattern-count-other": "{0} кг",
+				"perUnitPattern": "{0}/кг"
+			},
+			"mass-gram": {
+				"displayName": "грамм",
+				"unitPattern-count-one": "{0} г",
+				"unitPattern-count-other": "{0} г",
+				"perUnitPattern": "{0}/г"
+			},
+			"mass-milligram": {
+				"displayName": "мг",
+				"unitPattern-count-one": "{0} мг",
+				"unitPattern-count-other": "{0} мг"
+			},
+			"mass-microgram": {
+				"displayName": "мкг",
+				"unitPattern-count-one": "{0} мкг",
+				"unitPattern-count-other": "{0} мкг"
+			},
+			"mass-ton": {
+				"displayName": "тонна",
+				"unitPattern-count-one": "{0} тн",
+				"unitPattern-count-other": "{0} тн"
+			},
+			"mass-stone": {
+				"displayName": "st",
+				"unitPattern-count-other": "{0} st"
+			},
+			"mass-pound": {
+				"displayName": "фунт",
+				"unitPattern-count-one": "{0} фунт",
+				"unitPattern-count-other": "{0} фунт",
+				"perUnitPattern": "{0}/фунт"
+			},
+			"mass-ounce": {
+				"displayName": "унц.",
+				"unitPattern-count-one": "{0} унц.",
+				"unitPattern-count-other": "{0} унц.",
+				"perUnitPattern": "{0}/унц."
+			},
+			"mass-ounce-troy": {
+				"displayName": "тр. унц.",
+				"unitPattern-count-one": "{0} тр. унц.",
+				"unitPattern-count-other": "{0} тр. унц."
+			},
+			"mass-carat": {
+				"displayName": "карат",
+				"unitPattern-count-one": "{0} КТ",
+				"unitPattern-count-other": "{0} КТ"
+			},
+			"power-gigawatt": {
+				"displayName": "ГВт",
+				"unitPattern-count-one": "{0} ГВт",
+				"unitPattern-count-other": "{0} ГВт"
+			},
+			"power-megawatt": {
+				"displayName": "МВт",
+				"unitPattern-count-one": "{0} МВт",
+				"unitPattern-count-other": "{0} МВт"
+			},
+			"power-kilowatt": {
+				"displayName": "киловатт",
+				"unitPattern-count-one": "{0} кВт",
+				"unitPattern-count-other": "{0} кВт"
+			},
+			"power-watt": {
+				"displayName": "ватт",
+				"unitPattern-count-one": "{0} Вт",
+				"unitPattern-count-other": "{0} Вт"
+			},
+			"power-milliwatt": {
+				"displayName": "мВт",
+				"unitPattern-count-one": "{0} мВт",
+				"unitPattern-count-other": "{0} мВт"
+			},
+			"power-horsepower": {
+				"displayName": "а. к.",
+				"unitPattern-count-one": "{0} а. к.",
+				"unitPattern-count-other": "{0} а. к."
+			},
+			"pressure-hectopascal": {
+				"displayName": "гектопаскаль",
+				"unitPattern-count-one": "{0} гПа",
+				"unitPattern-count-other": "{0} гПа"
+			},
+			"pressure-millimeter-of-mercury": {
+				"displayName": "с.б.мм.",
+				"unitPattern-count-one": "{0} с.б.мм.",
+				"unitPattern-count-other": "{0} с.б.мм."
+			},
+			"pressure-pound-per-square-inch": {
+				"displayName": "psi",
+				"unitPattern-count-one": "{0} psi",
+				"unitPattern-count-other": "{0} psi"
+			},
+			"pressure-inch-hg": {
+				"displayName": "in Hg",
+				"unitPattern-count-one": "{0} inHg",
+				"unitPattern-count-other": "{0} inHg"
+			},
+			"pressure-millibar": {
+				"displayName": "мбар",
+				"unitPattern-count-one": "{0} мб",
+				"unitPattern-count-other": "{0} мб"
+			},
+			"speed-kilometer-per-hour": {
+				"displayName": "км/сағ",
+				"unitPattern-count-one": "{0} км/сағ",
+				"unitPattern-count-other": "{0} км/сағ"
+			},
+			"speed-meter-per-second": {
+				"displayName": "метр/секунд",
+				"unitPattern-count-one": "{0} м/с",
+				"unitPattern-count-other": "{0} м/с"
+			},
+			"speed-mile-per-hour": {
+				"displayName": "миля/сағат",
+				"unitPattern-count-one": "{0} миля/сағ",
+				"unitPattern-count-other": "{0} миля/сағ"
+			},
+			"speed-knot": {
+				"displayName": "kn",
+				"unitPattern-count-one": "{0} kn",
+				"unitPattern-count-other": "{0} kn"
+			},
+			"temperature-generic": {
+				"displayName": "°",
+				"unitPattern-count-one": "{0}°",
+				"unitPattern-count-other": "{0}°"
+			},
+			"temperature-celsius": {
+				"displayName": "Цельсий градусы",
+				"unitPattern-count-one": "{0}°C",
+				"unitPattern-count-other": "{0}°C"
+			},
+			"temperature-fahrenheit": {
+				"displayName": "Фаренгейт градусы",
+				"unitPattern-count-one": "{0}°F",
+				"unitPattern-count-other": "{0}°F"
+			},
+			"temperature-kelvin": {
+				"displayName": "K",
+				"unitPattern-count-one": "{0} К",
+				"unitPattern-count-other": "{0} К"
+			},
+			"volume-cubic-kilometer": {
+				"displayName": "км³",
+				"unitPattern-count-one": "{0} км³",
+				"unitPattern-count-other": "{0} км³"
+			},
+			"volume-cubic-meter": {
+				"displayName": "м³",
+				"unitPattern-count-one": "{0} м³",
+				"unitPattern-count-other": "{0} м³",
+				"perUnitPattern": "{0}/м³"
+			},
+			"volume-cubic-centimeter": {
+				"displayName": "cм³",
+				"unitPattern-count-one": "{0} cм³",
+				"unitPattern-count-other": "{0} cм³",
+				"perUnitPattern": "{0}/см³"
+			},
+			"volume-cubic-mile": {
+				"displayName": "миля³",
+				"unitPattern-count-one": "{0} миля³",
+				"unitPattern-count-other": "{0} миля³"
+			},
+			"volume-cubic-yard": {
+				"displayName": "ярд³",
+				"unitPattern-count-one": "{0} ярд³",
+				"unitPattern-count-other": "{0} ярд³"
+			},
+			"volume-cubic-foot": {
+				"displayName": "фут³",
+				"unitPattern-count-one": "{0} фт³",
+				"unitPattern-count-other": "{0} фт³"
+			},
+			"volume-cubic-inch": {
+				"displayName": "дюйм³",
+				"unitPattern-count-one": "{0} дюйм³",
+				"unitPattern-count-other": "{0} дюйм³"
+			},
+			"volume-megaliter": {
+				"displayName": "Мл",
+				"unitPattern-count-one": "{0} Мл",
+				"unitPattern-count-other": "{0} Мл"
+			},
+			"volume-hectoliter": {
+				"displayName": "гл",
+				"unitPattern-count-one": "{0} гл",
+				"unitPattern-count-other": "{0} гл"
+			},
+			"volume-liter": {
+				"displayName": "литр",
+				"unitPattern-count-one": "{0} л",
+				"unitPattern-count-other": "{0} л",
+				"perUnitPattern": "{0}/л"
+			},
+			"volume-deciliter": {
+				"displayName": "дл",
+				"unitPattern-count-one": "{0} дл",
+				"unitPattern-count-other": "{0} дл"
+			},
+			"volume-centiliter": {
+				"displayName": "сл",
+				"unitPattern-count-one": "{0} cл",
+				"unitPattern-count-other": "{0} cл"
+			},
+			"volume-milliliter": {
+				"displayName": "мл",
+				"unitPattern-count-one": "{0} мл",
+				"unitPattern-count-other": "{0} мл"
+			},
+			"volume-pint-metric": {
+				"displayName": "mpt",
+				"unitPattern-count-one": "{0} mpt",
+				"unitPattern-count-other": "{0} mpt"
+			},
+			"volume-cup-metric": {
+				"displayName": "м. кесе",
+				"unitPattern-count-one": "{0} mc",
+				"unitPattern-count-other": "{0} mc"
+			},
+			"volume-acre-foot": {
+				"displayName": "aкро-фут",
+				"unitPattern-count-one": "{0} aкро-фут",
+				"unitPattern-count-other": "{0} aкро-фут"
+			},
+			"volume-bushel": {
+				"displayName": "bu",
+				"unitPattern-count-other": "{0} bu"
+			},
+			"volume-gallon": {
+				"displayName": "gal",
+				"unitPattern-count-one": "{0} gal",
+				"unitPattern-count-other": "{0} gal",
+				"perUnitPattern": "{0}/gal"
+			},
+			"volume-gallon-imperial": {
+				"displayName": "имп. галлон",
+				"unitPattern-count-one": "{0} gal Imp.",
+				"unitPattern-count-other": "{0} gal Imp.",
+				"perUnitPattern": "{0}/имп. галлон"
+			},
+			"volume-quart": {
+				"displayName": "qt",
+				"unitPattern-count-one": "{0} qt",
+				"unitPattern-count-other": "{0} qt"
+			},
+			"volume-pint": {
+				"displayName": "пинта",
+				"unitPattern-count-one": "{0} pt",
+				"unitPattern-count-other": "{0} pt"
+			},
+			"volume-cup": {
+				"displayName": "кесе",
+				"unitPattern-count-one": "{0} к.",
+				"unitPattern-count-other": "{0} к."
+			},
+			"volume-fluid-ounce": {
+				"displayName": "fl oz",
+				"unitPattern-count-one": "{0} fl oz",
+				"unitPattern-count-other": "{0} fl oz"
+			},
+			"volume-tablespoon": {
+				"displayName": "ас қ.",
+				"unitPattern-count-one": "{0} ас қ.",
+				"unitPattern-count-other": "{0} ас қ."
+			},
+			"volume-teaspoon": {
+				"displayName": "ш. қ.",
+				"unitPattern-count-one": "{0} ш. қ.",
+				"unitPattern-count-other": "{0} ш. қ."
+			},
+			"coordinateUnit": {
+				"east": "{0} Ш",
+				"north": "{0} С",
+				"south": "{0} О",
+				"west": "{0} Б"
+			}
+		}
+	},
 	"currencyDigits": {
 		"ADP": 0,
 		"AFN": 0,

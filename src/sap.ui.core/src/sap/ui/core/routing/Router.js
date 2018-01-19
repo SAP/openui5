@@ -871,9 +871,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 			 * @param {object} oEvent.getParameters
 			 * @param {string} oEvent.getParameters.title The current displayed title
 			 * @param {array} oEvent.getParameters.history An array which contains the history of previous titles
-			 * @param {string} oEvent.getParameters.history[].title The title
-			 * @param {string} oEvent.getParameters.history[].hash The hash
-			 * @param {boolean} oEvent.getParameters.history[].isHome The app home indicator
+			 * @param {string} oEvent.getParameters.history.title The title
+			 * @param {string} oEvent.getParameters.history.hash The hash
+			 * @param {boolean} oEvent.getParameters.history.isHome The app home indicator
 			 * @public
 			 */
 

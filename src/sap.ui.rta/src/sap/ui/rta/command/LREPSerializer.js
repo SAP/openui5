@@ -148,5 +148,48 @@ sap.ui.define([
 		return this._lastPromise;
 	};
 
+	/**
+	 *
+	 * @param {string} sReferenceAppIdForChanges
+	 * @returns {promise} returns a promise with true or false
+	 * @description Shall be used to persist the unsaved changes (in the current RTA session) for new app variant;
+	 * Once the unsaved changes has been saved for the app variant, the cache (See Cache#update) will not be updated for the current app
+	 * and the dirty changes will be spliced;
+	 * At this point command stack is not aware if the changes have been booked for the new app variant.
+	 * Therefore if there shall be some UI changes present in command stack, we undo all the changes till the beginning.
+	 * Undo operation calls ChangePersistence#deleteChange and for this change we mark the change's state to 'PERSISTED'.(See ChangePersistence#deleteChange -> Change#markForDeletion)
+	 * In the last when user presses 'Save and Exit', this change will be automatically ignored because the state was already set to 'PERSISTED'.
+	 */
+	LREPSerializer.prototype.saveAsCommands = function(sReferenceAppIdForChanges) {
+		if (!sReferenceAppIdForChanges) {
+			throw new Error("The id of the new app variant is required");
+		}
+
+		var oRootControl = sap.ui.getCore().byId(this.getRootControl());
+
+		if (!oRootControl) {
+			throw new Error("Can't save commands without root control instance!");
+		}
+
+		var oRunningAppDescriptor = FlexUtils.getAppDescriptor(oRootControl);
+		// In case the id of the current running app is equal to the app variant id
+		if (oRunningAppDescriptor["sap.app"].id === sReferenceAppIdForChanges) {
+			throw new Error("The id of the app variant should be different from the current app id");
+		}
+
+		var oFlexController = FlexControllerFactory.createForControl(oRootControl);
+
+		return oFlexController.saveAs(sReferenceAppIdForChanges).then(function() {
+			while (this.getCommandStack().canUndo()) {
+				this.getCommandStack().undo();
+			}
+
+			// Once the changes are undoed, all commands shall be removed
+			this.getCommandStack().removeAllCommands();
+
+			return Promise.resolve(true);
+		}.bind(this));
+	};
+
 	return LREPSerializer;
 }, /* bExport= */true);

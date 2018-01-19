@@ -1613,6 +1613,110 @@
 			tp.destroy();
 		});
 
+		QUnit.test("support2400 - property play",function(assert) {
+			//prepare
+			var oTP = new sap.m.TimePicker({
+				displayFormat: "HH:mm:ss",
+				dateValue: new Date(2000, 1, 2, 23, 35, 54)
+			}),
+				oEvent,
+				oSliders,
+				oSliderHours;
+
+			oTP.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			assert.strictEqual(oTP.getSupport2400(), false, "'support2400' is false by default");
+
+			//act
+			oTP.setSupport2400(true);
+
+			//assert
+			assert.strictEqual(oTP.getSupport2400(), true, "'support2400' is now set to 'true'");
+
+			//act
+			oTP._openPicker();
+			this.clock.tick(1000);
+			oBtnOK = oTP._getPicker().getBeginButton();
+			oSliders = oTP._getSliders();
+			oSliderHours = oSliders.getAggregation("_columns")[0];
+			oEvent = this._createMouseWheelEvent(-1);
+			oSliders._onmousewheel(oEvent); //these values are inside the event object when we scroll just a little
+			this.clock.tick(160);
+
+			//assert
+			assert.equal(oSliderHours.getSelectedValue(), "24", "slider's hour value changed to 24");
+
+			//cleanup
+			oTP.destroy();
+
+		});
+
+		QUnit.test("support2400 - minutes and seconds are disabled and set to '0' when hours are '24'", function(assert) {
+			//prepare
+			var oTP = new sap.m.TimePicker({
+				displayFormat: "HH:mm:ss",
+				dateValue: new Date(2000, 1, 2, 23, 35, 54)
+			}),
+				oSliders,
+				oSliderHours,
+				oSliderMinutes,
+				oSliderSeconds,
+				oEvent;
+
+			oTP.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+
+			//assert
+			assert.strictEqual(oTP.getSupport2400(), false, "support2400 is false by default");
+
+			//act
+			oTP.setSupport2400(true);
+			oTP._openPicker();
+			this.clock.tick(1000); //wait the initial focus of the first slider
+
+			oSliders = oTP._getSliders();
+			oSliderHours = oSliders.getAggregation("_columns")[0];
+			oSliderMinutes = oSliders.getAggregation("_columns")[1];
+			oSliderSeconds = oSliders.getAggregation("_columns")[2];
+
+			//set hours to '24'
+			oEvent = this._createMouseWheelEvent(-1);
+			oSliders._onmousewheel(oEvent); //these values are inside the event object when we scroll just a little
+			this.clock.tick(160);
+
+			//assert
+			assert.equal(oSliderMinutes.getSelectedValue(), "0", "When hours are set to 24, minutes are set to 0");
+			assert.ok(oSliderMinutes.$().hasClass("sapMTPDisabled"),
+					"When hours are set to 24, minutes have 'sapMTPDisabled' class");
+			assert.equal(oSliderSeconds.getSelectedValue(), "0", "When hours are set to 24, seconds are set to 0");
+			assert.ok(oSliderSeconds.$().hasClass("sapMTPDisabled"),
+					"When hours are set to 24, seconds have 'sapMTPDisabled' class");
+
+			//act
+			//scroll hours to their previous state
+			oEvent = this._createMouseWheelEvent(-1);
+			oSliders._onmousewheel(oEvent); //these values are inside the event object when we scroll just a little
+			this.clock.tick(160);
+
+			//assert
+			assert.equal(oSliderHours.getSelectedValue(), "0", "slider's hour value changed to 0");
+			assert.equal(oSliderMinutes.getSelectedValue(), "35",
+					"Minutes are back to their previous value before scrolling though '24' for hours");
+			assert.ok(!oSliderMinutes.$().hasClass("sapMTP2400"),
+					"When minutes are back to their previous value, they don't have 'sapMTP2400' class");
+			assert.equal(oSliderSeconds.getSelectedValue(), "54",
+					"Seconds are back to their previous value before scrolling though '24' for hours");
+			assert.ok(!oSliderSeconds.$().hasClass("sapMTP2400"),
+					"When seconds are back to their previous value, they don't have 'sapMTP2400' class");
+
+			//cleanup
+			oTP.destroy();
+
+		});
+
 		QUnit.test("_getUpdatedCycleScrollTop returns a new top value with the right offset", function(assert) {
 			//sut
 			var tp = new sap.m.TimePicker();
@@ -3118,7 +3222,7 @@
 				oPositionCaretSpy = this.spy(this.oTp, "_positionCaret");
 
 			// act
-			this.oTp.oninput({});
+			this.oTp.oninput({ setMarked: function () {}});
 
 			// assert
 			assert.equal(oApplyMaskSpy.callCount, 1, "MaskEnabler._applyMask should be called once");
@@ -3137,7 +3241,7 @@
 					oPositionCaretSpy = this.spy(this.oTp, "_positionCaret");
 
 			// act
-			this.oTp.oninput({});
+			this.oTp.oninput({ setMarked: function () {}});
 
 			// assert
 			assert.equal(oApplyMaskSpy.callCount, 0, "MaskEnabler._applyMask should not be called");

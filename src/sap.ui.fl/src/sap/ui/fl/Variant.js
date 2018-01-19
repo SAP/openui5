@@ -116,7 +116,7 @@ sap.ui.define([
 		if (!this._oDefinition.content.fileName) {
 			bIsValid = false;
 		}
-		if (!this._oDefinition.content.title) {
+		if (!this._oDefinition.content.content.title) {
 			bIsValid = false;
 		}
 		if (!this._oDefinition.content.variantManagementReference) {
@@ -150,7 +150,7 @@ sap.ui.define([
 	 */
 	Variant.prototype.getTitle = function () {
 		if (this._oDefinition) {
-			return this._oDefinition.content.title;
+			return this._oDefinition.content.content.title;
 		}
 	};
 
@@ -571,13 +571,14 @@ sap.ui.define([
 		var oNewFile = {
 			content : {
 				fileName: sFileName,
-				title: oPropertyBag.content.title || "",
 				fileType: "ctrl_variant",
 				variantManagementReference: oPropertyBag.content.variantManagementReference,
 				variantReference: oPropertyBag.content.variantReference || "",
 				reference: oPropertyBag.content.reference || "",
 				packageName: oPropertyBag.content.packageName || "",
-				content: {},
+				content: {
+					title: oPropertyBag.content.content.title || ""
+				},
 				self: sNamespace + sFileName + "." + "ctrl_variant",
 				layer: oPropertyBag.content.layer || Utils.getCurrentLayer(oPropertyBag.isUserDependent),
 				texts: oPropertyBag.content.texts || {},
