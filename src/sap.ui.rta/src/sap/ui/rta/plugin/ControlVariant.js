@@ -392,7 +392,7 @@ sap.ui.define([
 			oDesignTimeMetadata = oOverlay.getDesignTimeMetadata(),
 			oRenamedElement = oOverlay.getElementInstance(),
 			oModel = this._getVariantModel(oRenamedElement),
-			sWarningText,
+			sErrorText,
 			sVariantManagementReference = oOverlay.getVariantManagement(),
 			iDuplicateCount = oModel._getVariantLabelCount(sText, sVariantManagementReference),
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
@@ -410,16 +410,16 @@ sap.ui.define([
 
 		//For newly created variants, duplicate triggered on count of 2
 		if (iDuplicateCount > 1) {
-			sWarningText = "DUPLICATE_WARNING_TEXT";
+			sErrorText = "DUPLICATE_ERROR_TEXT";
 		}
 
 		//Check for real change before creating a command and pass if warning text already set
-		if (this.getOldValue() !== sText && !sWarningText) {
+		if (this.getOldValue() !== sText && !sErrorText) {
 			if (sText === '\xa0') { //Empty string
-				sWarningText = "BLANK_WARNING_TEXT";
+				sErrorText = "BLANK_ERROR_TEXT";
 			} else if (iDuplicateCount > 0) {
-				sWarningText = "DUPLICATE_WARNING_TEXT";
-			} else if (!sWarningText) {
+				sErrorText = "DUPLICATE_ERROR_TEXT";
+			} else if (!sErrorText) {
 				return this._createSetTitleCommand({
 					text: sText,
 					element: oRenamedElement,
@@ -429,11 +429,11 @@ sap.ui.define([
 			}
 		}
 
-		if (sWarningText) {
-			var sValueStateText = oResourceBundle.getText(sWarningText);
+		if (sErrorText) {
+			var sValueStateText = oResourceBundle.getText(sErrorText);
 			this._prepareOverlayForValueState(oOverlay, sValueStateText);
 
-			return Utils._showMessageBox("WARNING", "BLANK_DUPLICATE_TITLE_TEXT", sWarningText)
+			return Utils._showMessageBox("ERROR", "BLANK_DUPLICATE_TITLE_TEXT", sErrorText)
 				.then(function () {
 					//valueStateMessage
 					if (!this._oValueStateMessage) {
@@ -548,8 +548,8 @@ sap.ui.define([
 
 		if (this.isVariantConfigureAvailable(oOverlay)){
 			aMenuItems.push({
-				id: "CTX_VARIANT_CONFIGURE",
-				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_VARIANT_CONFIGURE'),
+				id: "CTX_VARIANT_MANAGE",
+				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_VARIANT_MANAGE'),
 				handler: this.configureVariants.bind(this),
 				enabled: this.isVariantConfigureEnabled.bind(this),
 				startSection: true,
