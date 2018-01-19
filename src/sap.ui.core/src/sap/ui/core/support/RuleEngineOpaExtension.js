@@ -89,30 +89,28 @@ sap.ui.define([
 				 * If "sap-skip-rules-issues=true" is set as an URI parameter, assertion result will be always positive.
 				 */
 				getFinalReport: function () {
-					var ruleDeferred = jQuery.Deferred();
+					var ruleDeferred = jQuery.Deferred(),
+						history = jQuery.sap.support.getFormattedAnalysisHistory(),
+						analysisHistory = jQuery.sap.support.getAnalysisHistory(),
+						totalIssues = analysisHistory.reduce(function (total, analysis) {
+							return total + analysis.issues.length;
+						}, 0),
+						result = totalIssues === 0,
+						message = "Support Assistant Analysis History",
+						actual = message;
 
-					jQuery.sap.support.getFormattedAnalysisHistory().then(function (history) {
-						var analysisHistory = jQuery.sap.support.getAnalysisHistory(),
-							totalIssues = analysisHistory.reduce(function (total, analysis) {
-								return total + analysis.issues.length;
-							}, 0),
-							result = totalIssues === 0,
-							message = "Support Assistant Analysis History",
-							actual = message;
+					if (result) {
+						message += " - no issues found";
+					} else  if (fnShouldSkipRulesIssues()) {
+						result = true;
+						message += ' - issues are found. To see them remove the "sap-skip-rules-issues=true" URI parameter';
+					}
 
-						if (result) {
-							message += " - no issues found";
-						} else  if (fnShouldSkipRulesIssues()) {
-							result = true;
-							message += ' - issues are found. To see them remove the "sap-skip-rules-issues=true" URI parameter';
-						}
-
-						ruleDeferred.resolve({
-							result: result,
-							message: message,
-							actual: actual,
-							expected: history
-						});
+					ruleDeferred.resolve({
+						result: result,
+						message: message,
+						actual: actual,
+						expected: history
 					});
 
 					return ruleDeferred.promise();
