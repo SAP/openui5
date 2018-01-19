@@ -75,7 +75,7 @@ sap.ui.define([
 			"city" : {
 				Path : "adr",
 				TermName : "Contact",
-				V4Attribute: "locality"
+				V4Attribute : "locality"
 			},
 			"country" : {
 				Path : "adr",
@@ -84,7 +84,7 @@ sap.ui.define([
 			"email" : {
 				Path : "address",
 				TermName : "Contact",
-				V4Attribute: "uri",
+				V4Attribute : "uri",
 				typeMapping : {
 					"home" : "home",
 					"pref" : "preferred",
@@ -96,26 +96,26 @@ sap.ui.define([
 			"familyname" : {
 				Path : "n",
 				TermName : "Contact",
-				V4Attribute: "surname"
+				V4Attribute : "surname"
 			},
 			"givenname" : {
 				Path : "n",
 				TermName : "Contact",
-				V4Attribute: "given"
+				V4Attribute : "given"
 			},
 			"honorific" : {
 				Path : "n",
 				TermName : "Contact",
-				V4Attribute: "prefix"
+				V4Attribute : "prefix"
 			},
 			"middlename" : {
 				Path : "n",
 				TermName : "Contact",
-				V4Attribute: "additional"
+				V4Attribute : "additional"
 			},
 			"name" : {
 				TermName : "Contact",
-				V4Attribute: "fn"
+				V4Attribute : "fn"
 			},
 			"nickname" : {
 				TermName : "Contact"
@@ -156,7 +156,7 @@ sap.ui.define([
 			"tel" : {
 				Path : "tel",
 				TermName : "Contact",
-				V4Attribute: "uri",
+				V4Attribute : "uri",
 				typeMapping : {
 					"cell" : "cell",
 					"fax" : "fax",
@@ -175,7 +175,7 @@ sap.ui.define([
 			"zip" : {
 				Path : "adr",
 				TermName : "Contact",
-				V4Attribute: "code"
+				V4Attribute : "code"
 			},
 			// event annotations
 			"class" : {
@@ -230,7 +230,7 @@ sap.ui.define([
 			},
 			"percent-complete" : {
 				TermName : "Task",
-				V4Attribute: "percentcomplete"
+				V4Attribute : "percentcomplete"
 			},
 			"priority" : {
 				TermName : "Task"
@@ -643,7 +643,8 @@ sap.ui.define([
 	 *   Maps annotatable path to a map of V4 annotations; V2 annotations are merged into this
 	 *   object
 	 */
-	V2MetadataConverter.prototype.mergeAnnotations = function (mConvertedV2Annotations, mV4Annotations) {
+	V2MetadataConverter.prototype.mergeAnnotations = function (mConvertedV2Annotations,
+			mV4Annotations) {
 		var sAnnotatablePath;
 
 		for (sAnnotatablePath in mConvertedV2Annotations) {

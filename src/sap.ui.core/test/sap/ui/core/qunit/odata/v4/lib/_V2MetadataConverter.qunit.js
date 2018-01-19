@@ -192,8 +192,8 @@ sap.ui.require([
 				<Schema Namespace="foo" Alias="f"/>\
 			</edmx:DataServices>',
 			{
-				"$Reference": {
-					"/qux/$metadata": {
+				"$Reference" : {
+					"/qux/$metadata" : {
 						"$Include" : ["qux."]
 					}
 				},
@@ -497,15 +497,15 @@ sap.ui.require([
 			{
 				"$EntityContainer" : "GWSAMPLE_BASIC.0001.Container",
 				"GWSAMPLE_BASIC.0001." : {
-					"$Annotations": {
-						"GWSAMPLE_BASIC.0001.Container/BusinessPartnerSet": {
-							"@Org.OData.Capabilities.V1.SearchRestrictions": {
-								"Searchable": false
+					"$Annotations" : {
+						"GWSAMPLE_BASIC.0001.Container/BusinessPartnerSet" : {
+							"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+								"Searchable" : false
 							}
 						},
-						"GWSAMPLE_BASIC.0001.Container/ProductSet": {
-							"@Org.OData.Capabilities.V1.SearchRestrictions": {
-								"Searchable": false
+						"GWSAMPLE_BASIC.0001.Container/ProductSet" : {
+							"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+								"Searchable" : false
 							}
 						}
 					},
@@ -567,8 +567,8 @@ sap.ui.require([
 					},
 					"foo.Container" : {
 						"$kind" : "EntityContainer",
-						"Baz": {
-							"$kind": sWhat + "Import"
+						"Baz" : {
+							"$kind" : sWhat + "Import"
 						}
 					},
 					"foo.Baz" : [{
@@ -612,7 +612,7 @@ sap.ui.require([
 				},
 				"foo.Container" : {
 					"$kind" : "EntityContainer",
-					"Baz": {
+					"Baz" : {
 						"$EntitySet" : "Bar",
 						"$Function" : "foo.Baz",
 						"$kind" : "FunctionImport"
@@ -647,11 +647,11 @@ sap.ui.require([
 				"foo." : {
 					"$kind" : "Schema"
 				},
-				"foo.Bar": [{
-					"$kind": "Function"
+				"foo.Bar" : [{
+					"$kind" : "Function"
 				}],
-				"foo.Container": {
-					"$kind": "EntityContainer",
+				"foo.Container" : {
+					"$kind" : "EntityContainer",
 					"Bar" : {
 						"$kind" : "FunctionImport",
 						"$Function" : "foo.Bar"
@@ -851,7 +851,7 @@ sap.ui.require([
 		expectedSemanticsV4 : {
 			'@com.sap.vocabularies.Communication.v1.Contact' : {
 				"n" : {
-					"given": {
+					"given" : {
 						"$Path" : "Bar"
 					}
 				}
@@ -862,7 +862,7 @@ sap.ui.require([
 		expectedSemanticsV4 : {
 			'@com.sap.vocabularies.Communication.v1.Contact' : {
 				"n" : {
-					"additional": {
+					"additional" : {
 						"$Path" : "Bar"
 					}
 				}
@@ -873,7 +873,7 @@ sap.ui.require([
 		expectedSemanticsV4 : {
 			'@com.sap.vocabularies.Communication.v1.Contact' : {
 				"n" : {
-					"surname": {
+					"surname" : {
 						"$Path" : "Bar"
 					}
 				}
@@ -883,7 +883,7 @@ sap.ui.require([
 		v2Semantics : 'sap:semantics="nickname"',
 		expectedSemanticsV4 : {
 			'@com.sap.vocabularies.Communication.v1.Contact' : {
-				"nickname": {
+				"nickname" : {
 					"$Path" : "Bar"
 				}
 			}
@@ -893,7 +893,7 @@ sap.ui.require([
 		expectedSemanticsV4 : {
 			'@com.sap.vocabularies.Communication.v1.Contact' : {
 				"n" : {
-					"prefix": {
+					"prefix" : {
 						"$Path" : "Bar"
 					}
 				}
@@ -904,7 +904,7 @@ sap.ui.require([
 		expectedSemanticsV4 : {
 			'@com.sap.vocabularies.Communication.v1.Contact' : {
 				"n" : {
-					"suffix": {
+					"suffix" : {
 						"$Path" : "Bar"
 					}
 				}
@@ -957,22 +957,22 @@ sap.ui.require([
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Contact" : {
-						"adr": {
-							"code": { "$Path": "P19" },
-							"country": { "$Path": "P17" },
-							"locality": { "$Path": "P15" },
-							"pobox": { "$Path": "P20" },
-							"region": { "$Path": "P18" },
-							"street": { "$Path": "P16" }
+						"adr" : {
+							"code" : { "$Path" : "P19" },
+							"country" : { "$Path" : "P17" },
+							"locality" : { "$Path" : "P15" },
+							"pobox" : { "$Path" : "P20" },
+							"region" : { "$Path" : "P18" },
+							"street" : { "$Path" : "P16" }
 						},
 						"bday" : { "$Path" : "P14" },
 						"fn" : { "$Path" : "P01" },
 						"n" : {
-							"given": { "$Path" : "P02" },
-							"additional": { "$Path" : "P03" },
-							"surname": { "$Path" : "P04" },
-							"prefix": { "$Path" : "P06" },
-							"suffix": { "$Path" : "P07" }
+							"given" : { "$Path" : "P02" },
+							"additional" : { "$Path" : "P03" },
+							"surname" : { "$Path" : "P04" },
+							"prefix" : { "$Path" : "P06" },
+							"suffix" : { "$Path" : "P07" }
 						},
 						"nickname" : { "$Path" : "P05" },
 						"note" : { "$Path" : "P08" },
@@ -1030,7 +1030,7 @@ sap.ui.require([
 					"@com.sap.vocabularies.Communication.v1.Contact" : {
 						"tel" : [{
 							"type" : {
-								"EnumMember":
+								"EnumMember" :
 									"com.sap.vocabularies.Communication.v1.PhoneType/cell "
 									+ "com.sap.vocabularies.Communication.v1.PhoneType/work"
 							},
@@ -1058,7 +1058,7 @@ sap.ui.require([
 					"@com.sap.vocabularies.Communication.v1.Contact" : {
 						"address" : [{
 							"type" : {
-								"EnumMember":
+								"EnumMember" :
 									"com.sap.vocabularies.Communication.v1.ContactInformationType/work "
 									+ "com.sap.vocabularies.Communication.v1.ContactInformationType/preferred "
 									+ "com.sap.vocabularies.Communication.v1.ContactInformationType/home"
@@ -1116,8 +1116,8 @@ sap.ui.require([
 					"@com.sap.vocabularies.Communication.v1.Contact" : {
 						"address" : [{
 							uri : {"$Path" : "P01"},
-							"type": {
-								"EnumMember": "com.sap.vocabularies.Communication.v1.ContactInformationType/work"
+							"type" : {
+								"EnumMember" : "com.sap.vocabularies.Communication.v1.ContactInformationType/work"
 							}
 						}]
 					}
@@ -1148,7 +1148,7 @@ sap.ui.require([
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Event" : {
-						"dtstart": {"$Path" : "P01"},
+						"dtstart" : {"$Path" : "P01"},
 						"dtend" : { "$Path" : "P02" },
 						"duration" : { "$Path" : "P03" },
 						"class" : { "$Path" : "P04" },
@@ -1177,7 +1177,7 @@ sap.ui.require([
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Task" : {
-						"due": {"$Path" : "P01"},
+						"due" : {"$Path" : "P01"},
 						"completed" : { "$Path" : "P02" },
 						"percentcomplete" : { "$Path" : "P03" },
 						"priority" : { "$Path" : "P04" }
@@ -1202,7 +1202,7 @@ sap.ui.require([
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Message" : {
-						"from": {"$Path" : "P01"},
+						"from" : {"$Path" : "P01"},
 						"sender" : { "$Path" : "P02" },
 						"subject" : { "$Path" : "P03" },
 						"body" : { "$Path" : "P04" },
@@ -1899,13 +1899,13 @@ sap.ui.require([
 						"$NavigationPropertyPath" : "ConflictB"
 					}]
 				},
-				"@Org.OData.Capabilities.V1.NavigationRestrictions": {
-					"RestrictedProperties": [{
-						"NavigationProperty": {
-							"$NavigationPropertyPath": "FilterableFalse"
+				"@Org.OData.Capabilities.V1.NavigationRestrictions" : {
+					"RestrictedProperties" : [{
+						"NavigationProperty" : {
+							"$NavigationPropertyPath" : "FilterableFalse"
 						},
-						"FilterRestrictions": {
-							"Filterable": false
+						"FilterRestrictions" : {
+							"Filterable" : false
 						}
 					}]
 				},
@@ -1989,11 +1989,11 @@ sap.ui.require([
 				"GWSAMPLE_BASIC.0001." : {
 					"$Annotations" : {
 						"GWSAMPLE_BASIC.0001.BusinessPartner/Computed" : {
-							"@com.sap.vocabularies.Common.v1.Label": "Computed",
+							"@com.sap.vocabularies.Common.v1.Label" : "Computed",
 							"@Org.OData.Core.V1.Computed" : true
 						},
 						"GWSAMPLE_BASIC.0001.BusinessPartner/Immutable" : {
-							"@com.sap.vocabularies.Common.v1.Label": "Immutable",
+							"@com.sap.vocabularies.Common.v1.Label" : "Immutable",
 							"@Org.OData.Core.V1.Immutable" : true
 						}
 					},
@@ -2067,61 +2067,61 @@ sap.ui.require([
 					</EntityType>\
 				</Schema>',
 			oExpectedResult = {
-				"GWSAMPLE_BASIC.0001.": {
-					"$Annotations": {
-						"GWSAMPLE_BASIC.0001.Product/Depth": {
-							"@Org.OData.Measures.V1.Unit": {
-								"$Path": "DepthUnit"
+				"GWSAMPLE_BASIC.0001." : {
+					"$Annotations" : {
+						"GWSAMPLE_BASIC.0001.Product/Depth" : {
+							"@Org.OData.Measures.V1.Unit" : {
+								"$Path" : "DepthUnit"
 							},
-							"@com.sap.vocabularies.Common.v1.Label": "Depth"
+							"@com.sap.vocabularies.Common.v1.Label" : "Depth"
 						},
-						"GWSAMPLE_BASIC.0001.Product/GrossWeight": {
-							"@Org.OData.Measures.V1.Unit": {
-								"$Path": "Parts/WeightUnit"
+						"GWSAMPLE_BASIC.0001.Product/GrossWeight" : {
+							"@Org.OData.Measures.V1.Unit" : {
+								"$Path" : "Parts/WeightUnit"
 							}
 						},
-						"GWSAMPLE_BASIC.0001.Product/PackagingWeight": {
-							"@Org.OData.Measures.V1.Unit": {
-								"$Path": "toMeasure/Parts/WeightUnit"
+						"GWSAMPLE_BASIC.0001.Product/PackagingWeight" : {
+							"@Org.OData.Measures.V1.Unit" : {
+								"$Path" : "toMeasure/Parts/WeightUnit"
 							},
-							"@com.sap.vocabularies.Common.v1.Label": "Packaging Weight"
+							"@com.sap.vocabularies.Common.v1.Label" : "Packaging Weight"
 						},
-						"GWSAMPLE_BASIC.0001.Product/Price": {
-							"@Org.OData.Measures.V1.ISOCurrency": {
-								"$Path": "PriceCurrency"
+						"GWSAMPLE_BASIC.0001.Product/Price" : {
+							"@Org.OData.Measures.V1.ISOCurrency" : {
+								"$Path" : "PriceCurrency"
 							}
 						},
-						"GWSAMPLE_BASIC.0001.Product/NetPrice": {
-							"@Org.OData.Measures.V1.ISOCurrency": {
-								"$Path": "Foo/Bar"
+						"GWSAMPLE_BASIC.0001.Product/NetPrice" : {
+							"@Org.OData.Measures.V1.ISOCurrency" : {
+								"$Path" : "Foo/Bar"
 							}
 						},
-						"GWSAMPLE_BASIC.0001.CT_Parts/Weight": {
-							"@Org.OData.Measures.V1.Unit": {
-								"$Path": "WeightUnit"
+						"GWSAMPLE_BASIC.0001.CT_Parts/Weight" : {
+							"@Org.OData.Measures.V1.Unit" : {
+								"$Path" : "WeightUnit"
 							}
 						},
-						"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit1": {
-							"@com.sap.vocabularies.Common.v1.Label": "Weight Missing Unit"
+						"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit1" : {
+							"@com.sap.vocabularies.Common.v1.Label" : "Weight Missing Unit"
 						},
-						"GWSAMPLE_BASIC.0001.Product/NetWeight": {
-							"@Org.OData.Measures.V1.Unit": {
-								"$Path": "toMeasure/WeightUnit"
+						"GWSAMPLE_BASIC.0001.Product/NetWeight" : {
+							"@Org.OData.Measures.V1.Unit" : {
+								"$Path" : "toMeasure/WeightUnit"
 							},
-							"@com.sap.vocabularies.Common.v1.Label": "Net Weight"
+							"@com.sap.vocabularies.Common.v1.Label" : "Net Weight"
 						}
 					},
-					"$kind": "Schema"
+					"$kind" : "Schema"
 				},
-				"GWSAMPLE_BASIC.0002.": {
-					"$Annotations": {
-						"GWSAMPLE_BASIC.0002.Product/Depth": {
-							"@Org.OData.Measures.V1.Unit": {
-								"$Path": "DepthUnit"
+				"GWSAMPLE_BASIC.0002." : {
+					"$Annotations" : {
+						"GWSAMPLE_BASIC.0002.Product/Depth" : {
+							"@Org.OData.Measures.V1.Unit" : {
+								"$Path" : "DepthUnit"
 							}
 						}
 					},
-					"$kind": "Schema"
+					"$kind" : "Schema"
 				}
 			};
 

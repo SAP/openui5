@@ -8,6 +8,8 @@ sap.ui.define([
 ], function (SyncPromise, _Helper) {
 	"use strict";
 
+	var sModuleName = "sap.ui.model.odata.v4.ODataBinding";
+
 	/**
 	 * A mixin for all OData V4 bindings.
 	 *
@@ -87,8 +89,8 @@ sap.ui.define([
 		oCachePromise["catch"](function (oError) {
 			//Note: this may also happen if the promise to read data for the canonical path's
 			// key predicate is rejected with a canceled error
-			that.oModel.reportError("Failed to create cache for binding " + that,
-				"sap.ui.model.odata.v4.ODataBinding", oError);
+			that.oModel.reportError("Failed to create cache for binding " + that, sModuleName,
+				oError);
 		});
 		this.oCachePromise = oCachePromise;
 		this.oFetchCacheCallToken = oCallToken;
@@ -100,7 +102,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context instance to be used, must be undefined for absolute bindings
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which resolves with the query options to create the cache for this binding,
 	 *   or with <code>undefined</code> if no cache is to be created
 	 *
@@ -191,6 +193,50 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the relative path for a given absolute path by stripping off the binding's resolved
+	 * path. Returns relative paths unchanged.
+	 * Note that the resulting path may start with a key predicate.
+	 *
+	 * Example: (The binding's resolved path is "/foo/bar"):
+	 * baz -> baz
+	 * /foo/bar/baz -> baz
+	 * /foo/bar('baz') -> ('baz')
+	 * /foo -> undefined if the binding is relative, an Error is thrown otherwise
+	 *
+	 * @param {string} sPath
+	 *   A path
+	 * @returns {string}
+	 *   The path relative to the binding's path or <code>undefined</code> if the path is not a sub
+	 *   path and the binding is relative
+	 * @throws {Error}
+	 *   If the binding is absolute and the path does not start with the binding's path
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.getRelativePath = function (sPath) {
+		var sResolvedPath;
+
+		if (sPath[0] === "/") {
+			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+
+			if (sPath.indexOf(sResolvedPath) === 0) {
+				sPath = sPath.slice(sResolvedPath.length);
+
+				if (sPath[0] === "/") {
+					sPath = sPath.slice(1);
+				}
+			} else if (this.bRelative) {
+				// this path doesn't match, but some parent binding might possibly fulfill it
+				sPath = undefined;
+			} else {
+				// this path definitely does not match
+				throw new Error(sPath + ": invalid path, must start with " + this.sPath);
+			}
+		}
+		return sPath;
+	};
+
+	/**
 	 * Returns the group ID of the binding that is used for update requests.
 	 *
 	 * @returns {string}
@@ -231,21 +277,15 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.hasPendingChangesForPath = function (sPath) {
-		var oCache;
+		var oPromise = this.withCache(function (oCache, sCachePath) {
+				return oCache.hasPendingChangesForPath(sCachePath);
+			}, sPath).catch(function (oError) {
+				jQuery.sap.log.error("Error in hasPendingChangesForPath", oError, sModuleName);
+				return false;
+			});
 
-		if (!this.oCachePromise.isFulfilled()) {
-			// No pending changes because create and update are not allowed
-			return false;
-		}
-
-		oCache = this.oCachePromise.getResult();
-		if (oCache) {
-			return oCache.hasPendingChangesForPath(sPath);
-		}
-		if (this.oContext && this.oContext.hasPendingChangesForPath) {
-			return this.oContext.hasPendingChangesForPath(_Helper.buildPath(this.sPath, sPath));
-		}
-		return false;
+		// If the cache is still being determined, there can be no changes in it
+		return oPromise.isFulfilled() ? oPromise.getResult() : false;
 	};
 
 	/**
@@ -400,18 +440,15 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.resetChangesForPath = function (sPath) {
-		var oCache;
+		var oPromise = this.withCache(function (oCache, sCachePath) {
+				oCache.resetChangesForPath(sCachePath);
+			}, sPath);
 
-		if (!this.oCachePromise.isFulfilled()) {
-			// No pending changes because create and update are not allowed
-			return;
-		}
-
-		oCache = this.oCachePromise.getResult();
-		if (oCache) {
-			oCache.resetChangesForPath(sPath);
-		} else if (this.oContext && this.oContext.resetChangesForPath) {
-			this.oContext.resetChangesForPath(_Helper.buildPath(this.sPath, sPath));
+		oPromise.catch(function (oError) {
+			jQuery.sap.log.error("Error in resetChangesForPath", oError, sModuleName);
+		});
+		if (oPromise.isRejected()) {
+			throw oPromise.getResult();
 		}
 	};
 
@@ -481,6 +518,42 @@ sap.ui.define([
 	// @override sap.ui.model.Binding#suspend
 	ODataBinding.prototype.suspend = function () {
 		throw new Error("Unsupported operation: suspend");
+	};
+
+	/**
+	 * Calls the given processor with the cache containing this binding's data, the path relative
+	 * to the cache and the cache-owning binding. Adjusts the path if the cache is owned by a parent
+	 * binding.
+	 *
+	 * @param {function} fnProcessor The processor
+	 * @param {string} [sPath=""] The path; either relative to the binding or absolute containing
+	 *   the cache's request path (it will become absolute when forwarding the request to the
+	 *   parent binding)
+	 * @returns {sap.ui.base.SyncPromise} A sync promise that is resolved with either the result of
+	 *   the processor or <code>undefined</code> if there is no cache for this binding currently
+	 */
+	ODataBinding.prototype.withCache = function (fnProcessor, sPath) {
+		var sRelativePath,
+			that = this;
+
+		sPath = sPath || "";
+		return this.oCachePromise.then(function (oCache) {
+			if (oCache) {
+				sRelativePath = that.getRelativePath(sPath);
+				if (sRelativePath !== undefined) {
+					return fnProcessor(oCache, sRelativePath, that);
+				}
+				// the path did not match, try to find it in the parent cache
+			} else if (that.oOperation) {
+				return undefined; // no cache yet
+			}
+			if (that.oContext && that.oContext.withCache) {
+				return that.oContext.withCache(fnProcessor,
+					sPath[0] === "/" ? sPath : _Helper.buildPath(that.sPath, sPath));
+			}
+			// no context or base context -> no cache (yet)
+			return undefined;
+		});
 	};
 
 	return function (oPrototype) {

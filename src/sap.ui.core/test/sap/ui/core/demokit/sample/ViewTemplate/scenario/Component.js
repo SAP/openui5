@@ -126,6 +126,7 @@ sap.ui.define([
 			});
 
 			return sap.ui.view({
+					async : true,
 					type : ViewType.XML,
 					viewName : "sap.ui.core.sample.ViewTemplate.scenario.Main",
 					models : oModel

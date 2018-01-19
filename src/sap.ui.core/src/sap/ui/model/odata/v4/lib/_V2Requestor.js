@@ -168,22 +168,59 @@ sap.ui.define([
 			that = this;
 
 		/*
-		 * Converts the given literal to V2 syntax.
+		 * Converts the given literal operand to V2 syntax using the type of the other operand.
 		 * @param {object} oLiteral The token for the literal
-		 * @param {string} sPath The path as given in the other operand
+		 * @param {object} oOtherOperand The token for the other operand
 		 */
-		function convertLiteral(oLiteral, sPath) {
+		function convertLiteral(oLiteral, oOtherOperand) {
 			var vModelValue,
-				oProperty = that.oModelInterface.fnFetchMetadata("/" + sResourcePath + "/" + sPath)
-					.getResult();
+				oTypeInfo = getType(oOtherOperand);
 
-			if (!oProperty) {
-				throw new Error("Invalid filter path: " + sPath);
+			if (oTypeInfo.$Type !== "Edm.String") {
+				vModelValue = _Helper.parseLiteral(oLiteral.value, oTypeInfo.$Type, oTypeInfo.path);
+				oLiteral.value = that.formatPropertyAsLiteral(vModelValue, oTypeInfo);
 			}
-			if (oProperty.$Type !== "Edm.String") {
-				vModelValue = _Helper.parseLiteral(oLiteral.value, oProperty.$Type, sPath);
-				oLiteral.value = that.formatPropertyAsLiteral(vModelValue, oProperty);
+		}
+
+		/*
+		 * Throws an error that the conversion to V2 failed.
+		 * @param {object} oNode the node at which it failed
+		 * @param {string} sMessage The error message
+		 */
+		function error(oNode, sMessage) {
+			throw new Error("Cannot convert filter to V2, " + sMessage + " at " + oNode.at + ": "
+				+ sFilter);
+		}
+
+		/*
+		 * Determines the type of a node.
+		 * @param {object} oNode A node
+		 * @returns {object} A pseudo property with path, $Type (and poss. $v2Type) or undefined if
+		 *   the type cannot be determined
+		 */
+		function getType(oNode) {
+			var oProperty;
+
+			if (oNode.type) {
+				return {
+					$Type : oNode.type
+				};
 			}
+			if (oNode.id === "PATH") {
+				oProperty = that.oModelInterface
+					.fnFetchMetadata("/" + sResourcePath + "/" + oNode.value).getResult();
+				if (!oProperty) {
+					throw new Error("Invalid filter path: " + oNode.value);
+				}
+				return {
+					path : oNode.value,
+					$Type : oProperty.$Type,
+					$v2Type : oProperty.$v2Type
+				};
+			}
+			// oNode must have id "FUNCTION" and type undefined here. So it must be either ceiling,
+			// floor or round and the return type is determined from the first and only parameter.
+			return getType(oNode.parameters[0]);
 		}
 
 		/*
@@ -192,20 +229,28 @@ sap.ui.define([
 		 */
 		function visitNode(oNode) {
 			if (oNode) {
-				if (oNode.left && oNode.right) {
-					if (oNode.right.id === "VALUE") {
-						if (oNode.left.id === "VALUE") {
-							throw new Error(
-								"Cannot convert filter for V2, saw literals on both sides of '"
-								+ oNode.id + "' at " + oNode.at + ": " + sFilter);
-						}
-						convertLiteral(oNode.right, oNode.left.value);
-					} else if (oNode.left.id === "VALUE") {
-						convertLiteral(oNode.left, oNode.right.value);
-					}
+				if (oNode.id === "VALUE" && oNode.ambiguous) {
+					error(oNode, "ambiguous type for the literal");
 				}
 				visitNode(oNode.left);
 				visitNode(oNode.right);
+				if (oNode.parameters) {
+					if (oNode.value === "contains") {
+						oNode.value = "substringof";
+						oNode.parameters.push(oNode.parameters.shift()); // swap the parameters
+					}
+					oNode.parameters.forEach(visitNode);
+				}
+				if (oNode.left && oNode.right) {
+					if (oNode.left.id === "VALUE") {
+						if (oNode.right.id === "VALUE") {
+							error(oNode, "saw literals on both sides of '" + oNode.id + "'");
+						}
+						convertLiteral(oNode.left, oNode.right);
+					} else if (oNode.right.id === "VALUE") {
+						convertLiteral(oNode.right, oNode.left);
+					}
+				}
 			}
 		}
 
@@ -378,9 +423,10 @@ sap.ui.define([
 	 *
 	 * @param {object} oResponsePayload
 	 *   The OData V2 response payload
-	 * @returns {SyncPromise}
-	 *   A promise which resolves with the OData V4 response payload or rejects with an error if
-	 *   the V2 response cannot be converted
+	 * @returns {object}
+	 *   The OData V4 response payload
+	 * @throws {Error}
+	 *   If the OData V2 response payload cannot be converted
 	 */
 	_V2Requestor.prototype.doConvertResponse = function (oResponsePayload) {
 		var oPayload = this.convertNonPrimitive(oResponsePayload.d);
@@ -603,8 +649,8 @@ sap.ui.define([
 	 * Returns a sync promise that is resolved when the requestor is ready to be used. Waits for the
 	 * metadata to be available.
 	 *
-	 * @returns {SyncPromise} A sync promise that is resolved with no result when the metadata is
-	 * available
+	 * @returns {sap.ui.base.SyncPromise} A sync promise that is resolved with no result when the
+	 * metadata is available
 	 */
 	_V2Requestor.prototype.ready = function () {
 		return this.oModelInterface.fnFetchEntityContainer().then(function () {});

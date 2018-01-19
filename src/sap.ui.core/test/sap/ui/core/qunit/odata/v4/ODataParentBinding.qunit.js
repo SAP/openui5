@@ -98,112 +98,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[undefined, "up"].forEach(function (sGroupId) {
-		QUnit.test("updateValue: binding w/ cache", function (assert) {
-			var oCache = {
-					update : function () {}
-				},
-				oBinding = new ODataParentBinding({
-					oCachePromise : SyncPromise.resolve(oCache),
-					sUpdateGroupId : "myUpdateGroup"
-				}),
-				fnErrorCallback = function () {},
-				sPathInCache = "SO_2_SOITEM/42",
-				sAbsolutePath = "/resolved/binding/path/" + sPathInCache,
-				oResult = {};
-
-			this.mock(oBinding).expects("getRelativePath")
-				.withExactArgs(sAbsolutePath).returns(sPathInCache);
-			this.mock(oCache).expects("update")
-				.withExactArgs(sGroupId || "myUpdateGroup", "bar", Math.PI,
-					sinon.match.same(fnErrorCallback), "edit('URL')", sPathInCache, "unitPath")
-				.returns(Promise.resolve(oResult));
-
-			// code under test
-			return oBinding.updateValue(sGroupId, "bar", Math.PI, fnErrorCallback, "edit('URL')",
-					sAbsolutePath, "unitPath")
-				.then(function (oResult0) {
-					assert.strictEqual(oResult0, oResult);
-				});
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("updateValue: absolute binding, patching root entity", function (assert) {
-		var oCache = {
-				update : function () {}
-			},
-			oBinding = new ODataParentBinding({
-				oCachePromise : SyncPromise.resolve(oCache),
-				sPath : "/absolute",
-				bRelative : false,
-				sUpdateGroupId : "myUpdateGroup"
-			}),
-			fnErrorCallback = function () {},
-			oResult = {};
-
-		this.mock(oBinding).expects("getRelativePath").withExactArgs(oBinding.sPath).returns("");
-		this.mock(oCache).expects("update")
-			.withExactArgs("group", "bar", Math.PI, sinon.match.same(fnErrorCallback),
-				"edit('URL')", "", undefined)
-			.returns(Promise.resolve(oResult));
-
-		// code under test
-		return oBinding.updateValue("group", "bar", Math.PI, fnErrorCallback, "edit('URL')",
-				oBinding.sPath)
-			.then(function (oResult0) {
-				assert.strictEqual(oResult0, oResult);
-			});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("updateValue: cache is not yet available", function (assert) {
-		var oCache = {
-				update : function () {}
-			},
-			oBinding = new ODataParentBinding({
-				oCachePromise : SyncPromise.resolve(Promise.resolve(oCache))
-			});
-
-		this.mock(oCache).expects("update").never();
-
-		// code under test
-		assert.throws(function () {
-			oBinding.updateValue("myUpdateGroup", "bar", Math.PI, "edit('URL')", "SO_2_SOITEM/42");
-		}, new Error("PATCH request not allowed"));
-	});
-
-	//*********************************************************************************************
-	QUnit.test("updateValue: relative binding w/o cache", function (assert) {
-		var oParentBinding = new ODataParentBinding(),
-			oBinding = new ODataParentBinding({
-				oCachePromise : SyncPromise.resolve(),
-				oContext : {
-					getBinding : function () { return oParentBinding; }
-				},
-				sPath : "PRODUCT_2_BP",
-				bRelative : true
-			}),
-			fnErrorCallback = function () {},
-			sPath = "/BusinessPartnerList/0/BP_2_XYZ/42",
-			oResult = {};
-
-		this.mock(oParentBinding).expects("updateValue")
-			.withExactArgs("up", "bar", Math.PI, sinon.match.same(fnErrorCallback),"edit('URL')",
-				sPath, "unitPath")
-			.returns(Promise.resolve(oResult));
-
-		this.mock(oBinding).expects("getUpdateGroupId").never();
-
-		// code under test
-		return oBinding.updateValue("up", "bar", Math.PI, fnErrorCallback,"edit('URL')", sPath,
-				"unitPath")
-			.then(function (oResult0) {
-				assert.strictEqual(oResult0, oResult);
-			});
-	});
-
-	//*********************************************************************************************
 	[{ // $select=Bar
 		options : {
 			$select : "Bar"
@@ -1154,17 +1048,18 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		SyncPromise.reject({}),
-		SyncPromise.resolve({ // cache sent read request
+		SyncPromise.reject.bind(SyncPromise, {}),
+		SyncPromise.resolve.bind(SyncPromise, { // cache sent read request
 			bSentReadRequest : true,
 			setQueryOptions : function () {}
 		})
-	].forEach(function (oCachePromise, i) {
+	].forEach(function (fnCachePromise, i) {
 		QUnit.test("fetchIfChildCanUseCache, immutable cache, " + i, function (assert) {
 			var oMetaModel = {
 					fetchObject : function () {},
 					getMetaPath : function () {}
 				},
+				oCachePromise = fnCachePromise(),
 				oBinding = new ODataParentBinding({
 					mAggregatedQueryOptions : {},
 					oCachePromise : oCachePromise,
@@ -1207,6 +1102,7 @@ sap.ui.require([
 					assert.strictEqual(oBinding.aChildCanUseCachePromises[0], oPromise);
 					assert.strictEqual(oBinding.oCachePromise.getResult(),
 						oCachePromise.getResult());
+					oCachePromise.catch(function () {}); // avoid "Uncaught (in promise)"
 				});
 			}
 		);
@@ -1542,7 +1438,7 @@ sap.ui.require([
 
 		this.mock(oBinding.oCachePromise.getResult()).expects("_delete")
 			.withExactArgs("$direct", "EMPLOYEES('1')", "42", sinon.match.same(fnCallback))
-			.returns(Promise.resolve());
+			.returns(SyncPromise.resolve());
 		oModelMock.expects("isAutoGroup").withExactArgs("$direct").returns(false);
 		oModelMock.expects("isDirectGroup").withExactArgs("$direct").returns(true);
 
@@ -1783,8 +1679,8 @@ sap.ui.require([
 					oCachePromise : SyncPromise.resolve(oCache)
 				}),
 				oCreateResult = {},
-				oCreatePromise = bCancel ? Promise.reject(oCreateError) : Promise.resolve(
-					oCreateResult),
+				oCreatePromise = SyncPromise.resolve(
+					bCancel ? Promise.reject(oCreateError) : oCreateResult),
 				fnCancel = function () {},
 				oInitialData = {};
 
@@ -1868,7 +1764,7 @@ sap.ui.require([
 				.withExactArgs("updateGroupId", vPostPath, "", sinon.match.same(oInitialData),
 					sinon.match.same(fnCancel), /*fnErrorCallback*/sinon.match.func)
 				// we only want to observe fnErrorCallback, hence we neither resolve, nor reject
-				.returns(new Promise(function () {}));
+				.returns(new SyncPromise(function () {}));
 
 			// code under test
 			oBinding.createInCache("updateGroupId", vPostPath, "", oInitialData, fnCancel);
@@ -1964,35 +1860,5 @@ sap.ui.require([
 
 			assert.deepEqual(oBinding.mAggregatedQueryOptions, oFixture.result);
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("getRelativePath", function (assert) {
-		var oAbsoluteBinding = new ODataParentBinding({
-				oContext : {},
-				oModel : {resolve : function () {}},
-				sPath : "/foo"
-			}), oRelativeBinding = new ODataParentBinding({
-				oContext : {},
-				oModel : {resolve : function () {}},
-				sPath : "bar",
-				bRelative : true
-			});
-
-		this.mock(oRelativeBinding.oModel).expects("resolve").exactly(5)
-			.withExactArgs("bar", sinon.match.same(oRelativeBinding.oContext)).returns("/foo/bar");
-
-		assert.strictEqual(oRelativeBinding.getRelativePath("/foo/bar/baz"), "baz");
-		assert.strictEqual(oRelativeBinding.getRelativePath("/foo/bar('baz')"), "('baz')");
-		assert.strictEqual(oRelativeBinding.getRelativePath("/foo"), undefined);
-		assert.strictEqual(oRelativeBinding.getRelativePath("/foo"), undefined);
-		assert.strictEqual(oRelativeBinding.getRelativePath("/wrong"), undefined,
-			"no error, binding must pass on to the parent binding for a better error message");
-
-		this.mock(oAbsoluteBinding.oModel).expects("resolve")
-			.withExactArgs("/foo", sinon.match.same(oAbsoluteBinding.oContext)).returns("/foo");
-		assert.throws(function () {
-			oAbsoluteBinding.getRelativePath("/wrong");
-		}, new Error("/wrong: invalid path, must start with /foo"));
 	});
 });

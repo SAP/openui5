@@ -3,8 +3,9 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
-	"sap/ui/base/SyncPromise"
-], function (jQuery, SyncPromise) {
+	"sap/ui/base/SyncPromise",
+	"sap/ui/test/TestUtils"
+], function (jQuery, SyncPromise, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks:[1,5], no-warning-comments: 0 */
 	"use strict";
@@ -33,22 +34,25 @@ sap.ui.require([
 		assert.strictEqual(oSyncPromise.isFulfilled(), false);
 		assert.strictEqual(oSyncPromise.isPending(), true);
 		assert.strictEqual(oSyncPromise.isRejected(), false);
-		assert.strictEqual(oSyncPromise.getResult(), oSyncPromise);
+		assert.strictEqual(typeof oSyncPromise.getResult().then, "function",
+			"pending on a thenable: " + oSyncPromise.getResult());
 	}
 
 	function assertRejected(assert, oSyncPromise, vExpectedReason) {
 		assert.strictEqual(oSyncPromise.isFulfilled(), false);
 		assert.strictEqual(oSyncPromise.isPending(), false);
 		assert.strictEqual(oSyncPromise.isRejected(), true);
-		assert.strictEqual(oSyncPromise.getResult(), vExpectedReason);
-		oSyncPromise.catch(function (vReason) {
-			assert.strictEqual(vReason, vExpectedReason);
-		});
-		oSyncPromise.then(function () {
-			assert.ok(false, "unexpected success");
-		}, function (vReason) {
-			assert.strictEqual(vReason, vExpectedReason);
-		});
+		if (arguments.length > 2) {
+			assert.strictEqual(oSyncPromise.getResult(), vExpectedReason);
+			oSyncPromise.catch(function (vReason) {
+				assert.strictEqual(vReason, vExpectedReason);
+			});
+			oSyncPromise.then(function () {
+				assert.ok(false, "unexpected success");
+			}, function (vReason) {
+				assert.strictEqual(vReason, vExpectedReason);
+			});
+		}
 	}
 
 	//*********************************************************************************************
@@ -57,15 +61,19 @@ sap.ui.require([
 			this.oLogMock = sinon.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
+			// save optional listener
+			this.listener = SyncPromise.listener;
 		},
 
 		afterEach : function () {
 			this.oLogMock.verify();
+			// restore optional listener
+			SyncPromise.listener = this.listener;
 		}
 	});
 
 	//*********************************************************************************************
-	[42, undefined, {then : 42}, {then : function () {}}, [SyncPromise.resolve()]
+	[42, undefined, {then : 42}, [SyncPromise.resolve()]
 	].forEach(function (vResult) {
 		QUnit.test("SyncPromise.resolve with non-Promise value: " + vResult, function (assert) {
 			assertFulfilled(assert, SyncPromise.resolve(vResult), vResult);
@@ -124,6 +132,8 @@ sap.ui.require([
 			assert.strictEqual(sResult, oNewSyncPromise.getResult(), "*42*");
 		});
 	});
+	//TODO make sure SyncPromise#then returns new instance?
+	// https://promisesaplus.com/#notes 3.3. allows to return same instance
 
 	//*********************************************************************************************
 	[
@@ -165,6 +175,7 @@ sap.ui.require([
 					? oSyncPromise.then(fail, callback)
 					: oSyncPromise.then(callback, fail);
 
+				assertPending(assert, oNewSyncPromise);
 				assert.notStrictEqual(oNewSyncPromise, oResult, "'then' returns a new promise");
 
 				return oNewSyncPromise.then(function (vResult) {
@@ -209,6 +220,8 @@ sap.ui.require([
 
 				if (oFixture.thenReject) {
 					assertRejected(assert, oNewSyncPromise, oResult);
+					// avoid "Uncaught (in promise)"
+					assertRejected(assert, oThenSyncPromise, oResult);
 				} else {
 					assertFulfilled(assert, oNewSyncPromise, oResult);
 				}
@@ -294,11 +307,37 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("SyncPromise.all: simple values", function (assert) {
 		assertFulfilled(assert, SyncPromise.all([]), []);
+		assertFulfilled(assert, SyncPromise.all([null]), [null]);
 		assertFulfilled(assert, SyncPromise.all([42]), [42]);
 		assertFulfilled(assert, SyncPromise.all([SyncPromise.resolve(42)]), [42]);
 
+		(function () {
+			// not exactly an array (Note: checkEqual() currently cannot handle this)
+			assertFulfilled(assert, SyncPromise.all(arguments), [42]/*arguments*/);
+		})(42);
+
+		// "An iterable object such as an Array or String."
+		assertFulfilled(assert, SyncPromise.all("42"), ["4", "2"]);
+
 		return SyncPromise.all([42]).then(function (aAnswers) {
 			assert.deepEqual(aAnswers, [42]);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SyncPromise.all: performance", function (assert) {
+		this.mock(SyncPromise).expects("resolve").never();
+
+		assertFulfilled(assert, SyncPromise.all("42"), ["4", "2"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SyncPromise.all: missing array", function (assert) {
+		var oSyncPromise = SyncPromise.all();
+
+		assertRejected(assert, oSyncPromise);
+		oSyncPromise.catch(function (vReason) {
+			assert.ok(vReason instanceof TypeError);
 		});
 	});
 
@@ -441,7 +480,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("toString", function (assert) {
-		var oPromise;
+		var oError = new Error("rejected"),
+			oPromise;
 
 		assert.strictEqual(SyncPromise.resolve("/EMPLOYEES").toString(), "/EMPLOYEES");
 		assert.strictEqual(SyncPromise.resolve().toString(), "undefined");
@@ -454,11 +494,13 @@ sap.ui.require([
 				true
 			]).toString(), "42,Foo,true");
 
-		assert.strictEqual(SyncPromise.reject(new Error("rejected")).toString(),
-			"Error: rejected");
+		oPromise = SyncPromise.reject(oError);
+		assert.strictEqual(oPromise.toString(), "Error: rejected");
+		// avoid "Uncaught (in promise)"
+		assertRejected(assert, oPromise, oError);
 
-		oPromise = SyncPromise.resolve(Promise.reject(new Error("rejected")));
 
+		oPromise = SyncPromise.resolve(Promise.reject(oError));
 		assert.strictEqual(oPromise.toString(), "SyncPromise: pending");
 		return oPromise.catch(function () {
 			assert.strictEqual(oPromise.toString(), "Error: rejected");
@@ -495,4 +537,277 @@ sap.ui.require([
 		assertFulfilled(assert, oNewSyncPromise, "OK");
 		assert.strictEqual(bCalled, true, "called synchronously");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("new SyncPromise", function (assert) {
+		var oFulfilledPromise,
+			oPendingPromise,
+			oPromise = Promise.resolve(42),
+			vReason = {};
+
+		assertPending(assert, new SyncPromise(function (resolve, reject) {
+			return "ignored";
+		}));
+
+		oFulfilledPromise = new SyncPromise(function (resolve, reject) {
+			resolve("OK");
+			resolve("Unexpected");
+			reject("Unexpected");
+			return "ignored";
+		});
+		assertFulfilled(assert, oFulfilledPromise, "OK");
+
+		assertFulfilled(assert, new SyncPromise(function (resolve, reject) {
+			resolve(oFulfilledPromise);
+			throw new Error("ignored");
+		}), "OK");
+
+		assertRejected(assert, new SyncPromise(function (resolve, reject) {
+			reject(vReason);
+			resolve("Unexpected");
+			reject("Unexpected");
+			return "ignored";
+		}), vReason);
+
+		assertRejected(assert, new SyncPromise(function (resolve, reject) {
+			throw vReason;
+		}), vReason);
+
+		oPendingPromise = new SyncPromise(function (resolve, reject) {
+			resolve(oPromise);
+			return "ignored";
+		});
+		assertPending(assert, oPendingPromise);
+
+		return oPromise.then(function (vResult) {
+			assertFulfilled(assert, oPendingPromise, vResult);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("A promise cannot be resolved with itself.", function (assert) {
+		var fnResolve,
+			oSyncPromise = new SyncPromise(function (resolve, reject) {
+				fnResolve = resolve;
+			});
+
+		assertPending(assert, oSyncPromise);
+
+		// code under test
+		fnResolve(oSyncPromise);
+
+		assertRejected(assert, oSyncPromise);
+		return oSyncPromise.catch(function (vReason) {
+			assert.ok(vReason instanceof TypeError);
+			// behavior for Promise varies:
+			// - Chrome: "Chaining cycle detected for promise #<Promise>"
+			// - Edge, IE: "You cannot resolve a promise with itself"
+			// - FF: "A promise cannot be resolved with itself."
+			assert.strictEqual(vReason.message, "A promise cannot be resolved with itself.");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Pending on native Promise", function (assert) {
+		var oEverPendingPromise = new Promise(function () {}),
+			oSyncPromise = new SyncPromise(function (resolve, reject) {
+				// Note: wrapping via resolve() must not make a difference here!
+				resolve(SyncPromise.resolve(oEverPendingPromise));
+			});
+
+		assertPending(assert, oSyncPromise);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Resolved, but not yet settled", function (assert) {
+		var oSyncPromise = new SyncPromise(function (resolve, reject) {
+				resolve(Promise.resolve(42));
+				resolve("Unexpected");
+				reject("Unexpected");
+			});
+
+		assertPending(assert, oSyncPromise);
+
+		return oSyncPromise.then(function (vResult) {
+			assert.strictEqual(vResult, 42);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("thenables: fulfilled", function (assert) {
+		var oThenable = {
+				then : function (resolve, reject) {
+					resolve(42);
+					resolve("Unexpected");
+					reject("Unexpected");
+				}
+			},
+			oSyncPromise = new SyncPromise(function (resolve, reject) {
+				resolve(oThenable);
+				resolve("Unexpected");
+				reject("Unexpected");
+			});
+
+		assertFulfilled(assert, oSyncPromise, 42);
+		assertFulfilled(assert, SyncPromise.all([oThenable]), [42]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("thenables: rejected", function (assert) {
+		var oThenable = {
+				then : function (resolve, reject) {
+					reject(42);
+					resolve("Unexpected");
+					reject("Unexpected");
+				}
+			},
+			oSyncPromise = new SyncPromise(function (resolve, reject) {
+				resolve(oThenable);
+				resolve("Unexpected");
+				reject("Unexpected");
+			});
+
+		assertRejected(assert, oSyncPromise, 42);
+		assertRejected(assert, SyncPromise.all([oThenable]), 42);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("thenables: cannot get 'then'", function (assert) {
+		var oError = new Error("This call intentionally failed"),
+			oThenable = Object.defineProperty({}, "then", {
+				get : function () {
+					throw oError;
+				}
+			}),
+			oSyncPromise = new SyncPromise(function (resolve, reject) {
+				resolve(oThenable);
+				resolve("Unexpected");
+				reject("Unexpected");
+			});
+
+		assertRejected(assert, oSyncPromise, oError);
+		assertRejected(assert, SyncPromise.all([oThenable]), oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("thenables: function", function (assert) {
+		var oSyncPromise,
+			fnThenable = function () {};
+
+		fnThenable.then = function (resolve, reject) {
+			resolve(42);
+			resolve("Unexpected");
+			reject("Unexpected");
+		};
+
+		oSyncPromise = new SyncPromise(function (resolve, reject) {
+			resolve(fnThenable);
+			resolve("Unexpected");
+			reject("Unexpected");
+		});
+
+		assertFulfilled(assert, oSyncPromise, 42);
+		assertFulfilled(assert, SyncPromise.all([fnThenable]), [42]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Pending on a thenable", function (assert) {
+		var oEverPendingThenable = {
+				then : function () {}
+			},
+			oSyncPromise = new SyncPromise(function (resolve, reject) {
+				// Note: wrapping via resolve() must not make a difference here!
+				resolve(SyncPromise.resolve(oEverPendingThenable));
+			});
+
+		assertPending(assert, oSyncPromise);
+		assertPending(assert, SyncPromise.all([oEverPendingThenable]));
+	});
+
+	//*********************************************************************************************
+//	QUnit.skip("Why does this hang?", function (assert) {
+//		// Note: looks like a QUnit issue, not a (Sync)Promise issue
+//		return Promise.all([
+//			SyncPromise.resolve()
+//		]); // Note: .then(function () {}) heals it!
+//	});
+
+	//*********************************************************************************************
+	QUnit.test("Uncaught (in promise): listener", function (assert) {
+		var oMock = this.mock(SyncPromise),
+			fnReject,
+			oSyncPromise = new SyncPromise(function (resolve, reject) {
+				fnReject = reject;
+			});
+
+		SyncPromise.listener = function () {};
+		oMock.expects("listener").withExactArgs(oSyncPromise, false);
+
+		// code under test
+		// Note: qunit.js cannot handle rejection with undefined reason!
+		fnReject(0);
+
+		oMock.expects("listener").withExactArgs(oSyncPromise, true);
+
+		// code under test
+		oSyncPromise.catch(function () {});
+
+		// code under test (must not call listener again)
+		oSyncPromise.catch(function () {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Uncaught (in promise): listen on rejected promises only", function (assert) {
+		var oSyncPromise = new SyncPromise(function () {});
+
+		SyncPromise.listener = function () {};
+		this.mock(SyncPromise).expects("listener").never();
+
+		// code under test
+		oSyncPromise.catch(function () {});
+
+		// code under test
+		SyncPromise.resolve().then(function () {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Uncaught (in promise): no listener", function (assert) {
+		delete SyncPromise.listener;
+
+		// code under test
+		return SyncPromise.reject(0).catch(function () {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Uncaught (in promise)", function (assert) {
+//		// Note: it's as simple as this...
+//		Promise.reject(42); // logs "Uncaught (in promise) 42" and this call's stack
+//
+//		var done = assert.async(),
+//			p = Promise.reject(23); // this logs an error which may later be removed ;-)
+//		setTimeout(function () {
+//			p.catch(function () {}); // it does not matter when you attach the "catch" handler
+//			done();
+//		}, 1000);
+
+		// Note: When a SyncPromise wraps a native Promise which is rejected, no native
+		// "Uncaught (in promise)" appears anymore!
+		return SyncPromise.all([
+			// code under test
+			SyncPromise.reject(0).catch(function () {}),
+			SyncPromise.resolve(Promise.reject(1)).catch(function () {}),
+			SyncPromise.resolve(Promise.reject(2)).then().catch(function () {}),
+			new SyncPromise(function (resolve, reject) {
+				resolve(SyncPromise.resolve(Promise.reject(3)));
+			}).catch(function () {}),
+			new SyncPromise(function (resolve, reject) {
+				resolve(SyncPromise.reject(4));
+			}).catch(function () {})
+		]);
+	});
 });
+//TODO Promise.race
+//TODO Promise.prototype.finally
+//TODO treat rejection via RangeError, ReferenceError, SyntaxError(?), TypeError, URIError specially?!
+// --> vReason instanceof Error && vReason.constructor !== Error
+// Error itself is often used during testing!

@@ -260,6 +260,42 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	["NOTGET", "GET"].forEach(function (sMethod, i) {
+		QUnit.test("request: wait for CSRF token if method is not GET, " + i, function (assert) {
+			var oPayload = {},
+				oPromise,
+				oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, {
+					fnGetGroupProperty : defaultGetGroupProperty
+				}),
+				oResult = {},
+				oSecurityTokenPromise = new Promise(function (fnResolve, fnReject) {
+					setTimeout(function () {
+						oRequestor.mHeaders["X-CSRF-Token"] = "abc123";
+						fnResolve();
+					}, 0);
+				});
+
+			// security token already requested by #refreshSecurityToken
+			oRequestor.oSecurityTokenPromise = oSecurityTokenPromise;
+
+			this.mock(jQuery).expects("ajax")
+				.withExactArgs(sServiceUrl + "Employees?foo=bar", {
+					data : JSON.stringify(oPayload),
+					headers : sinon.match({
+						"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
+						"X-CSRF-Token" : sMethod === "GET" ? "Fetch" : "abc123"
+					}),
+					method : sMethod
+				}).returns(createMock(assert, oResult, "OK"));
+
+			// code under test
+			oPromise = oRequestor.request(sMethod, "Employees?foo=bar", "$direct", {}, oPayload);
+
+			return Promise.all([oPromise, oSecurityTokenPromise]);
+		});
+	});
+
+	//*********************************************************************************************
 	[{
 		sODataVersion : "2.0",
 		mExpectedRequestHeaders : {
@@ -752,6 +788,8 @@ sap.ui.require([
 				"promise reused");
 			assert.strictEqual(jQuery.ajax.callCount, 1,
 				"only one HEAD request underway at any time");
+			assert.strictEqual(oRequestor.oSecurityTokenPromise, oPromise,
+				"promise stored at requestor instance so that request method can use it");
 
 			return oPromise.then(function () {
 				assert.ok(bSuccess, "success possible");

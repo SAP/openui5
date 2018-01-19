@@ -8,12 +8,13 @@ sap.ui.define([
 		'sap/ui/core/format/DateFormat',
 		'sap/ui/core/Item',
 		'sap/ui/core/mvc/Controller',
-		"sap/ui/model/Filter",
-		"sap/ui/model/FilterOperator",
+		'sap/ui/core/ValueState',
+		'sap/ui/model/Filter',
+		'sap/ui/model/FilterOperator',
 		'sap/ui/model/json/JSONModel',
 		'sap/ui/model/Sorter'
-], function (Dialog, MessageBox, MessageToast, DateFormat, Item, Controller, Filter, FilterOperator,
-		JSONModel, Sorter) {
+], function (Dialog, MessageBox, MessageToast, DateFormat, Item, Controller, ValueState, Filter,
+		FilterOperator, JSONModel, Sorter) {
 	"use strict";
 
 	var oDateFormat = DateFormat.getTimeInstance({pattern : "HH:mm"}),
@@ -108,6 +109,10 @@ sap.ui.define([
 			this.getView().getModel().resetChanges();
 		},
 
+		onChangeNewBuyerId : function (oEvent) {
+			this.getView().byId("NewBuyerID").setValueState(ValueState.None);
+		},
+
 		onCloseSalesOrderSchedules : function (oEvent) {
 			this.byId("SalesOrderSchedulesDialog").close();
 		},
@@ -135,7 +140,18 @@ sap.ui.define([
 		},
 
 		onCloseSalesOrderDialog : function (oEvent) {
-			var oView = this.getView();
+			var oView = this.getView(),
+				oNewSalesOrderContext = oView.byId("CreateSalesOrderDialog").getBindingContext(),
+				oNewBuyerId = oView.byId("NewBuyerID"),
+				oSelectedBuyerItem = oNewBuyerId.getSuggestionItemByKey(oNewBuyerId.getValue());
+
+			if (!oSelectedBuyerItem) {
+				MessageBox.error("Enter buyer Id");
+				oNewBuyerId.setValueState(ValueState.Error);
+				return;
+			}
+			oNewSalesOrderContext.setProperty("SO_2_BP@odata.bind",
+				oSelectedBuyerItem.getBindingContext());
 
 			oView.byId("CreateSalesOrderDialog").close();
 			// move the focus to the row of the newly created sales order
@@ -152,7 +168,6 @@ sap.ui.define([
 						// key
 						"SalesOrderID" : "",
 						// properties
-						"BuyerID" : "0100000000",
 						"ChangedAt" : "1970-01-01T00:00:00Z",
 						"CreatedAt" : "1970-01-01T00:00:00Z",
 						"CurrencyCode" : "EUR",
@@ -162,7 +177,7 @@ sap.ui.define([
 						"Note" : "A new Sales Order: " + new Date().toLocaleString(),
 						"NoteLanguage" : "E",
 						// navigation property
-						"SO_2_BP" : null
+						"SO_2_BP@odata.bind" : null
 					}),
 				oCreateSalesOrderDialog = oView.byId("CreateSalesOrderDialog"),
 				that = this;
@@ -219,12 +234,7 @@ sap.ui.define([
 			oView.getModel("ui").setProperty("/bCreateItemPending", true);
 
 			// Note: this promise fails only if the transient entity is deleted
-			oContext.created().then(function () {
-				// TODO: we can't set the oContext for dependent BusinessPartner/Contact data form
-				// because it would produce a new request (without expand for BP_2_CONTACT).
-				// What we need would be a complete refresh for the selected sales order and all its
-				// dependents
-				// that._setSalesOrderLineItemBindingContext(oContext);
+			this.oSalesOrderLineItemCreated = oContext.created().then(function () {
 				oView.getModel("ui").setProperty("/bCreateItemPending", false);
 				MessageBox.success("Line item created: " + oContext.getProperty("ItemPosition"));
 			}, function (oError) {
@@ -421,14 +431,20 @@ sap.ui.define([
 				"the favorite product");
 		},
 
-//		onRefreshSalesOrderDetails : function (oEvent) {
-//			this.refresh(this.byId("ObjectPage").getElementBinding(),
-//				"the sales order");
-//		},
-
 		onRefreshSalesOrdersList : function (oEvent) {
 			this.refresh(this.byId("SalesOrders").getBinding("items"),
 				"all sales orders");
+		},
+
+		onRefreshSelectedSalesOrder : function () {
+			var oSelectedSalesOrder = this.byId("SalesOrders").getSelectedItem(),
+				oSalesOrderContext;
+
+			if (oSelectedSalesOrder) {
+				oSalesOrderContext = oSelectedSalesOrder.getBindingContext();
+				this.refresh(oSalesOrderContext,
+					"sales order " + oSalesOrderContext.getProperty("SalesOrderID"));
+			}
 		},
 
 		onSalesOrderSchedules : function (oEvent) {
@@ -457,7 +473,25 @@ sap.ui.define([
 		},
 
 		onSaveSalesOrder : function () {
-			this.submitBatch("SalesOrderUpdateGroup");
+			var that = this;
+
+			this.submitBatch("SalesOrderUpdateGroup").then(function () {
+				// wait until created handler (if any) is processed
+				return that.oSalesOrderLineItemCreated;
+			}).then(function () {
+				var oObjectPage = that.getView().byId("ObjectPage"),
+					oSelectedSalesOrderContext =
+						oObjectPage.getObjectBinding().getContext();
+
+				if (oSelectedSalesOrderContext.hasPendingChanges()) {
+					MessageToast.show("Cannot refresh due to unsaved changes"
+							+ ", reset changes before refresh");
+				} else {
+					// Trigger refresh for the corresponding entry in the SalesOrderList to get
+					// the new ETag also there. This refreshes also all dependent bindings.
+					oSelectedSalesOrderContext.refresh();
+				}
+			});
 		},
 
 		onSaveSalesOrderList : function () {
@@ -589,6 +623,9 @@ sap.ui.define([
 		 *
 		 * @param {string} sGroupId
 		 *   the group ID
+		 * @returns {Promise}
+		 *   A Promise which is resolved after the Promise returned by
+		 *   {@link sap.ui.model.odata.v4.ODataModel#submitBatch} is either resolved or rejected
 		 */
 		submitBatch : function (sGroupId) {
 			var oView = this.getView();
@@ -598,7 +635,7 @@ sap.ui.define([
 			}
 
 			oView.setBusy(true);
-			oView.getModel().submitBatch(sGroupId).then(resetBusy, resetBusy);
+			return oView.getModel().submitBatch(sGroupId).then(resetBusy, resetBusy);
 		}
 	});
 

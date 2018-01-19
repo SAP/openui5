@@ -21,6 +21,7 @@ sap.ui.define([
 			+ "Content-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 ",
 		sRealOData = jQuery.sap.getUriParameters().get("realOData"),
 		rRequestLine = /^(GET|DELETE|PATCH|POST) (\S+) HTTP\/1\.1$/,
+		mData = {},
 		bProxy = sRealOData === "true" || sRealOData === "proxy",
 		bRealOData = bProxy || sRealOData === "direct",
 		TestUtils,
@@ -427,6 +428,8 @@ sap.ui.define([
 					oServer.respondWith("GET", sUrl, respond.bind(null, mUrls[sUrl]));
 				}
 				oServer.respondWith("DELETE", /.*/, respond.bind(null, [204, {}, ""]));
+				// Empty response for HEAD request to retrieve security token
+				oServer.respondWith("HEAD", /.*/, respond.bind(null, [200, {}, ""]));
 				// for PATCH/POST we simply echo the body, in real scenarios the server would
 				// respond with different data (generated keys, side-effects, ETag)
 				oServer.respondWith("PATCH", /.*/, echo);
@@ -446,8 +449,8 @@ sap.ui.define([
 				sinon.FakeXMLHttpRequest.useFilters = true;
 				sinon.FakeXMLHttpRequest.addFilter(function (sMethod, sUrl) {
 					// must return true if the request is NOT processed by the fake server
-					return sMethod !== "DELETE" && sMethod !== "PATCH" && sMethod !== "POST" &&
-						!(sMethod === "GET" && sUrl in mUrls);
+					return sMethod !== "DELETE" && sMethod !== "HEAD" && sMethod !== "PATCH"
+						&& sMethod !== "POST" && !(sMethod === "GET" && sUrl in mUrls);
 				});
 			}
 
@@ -579,6 +582,35 @@ sap.ui.define([
 			}
 			sProxyUrl = jQuery.sap.getResourcePath("sap/ui").replace("resources/sap/ui", "proxy");
 			return new URI(sProxyUrl + sAbsolutePath, TestUtils.getBaseUri()).pathname().toString();
+		},
+
+		/**
+		 * Returns the value which has been stored with the given key using {@link #setData} and
+		 * resets it.
+		 *
+		 * @param {string} sKey
+		 *   The key
+		 * @returns {object}
+		 *   The value
+		 */
+		retrieveData : function (sKey) {
+			var vValue = mData[sKey];
+
+			delete mData[sKey];
+			return vValue;
+		},
+
+		/**
+		 * Stores the given value under the given key so that it can be used by a test at a later
+		 * point in time.
+		 *
+		 * @param {string} sKey
+		 *   The key
+		 * @param {object} vValue
+		 *   The value
+		 */
+		setData : function (sKey, vValue) {
+			mData[sKey] = vValue;
 		},
 
 		/**

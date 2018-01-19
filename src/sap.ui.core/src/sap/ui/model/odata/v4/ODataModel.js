@@ -43,6 +43,7 @@ sap.ui.define([
 		mSupportedParameters = {
 			annotationURI : true,
 			autoExpandSelect : true,
+			earlyRequests : true,
 			groupId : true,
 			groupProperties : true,
 			odataVersion : true,
@@ -75,6 +76,16 @@ sap.ui.define([
 	 *   options from the binding hierarchy.
 	 *   Note: Dynamic changes to the binding hierarchy are not supported.
 	 *   Supported since 1.47.0
+	 * @param {boolean} [mParameters.earlyRequests=false]
+	 *   Whether the following is requested at the earliest convenience:
+	 *   <ul>
+	 *   <li> root $metadata document and annotation files;
+	 *   <li> the security token.
+	 *   </ul>
+	 *   Note: The root $metadata document and annotation files are just requested but not yet
+	 *   converted from XML to JSON unless really needed.
+	 *   Supported since 1.53.0
+	 *   <b>BEWARE:</b> Default value will change to <code>true</code> for 1.55.0!
 	 * @param {string} [mParameters.groupId="$auto"]
 	 *   Controls the model's use of batch requests: '$auto' bundles requests from the model in a
 	 *   batch request which is sent automatically before rendering; '$direct' sends requests
@@ -240,6 +251,10 @@ sap.ui.define([
 								}
 							}
 						}, sODataVersion);
+					if (mParameters.earlyRequests) {
+						this.oMetaModel.fetchEntityContainer(true);
+						this.initializeSecurityToken();
+					}
 
 					this.aAllBindings = [];
 					this.sDefaultBindingMode = BindingMode.TwoWay;
@@ -537,7 +552,7 @@ sap.ui.define([
 	/**
 	 * Constructs a map of query options from the given binding parameters.
 	 * Parameters starting with '$$' indicate binding-specific parameters, which must not be part
-	 * of a back end query; they are ignored and not added to the map.
+	 * of a back-end query; they are ignored and not added to the map.
 	 * The following query options are disallowed:
 	 * <ul>
 	 * <li> System query options (key starts with "$"), unless
@@ -960,6 +975,15 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.hasPendingChanges = function () {
 		return this.oRequestor.hasPendingChanges();
+	};
+
+	/**
+	 * Initializes the security token used by this model's requestor.
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.initializeSecurityToken = function () {
+		this.oRequestor.refreshSecurityToken();
 	};
 
 	/**
