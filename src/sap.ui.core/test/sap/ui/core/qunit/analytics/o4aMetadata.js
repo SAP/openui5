@@ -180,6 +180,67 @@ sap.ui.define([
 		"				<Property Name=\"Text\" Type=\"Edm.String\" MaxLength=\"40\"\n" +
 		"					sap:label=\"Text\" />\n" +
 		"			</EntityType>\n" +
+		"			<!-- EntityType for hierarchy support -->\n" +
+		"			<EntityType Name=\"TypeWithHierarchies\"\n" +
+		"				sap:label=\"Cost Centers: Actual/Planned Costs (hry only)\"\n" +
+		"				sap:semantics=\"aggregate\"\n" +
+		"				sap:content-version=\"1\">\n" +
+		"				<Key>\n" +
+		"					<PropertyRef Name=\"ID\"/>\n" +
+		"				</Key>\n" +
+		"				<Property Name=\"ID\" Type=\"Edm.String\" Nullable=\"false\" sap:filterable=\"false\"\n" +
+		"					sap:updatable=\"false\" sap:sortable=\"false\"/>\n" +
+		"				<Property Name=\"TotaledProperties\" Type=\"Edm.String\"\n" +
+		"					sap:aggregation-role=\"totaled-properties-list\" sap:is-annotation=\"true\"\n" +
+		"						sap:updatable=\"false\" sap:sortable=\"false\"/>\n" +
+		"				<Property Name=\"CostCenter\" Type=\"Edm.String\" MaxLength=\"15\"\n" +
+		"					sap:aggregation-role=\"dimension\" sap:creatable=\"false\"\n" +
+		"					sap:text=\"CostCenterText\" sap:updatable=\"false\" sap:label=\"Cost Center\"/>\n" +
+		"				<Property Name=\"CostCenter_NodeID\" Type=\"Edm.String\" MaxLength=\"281\"\n" +
+		"					sap:filter-restriction=\"multi-value\" sap:hierarchy-node-for=\"CostCenter\"\n" +
+		"					sap:text=\"CostCenter_NodeText\" sap:label=\"Cost Center Node ID\"\n" +
+		"					sap:sortable=\"false\"/>\n" +
+		"				<Property Name=\"CostCenter_NodeIDExt\" Type=\"Edm.String\" MaxLength=\"250\"\n" +
+		"					sap:filterable=\"false\" sap:hierarchy-node-external-key-for=\"CostCenter_NodeID\"\n" +
+		"					sap:text=\"CostCenter_NodeText\" sap:label=\"Cost Center Node ID External\"\n" +
+		"					sap:sortable=\"false\"/>\n" +
+		"				<Property Name=\"CostCenter_NodeText\" Type=\"Edm.String\" MaxLength=\"60\"\n" +
+		"					sap:filterable=\"false\" sap:label=\"Cost Center Node Text\" sap:sortable=\"false\"/>\n" +
+		"				<Property Name=\"CostCenter_ParentID\" Type=\"Edm.String\" MaxLength=\"281\"\n" +
+		"					sap:filter-restriction=\"multi-value\" sap:hierarchy-parent-node-for=\"CostCenter_NodeID\"\n" +
+		"					sap:label=\"Cost Center Parent ID\" sap:sortable=\"false\"/>\n" +
+		"				<Property Name=\"CostCenter_Level\" Type=\"Edm.Int16\" sap:filter-restriction=\"multi-value\"\n" +
+		"					sap:hierarchy-level-for=\"CostCenter_NodeID\" sap:label=\"Cost Center Level\"\n" +
+		"					sap:sortable=\"false\"/>\n" +
+		"				<Property Name=\"CostCenter_Drillstate\" Type=\"Edm.String\" MaxLength=\"9\"\n" +
+		"					sap:filterable=\"false\" sap:hierarchy-drill-state-for=\"CostCenter_NodeID\"\n" +
+		"					sap:is-annotation=\"true\" sap:label=\"Cost Center Drilldown State\" sap:sortable=\"false\"/>\n" +
+		"				<Property Name=\"CostCenter_Nodecount\" Type=\"Edm.Int16\" sap:filterable=\"false\"\n" +
+		"					sap:hierarchy-node-descendant-count-for=\"CostCenter_NodeID\" sap:is-annotation=\"true\"\n" +
+		"					sap:label=\"Cost Center Counter for Descendant Nodes\" sap:sortable=\"false\"/>\n" +
+		"				<Property Name=\"CostCenterText\" Type=\"Edm.String\" MaxLength=\"1333\" sap:creatable=\"false\"\n" +
+		"					sap:filterable=\"false\" sap:updatable=\"false\" sap:label=\"Cost Center (Description)\"/>\n" +
+		"				<Property Name=\"CostElement\" Type=\"Edm.String\" MaxLength=\"15\"\n" +
+		"					sap:aggregation-role=\"dimension\" sap:creatable=\"false\" sap:text=\"CostElementText\"\n" +
+		"					sap:updatable=\"false\" sap:label=\"Cost Element\"/>\n" +
+		"				<Property Name=\"CostElementText\" Type=\"Edm.String\" MaxLength=\"1333\" sap:creatable=\"false\"\n" +
+		"					sap:filterable=\"false\" sap:updatable=\"false\" sap:label=\"Cost Element (Description)\"/>\n" +
+		"				<Property Name=\"ActualCosts\" Type=\"Edm.Decimal\" Precision=\"42\" Scale=\"2\"\n" +
+		"					sap:aggregation-role=\"measure\" sap:creatable=\"false\" sap:filterable=\"false\"\n" +
+		"					sap:text=\"ActualCosts_F\" sap:unit=\"ActualCosts_E\" sap:updatable=\"false\"\n" +
+		"					sap:label=\"Actual Costs\"/>\n" +
+		"				<Property Name=\"ActualCosts_F\" Type=\"Edm.String\" MaxLength=\"60\" sap:creatable=\"false\"\n" +
+		"					sap:filterable=\"false\" sap:updatable=\"false\" sap:label=\"Actual Costs (Formatted)\"/>\n" +
+		"				<Property Name=\"ActualCosts_E\" Type=\"Edm.String\" MaxLength=\"5\" sap:creatable=\"false\"\n" +
+		"					sap:filterable=\"false\" sap:updatable=\"false\" sap:label=\"Actual Costs (Currency)\"\n" +
+		"					sap:semantics=\"currency-code\"/>\n" +
+		"				<Property Name=\"CostElement_NodeID\" Type=\"Edm.String\" MaxLength=\"281\"\n" +
+		"					sap:filter-restriction=\"multi-value\" sap:hierarchy-node-for=\"CostElement\"\n" +
+		"					sap:sortable=\"false\"/>\n" +
+		"				<Property Name=\"CostElement_Level\" Type=\"Edm.Int16\" sap:filter-restriction=\"multi-value\"\n" +
+		"					sap:hierarchy-level-for=\"CostElement_NodeID\" sap:label=\"Cost Element Level\"\n" +
+		"					sap:sortable=\"false\"/>\n" +
+		"			</EntityType>\n" +
 		"			<Association Name=\"ActualPlannedCosts_ActualPlannedCostsResultsType\">\n" +
 		"				<End Type=\"servicemock.ActualPlannedCostsType\" Role=\"ActualPlannedCostsPrincipal\"\n" +
 		"					Multiplicity=\"*\" />\n" +
@@ -251,6 +312,11 @@ sap.ui.define([
 		"					sap:addressable=\"false\" />\n" +
 		"				<EntitySet Name=\"CostCenters\" EntityType=\"servicemock.CostCentersType\" />\n" +
 		"				<EntitySet Name=\"CostElements\" EntityType=\"servicemock.CostElementsType\" />\n" +
+		"				<!-- EntitySet for hierarchy support -->\n" +
+		"				<EntitySet Name=\"TypeWithHierarchiesResults\" \n" +
+		"					EntityType=\"servicemock.TypeWithHierarchies\"\n" +
+		"					sap:creatable=\"false\" sap:updatable=\"false\" sap:deletable=\"false\"\n" +
+		"					sap:addressable=\"false\" sap:content-version=\"1\"/>\n" +
 		"				<AssociationSet Name=\"ActualPlannedCosts_ActualPlannedCostsResults\"\n" +
 		"					Association=\"servicemock.ActualPlannedCosts_ActualPlannedCostsResultsType\">\n" +
 		"					<End Role=\"ActualPlannedCostsPrincipal\" EntitySet=\"ActualPlannedCosts\" />\n" +

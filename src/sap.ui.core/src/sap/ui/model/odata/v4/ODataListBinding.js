@@ -187,7 +187,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The 'dataRequested' event is fired directly after data has been requested from a back end.
+	 * The 'dataRequested' event is fired directly after data has been requested from a backend.
 	 * It is to be used by applications for example to switch on a busy indicator.
 	 * Registered event handlers are called without parameters.
 	 *
@@ -544,7 +544,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Context} oContext
 	 *   The context instance to be used
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving with the binding's query options
 	 *
 	 * @private
@@ -583,7 +583,7 @@ sap.ui.define([
 	 *   that the cache promise is already created when the events are fired.
 	 * @param {string} sStaticFilter
 	 *   The static filter value
-	 * @returns {SyncPromise} A promise which resolves with the $filter value or "" if the
+	 * @returns {sap.ui.base.SyncPromise} A promise which resolves with the $filter value or "" if the
 	 *   filter arrays are empty and the static filter parameter is not given. It rejects with
 	 *   an error if a filter has an unknown operator or an invalid path.
 	 *
@@ -655,7 +655,7 @@ sap.ui.define([
 		 * @param {boolean} [bAnd] Whether the filters are combined with 'and'; combined with
 		 *   'or' if not given
 		 * @param {object} mLambdaVariableToPath The map from lambda variable to full path
-		 * @returns {SyncPromise} A promise which resolves with the $filter value
+		 * @returns {sap.ui.base.SyncPromise} A promise which resolves with the $filter value
 		 */
 		function fetchArrayFilter(aFilters, bAnd, mLambdaVariableToPath) {
 			var aFilterPromises = [],
@@ -697,8 +697,8 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.model.Filter[]} aGroupFilters The non-empty array of filters
 		 * @param {object} mLambdaVariableToPath The map from lambda variable to full path
-		 * @returns {SyncPromise} A promise which resolves with the $filter value or rejects
-		 *   with an error if the filter value uses an unknown operator
+		 * @returns {sap.ui.base.SyncPromise} A promise which resolves with the $filter value or
+		 *   rejects with an error if the filter value uses an unknown operator
 		 */
 		function fetchGroupFilter(aGroupFilters, mLambdaVariableToPath) {
 			var oMetaModel = that.oModel.getMetaModel(),
@@ -788,12 +788,15 @@ sap.ui.define([
 	 *   Some absolute path
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
-	 * @returns {SyncPromise}
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used for the request; it is hard-coded to "$cached" in case this
+	 *   binding's cache is used because requests must only be triggered via {@link #getContexts}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.fetchValue = function (sPath, oListener) {
+	ODataListBinding.prototype.fetchValue = function (sPath, oListener, sGroupId) {
 		var that = this;
 
 		return this.oCachePromise.then(function (oCache) {
@@ -802,11 +805,11 @@ sap.ui.define([
 			if (oCache) {
 				sRelativePath = that.getRelativePath(sPath);
 				if (sRelativePath !== undefined) {
-					return oCache.fetchValue(undefined, sRelativePath, undefined, oListener);
+					return oCache.fetchValue("$cached", sRelativePath, undefined, oListener);
 				}
 			}
 			if (that.oContext) {
-				return that.oContext.fetchValue(sPath, oListener);
+				return that.oContext.fetchValue(sPath, oListener, sGroupId);
 			}
 		});
 	};
@@ -1280,6 +1283,66 @@ sap.ui.define([
 	};
 
 	/**
+	 * Refreshes the single entity the given <code>oContext</code> is pointing to, refreshes also
+	 * dependent bindings and checks for updates once the data is received.
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 *   The context object for the entity to be refreshed
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used for refresh
+	 * @throws {Error}
+	 *   For invalid group IDs, if the binding is not refreshable or has pending changes.
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.refreshSingle = function (oContext, sGroupId) {
+		var that = this;
+
+		this.oModel.checkGroupId(sGroupId);
+
+		if (!this.isRefreshable()) {
+			throw new Error("Binding is not refreshable; cannot refresh entity: " + oContext);
+		}
+
+		if (this.hasPendingChangesForPath(oContext.getPath())) {
+			throw new Error("Cannot refresh entity due to pending changes: " + oContext);
+		}
+
+		this.oCachePromise.then(function (oCache) {
+			var bDataRequested = false;
+
+			function fireDataReceived (oData) {
+				if (bDataRequested) {
+					that.fireDataReceived(oData);
+				}
+			}
+
+			sGroupId = sGroupId || that.getGroupId();
+			oCache.refreshSingle(sGroupId, oContext.iIndex, function () {
+					bDataRequested = true;
+					that.fireDataRequested();
+				}
+			).then(function () {
+				fireDataReceived({data : {}});
+				oContext.checkUpdate();
+			}, function (oError) {
+				fireDataReceived({error : oError});
+				throw oError;
+			})["catch"](function (oError) {
+				that.oModel.reportError("Failed to refresh entity: " + oContext, sClassName,
+					oError);
+			});
+
+			// call refreshInternal on all dependent bindings to ensure that all resulting data
+			// requests are in the same batch request
+			that.oModel.getDependentBindings(oContext).forEach(function (oDependentBinding) {
+				// with bCheckUpdate = false because it is done after data is received
+				oDependentBinding.refreshInternal(sGroupId, false);
+			});
+		});
+	};
+
+	/**
 	 * Resets the binding's contexts array and its members related to current contexts and length
 	 * calculation. All bindings dependent to the header context are requested to check for updates.
 	 *
@@ -1427,8 +1490,9 @@ sap.ui.define([
 
 	/**
 	 * Updates the binding's "$apply" parameter based on the given analytical information as
-	 * "groupby((&lt;dimension_1,...,dimension_N>),aggregate(&lt;measure_1,...,measure_M>))" where
-	 * the "aggregate" part is only present if measures are given.
+	 * "groupby((&lt;dimension_1,...,dimension_N,unit_or_text_1,...,unit_or_text_K>),
+	 * aggregate(&lt;measure_1,...,measure_M>))" where the "aggregate" part is only present if
+	 * measures are given.
 	 *
 	 * Analytical information is the mapping of UI columns to properties in the bound OData entity
 	 * set. Every column object contains at least the <code>name</code> of the bound property.
@@ -1445,13 +1509,15 @@ sap.ui.define([
 	 *       <li><code>total</code>: its presence is used to detect a measure</li>
 	 *     </ul>
 	 *   </li>
+	 *   <li>A column bound to neither a dimension nor a measure property, but for instance
+	 *   bound to a text property or in some cases to a unit property, has no further boolean
+	 *   properties</li>
 	 * </ol>
 	 *
 	 * @param {object[]} aColumns
 	 *   An array with objects holding the analytical information for every column, from left to
 	 *   right
-	 * @throws {Error} In case a column is neither a dimension nor a measure, or both a dimension
-	 *   and a measure
+	 * @throws {Error} In case a column is both a dimension and a measure
 	 *
 	 * @protected
 	 * @see sap.ui.model.analytics.AnalyticalBinding#updateAnalyticalInfo
@@ -1460,7 +1526,8 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.updateAnalyticalInfo = function (aColumns) {
 		var aAggregate = [],
-			aGroupBy = [];
+			aGroupBy = [],
+			aGroupByNoDimension = [];
 
 		aColumns.forEach(function (oColumn) {
 			if ("total" in oColumn) { // measure
@@ -1473,11 +1540,11 @@ sap.ui.define([
 					aGroupBy.push(oColumn.name);
 				}
 			} else {
-				throw new Error("Neither dimension nor measure: " + oColumn.name);
+				aGroupByNoDimension.push(oColumn.name);
 			}
 		});
 
-		this.changeParameters({$apply : "groupby((" + aGroupBy.join(",")
+		this.changeParameters({$apply : "groupby((" + aGroupBy.concat(aGroupByNoDimension).join(",")
 			+ (aAggregate.length ? "),aggregate(" + aAggregate.join(",") + "))" : "))")});
 	};
 

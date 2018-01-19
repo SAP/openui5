@@ -109,7 +109,6 @@ sap.ui.define([
 				// auto-$expand/$select: promises to wait until child bindings have provided
 				// their path and query options
 				this.aChildCanUseCachePromises = [];
-				this.sRefreshGroupId = undefined;
 				this.sUpdateGroupId = undefined;
 
 				if (iPos >= 0) { // deferred operation binding
@@ -172,7 +171,7 @@ sap.ui.define([
 	/**
 	 * Requests the metadata for this operation binding. Caches the result.
 	 *
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that is resolved with the operation metadata.
 	 *
 	 * @private
@@ -282,7 +281,79 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The 'dataRequested' event is fired directly after data has been requested from a back end.
+	 * Creates the cache (if necessary) and sends the GET/POST request.
+	 *
+	 * @param {string} sPath
+	 *   The absolute binding path to the bound operation or operation import, e.g.
+	 *   "/Entity('0815')/bound.Operation(...)" or "/OperationImport(...)"
+	 * @param {object} oOperationMetadata
+	 *   The operation's metadata
+	 * @param {string} [sGroupId=getGroupId()]
+	 *   The group ID to be used for the request; if not specified, the group ID for this binding is
+	 *   used, see {@link sap.ui.model.odata.v4.ODataContextBinding#constructor}.
+	 * @returns {SyncPromise}
+	 *   The request promise
+	 * @throws {Error}
+	 *   If a collection-valued function parameter is encountered
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.createCacheAndRequest = function (sPath, oOperationMetadata,
+		sGroupId) {
+		var oCache,
+			sETag,
+			iIndex,
+			aOperationParameters,
+			sOperationPath,
+			aParameters,
+			oPromise,
+			mQueryOptions = jQuery.extend({}, this.oModel.mUriParameters, this.mQueryOptions),
+			that = this;
+
+		sGroupId = sGroupId || this.getGroupId();
+		this.oOperation.bAction = oOperationMetadata.$kind === "Action";
+		if (this.oOperation.bAction) {
+			// Recreate the cache, because the query options might have changed
+			oCache = _Cache.createSingle(this.oModel.oRequestor, sPath.slice(1, -5), mQueryOptions,
+				this.oModel.bAutoExpandSelect, true);
+			if (this.bRelative && this.oContext.getBinding) {
+				// @odata.etag is not added to path to avoid "failed to drill-down" in cache
+				// if no ETag is available
+				iIndex = this.sPath.lastIndexOf("/");
+				sETag = this.oContext.getObject(
+					iIndex >= 0 ? this.sPath.slice(0, iIndex) : "")["@odata.etag"];
+			}
+			oPromise = oCache.post(sGroupId, this.oOperation.mParameters, sETag);
+		} else {
+			// the function must always recreate the cache because the parameters influence the
+			// resource path
+			aOperationParameters = oOperationMetadata.$Parameter;
+			aParameters = [];
+			if (aOperationParameters) {
+				aOperationParameters.forEach(function (oParameter) {
+					var sName = oParameter.$Name;
+
+					if (sName in that.oOperation.mParameters) {
+						if (oParameter.$IsCollection) {
+							throw new Error("Unsupported: collection parameter");
+						}
+						aParameters.push(encodeURIComponent(sName) + "="
+							+ encodeURIComponent(_Helper.formatLiteral(
+								that.oOperation.mParameters[sName], oParameter.$Type)));
+					}
+				});
+			}
+			sOperationPath = sPath.slice(1).replace("...", aParameters.join(','));
+			oCache = _Cache.createSingle(this.oModel.oRequestor, sOperationPath, mQueryOptions,
+				this.oModel.bAutoExpandSelect);
+			oPromise = oCache.fetchValue(sGroupId);
+		}
+		this.oCachePromise = SyncPromise.resolve(oCache);
+		return oPromise;
+	};
+
+	/**
+	 * The 'dataRequested' event is fired directly after data has been requested from a backend.
 	 * It is to be used by applications for example to switch on a busy indicator. Registered event
 	 * handlers are called without parameters.
 	 *
@@ -389,7 +460,7 @@ sap.ui.define([
 	 * Hook method for {@link sap.ui.model.odata.v4.ODataBinding#fetchQueryOptionsForOwnCache} to
 	 * determine the query options for this binding.
 	 *
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving with the binding's query options
 	 *
 	 * @private
@@ -424,73 +495,7 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataContextBinding.prototype.execute = function (sGroupId) {
-		var that = this;
-
-		/**
-		 * Creates the cache (if necessary) and sends the GET/POST request.
-		 *
-		 * @param {object} oOperationMetadata The operation's metadata
-		 * @param {string} sPathPrefix
-		 *   The prefix for the path that results from the binding parameter
-		 * @returns {SyncPromise} The request promise
-		 */
-		function createCacheAndRequest(oOperationMetadata, sPathPrefix) {
-			var oCache,
-				iIndex,
-				aOperationParameters,
-				sOperationPath,
-				aParameters,
-				oPromise,
-				mQueryOptions = jQuery.extend({}, that.oModel.mUriParameters, that.mQueryOptions);
-
-			sGroupId = sGroupId || that.getGroupId();
-			that.oOperation.bAction = oOperationMetadata.$kind === "Action";
-			if (that.oOperation.bAction) {
-				// Recreate the cache, because the query options might have changed
-				oCache = _Cache.createSingle(that.oModel.oRequestor,
-					(sPathPrefix + that.sPath).slice(1, -5), mQueryOptions,
-					that.oModel.bAutoExpandSelect, true);
-				if (that.bRelative && that.oContext.getBinding) {
-					// do not access @odata.etag directly to avoid "failed to drill-down" in cache
-					// if it is not available
-					iIndex = that.sPath.lastIndexOf("/");
-					oPromise = that.oContext
-						.fetchValue(iIndex >= 0 ? that.sPath.slice(0, iIndex) : "")
-						.then(function (oEntity) { return oEntity["@odata.etag"]; });
-				} else {
-					oPromise = SyncPromise.resolve(); // no parent cache -> no ETag
-				}
-				oPromise = oPromise.then(function (sETag) {
-					return oCache.post(sGroupId, that.oOperation.mParameters, sETag);
-				});
-			} else {
-				// the function must always recreate the cache because the parameters influence the
-				// resource path
-				aOperationParameters = oOperationMetadata.$Parameter;
-				aParameters = [];
-				if (aOperationParameters) {
-					aOperationParameters.forEach(function (oParameter) {
-						var sName = oParameter.$Name;
-
-						if (sName in that.oOperation.mParameters) {
-							if (oParameter.$IsCollection) {
-								throw new Error("Unsupported: collection parameter");
-							}
-							aParameters.push(encodeURIComponent(sName) + "="
-								+ encodeURIComponent(_Helper.formatLiteral(
-									that.oOperation.mParameters[sName], oParameter.$Type)));
-						}
-					});
-				}
-				sOperationPath = (sPathPrefix + that.sPath.replace("...", aParameters.join(',')))
-					.slice(1);
-				oCache = _Cache.createSingle(that.oModel.oRequestor, sOperationPath, mQueryOptions,
-					that.oModel.bAutoExpandSelect);
-				oPromise = oCache.fetchValue(sGroupId);
-			}
-			that.oCachePromise = SyncPromise.resolve(oCache);
-			return oPromise;
-		}
+		var oPromise, that = this;
 
 		this.oModel.checkGroupId(sGroupId);
 		if (!this.oOperation) {
@@ -509,17 +514,20 @@ sap.ui.define([
 					+ this.oModel.resolve(this.sPath, this.oContext));
 			}
 		}
-		return this._fetchOperationMetadata().then(function (oOperationMetaData) {
+
+		oPromise = this._fetchOperationMetadata().then(function (oOperationMetaData) {
 			if (that.bRelative) {
 				if (!that.oContext.getBinding) {
-					return createCacheAndRequest(oOperationMetaData,
-						that.oContext.getPath() === "/" ? "/" : that.oContext.getPath() + "/");
+					return that.createCacheAndRequest(
+						(that.oContext.getPath() === "/" ? "/" : that.oContext.getPath() + "/")
+						+ that.sPath, oOperationMetaData, sGroupId);
 				}
 				return that.getContext().fetchCanonicalPath().then(function (sPath) {
-					return createCacheAndRequest(oOperationMetaData, sPath + "/");
+					return that.createCacheAndRequest(sPath + "/" + that.sPath, oOperationMetaData,
+						sGroupId);
 				});
 			}
-			return createCacheAndRequest(oOperationMetaData, "");
+			return that.createCacheAndRequest(that.sPath, oOperationMetaData, sGroupId);
 		}).then(function (oResult) {
 			that._fireChange({reason : ChangeReason.Change});
 			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
@@ -530,6 +538,8 @@ sap.ui.define([
 			that.oModel.reportError("Failed to execute " + that.sPath, sClassName, oError);
 			throw oError;
 		});
+
+		return Promise.resolve(oPromise);
 	};
 
 	/**
@@ -540,24 +550,25 @@ sap.ui.define([
 	 *   Some absolute path
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
-	 * @returns {SyncPromise}
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used for the request; defaults to this binding's group ID in case this
+	 *   binding's cache is used
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
 	 *
 	 * @private
 	 */
-	ODataContextBinding.prototype.fetchValue = function (sPath, oListener) {
+	ODataContextBinding.prototype.fetchValue = function (sPath, oListener, sGroupId) {
 		var that = this;
 
 		return this.oCachePromise.then(function (oCache) {
 			var bDataRequested = false,
-				sGroupId,
 				sRelativePath;
 
 			if (oCache) {
 				sRelativePath = that.getRelativePath(sPath);
 				if (sRelativePath !== undefined) {
-					sGroupId = that.sRefreshGroupId || that.getGroupId();
-					that.sRefreshGroupId = undefined;
+					sGroupId = sGroupId || that.getGroupId();
 					return oCache.fetchValue(sGroupId, sRelativePath, function () {
 						bDataRequested = true;
 						that.fireDataRequested();
@@ -577,7 +588,7 @@ sap.ui.define([
 				}
 			}
 			if (!that.oOperation && that.oContext && that.oContext.fetchValue) {
-				return that.oContext.fetchValue(sPath, oListener);
+				return that.oContext.fetchValue(sPath, oListener, sGroupId);
 			}
 		});
 	};
@@ -612,7 +623,6 @@ sap.ui.define([
 			if (!that.oOperation) {
 				if (oCache) {
 					that.fetchCache(that.oContext);
-					that.sRefreshGroupId = sGroupId;
 					that.mCacheByContext = undefined;
 					// Do not fire a change event, or else ManagedObject destroys and recreates the
 					// binding hierarchy causing a flood of events
@@ -677,6 +687,9 @@ sap.ui.define([
 	ODataContextBinding.prototype.setParameter = function (sParameterName, vValue) {
 		if (!this.oOperation) {
 			throw new Error("The binding must be deferred: " + this.sPath);
+		}
+		if (!sParameterName) {
+			throw new Error("Missing parameter name");
 		}
 		if (vValue === undefined) {
 			throw new Error("Missing value for parameter: " + sParameterName);

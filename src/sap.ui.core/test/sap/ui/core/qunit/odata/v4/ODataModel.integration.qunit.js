@@ -4,9 +4,9 @@
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/m/ColumnListItem",
+	"sap/m/CustomListItem",
 	"sap/m/Text",
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/analytics/ODataModelAdapter",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
@@ -17,7 +17,7 @@ sap.ui.require([
 	"sap/ui/test/TestUtils",
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
-], function (jQuery, ColumnListItem, Text, Controller, ODataModelAdapter, ChangeReason, Filter,
+], function (jQuery, ColumnListItem, CustomListItem, Text, Controller, ChangeReason, Filter,
 		FilterOperator, OperationMode, ODataListBinding, ODataModel, Sorter, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
@@ -177,7 +177,7 @@ sap.ui.require([
 		 * received.
 		 */
 		checkFinish : function () {
-			var sControlId, i;
+			var sControlId, aExpectedValuesPerRow, i;
 
 			if (this.aRequests.length) {
 				return;
@@ -186,14 +186,18 @@ sap.ui.require([
 				if (this.mChanges[sControlId].length) {
 					return;
 				}
+				delete this.mChanges[sControlId];
 			}
 			for (sControlId in this.mListChanges) {
 				// Note: This may be a sparse array
-				for (i in this.mListChanges[sControlId]) {
-					if (this.mListChanges[sControlId][i].length) {
+				aExpectedValuesPerRow = this.mListChanges[sControlId];
+				for (i in aExpectedValuesPerRow) {
+					if (aExpectedValuesPerRow[i].length) {
 						return;
 					}
+					delete aExpectedValuesPerRow[i];
 				}
+				delete this.mListChanges[sControlId];
 			}
 			if (this.resolve) {
 				this.resolve();
@@ -254,7 +258,8 @@ sap.ui.require([
 		 *   ODataMetaModel), otherwise <code>undefined</code>.
 		 */
 		checkValue : function (assert, sValue, sControlId, vRow) {
-			var aExpectedValues = vRow === undefined
+			var sExpectedValue,
+				aExpectedValues = vRow === undefined
 					? this.mChanges[sControlId]
 					: this.mListChanges[sControlId][vRow],
 				sVisibleId = vRow === undefined ? sControlId : sControlId + "[" + vRow + "]";
@@ -262,8 +267,12 @@ sap.ui.require([
 			if (!aExpectedValues || !aExpectedValues.length) {
 				assert.ok(false, sVisibleId + ": " + JSON.stringify(sValue) + " (unexpected)");
 			} else {
-				assert.strictEqual(sValue, aExpectedValues.shift(),
-					sVisibleId + ": " + JSON.stringify(sValue));
+				sExpectedValue = aExpectedValues.shift();
+				// Note: avoid bad performance of assert.strictEqual(), e.g. DOM manipulation
+				if (sValue !== sExpectedValue || vRow === undefined || vRow < 10) {
+					assert.strictEqual(sValue, sExpectedValue,
+						sVisibleId + ": " + JSON.stringify(sValue));
+				}
 			}
 			this.checkFinish();
 		},
@@ -363,6 +372,10 @@ sap.ui.require([
 					oResponse = oExpectedRequest.response;
 					delete oExpectedRequest.response;
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
+				}
+
+				if (!that.aRequests.length) { // waiting may be over after promise has been handled
+					setTimeout(that.checkFinish.bind(that), 0);
 				}
 
 				if (!that.oModel.isDirectGroup(sGroupId)) { // "$batch" support
@@ -535,10 +548,16 @@ sap.ui.require([
 		 * @param {string} sControlId The (symbolic) control ID for which changes are expected
 		 */
 		setFormatter : function (assert, oControl, sControlId) {
-			var that = this;
+			var oBindingInfo = oControl.getBindingInfo("text"),
+				fnOriginalFormatter = oBindingInfo.formatter,
+				that = this;
 
-			oControl.getBindingInfo("text").formatter = function (sValue) {
-				that.checkValue(assert, sValue, sControlId);
+			oBindingInfo.formatter = function (sValue) {
+				var sExpectedValue = fnOriginalFormatter
+						? fnOriginalFormatter.apply(this, arguments)
+						: sValue;
+
+				that.checkValue(assert, sExpectedValue, sControlId);
 			};
 		},
 
@@ -552,10 +571,16 @@ sap.ui.require([
 		 * @param {string} sControlId The control ID for which changes are expected
 		 */
 		setFormatterInList : function (assert, oControl, sControlId) {
-			var that = this;
+			var oBindingInfo = oControl.getBindingInfo("text"),
+				fnOriginalFormatter = oBindingInfo.formatter,
+				that = this;
 
 			oControl.getBindingInfo("text").formatter = function (sValue) {
-				that.checkValue(assert, sValue, sControlId,
+				var sExpectedValue = fnOriginalFormatter
+						? fnOriginalFormatter.apply(this, arguments)
+						: sValue;
+
+				that.checkValue(assert, sExpectedValue, sControlId,
 					this.getBindingContext()
 					&& (this.getBindingContext().getIndex
 						? this.getBindingContext().getIndex()
@@ -580,7 +605,7 @@ sap.ui.require([
 				window.setTimeout(resolve, 3000);
 				that.checkFinish();
 			}).then(function () {
-				var sControlId, i, j;
+				var sControlId, aExpectedValuesPerRow, i, j;
 
 				// Report missing requests
 				that.aRequests.forEach(function (oRequest) {
@@ -595,10 +620,11 @@ sap.ui.require([
 				}
 				for (sControlId in that.mListChanges) {
 					// Note: This may be a sparse array
-					for (i in that.mListChanges[sControlId]) {
-						for (j in that.mListChanges[sControlId][i]) {
+					aExpectedValuesPerRow = that.mListChanges[sControlId];
+					for (i in aExpectedValuesPerRow) {
+						for (j in aExpectedValuesPerRow[i]) {
 							assert.ok(false, sControlId + "[" + i + "]: "
-								+ that.mListChanges[sControlId][i][j] + " (not set)");
+								+ aExpectedValuesPerRow[i][j] + " (not set)");
 						}
 					}
 				}
@@ -1865,10 +1891,11 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Behaviour of a bound action if nothing is available before the execute
+	// Scenario: bound action
 	QUnit.test("Bound action", function (assert) {
 		var sView = '\
 <VBox binding="{/EMPLOYEES(\'1\')}">\
+	<Text id="name" text="{Name}" />\
 	<VBox id="action" \
 			binding="{com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee(...)}">\
 		<Text id="teamId" text="{TEAM_ID}" />\
@@ -1876,12 +1903,14 @@ sap.ui.require([
 </VBox>',
 			that = this;
 
-		this.expectChange("teamId"); // no event initially
+		this.expectRequest("EMPLOYEES('1')", {
+				"Name" : "Jonathan Smith",
+				"@odata.etag" : "eTag"
+			})
+			.expectChange("name", "Jonathan Smith")
+			.expectChange("teamId", null);
 		return this.createView(assert, sView).then(function () {
-			that.expectRequest("EMPLOYEES('1')", {
-					"@odata.etag" : "eTag"
-				})
-				.expectRequest({
+			that.expectRequest({
 					method : "POST",
 					headers : {"If-Match" : "eTag"},
 					url : "EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001"
@@ -1892,7 +1921,6 @@ sap.ui.require([
 				}, {
 					"TEAM_ID" : "42"
 				})
-				.expectChange("teamId", null) // TODO unexpected change
 				.expectChange("teamId", "42");
 
 			that.oView.byId("action").getObjectBinding().setParameter("TeamID", "42").execute();
@@ -3287,8 +3315,7 @@ sap.ui.require([
 
 		this.oSandbox.stub(ODataListBinding.prototype, "getContexts",
 			function (iStart, iLength, iMaximumPrefetchSize) {
-				// this is how the call by sap.chart.Chart should look like (after ODataModelAdapter
-				// has tweaked it) --> GET w/o $top!
+				// this is how the call by sap.chart.Chart should look like --> GET w/o $top!
 				return fnGetContexts.call(this, iStart, iLength, Infinity);
 			});
 		this.expectRequest("TEAMS", {
@@ -3306,34 +3333,34 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	// Scenario: some custom control wants to read all data
+	// Scenario: some custom control wants to read all data, and it gets a lot
 	QUnit.test("read all data", function (assert) {
-		var sView = '\
-<Table id="table">\
-</Table>',
+		var i, n = 5000,
+			aIDs = new Array(n),
+			aValues = new Array(n),
+			sView = '\
+<List id="list">\
+</List>',
 			that = this;
 
-		return this.createView(assert, sView).then(function () {
-			that.expectRequest("TEAMS", {
-					"value" : [{
-						"Team_Id" : "TEAM_00"
-					}, {
-						"Team_Id" : "TEAM_01"
-					}, {
-						"Team_Id" : "TEAM_02"
-					}]
-				});
-				//TODO how to expect changes for template created below?
-//				.expectChange("id", ["TEAM_00", "TEAM_01", "TEAM_02"]);
+		for (i = 0; i < n; i += 1) {
+			aIDs[i] = "TEAM_" + i;
+			aValues[i] = {"Team_Id" : aIDs[i]};
+		}
 
-			that.oView.byId("table").bindItems({
+		return this.createView(assert, sView).then(function () {
+			var oText = new Text("id", {text : "{Team_Id}"});
+
+			that.setFormatterInList(assert, oText, "id");
+			that.expectRequest("TEAMS", {
+					"value" : aValues
+				})
+				.expectChange("id", aIDs);
+
+			that.oView.byId("list").bindItems({
 				length : Infinity, // code under test
 				path : "/TEAMS",
-				template : new ColumnListItem({
-//					cells : [
-//						new Text("id", {text : "{Team_Id}"})
-//					]
-				})
+				template : new CustomListItem({content : [oText]})
 			});
 
 			return that.waitForChanges(assert);
@@ -3341,40 +3368,110 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	// Scenario: an analytical control like sap.chart.Chart applies ODataModelAdapter to a V4 model
-	// in order to add analytical functionality
-	QUnit.test("ODataModelAdapter", function (assert) {
-		var oModel = createTeaBusiModel(),
-			sView = '\
-<Table id="table" items="{path : \'/TEAMS\', parameters : {\
-		analyticalInfo : [],\
-		noPaging : true,\
-		provideGrandTotals : false,\
-		provideTotalResultSize : false,\
-		reloadSingleUnitMeasures : true,\
-		useBatchRequests : true\
-	}}">\
-	<ColumnListItem>\
-		<Text id="id" text="{Team_Id}" />\
-	</ColumnListItem>\
-</Table>';
+	// Scenario: read all data w/o a control on top
+	QUnit.test("read all data w/o a control on top", function (assert) {
+		var done = assert.async(),
+			i, n = 10000,
+			aIDs = new Array(n),
+			aValues = new Array(n),
+			that = this;
 
-		// Note: GET w/o $count and $top
-		this.expectRequest("TEAMS", {
-				"value" : [{
-					"Team_Id" : "TEAM_00"
-				}, {
-					"Team_Id" : "TEAM_01"
-				}, {
-					"Team_Id" : "TEAM_02"
-				}]
-			})
-			.expectChange("id", ["TEAM_00", "TEAM_01", "TEAM_02"]);
+		for (i = 0; i < n; i += 1) {
+			aIDs[i] = "TEAM_" + i;
+			aValues[i] = {"Team_Id" : aIDs[i]};
+		}
 
-		// code under test
-		ODataModelAdapter.apply(oModel);
+		return this.createView(assert, "").then(function () {
+			var oListBinding = that.oModel.bindList("/TEAMS");
 
-		return this.createView(assert, sView, oModel);
+			that.expectRequest("TEAMS", {"value" : aValues});
+
+			oListBinding.getContexts(0, Infinity);
+			oListBinding.attachEventOnce("change", function () {
+				oListBinding.getContexts(0, Infinity).forEach(function (oContext, i) {
+					var sId = oContext.getProperty("Team_Id");
+
+					// Note: avoid bad performance of assert.strictEqual(), e.g. DOM manipulation
+					if (sId !== aIDs[i]) {
+						assert.strictEqual(sId, aIDs[i]);
+					}
+				});
+				done();
+			});
+
+			return that.waitForChanges(assert);
+		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: ODataListBinding contains ODataContextBinding contains ODataPropertyBinding;
+	//   only one cache; hasPendingChanges()
+	QUnit.test("hasPendingChanges on nested bindings", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sUrl = "SalesOrderList?$select=SalesOrderID"
+				+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=100",
+			sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<ColumnListItem>\
+		<Text binding="{SO_2_BP}" text="{CompanyName}"/>\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest(sUrl, {
+			value : [{
+				"SalesOrderID" : "42",
+				"SO_2_BP" : {
+					"BusinessPartnerID" : "1",
+					"CompanyName" : "Foo, Inc",
+					"@odata.etag" : "ETag"
+				}
+			}]
+		});
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oText = that.oView.byId("table").getItems()[0].getCells()[0];
+
+			that.expectRequest({
+				method : "PATCH",
+				url : "BusinessPartnerList('1')",
+				headers : {
+					"If-Match" : "ETag"
+				},
+				payload : {
+					"CompanyName" : "Bar, Inc"
+				}
+			}, {});
+
+			oText.getBinding("text").setValue("Bar, Inc");
+
+			// code under test
+			assert.strictEqual(oText.getElementBinding().hasPendingChanges(), true);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Support expression binding in ODataModel.integration.qunit
+	testViewStart("Expression binding",
+		'<Text id="text" text="{= \'Hello, \' + ${/EMPLOYEES(\'2\')/Name} }" />',
+		{"EMPLOYEES('2')/Name" : {"value" : "Frederic Fall"}},
+		{"text" : "Hello, Frederic Fall"}
+	);
+
+	//*********************************************************************************************
+	// Scenario: Support expression binding on a list in ODataModel.integration.qunit
+	// Note: Use "$\{Name}" to avoid that Maven replaces "${Name}"
+	testViewStart("Expression binding in a list", '\
+<Table items="{/EMPLOYEES}">\
+	<ColumnListItem>\
+		<Text id="text" text="{= \'Hello, \' + $\{Name} }" />\
+	</ColumnListItem>\
+</Table>',
+		{"EMPLOYEES?$skip=0&$top=100" :
+			{"value" : [{"Name" : "Frederic Fall"}, {"Name" : "Jonathan Smith"}]}},
+		{"text" : ["Hello, Frederic Fall", "Hello, Jonathan Smith"]}
+	);
 });
 //TODO test delete

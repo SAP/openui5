@@ -88,7 +88,7 @@ sap.ui.require([
 	 *   simulate drill-down, i.e. resolve with unwrapped array
 	 * @param {number} [iCount]
 	 *   the  value for "$count", remains unset if undefined
-	 * @return {SyncPromise}
+	 * @return {sap.ui.base.SyncPromise}
 	 *   the promise which is fulfilled as specified
 	 */
 	function createResult(iLength, iStart, bDrillDown, iCount) {
@@ -110,7 +110,7 @@ sap.ui.require([
 	 *   simulate drill-down, i.e. resolve with unwrapped array
 	 * @param {number} [iCount]
 	 *   the  value for "$count", remains unset if undefined
-	 * @return {SyncPromise}
+	 * @return {sap.ui.base.SyncPromise}
 	 *   the promise which is fulfilled as specified
 	 */
 	function createSyncResult(iLength, iStart, bDrillDown, iCount) {
@@ -900,7 +900,7 @@ sap.ui.require([
 			// code under test
 			assert.strictEqual(oBinding.getLength(), iExpectedLength);
 
-			oCacheMock.expects("create").returns(Promise.resolve({}));
+			oCacheMock.expects("create").returns(SyncPromise.resolve(Promise.resolve({})));
 			oContext = oBinding.create();
 
 			// code under test
@@ -913,7 +913,8 @@ sap.ui.require([
 					iExpectedLength + (oFixture.$count ? 2 : 1),
 					"after successful POST");
 
-				oCacheMock.expects("_delete").callsArgWith(3, -1).returns(Promise.resolve());
+				oCacheMock.expects("_delete").callsArgWith(3, -1)
+					.returns(SyncPromise.resolve());
 				return oBinding._delete("$direct", "EMPLOYEES('42')", oContext).then(function () {
 					// code under test
 					assert.strictEqual(oBinding.getLength(), iExpectedLength,
@@ -1051,7 +1052,7 @@ sap.ui.require([
 		this.mock(ODataListBinding.prototype).expects("getGroupId").never();
 		oControl.bindObject("/TEAMS('4711')");
 		this.mock(oControl.getObjectBinding()).expects("fetchValue").atLeast(1)
-			.withExactArgs("/TEAMS('4711')/TEAM_2_EMPLOYEES", undefined)
+			.withExactArgs("/TEAMS('4711')/TEAM_2_EMPLOYEES", undefined, undefined)
 			.returns(oPromise);
 		this.spy(ODataListBinding.prototype, "reset");
 
@@ -1259,8 +1260,8 @@ sap.ui.require([
 						sMessage);
 					//check delegation of fetchValue from context
 					oPromise = {}; // a fresh new object each turn around
-					oBindingMock.expects("fetchValue")
-						.withExactArgs("/EMPLOYEES/" + (iStart + i) + "/foo/bar/" + i, undefined)
+					oBindingMock.expects("fetchValue").withExactArgs(
+							"/EMPLOYEES/" + (iStart + i) + "/foo/bar/" + i, undefined, undefined)
 						.returns(oPromise);
 
 					assert.strictEqual(aContexts[i].fetchValue("foo/bar/" + i), oPromise);
@@ -1698,10 +1699,12 @@ sap.ui.require([
 		this.mock(oBinding).expects("getRelativePath")
 			.withExactArgs("/EMPLOYEES/42/bar").returns("42/bar");
 		this.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
-			.withExactArgs(undefined, "42/bar", undefined, sinon.match.same(oListener))
+			.withExactArgs("$cached", "42/bar", undefined, sinon.match.same(oListener))
 			.returns(SyncPromise.resolve(oReadResult));
 
-		oPromise = oBinding.fetchValue("/EMPLOYEES/42/bar", oListener);
+		// code under test
+		oPromise = oBinding.fetchValue("/EMPLOYEES/42/bar", oListener, "ignored");
+
 		assert.ok(oPromise.isFulfilled());
 		return oPromise.then(function (oResult) {
 			assert.strictEqual(oResult, oReadResult);
@@ -1719,10 +1722,11 @@ sap.ui.require([
 			oResult = {};
 
 		oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext);
-		this.mock(oContext).expects("fetchValue").withExactArgs(sPath, sinon.match.same(oListener))
+		this.mock(oContext).expects("fetchValue")
+			.withExactArgs(sPath, sinon.match.same(oListener), "group")
 			.returns(SyncPromise.resolve(oResult));
 
-		assert.strictEqual(oBinding.fetchValue(sPath, oListener).getResult(), oResult);
+		assert.strictEqual(oBinding.fetchValue(sPath, oListener, "group").getResult(), oResult);
 	});
 	//TODO provide iStart, iLength parameter to fetchValue to support paging on nested list
 
@@ -1751,7 +1755,8 @@ sap.ui.require([
 			{$$groupId : "group"});
 
 		this.mock(oBinding).expects("getRelativePath").withExactArgs(sPath).returns(undefined);
-		this.mock(oContext).expects("fetchValue").withExactArgs(sPath, undefined).returns(oResult);
+		this.mock(oContext).expects("fetchValue").withExactArgs(sPath, undefined, undefined)
+			.returns(oResult);
 
 		// code under test
 		assert.strictEqual(
@@ -2768,7 +2773,7 @@ sap.ui.require([
 			.withExactArgs("update", "EMPLOYEES", "", sinon.match.same(oInitialData),
 				sinon.match.func, sinon.match.func)
 			// we only want to observe fnCancelCallback, hence we neither resolve, nor reject
-			.returns(new Promise(function () {}));
+			.returns(new SyncPromise(function () {}));
 
 		// code under test
 		oContext = oBinding.create(oInitialData);
@@ -2814,7 +2819,7 @@ sap.ui.require([
 			oCacheMock.expects("create")
 				.withExactArgs(oFixture.sUpdateGroupId, "EMPLOYEES", "",
 					sinon.match.same(oFixture.oInitialData), sinon.match.func, sinon.match.func)
-				.returns(Promise.resolve());
+				.returns(SyncPromise.resolve(Promise.resolve()));
 			oBinding.attachEventOnce("change", function (oEvent) {
 				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Add);
 				assert.ok(oBinding.aContexts[-1], "transient context exists");
@@ -4129,8 +4134,12 @@ sap.ui.require([
 			"inResult" : true,
 			"name" : "BillToParty"
 		}, {
+			"name" : "UnitProperty"
+		}, {
 			"name" : "GrossAmountInTransactionCurrency",
 			"total" : false
+		}, {
+			"name" : "TextProperty"
 		}, {
 			"grouped" : false,
 			"name" : "TransactionCurrency",
@@ -4144,7 +4153,7 @@ sap.ui.require([
 			"name" : "IgnoreThisDimension",
 			"visible" : false
 		}],
-		sApply : "groupby((BillToParty,TransactionCurrency)"
+		sApply : "groupby((BillToParty,TransactionCurrency,UnitProperty,TextProperty)"
 			+ ",aggregate(GrossAmountInTransactionCurrency,NetAmountInTransactionCurrency))"
 	}].forEach(function (oFixture) {
 		QUnit.test("updateAnalyticalInfo with " + oFixture.sApply, function (assert) {
@@ -4155,18 +4164,6 @@ sap.ui.require([
 
 			oBinding.updateAnalyticalInfo(oFixture.aColumns);
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("updateAnalyticalInfo: neither dimension nor measure", function (assert) {
-		var oBinding = this.oModel.bindList("/EMPLOYEES");
-
-		assert.throws(function () {
-			oBinding.updateAnalyticalInfo([{
-				"inResult" : true,
-				"name" : "NeitherDimensionNorMeasure"
-			}]);
-		}, new Error("Neither dimension nor measure: NeitherDimensionNorMeasure"));
 	});
 
 	//*********************************************************************************************
@@ -4181,6 +4178,180 @@ sap.ui.require([
 				"total" : false
 			}]);
 		}, new Error("Both dimension and measure: BothDimensionAndMeasure"));
+	});
+
+	//*********************************************************************************************
+	[undefined, "group"].forEach(function (sGroupId) {
+		QUnit.test("refreshSingle, groupId: " + sGroupId, function (assert) {
+			var oBinding = this.oModel.bindList("/EMPLOYEES"),
+				oBindingMock = this.mock(oBinding),
+				oCache = {
+					hasPendingChangesForPath : function () {return false;},
+					refreshSingle : function () {}
+				},
+				oChild0 = {refreshInternal : function () {}},
+				oChild1 = {refreshInternal : function () {}},
+				oContext,
+				sExpectedGroupId = sGroupId || "$auto",
+				oMock,
+				oPromise = SyncPromise.resolve(Promise.resolve());
+
+			// initialize with 3 contexts and bLengthFinal===true
+			oBinding.createContexts(0, 4, createData(3, 0, true, 3));
+
+			oContext = oBinding.aContexts[2];
+			oBinding.aContexts[-1] = {}; // to ensure that view and model coordinates differ
+			oBinding.oCachePromise = SyncPromise.resolve(oCache);
+
+			oBindingMock.expects("isRefreshable").withExactArgs().returns(true);
+			oBindingMock.expects("getGroupId")
+				.exactly(sGroupId ? 0 : 1)
+				.withExactArgs()
+				.returns("$auto");
+			oMock = this.mock(oCache).expects("refreshSingle")
+				.withExactArgs(sExpectedGroupId, oContext.iIndex, sinon.match.func)
+				.returns(oPromise);
+			this.mock(this.oModel).expects("getDependentBindings")
+				.withExactArgs(sinon.match.same(oContext))
+				.returns([oChild0, oChild1]);
+			this.mock(oChild0).expects("refreshInternal").withExactArgs(sExpectedGroupId, false);
+			this.mock(oChild1).expects("refreshInternal").withExactArgs(sExpectedGroupId, false);
+			this.mock(oContext).expects("checkUpdate").withExactArgs();
+
+			// code under test
+			oBinding.refreshSingle(oContext, sGroupId);
+
+			oBindingMock.expects("fireDataRequested").withExactArgs();
+
+			// code under test - callback fires data requested event
+			oMock.firstCall.args[2]();
+
+			oBindingMock.expects("fireDataReceived").withExactArgs({data : {}});
+
+			return oPromise;
+		});
+		//TODO: within #refreshSingle
+		// Eliminate checkUpdate and call refreshInternal with bCheckUpdate=true
+		// Find a way to use _Helper.updateCache in _Cache.refreshSingle to do the
+		// notification for the changeListeners, currently it would fail because the lookup
+		// for the changeListener fails because of different paths (index versus key predicate)
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refreshSingle, no fireDataReceived if no fireDataRequested", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES"),
+			oBindingMock = this.mock(oBinding),
+			oCache = {
+				hasPendingChangesForPath : function () {return false;},
+				refreshSingle : function () {}
+			},
+			oContext;
+
+		// initialize with 3 contexts and bLengthFinal===true
+		oBinding.createContexts(0, 4, createData(3, 0, true, 3));
+
+		oContext = oBinding.aContexts[2];
+		oBinding.oCachePromise = SyncPromise.resolve(oCache);
+
+		oBindingMock.expects("fireDataRequested").never();
+		oBindingMock.expects("fireDataReceived").never();
+
+		this.mock(oCache).expects("refreshSingle")
+			.withExactArgs("foo", oContext.iIndex, sinon.match.func)
+			.returns(SyncPromise.resolve());
+
+		// code under test
+		oBinding.refreshSingle(oContext, "foo");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refreshSingle, error handling: invalid group", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES"),
+			oContext = {},
+			oError = new Error(),
+			sGroupId = "$foo";
+
+		this.mock(this.oModel).expects("checkGroupId").withExactArgs(sGroupId).throws(oError);
+
+		assert.throws(function () {
+			// code under test
+			oBinding.refreshSingle(oContext, sGroupId);
+		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refreshSingle, error handling: binding is not refreshable", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES"),
+			oContext = {
+				iIndex : 43,
+				isRefreshable : function () {},
+				toString : function () { return "foo"; }
+			};
+
+		this.mock(oBinding).expects("isRefreshable").withExactArgs().returns(false);
+
+		assert.throws(function () {
+			// code under test
+			oBinding.refreshSingle(oContext, "groupId");
+		}, new Error("Binding is not refreshable; cannot refresh entity: foo"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refreshSingle, error handling: has pending changes", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES"),
+			oContext = {
+				iIndex : 43,
+				getPath : function () { return "/EMPLOYEES('1')"; },
+				toString : function () { return "foo"; }
+			};
+
+		this.mock(oBinding).expects("hasPendingChangesForPath")
+			.withExactArgs("/EMPLOYEES('1')").returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oBinding.refreshSingle(oContext, "groupId");
+		}, new Error("Cannot refresh entity due to pending changes: foo"));
+	});
+
+	//*********************************************************************************************
+	[true, false].forEach(function (bDataRequested) {
+		QUnit.test("refreshSingle, error handling: dataRequested already fired: " + bDataRequested,
+				function (assert) {
+			var oBinding = this.oModel.bindList("/EMPLOYEES"),
+				oBindingMock = this.mock(oBinding),
+				oCache = {refreshSingle : function () {}},
+				oContext = {
+					iIndex : 42,
+					getPath : function () { return "/EMPLOYEES('1')"; },
+					toString : function () { return "Foo"; }
+				},
+				oError = {},
+				oExpectation;
+
+			oBinding.oCachePromise = SyncPromise.resolve(oCache);
+
+			oBindingMock.expects("fireDataRequested")
+				.exactly(bDataRequested ? 1 : 0)
+				.withExactArgs();
+			oBindingMock.expects("fireDataReceived")
+				.exactly(bDataRequested ? 1 : 0)
+				.withExactArgs(bDataRequested ? {error : oError} : 0);
+			this.mock(oBinding).expects("hasPendingChangesForPath")
+				.withExactArgs("/EMPLOYEES('1')").returns(false);
+			oExpectation = this.mock(oCache).expects("refreshSingle")
+				.withExactArgs("groupId", 42, sinon.match.func)
+				.returns(SyncPromise.reject(oError));
+			if (bDataRequested) {
+				oExpectation.callsArg(2);
+			}
+			this.mock(this.oModel).expects("reportError")
+				.withExactArgs("Failed to refresh entity: Foo", sClassName,
+					sinon.match.same(oError));
+
+			// code under test
+			oBinding.refreshSingle(oContext, "groupId");
+		});
 	});
 });
 

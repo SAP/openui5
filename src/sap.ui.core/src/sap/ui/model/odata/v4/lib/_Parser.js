@@ -43,10 +43,104 @@ sap.ui.define([
 			+ sValue + ")|(" + sSystemQueryOption + "))"),
 		// The two hex digits of a %-escape
 		rEscapeDigits = /^[0-9a-f]{2}$/i,
+		// The list of built-in functions
+		mFunctions = {
+			"ceiling" : {
+				ambiguousParameters : true
+			},
+			"concat" : {
+				type : "Edm.String"
+			},
+			"contains" : {
+				type : "Edm.Boolean"
+			},
+			"day" : {
+				type : "Edm.Int32",
+				ambiguousParameters : true
+			},
+			"endswith" : {
+				type : "Edm.Boolean"
+			},
+			"floor" : {
+				ambiguousParameters : true
+			},
+			"hour" : {
+				type : "Edm.Int32",
+				ambiguousParameters : true
+			},
+			"indexof" : {
+				type : "Edm.Int32"
+			},
+			"length" : {
+				type : "Edm.Int32"
+			},
+			"minute" : {
+				type : "Edm.Int32",
+				ambiguousParameters : true
+			},
+			"month" : {
+				type : "Edm.Int32",
+				ambiguousParameters : true
+			},
+			"round" : {
+				ambiguousParameters : true
+			},
+			"second" : {
+				type : "Edm.Int32",
+				ambiguousParameters : true
+			},
+			"startswith" : {
+				type : "Edm.Boolean"
+			},
+			"substring" : {
+				type : "Edm.String"
+			},
+			"tolower" : {
+				type : "Edm.String"
+			},
+			"toupper" : {
+				type : "Edm.String"
+			},
+			"trim" : {
+				type : "Edm.String"
+			},
+			"year" : {
+				type : "Edm.Int32",
+				ambiguousParameters : true
+			}
+		},
 		// The symbol table for the filter parser
 		mFilterParserSymbols = {
 			"(" : {
-				lbp : 0,
+				lbp : 9,
+				led : function (oToken, oLeft) {
+					var oFunction, oParameter;
+
+					if (oLeft.id !== "PATH") {
+						this.error("Unexpected ", oToken);
+					}
+					oFunction = mFunctions[oLeft.value];
+					if (!oFunction) {
+						this.error("Unknown function ", oLeft);
+					}
+					oLeft.id = "FUNCTION";
+					if (oFunction.type) {
+						oLeft.type = oFunction.type;
+					}
+					oLeft.parameters = [];
+					do {
+						this.advanceBws();
+						oParameter = this.expression(0);
+						if (oFunction.ambiguousParameters) {
+							oParameter.ambiguous = true;
+						}
+						oLeft.parameters.push(oParameter);
+						this.advanceBws();
+					} while (this.advanceIf(","));
+					this.advanceBws();
+					this.advance(')');
+					return oLeft;
+				},
 				nud : function () {
 					this.advanceBws();
 					var oToken = this.expression(0);
@@ -60,6 +154,7 @@ sap.ui.define([
 				nud : function (oToken) {
 					oToken.precedence = 7;
 					oToken.right = this.expression(7);
+					oToken.type = "Edm.Boolean";
 					return oToken;
 				}
 			}
@@ -75,6 +170,7 @@ sap.ui.define([
 		mFilterParserSymbols[sId] = {
 			lbp : iLbp,
 			led : function (oToken, oLeft) {
+				oToken.type = "Edm.Boolean"; // Note: currently we only support logical operators
 				oToken.precedence = iLbp;
 				oToken.left = oLeft;
 				oToken.right = this.expression(iLbp);
@@ -222,7 +318,7 @@ sap.ui.define([
 
 	/**
 	 * A parser that is able to parse a filter string into a syntax tree which recognizes paths,
-	 * comparison operators and literals.
+	 * comparison operators, literals and built-in functions (which are identical in V2 and V4).
 	 */
 	function FilterParser() {
 	}
@@ -251,13 +347,17 @@ sap.ui.define([
 	 * @returns {object} The syntax tree for that expression
 	 */
 	FilterParser.prototype.expression = function (iRbp) {
-		var oLeft, oToken;
+		var fnLeft, oLeft, oToken;
 
 		oToken = this.advance();
 		if (!oToken) {
 			this.expected("expression");
 		}
-		oLeft = this.getSymbolValue(oToken, "nud").call(this, oToken);
+		fnLeft = this.getSymbolValue(oToken, "nud");
+		if (!fnLeft) {
+			this.expected("expression", oToken);
+		}
+		oLeft = fnLeft.call(this, oToken);
 		oToken = this.current();
 		while (oToken && this.getSymbolValue(oToken, "lbp", 0) > iRbp) {
 			oLeft = this.getSymbolValue(oToken, "led").call(this, this.advance(), oLeft);
@@ -273,18 +373,11 @@ sap.ui.define([
 	 * @param {string} sWhat The key in the symbol table entry
 	 * @param {any} [vDefault] The default value if nothing is found in the symbol table entry
 	 * @returns {any} The value
-	 * @throws {SyntaxError} An error that the token was unexpected when there is no such value and
-	 *   no default
 	 */
 	FilterParser.prototype.getSymbolValue = function (oToken, sWhat, vDefault) {
 		var oSymbol = mFilterParserSymbols[oToken.id];
 
-		if (oSymbol && sWhat in oSymbol) {
-			return oSymbol[sWhat];
-		} else if (vDefault !== undefined) {
-			return vDefault;
-		}
-		this.error("Unexpected ", oToken);
+		return oSymbol && sWhat in oSymbol ?  oSymbol[sWhat] : vDefault;
 	};
 
 	/**
@@ -478,14 +571,14 @@ sap.ui.define([
 		function nextChar(bConsume) {
 			var c = sNext[i];
 
-			if (bConsume) {
-				i += 1;
-			}
-			if (c === "%" && sNext[i] === "2" && sNext[i + 1] === "7") {
+			if (c === "%" && sNext[i + 1] === "2" && sNext[i + 2] === "7") {
 				c = "'";
 				if (bConsume) {
 					i += 2;
 				}
+			}
+			if (bConsume) {
+				i += 1;
 			}
 			return c;
 		}
@@ -569,10 +662,9 @@ sap.ui.define([
 					} else if (sValue === "not") {
 						sId = "not";
 						aMatches = rNot.exec(sNext);
-						if (!aMatches) {
-							throw new SyntaxError("Expected ' ' after 'not': " + sOption);
+						if (aMatches) {
+							sValue = aMatches[0];
 						}
-						sValue = aMatches[0];
 					}
 				} else if (aMatches[3]) { // a %-escaped delimiter
 					sId = unescape(aMatches[3]);
@@ -621,6 +713,12 @@ sap.ui.define([
 				if (!oNode) {
 					return "";
 				}
+				if (oNode.parameters) {
+					sFilter = oNode.parameters.map(function (oParameter) {
+						return serialize(oParameter, 0);
+					}).join(",");
+					return oNode.value + "(" + sFilter + ")";
+				}
 				sFilter = serialize(oNode.left, oNode.precedence) + oNode.value
 					+ serialize(oNode.right, oNode.precedence);
 				if (oNode.precedence < iParentPrecedence) {
@@ -638,19 +736,36 @@ sap.ui.define([
 		 * <li> paths are leafs with <code>id="PATH"</code> and the path in <code>value</code>
 		 * <li> literals are leafs with <code>id="VALUE"</code> and the literal (as parsed) in
 		 *   <code>value</code>
-		 * <li> binary operations are nodes with the operator in <code>id</code>, the operator incl.
+		 * <li> operations are nodes with the operator in <code>id</code>, the operator incl.
 		 *   the surrounding required space in <code>value</code> and <code>left</code> and
-		 *   <code>right</code> containing syntax trees for the operands.
+		 *   <code>right</code> containing syntax trees for the operands. <code>not</code> only uses
+		 *   <code>right</code>.
+		 * <li> functions are nodes with <code>id="FUNCTION"</code>,the name in <code>value</code>
+		 *   and an array of <code>parameters</code>.
 		 * </ul>
+		 * If the type is known (especially for logical operators and functions), it is given in
+		 * <code>type</code>. If a function parameter may have different types (like Edm.Decimal or
+		 * Edm.Double in <code>round</code>), it has the property <code>ambiguous: true</code>.
 		 * <code>at</code> always contains the position where this token started (starting with 1).
 		 *
-		 * Example: <code>parseFilter("foo eq 'bar')</code> results in
+		 * Example: <code>parseFilter("foo eq 'bar' and length(baz) ne 5")</code> results in
 		 * <pre>
-			 {
-				id : "eq", value : " eq ", at : 5,
-	            left : {id : "PATH", value : "foo", at : 1},
-				right : {id : "VALUE", value : "'bar'", at : 8}
-			 }
+			{
+				id : "and", value : " and ", type : "Edm.Boolean", at : 14,
+				left : {
+					id : "eq", value : " eq ", type : "Edm.Boolean", at : 5,
+					left : {id : "PATH", value : "foo", at : 1},
+					right : {id : "VALUE", value : "'bar'", at : 8}
+				},
+				right : {
+					id : "ne", value : " ne ", type : "Edm.Boolean", at : 30,
+					left : {
+						id : "FUNCTION", value : "length", type : "Edm.Int32", at : 18,
+						parameters : [{id : "PATH", value : "baz", at : 25}]
+					},
+					right : {id : "VALUE", value : "5", at : 33}
+				}
+			}
 		 * </pre>
 		 *
 		 * @param {string} sFilter The filter string

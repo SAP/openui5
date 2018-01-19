@@ -1001,7 +1001,46 @@ sap.ui.require([
 		v2 : "not (foo gt 3.14d)"
 	}, {
 		v4 : "3.14 eq 3.14",
-		error : "Cannot convert filter for V2, saw literals on both sides of 'eq' at 6"
+		error : "saw literals on both sides of 'eq' at 6"
+	}, {
+		v4 : "length(foo) gt 20",
+		v2 : "length(foo) gt 20"
+	}, {
+		v4 : "20 lt length(foo)",
+		v2 : "20 lt length(foo)"
+	}, {
+		v4 : "length('foo') gt length(bar)",
+		v2 : "length('foo') gt length(bar)"
+	}, {
+		v4 : "substring(foo,2,5) eq 'bar'",
+		v2 : "substring(foo,2,5) eq 'bar'"
+	}, {
+		v4 : "day(2017-12-16) gt 0",
+		error : "ambiguous type for the literal at 5"
+	}, {
+		v4 : "floor(42.5) eq 42",
+		error : "ambiguous type for the literal at 7"
+	}, {
+		v4 : "0 lt day(2017-12-16)",
+		error : "ambiguous type for the literal at 10"
+	}, {
+		v4 : "42 eq floor(42.5)",
+		error : "ambiguous type for the literal at 13"
+	}, {
+		v4 : "floor(foo) eq 42",
+		v2 : "floor(foo) eq 42d"
+	}, {
+		v4 : "floor(round(foo)) eq 42",
+		v2 : "floor(round(foo)) eq 42d"
+	}, {
+		v4 : "startswith(foo,'bar') eq true",
+		v2 : "startswith(foo,'bar') eq true"
+	}, {
+		v4 : "contains(concat(foo,bar),substring(baz,5,2))",
+		v2 : "substringof(substring(baz,5,2),concat(foo,bar))"
+	}, {
+		v4 : "contains(foo)", // wrong actually, but should not generate a syntax error
+		v2 : "substringof(foo)"
 	}].forEach(function (oFixture) {
 		QUnit.test("convertFilter: " + oFixture.v4, function (assert) {
 			var oProperty = {$Type : "Edm.Double"},
@@ -1020,7 +1059,8 @@ sap.ui.require([
 			if (oFixture.error) {
 				assert.throws(function () {
 					oRequestor.convertFilter(oFixture.v4, sResourcePath);
-				}, new Error(oFixture.error + ": " + oFixture.v4));
+				}, new Error("Cannot convert filter to V2, " + oFixture.error + ": "
+					+ oFixture.v4));
 			} else {
 				assert.strictEqual(oRequestor.convertFilter(oFixture.v4, sResourcePath),
 					oFixture.v2);

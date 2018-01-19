@@ -457,7 +457,7 @@ sap.ui.define([
 	 *   If <code>true</code>, the name of the type is delivered instead of the type itself. This
 	 *   must be used when asking for a property type to avoid that the function logs an error
 	 *   because there are no objects for primitive types like "Edm.Stream".
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that is resolved with the type of the object at the given path or its name.
 	 */
 	Requestor.prototype.fetchTypeForPath = function (sPath, bAsName) {
@@ -582,7 +582,7 @@ sap.ui.define([
 	 * Returns a sync promise that is resolved when the requestor is ready to be used. The V4
 	 * requestor is ready immediately. Subclasses may behave differently.
 	 *
-	 * @returns {SyncPromise} A sync promise that is resolved immediately with no result
+	 * @returns {sap.ui.base.SyncPromise} A sync promise that is resolved immediately with no result
 	 */
 	Requestor.prototype.ready = function () {
 		return SyncPromise.resolve();
@@ -635,8 +635,8 @@ sap.ui.define([
 	 * which the <code>$cancel</code> callback is defined are removed.
 	 *
 	 * @param {Promise} oPromise
-	 *   A promise that has been returned for a PATCH request. It will be rejected with an error
-	 *   with property <code>canceled = true</code>.
+	 *   A promise that has been returned for a PATCH request. That request will be rejected with
+	 *   an error with property <code>canceled = true</code>.
 	 * @throws {Error}
 	 *   If the request is not in the queue, assuming that it has been submitted already
 	 *
@@ -722,6 +722,57 @@ sap.ui.define([
 			oRequest,
 			that = this;
 
+		function executeRequest() {
+			return new Promise(function (fnResolve, fnReject) {
+				var sCurrentCSRFToken = that.mHeaders["X-CSRF-Token"];
+				// Adding query parameters could have been the responsibility of submitBatch,
+				// but doing it here makes the $batch recognition easier.
+				jQuery.ajax(that.sServiceUrl + sResourcePath
+						+ (bIsBatch ? that.sQueryParams : ""), {
+					data : sPayload,
+					headers : jQuery.extend({},
+						that.mPredefinedRequestHeaders,
+						that.mHeaders,
+						mHeaders,
+						bIsBatch ? oBatchRequest.headers : that.mFinalHeaders),
+					method : sMethod
+				}).then(function (oPayload, sTextStatus, jqXHR) {
+					try {
+						that.doCheckVersionHeader(jqXHR.getResponseHeader, sResourcePath);
+					} catch (oError) {
+						fnReject(oError);
+						return;
+					}
+					that.mHeaders["X-CSRF-Token"]
+						= jqXHR.getResponseHeader("X-CSRF-Token") || that.mHeaders["X-CSRF-Token"];
+					if (bIsBatch) {
+						fnResolve(_Batch.deserializeBatchResponse(
+							jqXHR.getResponseHeader("Content-Type"), oPayload));
+					} else {
+						try {
+							fnResolve(that.doConvertResponse(oPayload));
+						} catch (oError) {
+							fnReject(oError);
+						}
+					}
+				}, function (jqXHR, sTextStatus, sErrorMessage) {
+					var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
+					if (!bIsFreshToken && jqXHR.status === 403
+							&& sCsrfToken && sCsrfToken.toLowerCase() === "required") {
+						// refresh CSRF token and repeat original request
+						that.refreshSecurityToken(sCurrentCSRFToken).then(function () {
+							// no fnSubmit, it has been called already
+							// no fnCancel, it is only relevant while the request is in the queue
+							fnResolve(that.request(sMethod, sResourcePath, sGroupId, mHeaders,
+								oPayload, undefined, undefined, true));
+						}, fnReject);
+					} else {
+						fnReject(_Helper.createError(jqXHR));
+					}
+				});
+			});
+		}
+
 		if (sGroupId === "$cached") {
 			throw new Error("Unexpected request: " + sMethod + " " + sResourcePath);
 		}
@@ -771,53 +822,10 @@ sap.ui.define([
 			}
 		}
 
-		return new Promise(function (fnResolve, fnReject) {
-			var sCurrentCSRFToken = that.mHeaders["X-CSRF-Token"];
-			// Adding query parameters could have been the responsibility of submitBatch, but doing
-			// it here makes the $batch recognition easier.
-			jQuery.ajax(that.sServiceUrl + sResourcePath + (bIsBatch ? that.sQueryParams : ""), {
-				data : sPayload,
-				headers : jQuery.extend({},
-					that.mPredefinedRequestHeaders,
-					that.mHeaders,
-					mHeaders,
-					bIsBatch ? oBatchRequest.headers : that.mFinalHeaders),
-				method : sMethod
-			}).then(function (oPayload, sTextStatus, jqXHR) {
-				try {
-					that.doCheckVersionHeader(jqXHR.getResponseHeader, sResourcePath);
-				} catch (oError) {
-					fnReject(oError);
-					return;
-				}
-				that.mHeaders["X-CSRF-Token"]
-					= jqXHR.getResponseHeader("X-CSRF-Token") || that.mHeaders["X-CSRF-Token"];
-				if (bIsBatch) {
-					fnResolve(_Batch.deserializeBatchResponse(
-						jqXHR.getResponseHeader("Content-Type"), oPayload));
-				} else {
-					try {
-						fnResolve(that.doConvertResponse(oPayload));
-					} catch (oError) {
-						fnReject(oError);
-					}
-				}
-			}, function (jqXHR, sTextStatus, sErrorMessage) {
-				var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
-				if (!bIsFreshToken && jqXHR.status === 403
-						&& sCsrfToken && sCsrfToken.toLowerCase() === "required") {
-					// refresh CSRF token and repeat original request
-					that.refreshSecurityToken(sCurrentCSRFToken).then(function () {
-						// no fnSubmit, it has been called already
-						// no fnCancel, it is only relevant while the request is in the queue
-						fnResolve(that.request(sMethod, sResourcePath, sGroupId, mHeaders, oPayload,
-							undefined, undefined, true));
-					}, fnReject);
-				} else {
-					fnReject(_Helper.createError(jqXHR));
-				}
-			});
-		});
+		if (this.oSecurityTokenPromise && sMethod !== "GET") {
+			return this.oSecurityTokenPromise.then(executeRequest);
+		}
+		return executeRequest();
 	};
 
 	/**

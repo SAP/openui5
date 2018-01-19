@@ -567,6 +567,7 @@ sap.ui.require([
 				foo : {
 					bar : 42,
 					list : [{}, {}],
+					"navigation@odata.bind" : "EntitySet('4712')",
 					"null" : null
 				}
 			}];
@@ -584,6 +585,8 @@ sap.ui.require([
 		assert.strictEqual(oCache.drillDown(oData, "('a')"), oData[0], "('a')");
 		assert.strictEqual(oCache.drillDown(oData, "0/foo"), oData[0].foo, "0/foo");
 		assert.strictEqual(oCache.drillDown(oData, "0/foo/bar"), oData[0].foo.bar, "0/foo/bar");
+		assert.strictEqual(oCache.drillDown(oData, "0/foo/navigation/any/path"), undefined,
+			"0/foo/navigation/any/path");
 		assert.strictEqual(oCache.drillDown(oData, "0/foo/null/invalid"), undefined,
 			"0/foo/null/invalid");
 		assert.strictEqual(oCache.drillDown(oData, "0/foo/list/$count"), oData[0].foo.list.$count,
@@ -1242,6 +1245,7 @@ sap.ui.require([
 			oCacheMock = this.mock(oCache);
 			oCacheMock.expects("fetchTypes").withExactArgs()
 				.returns(Promise.resolve(mTypeForMetaPath));
+			this.spy(oCache, "fill");
 
 			// code under test
 			oPromise = oCache.read(oFixture.index, oFixture.length, 0, "group");
@@ -1249,6 +1253,8 @@ sap.ui.require([
 			assert.ok(!oPromise.isFulfilled());
 			assert.ok(!oPromise.isRejected());
 			assert.ok(oCache.bSentReadRequest);
+			sinon.assert.calledWithExactly(oCache.fill, sinon.match.instanceOf(SyncPromise),
+				oFixture.index, oFixture.index + oFixture.length);
 			return oPromise.then(function (oResult) {
 				var oExpectedResult = {
 						"@odata.context" : "$metadata#TEAMS",
@@ -1532,6 +1538,7 @@ sap.ui.require([
 		assert.ok("$count" in oCache.aElements);
 		assert.ok("$tail" in oCache.aElements);
 		assert.strictEqual(oCache.iLimit, Infinity);
+		assert.ok("oSyncPromiseAll" in oCache);
 
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", "Employees", /*sGroupId*/undefined, /*mHeaders*/undefined,
@@ -1650,14 +1657,44 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#fetchValue includes $tail", function (assert) {
-		var oCache = this.createCache("Employees");
+		var oCache = this.createCache("Employees"),
+			oResult,
+			oSyncPromiseAll = Promise.resolve(),
+			that = this;
 
+		assert.strictEqual(oCache.oSyncPromiseAll, undefined);
 		oCache.aElements.push("0");
 		oCache.aElements.push("1");
 		oCache.aElements.push("2");
 		oCache.aElements.$tail = "$";
 		this.mock(SyncPromise).expects("all")
 			.withExactArgs(["0", "1", "2", "$"])
+			.returns(oSyncPromiseAll);
+		oSyncPromiseAll.then(function () {
+			that.mock(oCache).expects("drillDown")
+				.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key").returns("c");
+		});
+
+		// code under test
+		oResult = oCache.fetchValue("group", "('c')/key").then(function (sResult) {
+			assert.strictEqual(sResult, "c");
+		});
+
+		assert.strictEqual(oCache.oSyncPromiseAll, oSyncPromiseAll);
+
+		// code under test (simulate an error)
+		oCache.fill(undefined, 0, 3);
+
+		assert.strictEqual(oCache.oSyncPromiseAll, undefined);
+		return oResult;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#fetchValue without $tail", function (assert) {
+		var oCache = this.createCache("Employees");
+
+		this.mock(SyncPromise).expects("all")
+			.withExactArgs(sinon.match.same(oCache.aElements))
 			.returns(SyncPromise.resolve());
 		this.mock(oCache).expects("drillDown")
 			.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key").returns("c");
@@ -1669,12 +1706,11 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache#fetchValue without $tail", function (assert) {
+	QUnit.test("CollectionCache#fetchValue without $tail, oSyncPromiseAll", function (assert) {
 		var oCache = this.createCache("Employees");
 
-		this.mock(SyncPromise).expects("all")
-			.withExactArgs(sinon.match.same(oCache.aElements))
-			.returns(SyncPromise.resolve());
+		oCache.oSyncPromiseAll = SyncPromise.resolve();
+		this.mock(SyncPromise).expects("all").never();
 		this.mock(oCache).expects("drillDown")
 			.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key").returns("c");
 
@@ -2161,20 +2197,27 @@ sap.ui.require([
 		var sResourcePath = "Employees",
 			oCache = this.createCache(sResourcePath),
 			oError = {},
-			oSuccess = createResult(0, 5);
+			oSuccess = createResult(0, 5),
+			that = this;
 
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=5", undefined, undefined,
 				undefined, undefined)
 			.returns(Promise.reject(oError));
-		this.oRequestorMock.expects("request")
-			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=5", undefined, undefined,
-				undefined, undefined)
-			.returns(Promise.resolve(oSuccess));
+		this.spy(oCache, "fill");
 
 		// code under test
 		return oCache.read(0, 5, 0).catch(function (oResult1) {
 			assert.strictEqual(oResult1, oError);
+			sinon.assert.calledWithExactly(oCache.fill, sinon.match.instanceOf(SyncPromise), 0, 5);
+			sinon.assert.calledWithExactly(oCache.fill, undefined, 0, 5);
+
+			that.oRequestorMock.expects("request")
+				.withExactArgs("GET", sResourcePath + "?$skip=0&$top=5", undefined, undefined,
+					undefined, undefined)
+				.returns(Promise.resolve(oSuccess));
+
+			// code under test
 			return oCache.read(0, 5, 0).then(function (oResult2) {
 				assert.deepEqual(oResult2, oSuccess);
 			});
@@ -3046,6 +3089,57 @@ sap.ui.require([
 		return oCache.read(0, 3, 0, "group").then(function () {
 			assert.strictEqual(oCache.aElements[0], oValue0);
 			assert.strictEqual(oCache.aElements[1], oValue1);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#refreshSingle", function(assert) {
+		var fnDataRequested = sinon.spy(),
+			sKeyPredicate = "('13')",
+			oElement = {"@$ui5.predicate" : sKeyPredicate},
+			aElements = [{}, oElement],
+			sResourcePath = "Employees",
+			mQueryOptionsCopy = {$filter: "foo", $count: true, $sort: "bar", $select: "Name"},
+			oCache = this.createCache(sResourcePath,
+				{$filter: "foo", $count: true, $sort: "bar", $select: "Name"}),
+			oCacheMock = this.mock(oCache),
+			oPromise,
+			sQueryString = "?$select=Name",
+			oResponse = {},
+			oTypes = {};
+
+		this.mock(jQuery).expects("extend")
+			.withExactArgs({}, sinon.match.same(oCache.mQueryOptions))
+			.returns(mQueryOptionsCopy);
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs(oCache.sResourcePath, {$select: "Name"}, false,
+				oCache.bSortExpandSelect)
+			.returns(sQueryString);
+		this.oRequestorMock.expects("request")
+			.withExactArgs("GET", sResourcePath + sKeyPredicate + sQueryString, "group", undefined,
+				undefined, sinon.match.same(fnDataRequested))
+			.returns(Promise.resolve(oResponse));
+		oCacheMock.expects("fetchTypes").withExactArgs().returns(SyncPromise.resolve(oTypes));
+		this.mock(_Cache).expects("computeCount")
+			.withExactArgs(sinon.match.same(oResponse));
+		oCacheMock.expects("calculateKeyPredicates")
+			.withExactArgs(sinon.match.same(oResponse), oTypes);
+
+		oCache.aElements = aElements;
+		oCache.aElements.$byPredicate = {};
+
+		// code under test
+		oPromise = oCache.refreshSingle("group", 1, fnDataRequested);
+		assert.ok(oPromise.isFulfilled, "returned a SyncPromise");
+
+		assert.strictEqual(oCache.bSentReadRequest, true);
+		assert.deepEqual(oCache.aElements, aElements);
+		assert.strictEqual(oCache.aElements[1], oElement);
+
+		return oPromise.then(function (oResult) {
+			assert.strictEqual(oResult, undefined);
+			assert.strictEqual(oCache.aElements[1], oResponse);
+			assert.strictEqual(oCache.aElements.$byPredicate[sKeyPredicate], oResponse);
 		});
 	});
 

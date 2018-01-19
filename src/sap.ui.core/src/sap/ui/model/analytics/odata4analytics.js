@@ -225,20 +225,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 				// find out which model version we are running
 				this._iVersion = AnalyticalVersionInfo.getVersion(this._oModel);
 				checkForMetadata();
-			} else {
+			} else if (mParameter && mParameter.modelVersion === AnalyticalVersionInfo.V2) {
 				// Check if the user wants a V2 model
-				if (mParameter && mParameter.modelVersion === AnalyticalVersionInfo.V2) {
-					var V2ODataModel = sap.ui.requireSync("sap/ui/model/odata/v2/ODataModel");
-					this._oModel = new V2ODataModel(oModelReference.sServiceURI);
-					this._iVersion = AnalyticalVersionInfo.V2;
-					checkForMetadata();
-				} else {
-					//default is V1 Model
-					var ODataModel = sap.ui.requireSync("sap/ui/model/odata/ODataModel");
-					this._oModel = new ODataModel(oModelReference.sServiceURI);
-					this._iVersion = AnalyticalVersionInfo.V1;
-					checkForMetadata();
-				}
+				var V2ODataModel = sap.ui.requireSync("sap/ui/model/odata/v2/ODataModel");
+				this._oModel = new V2ODataModel(oModelReference.sServiceURI);
+				this._iVersion = AnalyticalVersionInfo.V2;
+				checkForMetadata();
+			} else {
+				//default is V1 Model
+				var ODataModel = sap.ui.requireSync("sap/ui/model/odata/ODataModel");
+				this._oModel = new ODataModel(oModelReference.sServiceURI);
+				this._iVersion = AnalyticalVersionInfo.V1;
+				checkForMetadata();
 			}
 
 			if (this._oModel.getServiceMetadata().dataServices == undefined) {
@@ -2396,7 +2394,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 			 * collect all hierarchies defined in this entity type
 			 */
 			var oRecursiveHierarchies = {}; // temp for collecting all properties participating in hierarchies
-			var oRecursiveHierarchy = null;
+
+			function getOrCreateHierarchy(sKey) {
+				var oResult = oRecursiveHierarchies[sKey];
+
+				if (!oResult) {
+					oResult = oRecursiveHierarchies[sKey] = {};
+				}
+				return oResult;
+			}
 
 			for (var i = -1, oPropertyRef; (oPropertyRef = oEntityType.key.propertyRef[++i]) !== undefined;) {
 				this._aKeyProperties.push(oPropertyRef.name);
@@ -2418,7 +2424,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 				}
 				for (var j = -1, oExtension; (oExtension = oProperty.extensions[++j]) !== undefined;) {
 
-					if (!oExtension.namespace == odata4analytics.constants.SAP_NAMESPACE) {
+					if (oExtension.namespace !== odata4analytics.constants.SAP_NAMESPACE) {
 						continue;
 					}
 
@@ -2448,31 +2454,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 
 					// hierarchy annotations: build temporary set of
 					// hierarchy-node-id properties with relevant attributes
+					case "hierarchy-node-external-key-for":
+						getOrCreateHierarchy(oExtension.value).externalKeyProperty = oProperty;
+						break;
 					case "hierarchy-node-for":
-						if (!(oRecursiveHierarchy = oRecursiveHierarchies[oProperty.name])) {
-							oRecursiveHierarchy = oRecursiveHierarchies[oProperty.name] = {};
-						}
-						oRecursiveHierarchy.dimensionName = oExtension.value;
+						getOrCreateHierarchy(oProperty.name).dimensionName = oExtension.value;
 						break;
 					case "hierarchy-parent-node-for":
 					case "hierarchy-parent-nod": // TODO workaround for GW bug
-						if (!(oRecursiveHierarchy = oRecursiveHierarchies[oExtension.value])) {
-							oRecursiveHierarchy = oRecursiveHierarchies[oExtension.value] = {};
-						}
-						oRecursiveHierarchy.parentNodeIDProperty = oProperty;
+						getOrCreateHierarchy(oExtension.value).parentNodeIDProperty = oProperty;
 						break;
 					case "hierarchy-level-for":
-						if (!(oRecursiveHierarchy = oRecursiveHierarchies[oExtension.value])) {
-							oRecursiveHierarchy = oRecursiveHierarchies[oExtension.value] = {};
-						}
-						oRecursiveHierarchy.levelProperty = oProperty;
+						getOrCreateHierarchy(oExtension.value).levelProperty = oProperty;
 						break;
 					case "hierarchy-drill-state-for":
 					case "hierarchy-drill-stat": // TODO workaround for GW bug
-						if (!(oRecursiveHierarchy = oRecursiveHierarchies[oExtension.value])) {
-							oRecursiveHierarchy = oRecursiveHierarchies[oExtension.value] = {};
-						}
-						oRecursiveHierarchy.drillStateProperty = oProperty;
+						getOrCreateHierarchy(oExtension.value).drillStateProperty = oProperty;
 						break;
 					default:
 					}
@@ -2491,8 +2488,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 					// node ID
 					oDimensionProperty = oHierarchyNodeIDProperty;
 				}
-				this._oRecursiveHierarchySet[oDimensionProperty.name] = new odata4analytics.RecursiveHierarchy(oEntityType,
-						oHierarchyNodeIDProperty, oHierarchy.parentNodeIDProperty, oHierarchy.levelProperty, oDimensionProperty);
+				this._oRecursiveHierarchySet[oDimensionProperty.name]
+					= new odata4analytics.RecursiveHierarchy(oEntityType, oHierarchyNodeIDProperty,
+						oHierarchy.parentNodeIDProperty, oHierarchy.levelProperty,
+						oDimensionProperty, oHierarchy.externalKeyProperty);
 			}
 
 		},
@@ -2869,28 +2868,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	 *            oNodeValueProperty datajs object for the property holding the data
 	 *            value for the of the hierarchy node pointed to by the value of
 	 *            oNodeIDProperty
+	 * @param {object}
+	 *            oNodeExternalKeyProperty datajs object for the property holding the node external
+	 *            key of the hierarchy node. The external key is a human-readable identification of
+	 *            a node. The value of the <code>hierarchy-node-external-key-for</code> attribute is
+	 *            always the name of another property in the same type. It points to the related
+	 *            property holding the hierarchy node ID.
 	 *
 	 * @class Representation of a recursive hierarchy.
 	 * @name sap.ui.model.analytics.odata4analytics.RecursiveHierarchy
 	 * @public
 	 */
-	odata4analytics.RecursiveHierarchy = function(oEntityType, oNodeIDProperty, oParentNodeIDProperty, oNodeLevelProperty,
-			oNodeValueProperty) {
-		this._init(oEntityType, oNodeIDProperty, oParentNodeIDProperty, oNodeLevelProperty, oNodeValueProperty);
+	odata4analytics.RecursiveHierarchy = function(oEntityType, oNodeIDProperty,
+			oParentNodeIDProperty, oNodeLevelProperty, oNodeValueProperty,
+			oNodeExternalKeyProperty) {
+		this._init(oEntityType, oNodeIDProperty, oParentNodeIDProperty, oNodeLevelProperty,
+			oNodeValueProperty, oNodeExternalKeyProperty);
 	};
 
 	odata4analytics.RecursiveHierarchy.prototype = {
 		/**
 		 * @private
 		 */
-		_init : function(oEntityType, oNodeIDProperty, oParentNodeIDProperty, oNodeLevelProperty, oNodeValueProperty) {
+		_init : function(oEntityType, oNodeIDProperty, oParentNodeIDProperty, oNodeLevelProperty,
+				oNodeValueProperty, oNodeExternalKeyProperty) {
 			this._oEntityType = oEntityType;
-
 			this._oNodeIDProperty = oNodeIDProperty;
 			this._oParentNodeIDProperty = oParentNodeIDProperty;
 			this._oNodeLevelProperty = oNodeLevelProperty;
 			this._oNodeValueProperty = oNodeValueProperty;
-
+			this._oNodeExternalKeyProperty = oNodeExternalKeyProperty;
 		},
 
 		/**
@@ -2915,6 +2922,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		 */
 		isLeveledHierarchy : function() {
 			return false;
+		},
+
+		/**
+		 * Get the property holding the node external key of the hierarchy node
+		 *
+		 * @returns {object} The datajs object representing this property
+		 * @public
+		 * @function
+		 * @name sap.ui.model.analytics.odata4analytics.RecursiveHierarchy#getNodeExternalKeyProperty
+		 */
+		getNodeExternalKeyProperty : function() {
+			return this._oNodeExternalKeyProperty;
 		},
 
 		/**
@@ -2969,12 +2988,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		/**
 		 * Private member attributes
 		 */
-
+		_oEntityType : null,
 		_oNodeIDProperty : null,
 		_oParentNodeIDProperty : null,
 		_oNodeLevelProperty : null,
-		_oNodeValueProperty : null
-
+		_oNodeValueProperty : null,
+		_oNodeExternalKeyProperty : null
 	};
 
 	/** ******************************************************************** */
@@ -3939,7 +3958,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 	 * @public
 	 */
 	odata4analytics.QueryResultRequest = function(oQueryResult, oParameterizationRequest) {
-		this._init(oQueryResult);
+		this._init(oQueryResult, oParameterizationRequest);
 	};
 
 	odata4analytics.QueryResultRequest.prototype = {
@@ -3950,11 +3969,58 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 			this._oQueryResult = oQueryResult;
 			this._oParameterizationRequest = oParameterizationRequest;
 			this._oAggregationLevel = {};
+			this._oDimensionHierarchies = {};
 			this._oMeasures = {};
 			this._bIncludeEntityKey = false;
 			this._oFilterExpression = null;
 			this._oSortExpression = null;
 			this._oSelectedPropertyNames = null;
+		},
+
+		/**
+		 * Adds a recursive hierarchy to the aggregation level.
+		 *
+		 * @param {string} sHierarchyDimensionName
+		 *    Name of dimension whose hierarchy shall be part of the aggregation level
+		 * @param {boolean} bIncludeExternalKey
+		 *    Indicator whether or not to include the external node key (if available) in the query
+		 *    result
+		 * @param {boolean} bIncludeText
+		 *    Indicator whether or not to include the node text (if available) in the query result
+		 * @throws {Error}
+		 *    If the given name is not a name of a dimension or the corresponding dimension does not
+		 *    have a hierarchy.
+		 *
+		 * @public
+		 * @function
+		 * @name sap.ui.model.analytics.odata4analytics.QueryResultRequest#addRecursiveHierarchy
+		 */
+		addRecursiveHierarchy : function (sHierarchyDimensionName, bIncludeExternalKey,
+				bIncludeText) {
+			var oDimension;
+
+			if (!sHierarchyDimensionName) {
+				return;
+			}
+			// sHierarchyDimensionName is the name of a dimension property (and not e.g. of a
+			// dimension's text property), findDimensionByName can be used instead of
+			// findDimensionByPropertyName
+			oDimension = this._oQueryResult.findDimensionByName(sHierarchyDimensionName);
+			if (!oDimension) {
+				throw new Error("'" + sHierarchyDimensionName + "' is not a dimension property");
+			}
+			if (!oDimension.getHierarchy()) {
+				throw new Error("Dimension '" + sHierarchyDimensionName
+					+ "' does not have a hierarchy");
+			}
+
+			// reset previously compiled list of selected properties
+			this._oSelectedPropertyNames = null;
+			this._oDimensionHierarchies[sHierarchyDimensionName] = {
+				externalKey : bIncludeExternalKey,
+				id: true,
+				text : bIncludeText
+			};
 		},
 
 		/**
@@ -4555,65 +4621,71 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		 * @name sap.ui.model.analytics.odata4analytics.QueryResultRequest#getURIQueryOptionValue
 		 */
 		getURIQueryOptionValue : function(sQueryOptionName) {
-			var sQueryOptionValue = null;
+			var sName,
+				sQueryOptionValue = null,
+				sSelectOption,
+				that = this;
+
+			// Adds given property (either the name of the property as string or an object with a
+			// property name) to sSelectOption and to this._oSelectedPropertyNames if not yet done
+			function addSelect(vProperty) {
+				var sPropertyName;
+				if (!vProperty) {
+					return;
+				}
+				sPropertyName = typeof vProperty === "string" ? vProperty : vProperty.name;
+				if (!that._oSelectedPropertyNames[sPropertyName]) {
+					sSelectOption += (sSelectOption == "" ? "" : ",") + sPropertyName;
+					that._oSelectedPropertyNames[sPropertyName] = true;
+				}
+			}
 
 			switch (sQueryOptionName) {
 			case "$select": {
-				var sSelectOption = "";
+				sSelectOption = "";
 				this._oSelectedPropertyNames = {};
-				var sDimensionPropertyName = null;
-				for ( var sDimName in this._oAggregationLevel) {
-					var oDim = this._oQueryResult.findDimensionByName(sDimName);
-					var oDimSelect = this._oAggregationLevel[sDimName];
+				for (sName in this._oAggregationLevel) {
+					var oDim = this._oQueryResult.findDimensionByName(sName);
+					var oDimSelect = this._oAggregationLevel[sName];
 					if (oDimSelect.key == true) {
-						sDimensionPropertyName = oDim.getKeyProperty().name;
-						if (this._oSelectedPropertyNames[sDimensionPropertyName] == undefined) {
-							sSelectOption += (sSelectOption == "" ? "" : ",") + sDimensionPropertyName;
-							this._oSelectedPropertyNames[sDimensionPropertyName] = true;
-						}
+						addSelect(oDim.getKeyProperty());
 					}
-					if (oDimSelect.text == true && oDim.getTextProperty()) {
-						sDimensionPropertyName = oDim.getTextProperty().name;
-						if (this._oSelectedPropertyNames[sDimensionPropertyName] == undefined) {
-							sSelectOption += (sSelectOption == "" ? "" : ",") + sDimensionPropertyName;
-							this._oSelectedPropertyNames[sDimensionPropertyName] = true;
-						}
+					if (oDimSelect.text == true) {
+						addSelect(oDim.getTextProperty());
 					}
 					if (oDimSelect.attributes) {
 						for (var i = -1, sAttrName; (sAttrName = oDimSelect.attributes[++i]) !== undefined;) {
-							sDimensionPropertyName = oDim.findAttributeByName(sAttrName).getName();
-							if (this._oSelectedPropertyNames[sDimensionPropertyName] == undefined) {
-								sSelectOption += (sSelectOption == "" ? "" : ",") + sDimensionPropertyName;
-								this._oSelectedPropertyNames[sDimensionPropertyName] = true;
-							}
+							addSelect(oDim.findAttributeByName(sAttrName).getName());
 						}
 					}
 				}
 
-				var sMeasurePropertyName;
-				for ( var sMeasName in this._oMeasures) {
-					var oMeas = this._oQueryResult.findMeasureByName(sMeasName);
-					var oMeasSelect = this._oMeasures[sMeasName];
+				for (sName in this._oMeasures) {
+					var oMeas = this._oQueryResult.findMeasureByName(sName);
+					var oMeasSelect = this._oMeasures[sName];
 					if (oMeasSelect.value == true) {
-						sMeasurePropertyName = oMeas.getRawValueProperty().name;
-						if (this._oSelectedPropertyNames[sMeasurePropertyName] == undefined) {
-							sSelectOption += (sSelectOption == "" ? "" : ",") + sMeasurePropertyName;
-							this._oSelectedPropertyNames[sMeasurePropertyName] = true;
-						}
+						addSelect(oMeas.getRawValueProperty());
 					}
-					if (oMeasSelect.text == true && oMeas.getFormattedValueProperty()) {
-						sMeasurePropertyName = oMeas.getFormattedValueProperty().name;
-						if (this._oSelectedPropertyNames[sMeasurePropertyName] == undefined) {
-							sSelectOption += (sSelectOption == "" ? "" : ",") + sMeasurePropertyName;
-							this._oSelectedPropertyNames[sMeasurePropertyName] = true;
-						}
+					if (oMeasSelect.text == true) {
+						addSelect(oMeas.getFormattedValueProperty());
 					}
-					if (oMeasSelect.unit == true && oMeas.getUnitProperty()) {
-						sMeasurePropertyName = oMeas.getUnitProperty().name;
-						if (this._oSelectedPropertyNames[sMeasurePropertyName] == undefined) {
-							sSelectOption += (sSelectOption == "" ? "" : ",") + sMeasurePropertyName;
-							this._oSelectedPropertyNames[sMeasurePropertyName] = true;
-						}
+					if (oMeasSelect.unit == true) {
+						addSelect(oMeas.getUnitProperty());
+					}
+				}
+
+				for (sName in this._oDimensionHierarchies) {
+					var oHier = this._oQueryResult.findDimensionByName(sName).getHierarchy();
+					var oHierSelect = this._oDimensionHierarchies[sName];
+					if (oHierSelect.id) {
+						addSelect(oHier.getNodeIDProperty());
+					}
+					if (oHierSelect.externalKey) {
+						addSelect(oHier.getNodeExternalKeyProperty());
+					}
+					if (oHierSelect.text) {
+						addSelect(this._oQueryResult.getEntityType()
+							.getTextPropertyOfProperty(oHier.getNodeIDProperty().name));
 					}
 				}
 
@@ -4764,6 +4836,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		_oParameterizationRequest : null,
 		_sResourcePath : null,
 		_oAggregationLevel : null,
+		_oDimensionHierarchies : null,
 		_oMeasures : null,
 		_bIncludeEntityKey : null,
 		_bIncludeCount : null,

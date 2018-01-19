@@ -34,10 +34,10 @@ sap.ui.require([
 				return;
 			}
 
+			TestUtils.setData("sap.ui.core.sample.odata.v4.SalesOrders.updateGroupId", sGroupId);
 			Given.iStartMyUIComponent({
 				componentConfig : {
-					name : "sap.ui.core.sample.odata.v4.SalesOrders",
-					settings: {componentData : {updateGroupId : sGroupId}}
+					name : "sap.ui.core.sample.odata.v4.SalesOrders"
 				}
 			});
 

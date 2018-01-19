@@ -577,7 +577,7 @@ sap.ui.require([
 			assert.strictEqual(oMetaModel[sGetMethodName].apply(oMetaModel, aArguments), undefined,
 				"pending");
 		}
-		return oRejectedPromise.catch(function () {
+		return oSyncPromise.catch(function () {
 			// get: rejected
 			if (bThrow) {
 				assert.throws(function () {
@@ -767,34 +767,49 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[{
-		aAnnotationURI: undefined,
-		aAdditionalRequest : []
-	}, {
-		aAnnotationURI: ["/my/annotation.xml"],
-		aAdditionalRequest : ["/my/annotation.xml"]
-	}, {
-		aAnnotationURI: ["/my/annotation.xml", "/another/annotation.xml"],
-		aAdditionalRequest : ["/my/annotation.xml", "/another/annotation.xml"]
-	}].forEach(function (oFixture) {
-		var title = "fetchEntityContainer - " + JSON.stringify(oFixture.aAnnotationURI);
+	[
+		undefined,
+		["/my/annotation.xml"],
+		["/my/annotation.xml", "/another/annotation.xml"]
+	].forEach(function (aAnnotationURI) {
+		var title = "fetchEntityContainer - " + JSON.stringify(aAnnotationURI);
 		QUnit.test(title, function (assert) {
 			var oRequestorMock = this.mock(this.oMetaModel.oRequestor),
-				aReadResults = [],
+				aReadResults,
 				mRootScope = {},
 				oSyncPromise,
 				that = this;
 
-			this.oMetaModel.aAnnotationUris = oFixture.aAnnotationURI;
-			oRequestorMock.expects("read").withExactArgs(this.oMetaModel.sUrl)
-				.returns(Promise.resolve(mRootScope));
-			oFixture.aAdditionalRequest.forEach(function (sAnnotationUrl) {
-				var oAnnotationResult = {};
+			function expectReads(bPrefetch) {
+				oRequestorMock.expects("read")
+					.withExactArgs(that.oMetaModel.sUrl, false, bPrefetch)
+					.returns(Promise.resolve(mRootScope));
+				aReadResults = [];
+				(aAnnotationURI || []).forEach(function (sAnnotationUrl) {
+					var oAnnotationResult = {};
 
-				aReadResults.push(oAnnotationResult);
-				oRequestorMock.expects("read").withExactArgs(sAnnotationUrl, true)
-					.returns(Promise.resolve(oAnnotationResult));
-			});
+					aReadResults.push(oAnnotationResult);
+					oRequestorMock.expects("read")
+						.withExactArgs(sAnnotationUrl, true, bPrefetch)
+						.returns(Promise.resolve(oAnnotationResult));
+				});
+			}
+
+			this.oMetaModel.aAnnotationUris = aAnnotationURI;
+			this.oMetaModelMock.expects("_mergeAnnotations").never();
+			expectReads(true);
+
+			// code under test
+			assert.strictEqual(this.oMetaModel.fetchEntityContainer(true), null);
+
+			// bPrefetch => no caching
+			expectReads(true);
+
+			// code under test
+			assert.strictEqual(this.oMetaModel.fetchEntityContainer(true), null);
+
+			// now test [bPrefetch=false]
+			expectReads();
 			this.oMetaModelMock.expects("_mergeAnnotations")
 				.withExactArgs(mRootScope, aReadResults);
 
@@ -805,6 +820,8 @@ sap.ui.require([
 			assert.strictEqual(oSyncPromise.isPending(), true);
 			// already caching
 			assert.strictEqual(this.oMetaModel.fetchEntityContainer(), oSyncPromise);
+			assert.strictEqual(this.oMetaModel.fetchEntityContainer(true), oSyncPromise,
+				"now bPrefetch makes no difference");
 
 			return oSyncPromise.then(function (mRootScope0) {
 				assert.strictEqual(mRootScope0, mRootScope);
@@ -820,7 +837,7 @@ sap.ui.require([
 		var oError = new Error();
 
 		this.mock(this.oMetaModel.oRequestor).expects("read")
-			.withExactArgs(this.oMetaModel.sUrl)
+			.withExactArgs(this.oMetaModel.sUrl, false, undefined)
 			.returns(Promise.resolve({}));
 		this.oMetaModelMock.expects("_mergeAnnotations").throws(oError);
 
@@ -2173,6 +2190,9 @@ sap.ui.require([
 	}, { // decode navigation property, encode entity set
 		path : "/EMPLOYEES('7')/EMPLOYEE_2_EQUIPM%E2%82%ACNTS(42)|ID",
 		editUrl : "EQUIPM%E2%82%ACNTS(42)"
+	}, { // navigation property with @odata.bind annotation
+		path : "/TEAMS('42')|TEAM_2_EMPLOYEES@odata.bind",
+		editUrl : "TEAMS('42')"
 	}].forEach(function (oFixture) {
 		QUnit.test("fetchUpdateData: " + oFixture.path, function (assert) {
 			var i = oFixture.path.indexOf("|"),
@@ -2266,6 +2286,9 @@ sap.ui.require([
 		dataPath : "/TEAMS/0/Foo/Bar",
 		message : "Not a (navigation) property: Foo"
 	}, {
+		dataPath : "/TEAMS/0/Foo@odata.bind",
+		message : "Not a (navigation) property: Foo@odata.bind"
+	}, {
 		dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
 		instance : undefined,
 		message : "No instance to calculate key predicate at /TEAMS/0"
@@ -2304,6 +2327,7 @@ sap.ui.require([
 			assert.ok(oPromise.isRejected());
 			assert.strictEqual(oPromise.getResult().message,
 				oFixture.dataPath + ": " + oFixture.message);
+			oPromise.catch(function () {}); // avoid "Uncaught (in promise)"
 		});
 	});
 
@@ -4100,7 +4124,7 @@ sap.ui.require([
 			},
 			oValueListModel = {sServiceUrl : sMappingUrl};
 
-		oRequestorMock.expects("read").withExactArgs("/Foo/DataService/$metadata")
+		oRequestorMock.expects("read").withExactArgs("/Foo/DataService/$metadata", false, undefined)
 			.returns(Promise.resolve(oMetadata));
 		oRequestorMock.expects("read").withExactArgs("/Foo/EpmSample/$metadata")
 			.returns(Promise.resolve(oMetadataProduct));

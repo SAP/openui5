@@ -24,7 +24,7 @@ sap.ui.define([
 	 * @param {boolean} [bExternalFormat=false]
 	 *   If <code>true</code>, the value is returned in external format using a UI5 type for the
 	 *   given property path that formats corresponding to the property's EDM type and constraints.
-	 * @returns {SyncPromise} a promise on the formatted value
+	 * @returns {sap.ui.base.SyncPromise} a promise on the formatted value
 	 */
 	function fetchPrimitiveValue(oContext, sPath, bExternalFormat) {
 		var oError,
@@ -96,7 +96,9 @@ sap.ui.define([
 				this.oSyncCreatePromise = oCreatePromise && SyncPromise.resolve(oCreatePromise);
 				this.iIndex = iIndex;
 			}
-		});
+		}),
+		sClassname = "sap.ui.model.odata.v4.Context",
+		rEndsWithODataBind = /@odata\.bind$/;
 
 	/**
 	 * Updates all dependent bindings of this context.
@@ -207,7 +209,7 @@ sap.ui.define([
 	/**
 	 * Returns a promise for the "canonical path" of the entity for this context.
 	 *
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved with the canonical path (e.g. "/SalesOrderList('0500000000')")
 	 *   in case of success, or rejected with an instance of <code>Error</code> in case of failure,
 	 *   e.g. if the given context does not point to an entity
@@ -226,12 +228,15 @@ sap.ui.define([
 	 *   A path (absolute or relative to this context)
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
-	 * @returns {SyncPromise}
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used for the request; if not specified, it depends on the parent binding
+	 *   which owns the cache
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the binding's <code>fetchValue</code> call
 	 *
 	 * @private
 	 */
-	Context.prototype.fetchValue = function (sPath, oListener) {
+	Context.prototype.fetchValue = function (sPath, oListener, sGroupId) {
 		if (this.iIndex === -2) {
 			return SyncPromise.resolve(); // no cache access for virtual contexts
 		}
@@ -240,7 +245,7 @@ sap.ui.define([
 		// the same that is used for an update and the update notifies the listener.
 		return this.oBinding.fetchValue(
 			sPath && sPath[0] === "/" ? sPath : _Helper.buildPath(this.sPath, sPath),
-			oListener);
+			oListener, sGroupId);
 	};
 
 	/**
@@ -402,18 +407,20 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns <code>true</code> if there are pending changes below the given path.
+	 * Returns <code>true</code> if there are pending changes for the single entity in a
+	 * {@link sap.ui.model.odata.v4.ODataListBinding} represented by this context or there are
+	 * pending changes in dependent bindings relative to this context.
 	 *
-	 * @param {string} sPath
-	 *   The relative path of a binding; must not end with '/'
 	 * @returns {boolean}
 	 *   <code>true</code> if there are pending changes
 	 *
-	 * @private
+	 * @public
+	 * @since 1.53.0
 	 */
-	Context.prototype.hasPendingChangesForPath = function (sPath) {
-		// Note: iIndex === -2 is OK here, no changes will be found...
-		return this.oBinding.hasPendingChangesForPath(_Helper.buildPath(this.iIndex, sPath));
+	Context.prototype.hasPendingChanges = function () {
+		return this.oModel.getDependentBindings(this).some(function (oDependentBinding) {
+			return oDependentBinding.hasPendingChanges();
+		});
 	};
 
 	/**
@@ -428,6 +435,28 @@ sap.ui.define([
 	 */
 	Context.prototype.isTransient = function () {
 		return this.oSyncCreatePromise && this.oSyncCreatePromise.isPending();
+	};
+
+	/**
+	 * Refreshes the single entity in a {@link sap.ui.model.odata.v4.ODataListBinding} represented
+	 * by this context.
+	 *
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used for the refresh; if not specified, the group ID for the context's
+	 *   binding is used, see {@link sap.ui.model.odata.v4.ODataModel#bindList}.
+	 * @throws {Error}
+	 *   If <code>refresh</code> is called on a context not created by a
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding}, if the group ID is not valid, if the
+	 *   binding is not refreshable or has pending changes.
+	 *
+	 * @public
+	 * @since 1.53.0
+	 */
+	Context.prototype.refresh = function (sGroupId) {
+		if (!this.oBinding.refreshSingle) {
+			throw new Error("Refresh is only supported for contexts of a list binding");
+		}
+		this.oBinding.refreshSingle(this, sGroupId);
 	};
 
 	/**
@@ -501,19 +530,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resets all pending changes for a given <code>sPath</code>.
-	 *
-	 * @param {string} sPath
-	 *   The relative path of a binding; must not end with '/'
-	 *
-	 * @private
-	 */
-	Context.prototype.resetChangesForPath = function (sPath) {
-		// Note: iIndex === -2 is OK here, no changes will be found...
-		this.oBinding.resetChangesForPath(_Helper.buildPath(this.iIndex, sPath));
-	};
-
-	/**
 	 * Sets the context's index.
 	 *
 	 * @param {number} iIndex
@@ -523,6 +539,70 @@ sap.ui.define([
 	 */
 	Context.prototype.setIndex = function (iIndex) {
 		this.iIndex = iIndex;
+	};
+
+	/**
+	 * Sets the property value for the given path. Only a path to a navigation property's
+	 * "@odata.bind" annotation on a transient context is allowed, e.g. "SO_2_BP@odata.bind".
+	 *
+	 * @param {string} sPath
+	 *   A relative path within the JSON structure, see {@link #getObject}
+	 * @param {string|sap.ui.model.odata.v4.Context|string[]|sap.ui.model.odata.v4.Context[]} vValue
+	 *   The navigation property now relates to the entities addressed via the given value.
+	 *   <code>vValue</code> has to be either a <code>string</code> with an absolute path,
+	 *   for example "/BusinessPartner('42')", or a {@link sap.ui.model.odata.v4.Context} or, if the
+	 *   navigation property is collection-valued, an array of them.
+	 * @throws {Error}
+	 *   If the path does not point to an "@odata.bind" navigation property annotation, the
+	 *   context is not transient (see {@link #isTransient}) or <code>vValue</code> contains a
+	 *   relative path.
+	 *
+	 * @public
+	 * @since 1.53.0
+	 */
+	Context.prototype.setProperty = function (sPath, vValue) {
+		var vTargets,
+			that = this;
+
+		function reportError (oError) {
+			that.oModel.reportError("Failed to set property for path: "
+				+ that.oModel.resolve(sPath, that), sClassname, oError);
+		}
+
+		function getRelativePathOrThrowError(vTarget) {
+			vTarget = (vTarget.getPath ? vTarget.getPath() : vTarget);
+			if (vTarget[0] === "/") {
+				vTarget = vTarget.slice(1);
+			} else {
+				throw new Error("Value '" + vTarget
+					+ "' is not an absolute path; cannot set property for path: "
+					+ that.oModel.resolve(sPath, that));
+			}
+			return vTarget;
+		}
+
+		if (!rEndsWithODataBind.test(sPath)) {
+			throw new Error("Cannot set property for path: " + this.oModel.resolve(sPath, that));
+		}
+
+		if (!this.isTransient()) {
+			throw new Error("Entity is not transient; cannot set property for path: "
+				+ this.oModel.resolve(sPath, that));
+		}
+
+		if (Array.isArray(vValue)) {
+			vTargets = vValue.map(getRelativePathOrThrowError);
+		} else {
+			vTargets = getRelativePathOrThrowError(vValue);
+		}
+
+		this.getModel().getMetaModel().fetchUpdateData(sPath, this).then(function (oResult) {
+			return that.getBinding().withCache(function (oCache, sCachePath, oBinding) {
+				oCache.update(oBinding.getUpdateGroupId(),
+					oResult.propertyPath, vTargets, reportError, oResult.editUrl,
+					sCachePath)["catch"](reportError);
+			}, oResult.entityPath);
+		})["catch"](reportError);
 	};
 
 	/**
@@ -539,6 +619,24 @@ sap.ui.define([
 			sIndex = "[" + this.iIndex + (this.isTransient() ? "|transient" : "") + "]";
 		}
 		return this.sPath + sIndex;
+	};
+
+	/**
+	 * Calls the given processor with the cache containing this context's data and the absolute
+	 * <code>sPath</code> (by prepending the context path if necessary).
+	 *
+	 * @param {function} fnProcessor The processor
+	 * @param {string} sPath The path; either relative to the context or absolute containing
+	 *   the cache's request path (it will become absolute when forwarding the request to the
+	 *   parent binding)
+	 * @returns {sap.ui.base.SyncPromise} A sync promise on the result of the processor
+	 */
+	Context.prototype.withCache = function (fnProcessor, sPath) {
+		if (this.iIndex === -2) {
+			return SyncPromise.resolve(); // no cache access for virtual contexts
+		}
+		return this.oBinding.withCache(fnProcessor,
+			sPath[0] === "/" ? sPath : _Helper.buildPath(this.sPath, sPath));
 	};
 
 	return {

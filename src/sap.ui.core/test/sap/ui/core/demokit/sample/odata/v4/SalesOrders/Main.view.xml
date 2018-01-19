@@ -62,16 +62,17 @@
 					<form:SimpleForm editable="true" layout="ResponsiveGridLayout">
 						<Label labelFor="NewBuyerID" text="Buyer ID"/>
 						<!-- TODO Q: derive maxLength from type's constraints?! A: SmartField?! -->
-						<Input id="NewBuyerID"
+						<Input change="onChangeNewBuyerId" id="NewBuyerID"
 							maxLength="10"
 							placeholder="Enter Buyer ID starting with '0'..."
 							showSuggestion="true"
 							suggestionItems="{/BusinessPartnerList}"
 							type="Text"
-							value="{BuyerID}">
+							value="0100000000">
 							<!-- TODO: implement lazy loading of BusinessPartners -->
 							<suggestionItems>
-								<core:ListItem additionalText="{CompanyName}"
+								<core:ListItem key="{BusinessPartnerID}"
+									additionalText="{CompanyName}"
 									text="{BusinessPartnerID}"/>
 							</suggestionItems>
 						</Input>
@@ -118,6 +119,12 @@
 						icon="sap-icon://delete"
 						id="deleteSalesOrder" press="onDeleteSalesOrder"
 						tooltip="Delete sales order"/>
+					<Button
+						enabled="{= ${ui>/bSalesOrderSelected}
+							&amp;&amp; !${ui>/bCreateItemPending}}"
+						icon="sap-icon://synchronize"
+						id="refreshSelectedSalesOrder" press="onRefreshSelectedSalesOrder"
+						tooltip="Refresh selected sales order"/>
 					<Button
 						enabled="{= ${ui>/bSalesOrderSelected} &amp;&amp; ${ui>/bRealOData}
 							&amp;&amp; !${ui>/bSelectedSalesOrderTransient} }"

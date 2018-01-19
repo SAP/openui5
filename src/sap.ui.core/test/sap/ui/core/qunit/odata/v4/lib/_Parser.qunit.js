@@ -416,6 +416,11 @@ sap.ui.require([
 			string : '$search=%22foo%5c%22bar%5C\\baz%22',
 			parsed : {"$search" : '%22foo%5c%22bar%5C\\baz%22'},
 			converted : {"$search" : '%22foo%5c%22bar%5C\\baz%22'}
+		}, {
+			//       "$search= " foo \  " bar \ \ baz% ",
+			string : '$search=%22foo%5c%22bar%5C\\baz%%22',
+			parsed : {"$search" : '%22foo%5c%22bar%5C\\baz%%22'},
+			converted : {"$search" : '%22foo%5c%22bar%5C\\baz%%22'}
 		}].forEach(function (oFixture) {
 			assert.deepEqual(_Parser.parseSystemQueryOption(oFixture.string), oFixture.parsed,
 				oFixture.string);
@@ -433,6 +438,7 @@ sap.ui.require([
 			parseAndRebuild(assert, "foo " + sOperator + " 'bar'", {
 				id : sOperator,
 				value : " " + sOperator + " ",
+				type : "Edm.Boolean",
 				at : 5,
 				left : {
 					id : "PATH",
@@ -450,6 +456,7 @@ sap.ui.require([
 			parseAndRebuild(assert, "'bar' " + sOperator + " foo", {
 				id : sOperator,
 				value : " " + sOperator + " ",
+				type : "Edm.Boolean",
 				at : 7,
 				left : {
 					id : "VALUE",
@@ -466,10 +473,18 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("parseFilter: String constants", function (assert) {
+		["'bar'", "'ba''r'", "'ba%27'r'", "'ba'%27r'", "'ba%27%27r'"].forEach(function (sValue) {
+			assert.strictEqual(_Parser.buildFilterString(_Parser.parseFilter(sValue)), sValue,
+				sValue);
+		});
+	});
+
+	//*********************************************************************************************
 	// string: the filter string
 	// parsed: the syntax tree
 	// converted: the resulting filter string after parsing and rebuilding (if different to string)
-	[{
+	[{ // logical operators, precedence, brackets
 		string :"foo eq bar ne baz",
 		parsed :{
 			id : "ne",
@@ -543,6 +558,141 @@ sap.ui.require([
 			}
 		},
 		converted : "foo and (bar or baz)"
+	}, { // string functions
+		string : "trim(foo)",
+		parsed : {
+			id : "FUNCTION", value : "trim", type : "Edm.String",
+			parameters : [{value : "foo"}]
+		}
+	}, {
+		string : "concat(foo,bar)",
+		parsed : {
+			id : "FUNCTION", value : "concat", type : "Edm.String",
+			parameters : [{value : "foo"}, {value : "bar"}]
+		}
+	}, {
+		string : "concat( foo , bar )",
+		parsed : {
+			id : "FUNCTION", value : "concat",
+			parameters : [{value : "foo"}, {value : "bar"}]
+		},
+		converted : "concat(foo,bar)"
+	}, {
+		string : "concat(trim(foo),bar)",
+		parsed : {
+			id : "FUNCTION", value : "concat",
+			parameters : [{
+				id : "FUNCTION", value : "trim",
+				parameters : [{value : "foo"}]
+			}, {
+				value : "bar"
+			}]
+		}
+	}, {
+		string : "not startswith(foo,'bar')",
+		parsed : {
+			id : "not", type : "Edm.Boolean",
+			right : {
+				id : "FUNCTION", value : "startswith", type : "Edm.Boolean",
+				parameters : [{value : "foo"}, {value : "'bar'"}]
+			}
+		}
+	}, {
+		string : "endswith(foo,bar)",
+		parsed : {
+			id : "FUNCTION", value : "endswith", type : "Edm.Boolean",
+			parameters : [{value : "foo"}, {value : "bar"}]
+		}
+	}, {
+		string : "indexof(foo,bar)",
+		parsed : {
+			id : "FUNCTION", value : "indexof", type : "Edm.Int32",
+			parameters : [{value : "foo"}, {value : "bar"}]
+		}
+	}, {
+		string : "length(foo)",
+		parsed : {
+			id : "FUNCTION", value : "length", type : "Edm.Int32",
+			parameters : [{value : "foo"}]
+		}
+	}, {
+		string : "substring(foo,bar,baz)",
+		parsed : {
+			id : "FUNCTION", value : "substring", type : "Edm.String",
+			parameters : [{value : "foo"}, {value : "bar"}, {value : "baz"}]
+		}
+	}, {
+		string : "tolower(foo)",
+		parsed : {
+			id : "FUNCTION", value : "tolower", type : "Edm.String",
+			parameters : [{value : "foo"}]
+		}
+	}, {
+		string : "toupper(foo)",
+		parsed : {
+			id : "FUNCTION", value : "toupper", type : "Edm.String",
+			parameters : [{value : "foo"}]
+		}
+	}, {
+		string : "contains(foo,bar)",
+		parsed : {
+			id : "FUNCTION", value : "contains", type : "Edm.Boolean",
+			parameters : [{value : "foo"}, {value : "bar"}]
+		}
+	}, { // date functions
+		string : "day(foo)",
+		parsed : {
+			id : "FUNCTION", value : "day", type : "Edm.Int32",
+			parameters : [{value : "foo", ambiguous : true}]
+		}
+	}, {
+		string : "hour(foo)",
+		parsed : {
+			id : "FUNCTION", value : "hour", type : "Edm.Int32",
+			parameters : [{value : "foo", ambiguous : true}]
+		}
+	}, {
+		string : "minute(foo)",
+		parsed : {
+			id : "FUNCTION", value : "minute", type : "Edm.Int32",
+			parameters : [{value : "foo", ambiguous : true}]
+		}
+	}, {
+		string : "month(foo)",
+		parsed : {
+			id : "FUNCTION", value : "month", type : "Edm.Int32",
+			parameters : [{value : "foo", ambiguous : true}]
+		}
+	}, {
+		string : "second(foo)",
+		parsed : {
+			id : "FUNCTION", value : "second", type : "Edm.Int32",
+			parameters : [{value : "foo", ambiguous : true}]
+		}
+	}, {
+		string : "year(foo)",
+		parsed : {
+			id : "FUNCTION", value : "year", type : "Edm.Int32",
+			parameters : [{value : "foo", ambiguous : true}]
+		}
+	}, { // arithmetic functions
+		string : "ceiling(foo)",
+		parsed : {
+			id : "FUNCTION", value : "ceiling",
+			parameters : [{value : "foo", ambiguous : true}]
+		}
+	}, {
+		string : "floor(foo)",
+		parsed : {
+			id : "FUNCTION", value : "floor",
+			parameters : [{value : "foo", ambiguous : true}]
+		}
+	}, {
+		string : "round(foo)",
+		parsed : {
+			id : "FUNCTION", value : "round",
+			parameters : [{value : "foo", ambiguous : true}]
+		}
 	}].forEach(function (oFixture) {
 		QUnit.test("parseFilter: " + oFixture.string, function (assert) {
 			parseAndRebuild(assert, oFixture.string, oFixture.parsed, oFixture.converted);
@@ -647,7 +797,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	[{
 		string : ";",
-		error : "Unexpected ';' at 1"
+		error : "Expected expression but instead saw ';' at 1"
 	}, {
 		string : "foo='bar'",
 		error : "Expected end of input but instead saw '=' at 4"
@@ -662,10 +812,19 @@ sap.ui.require([
 		error : "Expected expression but instead saw end of input"
 	}, {
 		string : "foo and not;",
-		error : "Expected ' ' after 'not'"
+		error : "Expected expression but instead saw ';' at 12"
 	}, {
 		string : "foo and (bar or baz",
 		error : "Expected ')' but instead saw end of input"
+	}, {
+		string : "2()",
+		error : "Unexpected '(' at 2"
+	}, {
+		string : "foo(bar)",
+		error : "Unknown function 'foo' at 1"
+	}, {
+		string : "trim()",
+		error : "Expected expression but instead saw ')' at 6"
 	}].forEach(function (oFixture) {
 		QUnit.test('_Parser#parseFilter: "' + oFixture.string + '"', function (assert) {
 			assert.throws(function () {

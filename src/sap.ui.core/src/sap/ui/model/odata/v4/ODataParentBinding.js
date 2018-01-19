@@ -189,7 +189,7 @@ sap.ui.define([
 	 *   The initial data for the created entity
 	 * @param {function} fnCancelCallback
 	 *   A function which is called after a transient entity has been canceled from the cache
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   The create Promise which is resolved without data when the POST request has been
 	 *   successfully sent and the entity has been marked as non-transient
 	 *
@@ -305,7 +305,7 @@ sap.ui.define([
 	 * @param {function} fnCallback
 	 *   A function which is called after the entity has been deleted from the server and from the
 	 *   cache; the index of the entity is passed as parameter
-	 * @returns {SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure
 	 * @throws {Error}
@@ -347,10 +347,10 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Context} oContext The child binding's context
 	 * @param {string} sChildPath The child binding's binding path
-	 * @param {SyncPromise} oChildQueryOptionsPromise Promise resolving with the child binding's
-	 *   (aggregated) query options
-	 * @returns {SyncPromise} A promise resolved with a boolean value indicating whether the child
-	 *   binding can use this binding's or an ancestor binding's cache.
+	 * @param {sap.ui.base.SyncPromise} oChildQueryOptionsPromise Promise resolving with the child
+	 *   binding's (aggregated) query options
+	 * @returns {sap.ui.base.SyncPromise} A promise resolved with a boolean value indicating whether
+	 *   the child binding can use this binding's or an ancestor binding's cache.
 	 *
 	 * @private
 	 */
@@ -368,7 +368,7 @@ sap.ui.define([
 		/*
 		 * Fetches the property that is reached by the calculated meta path and (if necessary) its
 		 * type.
-		 * @returns {SyncPromise} A promise that is resolved with the property
+		 * @returns {sap.ui.base.SyncPromise} A promise that is resolved with the property
 		 */
 		function fetchPropertyAndType() {
 			return oMetaModel.fetchObject(sFullMetaPath).then(function (oProperty) {
@@ -499,44 +499,6 @@ sap.ui.define([
 			return {};
 		}
 		return oContext.getQueryOptionsForPath(_Helper.buildPath(this.sPath, sPath));
-	};
-
-	/**
-	 * Returns the relative path for a given absolute path by stripping off the binding's resolved
-	 * path. Note that the resulting path may start with a key predicate.
-	 *
-	 * Example: (The binding's resolved path is "/foo/bar"):
-	 * /foo/bar/baz -> baz
-	 * /foo/bar('baz') -> ('baz')
-	 * /foo -> undefined if the binding is relative, an Error is thrown otherwise
-	 *
-	 * @param {string} sPath
-	 *   An absolute path
-	 * @returns {string}
-	 *   The path relative to the binding's path or <code>undefined</code> if the path is not a sub
-	 *   path and the binding is relative
-	 * @throws {Error}
-	 *   If the binding is absolute and the path does not start with the binding's path
-	 *
-	 * @private
-	 */
-	ODataParentBinding.prototype.getRelativePath = function (sPath) {
-		var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
-
-		if (sPath.indexOf(sResolvedPath) < 0) {
-			if (this.bRelative) {
-				// this path doesn't match, but some parent binding might possibly fulfill it
-				return undefined;
-			}
-			// this path definitely does not match
-			throw new Error(sPath + ": invalid path, must start with " + this.sPath);
-		}
-		sPath = sPath.slice(sResolvedPath.length);
-
-		if (sPath[0] === "/") {
-			sPath = sPath.slice(1);
-		}
-		return sPath;
 	};
 
 	/**
@@ -710,52 +672,6 @@ sap.ui.define([
 				that.mAggregatedQueryOptions[sName] = mNewQueryOptions[sName];
 			}
 		});
-	};
-
-	/**
-	 * Updates the value for the given property path inside the entity with the given absolute path;
-	 * the value is updated in this binding's cache or in its parent context in case it has no
-	 * cache.
-	 *
-	 * @param {string} [sGroupId=getUpdateGroupId()]
-	 *   The group ID to be used for this update call.
-	 * @param {string} sPropertyPath
-	 *   The path of the property relative to the entity
-	 * @param {any} vValue
-	 *   The new value
-	 * @param {function} fnErrorCallback
-	 *   A function which is called with an Error object each time a PATCH request fails
-	 * @param {string} sEditUrl
-	 *   The edit URL corresponding to the entity to be updated
-	 * @param {string} sEntityPath
-	 *   The resolved, absolute entity path (as delivered from ODataMetaModel#fetchUpdateData)
-	 * @param {string} [sUnitOrCurrencyPath]
-	 *   The path of the unit or currency for the property, relative to the entity
-	 * @returns {SyncPromise}
-	 *   A promise on the outcome of the cache's <code>update</code> call
-	 * @throws {Error}
-	 *   If the cache promise for this binding is not yet fulfilled
-	 *
-	 * @private
-	 */
-	ODataParentBinding.prototype.updateValue = function (sGroupId, sPropertyPath, vValue,
-		fnErrorCallback, sEditUrl, sEntityPath, sUnitOrCurrencyPath) {
-		var oCache;
-
-		if (!this.oCachePromise.isFulfilled()) {
-			throw new Error("PATCH request not allowed");
-		}
-
-		oCache = this.oCachePromise.getResult();
-		if (oCache) {
-			sGroupId = sGroupId || this.getUpdateGroupId();
-			return oCache.update(sGroupId, sPropertyPath, vValue, fnErrorCallback, sEditUrl,
-				this.getRelativePath(sEntityPath), sUnitOrCurrencyPath);
-		}
-
-		return this.oContext.getBinding()
-			.updateValue(sGroupId, sPropertyPath, vValue, fnErrorCallback, sEditUrl, sEntityPath,
-				sUnitOrCurrencyPath);
 	};
 
 	return function (oPrototype) {

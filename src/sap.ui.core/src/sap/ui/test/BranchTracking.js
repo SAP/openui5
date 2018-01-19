@@ -4,10 +4,12 @@
 
 (function () {
 	"use strict";
-	/*global _$blanket, blanket, falafel */
+	/*global _$blanket, blanket, falafel, QUnit */
+	/*eslint no-warning-comments: 0 */
 
 	var aFileNames = [], // maps a file's index to its name
-		aStatistics = []; // maps a file's index to its "hits" array (and statistics record)
+		aStatistics = [], // maps a file's index to its "hits" array (and statistics record)
+		rWordChar = /\w/; // a "word" (= identifier) character
 
 	/**
 	 * Keep track of branch coverage.
@@ -130,7 +132,9 @@
 	function visit(bBranchTracking, iFileIndex, oNode) {
 		var aHits = aStatistics[iFileIndex],
 			aBranchTracking = aHits.branchTracking,
-			iLine = oNode.loc.start.line;
+			iLine = oNode.loc.start.line,
+			sNewSource,
+			sOldSource;
 
 		function addLineTracking(oNode) {
 			oNode.update("blanket.$l(" + iFileIndex + ", " + iLine + "); " + oNode.source());
@@ -176,6 +180,12 @@
 				});
 				return true;
 
+			case "ExpressionStatement":
+				if (oNode.expression.type === "Literal"
+					&& oNode.expression.value === "use strict") {
+					return false; // do not instrument "use strict"; it would break it!
+				}
+				// fall through
 			case "DoWhileStatement":
 			case "ForInStatement":
 			case "ForStatement":
@@ -184,7 +194,6 @@
 				// Note: we assume block statements only (@see blanket._blockifyIf)
 			case "BreakStatement":
 			case "ContinueStatement":
-			case "ExpressionStatement":
 			case "FunctionDeclaration":
 			case "ReturnStatement":
 			case "SwitchStatement":
@@ -215,10 +224,14 @@
 				}
 				if (oNode.operator === "||" || oNode.operator === "&&") {
 					// Note: (...) around right source!
-					oNode.update("blanket.$b(" + iFileIndex + ", " + aBranchTracking.length + ", "
-						+ oNode.left.source() + ") "
-						+ oNode.operator + " (" + oNode.right.source() + ")"
-					);
+					sOldSource = oNode.left.source();
+					sNewSource = "blanket.$b(" + iFileIndex + ", " + aBranchTracking.length + ", "
+						+ sOldSource + ") " + oNode.operator + " (" + oNode.right.source() + ")";
+					if (!rWordChar.test(sOldSource[0])) {
+						// Note: handle minified code like "return!x||y;"
+						sNewSource = " " + sNewSource;
+					}
+					oNode.update(sNewSource);
 					aBranchTracking.push({
 						alternate : oNode.operator === "&&"
 							? oNode.left.loc
@@ -254,5 +267,116 @@
 			blanket.options("reporter", BlanketReporter.bind(null, getScriptTag()));
 		});
 	}
+
+	//**********************************************************************************************
+	// Code for tracking "Uncaught (in promise)" for sap.ui.base.SyncPromise inside QUnit tests
+	//**********************************************************************************************
+	var bDebug,
+		sClassName = "sap.ui.base.SyncPromise",
+		fnModule,
+		iNo = 0,
+		mUncaughtById = {};
+
+	/**
+	 * Check for uncaught errors in sync promises and provide an appropriate report to the given
+	 * optional reporter.
+	 *
+	 * @param {function} [fnReporter]
+	 *   Optional reporter to receive a report
+	 */
+	function checkUncaught(fnReporter) {
+		var sId,
+			iLength = Object.keys(mUncaughtById).length,
+			sMessage = "Uncaught (in promise): " + iLength + " times\n",
+			oPromise;
+
+		if (iLength) {
+			for (sId in mUncaughtById) {
+				oPromise = mUncaughtById[sId];
+				if (oPromise.getResult() && oPromise.getResult().stack) {
+					sMessage += oPromise.getResult().stack;
+				} else {
+					sMessage += oPromise.getResult();
+				}
+				if (oPromise.$error.stack) {
+					sMessage += "\n>>> SyncPromise rejected with above reason...\n"
+						+ oPromise.$error.stack.split("\n").slice(2).join("\n"); // hide listener
+				}
+				sMessage += "\n\n";
+			}
+			mUncaughtById = {};
+			if (fnReporter) {
+				fnReporter(sMessage);
+			} else if (bDebug) {
+				jQuery.sap.log.debug("Clearing " + iLength + " uncaught promises", sMessage,
+					sClassName);
+			}
+		}
+	}
+
+	/**
+	 * Listener for sync promises which become (un)caught.
+	 *
+	 * @param {sap.ui.base.SyncPromise} oPromise
+	 *   A sync promise
+	 * @param {boolean} bCaught
+	 *   Tells whether the given sync promise became caught
+	 */
+	function listener(oPromise, bCaught) {
+		if (bCaught) {
+			delete mUncaughtById[oPromise.$id];
+			if (bDebug) {
+				jQuery.sap.log.debug("Promise " + oPromise.$id + " caught",
+					Object.keys(mUncaughtById), sClassName);
+			}
+			return;
+		}
+
+		oPromise.$id = iNo++;
+		oPromise.$error = new Error();
+		mUncaughtById[oPromise.$id] = oPromise;
+		if (bDebug) {
+			jQuery.sap.log.debug("Promise " + oPromise.$id + " rejected with "
+				+ oPromise.getResult(), Object.keys(mUncaughtById), sClassName);
+		}
+	}
+
+	/**
+	 * Wrapper for <code>QUnit.module</code> to check for uncaught errors in sync promises.
+	 *
+	 * @param {string} sTitle
+	 *   The module's title
+	 * @param {object} [mHooks]
+	 *   Optional map of hooks, e.g. "beforeEach"
+	 */
+	function module(sTitle, mHooks) {
+		var fnAfterEach, fnBeforeEach;
+
+		mHooks = mHooks || {};
+		fnAfterEach = mHooks.afterEach || function () {};
+		mHooks.afterEach = function (assert) {
+			fnAfterEach.apply(this, arguments);
+			checkUncaught(assert.ok.bind(assert, false));
+		};
+		fnBeforeEach = mHooks.beforeEach || function () {};
+		mHooks.beforeEach = function () {
+			checkUncaught(); // cleans up what happened before
+			fnBeforeEach.apply(this, arguments);
+		};
+
+		fnModule(sTitle, mHooks);
+	}
+
+	if (QUnit && QUnit.module !== module && jQuery && jQuery.sap
+			// Note: we rely on jQuery.sap.log as well!
+			&& jQuery.sap.getUriParameters().get("uncaughtInSyncPromise")) {
+		fnModule = QUnit.module.bind(QUnit);
+		QUnit.module = module;
+		sap.ui.require(["sap/ui/base/SyncPromise"], function (SyncPromise) {
+			bDebug = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG, sClassName);
+			SyncPromise.listener = listener;
+		});
+	}
 }());
 //TODO add tooltips to highlighting to explain rules
+
