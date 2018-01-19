@@ -167,6 +167,30 @@
 		table.destroy();
 	});
 
+	QUnit.test("Test for correct column id", function(assert) {
+		var oCLI = new sap.m.ColumnListItem({
+			cells: [
+				new sap.m.Text({text: "Cell data"})
+			]
+		});
+		var oCol = new sap.m.Column("testColumn", {
+			header: new sap.m.Label({text: "Column Header"})
+		});
+		var sut = new sap.m.Table("idResponsiveTable", {
+			columns: [oCol],
+			items: [oCLI]
+		});
+		sut.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var $cell = oCLI.getCells()[0].getDomRef();
+		var $td = $cell.parentElement;
+		assert.equal($td.getAttribute("data-sap-ui-column"), oCol.getId(), "Column id is correctly associated with cell");
+
+		// cleanup
+		sut.destroy();
+	});
+
 </script>
 </head>
 

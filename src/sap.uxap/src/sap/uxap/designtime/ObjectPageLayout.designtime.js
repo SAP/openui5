@@ -31,6 +31,18 @@ sap.ui.define(["sap/uxap/library"],
 				},
 				actions : {
 					move : "moveControls"
+				},
+				beforeMove : function (ObjectPageLayout) {
+					if (ObjectPageLayout){
+						ObjectPageLayout._suppressScroll();
+					}
+				},
+				afterMove : function (ObjectPageLayout) {
+					if (ObjectPageLayout){
+						ObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+							ObjectPageLayout._resumeScroll(false);
+						});
+					}
 				}
 			},
 			headerContent : {
@@ -55,7 +67,10 @@ sap.ui.define(["sap/uxap/library"],
 			}
 		}],
 
-		cloneDomRef : ":sap-domref > header"
+		cloneDomRef : ":sap-domref > header",
+		templates: {
+			create: "sap/uxap/designtime/ObjectPageLayout.create.fragment.xml"
+		}
 	};
 
 }, /* bExport= */ false);

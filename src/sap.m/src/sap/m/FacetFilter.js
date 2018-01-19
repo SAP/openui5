@@ -544,9 +544,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		}
 		// After each rendering the delegate needs to be initialized as well.
 
-		//set the root dom node that surrounds the items
-		this.oItemNavigation.setRootDomRef(oFocusRef);
-
 		//set the array of dom nodes representing the items.
 		this.oItemNavigation.setItemDomRefs(aDomRefs);
 

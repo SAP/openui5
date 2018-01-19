@@ -11,8 +11,8 @@
  */
 
 // Provides class sap.ui.model.odata.ODataUtils
-sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/model/Filter', 'sap/ui/core/format/DateFormat'],
-	function(jQuery, ODataFilter, Sorter, Filter, DateFormat) {
+sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/core/format/DateFormat'],
+	function(jQuery, ODataFilter, Sorter, DateFormat) {
 	"use strict";
 
 	var rDecimal = /^([-+]?)0*(\d+)(\.\d+|)$/,

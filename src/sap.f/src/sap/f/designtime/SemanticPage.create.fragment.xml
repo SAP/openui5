@@ -1,0 +1,36 @@
+<core:FragmentDefinition
+		xmlns="sap.f.semantic"
+		xmlns:m="sap.m"
+		xmlns:core="sap.ui.core">
+
+	<SemanticPage showFooter="true">
+		<titleHeading>
+			<m:Title text="Semantic Page Title" />
+		</titleHeading>
+
+		<headerContent>
+			<m:Text text="Semantic Page Header Content"/>
+		</headerContent>
+
+		<titleMainAction>
+			<TitleMainAction text="Main Action"/>
+		</titleMainAction>
+
+		<titleCustomTextActions>
+			<m:Button text="Custom Text Button"/>
+		</titleCustomTextActions>
+
+		<titleCustomIconActions>
+			<m:OverflowToolbarButton icon="sap-icon://cart" text="Custom Icon Button" />
+		</titleCustomIconActions>
+
+		<content>
+			<m:Text text="Semantic Page Header Content"/>
+		</content>
+
+		<footerCustomActions>
+			<m:Button text="Button 1" />
+		</footerCustomActions>
+	</SemanticPage>
+
+</core:FragmentDefinition>

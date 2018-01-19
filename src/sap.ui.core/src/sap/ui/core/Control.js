@@ -75,6 +75,16 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				"busyIndicatorDelay" : {type: "int", defaultValue: 1000},
 
 				/**
+				 * The size of the BusyIndicator. For controls with a width smaller 3rem a
+				 * <code>sap.ui.core.BusyIndicatorSize.Small</code> should be used.
+				 * If the size could vary in width and the width could get smaller than 3rem, the
+				 * <code>sap.ui.core.BusyIndicatorSize.Auto</code> option could be used.
+				 * The default is set to <code>sap.ui.core.BusyIndicatorSize.Medium</code>
+				 * For a full screen BusyIndicator use <code>sap.ui.core.BusyIndicatorSize.Large</code>.
+				 */
+				"busyIndicatorSize" : {type: "sap.ui.core.BusyIndicatorSize", defaultValue: 'Medium'},
+
+				/**
 				 * Whether the control should be visible on the screen.
 				 *
 				 * If set to false, a placeholder will be rendered to mark the location of the invisible
@@ -613,6 +623,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	Control.prototype.destroy = function(bSuppressInvalidate) {
 		// avoid rerendering
 		this._bIsBeingDestroyed = true;
+
 		//Cleanup Busy Indicator
 		this._cleanupBusyIndicator();
 
@@ -633,10 +644,16 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 
 	// ---- local busy indicator handling ---------------------------------------------------------------------------------------
 
-	var sPreventedEvents = "focusin focusout keydown keypress keyup mousedown touchstart touchmove mouseup touchend click",
+	var aPreventedEvents = ["focusin", "focusout", "keydown", "keypress", "keyup", "mousedown", "touchstart", "touchmove", "mouseup", "touchend", "click"],
 		rForbiddenTags = /^(?:area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr|tr)$/i,
 		oBusyIndicatorDelegate = {
-			onAfterRendering: function() {
+			onBeforeRendering: function() {
+				// deregister handler/DomRef as after rendering new handler/DomRef exists and must be registered
+				if (this.getBusy() && this.getDomRef() && !this._busyIndicatorDelayedCallId && this.getDomRef("busyIndicator")) {
+					fnHandleInteraction.call(this, false);
+				}
+			},
+			onAfterRendering: function () {
 				if (this.getBusy() && this.getDomRef() && !this._busyIndicatorDelayedCallId && !this.getDomRef("busyIndicator")) {
 					// Also use the BusyIndicatorDelay when a control is initialized
 					// with "busy = true". If the delayed call was already initialized
@@ -655,6 +672,12 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 			}
 		};
 
+
+	/**
+	 * Add busy indicator to DOM
+	 *
+	 * @private
+	 */
 	function fnAppendBusyIndicator() {
 
 		// Only append if busy state is still set
@@ -679,7 +702,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 
 		//Check if DOM Element where the busy indicator is supposed to be placed can handle content
 		var sTag = $this.get(0) && $this.get(0).tagName;
-		if ( rForbiddenTags.test(sTag) ) {
+		if (rForbiddenTags.test(sTag)) {
 			jQuery.sap.log.warning("BusyIndicator cannot be placed in elements with tag '" + sTag + "'.");
 			return;
 		}
@@ -692,75 +715,187 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		}
 
 		//Append busy indicator to control DOM
-		this._$BusyIndicator = BusyIndicatorUtils.addHTML($this, this.getId() + "-busyIndicator");
+		this._$BusyIndicator = BusyIndicatorUtils.addHTML($this, this.getId() + "-busyIndicator", this.getBusyIndicatorSize());
 
 		fnHandleInteraction.call(this, true);
 	}
 
-	function fnHandleInteraction(bBusy) {
+	/**
+	 * Remove busy indicator from DOM
+	 *
+	 * @private
+	 */
+	function fnRemoveBusyIndicator() {
 		var $this = this.$(this._sBusySection);
 
-		if (bBusy) {
-			// all focusable elements must be processed for the "tabindex=-1"
-			// attribute. The dropdownBox for example has got two focusable elements
-			// (arrow and input field) and both shouldn't be focusable. Otherwise
-			// the input field will still be focused on keypress (tab) because the
-			// browser focuses the element
-			var $TabRefs = $this.find(":sapTabbable"),
-				that = this;
+		$this.removeClass('sapUiLocalBusy');
+		//Unset the actual DOM Element´s 'aria-busy'
+		$this.removeAttr('aria-busy');
 
-			this._busyTabIndices = [
-				// if only the control itself without any nested tabrefs was found,
-				// block the events as well
-				{
-					ref : $this,
-					tabindex : $this.attr('tabindex')
-				}
-			];
-
-			$this.attr('tabindex', -1);
-			$this.bind(sPreventedEvents, preventDefaultAndStopPropagation);
-
-			$TabRefs.each(function(iIndex, oObject) {
-				var $Ref = jQuery(oObject),
-					iTabIndex = $Ref.attr('tabindex');
-
-				if (iTabIndex < 0) {
-					return true;
-				}
-
-				that._busyTabIndices.push({
-					ref: $Ref,
-					tabindex: iTabIndex
-				});
-
-				$Ref.attr('tabindex', -1);
-				$Ref.bind(sPreventedEvents, preventDefaultAndStopPropagation);
-			});
-		} else {
-			if (this._busyTabIndices) {
-				this._busyTabIndices.forEach(function(oObject) {
-					if (oObject.tabindex) {
-						// if there was no tabindex before it was added by the BusyIndicator
-						// the previous value is "undefined". And this value can't be set
-						// so the attribute remains at the DOM-ref. So if there was no tabindex
-						// attribute before the whole attribute should be removed again.
-						oObject.ref.attr('tabindex', oObject.tabindex);
-					} else {
-						oObject.ref.removeAttr('tabindex');
-					}
-
-					oObject.ref.unbind(sPreventedEvents, preventDefaultAndStopPropagation);
-				});
-			}
-			this._busyTabIndices = null;
+		//Reset the position style to its original state
+		if (this._busyStoredPosition) {
+			$this.css('position', this._busyStoredPosition);
+			delete this._busyStoredPosition;
+		}
+		if (this._$BusyIndicator) {
+			fnHandleInteraction.call(this, false);
+			//Remove the busy indicator from the DOM
+			this._$BusyIndicator.remove();
+			delete this._$BusyIndicator;
 		}
 	}
 
-	function preventDefaultAndStopPropagation(oEvent) {
-		jQuery.sap.log.debug("Local Busy Indicator Event Suppressed: " + oEvent.type);
-		oEvent.preventDefault();
-		oEvent.stopImmediatePropagation();
+	/**
+	 * Handler which suppresses event bubbling for busy section
+	 *
+	 * @param {object} oEvent The event on the suppressed DOM
+	 * @private
+	 */
+	function suppressDefaultAndStopPropagation(oEvent) {
+		var bTargetIsBusyIndicator = oEvent.target === this._$BusyIndicator.get(0);
+		if (bTargetIsBusyIndicator && oEvent.type === 'keydown' && oEvent.keyCode === 9) {
+			// Special handling for "tab" keydown: redirect to next element before or after busy section
+			jQuery.sap.log.debug("Local Busy Indicator Event keydown handled: " + oEvent.type);
+			var oBusyTabbable = oEvent.shiftKey ? this.oBusyTabbableBefore : this.oBusyTabbableAfter;
+			oBusyTabbable.setAttribute("tabindex", -1);
+			// ignore execution of focus handler
+			this.bIgnoreBusyFocus = true;
+			oBusyTabbable.focus();
+			this.bIgnoreBusyFocus = false;
+			oBusyTabbable.setAttribute("tabindex", 0);
+			oEvent.stopImmediatePropagation();
+		} else if (bTargetIsBusyIndicator && (oEvent.type === 'mousedown' || oEvent.type === 'touchstart')) {
+			// Do not "preventDefault" to allow to focus busy indicator
+			jQuery.sap.log.debug("Local Busy Indicator click handled on busy area: " + oEvent.target.id);
+			oEvent.stopImmediatePropagation();
+		} else {
+			jQuery.sap.log.debug("Local Busy Indicator Event Suppressed: " + oEvent.type);
+			oEvent.preventDefault();
+			oEvent.stopImmediatePropagation();
+		}
+	}
+
+	/**
+	 * Captures and redirects focus before it reaches busy section (from both sides)
+	 *
+	 * @private
+	 */
+	function redirectBusyFocus() {
+		if (!this.bIgnoreBusyFocus) {
+			// Redirect focus onto busy indicator (if not already focused)
+			this._$BusyIndicator.get(0).focus();
+		}
+	}
+
+	/**
+	 * Create a tabbable span for the busy section of the control with according focus handling.
+	 *
+	 * @param {function} fnRedirectBusyFocus Focus handling function
+	 * @returns {object} The span element's DOM node
+	 * @private
+	 */
+	function createBusyTabbable(fnRedirectBusyFocus) {
+		var oBusySpan = document.createElement("span");
+		oBusySpan.setAttribute("tabindex", 0);
+		oBusySpan.addEventListener('focusin', fnRedirectBusyFocus);
+		return oBusySpan;
+	}
+
+	/**
+	 * Create a tabbable span for the busy section of the control with according focus handling.
+	 *
+	 * @param {object}
+	 * @param {function} fnRedirectBusyFocus Focus handling function
+	 * @returns {object} The span element's DOM node
+	 */
+	function removeBusyTabbable(oBusySpan, fnRedirectBusyFocus) {
+		if (oBusySpan.parentNode) {
+			oBusySpan.parentNode.removeChild(oBusySpan);
+		}
+		oBusySpan.removeEventListener('focusin', fnRedirectBusyFocus);
+	}
+
+	/**
+	 * Register event handler to suppress event within busy section
+	 */
+	function registerBusyInteractionHandler(oBusySectionDomRef, $BusyIndicatorDomRef, fnHandler) {
+		var aSuppressHandler = [];
+		for (var i = 0; i < aPreventedEvents.length; i++) {
+			// Add event listeners with "useCapture" settings to suppress events before dispatching/bubbling starts
+			oBusySectionDomRef.addEventListener(aPreventedEvents[i], fnHandler, {
+				capture: true,
+				passive: false
+			});
+			aSuppressHandler.push(jQuery.sap._suppressTriggerEvent(aPreventedEvents[i], oBusySectionDomRef, $BusyIndicatorDomRef.get(0)));
+		}
+		//for jQuery triggered events we also need the keydown handler
+		$BusyIndicatorDomRef.bind('keydown', fnHandler);
+		return aSuppressHandler;
+	}
+
+	/**
+	 * Deregister event handler to suppress event within busy section
+	 */
+	function deregisterBusyInteractionHandler(oBusySectionDomRef, $BusyIndicatorDomRef, fnHandler, aSuppressHandler) {
+		var i;
+		if (oBusySectionDomRef) {
+			for (i = 0; i < aPreventedEvents.length; i++) {
+			// Remove event listeners with "useCapture" settings
+				oBusySectionDomRef.removeEventListener(aPreventedEvents[i], fnHandler, {
+					capture: true,
+					passive: false
+				});
+			}
+		}
+		if (aSuppressHandler) {
+			for (i = 0; i < aSuppressHandler.length; i++) {
+				// this part should be done even no DOMRef exists
+				jQuery.sap._releaseTriggerEvent(aSuppressHandler[i]);
+			}
+		}
+		if ($BusyIndicatorDomRef) {
+			$BusyIndicatorDomRef.unbind('keydown', fnHandler);
+		}
+	}
+
+	/**
+	 * Suppress interactions on all DOM elements in the busy section
+	 *
+	 * @param {Boolean} bBusy New busy state
+	 * @private
+	 */
+	function fnHandleInteraction(bBusy) {
+		var oBusySectionDomRef = this.getDomRef(this._sBusySection);
+
+		if (bBusy) {
+			if (oBusySectionDomRef){
+				// Those two elements handle the tab chain so it is not possible to tab behind the busy section.
+				this.fnRedirectBusyFocus = redirectBusyFocus.bind(this);
+				this.oBusyTabbableBefore = createBusyTabbable(this.fnRedirectBusyFocus);
+				this.oBusyTabbableAfter = createBusyTabbable(this.fnRedirectBusyFocus);
+
+				oBusySectionDomRef.parentNode.insertBefore(this.oBusyTabbableBefore, oBusySectionDomRef);
+				oBusySectionDomRef.parentNode.insertBefore(this.oBusyTabbableAfter, oBusySectionDomRef.nextSibling);
+
+				this._fnSuppressDefaultAndStopPropagationHandler = suppressDefaultAndStopPropagation.bind(this);
+
+				this._aSuppressHandler = registerBusyInteractionHandler(oBusySectionDomRef, this._$BusyIndicator, this._fnSuppressDefaultAndStopPropagationHandler);
+			} else {
+				jQuery.sap.log.warning("fnHandleInteraction called with bBusy true, but no DOMRef exists!");
+			}
+		} else {
+			if (this.oBusyTabbableBefore) {
+				removeBusyTabbable(this.oBusyTabbableBefore, this.fnRedirectBusyFocus);
+				delete this.oBusyTabbableBefore;
+			}
+			if (this.oBusyTabbableAfter) {
+				removeBusyTabbable(this.oBusyTabbableAfter, this.fnRedirectBusyFocus);
+				delete this.oBusyTabbableAfter;
+			}
+			delete this.fnRedirectBusyFocus;
+			//trigger handler deregistration needs to be done even if DomRef is already destroyed
+			deregisterBusyInteractionHandler(oBusySectionDomRef, this._$BusyIndicator, this._fnSuppressDefaultAndStopPropagationHandler, this._aSuppressHandler);
+		}
 	}
 
 	/**
@@ -771,13 +906,12 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * @public
 	 */
 	Control.prototype.setBusy = function (bBusy, sBusySection /* this is an internal parameter to apply partial local busy indicator for a specific section of the control */) {
-		this._sBusySection = sBusySection;
-		var $this = this.$(this._sBusySection);
-
 		//If the new state is already set, we don't need to do anything
-		if (bBusy == this.getProperty("busy")) {
+		if (!!bBusy == this.getProperty("busy")) {
 			return this;
 		}
+
+		this._sBusySection = sBusySection;
 
 		//No rerendering - should be modeled as a non-invalidating property once we have that
 		this.setProperty("busy", bBusy, /*bSuppressInvalidate*/ true);
@@ -805,19 +939,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				this._busyIndicatorDelayedCallId = jQuery.sap.delayedCall(this.getBusyIndicatorDelay(), this, fnAppendBusyIndicator);
 			}
 		} else {
-			//Remove the busy indicator from the DOM
-			this.$("busyIndicator").remove();
-			$this.removeClass('sapUiLocalBusy');
-			//Unset the actual DOM Element´s 'aria-busy'
-			$this.removeAttr('aria-busy');
-
-			//Reset the position style to its original state
-			if (this._busyStoredPosition) {
-				$this.css('position', this._busyStoredPosition);
-				delete this._busyStoredPosition;
-			}
-			fnHandleInteraction.call(this, false);
-
+			fnRemoveBusyIndicator.call(this);
 		}
 		return this;
 	};
@@ -851,10 +973,12 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * @private
 	 */
 	Control.prototype._cleanupBusyIndicator = function() {
+		//If there is a pending delayed call we clear it
 		if (this._busyIndicatorDelayedCallId) {
 			jQuery.sap.clearDelayedCall(this._busyIndicatorDelayedCallId);
 			delete this._busyIndicatorDelayedCallId;
 		}
+		fnHandleInteraction.call(this, false);
 	};
 
 

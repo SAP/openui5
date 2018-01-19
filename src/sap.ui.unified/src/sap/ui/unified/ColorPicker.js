@@ -969,9 +969,12 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 
 		if (this.bResponsive) {
 			// If library is not commons switch the control to responsive mode
-			// Changing tablet breakpoint to 314px is a magic number enabling the best adaptive behavior of the control
-			// which apply's best to control specific look and feel.
-			oGrid._setBreakPointTablet(314);
+			if (!Device.system.phone && !jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
+				// Changing tablet breakpoint to 400px is a magic number enabling the best adaptive behavior of the control
+				// mainly on Desktop which apply's best to control specific look and feel.
+				// Consider rewriting the renderer to take advantage on responsive grid behavior and to use it's private methods.
+				oGrid._setBreakPointTablet(400);
+			}
 			oGrid.addStyleClass(CONSTANTS.CPResponsiveClass);
 		} else {
 			oGrid.setProperty("hSpacing", 0, true);

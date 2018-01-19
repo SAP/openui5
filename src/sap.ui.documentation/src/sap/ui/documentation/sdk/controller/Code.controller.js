@@ -108,6 +108,14 @@ sap.ui.define([
 					this._oData.fileName = sFileName;
 				}
 
+				// we need this property to navigate to API reference
+				this.entityId = oSample.entityId;
+
+				this.getAPIReferenceCheckPromise(oSample.entityId).then(function (bHasAPIReference) {
+					// set API Reference button visibility
+					this._oData.bHasAPIReference = bHasAPIReference;
+				}.bind(this));
+
 				// set model data
 				this.oModel.setData(this._oData);
 
@@ -127,6 +135,7 @@ sap.ui.define([
 				// scroll to the top of the page
 				var page = this.byId("page");
 				page.scrollTo(0);
+
 			},
 
 			fetchSourceFile : function (sRef, sFile) {
@@ -240,6 +249,10 @@ sap.ui.define([
 				}
 
 				return sMockData;
+			},
+
+			onAPIRefPress: function () {
+				this.getRouter().navTo("apiId", {id: this.entityId});
 			},
 
 			onNavBack : function () {

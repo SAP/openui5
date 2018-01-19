@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['./Filter', 'jquery.sap.global', "jquery.sap.unicode"],
-	function(Filter, jQuery) {
+sap.ui.define(['./Filter', 'jquery.sap.global', 'jquery.sap.unicode'],
+	function(Filter, jQuery /* jQuerySapUnicode */) {
 	"use strict";
 
 	/**
@@ -29,7 +29,9 @@ sap.ui.define(['./Filter', 'jquery.sap.global', "jquery.sap.unicode"],
 	 * @public
 	 */
 	FilterProcessor.apply = function(aData, aFilters, fnGetValue){
-		if (!aFilters || aFilters.length == 0) {
+		if (!aData) {
+			return [];
+		} else if (!aFilters || aFilters.length == 0) {
 			return aData.slice();
 		}
 		var that = this,

@@ -285,7 +285,6 @@ function(ManagedObject) {
 	 * @param  {string} mPropertyBag.pluginId The ID of the plugin
 	 * @param  {number} mPropertyBag.rank The rank deciding the position of the action in the context menu
 	 * @param  {string} mPropertyBag.icon an icon for the Button inside the context menu
-	 * @param  {boolean} mPropertyBag.preventMenu whether the pugin should prevent the MiniMenu from opening
 	 * @param  {string} mPropertyBag.group A group for buttons which should be grouped together in the MiniMenu
 	 * @return {object[]} Returns an array with the object containing the required data for a context menu item
 	 */
@@ -304,7 +303,6 @@ function(ManagedObject) {
 			enabled: this.isEnabled.bind(this),
 			rank: mPropertyBag.rank,
 			icon: mPropertyBag.icon,
-			preventMenu: mPropertyBag.preventMenu,
 			group: mPropertyBag.group
 		}];
 	};

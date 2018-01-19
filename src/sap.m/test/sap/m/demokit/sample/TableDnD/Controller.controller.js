@@ -182,6 +182,10 @@ sap.ui.define([
 
 		moveDown: function() {
 			this.moveSelectedItem("Down");
+		},
+
+		onBeforeOpenContextMenu: function(oEvent) {
+			oEvent.getParameters().listItem.setSelected(true);
 		}
 	});
 

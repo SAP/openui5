@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>ACC PDFViewer - sap.suite.ui.commons.statusindicator</title>
+
+	<!-- UI5 Bootstrap -->
+	<script src="../../../../resources/sap-ui-core.js"
+	        type="text/javascript" id="sap-ui-bootstrap"
+	        data-sap-ui-libs="sap.m"
+	        data-sap-ui-theme="sap_belize"></script>
+
+	<style type="text/css">
+		#content {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+	<script type="text/javascript">
+		sap.ui.getCore().attachInit(function () {
+			"use strict";
+			sap.ui.require([
+				"sap/m/FlexBox",
+				"sap/m/PDFViewer",
+				"sap/m/Button",
+				"sap/m/FlexItemData"
+			], function (FlexBox, PDFViewer, Button, FlexItemData) {
+
+				var oPDFViewer = new PDFViewer({
+					source: "../qunit/pdfviewer/sample-file.pdf",
+					title: "PDF Viewer"
+				});
+
+				var oFlexBox = new FlexBox({
+					fitContainer: true,
+					wrap: "Wrap",
+					renderType: "Bare",
+					direction: "Column",
+					items: [
+						new PDFViewer({
+							source: "../qunit/pdfviewer/sample-file.pdf",
+							title: "PDF Viewer",
+							height: "50%",
+							layoutData: new FlexItemData({
+								growFactor: 1
+							})
+						}),
+						new Button({
+							text: "Open PDF Popup",
+							tooltip: "Open PDFViewer in Popup mode",
+							press: [oPDFViewer.open, oPDFViewer],
+							layoutData: new FlexItemData({
+								alignSelf: "Start"
+							})
+						})
+					]
+				});
+
+				oFlexBox.placeAt("content");
+			});
+		});
+	</script>
+</head>
+
+<body class="sapUiBody">
+<div id="content"></div>
+</body>
+</html>

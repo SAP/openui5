@@ -9,8 +9,8 @@
  */
 
 // Provides class sap.ui.core.delegate.ItemNavigation
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
-	function(jQuery, EventProvider) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'jquery.sap.keycodes'],
+	function(jQuery, EventProvider /*, jQuerySapKeycodes */) {
 	"use strict";
 	/* eslint-disable no-lonely-if */
 

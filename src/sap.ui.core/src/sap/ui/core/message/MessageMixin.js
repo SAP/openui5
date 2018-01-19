@@ -3,8 +3,11 @@
  */
 
 // sap.ui.core.message.MessageMixin
-sap.ui.define([], function() {
+sap.ui.define(["jquery.sap.global", "sap/ui/core/library"], function(jQuery, library) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = library.ValueState;
 
 	/**
 	 * Applying the MessageMixin to a Control's prototype augments the refreshDataState function to support Label-texts.
@@ -57,12 +60,12 @@ sap.ui.define([], function() {
 			if (aMessages && aMessages.length > 0) {
 				var oMessage = aMessages[0];
 				// check if the message type is a valid sap.ui.core.ValueState
-				if (sap.ui.core.ValueState[oMessage.type]) {
+				if (ValueState[oMessage.type]) {
 					this.setValueState(oMessage.type);
 					this.setValueStateText(oMessage.message);
 				}
 			} else {
-				this.setValueState(sap.ui.core.ValueState.None);
+				this.setValueState(ValueState.None);
 				this.setValueStateText('');
 			}
 		}

@@ -74,7 +74,6 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 	});
 
 	QUnit.test("when getChangesForComponent is called with a variantSection", function (assert) {
-		var done = assert.async();
 		var oMockedWrappedContent = {
 			"changes" : {
 				"changes": [{
@@ -87,17 +86,19 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 					"variantManagementId" : {
 						"variants" : [{
 							"content" : {
-								"content" : {},
-								"fileName": "variant0",
-								"title": "variant 0"
+								"content" : {
+									"title": "variant 0"
+								},
+								"fileName": "variant0"
 							},
 							"changes" : []
 						},
 							{
 								"content" : {
-									"content" : {},
-									"fileName": "variant1",
-									"title": "variant 1"
+									"content" : {
+										"title": "variant 1"
+									},
+									"fileName": "variant1"
 								},
 								"changes" : []
 							}]
@@ -120,13 +121,11 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				assert.ok(fnSetChangeFileContentSpy.calledOnce, "then _setChangeFileContent of VariantManagement not called again as file content is set");
 				assert.ok(fnLoadInitialChangesStub.calledOnce, "then loadDefaultChanges of VariantManagement not called again as file content is set");
 				assert.ok(fnApplyChangesOnVariantManagementStub.calledOnce, "then applyChangesOnVariantManagement not called again as file content is set\"");
-				done();
 			});
 		}.bind(this));
 	});
 
 	QUnit.test("when getChangesForComponent is called with 'ctrl_variant' and 'ctrl_variant_change' fileTypes", function (assert) {
-		var done = assert.async();
 		var aWrappedContent = {
 			changes: {
 				changes: [
@@ -148,10 +147,100 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		return this.oChangePersistence.getChangesForComponent().then(function (aChanges) {
 			assert.equal(aChanges[0].getId(), aWrappedContent.changes.changes[0].fileName, "then change with 'ctrl_variant' fileType received");
 			assert.equal(aChanges[1].getId(), aWrappedContent.changes.changes[1].fileName, "then change with 'ctrl_variant_change' fileType received");
-			done();
 		});
+	});
 
+	QUnit.test("when getChangesForComponent is called with includeCtrlVariants and includeVariants set to true", function(assert) {
+		var oMockedWrappedContent = {
+			"changes" : {
+				"changes": [
+					{
+						fileType: "change",
+						selector: {
+							id: "controlId"
+						}
+					}
+				],
+				"variantSection" : {
+					"variantManagementId" : {
+						"variants" : [
+							{
+								"content" : {
+									"fileName": "variant0",
+									"content" : {
+										"title": "variant 0"
+									},
+									"fileType": "ctrl_variant",
+									"variantManagementReference": "variantManagementId"
+								},
+								"controlChanges": [
+									{
+										"variantReference":"variant0",
+										"fileName":"controlChange0",
+										"fileType":"change",
+										"content":{},
+										"selector":{
+											"id":"selectorId"
+										}
+									}
+								],
+								"variantChanges": {
+									"setTitle": [
+										{
+											"fileType": "ctrl_variant_change",
+											"selector": {
+												"id" : "variant0"
+											}
+										}
+									]
+								},
+								"changes" : []
+							},
+							{
+								"content" : {
+									"content" : {
+										"title": "variant 1"
+									},
+									"fileName": "variant1",
+									"fileType": "ctrl_variant",
+									"variantManagementReference": "variantManagementId"
+								},
+								"controlChanges": [
+								],
+								"variantChanges": {
+									"setTitle": [
+										{
+											"fileType": "ctrl_variant_change",
+											"selector": {
+												"id" : "variant1"
+											}
+										}
+									]
+								},
+								"changes" : []
+							}
+						],
+						"variantManagementChanges": {
+							"setDefault" : [{
+								"fileName": "setDefault",
+								"fileType": "ctrl_variant_management_change",
+								"content": {
+									"defaultVariant":"variant0"
+								},
+								"selector": {
+									"id": "variantManagementId"
+								}
+							}]
+						}
+					}
+				}
+			}
+		};
 
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+		return this.oChangePersistence.getChangesForComponent({includeCtrlVariants: true, includeVariants: true}).then(function(aChanges) {
+			assert.equal(aChanges.length, 8, "then all the variant related changes are part of the response");
+		});
 	});
 
 	QUnit.test("getChangesForComponent shall not bind the messagebundle as a json model into app component if no VENDOR change is available", function(assert) {
@@ -1531,6 +1620,67 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		});
 	});
 
+	QUnit.test("Shall not add a variant related change to the cache", function (assert) {
+		var oChangeContent;
+
+		oChangeContent = {
+			"content" : {
+				"title": "variant 0"
+			},
+			"fileName": "variant0",
+			"fileType": "ctrl_variant",
+			"variantManagementReference": "variantManagementId"
+		};
+		this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+
+		oChangeContent = {
+			"variantReference":"variant0",
+			"fileName":"controlChange0",
+			"fileType":"change",
+			"content":{},
+			"selector":{
+				"id":"selectorId"
+			}
+		};
+		this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+
+		oChangeContent = {
+			"fileType": "ctrl_variant_change",
+			"selector": {
+				"id" : "variant0"
+			}
+		};
+		this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+
+		oChangeContent = {
+			"fileName": "setDefault",
+			"fileType": "ctrl_variant_management_change",
+			"content": {
+				"defaultVariant":"variant0"
+			},
+			"selector": {
+				"id": "variantManagementId"
+			}
+		};
+		this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+
+		oChangeContent = {
+			fileName: "Gizorillus",
+			layer: "VENDOR",
+			fileType: "change",
+			changeType: "addField",
+			selector: { "id": "control1" },
+			content: { },
+			originalLanguage: "DE"
+		};
+		this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
+
+		var oAddChangeSpy = sinon.spy(Cache, "addChange");
+		return this.oChangePersistence.saveDirtyChanges().then(function(){
+			assert.equal(oAddChangeSpy.callCount, 1, "then addChange was only called for the change not related to variants");
+		});
+	});
+
 	QUnit.test("(Save As scenario) after a change creation has been saved for the new app variant, the change shall not be added to the cache", function (assert) {
 		var oChangeContent = {
 			fileName: "Gizorillus",
@@ -1577,7 +1727,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		}.bind(this));
 	});
 
-	QUnit.test("(Save As scenario) shall remove the change from the dirty changes, after is has been saved for the new app variant", function (assert) {
+	QUnit.test("(Save As scenario) shall remove the change from the dirty changes, after it has been saved for the new app variant", function (assert) {
 		var oChangeContent = {
 			fileName: "Gizorillus",
 			layer: "VENDOR",

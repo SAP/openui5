@@ -928,6 +928,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("dynamic enhance of models and datasources", function(assert) {
+		this.stubGetUriParameters();
 
 		jQuery.sap.declare("sap.ui.test.v2local.Component");
 		sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
@@ -942,13 +943,15 @@ sap.ui.define([
 				}
 			});
 
-			LocalComponent.prototype._initComponentModels = function(mModels, mDataSources) {
+			LocalComponent.prototype._initComponentModels = function(mModels, mDataSources, mCacheTokens) {
 
 				mModels = mModels || {};
 				mDataSources = mDataSources || {};
+				mCacheTokens = mCacheTokens || {};
+				mCacheTokens.dataSources = mCacheTokens.dataSources || {};
 
 				mModels["ODataModel"] = {
-					"type": "sap.ui.model.odata.ODataModel",
+					"type": "sap.ui.model.odata.v2.ODataModel",
 					"dataSource": "OData",
 					"settings": {
 						"useBatch": false,
@@ -971,7 +974,10 @@ sap.ui.define([
 					"type": "ODataAnnotation"
 				};
 
-				UIComponent.prototype._initComponentModels.call(this, mModels, mDataSources);
+				mCacheTokens.dataSources["/path/to/odata/service"] = "1234567890";
+
+				debugger;
+				UIComponent.prototype._initComponentModels.call(this, mModels, mDataSources, mCacheTokens);
 
 			};
 
@@ -983,21 +989,21 @@ sap.ui.define([
 			name: "sap.ui.test.v2local"
 		});
 
-		// sap.ui.model.odata.ODataModel
-		sinon.assert.callCount(this.modelSpy.odata, 1);
+		// sap.ui.model.odata.v2.ODataModel
+		sinon.assert.callCount(this.modelSpy.odataV2, 1);
 
 		// model: "ODataModel"
-		sinon.assert.calledWithExactly(this.modelSpy.odata, {
-			serviceUrl: '/path/to/odata/service',
-			annotationURI: [ 'testdata/v2local/path/to/local/odata/annotations' ],
+		sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+			serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
+			annotationURI: [ 'testdata/v2local/path/to/local/odata/annotations?sap-language=EN&sap-client=foo' ],
+			metadataUrlParams: { "sap-context-token": '1234567890', "sap-language": 'EN' },
 			useBatch: false,
-			refreshAfterChange: false,
-			json: true
+			refreshAfterChange: false
 		});
 
 		// check if models are set on component (and save them internally)
 		this.assertModelInstances({
-			"ODataModel": sap.ui.model.odata.ODataModel
+			"ODataModel": sap.ui.model.odata.v2.ODataModel
 		});
 
 		// destroy the component

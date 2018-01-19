@@ -19,20 +19,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	/**
 	 * Constructor for a new JSONModel.
 	 *
-	 * @class
-	 * Model implementation for JSON format
-	 *
 	 * The observation feature is experimental! When observation is activated, the application can directly change the
 	 * JS objects without the need to call setData, setProperty or refresh. Observation does only work for existing
-	 * properties in the JSON, it can not detect new properties or new array entries.
+	 * properties in the JSON, it cannot detect new properties or new array entries.
+	 *
+	 * @param {object|string} oData Either the URL where to load the JSON from or a JS object
+	 * @param {boolean} bObserve Whether to observe the JSON data for property changes (experimental)
+	 *
+	 * @class
+	 * Model implementation for JSON format
 	 *
 	 * @extends sap.ui.model.ClientModel
 	 *
 	 * @author SAP SE
 	 * @version ${version}
-	 *
-	 * @param {object} oData either the URL where to load the JSON from or a JS object
-	 * @param {boolean} bObserve whether to observe the JSON data for property changes (experimental)
 	 * @public
 	 * @alias sap.ui.model.json.JSONModel
 	 */

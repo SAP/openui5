@@ -1,0 +1,92 @@
+<mvc:View
+	xmlns="sap.ui.table"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:u="sap.ui.unified"
+	xmlns:c="sap.ui.core"
+	xmlns:m="sap.m"
+	controllerName="sap.ui.core.samples.UnitTable"
+	height="100%">
+	<m:Panel>
+		<m:headerToolbar>
+			<m:Toolbar height="3rem">
+				<m:Title text="Unit Formatting"/>
+			</m:Toolbar>
+		</m:headerToolbar>
+		<m:content>
+			<Table rows="{/}">
+				<toolbar>
+					<m:Toolbar>
+						<m:content>
+							<m:Title id="title" text="Sample Data" />
+							<m:ToolbarSpacer/>
+							<m:Label text="Select a different Locale:" />
+							<m:ComboBox items="{loc>/locales}" selectedKey="{loc>/currentLocale}" selectionChange=".localeChanged">
+								<c:Item key="{loc>key}" text="{loc>key}" />
+							</m:ComboBox>
+						</m:content>
+					</m:Toolbar>
+				</toolbar>
+
+				<columns>
+					<Column>
+						<m:Label text="Name" />
+						<template>
+							<m:Text text="{name}"/>
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="Lastname" />
+						<template>
+							<m:Text text="{lastName}"/>
+						</template>
+					</Column>
+
+					<Column>
+						<m:Label text="Profit (Currency)" />
+						<template>
+							<m:Label text="{
+								parts: ['money', 'currency'],
+								formatter: '.formatCurrency'
+							}"/>
+						</template>
+					</Column>
+
+					<Column sortProperty="speedValue">
+						<m:Label text="Speed" />
+						<template>
+							<m:Label text="{
+								parts: ['speedValue', 'speedUnit'],
+								formatter: '.formatUnitCLDR'
+							}"/>
+						</template>
+					</Column>
+
+					<Column sortProperty="volumeValue">
+						<m:Label text="Volume" />
+						<template>
+							<m:Label text="{
+								parts: ['volumeValue', 'volumeUnit'],
+								formatter: '.formatUnitCLDR'
+							}"/>
+						</template>
+					</Column>
+
+					<Column sortProperty="diskspaceValue">
+						<m:Label text="Diskspace (#)" />
+						<template>
+							<m:Label text="{path: 'diskspaceValue', formatter: '.formatDiskvalue'}" />
+						</template>
+					</Column>
+
+					<Column sortProperty="diskspaceUnit">
+						<m:Label text="Diskspace Unit" />
+						<template>
+							<m:Label text="{path: 'diskspaceUnit', formatter: '.formatDisplayNameCLDR'}"/>
+						</template>
+					</Column>
+
+				</columns>
+			</Table>
+		</m:content>
+	</m:Panel>
+</mvc:View>

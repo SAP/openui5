@@ -57,7 +57,8 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./SliderTooltip", "./SliderUtil
                      * If the value is lower/higher than the allowed minimum/maximum, a warning message will be output to the console.
                      */
                     range: {type: "float[]", group: "Data", defaultValue: [0,100]}
-                }
+                },
+                designtime: "sap/m/designtime/RangeSlider.designtime"
             }
         });
 
@@ -143,6 +144,12 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./SliderTooltip", "./SliderUtil
             // this.setRange(aRange) OR this.setValue(fValue) && this.setValue2(fValue2).
             // Note: this.getRange() is intended to have the same value as [this.getValue(), this.getValue2()]
             this._bInitialRangeChecks = false;
+
+            // We need the decimal precision in order to be able to set the correct values.
+            // It is well known that JavaScript has issues with handling floating point values.
+            // E.g. 0.0001 + 0.0002 = 0.00029999999999999998
+            this._iDecimalPrecision = this.getDecimalPrecisionOfNumber(this.getStep());
+
             this.setRange(aRange);
 
             this._validateProperties();
@@ -156,8 +163,6 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./SliderTooltip", "./SliderUtil
             }
 
             this._mHandleTooltip.bTooltipsSwapped = false; // Reset tooltips swapping
-
-            this._iDecimalPrecision = this.getDecimalPrecisionOfNumber(this.getStep());
 
             // For backwards compatibility when tickmarks are enabled, should be visible
             if (this.getEnableTickmarks() && !this.getAggregation("scale")) {
@@ -327,11 +332,12 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./SliderTooltip", "./SliderUtil
 
         RangeSlider.prototype._updateHandleAria = function (oHandle, sValue) {
             var aRange = this.getRange(),
-                oProgressHandle = this.getDomRef("progress");
+                oProgressHandle = this.getDomRef("progress"),
+                fNormalizedValue = this.toFixed(sValue, this._iDecimalPrecision);
 
             this._updateHandlesAriaLabels();
 
-            oHandle.setAttribute("aria-valuenow", sValue);
+            oHandle.setAttribute("aria-valuenow", fNormalizedValue);
 
             if (oProgressHandle) {
                 oProgressHandle.setAttribute("aria-valuenow", aRange.join("-"));
@@ -469,6 +475,32 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./SliderTooltip", "./SliderUtil
             return this;
         };
 
+        RangeSlider.prototype.setStep = function (fStep) {
+            var oTooltipContainer = this.getAggregation("_tooltipContainer");
+
+            if (!oTooltipContainer instanceof sap.ui.core.Control || !oTooltipContainer["getAssociatedTooltipsAsControls"]) {
+                return this;
+            }
+
+            var aTooltips = oTooltipContainer.getAssociatedTooltipsAsControls();
+
+            this.setProperty("step", fStep, true);
+
+            //Log warning in case fStep is not valid
+            this._validateProperties();
+
+            //Get the new decimal precision
+            this._iDecimalPrecision = this.getDecimalPrecisionOfNumber(fStep);
+
+            aTooltips.forEach(function (oTooltip) {
+                if (oTooltip.getStep() !== fStep) {
+                    oTooltip.setStep(fStep);
+                }
+            });
+
+            return this;
+        };
+
         RangeSlider.prototype.setValue = function (fValue) {
             var aRange = this.getRange();
 
@@ -503,14 +535,19 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./SliderTooltip", "./SliderUtil
         };
 
         RangeSlider.prototype._updateRangePropertyDependencies = function (aRange) {
-            var aRangeCopy = Array.isArray(aRange) ? aRange.slice() : [];
+            var aRangeCopy = Array.isArray(aRange) ? aRange.slice() : [],
+                iDecimal = this._iDecimalPrecision ? this._iDecimalPrecision : 0,
+                fNewValue = Number(aRangeCopy[0].toFixed(iDecimal)),
+                fNewValue2 = Number(aRangeCopy[1].toFixed(iDecimal));
 
-            if (this.getProperty("value") !== aRangeCopy[0]) {
-                this.setProperty("value", aRangeCopy[0], true);
+            if (this.getProperty("value") !== fNewValue) {
+                this.setProperty("value", fNewValue, true);
+                aRangeCopy[0] = fNewValue;
             }
 
-            if (this.getProperty("value2") !== aRangeCopy[1]) {
-                this.setProperty("value2", aRangeCopy[1], true);
+            if (this.getProperty("value2") !== fNewValue2) {
+                this.setProperty("value2", fNewValue2, true);
+                aRangeCopy[1] = fNewValue2;
             }
 
             this.setProperty("range", aRangeCopy, true);

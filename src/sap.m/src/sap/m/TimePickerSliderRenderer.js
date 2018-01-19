@@ -37,6 +37,9 @@ sap.ui.define([],
 			if (!oControl.getIsCyclic()) {
 				oRm.addClass("sapMTimePickerSliderShort");
 			}
+			if (!oControl._getEnabled()) {
+				oRm.addClass("sapMTPDisabled");
+			}
 			oRm.writeClasses();
 
 			//WAI-ARIA region

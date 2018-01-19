@@ -61,6 +61,7 @@
 				<items>
 					<ObjectListItem
 						type="{= ${device>/system/phone} ? 'Active' : 'Inactive'}"
+						press="onSelectionChange"
 						title="{Name}"
 						number="{
 							path: 'UnitNumber',

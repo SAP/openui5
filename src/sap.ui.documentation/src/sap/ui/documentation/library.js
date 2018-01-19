@@ -19,7 +19,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo',
 		types: [],
 		interfaces: [],
 		controls: [
-			"sap.ui.documentation.sdk.controls.Search"
+			"sap.ui.documentation.sdk.controls.Search",
+			"sap.ui.documentation.sdk.controls.ObjectPageSubSection"
 		],
 		elements: [],
 		noLibraryCSS: true
@@ -37,6 +38,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo',
 	var thisLibrary = sap.ui.documentation;
 
 	var _libraryInfoSingleton;
+
+	thisLibrary._getLicense = function () {
+		var sUrl = "./LICENSE.txt";
+
+		return jQuery.ajax({
+			url: sUrl,
+			dataType: "text"
+		});
+	};
 
 	thisLibrary._getAppInfo = function(fnCallback) {
 		var sUrl = sap.ui.resource("", "sap-ui-version.json");

@@ -574,6 +574,61 @@
 				oIconTabBar.destroy();
 			});
 
+			QUnit.test("IconTabFilter with content and model update", function(assert) {
+
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							visible: "{TabOneVisible}",
+							icon: "sap-icon://instance",
+							content: new sap.m.Text({ text: "{TabOne}" }),
+							key: "key1"
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://activity-items",
+							content: new sap.m.Text({ text: "{TabTwo}" }),
+							key: "key2"
+						})
+					],
+					selectedKey: "key1"
+				});
+
+				var oModel = new sap.ui.model.json.JSONModel();
+				oModel.setData({
+					"Data": [
+						{
+							"TabOne": "Item 1 tab one",
+							"TabTwo": "Item 1 tab two"
+						},
+						{
+							"TabOne": "Item 2 tab one",
+							"TabTwo": "Item 2 tab two",
+							"TabOneVisible": false
+						}
+					]
+				});
+
+				sap.ui.getCore().setModel(oModel);
+
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				// Act
+				oIconTabBar.bindElement("/Data/0");
+				sap.ui.getCore().applyChanges();
+				oIconTabBar.bindElement("/Data/1");
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				var $itbf = oIconTabBar.$("content");
+				assert.equal($itbf.children(0).text(), "Item 2 tab two", "IconTabFilter content should be rendered after the selected tab is updated by a model");
+
+				// Clean up
+				oIconTabBar.destroy();
+			});
+
 			QUnit.test("IconTabBar without one content no rerendering of content", function(assert) {
 
 				// Arrange

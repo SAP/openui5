@@ -1867,14 +1867,9 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 					id: this.getId() + TOOLBAR_SUFFIX
 				});
 
-				this._oCloseBtnARIAInvText = new InvisibleText({
-					text: this._getText("MESSAGEPOPOVER_CLOSE")
-				});
-
 				// create close button
 				oCloseBtn = new Button({
 					icon: IconPool.getIconURI("decline"),
-					ariaLabelledBy: this._oCloseBtnARIAInvText.toStatic().getId(),
 					press: this._cancel.bind(this)
 				}).addStyleClass('sapMVSPCloseBtn');
 
@@ -2002,9 +1997,6 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 
 			this._popover.destroy();
 			this._popover = null;
-
-			this._oCloseBtnARIAInvText.destroy();
-			this._oCloseBtnARIAInvText = null;
 
 			this._title = null;
 			this._navContainer = null;

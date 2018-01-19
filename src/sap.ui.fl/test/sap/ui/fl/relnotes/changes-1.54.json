@@ -43,6 +43,36 @@
         "type": "FEATURE",
         "text": "sap.ui.fl: Support for instance specific change handlers",
         "references": []
+      },
+      {
+        "id": "ca5b37dada47aa8e9e4b9d01491d4649253217d9",
+        "type": "FIX",
+        "text": " Copy of variants doesn\u0027t copy name",
+        "references": []
+      },
+      {
+        "id": "c0342407fe532b52da845670c2a969ff879a5733",
+        "type": "FIX",
+        "text": " Bug fixes for Delta Variants",
+        "references": []
+      },
+      {
+        "id": "ab822c93bbf93598bba946d730a79cc800c49dfe",
+        "type": "FIX",
+        "text": " Revise VariantController unit test for sorting",
+        "references": []
+      },
+      {
+        "id": "b548cbe1666b1cc3441484aebd3cee7677db85a1",
+        "type": "FIX",
+        "text": " Control Variants duplicate fileName length exceeding 64",
+        "references": []
+      },
+      {
+        "id": "aaf90380008550c18ddf8a838f6f20fc8955fc37",
+        "type": "FIX",
+        "text": " sap.ui.fl - controlDependencies check bugfix",
+        "references": []
       }
     ]
   }

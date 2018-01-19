@@ -28,6 +28,9 @@ sap.ui.define(["sap/m/Button", "./library"], function (Button, library) {
 	var ObjectPageHeaderActionButton = Button.extend("sap.uxap.ObjectPageHeaderActionButton", /** @lends sap.uxap.ObjectPageHeaderActionButton.prototype */ {
 		metadata: {
 
+			interfaces : [
+			    "sap.m.IOverflowToolbarContent"
+			],
 			library: "sap.uxap",
 			properties: {
 
@@ -112,6 +115,31 @@ sap.ui.define(["sap/m/Button", "./library"], function (Button, library) {
 
 	ObjectPageHeaderActionButton.prototype._getInternalVisible = function () {
 		return this._bInternalVisible;
+	};
+
+	/**
+	 * Required by the {@link sap.m.IOverflowToolbarContent} interface.
+	 */
+	ObjectPageHeaderActionButton.prototype.getOverflowToolbarConfig = function() {
+		var oConfig = {
+			canOverflow: true,
+			propsUnrelatedToSize: ["importance"],
+			getCustomImportance: function () {
+				return this.getImportance();
+			}.bind(this)
+		};
+
+		oConfig.onBeforeEnterOverflow = function(oActionButton) {
+			oActionButton.toggleStyleClass("sapUxAPObjectPageHeaderActionButtonHideText", false, true /* suppress invalidate */);
+			oActionButton.toggleStyleClass("sapUxAPObjectPageHeaderActionButtonHideIcon", false, true /* suppress invalidate */);
+		};
+
+		oConfig.onAfterExitOverflow = function(oActionButton) {
+			oActionButton.toggleStyleClass("sapUxAPObjectPageHeaderActionButtonHideText", oActionButton.getHideText(), true /* suppress invalidate */);
+			oActionButton.toggleStyleClass("sapUxAPObjectPageHeaderActionButtonHideIcon", oActionButton.getHideIcon(), true /* suppress invalidate */);
+		};
+
+		return oConfig;
 	};
 
 	return ObjectPageHeaderActionButton;

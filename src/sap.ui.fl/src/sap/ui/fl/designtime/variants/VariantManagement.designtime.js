@@ -22,6 +22,12 @@ sap.ui.define([], function() {
 			},
 			editable: {
 				ignore: false
+			},
+			modelName: {
+				ignore: false
+			},
+			updateVariantInURL: {
+				ignore: false
 			}
 		},
 		customData: {}

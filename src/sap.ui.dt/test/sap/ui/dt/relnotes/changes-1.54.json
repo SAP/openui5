@@ -73,6 +73,18 @@
         "type": "FIX",
         "text": "sap.ui.rta: DT Metadata ignore() called for destroyed element",
         "references": []
+      },
+      {
+        "id": "99356a6c7776acd40b85bab61d202efe8479f1d5",
+        "type": "FIX",
+        "text": " MiniMenu not longer overwriting Popover style",
+        "references": []
+      },
+      {
+        "id": "1faa460cb7a9fae125f52c634cba63826e01da60",
+        "type": "FIX",
+        "text": " sap.ui.dt: MiniMenu sometimes not opening",
+        "references": []
       }
     ]
   }

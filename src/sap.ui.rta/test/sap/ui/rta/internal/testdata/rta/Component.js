@@ -2,12 +2,14 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/FakeLrepConnectorLocalStorage",
 	"sap/ui/rta/test/SmartLinkUtil",
-	"sap/ui/rta/util/UrlParser"
+	"sap/ui/rta/util/UrlParser",
+	"sap/ui/core/CustomData"
 ], function(
 	UIComponent,
 	FakeLrepConnectorLocalStorage,
 	SmartLinkUtil,
-	UrlParser
+	UrlParser,
+	CustomData
 ) {
 	"use strict";
 
@@ -34,7 +36,17 @@ sap.ui.define([
 			// app specific setup
 			this._createFakeLrep();
 
-			var oApp = new sap.m.App();
+			var oApp = new sap.m.App({
+				id : this.createId("app"),
+				customData : [new CustomData({
+					key : "sap-ui-custom-settings",
+					value : {
+						"sap.ui.dt" : {
+							designtime : "sap/ui/rta/test/InstanceSpecificScopedRoot.designtime"
+						}
+					}
+				})]
+			});
 
 			var oModel = new sap.ui.model.json.JSONModel({
 				showAdaptButton : this._bShowAdaptButton

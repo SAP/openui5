@@ -3,8 +3,14 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/core/Component"
-], function (jQuery, Component) {
+	"jquery.sap.global",
+	"sap/ui/core/Component",
+	"sap/ui/thirdparty/hasher"
+], function(
+	jQuery,
+	Component,
+	hasher
+) {
 	"use strict";
 	//Stack of layers in the layered repository
 	var aLayers = [
@@ -773,7 +779,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Converts ASCII coding into a string. Required for restoring stored code extinsions
+		 * Converts a string into ASCII coding. Required for restoring stored code extinsions
 		 *
 		 * @param {String} string string which has to be encoded
 		 * @returns {String} ascii imput parsed to ascii numbers seperated by ','
@@ -867,12 +873,36 @@ sap.ui.define([
 		 * Returns the values of a certain technical parameter or undefined if the parameter is invalid
 		 * @param  {object} oComponent Component instance used to get the technical parameters
 		 * @param {string} sParameterName The name of the parameter (e.g. "sap-ui-fl-control-variant-id")
-		 * @return {string[]|undefined} Returns the list of variant references found in the URL or undefined if none found
+		 * @return {string[]|undefined} Returns the array of parameter values found in the URL or undefined if none found
 		 */
-		getTechnicalParameterValuesFromURL : function(oComponent, sParameterName){
+		getTechnicalURLParameterValues : function(oComponent, sParameterName){
 			var mTechnicalParameters = oComponent && oComponent.getComponentData
 				&& oComponent.getComponentData() && oComponent.getComponentData().technicalParameters;
 			return (mTechnicalParameters && mTechnicalParameters[sParameterName]) || [];
+		},
+
+		/**
+		 * Sets the values of the URL technical parameters without triggering a navigation
+		 * @param {string} sParameterName Name of the parameter (e.g. "sap-ui-fl-control-variant-id")
+		 * @param {string[]} aValues Array of values for the technical parameter
+		 */
+		setTechnicalURLParameterValues: function (sParameterName, aValues) {
+			if (Utils.getUshellContainer()) {
+				hasher.changed.active = false; //disable changed signal
+
+				var oURLParser = sap.ushell.Container.getService("URLParsing");
+				var oParsedHash = oURLParser.parseShellHash(oURLParser.getHash(window.location.href));
+				var mParams = oParsedHash.params;
+
+				if (aValues.length === 0) {
+					delete mParams[sParameterName];
+				} else {
+					mParams[sParameterName] = aValues;
+				}
+
+				hasher.setHash(oURLParser.constructShellHash(oParsedHash)); //set hash without dispatching changed signal
+				hasher.changed.active = true; //re-enable signal
+			}
 		},
 
 		/**
@@ -901,6 +931,10 @@ sap.ui.define([
 		 */
 		getUrlParameter: function (sParameterName) {
 			return jQuery.sap.getUriParameters().get(sParameterName);
+		},
+
+		getUshellContainer: function() {
+			return sap.ushell && sap.ushell.Container;
 		},
 
 		createDefaultFileName: function (sNameAddition) {
@@ -984,13 +1018,15 @@ sap.ui.define([
 
 		/**
 		 * Execute the passed asynchronous / synchronous (Utils.FakePromise) functions serialized - one after the other.
-		 * Errors do not break the sequentially execution of the queue. Error message will be written.
+		 * By default errors do not break the sequential execution of the queue, but this can be changed with the parameter bThrowError.
+		 * Error message will be written in any case.
 		 *
 		 * @param {array.<function>} aPromiseQueue - List of asynchronous functions that returns promises
+		 * @param {boolean} bThrowError - true: errors will be rethrown and therefore break the execution
 		 * @param {boolean} bAsync - true: asynchronous processing with Promise, false: synchronous processing with FakePromise
 		 * @returns {Promise} Returns empty resolved Promise or FakePromise when all passed promises inside functions have been executed
 		 */
-		execPromiseQueueSequentially : function(aPromiseQueue, bAsync) {
+		execPromiseQueueSequentially : function(aPromiseQueue, bThrowError, bAsync) {
 			if (aPromiseQueue.length === 0) {
 				if (bAsync) {
 					return Promise.resolve();
@@ -1008,16 +1044,22 @@ sap.ui.define([
 				})
 
 				.catch(function(e) {
-					this.log.error("Error during execPromiseQueueSequentially processing occured: " + (e && e.message));
+					var sErrorMessage = "Error during execPromiseQueueSequentially processing occured";
+					sErrorMessage += e ?  ": " + e.message : "";
+					this.log.error(sErrorMessage);
+
+					if (bThrowError) {
+						throw new Error(sErrorMessage);
+					}
 				}.bind(this))
 
 				.then(function() {
-					return this.execPromiseQueueSequentially(aPromiseQueue, bAsync);
+					return this.execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync);
 				}.bind(this));
 
 			} else {
 				this.log.error("Changes could not be applied, promise not wrapped inside function.");
-				return this.execPromiseQueueSequentially(aPromiseQueue, bAsync);
+				return this.execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync);
 			}
 		},
 

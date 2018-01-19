@@ -14,7 +14,7 @@ sap.ui.define([
 			return !oAssertion.result && oAssertion.message === "Test timed out";
 		});
 		if (bTimedOut) {
-			Opa._stopQueue({qunitTimeout: true});
+			Opa._stopQueue({qunitTimeout: QUnit.config.testTimeout / 1000});
 		}
 	});
 	/**

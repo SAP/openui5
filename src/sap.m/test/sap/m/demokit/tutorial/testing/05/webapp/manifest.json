@@ -33,7 +33,12 @@
 		}
 	},
 	"sap.ui5": {
-		"rootView": "sap.ui.demo.bulletinboard.view.App",
+		"rootView": {
+			"viewName": "sap.ui.demo.bulletinboard.view.App",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
 		"dependencies": {
 			"minUI5Version": "1.30.0",
 			"libs": {

@@ -1,0 +1,61 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<VBox>
+		<VBox id="innerVBox"/>
+		<core:AggregationProxySingle2 id="text"/>
+	</VBox>
+</core:FragmentDefinition>
+
+
+
+
+<!--
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<VBox>
+		<core:AggregationProxy ref="{$forwardtext>textItems}" ></core:AggregationProxy>
+		<core:AggregationProxy ref="{$forwardtext>text}"></core:AggregationProxy>
+	</VBox>
+</core:FragmentDefinition>
+ <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:AggregationProxy=<url>>
+	<VBox>
+		<VBox items="{$forwardtext>textItems}">
+			<Text proxy:this="">
+		</VBox>
+		<Text proxy:this="{$forwardtext>text}"/>
+	</VBox>
+</core:FragmentDefinition>
+
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:AggregationProxy=<url>>
+	<VBox>
+		<VBox proxy:items="{$forwardtext>textItems}" proxy:type="sap.m.Text">
+		</VBox>
+		<proxy:AggregationProxy ref="{$forwardtext>text}" proxy:type="sap.m.Text"/>
+	</VBox>
+</core:FragmentDefinition>
+
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:AggregationProxy=<url>>
+	<VBox>
+		<VBox items="{$forwardtext>textItems}" AggregationProxy>
+		</VBox>
+		<proxy:single="{$forwardtext>text}"/>
+	</VBox>
+</core:FragmentDefinition>
+
+
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:AggregationProxy=<url>>
+	<VBox>
+		<VBox items="{$forwardtext>textItems}" >
+			<proxy:multiple="{$forwardtext>textItems}" />
+		</VBox>
+		<proxy:single="{$forwardtext>text}"/>
+	</VBox>
+</core:FragmentDefinition>
+
+
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:AggregationProxy=<url>>
+	<VBox>
+		<VBox proxy:items="{$forwardtext>textItems}" proxy:type="sap.m.Text">
+
+		</VBox>
+		<proxy:AggregationProxy ref="{$forwardtext>text}" proxy:type="sap.m.Text"/>
+	</VBox>
+</core:FragmentDefinition> -->

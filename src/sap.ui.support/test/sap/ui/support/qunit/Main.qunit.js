@@ -339,20 +339,63 @@ sap.ui.require([
 			assert.equal(Object.keys(Main._oSelectedRulesIds).length, 4, "Should have 4 selected rules in _oSelectedRulesIds");
 		});
 
-		QUnit.test("_setSelectedRules with no ruleDescriptors", function (assert) {
+		QUnit.test("_setSelectedRules with invalid ruleDescriptors", function (assert) {
 			// Arrange
-			var iTotalRules = 0;
-			Object.keys(RuleSetLoader._mRuleSets).map(function (sLibName) {
-				var oRulesetRules = RuleSetLoader._mRuleSets[sLibName].ruleset.getRules();
-				iTotalRules += Object.keys(oRulesetRules).length;
-			});
+			var aRuleDescriptors = [
+				// Valid rule descriptors (the library and the rule exist)
+				{
+					"ruleId": "tmpRule",
+					"libName": "temporary"
+				},
+				{
+					"ruleId": "preloadAsyncCheck",
+					"libName": "sap.ui.core"
+				},
+				{
+					"ruleId": "XMLViewWrongNamespace",
+					"libName": "sap.ui.core"
+				},
+				{
+					"ruleId": "inputNeedsLabel",
+					"libName": "sap.m"
+				},
+				// Invalid library
+				{
+					"ruleId": "someRule",
+					"libName": "sap.unknown"
+				},
+				// Invalid rule
+				{
+					"ruleId": "someRule2",
+					"libName": "sap.ui.core"
+				},
+				// Invalid rule descriptors
+				{
+					"test": "invalidRule",
+					"libName": "sap.ui.core"
+				},
+				{
+					"ruleId": "invalidRule",
+					"libbbbbbbName": "sap.ui.core"
+				},
+				"string rule descriptor"
+			];
 
+			// Act
+			Main._setSelectedRules(aRuleDescriptors);
+
+			// Assert
+			assert.equal(Main._aSelectedRules.length, 4, "Should select only the valid rules in _aSelectedRules");
+			assert.equal(Object.keys(Main._oSelectedRulesIds).length, 4, "Should select only the valid rules in _oSelectedRulesIds");
+		});
+
+		QUnit.test("_setSelectedRules with no ruleDescriptors", function (assert) {
 			// Act
 			Main._setSelectedRules();
 
 			// Assert
-			assert.equal(Main._aSelectedRules.length, iTotalRules, "Should have all rules as selected in _aSelectedRules");
-			assert.equal(Object.keys(Main._oSelectedRulesIds).length, iTotalRules, "Should have all rules as selected in _oSelectedRulesIds");
+			assert.equal(Main._aSelectedRules.length, 0, "Should reset all selected rules in _aSelectedRules");
+			assert.equal(Object.keys(Main._oSelectedRulesIds).length, 0, "Should reset all selected rules in _oSelectedRulesIds");
 		});
 
 		QUnit.test("_fetchRuleSet with ruleset of type RuleSet and library not present in the available rulesets", function (assert) {

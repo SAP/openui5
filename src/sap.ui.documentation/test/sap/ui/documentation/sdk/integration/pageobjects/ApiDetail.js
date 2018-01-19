@@ -30,7 +30,13 @@ sap.ui.define([
 					return this.waitFor({
 						controlType: "sap.m.Link",
 						matchers: new Properties({text: sLinkName}),
-						actions: new Press(),
+						//actions: new Press(),
+						// Since Change 3002279, Links no longer navigate correctly when used with OPA Press action,
+						// scrolling to wrong entity.
+						// Using firePress as workaround
+						success: function (aLink) {
+							aLink[0].firePress();
+						},
 						errorMessage: "Link" + sLinkName + " not found."
 					});
 				}

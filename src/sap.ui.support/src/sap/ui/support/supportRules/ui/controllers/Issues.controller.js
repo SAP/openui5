@@ -78,7 +78,7 @@ sap.ui.define([
 				this.model.setProperty("/issues", data.issues);
 				this.model.setProperty('/analyzePressed', true);
 				this.model.setProperty("/issuesCount", this.data.issues.length);
-				this.model.setProperty("/selectedIssue", "");
+				this.model.setProperty("/selectedIssue", null);
 				this.elementTree.setData({
 					controls: data.elementTree,
 					issuesIds: problematicControlsIds
@@ -139,19 +139,20 @@ sap.ui.define([
 		},
 		onRowSelectionChanged: function (event) {
 			if (event.getParameter("rowContext")) {
-				var selection = event.getParameter("rowContext").getObject();
+				var selection = event.getParameter("rowContext").getObject(),
+					visibleRowCount = constants.MAX_VISIBLE_ISSUES_FOR_RULE;
+
 				if (selection.type === "rule") {
 					this._setSelectedRule(selection);
 				} else {
-					this.model.setProperty("/selectedIssue", "");
+					this.model.setProperty("/selectedIssue", null);
 				}
-				if (selection.issueCount < 4 ) {
-					this._setPropertiesOfResponsiveDetailsAndTable("Fixed", "inherit");
-					this.model.setProperty("/visibleRowCount", 4);
 
-				} else {
-					this._setPropertiesOfResponsiveDetailsAndTable("Auto", "5rem");
+				if (selection.issueCount < visibleRowCount) {
+					visibleRowCount = selection.issueCount;
 				}
+
+				this.model.setProperty("/visibleRowCount", visibleRowCount);
 			}
 
 		},
@@ -221,7 +222,7 @@ sap.ui.define([
 				this.model.setProperty("/selectedIssue", selectionCopy);
 				this._setIconAndColorToIssue(selectionCopy.issues);
 			} else {
-			this.model.setProperty("/selectedIssue", "");
+				this.model.setProperty("/selectedIssue", null);
 			}
 		},
 
@@ -248,11 +249,6 @@ sap.ui.define([
 						break;
 				}
 			});
-		},
-
-		_setPropertiesOfResponsiveDetailsAndTable: function(visibleRowCountMode, heightDetailsArea){
-			this.model.setProperty("/visibleRowCountMode", visibleRowCountMode);
-			this.model.setProperty("/heightDetailsArea", heightDetailsArea);
 		}
 	});
 });

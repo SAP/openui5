@@ -154,6 +154,22 @@
 			assert.equal(jQuery( "span." + sap.m.TabStripItem.CSS_CLASS_LABEL + ":contains("+sName+")").length, 1, 'Element with name "'+sName+'" is in the DOM.');
 		});
 
+		QUnit.test("removeItem by index should remove item if 0 is passed", function (assert) {
+			// prepare
+			var oActualRemovedItem,
+				oExpectedRemovedItem = this.oTabContainer.getAggregation("items")[0];
+
+			// act
+			oActualRemovedItem = this.oTabContainer.removeItem(0);
+
+			// assert
+			assert.equal(oActualRemovedItem, oExpectedRemovedItem, "first item should be removed");
+
+			// cleanup
+			oActualRemovedItem = null;
+			oExpectedRemovedItem = null;
+		});
+
 		QUnit.module("Misc", {
 			beforeEach: function () {
 				this.oTabContainer = new sap.m.TabContainer({
@@ -208,12 +224,10 @@
 		});
 
 		QUnit.test("Rerendering", function (assert) {
-			var oItem = this.oTabContainer._getTabStrip().getItems()[0];
-			var sName = oItem.getText();
-			//sapMTabSelect
-			assert.strictEqual(jQuery(this.oTabContainer.$()).children('.sapMTabStrip').length, 1, 'TabStrip is initially rendered.');
+			var oTabStrip = this.oTabContainer._getTabStrip();
+			assert.ok(oTabStrip.$().hasClass('sapMTabStrip'), 'TabStrip is initially rendered.');
 			this.oTabContainer.destroyAggregation('_tabStrip');
-			assert.strictEqual(jQuery(this.oTabContainer.$()).children('.sapMTabStrip').length, 0, 'TabStrip is not re-rendered upon TabContainer re-rendering after TabStrip was destroyed.');
+			assert.strictEqual(oTabStrip.$().length, 0, 'TabStrip is not re-rendered upon TabContainer re-rendering after TabStrip was destroyed.');
 		});
 
 		QUnit.test("Add button rendering in nested TabContainer with binding", function (assert) {

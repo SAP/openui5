@@ -3,5 +3,6 @@
 	<MultiComboBox>
 		<core:Item key="key-one" text="Item One" />
 		<core:Item key="key-two" text="Item Two" />
+		<core:Item key="key-three" text="Item Three" />
 	</MultiComboBox>
 </core:FragmentDefinition>

@@ -613,14 +613,15 @@ sap.ui.define([
 	};
 
 	P13nFilterPanel.prototype.updateFilterItems = function(sReason) {
-		this.updateAggregation("filterItems");
+        this.updateAggregation("filterItems");
 
-		if (sReason == "change" && !this._bIgnoreBindCalls) {
-			this._bUpdateRequired = true;
-		}
-	};
+        if (sReason === "change" && !this._bIgnoreBindCalls) {
+            this._bUpdateRequired = true;
+            this.invalidate();
+        }
+    };
 
-	P13nFilterPanel.prototype.removeFilterItem = function(oFilterItem) {
+    P13nFilterPanel.prototype.removeFilterItem = function(oFilterItem) {
 		oFilterItem = this.removeAggregation("filterItems", oFilterItem, true);
 
 		if (!this._bIgnoreBindCalls) {

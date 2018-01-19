@@ -3,13 +3,9 @@
  */
 
 // Provides (optional) base class for all renderers
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
-	function(jQuery, sapUiCore) {
+sap.ui.define(['jquery.sap.global'],
+	function(jQuery) {
 	"use strict";
-
-	// create shortcuts for enums from sap.ui.core
-	var TextAlign = sapUiCore.TextAlign,
-		TextDirection = sapUiCore.TextDirection;
 
 	/**
 	 * @classdesc Base Class for a Renderer.
@@ -22,6 +18,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
 	 */
 	var Renderer = {
 	};
+
+	// shortcut for lazy required Core library
+	var sapUiCore;
 
 	/**
 	 * Helper to create an extend function for the given renderer class.
@@ -177,6 +176,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
 	 * @protected
 	 */
 	Renderer.getTextAlign = function(oTextAlign, oTextDirection) {
+		// lazy require sap.ui.core library
+		if (!sapUiCore) {
+			sapUiCore = sap.ui.requireSync("sap/ui/core/library");
+		}
+
+		// create shortcuts for enums from sap.ui.core library
+		var TextAlign = sapUiCore.TextAlign;
+		var TextDirection = sapUiCore.TextDirection;
+
 		var sTextAlign = "",
 			bRTL = sap.ui.getCore().getConfiguration().getRTL();
 

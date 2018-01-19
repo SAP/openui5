@@ -114,15 +114,20 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.addClass("sapUiTableCnt");
 		rm.writeClasses();
 
-		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "CONTENT");
-
 		// Define group for F6 handling
 		rm.writeAttribute("data-sap-ui-fastnavgroup", "true");
+		rm.write(">");
+
+		rm.write("<div");
+		rm.writeAttribute("id", oTable.getId() + "-sapUiTableGridCnt");
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "CONTENT");
 		rm.write(">");
 
 		this.renderColRsz(rm, oTable);
 		this.renderColHdr(rm, oTable);
 		this.renderTable(rm, oTable);
+
+		rm.write("</div>");
 
 		oTable._getAccRenderExtension().writeHiddenAccTexts(rm, oTable);
 
@@ -168,13 +173,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	TableRenderer.renderToolbar = function(rm, oTable, oToolbar) {
 		rm.write("<div");
 		rm.addClass("sapUiTableTbr");
-		if (typeof oToolbar.getStandalone !== "function") {
-			// for the mobile toolbar we add another class
-			rm.addClass("sapUiTableMTbr");
-		}
-		rm.writeClasses();
-		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TABLESUBHEADER");
-		rm.write(">");
 
 		// toolbar has to be embedded (not standalone)!
 		if (typeof oToolbar.getStandalone === "function" && oToolbar.getStandalone()) {
@@ -184,10 +182,14 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		// set the default design of the toolbar
 		if (TableUtils.isInstanceOf(oToolbar, "sap/m/Toolbar")) {
 			oToolbar.setDesign(Parameters.get("_sap_ui_table_Table_ToolbarDesign"), true);
+			oToolbar.addStyleClass("sapMTBHeader-CTX");
+			rm.addClass("sapUiTableMTbr"); // Just a marker when sap.m toolbar is used
 		}
 
+		rm.writeClasses();
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TABLESUBHEADER");
+		rm.write(">");
 		rm.renderControl(oToolbar);
-
 		rm.write("</div>");
 	};
 

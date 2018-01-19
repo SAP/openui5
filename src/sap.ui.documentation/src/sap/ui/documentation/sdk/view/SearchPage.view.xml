@@ -22,7 +22,7 @@
 					<op:blocks>
 						<VBox>
 							<OverflowToolbar design="Transparent" height="3rem">
-								<Title text="ALL (1 - {/visibleAllLength} of {/AllLength})"/>
+								<Title text="ALL ({=!!${/AllLength} > 0 ? '1 - ' + ${/visibleAllLength} : '0'} of {/AllLength})"/>
 							</OverflowToolbar>
 							<List
 								id="allList"

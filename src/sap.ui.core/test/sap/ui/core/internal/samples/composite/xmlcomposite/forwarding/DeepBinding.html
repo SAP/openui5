@@ -45,7 +45,7 @@
 				content: new sap.m.Button({ text: "{lastName}" })
 			})
 		});
-		var oPanelDeepBinding = new sap.m.Panel({ expandable: true, expanded: false, content: oDeepBinding, headerText: "Ex A. Deep template example - OK" });
+		var oPanelDeepBinding = new sap.m.Panel({ expandable: true, expanded: false, content: oDeepBinding, headerText: "Ex A. Deep template example" });
 
 		var oMySelect = new composites.MySelect({ id: "mySelect" });
 		oMySelect.bindAggregation("myItems", {
@@ -54,7 +54,7 @@
 				text: "{lastName}"
 			})
 		});
-		var oPanelMySelect = new sap.m.Panel({ expandable: true, expanded: false, content: oMySelect, headerText: "Ex B. One level list forwarding - OK" });
+		var oPanelMySelect = new sap.m.Panel({ expandable: true, expanded: false, content: oMySelect, headerText: "Ex B. One level list forwarding" });
 
 		var oMySelect2 = new composites.MySelect2({ id: "mySelect2" });
 		oMySelect2.bindAggregation("myItems", {
@@ -63,7 +63,7 @@
 				text: "{lastName}"
 			})
 		});
-		var oPanelMySelect2 = new sap.m.Panel({ expandable: true, expanded: false, content: oMySelect2, headerText: "Ex C. One level list forwarding with SelectList - *NOT* OK (OK when we remove destroyItems in updateItems of SelectList)" });
+		var oPanelMySelect2 = new sap.m.Panel({ expandable: true, expanded: false, content: oMySelect2, headerText: "Ex C. One level list forwarding with SelectList" });
 
 		var oMySelect3 = new composites.MySelect3({ id: "mySelect3" });
 		oMySelect3.bindAggregation("myItems", {
@@ -72,7 +72,7 @@
 				text: "{lastName}"
 			})
 		});
-		var oPanelMySelect3 = new sap.m.Panel({ expandable: true, expanded: false, content: oMySelect3, headerText: "Ex D. One level (in reality two) list forwarding with Select - *NOT* OK (binding not correct on items in SelectList, in Select binding OK)"});
+		var oPanelMySelect3 = new sap.m.Panel({ expandable: true, expanded: false, content: oMySelect3, headerText: "Ex D. One level (in reality two) list forwarding with Select" });
 
 		var oMySelectWrapper = new composites.MySelectWrapper({ id: "mySelectWrapper" });
 		oMySelectWrapper.bindAggregation("fcItems", {
@@ -81,7 +81,7 @@
 				text: "{lastName}"
 			})
 		});
-		var oPanelMySelectWrapper = new sap.m.Panel({ expandable: true, expanded: false, content: oMySelectWrapper, headerText: "Ex E. Two level list forwarding - *NOT* OK (only one item - the first - is left in innermost aggregation)" });
+		var oPanelMySelectWrapper = new sap.m.Panel({ expandable: true, expanded: false, content: oMySelectWrapper, headerText: "Ex E. Two level list forwarding" });
 
 		oPanelDeepBinding.placeAt("content");
 		oPanelMySelect.placeAt("content");

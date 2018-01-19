@@ -107,8 +107,8 @@
 				value: {
 					path: "/timeValue",
 					type: new sap.ui.model.type.Time({style: "medium", strictParsing: true})
-		 		}
-		 	}, {
+				}
+			}, {
 				id: "TP17",
 				localeId: "zh_CN",
 				displayFormat: "ah:mm:ss",
@@ -123,6 +123,13 @@
 			{
 				id: "TP19",
 				initialFocusedDateValue: new Date(2017, 8, 9, 10, 11, 12)
+			},
+			{
+				id: "TP20",
+				valueFormat: "HH:mm:ss",
+				displayFormat: "HH:mm:ss",
+				support2400: true,
+				value: "24:00:00"
 			}
 		];
 

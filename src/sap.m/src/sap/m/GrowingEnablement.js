@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.m.GrowingEnablement
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/NumberFormat', 'sap/m/library', 'sap/ui/model/ChangeReason', 'sap/ui/base/ManagedObjectMetadata'],
-	function(jQuery, BaseObject, NumberFormat, library, ChangeReason, ManagedObjectMetadata) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/NumberFormat', 'sap/m/library', 'sap/ui/model/ChangeReason', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui/core/HTML'],
+	function(jQuery, BaseObject, NumberFormat, library, ChangeReason, ManagedObjectMetadata, HTML) {
 	"use strict";
 
 
@@ -100,7 +100,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				this._oScrollDelegate = null;
 			}
 
-			this._updateTriggerDelayed(false);
+			if (!this._bLoading) {
+				this._updateTriggerDelayed(false);
+			}
 		},
 
 		setTriggerText : function(sText) {
@@ -199,7 +201,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				id: sTriggerID,
 				busyIndicatorDelay: 0,
 				type: ListType.Active,
-				content: new sap.ui.core.HTML({
+				content: new HTML({
 					content:	'<div class="sapMGrowingListTrigger">' +
 									'<div class="sapMSLITitleDiv sapMGrowingListTriggerText">' +
 										'<span class="sapMSLITitle" id="' + sTriggerID + 'Text">' + jQuery.sap.encodeHTML(sTriggerText) + '</span>' +
@@ -269,7 +271,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 			}
 
 			// after growing-button gets hidden scroll container should still be scrollable
-			return this._oScrollDelegate.getMaxScrollTop() > this._oControl.$("triggerList").outerHeight();
+			return this._oScrollDelegate.getMaxScrollTop() > 80;
 		},
 
 		// destroy all items in the list and cleanup
@@ -586,7 +588,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				oControl = this._oControl;
 
 			// If there are no visible columns then also hide the trigger.
-			if (!oTrigger || !oControl || !oControl.shouldRenderItems()) {
+			if (!oTrigger || !oControl || !oControl.shouldRenderItems() || !oControl.getDomRef()) {
 				return;
 			}
 

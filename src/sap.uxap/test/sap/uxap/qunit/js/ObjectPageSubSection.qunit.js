@@ -365,4 +365,40 @@
 		});
 	});
 
+    QUnit.module("SubSection access to parent ObjectPage", {
+        beforeEach: function () {
+            this.oObjectPageLayout = new sap.uxap.ObjectPageLayout({
+                sections: [
+                    new sap.uxap.ObjectPageSection("section1", {
+                        title: "section 1",
+                        subSections: [
+                            new sap.uxap.ObjectPageSubSection({
+                                title:"subsection 1",
+                                blocks: [
+                                    new sap.m.Button({ text: 'notext' })
+                                ]
+                            })
+                        ]
+                    })
+                ]
+            });
+            this.oObjectPageLayout.placeAt('qunit-fixture');
+            sap.ui.getCore().applyChanges();
+        },
+        afterEach: function () {
+            this.oObjectPageLayout.destroy();
+        }
+    });
+
+    QUnit.test("No error when accessing a property of parent ObjectPage", function(assert) {
+        // note that selected section is the last visible one
+        var oSection = this.oObjectPageLayout.getSections()[0],
+            oSubSection;
+
+        //act
+        oSubSection = oSection.removeSubSection(0);
+
+        assert.ok(!oSubSection._getUseTitleOnTheLeft(), "falsy value is returned");
+    });
+
 }(jQuery, QUnit, sinon, window.testData));

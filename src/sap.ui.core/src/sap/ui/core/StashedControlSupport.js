@@ -3,8 +3,8 @@
  */
 
 // Provides inactive support for controls
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Control'],
-	function(jQuery, Element, Control) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element'],
+	function(jQuery, Element) {
 		"use strict";
 
 		/**

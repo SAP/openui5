@@ -13,8 +13,14 @@
 						<Title text="Products" level="H2"/>
 						<ToolbarSpacer/>
 						<Button tooltip="View Settings" icon="sap-icon://drop-down-list" press="handleViewSettingsDialogButtonPressed" />
+						<ToggleButton icon="sap-icon://menu" tooltip="Enable / Disable Custom Context Menu" press="onToggleContextMenu" />
 					</Toolbar>
 				</headerToolbar>
+				<infoToolbar>
+					<Toolbar id="vsdFilterBar" visible="false">
+						<Text id="vsdFilterLabel" />
+					</Toolbar>
+				</infoToolbar>
 				<columns>
 					<Column width="12em"><Text text="Product" /></Column>
 					<Column minScreenWidth="Tablet" demandPopin="true"><Text text="Supplier" /></Column>

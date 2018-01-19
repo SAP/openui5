@@ -157,16 +157,18 @@ sap.ui.require([
 						"variants" : [{
 							"content" : {
 								"fileName": "variant0",
-								"title": "variant 0",
-								"content": {}
+								"content": {
+									"title": "variant 0"
+								}
 							},
 							"controlChanges" : []
 						},
 						{
 							"content" : {
 								"fileName": "variant1",
-								"title": "variant 1",
-								"content": {}
+								"content": {
+									"title": "variant 1"
+								}
 							},
 							"controlChanges" : [oChangeContent0, oChangeContent1]
 						}],
@@ -221,17 +223,19 @@ sap.ui.require([
 						"variants" : [{
 							"content" : {
 								"fileName": "variant0",
-								"title": "variant 0",
-								"content": {}
+								"content": {
+									"title": "variant 0"
+								}
 							},
 							"controlChanges" : [oChangeContent0, oChangeContent1, oChangeContent2]
 						},
 						{
 							"content" : {
 								"fileName": "variant1",
-								"title": "variant 1",
 								"variantReference":"variant0",
-								"content": {}
+								"content": {
+									"title": "variant 1"
+								}
 							},
 							"controlChanges" : [oChangeContent0, oChangeContent3, oChangeContent4]
 						}],
@@ -290,7 +294,6 @@ sap.ui.require([
 
 	QUnit.test("when calling '_setChangeFileContent'", function(assert) {
 		var oVariantController = new VariantController("MyComponent", "1.2.3", {});
-		var fnCompareVariantsSpy = sandbox.spy(oVariantController, "compareVariants");
 		var fnApplyChangesOnVariantManagementSpy = sandbox.spy(oVariantController, "_applyChangesOnVariantManagement");
 		oVariantController._setChangeFileContent(this.oResponse);
 		assert.equal(oVariantController._mVariantManagement["idMain1--variantManagementOrdersTable"].variants.length, 3, "then 3 variants added to 'idMain1--variantManagementOrdersTable' variant management reference");
@@ -298,7 +301,8 @@ sap.ui.require([
 		assert.ok(oVariantController._mVariantManagement["idMain1--variantManagementOrdersTable"].variants[0].content.content.visible, "then visible property of variant set to true");
 		assert.equal(oVariantController._mVariantManagement["idMain1--variantManagementOrdersTable"].defaultVariant, "variant0", "then visible property of variant set to true");
 		assert.ok(typeof oVariantController._mVariantManagement["idMain1--variantManagementOrdersTable"].variantManagementChanges === 'object', "then variant management changes object exists");
-		assert.equal(fnCompareVariantsSpy.callCount, 3,  "then compare variants function called thrice for the two variant management references");
+		assert.ok(oVariantController._mVariantManagement["idMain1--variantManagementOrdersTable"].variants[1].content.content.title <
+			oVariantController._mVariantManagement["idMain1--variantManagementOrdersTable"].variants[2].content.content.title, "then the variants at indices 1 and 2 are sorted alphabetically");
 		assert.ok(fnApplyChangesOnVariantManagementSpy.calledTwice, "_applyChangesOnVariantManagement called twice, once per variant management reference");
 	});
 
@@ -316,12 +320,13 @@ sap.ui.require([
 							{
 								"content": {
 									"fileName":"variant0",
-									"title":"variant A",
 									"layer":"CUSTOMER",
 									"support":{
 										"user":"Me"
 									},
-									"content": {}
+									"content": {
+										"title":"variant A"
+									}
 								},
 								"controlChanges" : [
 									{
@@ -338,12 +343,13 @@ sap.ui.require([
 							{
 								"content": {
 									"fileName":"variant1",
-									"title":"variant B",
 									"layer":"CUSTOMER",
 									"support":{
 										"user":"Me"
 									},
-									"content": {}
+									"content": {
+										"title":"variant B"
+									}
 								},
 								"controlChanges" : [
 									{
@@ -360,12 +366,13 @@ sap.ui.require([
 							{
 								"content": {
 									"fileName":"variantMgmtId1",
-									"title":"Standard",
 									"layer":"VENDOR",
 									"support":{
 										"user":"SAP"
 									},
-									"content": {}
+									"content": {
+										"title":"Standard"
+									}
 								},
 								"controlChanges" : [
 									{
@@ -400,7 +407,6 @@ sap.ui.require([
 		var oExpectedData = {
 			"variantMgmtId1": {
 				"defaultVariant": "variant1",
-				"originalDefaultVariant": "variant1",
 				"variants": [{
 					//"author": "SAP",
 					"favorite": true,
@@ -444,12 +450,13 @@ sap.ui.require([
 							{
 								"content": {
 									"fileName":"variant0",
-									"title":"variant A",
 									"layer":"CUSTOMER",
 									"support":{
 										"user":"Me"
 									},
-									"content": {}
+									"content": {
+										"title":"variant A"
+									}
 								},
 								"controlChanges" : [],
 								"variantChanges" : {}
@@ -457,12 +464,13 @@ sap.ui.require([
 							{
 								"content": {
 									"fileName":"variantMgmtId1",
-									"title":"Standard",
 									"layer":"VENDOR",
 									"support":{
 										"user":"SAP"
 									},
-									"content": {}
+									"content": {
+										"title":"Standard"
+									}
 								},
 								"controlChanges" : [],
 								"variantChanges" : {}
@@ -476,9 +484,7 @@ sap.ui.require([
 		var oExpectedData = {
 			"variantMgmtId1": {
 				"defaultVariant": "variantMgmtId1",
-				"originalDefaultVariant": "variantMgmtId1",
 				"currentVariant": "variant0",
-				"originalCurrentVariant": "variant0",
 				"variants": [{
 //					"author": "SAP",
 					"favorite": true,
@@ -498,7 +504,7 @@ sap.ui.require([
 			}
 		};
 
-		sandbox.stub(Utils, "getTechnicalParameterValuesFromURL").returns(["variant0"]);
+		sandbox.stub(Utils, "getTechnicalURLParameterValues").returns(["variant0"]);
 		var oVariantController = new VariantController("MyComponent", "1.2.3", oFakeVariantResponse);
 		var fnApplyChangesOnVariantSpy = sandbox.spy(oVariantController, "_applyChangesOnVariant");
 		var oData = oVariantController._fillVariantModel();
@@ -520,12 +526,12 @@ sap.ui.require([
 							{
 								"content": {
 									"fileName":"variant0",
-									"title":"variant A",
 									"layer":"CUSTOMER",
 									"support":{
 										"user":"Me"
 									},
 									"content": {
+										"title":"variant A",
 										"favorite": true
 									}
 								},
@@ -580,10 +586,10 @@ sap.ui.require([
 			}
 		};
 		var oVariantController = new VariantController("MyComponent", "1.2.3", oFakeVariantResponse);
-		assert.strictEqual(oVariantController._mVariantManagement["variantMgmtId1"].variants[0].content.title, "variant A", "then title of the variant is set to the intiial value");
+		assert.strictEqual(oVariantController._mVariantManagement["variantMgmtId1"].variants[0].content.content.title, "variant A", "then title of the variant is set to the intiial value");
 		assert.ok(oVariantController._mVariantManagement["variantMgmtId1"].variants[0].content.content.favorite, "then variant set as favorite initially");
 		oVariantController._applyChangesOnVariant(oVariantController._mVariantManagement["variantMgmtId1"].variants[0]);
-		assert.strictEqual(oVariantController._mVariantManagement["variantMgmtId1"].variants[0].content.title, "New Variant Title2", "then title of the variant is set to the last change in the setTitle array");
+		assert.strictEqual(oVariantController._mVariantManagement["variantMgmtId1"].variants[0].content.content.title, "New Variant Title2", "then title of the variant is set to the last change in the setTitle array");
 		assert.notOk(oVariantController._mVariantManagement["variantMgmtId1"].variants[0].content.content.favorite, "then variant set as not a favorite after");
 	});
 
@@ -625,7 +631,9 @@ sap.ui.require([
 
 		var oFakeVariantData1 = {
 			"content" : {
-				"title": "AA",
+				"content": {
+					"title": "AA"
+				},
 				"fileName": "newVariant1"
 			},
 			"controlChanges" : [oChangeContent0]
@@ -633,7 +641,9 @@ sap.ui.require([
 
 		var oFakeVariantData2 = {
 			"content" : {
-				"title": "ZZ",
+				"content": {
+					"title": "ZZ"
+				},
 				"fileName": "newVariant2"
 			},
 			"controlChanges" : [oChangeContent1]
@@ -664,6 +674,19 @@ sap.ui.require([
 		assert.equal(aVariants[2].content.fileName, "variant0", "then after renaming the title to ZZZ variant moved to index 2");
 	});
 
+	QUnit.test("when calling '_setVariantData' with a changed title and previous index for Standard variant", function(assert) {
+		var mPropertyBag = {
+			title: "ZZZ"
+		};
+
+		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
+		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
+		assert.equal(aVariants[0].content.fileName, "idMain1--variantManagementOrdersTable", "then before renaming the title variant present at index 0");
+		var iSortedIndex = oVariantController._setVariantData(mPropertyBag, "idMain1--variantManagementOrdersTable", 0);
+		assert.equal(iSortedIndex, 0, "then 0 received as sorted index");
+		assert.equal(aVariants[0].content.fileName, "idMain1--variantManagementOrdersTable", "then after renaming the title to ZZZ variant is still at index 0");
+	});
+
 	QUnit.test("when calling '_getIndexToSortVariant' with all variants (excluding standard variant) and the variant which needs to be re-sorted", function(assert) {
 		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
 		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
@@ -682,9 +705,11 @@ sap.ui.require([
 
 		var oFakeVariantData1 = {
 			"content" : {
-				"title": "AA",
 				"fileName": "newVariant1",
-				"variantReference": "variant0"
+				"variantReference": "variant0",
+				"content": {
+					"title": "AA"
+				}
 			},
 			"controlChanges" : [oChangeContent0]
 		};
@@ -709,10 +734,11 @@ sap.ui.require([
 
 		var oFakeVariantData1 = {
 			"content" : {
-				"title": "AA",
 				"fileName": "newVariant1",
 				"variantReference": "variant0",
-				"content": {}
+				"content": {
+					"title": "AA"
+				}
 			},
 			"controlChanges" : [oChangeContent0]
 		};
@@ -948,25 +974,28 @@ sap.ui.require([
 							"variants" : [{
 								"content" : {
 									"fileName": "variant0",
-									"title": "variant 0",
-									"content": {}
+									"content": {
+										"title": "variant 0"
+									}
 								},
 								"controlChanges" : [this.oChangeContent0, this.oChangeContent1]
 							},
 							{
 								"content" : {
 									"fileName": "variant1",
-									"title": "variant 1",
 									"variantReference": "variant0",
-									"content": {}
+									"content": {
+										"title": "variant 1"
+									}
 								},
 								"controlChanges" : []
 							},
 							{
 								"content" : {
 									"fileName": "variantManagementId",
-									"title": "variant default",
-									"content": {}
+									"content": {
+										"title": "variant default"
+									}
 								},
 								"controlChanges" : [this.oChangeContent3]
 							}],
@@ -1074,16 +1103,18 @@ sap.ui.require([
 			"variants" : [{
 				"content" : {
 					"fileName": "variant02",
-					"title": "variant 02",
-					"content": {}
+					"content": {
+						"title": "variant 02"
+					}
 				},
 				"controlChanges" : [this.oChangeContent4]
 			},
 			{
 				"content" : {
 					"fileName": "variantManagementId2",
-					"title": "variant default2",
-					"content": {}
+					"content": {
+						"title": "variant default2"
+					}
 				},
 				"controlChanges" : [this.oChangeContent5]
 			}],
@@ -1093,20 +1124,18 @@ sap.ui.require([
 		this.oComponent.getComponentData = function(){
 			return {
 				technicalParameters: {
-					"sap-ui-fl-control-variant-id" : ["variant0", "variant02"]
+					"sap-ui-fl-control-variant-id" : ["variant0", "variant02", "variantManagementId2"]
 				}
 			};
 		};
-
-		this.oVariantController = new VariantController("MyComponent", "1.2.3", this.oFakeVariantResponse);
 
 		this.oVariantController._setChangeFileContent(this.oFakeVariantResponse, this.oComponent);
 		var aInitialChanges = this.oVariantController.loadInitialChanges();
 
 		var aExpectedChanges = this.oFakeVariantResponse.changes.variantSection.variantManagementId.variants[0].controlChanges.concat(
-			this.oFakeVariantResponse.changes.variantSection.variantManagementId2.variants[0].controlChanges);
+			this.oFakeVariantResponse.changes.variantSection.variantManagementId2.variants[1].controlChanges);
 
-		assert.deepEqual(aExpectedChanges, aInitialChanges, "then the combined control changes are retrieved");
+		assert.deepEqual(aExpectedChanges, aInitialChanges, "then the combined control changes are retrieved, loading changes for the last variant that matches a URL parameter");
 	});
 
 	QUnit.test("when calling '_setChangeFileContent' & 'loadInitialChanges' with one valid URL parameter for a variant management, but two variant management ids exist", function(assert){
@@ -1117,16 +1146,18 @@ sap.ui.require([
 			"variants" : [{
 				"content" : {
 					"fileName": "variant02",
-					"title": "variant 02",
-					"content": {}
+					"content": {
+						"title": "variant 02"
+					}
 				},
 				"controlChanges" : [this.oChangeContent4]
 			},
 			{
 				"content" : {
 					"fileName": "variantManagementId2",
-					"title": "variant default2",
-					"content": {}
+					"content": {
+						"title": "variant default2"
+					}
 				},
 				"controlChanges" : [this.oChangeContent5]
 			}],
@@ -1140,9 +1171,6 @@ sap.ui.require([
 				}
 			};
 		};
-
-		this.oVariantController = new VariantController("MyComponent", "1.2.3", this.oFakeVariantResponse);
-
 		this.oVariantController._setChangeFileContent(this.oFakeVariantResponse, this.oComponent);
 		var aInitialChanges = this.oVariantController.loadInitialChanges();
 
@@ -1150,6 +1178,9 @@ sap.ui.require([
 			this.oFakeVariantResponse.changes.variantSection.variantManagementId2.variants[1].controlChanges);
 
 		assert.deepEqual(aExpectedChanges, aInitialChanges, "then the control changes for the specified variant + default for the other id are combined");
+
+		this.oVariantController._mVariantManagement["variantManagementId2"].variants[0].content.fileName = "variantCheckReference";
+		assert.deepEqual(sap.ui.fl.Cache.getEntry("MyComponent", "1.2.3").file.changes.variantSection, this.oVariantController._mVariantManagement, "then Cache.file.changes has the same structure as VariantController variantSection map, passed by reference");
 	});
 
 });

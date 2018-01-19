@@ -983,6 +983,7 @@
 			assert.equal(jQuery("#PC3-OneMonthInt--Month0-days .sapUiCalItem").length , 31, "days are 31");
 		});
 
+
 		QUnit.module("Setters");
 
 		QUnit.test("startDate", function(assert) {
@@ -2822,6 +2823,11 @@
 			//assert
 			assert.equal(this.oPC.getStartDate().getFullYear(), 2016, 'year is the same');
 			assert.equal(this.oPC.getStartDate().getMonth(), 8, 'month is the same');
+		});
+
+		QUnit.test("checks for sapUiCalOneMonthInt class", function(assert) {
+			//Assert
+			assert.ok(this.oPCInterval.$().hasClass("sapUiCalOneMonthInt"), "sapUiCalOneMonthInt is rendered");
 		});
 
 		QUnit.module("OneMonth view (size S)", {

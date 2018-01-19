@@ -1500,6 +1500,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 *       <li><code>onAfterExitOverflow(oControl)</code> - A callback function that will be invoked after taking the control out of the overflow menu (before moving it back to the toolbar itself). The control instance will be passed as an argument.
 	 *
 	 *       <b>Note:</b> See: <code>onBeforeEnterOverflow</code> for details about the function's context.</li>
+	 *
+	 *       <li><code>getCustomImportance()</code> - A function that, if provided, will be called to determine the priority of the control.
+	 *       This function must return a value of type <code>sap.m.OverflowToolbarPriority</code>. The string "Medium" is also accepted and interpreted as priority between <code>Low</code> and <code>High<code>.
+	 *
+	 *       <b>Note:</b> Normally priority in <code>sap.m.OverflowToolbar</code> is managed with the <code>priority</code> property of <code>sap.m.OverflowToolbarLayoutData</code>.
+	 *       However, some controls may have other means of defining priority, such as dedicated properties or other types of layout data for that purpose.
+	 *       In summary, implementing this function allows a control to override the default priority logic (<code>sap.m.OverflowToolbarLayoutData</code>) by providing its own.</li>
 	 *   </ul>
 	 *
 	 *   <b>Important:</b> In addition, the control can implement a CSS class, scoped with the <code>.sapMOverflowToolbarMenu-CTX</code> context selector, that will be applied whenever the control is inside the overflow menu.

@@ -298,7 +298,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 			return (
 				sModuleName === sPattern
 				|| sPattern.match(/\*$/) && sModuleName.indexOf(sPattern.slice(0,-1)) === 0 // simple prefix match
-				|| sPattern.match(/\.*$/) && sModuleName === sPattern.slice(0,-2) // directory pattern also matches directory itself
+				|| sPattern.match(/\.\*$/) && sModuleName === sPattern.slice(0,-2) // directory pattern also matches directory itself
 			);
 		}
 

@@ -377,12 +377,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("AutoWait Config", {
-		beforeEach: function () {
-			this.oTraceSpy = sinon.spy(window.console, "trace");
-			Opa5.extendConfig({logLevel: "trace"});
-		},
 		afterEach: function () {
-			this.oTraceSpy.restore();
 			Opa5.resetConfig();
 		}
 	});
@@ -402,9 +397,7 @@ sap.ui.define([
 			},
 			success: function () {
 				sinon.assert.called(fnHasToWait, "Should call autoWait");
-				sinon.assert.calledWithMatch(this.oTraceSpy, "Timeout delay 401 reached the limit of 400. Long-running timeout is ignored");
 				fnHasToWait.reset();
-				this.oTraceSpy.reset();
 			}.bind(this)
 		});
 
@@ -416,9 +409,8 @@ sap.ui.define([
 				return setTimeout(function () {},  1001);
 			},
 			success: function () {
-				sinon.assert.called(fnHasToWait, "Should call autoWait");
 				// default maxDelay 1000 is used again
-				sinon.assert.calledWithMatch(this.oTraceSpy, "Timeout delay 1001 reached the limit of 1000. Long-running timeout is ignored");
+				sinon.assert.called(fnHasToWait, "Should call autoWait");
 				fnHasToWait.restore();
 			}.bind(this)
 		});
@@ -439,9 +431,7 @@ sap.ui.define([
 					success: function () {
 						sinon.assert.called(fnHasToWait, "Should call autoWait");
 						// maxDelay is 1001 for this waitFor only
-						sinon.assert.calledWithMatch(this.oTraceSpy, "Timeout delay 1002 reached the limit of 1001. Long-running timeout is ignored");
 						fnHasToWait.reset();
-						this.oTraceSpy.reset();
 					}.bind(this)
 				});
 			}.bind(this)
@@ -454,7 +444,6 @@ sap.ui.define([
 					success: function () {
 						sinon.assert.notCalled(fnHasToWait, "Should not call autoWait");
 						// default maxDelay 1000 is used again
-						sinon.assert.calledWithMatch(this.oTraceSpy, "Timeout delay 1002 reached the limit of 1000. Long-running timeout is ignored");
 						fnHasToWait.restore();
 					}.bind(this)
 				});

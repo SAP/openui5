@@ -8,6 +8,12 @@ sap.ui.define([],
 		"use strict";
 
 		return {
+			palette: {
+				group: "CONTAINER",
+				icons: {
+					svg: "sap/m/designtime/Page.icon.svg"
+				}
+			},
 			actions: {
 				rename: function (oPage) {
 					// When a custom header is added the title is not visualized and we do not need a rename action.
@@ -52,6 +58,9 @@ sap.ui.define([],
 			name: {
 				singular: "PAGE_NAME",
 				plural: "PAGE_NAME_PLURAL"
+			},
+			templates: {
+				create: "sap/m/designtime/Page.create.fragment.xml"
 			}
 		};
 

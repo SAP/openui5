@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', 'sap/ui/core/Control' ],
-		function(jQuery, Core, BaseObject, Control) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
+		function(jQuery, Core) {
 	"use strict";
 
 	/**

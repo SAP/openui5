@@ -408,6 +408,27 @@
 				assert.equal(jQuery.sap.equal(a, b, 100), true, "deep object");
 			});
 
+			QUnit.test("DOM node", function(assert) {
+				assert.equal(jQuery.sap.equal(document.createElement("div"), document.createElement("div")), true, "div, div");
+				assert.equal(jQuery.sap.equal(document.createElement("div"), document.createElement("span")), false, "div, span");
+				assert.equal(jQuery.sap.equal(document.createElement("div"), { nodeName: true, namespaceURI: true }), false, "div, fake node");
+				assert.equal(jQuery.sap.equal(document.createElement("div"), true), false, "div, true");
+				assert.equal(jQuery.sap.equal(document.createElement("div"), 1), false, "div, 1");
+				assert.equal(jQuery.sap.equal(document.createElement("div"), "div"), false, "div, \"div\"");
+
+				function createDivWithSpan(spanText) {
+					var div = document.createElement("div");
+					var span = document.createElement("span");
+					span.innerText = spanText;
+					div.appendChild(span);
+					return div;
+				}
+
+				assert.equal(jQuery.sap.equal(createDivWithSpan("foo"), createDivWithSpan("foo")), true, "div (/w span), div (/w span)");
+				assert.equal(jQuery.sap.equal(createDivWithSpan("foo"), createDivWithSpan("bar")), false, "div (/w span), div (/w span)");
+				assert.equal(jQuery.sap.equal(createDivWithSpan("foo"), document.createElement("div")), false, "div (/w span), div");
+			});
+
 			// -------------------------------------------------------------------------------
 			// jQuery.sap.each
 			// -------------------------------------------------------------------------------

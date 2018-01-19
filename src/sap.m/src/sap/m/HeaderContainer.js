@@ -280,7 +280,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				oToCell = this._getParentCell(oNext);
 			}
 
-			if (oFromCell && oToCell && oFromCell.id !== oToCell.id || oNext && oNext.id === this.getId() + "-after") { // attempt to jump out of HeaderContainer
+          if ( ( oFromCell && oToCell && oFromCell.id !== oToCell.id ) || ( oNext && oNext.id === this.getId() + "-after" ) || ( oNext && oNext.id === this.getId() + "-scrl-prev-button" ) ) { // attempt to jump out of HeaderContainer
 				var oLastInnerTab = oFocusables.last().get(0);
 				if (oLastInnerTab) {
 					this._bIgnoreFocusIn = true;
@@ -574,7 +574,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		HeaderContainer.prototype._getFirstItemOffset = function (sType) {
 			var $firstItem = this.getContent()[0] && this.getContent()[0].$(),
 				$parent = $firstItem && $firstItem.parent(),
-				iFirst = $parent && $parent[0][sType];
+				iFirst = $parent && $parent[0] && $parent[0][sType];
 
 			return iFirst || 0;
 		};

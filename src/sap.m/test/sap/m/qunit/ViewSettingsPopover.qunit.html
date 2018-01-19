@@ -1323,6 +1323,16 @@
 			});
 		});
 
+		// BCP: 1780409422
+		QUnit.test("close button", function () {
+			// arrange
+			this.sut._getToolbar();
+
+			// assert
+			assert.equal(this.sut._oCloseBtnARIAInvText, undefined, "no invisible text is created for aria-labelledby for the close button");
+			assert.equal(this.sut._toolbar.getContent()[2].getAriaLabelledBy().length, 0, "close button has no ariaLabelledBy items in the association");
+		});
+
 
 
 		QUnit.module("Single Data Point", {

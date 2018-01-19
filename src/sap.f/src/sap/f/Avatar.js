@@ -123,7 +123,8 @@ sap.ui.define([
 				 * Fired when the user selects the control.
 				 */
 				press: {}
-			}
+			},
+			designtime: "sap/f/designtime/Avatar.designtime"
 		}
 	});
 

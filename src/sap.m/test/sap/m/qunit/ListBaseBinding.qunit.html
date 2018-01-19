@@ -124,10 +124,8 @@
 			}, {
 				events: {
 					dataRequested: function() {
-						Promise.resolve().then(function() {
-							var $BusyIndicator = oList.$().find(".sapUiLocalBusyIndicator");
-							assert.strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible after data has been requested");
-						});
+						var $BusyIndicator = jQuery(".sapUiLocalBusyIndicator");
+						assert.strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible after data has been requested");
 					},
 					dataReceived: function() {
 						window.setTimeout(function() {
@@ -159,10 +157,8 @@
 			}, {
 				events: {
 					dataRequested: function() {
-						Promise.resolve().then(function() {
-							var $BusyIndicator = oList.$().find(".sapUiLocalBusyIndicator");
-							assert.strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible after data has been requested");
-						});
+						var $BusyIndicator = jQuery(".sapUiLocalBusyIndicator");
+						assert.strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible after data has been requested");
 					},
 					dataReceived: function() {
 						window.setTimeout(function() {
@@ -193,10 +189,8 @@
 				filters : [new sap.ui.model.Filter("Name", mFilterOperator.EQ, "ThisTextShouldNotBeFound")],
 				events: {
 					dataRequested: function() {
-						Promise.resolve().then(function() {
-							var $BusyIndicator = oList.$().find(".sapUiLocalBusyIndicator");
-							assert.strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible after data has been requested");
-						});
+						var $BusyIndicator = jQuery(".sapUiLocalBusyIndicator");
+						assert.strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible after data has been requested");
 					},
 					dataReceived: function() {
 						window.setTimeout(function() {
@@ -268,10 +262,8 @@
 				path :"/ThereIsNoSuchPath",
 				events: {
 					dataRequested: function() {
-						Promise.resolve().then(function() {
-							var $BusyIndicator = oList.$().find(".sapUiLocalBusyIndicator");
-							assert.strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible after data has been requested");
-						});
+						var $BusyIndicator = jQuery(".sapUiLocalBusyIndicator");
+						assert.strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible after data has been requested");
 					},
 					dataReceived: function() {
 						window.setTimeout(function() {

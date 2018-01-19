@@ -44,6 +44,7 @@
 		"rootView": {
 			"viewName": "sap.ui.demo.masterdetail.view.App",
 			"type": "XML",
+			"async": true,
 			"id": "app"
 		},
 

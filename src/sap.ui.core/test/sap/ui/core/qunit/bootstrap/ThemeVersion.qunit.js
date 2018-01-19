@@ -179,6 +179,31 @@ function setupQUnitTests(mOptions) {
 					sap.ui.getCore().attachThemeChanged(fnThemeChanged);
 					sap.ui.getCore().applyTheme("sap_bluecrystal");
 				});
+				QUnit.test("RTL Change", function(assert) {
+					sap.ui.getCore().getConfiguration().setRTL(true);
+
+					var oLink = $.sap.domById("sap-ui-theme-sap.ui.core");
+					var sHref = oLink.getAttribute("href");
+					var sCoreVersion = sap.ui.getCore().getLoadedLibraries()["sap.ui.core"].version;
+
+					var sExpectedHref = "../../../../../../resources/sap/ui/core/themes/sap_bluecrystal/library-RTL.css";
+
+					if (mOptions.versionedLibCss) {
+						assert.equal(
+							sHref,
+							sExpectedHref + "?version=" + sCoreVersion + "&sap-ui-dist-version=" + oVersionInfo.version,
+							"'sap.ui.core' library-RTL.css URL should contain version parameters."
+						);
+					} else {
+						assert.equal(
+							sHref,
+							sExpectedHref,
+							"'sap.ui.core' library-RTL.css URL should not contain version parameters."
+						);
+					}
+
+					sap.ui.getCore().getConfiguration().setRTL(false);
+				});
 			});
 		});
 	});

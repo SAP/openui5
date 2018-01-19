@@ -11,7 +11,12 @@
 
 	"sap.ui5": {
 
-		"rootView": "samples.manifestfirst.customer.view.Main"
+		"rootView": {
+			"viewName": "samples.manifestfirst.customer.view.Main",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		}
 
 	}
 

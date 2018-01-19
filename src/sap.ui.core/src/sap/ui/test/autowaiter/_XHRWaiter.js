@@ -78,7 +78,7 @@ sap.ui.define([
 
 	function createLogForSingleRequest (oXHR) {
 		var sMessage = oXHR.fake ? "\nFakeXHR: " : "\nXHR: ";
-		sMessage += "URL: '" + oXHR.url + "' Method: '" + oXHR.method + "' Stack: " + oXHR.trace;
+		sMessage += "URL: '" + oXHR.url + "' Method: '" + oXHR.method + "'\nStack: " + oXHR.trace;
 		return sMessage;
 	}
 

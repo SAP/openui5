@@ -3,8 +3,8 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './BindingMode', './Context', './Filter', './FilterOperator'],
-	function(jQuery, MessageProcessor, BindingMode, Context, Filter, FilterOperator) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './BindingMode', './Context', './Filter'],
+	function(jQuery, MessageProcessor, BindingMode, Context, Filter) {
 	"use strict";
 
 

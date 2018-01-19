@@ -5,9 +5,9 @@
 // Provides the render manager sap.ui.core.RenderManager
 sap.ui.define([
 		'jquery.sap.global',
-		'../base/Interface', '../base/Object', './LabelEnablement',
+		'./LabelEnablement',
 		'jquery.sap.act', 'jquery.sap.encoder', 'jquery.sap.dom', 'jquery.sap.trace'
-	], function(jQuery, Interface, BaseObject, LabelEnablement /* , jQuerySap1, jQuerySap */) {
+], function(jQuery, LabelEnablement /* , jQuerySapAct, jQuerySapEncoder, jQuerySapDom, jQuerySapTrace */) {
 
 	"use strict";
 

@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.util.ExportType
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
-	function(jQuery, ManagedObject) {
+sap.ui.define(['sap/ui/base/ManagedObject'],
+	function(ManagedObject) {
 	'use strict';
 
 	/**

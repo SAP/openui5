@@ -101,6 +101,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			href : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
 
 			/**
+			 * Defines whether the link target URI should be validated.
+			 *
+			 * If validation fails, the value of the <code>href</code> property will still be set, but will not be applied to the DOM.
+			 *
+			 * <b>Note:</b> Additional whitelisting of URLs is allowed through
+			 * {@link jQuery.sap/methods/jQuery.sap.addUrlWhitelist jQuery.sap.addUrlWhitelist}.
+			 *
+			 * @since 1.54.0
+			 */
+			validateUrl : {type : "boolean", group : "Data", defaultValue : false},
+
+			/**
 			 * Determines whether the link text is allowed to wrap when there is no sufficient space.
 			 */
 			wrapping : {type : "boolean", group : "Appearance", defaultValue : false},
@@ -262,7 +274,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	Link.prototype.setHref = function(sUri){
+		var bIsValid = this._isHrefValid(sUri);
+
 		this.setProperty("href", sUri, true);
+
+		if (!bIsValid) {
+			this.$().removeAttr("href");
+			jQuery.sap.log.warning(this + ": The href tag of the link was not set since it's not valid.");
+			return this;
+		}
+
 		if (this.getEnabled()) {
 			sUri = this.getProperty("href");
 			if (!sUri) {
@@ -271,6 +292,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this.$().attr("href", sUri);
 			}
 		}
+
 		return this;
 	};
 
@@ -368,6 +390,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/*************************************** Static members ******************************************/
+
+	/**
+	 * Checks if the given sUri is valid depending on the validateUrl property
+	 *
+	 * @param {String} sUri
+	 * @returns {Boolean}
+	 * @private
+	 */
+	Link.prototype._isHrefValid = function (sUri) {
+		return this.getValidateUrl() ? jQuery.sap.validateUrl(sUri) : true;
+	};
 
 	/**
 	 * Retrieves the resource bundle for the sap.m library

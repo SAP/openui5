@@ -3,7 +3,8 @@
 	xmlns:core="sap.ui.core">
 		<ComboBox>
 			<items>
-				<core:Item key="item-key" text="Item Text" />
+				<core:Item key="item-1-key" text="Item 1 Text" />
+				<core:Item key="item-2-key" text="Item 2 Text" />
 			</items>
 		</ComboBox>
 </core:FragmentDefinition>

@@ -323,4 +323,42 @@ sap.ui.require([
 			jQuery.sap.log.error.restore();
 		});
 
+		QUnit.test("_fetchRuleSet with library and no library.support", function (assert) {
+			// Arrange
+			sinon.stub(jQuery.sap, "getObject", function (sLibName) {
+				return {
+					library: {
+						support: undefined
+					}
+				};
+			});
+			sinon.spy(jQuery.sap.log, "error");
+
+			// Act
+			RuleSetLoader._fetchRuleSet("sap.test");
+
+			//Assert
+			assert.notOk(RuleSetLoader._mRuleSets["sap.test"], "Should be undefined");
+			assert.equal(jQuery.sap.log.error.callCount, 1, "Should have logged an error");
+
+			jQuery.sap.getObject.restore();
+			jQuery.sap.log.error.restore();
+		});
+
+		QUnit.test("getAllRules", function (assert) {
+			var mRules = RuleSetLoader.getAllRules();
+
+			assert.notOk(mRules instanceof Array, "Should not be an array");
+			assert.equal(Object.keys(mRules).length, 10, "Should have 10 rules");
+		});
+
+		QUnit.test("getAllRuleDescriptors", function (assert) {
+			var aRuleDescriptors = RuleSetLoader.getAllRuleDescriptors();
+
+			assert.ok(aRuleDescriptors instanceof Array, "Should be an array");
+			assert.equal(aRuleDescriptors.length, 10, "Should have 10 rules");
+			assert.ok(aRuleDescriptors[0].hasOwnProperty("libName"), "Rule descriptors should have libName property set");
+			assert.ok(aRuleDescriptors[0].hasOwnProperty("ruleId"), "Rule descriptors should have ruleId property set");
+		});
+
 	});

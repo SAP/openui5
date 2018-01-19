@@ -2,17 +2,24 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/f/FlexibleColumnLayout", "sap/ui/Device"],
-	function (FCL, Device) {
+sap.ui.define(["sap/f/FlexibleColumnLayout", "sap/ui/Device", "sap/m/library"],
+	function (FCL, Device, mobileLibrary) {
 		"use strict";
 
 		var FCLRenderer = {};
 
 		FCLRenderer.render = function (oRm, oControl) {
 
+			var sBackgroundDesign = oControl.getBackgroundDesign();
+
 			oRm.write("<div");
 			oRm.writeControlData(oControl);
 			oRm.addClass("sapFFCL");
+
+			if (sBackgroundDesign !== mobileLibrary.BackgroundDesign.Transparent) {
+				oRm.addClass("sapFFCLBackgroundDesign" + sBackgroundDesign);
+			}
+
 			oRm.writeClasses();
 			oRm.write(">");
 

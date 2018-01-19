@@ -272,6 +272,7 @@ module.exports = function(grunt, config) {
 		    'npm-install:cldr-numbers-modern@32.0.0',
 		    'npm-install:cldr-dates-modern@32.0.0',
 		    'npm-install:cldr-misc-modern@32.0.0',
+		    'npm-install:cldr-units-modern@32.0.0',
 		    'npm-install:cldr-localenames-modern@32.0.0',
 		    'npm-install:cldr-cal-islamic-modern@32.0.0',
 		    'npm-install:cldr-cal-japanese-modern@32.0.0',

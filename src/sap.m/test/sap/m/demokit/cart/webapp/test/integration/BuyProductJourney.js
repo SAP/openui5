@@ -62,7 +62,17 @@ sap.ui.define([
 		When.onTheCategory.iGoToTheCartPage();
 
 		// Assertions
-		Then.onTheCart.iShouldSeeTheProductInMyCart();
+		Then.onTheCart.iShouldSeeTheProductInMyCart()
+			.and.iTeardownMyApp();
+	});
+
+	opaTest("Should start the app with a bookmarkable cart product", function (Given, When, Then) {
+		//Arrangement
+		Given.iStartMyApp(true,{
+			hash: "#/cart/HT-1254"
+		});
+		//Assertions
+		Then.onTheProduct.iShouldSeeTheRightProduct();
 	});
 
 	opaTest("Should navigate to checkout", function (Given, When, Then) {

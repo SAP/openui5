@@ -7,6 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 	function(jQuery) {
 	"use strict";
 
+	/*global Node*/
+
 	/**
 	 * Some private variable used for creation of (pseudo-)unique ids.
 	 * @type int
@@ -291,8 +293,8 @@ sap.ui.define(['jquery.sap.global'],
 			if (!contains && Object.keys(a).length !== Object.keys(b).length) {
 				return false;
 			}
-			if (a.nodeName && b.nodeName && a.namespaceURI && b.namespaceURI) {
-				return jQuery.sap.isEqualNode(a,b);
+			if (a instanceof Node) {
+				return a.isEqualNode(b);
 			}
 			if (a instanceof Date) {
 				return a.valueOf() === b.valueOf();
@@ -570,7 +572,7 @@ sap.ui.define(['jquery.sap.global'],
 	 *
 	 * This partly implements the algorithm described in "A Technique for Isolating Differences Between Files"
 	 * but instead of working with hashes, it does compare each entry of the old list with each entry of the new
-	 * list, which causes terrible performane on large datasets.
+	 * list, which causes terrible performance on large datasets.
 	 *
 	 * @deprecated As of 1.38, use {@link jQuery.sap.arraySymbolDiff} instead if applicable
 	 * @public

@@ -12,9 +12,11 @@ sap.ui.define([
 	"use strict";
 
 	var oPDFViewer;
+	var sandbox = sinon.sandbox.create();
 	QUnit.module('Special use cases', {
 		afterEach: function (assert) {
 			oPDFViewer.destroy();
+			sandbox.verifyAndRestore();
 		}
 	});
 
@@ -197,6 +199,19 @@ sap.ui.define([
 		});
 
 		TestUtils.renderPdfViewer(oPDFViewer);
+	});
+
+	QUnit.test("Height on mobile/tablet devices is always auto", function (assert) {
+		this.sandbox.stub(Device, "system", {desktop: false});
+
+		oPDFViewer = TestUtils.createPdfViewer({
+			height: '250px',
+			source: "./pdfviewer/sample file with spaces.pdf"
+		});
+
+		TestUtils.renderPdfViewer(oPDFViewer);
+
+		assert.equal(oPDFViewer.$()[0].style.height, 'auto');
 	});
 
 });

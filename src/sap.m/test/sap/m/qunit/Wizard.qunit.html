@@ -361,6 +361,42 @@
 			assert.ok(this.oWizard.previousStep().previousStep(), "previousStep chaining should not throw an Error");
 		});
 
+		QUnit.test("Optional Step property", function (assert) {
+			var oNavigator,
+				oFirstStepRef,
+				oSecondStepRef,
+				oWizard = new sap.m.Wizard({
+					steps: [
+						new sap.m.WizardStep({
+							title: "First",
+							optional: true
+						}),
+						new sap.m.WizardStep({
+							title: "Second",
+							optional: false
+						}),
+						new sap.m.WizardStep({
+							title: "Third"
+						})
+					]
+				});
+
+			// arrange
+			oWizard.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oNavigator = oWizard._getProgressNavigator();
+			oFirstStepRef = jQuery(oNavigator.$().find("li")[0]);
+			oSecondStepRef = jQuery(oNavigator.$().find("li")[1]);
+
+			// assert
+			assert.strictEqual(oFirstStepRef.find(".sapMWizardProgressNavAnchorLabelOptional").length, 1, "An element with style class sapMWizardProgressNavAnchorLabelOptional should be added");
+			assert.strictEqual(oSecondStepRef.find(".sapMWizardProgressNavAnchorLabelOptional").length, 0, "An element with style class sapMWizardProgressNavAnchorLabelOptional should not be added");
+
+			// clean up
+			oWizard.destroy();
+		});
+
 		QUnit.module("Wizard Branching", {
 			sWizardId: "wizard-branching-id",
 			beforeEach: function () {

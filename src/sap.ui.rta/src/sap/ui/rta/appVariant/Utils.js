@@ -20,7 +20,7 @@ sap.ui.define([
 			return oLREPConnector.send(sRoute, sOperation);
 		};
 
-		Utils.getAppVariantOverviewAttributes = function(oAppVariantInfo) {
+		Utils.getAppVariantOverviewAttributes = function(oAppVariantInfo, bKeyUser) {
 			var oAppVariantAttributes;
 			var fnCheckAppType = function() {
 				if (oAppVariantInfo.isOriginal && oAppVariantInfo.isAppVariant) {
@@ -50,7 +50,7 @@ sap.ui.define([
 					};
 
 					return fncheckNavigationSupported(oNavigationParams).then(function(aResult) {
-						if (aResult.length) {
+						if (aResult.length && bKeyUser) {
 							oAppVariantAttributes.adaptUIButtonVisibility = true;
 						} else {
 							oAppVariantAttributes.adaptUIButtonVisibility = false;
@@ -83,7 +83,8 @@ sap.ui.define([
 				icon : oAppVariantInfo.iconUrl || '',
 				isOriginal : oAppVariantInfo.isOriginal,
 				typeOfApp : fnCheckAppType(),
-				descriptorUrl : oAppVariantInfo.descriptorUrl
+				descriptorUrl : oAppVariantInfo.descriptorUrl,
+				isKeyUser : bKeyUser
 			};
 
 			var sNewAppVariantId = AppVariantUtils.getNewAppVariantId();
@@ -95,16 +96,22 @@ sap.ui.define([
 			return fnGetNavigationInfo(oAppVariantAttributes);
 		};
 
-		Utils.getAppVariantOverview = function(sReferenceAppId) {
-			var sRoute = '/sap/bc/lrep/app_variant_overview/?sap.app/id=' + sReferenceAppId;
+		Utils.getAppVariantOverview = function(sReferenceAppId, bKeyUser) {
+			var sLayer = bKeyUser ? 'CUSTOMER' : 'VENDOR';
+			var sRoute = '/sap/bc/lrep/app_variant_overview/?sap.app/id=' + sReferenceAppId + '&layer=' + sLayer;
 
 			return this.sendRequest(sRoute, 'GET').then(function(oResult) {
 				var aAppVariantOverviewInfo = [];
-				var aAppVariantInfo = oResult.response.items;
+				var aAppVariantInfo;
+				if (oResult.response && oResult.response.items) {
+					aAppVariantInfo = oResult.response.items;
+				} else {
+					return Promise.resolve([]);
+				}
 
 				aAppVariantInfo.forEach(function(oAppVariantInfo) {
 					if (!oAppVariantInfo.isDescriptorVariant) {
-						aAppVariantOverviewInfo.push(this.getAppVariantOverviewAttributes(oAppVariantInfo));
+						aAppVariantOverviewInfo.push(this.getAppVariantOverviewAttributes(oAppVariantInfo, bKeyUser));
 					}
 				}, this);
 

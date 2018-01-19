@@ -3,8 +3,8 @@
  */
 
 // Provides the concept of a sorter for list bindings
-sap.ui.define(['sap/ui/base/Object'],
-	function(BaseObject) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
+	function(jQuery, BaseObject) {
 	"use strict";
 
 

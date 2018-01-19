@@ -90,6 +90,11 @@
 
 		// test property accessor methods
 
+		QUnit.test("VerticalAlignOk", function(assert) {
+			assert.strictEqual(l1.getVAlign(), "Inherit", "l1.getVAlign() returns result: " + l1.getVAlign());
+			assert.strictEqual(l2.getVAlign(), "Inherit", "l2.getVAlign() returns result: " + l2.getVAlign());
+		});
+
 		QUnit.test("TextOk", function(assert) {
 			assert.strictEqual(l1.getText(), sText, "l1.getText() returns result: " + l1.getText());
 			assert.strictEqual(l2.getText(), sText, "l2.getText() returns result: " + l2.getText());
@@ -114,6 +119,18 @@
 		QUnit.test("DesignOk", function(assert) {
 			assert.strictEqual(l1.getDesign(), oStandardDesign, "l1.getDesign() returns result: " + l1.getDesign());
 			assert.strictEqual(l2.getDesign(), oBoldDesign, "l2.getDesign() returns result: " + l2.getDesign());
+		});
+
+		QUnit.test("Should set vertical alignment", function(assert) {
+			var sVerticalAlign = l1.getVAlign();
+
+			assert.strictEqual(l1.getVAlign(), "Inherit", "should have vertical-align: inherit set as default");
+
+			l1.setVAlign(sap.ui.core.VerticalAlign.Top);
+
+			assert.ok(l1.$().attr("vertical-align", "top"), "should have vertical-align set on the DOM element");
+
+			l1.setVAlign(sap.ui.core.VerticalAlign.Inherit);
 		});
 
 		QUnit.test("When width is not set max-width should apply to control", function(assert) {

@@ -25,10 +25,6 @@ sap.ui.define([
 				 */
 				phoneText: {type : "string", defaultValue : ""},
 				/**
-				 * Defines the custom CSS class needed for the parameter's text in the tables.
-				 */
-				customClass : {type : "string", group : "Behavior", defaultValue : ""},
-				/**
 				 * Defines the depth of the item and based on it it's decided what class should be applied to the
 				 * control.
 				 */
@@ -59,7 +55,6 @@ sap.ui.define([
 			oRm.writeControlData(oControl);
 			oRm.addClass("sapUiParamText");
 			oRm.addClass("depth-" + oControl.getDepth());
-			oRm.addClass(oControl.getCustomClass());
 			oRm.writeClasses();
 			oRm.write(">");
 

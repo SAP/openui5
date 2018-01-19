@@ -5,10 +5,11 @@
 /*global history */
 sap.ui.define([
 		"jquery.sap.global",
+		"sap/ui/Device",
 		"sap/ui/documentation/sdk/controller/MasterTreeBaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/m/library"
-	], function (jQuery, MasterTreeBaseController, JSONModel, mobileLibrary) {
+	], function (jQuery, Device, MasterTreeBaseController, JSONModel, mobileLibrary) {
 		"use strict";
 
 		// shortcut for sap.m.SplitAppMode
@@ -53,6 +54,12 @@ sap.ui.define([
 				// When no particular topic is selected, collapse all nodes
 				this._collapseAllNodes();
 				this._clearSelection();
+
+				if (Device.system.desktop) {
+					jQuery.sap.delayedCall(0, this, function () {
+						this.getView().byId("searchField").getFocusDomRef().focus();
+					});
+				}
 			},
 
 			_fetchDocuIndex : function () {

@@ -1,0 +1,15 @@
+{
+    "error":{
+        "code":"BusinessError-123",
+        "message":{
+            "lang":"en",
+            "value":"Employee was not updated"
+        },
+        "innererror":{
+            "transactionid":"566E06A5AC200A50E10080000A0F87DB",
+            "timestamp":"20160310120625.4547750",
+            "Error_Resolution":{ },
+            "errordetails":[ ]
+        }
+    }
+}

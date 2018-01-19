@@ -176,6 +176,14 @@ sap.ui.define([
 				"mode" : {
 					type: "string",
 					defaultValue: "adaptation"
+				},
+
+				/**
+				 * Defines designtime metadata scope
+				 */
+				"metadataScope": {
+					type: "string",
+					defaultValue: "default"
 				}
 			},
 			events : {
@@ -499,9 +507,11 @@ sap.ui.define([
 
 				jQuery.sap.measure.start("rta.dt.startup","Measurement of RTA: DesignTime start up");
 				this._oDesignTime = new DesignTime({
-					rootElements : [this._oRootControl],
-					plugins : aPlugins
+					scope: this.getMetadataScope(),
+					plugins: aPlugins
 				});
+				//add root control is triggereing overlay creation, so we need to wait for the scope to be set.
+				this._oDesignTime.addRootElement(this._oRootControl);
 
 				jQuery(Overlay.getOverlayContainer()).addClass("sapUiRta");
 				if (this.getLayer() === "USER") {
@@ -569,9 +579,17 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Checks the Publish button and app variant support (i.e. Save As and Overview of App Variants) availability
+	 * @private
+	 * @returns {[bPublishAvaiable, bAppVariantSupportAvailable]} Returns an array of boolean values
+	 * @description The publish button shall not be available if the system is productive and if a merge error occured during merging changes into the view on startup
+	 * The app variant support shall not be available if the system is productive and if the platform is not enabled (See Feature.js) to show the app variant tooling
+	 * isProductiveSystem should only return true if it is a test or development system with the provision of custom catalog extensions
+	 */
 	RuntimeAuthoring.prototype._getPublishAndAppVariantSupportVisibility = function() {
 		return FlexSettings.getInstance().then(function(oSettings) {
-			return RtaAppVariantFeature.isPlatFormEnabled(this.getLayer(), this._oRootControl).then(function(bIsAppVariantSupported) {
+			return RtaAppVariantFeature.isPlatFormEnabled(this._oRootControl, this.getLayer(), this._oSerializer).then(function(bIsAppVariantSupported) {
 				return [!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured(), !oSettings.isProductiveSystem() && bIsAppVariantSupported];
 			});
 		}.bind(this))
@@ -800,6 +818,8 @@ sap.ui.define([
 				fnConstructor = StandaloneToolbar;
 			}
 
+			var bExtendedOverview = bIsAppVariantSupported ? RtaAppVariantFeature.isOverviewExtended() : false;
+
 			if (this.getLayer() === "USER") {
 				this.addDependent(new fnConstructor({
 					textResources: this._getTextResources(),
@@ -812,7 +832,8 @@ sap.ui.define([
 					modeSwitcher: this.getMode(),
 					publishVisible: bPublishAvailable,
 					textResources: this._getTextResources(),
-					appVariantFeaturesSupported: bIsAppVariantSupported,
+					appVariantFeatureForDeveloperSupported: bIsAppVariantSupported && bExtendedOverview,
+					appVariantFeatureForKeyUserSupported: bIsAppVariantSupported && !bExtendedOverview,
 					//events
 					exit: this.stop.bind(this, false, false),
 					transport: this._onTransport.bind(this),
@@ -820,8 +841,9 @@ sap.ui.define([
 					undo: this._onUndo.bind(this),
 					redo: this._onRedo.bind(this),
 					modeChange: this._onModeChange.bind(this),
-					manageApps: RtaAppVariantFeature.onGetOverview.bind(null, this._oRootControl),
-					saveAs: RtaAppVariantFeature.onSaveAs.bind(null, this._oRootControl, null)
+					manageApps: RtaAppVariantFeature.onGetOverview.bind(null, true),
+					appVariantOverview: this._onGetAppVariantOverview.bind(this),
+					saveAs: RtaAppVariantFeature.onSaveAsFromRtaToolbar.bind(null, true, true)
 				}), 'toolbar');
 			}
 
@@ -831,6 +853,13 @@ sap.ui.define([
 				this.getToolbar().setRestoreEnabled(bResult);
 			}.bind(this));
 		}
+	};
+
+	RuntimeAuthoring.prototype._onGetAppVariantOverview = function(oEvent) {
+		var oItem = oEvent.getParameter("item");
+
+		var bTriggeredForKeyUser = oItem.getId() === 'keyUser';
+		return RtaAppVariantFeature.onGetOverview(bTriggeredForKeyUser);
 	};
 
 	/**
@@ -894,11 +923,10 @@ sap.ui.define([
 			.then(function(oTransportInfo) {
 				if (oTransportInfo) {
 					return this._serializeToLrep().then(function () {
-						return this._getFlexController().getComponentChanges({currentLayer: this.getLayer()}).then(function (aAllLocalChanges) {
+						return this._getFlexController().getComponentChanges({currentLayer: this.getLayer(), includeCtrlVariants: true}).then(function (aAllLocalChanges) {
 							if (aAllLocalChanges.length > 0) {
 								BusyIndicator.show(0);
-								return this._createAndApplyChanges(aAllLocalChanges)
-									.then(this._transportAllLocalChanges.bind(this, oTransportInfo))
+								return this._transportAllLocalChanges(oTransportInfo)
 										['catch'](fnHandleAllErrors);
 							}
 						}.bind(this));
@@ -921,51 +949,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Create and apply changes
-	 *
-	 * Function is copied from FormP13nHandler. We need all changes for various controls.
-	 * The function is used in the transport handling.
-	 *
-	 * @private
-	 * @param {array} aChangeSpecificData - array of objects with change specific data
-	 * @returns {Promise} promise that resolves with no parameters
-	 */
-	RuntimeAuthoring.prototype._createAndApplyChanges = function(aChangeSpecificData) {
-		var aPromises = [];
-		return Promise.resolve()
-
-		.then(function() {
-			function fnValidChanges(oChangeSpecificData) {
-				return oChangeSpecificData && oChangeSpecificData.selector && oChangeSpecificData.selector.id;
-			}
-			aChangeSpecificData.filter(fnValidChanges).forEach(function(oChangeSpecificData) {
-				var oControl = sap.ui.getCore().byId(oChangeSpecificData.selector.id);
-				var oFlexController = this._getFlexController();
-				aPromises.push(oFlexController.createAndApplyChange.bind(oFlexController, oChangeSpecificData, oControl));
-			}.bind(this));
-			return FlexUtils.execPromiseQueueSequentially(aPromises);
-		}.bind(this))
-
-		.catch(function(oError) {
-			FlexUtils.log.error("Create and apply error: " + oError);
-			return oError;
-		})
-
-		.then(function(oError) {
-			return this._getFlexController().saveAll().then(function() {
-				if (oError) {
-					throw oError;
-				}
-			});
-		}.bind(this))
-
-		.catch(function(oError) {
-			FlexUtils.log.error("Create and apply and/or save error: " + oError);
-			return Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_TRANSPORT_APPLYSAVE_ERROR", "MSG_TRANSPORT_APPLYSAVE_ERROR", oError);
-		});
-	};
-
-	/**
 	 * Delete all changes for current layer and root control's component
 	 *
 	 * @private
@@ -985,19 +968,30 @@ sap.ui.define([
 		}, []);
 
 		this._getFlexController().getComponentChanges({currentLayer: sCurrentLayer}).then(function(aChanges) {
-			aChanges = aChanges.concat(aUnsavedChanges);
 			return FlexSettings.getInstance(FlexUtils.getComponentClassName(this._oRootControl)).then(function(oSettings) {
 				if (!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured()) {
 					return oTransportSelection.setTransports(aChanges, this._oRootControl);
 				}
 			}.bind(this)).then(function() {
+				BusyIndicator.show(0);
+				aChanges = aChanges.concat(aUnsavedChanges);
 				return this._getFlexController().discardChanges(aChanges, sCurrentLayer === "USER");
 			}.bind(this)).then(function() {
-				return window.location.reload();
-			});
+				BusyIndicator.hide();
+				this._reloadPage();
+			}.bind(this));
 		}.bind(this))["catch"](function(oError) {
+			BusyIndicator.hide();
 			return Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
 		});
+	};
+
+	/**
+	 * Reloads the page.
+	 * @private
+	 */
+	RuntimeAuthoring.prototype._reloadPage = function(){
+		window.location.reload();
 	};
 
 	/**
@@ -1091,7 +1085,7 @@ sap.ui.define([
 	 * @returns {Promise} Returns a Promise which resolves without parameters
 	 */
 	RuntimeAuthoring.prototype._transportAllLocalChanges = function(mTransportInfo) {
-		return this._getFlexController().getComponentChanges({currentLayer: this.getLayer()}).then(function(aAllLocalChanges) {
+		return this._getFlexController().getComponentChanges({currentLayer: this.getLayer(), includeCtrlVariants: true}).then(function(aAllLocalChanges) {
 
 			// Pass list of changes to be transported with transport request to backend
 			var oTransports = new Transports();
@@ -1215,7 +1209,12 @@ sap.ui.define([
 				} else if (vAction === "setTitle"){
 					this._setTitleOnCreatedVariant(vAction);
 				}
-			}.bind(this));
+			}.bind(this))
+
+			// Error handling when a command fails is done in the Stack
+			.catch(function(oError) {
+				throw new Error(oError);
+			});
 		}
 		return Promise.resolve();
 	};
@@ -1483,6 +1482,20 @@ sap.ui.define([
 		}
 	};
 
-	return RuntimeAuthoring;
+	/**
+	 * Setter for property 'metadataScope'.
+	 * @param {string} sScope The new value for the 'metadataScope' property
+	 */
+	RuntimeAuthoring.prototype.setMetadataScope = function (sScope) {
+		// We do not support scope change after creation of DesignTime instance
+		// as this requires reinitialization of all overlays
+		if (this._oDesignTime) {
+			jQuery.sap.log.error("sap.ui.rta: Failed to set metadata scope on RTA instance after RTA is started");
+			return;
+		}
 
+		this.setProperty('metadataScope', sScope);
+	};
+
+	return RuntimeAuthoring;
 }, /* bExport= */true);
