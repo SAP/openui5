@@ -926,7 +926,7 @@ sap.ui.require([
 
 		oTable.attachEvent("_rowsUpdated", function(oEvent) {
 			if (oEvent.getParameter("reason") === TableUtils.RowsUpdateReason.Render) {
-				document.getElementById("qunit-fixture").style.height = "800px";
+				document.getElementById("qunit-fixture").style.height = "756px";
 			}
 
 			if (oEvent.getParameter("reason") === TableUtils.RowsUpdateReason.Resize) {
