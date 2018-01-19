@@ -21,7 +21,13 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 					stretch : true,
 					files: [
 						"Page.view.xml",
-						"Page.controller.js"
+						"Page.controller.js",
+						"mockdata/BusinessPartnerSet.json",
+						"mockdata/ContactSet.json",
+						"mockdata/metadata.xml",
+						"mockdata/ProductSet.json",
+						"mockdata/SalesOrderLineItemSet.json",
+						"mockdata/SalesOrderSet.json"
 					]
 				}
 			}

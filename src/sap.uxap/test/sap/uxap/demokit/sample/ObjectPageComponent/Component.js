@@ -19,6 +19,7 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 					files: [
 						"ObjectPageComponent.view.xml",
 						"ObjectPageComponent.controller.js",
+						"ObjectPageEvents.js",
 						"ObjectPageConfig.json",
 						"HRData.json"
 					]

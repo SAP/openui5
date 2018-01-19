@@ -23,7 +23,8 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					sample : {
 						stretch : true,
 						files : [
-							"DynamicPageAnalyticalTable.view.xml"
+							"DynamicPageAnalyticalTable.view.xml",
+							"DynamicPageAnalyticalTable.controller.js"
 						]
 					}
 				}
