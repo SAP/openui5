@@ -1047,9 +1047,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				var oScrollExtension = this._getScrollExtension();
 				var oHSb = oScrollExtension.getHorizontalScrollbar();
 
-				if (oHSb != null && oScrollExtension.isHorizontalScrollbarVisible()) {
-					iUsedHeight += oHSb.offsetHeight;
-				} else {
+				if (oHSb == null || !oScrollExtension.isHorizontalScrollbarVisible()) {
 					var mDefaultScrollbarHeight = {};
 					mDefaultScrollbarHeight[Device.browser.BROWSER.CHROME] = 16;
 					mDefaultScrollbarHeight[Device.browser.BROWSER.FIREFOX] = 16;
