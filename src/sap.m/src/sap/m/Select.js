@@ -1007,21 +1007,26 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		 * @private
 		 */
 		Select.prototype.onsapescape = function(oEvent) {
+			var bSelectionChanged;
 
-			// prevents actions from occurring when the control is disabled,
-			// IE11 browser focus non-focusable elements
-			if (!this.getEnabled()) {
+			// Prevents escape, when the control is disabled or the <code>SelectList<code/> is closed.
+			// IE11 browser focus non-focusable elements.
+			if (!this.getEnabled() || !this.isOpen()) {
 				return;
 			}
 
-			if (this.isOpen()) {
+			// mark the event for components that needs to know if the event was handled
+			oEvent.setMarked();
 
-				// mark the event for components that needs to know if the event was handled
-				oEvent.setMarked();
+			bSelectionChanged = this._oInitiallytSelectedItem && this._oInitiallytSelectedItem !== this.getSelectedItem();
 
+			if (!bSelectionChanged) {
 				this.close();
-				this._checkSelectionChange();
+				return;
 			}
+
+			this.setSelection(this._oInitiallytSelectedItem);
+			this.setValue(this._getSelectedItemText());
 		};
 
 		/**
