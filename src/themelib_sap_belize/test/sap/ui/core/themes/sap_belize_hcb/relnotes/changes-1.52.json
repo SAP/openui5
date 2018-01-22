@@ -193,5 +193,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.5": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "61fca7cdef5ef47488003b97aac082fc01d3ff2b",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Contrast ratio on focus is now correct",
+        "references": []
+      }
+    ]
   }
 }

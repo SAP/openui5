@@ -2697,5 +2697,70 @@
         "references": []
       }
     ]
+  },
+  "1.44.26": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "73551f51a2135b403da073eb3014484ae2392cbc",
+        "type": "FIX",
+        "text": " sap.m.BarInPageEnabler: remove extra aria-labelledby attribute",
+        "references": []
+      },
+      {
+        "id": "d0247c23fa06e50e18ca3f4642009054fab97263",
+        "type": "FIX",
+        "text": " sap.m.Button: fire press event on keydown for \u0027enter\u0027 and keyup for \u0027space\u0027",
+        "references": []
+      },
+      {
+        "id": "af84506789161c82bbbffeabbfa93f5f2e564c28",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Open Popover in small screens corrected",
+        "references": []
+      },
+      {
+        "id": "200b262e04162bbd7b466ebfe587eb749c3c642f",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Prevent dropdown auto close",
+        "references": []
+      },
+      {
+        "id": "4be2260da0ca7b45c185fac652fecb964eb0cefe",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: focus fixed for HCB",
+        "references": []
+      },
+      {
+        "id": "8729935f1b7249e7e8050f15b157bfbcf306e2d8",
+        "type": "FIX",
+        "text": " sap.m.Page: Documentation updated",
+        "references": []
+      },
+      {
+        "id": "51d406386496ae9f2c4790d50a57285d32759776",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Problem with the position of the dot when a browser is zoomed fixed",
+        "references": []
+      },
+      {
+        "id": "5ad02f9d142a2ff2bc1e384be3cd734d3c7054f5",
+        "type": "FIX",
+        "text": " sap.m.Slider: sap.m.RangeSlider exception fixed.",
+        "references": []
+      },
+      {
+        "id": "fe9557f1bbeb228252ae16ac77406d58b737013a",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: fix removeItem with 0 as a parameter",
+        "references": []
+      },
+      {
+        "id": "41846f3ff03d42d1bf4f72217932c8cf7b8be2b8",
+        "type": "FIX",
+        "text": " sap.m.Text: maxLines property is now working",
+        "references": []
+      }
+    ]
   }
 }

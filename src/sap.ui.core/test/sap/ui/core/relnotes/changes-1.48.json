@@ -1115,5 +1115,16 @@
         "references": []
       }
     ]
+  },
+  "1.48.18": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "b44bf8602e9f22eb139e0a66399f38ec67417cbf",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Tab navigation is now correct",
+        "references": []
+      }
+    ]
   }
 }

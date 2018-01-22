@@ -222,5 +222,22 @@
         "references": []
       }
     ]
+  },
+  "1.52.5": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "383394649ccd0363a2efeba49736dd1bf17f73a7",
+        "type": "FIX",
+        "text": " Control: refactor fnHandleInteraction",
+        "references": []
+      },
+      {
+        "id": "502ccce5c7be63414fc198a364bf3b2e001fb61e",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Fix day names in IE",
+        "references": []
+      }
+    ]
   }
 }

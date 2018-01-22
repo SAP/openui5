@@ -209,5 +209,28 @@
         "references": []
       }
     ]
+  },
+  "1.52.5": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "383394649ccd0363a2efeba49736dd1bf17f73a7",
+        "type": "FIX",
+        "text": " Control: refactor fnHandleInteraction",
+        "references": []
+      },
+      {
+        "id": "16086f1fb2884210517affa65f6ff5ce6676b5fd",
+        "type": "FIX",
+        "text": " GridTable: No event default prevention on non-table DOM elements",
+        "references": []
+      },
+      {
+        "id": "206ac003ad7e669d8a3f6d2724f280f3f6fa053b",
+        "type": "FIX",
+        "text": " Table: Role \"row\" added to tr elements in the table header",
+        "references": []
+      }
+    ]
   }
 }

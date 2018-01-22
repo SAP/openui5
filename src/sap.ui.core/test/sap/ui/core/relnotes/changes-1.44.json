@@ -1240,5 +1240,28 @@
         "references": []
       }
     ]
+  },
+  "1.44.26": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "63c3ad530dab18b5a9e60a4f5f8bf34d84caa3c9",
+        "type": "FIX",
+        "text": " Opa: fix action focus when IE11 browser is not focused",
+        "references": []
+      },
+      {
+        "id": "2cc57bc550b70cbe36f62f375708601dfadec857",
+        "type": "FIX",
+        "text": " jQuery.sap.global: open the TechnicalInfo only when left \u0027alt\u0027 is pressed",
+        "references": []
+      },
+      {
+        "id": "828534dcc35ef6d27023409dcf74dfc415b7e5c2",
+        "type": "FIX",
+        "text": " v2.ODataModel delete Entry messages",
+        "references": []
+      }
+    ]
   }
 }
