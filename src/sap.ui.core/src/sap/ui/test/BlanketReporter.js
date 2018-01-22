@@ -64,9 +64,8 @@ sap.ui.define([
 		filterThreshold : function (bFilter) {
 			var oBinding,
 				oFilter = null,
-				oView = this.getView(),
-				iThreshold = oView.getModel().getProperty("/threshold"),
-				oTable = oView.byId("Files");
+				oTable = this.byId("Files"),
+				iThreshold = this.getView().getModel().getProperty("/threshold");
 
 			if (bFilter) {
 				oFilter = new Filter({
@@ -92,12 +91,11 @@ sap.ui.define([
 		onRowSelection : function (/*oEvent*/) { // Note: do not use event because of "Show Hits"
 			var oContext,
 				sFile,
+				oHtml = this.byId("blanket-source"),
 				iLinesOfContext,
+				oModel = this.getView().getModel(),
 				aStatistics,
-				oView = this.getView(),
-				oHtml = oView.byId("blanket-source"),
-				oModel = oView.getModel(),
-				oTable = oView.byId("Files"),
+				oTable = this.byId("Files"),
 				iSelectedRow = oTable.getSelectedIndex() - oTable.getFirstVisibleRow();
 
 			if (iSelectedRow >= 0) {

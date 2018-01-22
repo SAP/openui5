@@ -65,6 +65,10 @@
 				"type" : "sap.ui.model.odata.v4.ODataModel"
 			}
 		},
-		"rootView" : "Main.view.xml"
+		"rootView" : {
+			"async" : true,
+			"type" : "XML",
+			"viewName" : "Main.view.xml"
+		}
 	}
 }
