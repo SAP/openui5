@@ -20,9 +20,10 @@ sap.ui.define([
 		"sap/m/ObjectStatus",
 		"sap/ui/core/HTML",
 		"sap/m/Title",
-		"sap/m/Panel"
+		"sap/m/Panel",
+		"sap/ui/documentation/sdk/controls/BorrowedList"
 	], function (jQuery, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, ObjectPageSubSection, APIInfo,
-				 VerticalLayout, Table, Column, Label, ColumnListItem, Link, ObjectStatus, HTML, Title, Panel) {
+				 VerticalLayout, Table, Column, Label, ColumnListItem, Link, ObjectStatus, HTML, Title, Panel, BorrowedList) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.ApiDetail", {
@@ -354,15 +355,12 @@ sap.ui.define([
 											expanded: true,
 											headerText: "{name}",
 											width: "100%",
-											content: {
-												path: "methods",
-												templateShareable: false,
-												template: new Link({
-													text: "{name}",
-													href: "{link}"
-												}).addStyleClass("sapUiTinyMargin")
-											}
-										}).addStyleClass("borrowedMethodsPanel")
+											content: [
+													new BorrowedList({
+														list: "{methods}"
+													})
+												]
+											}).addStyleClass("borrowedListPanel")
 									}
 								})
 							]
@@ -451,15 +449,10 @@ sap.ui.define([
 											expanded: true,
 											headerText: "{name}",
 											width: "100%",
-											content: {
-												path: "events",
-												templateShareable: false,
-												template: new Link({
-													text: "{name}",
-													href: "{link}"
-												}).addStyleClass("sapUiTinyMargin")
-											}
-										})
+											content: new BorrowedList({
+												list: "{events}"
+											})
+										}).addStyleClass("borrowedListPanel")
 									}
 								})
 							]
