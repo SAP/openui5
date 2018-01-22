@@ -155,19 +155,6 @@ sap.ui.define([
 		// When set to true, the recalculation algorithm will bypass an optimization to determine if anything moved from/to the action sheet
 		this._bSkipOptimization = false;
 
-		// Init static hidden text for ARIA
-		if (!OverflowToolbar._sAriaOverflowButtonLabelId) {
-
-			// Load the resources, needed for the text of the overflow button
-			var oCoreResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
-
-			// Use Icon-Font text
-			OverflowToolbar._sAriaOverflowButtonLabelId = new InvisibleText({
-				text: oCoreResourceBundle.getText("Icon.overflow")
-			}).toStatic().getId();
-
-		}
-
 		this._aControlSizes = {}; // A map of control id -> control *optimal* size in pixels; the optimal size is outerWidth for most controls and min-width for spacers
 	};
 
@@ -617,7 +604,7 @@ sap.ui.define([
 				id: this.getId() + "-overflowButton",
 				icon: IconPool.getIconURI("overflow"),
 				press: this._overflowButtonPressed.bind(this),
-				ariaLabelledBy: this._sAriaOverflowButtonLabelId,
+				ariaLabelledBy: InvisibleText.getStaticId("sap.ui.core", "Icon.overflow"),
 				type: ButtonType.Transparent
 			});
 
@@ -666,7 +653,7 @@ sap.ui.define([
 				horizontalScrolling: Device.system.phone ? false : true,
 				contentWidth: Device.system.phone ? "100%" : "auto",
 				offsetY: this._detireminePopoverVerticalOffset(),
-				ariaLabelledBy: this._getPopoverHiddenLabelId()
+				ariaLabelledBy: InvisibleText.getStaticId("sap.m", "INPUT_AVALIABLE_VALUES")
 			});
 
 			// Override popover positioning mechanism
@@ -1067,22 +1054,6 @@ sap.ui.define([
 	 */
 	OverflowToolbar.prototype.closeOverflow = function () {
 		this._getPopover().close();
-	};
-
-	OverflowToolbar.prototype._getPopoverHiddenLabelId = function () {
-		if (!sap.ui.getCore().getConfiguration().getAccessibility()) {
-			return "";
-		}
-
-		// Load the resources
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-
-		if (!OverflowToolbar._sPickerHiddenLabelId) {
-			OverflowToolbar._sPickerHiddenLabelId = new InvisibleText({
-				text: oResourceBundle.getText("INPUT_AVALIABLE_VALUES")
-			}).toStatic().getId();
-		}
-		return OverflowToolbar._sPickerHiddenLabelId;
 	};
 
 	return OverflowToolbar;

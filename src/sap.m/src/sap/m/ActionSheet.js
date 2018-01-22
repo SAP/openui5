@@ -145,9 +145,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		designtime: "sap/m/designtime/ActionSheet.designtime"
 	}});
 
-	//Keeps the ID of the static aria text for Available Actions
-	var sPopupHiddenLabelId;
-
 	ActionSheet.prototype.init = function() {
 		// this method is kept here empty in case some control inherits from it but forgets to check the existence of this function when chaining the call
 		this._fnOrientationChange = this._orientationChange.bind(this);
@@ -586,19 +583,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	 * @protected
 	 */
 	ActionSheet.prototype.getPopupHiddenLabelId = function() {
-		if (!sap.ui.getCore().getConfiguration().getAccessibility()) {
-			return "";
-		}
-
-		// Load the resources
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-
-		if (!sPopupHiddenLabelId) {
-			sPopupHiddenLabelId = new InvisibleText({
-				text: oResourceBundle.getText("ACTIONSHEET_AVAILABLE_ACTIONS")
-			}).toStatic().getId();
-		}
-		return sPopupHiddenLabelId;
+		return InvisibleText.getStaticId("sap.m", "ACTIONSHEET_AVAILABLE_ACTIONS");
 	};
 
 	/**

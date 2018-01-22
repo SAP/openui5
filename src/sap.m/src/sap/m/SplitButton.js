@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.SplitButton.
-sap.ui.define(['./library', 'sap/ui/core/Control', './Button', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/core/library', 'sap/ui/Device', 'sap/ui/core/InvisibleText'],
-	function(library, Control, Button, EnabledPropagator, IconPool, coreLibrary, Device, InvisibleText) {
+sap.ui.define(['./library', 'sap/ui/core/Control', './Button', './ButtonRenderer', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/core/library', 'sap/ui/Device', 'sap/ui/core/InvisibleText'],
+	function(library, Control, Button, ButtonRenderer, EnabledPropagator, IconPool, coreLibrary, Device, InvisibleText) {
 		"use strict";
 
 		// shortcut for sap.ui.core.TextDirection
@@ -278,53 +278,13 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './Button', 'sap/ui/core/Enab
 			oEvent.preventDefault();
 		};
 
-		SplitButton.prototype.getSplitButtonAriaLabel = function() {
-			var oRb, sText;
-
-			if (!SplitButton._oStaticSplitButtonAriaLabel) {
-				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-				sText = oRb.getText("SPLIT_BUTTON_DESCRIPTION");
-				SplitButton._oStaticSplitButtonAriaLabel = new InvisibleText({text: sText});
-				SplitButton._oStaticSplitButtonAriaLabel.toStatic();
-			}
-
-			return SplitButton._oStaticSplitButtonAriaLabel;
-		};
-
-		SplitButton.prototype.getKeyboardDescriptionAriaLabel = function() {
-			var oRb, sText;
-
-			if (!SplitButton._oStaticSplitButtonDescription) {
-				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-				sText = oRb.getText("SPLIT_BUTTON_KEYBOARD_HINT");
-				SplitButton._oStaticSplitButtonDescription = new InvisibleText({text: sText});
-				SplitButton._oStaticSplitButtonDescription.toStatic();
-			}
-
-			return SplitButton._oStaticSplitButtonDescription;
-		};
-
 		/**
 		 * @private
 		 * @returns {*}
 		 */
-		SplitButton.prototype.getButtonTypeAriaLabel = function() {
-			var oTypeLabel,
-				sButtonType = this._getTextButton().getType();
-
-			switch (sButtonType) {
-				case ButtonType.Accept:
-					oTypeLabel = Button._oStaticAcceptText;
-					break;
-				case ButtonType.Reject:
-					oTypeLabel = Button._oStaticRejectText;
-					break;
-				case ButtonType.Emphasized:
-					oTypeLabel = Button._oStaticEmphasizedText;
-					break;
-			}
-
-			return oTypeLabel;
+		SplitButton.prototype.getButtonTypeAriaLabelId = function() {
+			var sButtonType = this._getTextButton().getType();
+			return ButtonRenderer.getButtonTypeAriaLabelId(sButtonType);
 		};
 
 		SplitButton.prototype.getTooltipInfoLabel = function(sTooltip) {

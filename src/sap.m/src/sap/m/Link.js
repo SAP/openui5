@@ -311,7 +311,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		if (bSubtle && !Link.prototype._sAriaLinkSubtleId) {
-			Link.prototype._sAriaLinkSubtleId = Link._getARIAInvisibleTextId("LINK_SUBTLE");
+			Link.prototype._sAriaLinkSubtleId = InvisibleText.getStaticId("sap.m", "LINK_SUBTLE");
 		}
 
 		return this;
@@ -332,7 +332,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		if (bEmphasized && !Link.prototype._sAriaLinkEmphasizedId) {
-			Link.prototype._sAriaLinkEmphasizedId = Link._getARIAInvisibleTextId("LINK_EMPHASIZED");
+			Link.prototype._sAriaLinkEmphasizedId = InvisibleText.getStaticId("sap.m", "LINK_EMPHASIZED");
 		}
 
 		return this;
@@ -400,29 +400,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	Link.prototype._isHrefValid = function (sUri) {
 		return this.getValidateUrl() ? jQuery.sap.validateUrl(sUri) : true;
-	};
-
-	/**
-	 * Retrieves the resource bundle for the sap.m library
-	 *
-	 * @returns {Object} the resource bundle object
-	 */
-	Link._getResourceBundle = function () {
-		return sap.ui.getCore().getLibraryResourceBundle("sap.m");
-	};
-
-	/**
-	 * Creates ARIA sap.ui.core.InvisibleText for the given translation text
-	 *
-	 * @param {String} sResourceBundleKey the resource key in the translation bundle
-	 * @returns {String} the InvisibleText control ID
-	 */
-	Link._getARIAInvisibleTextId = function (sResourceBundleKey) {
-		var oRb = Link._getResourceBundle();
-
-		return new InvisibleText({
-			text: oRb.getText(sResourceBundleKey)
-		}).toStatic().getId();
 	};
 
 	/**

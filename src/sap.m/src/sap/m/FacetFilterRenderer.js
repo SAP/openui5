@@ -17,8 +17,6 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	 */
 	var FacetFilterRenderer = {
 	};
-	// create ARIA announcements
-	var mAriaAnnouncements = {};
 
 
 	/**
@@ -140,16 +138,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	 * @protected
 	 */
 	FacetFilterRenderer.getAriaAnnouncement = function(sKey, sBundleText) {
-		if (mAriaAnnouncements[sKey]) {
-			return mAriaAnnouncements[sKey];
-		}
-
-		sBundleText = sBundleText || "FACETFILTER_" + sKey.toUpperCase();
-		mAriaAnnouncements[sKey] = new InvisibleText({
-			text : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText(sBundleText)
-		}).toStatic().getId();
-
-		return mAriaAnnouncements[sKey];
+		return InvisibleText.getStaticId("sap.m", sBundleText || "FACETFILTER_" + sKey.toUpperCase());
 	};
 
 

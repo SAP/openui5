@@ -21,9 +21,6 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	 */
 	var ListItemBaseRenderer = {};
 
-	// create ARIA announcements
-	var mAriaAnnouncements = {};
-
 	ListItemBaseRenderer.renderInvisible = function(rm, oLI) {
 		this.openItemTag(rm, oLI);
 		rm.writeInvisiblePlaceholderData(oLI);
@@ -219,16 +216,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	 * @protected
 	 */
 	ListItemBaseRenderer.getAriaAnnouncement = function(sKey, sBundleText) {
-		if (mAriaAnnouncements[sKey]) {
-			return mAriaAnnouncements[sKey];
-		}
-
-		sBundleText = sBundleText || "LIST_ITEM_" + sKey.toUpperCase();
-		mAriaAnnouncements[sKey] = new InvisibleText({
-			text : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText(sBundleText)
-		}).toStatic().getId();
-
-		return mAriaAnnouncements[sKey];
+		return InvisibleText.getStaticId("sap.m", sBundleText || "LIST_ITEM_" + sKey.toUpperCase());
 	};
 
 

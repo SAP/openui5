@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-<title>Test Page for sap.ui.m.SearchField</title>
+<title>Test Page for sap.m.SearchField</title>
 <script src="../shared-config.js"></script>
 <script id="sap-ui-bootstrap" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
@@ -236,11 +236,11 @@
 	QUnit.test("When refresh button is added invisible text should be set", function (assert) {
 		// arrange
 		var ariaDescribedByAttr = this.SearchField.$("I").attr('aria-describedby');
-		var f5Text = this.SearchField._sAriaF5LabelId;
-		var isF5TextSet = ariaDescribedByAttr.indexOf(f5Text) >= 0;
+		var f5TextId = sap.ui.core.InvisibleText.getStaticId("sap.m", "SEARCHFIELD_ARIA_F5");
+		var isF5TextSet = ariaDescribedByAttr.indexOf(f5TextId) >= 0;
 
 		// assert
-		assert.strictEqual(isF5TextSet, true, 'The "Pres F5 to refresh" text should be set as aria-describedby');
+		assert.strictEqual(isF5TextSet, true, 'The "Press F5 to refresh" text should be set as aria-describedby');
 	});
 
 </script>

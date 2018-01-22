@@ -9,12 +9,11 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/Control",
-	"sap/ui/core/InvisibleText",
 	"sap/m/library",
 	"sap/m/Button",
 	"sap/m/NavContainer",
 	"jquery.sap.events"
-], function (jQuery, library, Device, ResizeHandler, Control, InvisibleText, mobileLibrary, Button, NavContainer) {
+], function (jQuery, library, Device, ResizeHandler, Control, mobileLibrary, Button, NavContainer) {
 	"use strict";
 
 
@@ -1615,6 +1614,16 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Retrieves the resource bundle for the <code>sap.f</code> library.
+	 * @static
+	 * @private
+	 * @returns {Object} the resource bundle object
+	 */
+	FlexibleColumnLayout._getResourceBundle = function () {
+		return sap.ui.getCore().getLibraryResourceBundle("sap.f");
+	};
+
 	// Resulting layouts, after shifting in a given direction from a specific layout
 	FlexibleColumnLayout.SHIFT_TARGETS = {
 		TwoColumnsBeginExpanded: {
@@ -1637,46 +1646,6 @@ sap.ui.define([
 		ThreeColumnsBeginExpandedEndHidden: {
 			"left": LT.ThreeColumnsMidExpandedEndHidden
 		}
-	};
-
-	/**
-	 * Retrieves the resource bundle for the <code>sap.f</code> library.
-	 * @static
-	 * @private
-	 * @returns {Object} the resource bundle object
-	 */
-	FlexibleColumnLayout._getResourceBundle = function () {
-		return sap.ui.getCore().getLibraryResourceBundle("sap.f");
-	};
-
-	/**
-	 * Lazily gets the aria labels for the three columns, and reuses them for all instances of the Flexible Column Layout
-	 * @static
-	 * @private
-	 * @returns {Object} the labels for the columns
-	 */
-	FlexibleColumnLayout._getAriaLabels = function () {
-		if (!FlexibleColumnLayout._sAriaFlexibleColumnLayoutLabels) {
-			FlexibleColumnLayout._sAriaFlexibleColumnLayoutLabels = {
-				beginColumnLabel: FlexibleColumnLayout._getARIAInvisibleTextId("FCL_BEGIN_COLUMN_REGION_TEXT"),
-				midColumnLabel: FlexibleColumnLayout._getARIAInvisibleTextId("FCL_MID_COLUMN_REGION_TEXT"),
-				endColumnLabel: FlexibleColumnLayout._getARIAInvisibleTextId("FCL_END_COLUMN_REGION_TEXT")
-			};
-		}
-
-		return FlexibleColumnLayout._sAriaFlexibleColumnLayoutLabels;
-	};
-
-	/**
-	 * Creates an invisible text in the static area and returns its id
-	 * @param {string} sResourceBundleKey
-	 * @private
-	 * @returns {string}
-	 */
-	FlexibleColumnLayout._getARIAInvisibleTextId = function (sResourceBundleKey) {
-		return new InvisibleText({
-			text: FlexibleColumnLayout._getResourceBundle().getText(sResourceBundleKey)
-		}).toStatic().getId();
 	};
 
 	/**

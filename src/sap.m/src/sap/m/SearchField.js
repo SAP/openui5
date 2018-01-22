@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.SearchField.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/core/InvisibleText', './Suggest', 'sap/ui/Device', 'jquery.sap.keycodes'],
-	function(jQuery, library, Control, EnabledPropagator, IconPool, InvisibleText, Suggest, Device) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', './Suggest', 'sap/ui/Device', 'jquery.sap.keycodes'],
+	function(jQuery, library, Control, EnabledPropagator, IconPool, Suggest, Device) {
 	"use strict";
 
 
@@ -235,12 +235,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// Default placeholder: "Search"
 		this.setProperty("placeholder", oRb.getText("FACETFILTER_SEARCH"),true);
 
-		// create an F5 ARIA announcement and remember its ID for later use in the renderer:
-		if (!SearchField.prototype._sAriaF5LabelId && sap.ui.getCore().getConfiguration().getAccessibility()) {
-			SearchField.prototype._sAriaF5LabelId = new InvisibleText({
-				text: oRb.getText("SEARCHFIELD_ARIA_F5")
-			}).toStatic().getId();
-		}
 	};
 
 	SearchField.prototype.getFocusDomRef = function() {

@@ -300,18 +300,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 		this._bRTL  = sap.ui.getCore().getConfiguration().getRTL();
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 
-		if (!CalendarRow._oStaticAppointmentText) {
-			CalendarRow._oStaticAppointmentText = new InvisibleText({text: this._oRb.getText("APPOINTMENT")});
-			CalendarRow._oStaticAppointmentText.toStatic(); //Put to Static UiArea
-			CalendarRow._oStaticTentativeText = new InvisibleText({text: this._oRb.getText("APPOINTMENT_TENTATIVE")});
-			CalendarRow._oStaticTentativeText.toStatic(); //Put to Static UiArea
-		}
-
-		if (!CalendarRow._oStaticSelectedText) {
-			CalendarRow._oStaticSelectedText = new InvisibleText({text: this._oRb.getText("APPOINTMENT_SELECTED")});
-			CalendarRow._oStaticSelectedText.toStatic(); //Put to Static UiArea
-		}
-
 		this._oFormatAria = DateFormat.getDateTimeInstance({pattern: "EEEE dd/MM/YYYY 'at' HH:mm:ss a"});
 
 		this._iHoursMinDelta = 1; // minutes - to position appointments in 1 minutes steps
@@ -1526,7 +1514,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 		var sAriaLabel;
 		var sAriaLabelNotSelected;
 		var sAriaLabelSelected;
-		var sSelectedTextId = CalendarRow._oStaticSelectedText.getId();
+		var sSelectedTextId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
 
 		if (bRemoveOldSelection) {
 			var aAppointments = this.getAppointments();
