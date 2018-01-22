@@ -1844,10 +1844,10 @@ sap.ui.define([
 				for (sName in mCustomQueryOptions) {
 					if (sName.indexOf("$") === 0) {
 						jQuery.sap.log.warning(this + " - Trying to set OData parameter '" + sName + "' as custom query option!");
-					} else if (mCustomQueryOptions[sName] === undefined){
-						aCustomParams.push(sName);
-					} else {
+					} else if (typeof mCustomQueryOptions[sName] === 'string') {
 						aCustomParams.push(sName + "=" + jQuery.sap.encodeURL(mCustomQueryOptions[sName]));
+					} else {
+						aCustomParams.push(sName);
 					}
 				}
 			}
