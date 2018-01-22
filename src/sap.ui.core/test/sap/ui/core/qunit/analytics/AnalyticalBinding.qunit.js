@@ -213,7 +213,7 @@ sap.ui.require([
 		sPathHierarchy = "/TypeWithHierarchiesResults";
 
 	function setupAnalyticalBinding(iVersion, mParameters, fnODataV2Callback, aAnalyticalInfo,
-			sBindingPath) {
+			sBindingPath, bSkipInitialize) {
 		var oBinding,
 			oModel;
 
@@ -250,13 +250,17 @@ sap.ui.require([
 
 		//V1 => synchronous metadata, initialize the binding directly
 		if (iVersion === 1) {
-			oBinding.initialize();
+			if (!bSkipInitialize) {
+				oBinding.initialize();
+			}
 			return {
 				binding : oBinding,
 				model : oModel};
 		} else {
 			oModel.attachMetadataLoaded(function () {
-				oBinding.initialize();
+				if (!bSkipInitialize) {
+					oBinding.initialize();
+				}
 				fnODataV2Callback(oBinding, oModel);
 			});
 		}
@@ -1685,5 +1689,25 @@ sap.ui.require([
 				done();
 			}, [], sPathHierarchy);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateAnalyticalInfo: not initialized", function (assert) {
+		var done = assert.async(),
+			aInitialColumns = [];
+
+		setupAnalyticalBinding(2, {}, function (oBinding) {
+			var aInitialColumnsAfterUpdate = [];
+
+			assert.strictEqual(oBinding.isInitial(), true);
+			assert.strictEqual(oBinding.aInitialAnalyticalInfo, aInitialColumns);
+
+			// code under test - updateAnalyticalInfo does not throw an error and saves aColumns
+			oBinding.updateAnalyticalInfo(aInitialColumnsAfterUpdate);
+
+			assert.strictEqual(oBinding.aInitialAnalyticalInfo, aInitialColumnsAfterUpdate);
+
+			done();
+		}, aInitialColumns, undefined, true);
 	});
 });
