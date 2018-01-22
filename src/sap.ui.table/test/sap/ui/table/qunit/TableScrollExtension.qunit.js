@@ -1537,12 +1537,11 @@ sap.ui.require([
 	});
 
 	QUnit.test("To Middle - small data - no variable row heights", function(assert) {
-
-		this.doTest(assert, {scrollTop: 750, expectedFirstVisibleRow: 15});
+		this.doTest(assert, {scrollTop: 750, expectedFirstVisibleRow: 14});
 	});
 
 	QUnit.test("To End - small data - no variable row heights", function(assert) {
-		this.doTest(assert, {scrollTop: 1000, expectedFirstVisibleRow: 20});
+		this.doTest(assert, {scrollTop: 1000, expectedFirstVisibleRow: 19});
 	});
 
 	QUnit.test("To Middle - big data - no variable row heights", function(assert) {
@@ -1563,11 +1562,11 @@ sap.ui.require([
 	});
 
 	QUnit.test("To Middle - small data - variable row heights", function(assert) {
-		this.doTest(assert, {scrollTop: 750, expectedFirstVisibleRow: 15});
+		this.doTest(assert, {scrollTop: 750, expectedFirstVisibleRow: 14});
 	});
 
 	QUnit.test("To End - small data - variable row heights", function(assert) {
-		this.doTest(assert, {scrollTop: 1000, expectedFirstVisibleRow: 20});
+		this.doTest(assert, {scrollTop: 1000, expectedFirstVisibleRow: 19});
 	});
 
 	QUnit.test("To Middle - big data - variable row heights", function(assert) {
