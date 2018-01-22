@@ -10,15 +10,13 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/base/DataType",
 	"sap/ui/Device",
-	"sap/uxap/changeHandler/MoveObjectPageSection",
 	"sap/m/library",
 	"sap/ui/layout/library"
 ], function(
 	jQuery,
 	Core,
 	DataType,
-	Device,
-	MoveObjectPageSection
+	Device
 ) {
 	"use strict";
 
@@ -70,14 +68,7 @@ sap.ui.define([
 		extensions: {
 			flChangeHandlers: {
 				"sap.uxap.ObjectPageHeader" : "sap/uxap/flexibility/ObjectPageHeader",
-				"sap.uxap.ObjectPageLayout": {
-					"moveControls": {
-						"changeHandler": MoveObjectPageSection,
-						"layers": {
-							"USER": true
-						}
-					}
-				},
+				"sap.uxap.ObjectPageLayout": "sap/uxap/flexibility/ObjectPageLayout",
 				"sap.uxap.ObjectPageSection": "sap/uxap/flexibility/ObjectPageSection",
 				"sap.uxap.ObjectPageSubSection" : "sap/uxap/flexibility/ObjectPageSubSection",
 				"sap.ui.core._StashedControl" : {
