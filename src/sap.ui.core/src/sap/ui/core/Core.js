@@ -126,7 +126,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			this.bInitialized = false;
 
 			/**
-			 * Whether the dom is ready (document.ready)
+			 * Whether the DOM is ready (document.ready)
 			 * @private
 			 */
 			this.bDomReady = false;
@@ -238,7 +238,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			/**
 			 * Object holding the interpreted configuration
-			 * Initialized from the global "sap-ui-config" object and from Url parameters
+			 * Initialized from the global "sap-ui-config" object and from URL parameters
 			 * @private
 			 */
 			this.oConfiguration = new Configuration(this);
@@ -557,7 +557,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Initializes the window "sap-ui-config" property, sets theme roots, initializes sTheme, sets theme css classes
+	 * Initializes the window "sap-ui-config" property, sets theme roots, initializes sTheme, sets theme CSS classes
 	 * @private
 	 */
 	Core.prototype._setupThemes = function() {
@@ -619,7 +619,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		var log = jQuery.sap.log,
 			METHOD = "sap.ui.core.Core";
 
-		//set the browser for css attribute selectors. do not move this to the onload function because sf and ie do not
+		//set the browser for CSS attribute selectors. do not move this to the onload function because sf and ie do not
 		//use the classes
 		$html = $html || jQuery("html");
 
@@ -648,8 +648,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Set the body's OS-related attribute and css class
-	 * @param $html - jQuery wrapped html object
+	 * Set the body's OS-related attribute and CSS class
+	 * @param $html - jQuery wrapped HTML object
 	 * @private
 	 */
 	Core.prototype._setupOS = function($html) {
@@ -678,7 +678,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 	/**
 	 * Set the body's lang attribute and attach the localization change event
-	 * @param $html - jQuery wrapped html object
+	 * @param $html - jQuery wrapped HTML object
 	 * @private
 	 */
 	Core.prototype._setupLang = function($html) {
@@ -701,7 +701,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 	/**
 	 * Set the body's Animation-related attribute and configures jQuery accordingly.
-	 * @param $html - jQuery wrapped html object
+	 * @param $html - jQuery wrapped HTML object
 	 * @private
 	 */
 	Core.prototype._setupAnimation = function($html) {
@@ -746,7 +746,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Boots the core and injects the necessary css and js files for the library.
+	 * Boots the core and injects the necessary CSS and JavaScript files for the library.
 	 * Applications shouldn't call this method. It is automatically called by the bootstrap scripts (e.g. sap-ui-core.js)
 	 *
 	 * @private
@@ -975,7 +975,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *   sap.ui.getCore().setThemeRoot("sap_belize", ["my.own.library"], "https://mythemeserver.com/allThemes");
 	 * </pre>
 	 *
-	 * This will cause the Belize theme to be loaded from the UI5 location for all standard libs.
+	 * This will cause the Belize theme to be loaded from the UI5 location for all standard libraries.
 	 * Resources for styling the <code>my.own.library</code> controls will be loaded from the configured
 	 * location:
 	 * <pre>
@@ -1261,7 +1261,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	/**
 	 * Locks the Core. No browser events are dispatched to the controls.
 	 *
-	 * Lock should be called before and after the dom is modified for rendering, roundtrips...
+	 * Lock should be called before and after the DOM is modified for rendering, roundtrips...
 	 * Exceptions might be the case for asynchronous UI behavior
 	 * @public
 	 */
@@ -1390,9 +1390,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *
 	 * @param {string|object} libConfig Name of the library to preload or settings object describing library
 	 * @param {string} [libConfig.name] Name of the library to preload
-	 * @param {boolean|undefined} [libConfig.json] Whether library supports only json (<code>true</code>) or only JS (<code>false</code>)
+	 * @param {boolean|undefined} [libConfig.json] Whether library supports only JSON (<code>true</code>) or only JS (<code>false</code>)
 	 *                               or whether both should be tried (undefined)
-	 * @returns {Promise} A promise to be fulfilled when the lib has been preloaded
+	 * @returns {Promise} A promise to be fulfilled when the library has been preloaded
 	 * @private
 	 */
 	function preloadLibraryAsync(libConfig) {
@@ -1531,7 +1531,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *
 	 * @param {string|object} libConfig Name of the library to preload or settings object describing library.
 	 * @param {string} [libConfig.name] Name of the library to preload
-	 * @param {boolean|undefined} [libConfig.json] Whether lib supports only json (<code>true</code>) or only JS (<code>false</code>)
+	 * @param {boolean|undefined} [libConfig.json] Whether library supports only JSON (<code>true</code>) or only JS (<code>false</code>)
 	 *                               or whether both should be tried (undefined)
 	 * @private
 	 */
@@ -1811,7 +1811,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * Creates a component with the provided id and settings.
 	 *
 	 * When the optional parameter <code>sUrl</code> is given, then all request for resources of the
-	 * library will be redirected to the given Url. This is convenience for a call to
+	 * library will be redirected to the given URL. This is convenience for a call to
 	 * <pre>
 	 *   jQuery.sap.registerModulePath(sName, sUrl);
 	 * </pre>
@@ -2071,7 +2071,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		jQuery.sap.assert(sVariant === undefined || typeof sVariant === "string", "sVariant must be a string or undefined");
 
 		/*
-		 * by specifiying a library name containing a colon (":") you can specify
+		 * by specifying a library name containing a colon (":") you can specify
 		 * the file name of the CSS file to include (ignoring RTL)
 		 */
 
@@ -2335,7 +2335,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *
 	 * @public
 	 * @param {string|Element} o a DOM Element or ID string of the UIArea
-	 * @return {sap.ui.core.UIArea} a UIArea with a given id or dom ref.
+	 * @return {sap.ui.core.UIArea} a UIArea with a given ID or DOM Element.
 	 */
 	Core.prototype.getUIArea = function(o) {
 		jQuery.sap.assert(typeof o === "string" || typeof o === "object", "o must be a string or object");
@@ -3143,7 +3143,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	/**
 	 * Registers a Plugin to the <code>sap.ui.core.Core</code>, which lifecycle
 	 * will be managed (start and stop).
-	 * <br/>
+	 *
 	 * Plugin object need to implement two methods:
 	 * <ul>
 	 *   <li><code>startPlugin(oCore)</code>: will be invoked, when the Plugin
@@ -3383,8 +3383,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Attach event-handler <code>fnFunction</code> to the 'validationError' event of <code>sap.ui.core.Core</code>.<br/>
-	 * Please note that this event is a bubbling event and may already be canceled before reaching the core.<br/>
+	 * Attach event-handler <code>fnFunction</code> to the 'validationError' event of <code>sap.ui.core.Core</code>.
+	 *
+	 * Please note that this event is a bubbling event and may already be canceled before reaching the core.
 	 *
 	 * @param {object}
 	 *            [oData] The object, that should be passed along with the event-object when firing the event
@@ -3409,7 +3410,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Detach event-handler <code>fnFunction</code> from the 'validationError' event of <code>sap.ui.core.Core</code>.<br/>
+	 * Detach event-handler <code>fnFunction</code> from the 'validationError' event of <code>sap.ui.core.Core</code>.
 	 *
 	 * The passed function and listener object must match the ones previously used for event registration.
 	 *
@@ -3426,8 +3427,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Attach event-handler <code>fnFunction</code> to the 'parseError' event of <code>sap.ui.core.Core</code>.<br/>
-	 * Please note that this event is a bubbling event and may already be canceled before reaching the core.<br/>
+	 * Attach event-handler <code>fnFunction</code> to the 'parseError' event of <code>sap.ui.core.Core</code>.
+	 *
+	 * Please note that this event is a bubbling event and may already be canceled before reaching the core.
 	 *
 	 * @param {object}
 	 *            [oData] The object, that should be passed along with the event-object when firing the event
@@ -3452,7 +3454,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Detach event-handler <code>fnFunction</code> from the 'parseError' event of <code>sap.ui.core.Core</code>.<br/>
+	 * Detach event-handler <code>fnFunction</code> from the 'parseError' event of <code>sap.ui.core.Core</code>.
 	 *
 	 * The passed function and listener object must match the ones previously used for event registration.
 	 *
@@ -3469,8 +3471,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Attach event-handler <code>fnFunction</code> to the 'formatError' event of <code>sap.ui.core.Core</code>.<br/>
-	 * Please note that this event is a bubbling event and may already be canceled before reaching the core.<br/>
+	 * Attach event-handler <code>fnFunction</code> to the 'formatError' event of <code>sap.ui.core.Core</code>.
+	 *
+	 * Please note that this event is a bubbling event and may already be canceled before reaching the core.
 	 *
 	 * @param {function}
 	 *            fnFunction The function to call, when the event occurs. This function will be called on the
@@ -3493,7 +3496,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Detach event-handler <code>fnFunction</code> from the 'formatError' event of <code>sap.ui.core.Core</code>.<br/>
+	 * Detach event-handler <code>fnFunction</code> from the 'formatError' event of <code>sap.ui.core.Core</code>.
 	 *
 	 * The passed function and listener object must match the ones previously used for event registration.
 	 *
@@ -3510,8 +3513,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Attach event-handler <code>fnFunction</code> to the 'validationSuccess' event of <code>sap.ui.core.Core</code>.<br/>
-	 * Please note that this event is a bubbling event and may already be canceled before reaching the core.<br/>
+	 * Attach event-handler <code>fnFunction</code> to the 'validationSuccess' event of <code>sap.ui.core.Core</code>.
+	 *
+	 * Please note that this event is a bubbling event and may already be canceled before reaching the core.
 	 *
 	 * @param {object}
 	 *            [oData] The object, that should be passed along with the event-object when firing the event
@@ -3536,7 +3540,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Detach event-handler <code>fnFunction</code> from the 'validationSuccess' event of <code>sap.ui.core.Core</code>.<br/>
+	 * Detach event-handler <code>fnFunction</code> from the 'validationSuccess' event of <code>sap.ui.core.Core</code>.
 	 *
 	 * The passed function and listener object must match the ones previously used for event registration.
 	 *

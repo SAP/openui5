@@ -486,7 +486,7 @@ sap.ui.define(['jquery.sap.global',
 	/**
 	 * Gets or loads all contexts for a specified node id (dependent on mode)
 	 *
-	 * @param {String} sNodeId the value of the hierarchy node property on which a parent node filter will be performed
+	 * @param {string} sNodeId the value of the hierarchy node property on which a parent node filter will be performed
 	 * @param {int} iStartIndex start index of the page
 	 * @param {int} iLength length of the page
 	 * @param {int} iThreshold additionally loaded entities
@@ -873,7 +873,7 @@ sap.ui.define(['jquery.sap.global',
 	/**
 	 * Triggers backend requests to load the child nodes of the node with the given sNodeId.
 	 *
-	 * @param {String} sNodeId the value of the hierarchy node property on which a parent node filter will be performed
+	 * @param {string} sNodeId the value of the hierarchy node property on which a parent node filter will be performed
 	 * @param {int} iStartIndex start index of the page
 	 * @param {int} iLength length of the page
 	 * @param {int} iThreshold additionally loaded entities

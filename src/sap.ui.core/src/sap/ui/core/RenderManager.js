@@ -1464,7 +1464,7 @@ sap.ui.define([
 
 	/**
 	 * Determines whether Dom Patching is enabled or not
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 * @private
 	 */
 	function isDomPatchingEnabled() {

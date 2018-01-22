@@ -88,7 +88,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 			lifecycle : {type : "sap.ui.core.ComponentLifecycle", defaultValue : ComponentLifecycle.Legacy},
 
 			/**
-			 * Flag, whether to autoprefix the id of the nested Component or not. If
+			 * Flag, whether to auto-prefix the ID of the nested Component or not. If
 			 * this property is set to true the ID of the Component will be prefixed
 			 * with the ID of the ComponentContainer followed by a single dash.
 			 * This property can only be applied initially.

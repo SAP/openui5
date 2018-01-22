@@ -37,7 +37,7 @@ sap.ui.define([
 
 	/**
 	 * Execute the change (load the required libraries)
-	 * @return {promise} resolved if libraries could be loaded; rejected if not
+	 * @return {Promise} resolved if libraries could be loaded; rejected if not
 	 */
 	AddLibrary.prototype.execute = function(){
 		var aPromises = [];

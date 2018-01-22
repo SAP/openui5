@@ -184,7 +184,7 @@ function(jQuery, DataType, ManagedObject, CustomData, View, ExtensionPoint, Stas
 	 *
 	 * @param {Element} xmlNode the XML element representing the View/Fragment
 	 * @param {sap.ui.core.mvc.XMLView|sap.ui.core.Fragment} oView the View/Fragment which corresponds to the parsed XML
-	 * @param {Boolean} bAsync Whether or not to perform the template processing asynchronously
+	 * @param {boolean} bAsync Whether or not to perform the template processing asynchronously
 	 * @returns {Promise} which resolves with the xmlNode
 	 * @private
 	 */
@@ -210,7 +210,7 @@ function(jQuery, DataType, ManagedObject, CustomData, View, ExtensionPoint, Stas
 	 *
 	 * @param {Element} xmlNode the XML element representing the View/Fragment
 	 * @param {sap.ui.core.mvc.XMLView|sap.ui.core.Fragment} oView the View/Fragment which corresponds to the parsed XML
-	 * @param {Boolean} bAsync Whether or not to perform the template processing asynchronously
+	 * @param {boolean} bAsync Whether or not to perform the template processing asynchronously
 	 * @param {object} oParseConfig parse configuration options, e.g. settings pre-processor
 	 * @return {Promise} with an array containing Controls and/or plain HTML element strings
 	 * @private
@@ -224,9 +224,9 @@ function(jQuery, DataType, ManagedObject, CustomData, View, ExtensionPoint, Stas
 	 *
 	 * @param {Element} xmlNode the XML element representing the View/Fragment
 	 * @param {sap.ui.core.mvc.XMLView|sap.ui.core.Fragment} oView the View/Fragment which corresponds to the parsed XML
-	 * @param {Boolean} bEnrichFullIds Flag for running in a mode which only resolves the ids and writes them back
+	 * @param {boolean} bEnrichFullIds Flag for running in a mode which only resolves the ids and writes them back
 	 *     to the xml source.
-	 * @param {Boolean} bAsync Whether or not to perform the template processing asynchronously.
+	 * @param {boolean} bAsync Whether or not to perform the template processing asynchronously.
 	 *     Will only be active in conjunction with <code>sap.ui.getCore().getConfiguration().getXMLProcessingMode()</code> being <code>sequential</code>
 	 * @param {object} oParseConfig parse configuration options, e.g. settings pre-processor
 	 *

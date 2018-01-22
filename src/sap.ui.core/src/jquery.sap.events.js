@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', 'jqu
 
 			/**
 			 * Fires a synthetic mouse event for a given type and native touch event.
-			 * @param {String} sType the type of the synthetic event to fire, e.g. "mousedown"
+			 * @param {string} sType the type of the synthetic event to fire, e.g. "mousedown"
 			 * @param {jQuery.Event} oEvent the event object
 			 * @private
 			 */
@@ -63,7 +63,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', 'jqu
 			/**
 			 * Checks if the target of the event is an input field.
 			 * @param {jQuery.Event} oEvent the event object
-			 * @return {Boolean} whether the target of the event is an input field.
+			 * @return {boolean} whether the target of the event is an input field.
 			 */
 			var isInputField = function(oEvent) {
 				return oEvent.target.tagName.match(/input|textarea|select/i);
@@ -1889,7 +1889,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', 'jqu
 	 * 		}
 	 * }
 	 *
-	 * @param {String} sEventType Event type to suppress jQuery.trigger for
+	 * @param {string} sEventType Event type to suppress jQuery.trigger for
 	 * @param {Element} oDomRef DOM element to suppress events from jQuery.trigger
 	 * @param {Element|Array} [aExcludedDomRefs] DomRefs excluded from suppress events from jQuery.trigger
 	 * @returns {Object} oHandler The supression handler. Needed for releasing the supression

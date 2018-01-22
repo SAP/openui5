@@ -1027,7 +1027,7 @@ sap.ui.define(['jquery.sap.global'],
 			error: error,
 			/**
 			 * Returns the index of the current character.
-			 * @returns {number} The current character's index.
+			 * @returns {int} The current character's index.
 			 */
 			getIndex: function() {
 				return at - 1;
@@ -1048,7 +1048,7 @@ sap.ui.define(['jquery.sap.global'],
 			 * Advances the index in the text to <code>iIndex</code>. Fails if the new index
 			 * is smaller than the previous index.
 			 *
-			 * @param {number} iIndex - the new index
+			 * @param {int} iIndex - the new index
 			 */
 			setIndex: function(iIndex) {
 				if (iIndex < at - 1) {

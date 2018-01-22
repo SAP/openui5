@@ -196,7 +196,7 @@ sap.ui.define(['jquery.sap.global', './Binding', './SimpleType','./DataState'],
 	 * The internal type is the property type of the element which the value is formatted to.
 	 *
 	 * @param {sap.ui.model.Type} oType the type for the binding
-	 * @param {String} sInternalType the internal type of the element property which this binding is bound against.
+	 * @param {string} sInternalType the internal type of the element property which this binding is bound against.
 	 *
 	 * @public
 	 */

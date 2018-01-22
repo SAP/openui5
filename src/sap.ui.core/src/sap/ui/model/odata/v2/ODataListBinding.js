@@ -692,7 +692,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Filter
 	 * In case the final length is unknown (e.g. when searching on a large dataset), this will
 	 * return an estimated length.
 	 *
-	 * @return {number} The length
+	 * @return {int} The length
 	 * @public
 	 */
 	ODataListBinding.prototype.getLength = function() {

@@ -2303,8 +2303,10 @@ sap.ui.define([
 
 
 	/**
-	 * This triggers rerendering of itself and its children.<br/> As <code>sap.ui.base.ManagedObject</code> "bubbles up" the
-	 * invalidate, changes to child-<code>Elements</code> will also result in rerendering of the whole sub tree.
+	 * This triggers rerendering of itself and its children.
+	 *
+	 * As <code>sap.ui.base.ManagedObject</code> "bubbles up" the invalidate, changes to
+	 * child-<code>Elements</code> will also result in rerendering of the whole sub tree.
 	 * @protected
 	 */
 	ManagedObject.prototype.invalidate = function() {
@@ -3439,8 +3441,8 @@ sap.ui.define([
 	 * @param {boolean} [oBindingInfo.suspended] Whether the binding should be suspended
 	 * @param {boolean} [oBindingInfo.templateShareable=true] option to enable that the template will be shared which means that it won't be destroyed or cloned automatically
 	 * @param {function} oBindingInfo.factory the factory function
-	 * @param {number} oBindingInfo.startIndex the first entry of the list to be created
-	 * @param {number} oBindingInfo.length the amount of entries to be created (may exceed the size limit of the model)
+	 * @param {int} oBindingInfo.startIndex the first entry of the list to be created
+	 * @param {int} oBindingInfo.length the amount of entries to be created (may exceed the size limit of the model)
 	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [oBindingInfo.sorter] the initial sort order (optional)
 	 * @param {sap.ui.model.Filter[]} [oBindingInfo.filters] the predefined filters for this aggregation (optional)
 	 * @param {string|function} oBindingInfo.key the name of the key property or a function getting the context as only parameter to calculate a key for entries. This can be used to improve update behaviour in models, where a key is not already available.
