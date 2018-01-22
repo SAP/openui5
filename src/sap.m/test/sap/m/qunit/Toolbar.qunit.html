@@ -141,6 +141,26 @@
 		oTB.destroy();
 	});
 
+	QUnit.test("test style property", function (assert) {
+		var oTB = createToolbar({
+			Toolbar: {},
+			Label: {text: "text"}
+		});
+
+		assert.equal(oTB.getStyle(), sap.m.ToolbarStyle.Standard, "The initial ToolbarStyle property value is correct");
+		assert.ok(oTB.$().hasClass("sapMTBStandard"), "Initially, toolbar has correct style class");
+
+		//act
+		oTB.setStyle(sap.m.ToolbarStyle.Clear);
+		sap.ui.getCore().applyChanges();
+
+		//check
+		assert.ok(!oTB.$().hasClass("sapMTBStandard"), "toolbar has correct style class");
+		assert.ok(oTB.$().hasClass("sapMTBClear"), "toolbar has correct style class");
+
+		oTB.destroy();
+	});
+
 	QUnit.test("test that Toolbar Separator is rendered", function(assert) {
 		var oToolbarSeparator = new sap.m.ToolbarSeparator();
 		var oTB = createToolbar({

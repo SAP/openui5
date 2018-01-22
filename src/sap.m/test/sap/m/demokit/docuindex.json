@@ -817,6 +817,7 @@
 			"sap.m.sample.ToolbarAlignment",
 			"sap.m.sample.ToolbarActive",
 			"sap.m.sample.ToolbarEnabled",
+			"sap.m.sample.ToolbarDesign",
 			"sap.m.sample.TitleToolBar"
 		  ]
 		},
@@ -1535,6 +1536,11 @@
 		  "id": "sap.m.sample.ToolbarEnabled",
 		  "name": "OverflowToolbar - Enabled",
 		  "description": "The Enabled property can be used to enable or disable all the controls inside the OverflowToolbar/Toolbar."
+		},
+		{
+		  "id": "sap.m.sample.ToolbarDesign",
+		  "name": "OverflowToolbar - Design and styling",
+		  "description": "The Design and Style properties can be used to specify the visual design of the OverflowToolbar/Toolbar."
 		},
 		{
 		  "id": "sap.m.sample.ToolbarShrinkable",

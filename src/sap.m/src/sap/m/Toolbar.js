@@ -8,7 +8,8 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	"use strict";
 
 
-	var ToolbarDesign = library.ToolbarDesign;
+	var ToolbarDesign = library.ToolbarDesign,
+		ToolbarStyle = library.ToolbarStyle;
 
 	/**
 	 * Constructor for a new <code>Toolbar</code>.
@@ -92,10 +93,19 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 
 			/**
 			 * Defines the toolbar design.
-			 * Note: Design settings are theme-dependent. They also determine the default height of the toolbar.
+			 *
+			 * <b>Note:</b> Design settings are theme-dependent. They also determine the default height of the toolbar.
 			 * @since 1.16.8
 			 */
-			design : {type : "sap.m.ToolbarDesign", group : "Appearance", defaultValue : ToolbarDesign.Auto}
+			design : {type : "sap.m.ToolbarDesign", group : "Appearance", defaultValue : ToolbarDesign.Auto},
+
+			/**
+			 * Defines the visual style of the <code>Toolbar</code>.
+			 *
+			 * <b>Note:</b> The visual styles are theme-dependent.
+			 * @since 1.54
+			 */
+			style : {type : "sap.m.ToolbarStyle", group : "Appearance", defaultValue : ToolbarStyle.Standard}
 		},
 		defaultAggregation : "content",
 		aggregations : {
@@ -482,6 +492,27 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 		}
 
 		this._sAutoDesign = this.validateProperty("design", sDesign);
+		return this;
+	};
+
+	Toolbar.prototype.setStyle = function(sNewStyle) {
+		var sTbStyleClass, bEnable;
+
+		if (this.getStyle() === sNewStyle) {
+			return this;
+		}
+
+		this.setProperty("style", sNewStyle, true /* suppress invalidate */);
+
+		if (this.getDomRef()) {
+			Object.keys(ToolbarStyle).forEach(function(sStyleKey) {
+
+				sTbStyleClass = "sapMTB" + sStyleKey;
+				bEnable = (sStyleKey === sNewStyle);
+				this.$().toggleClass(sTbStyleClass, bEnable);
+			}, this);
+		}
+
 		return this;
 	};
 

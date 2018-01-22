@@ -2999,6 +2999,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	};
 
 	/**
+	 * Types of visual styles for the {@link sap.m.Toolbar}.
+	 *
+	 * <b>Note:</b> Keep in mind that the styles are theme-dependent and can differ based on the currently used theme.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.54
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.ToolbarStyle = {
+
+		/**
+		 * Default visual style dependent on the used theme.
+		 * @public
+		 */
+		Standard : "Standard",
+
+		/**
+		 * Simplified visual style dependent on the used theme.
+		 * @public
+		 */
+		Clear : "Clear"
+
+	};
+
+	/**
 	 * Different modes for the <code>sap.m.TimePicker</code> mask.
 	 *
 	 * @enum {string}
