@@ -868,7 +868,7 @@ sap.ui.require([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-// TODO Why is formatter on property binding in form called twice for the below?
+//TODO Why is formatter on property binding in form called twice for the below?
 			that.expectChange("id", "1")
 				.expectChange("id", "1");
 
@@ -1475,7 +1475,7 @@ sap.ui.require([
 					"CompanyName" : "Bar"
 				})
 				.expectChange("note", "foo", 1)
-				.expectChange("note", "baz", 0) // TODO unexpected change
+				.expectChange("note", "baz", 0) //TODO unexpected change
 				.expectChange("note", "baz", 0);
 
 			oTable.getBinding("items").create({Note : "bar"});
@@ -1501,7 +1501,7 @@ sap.ui.require([
 			})
 			.expectChange("name", "Frederic Fall")
 			.expectChange("city", "Walldorf")
-// TODO unexpected changes
+//TODO unexpected changes
 			.expectChange("name", "Frederic Fall")
 			.expectChange("city", "Walldorf");
 
@@ -1522,7 +1522,7 @@ sap.ui.require([
 		this.expectRequest("EMPLOYEES('2')?$select=AGE,ID,Name", {
 				"Name" : "Jonathan Smith"
 			})
-// TODO unexpected change
+//TODO unexpected change
 			.expectChange("name", "Jonathan Smith")
 			.expectChange("name", "Jonathan Smith");
 
@@ -1739,7 +1739,7 @@ sap.ui.require([
 				})
 			.expectChange("name", "SAP NetWeaver Gateway Content")
 			.expectChange("TEAM_ID", "TEAM_03")
-// TODO unexpected changes
+//TODO unexpected changes
 			.expectChange("name", "SAP NetWeaver Gateway Content")
 			.expectChange("TEAM_ID", "TEAM_03");
 
@@ -1777,7 +1777,7 @@ sap.ui.require([
 					}
 				})
 			.expectChange("name", "SAP NetWeaver Gateway Content")
-// TODO unexpected changes
+//TODO unexpected changes
 			.expectChange("name", "SAP NetWeaver Gateway Content");
 
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
@@ -1866,7 +1866,7 @@ sap.ui.require([
 			}).then(function () {
 				that.expectChange("id", "2", 0)
 					.expectChange("text", "Frederic Fall", 0)
-					// TODO why do we get events twice?
+					//TODO why do we get events twice?
 					.expectChange("id", "2", 0)
 					.expectChange("text", "Frederic Fall", 0);
 
@@ -1940,12 +1940,12 @@ sap.ui.require([
 
 		this.expectChange("name");
 		return this.createView(assert, sView, oModel).then(function () {
-// TODO the query options for the function import are not enhanced
+//TODO the query options for the function import are not enhanced
 //			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=ID,Name", {
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
 					"Name" : "Jonathan Smith"
 				})
-				.expectChange("name", null) // TODO unexpected change
+				.expectChange("name", null) //TODO unexpected change
 				.expectChange("name", "Jonathan Smith");
 
 			that.oView.byId("function").getObjectBinding()
@@ -2035,7 +2035,7 @@ sap.ui.require([
 				})
 			.expectChange("name", "SAP NetWeaver Gateway Content")
 			.expectChange("age", "32")
-// TODO unexpected changes
+//TODO unexpected changes
 			.expectChange("name", "SAP NetWeaver Gateway Content")
 			.expectChange("age", "32");
 
@@ -2127,7 +2127,7 @@ sap.ui.require([
 				}
 			)
 			.expectChange("name", "Team 2")
-			.expectChange("name", "Team 2") // TODO unexpected change
+			.expectChange("name", "Team 2") //TODO unexpected change
 			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
 			.then(function () {
@@ -2654,7 +2654,7 @@ sap.ui.require([
 			})
 			.expectChange("url",
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/ProductPicture('42')")
-			.expectChange("url", // TODO unexpected change
+			.expectChange("url", //TODO unexpected change
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/ProductPicture('42')");
 		return this.createView(assert, sView, oModel);
 	});
@@ -2676,7 +2676,7 @@ sap.ui.require([
 				"Quantity" : "10.000",
 				"QuantityUnit" : "EA"
 			})
-			.expectChange("quantity", "10.000") // TODO duplicate change event
+			.expectChange("quantity", "10.000") //TODO duplicate change event
 			.expectChange("quantity", "10.000")
 			.expectChange("quantityUnit", "EA")
 			.expectChange("quantityUnit", "EA");
@@ -2783,7 +2783,7 @@ sap.ui.require([
 				]
 			})
 			.expectChange("id", "0500000001")
-			.expectChange("id", "0500000001") // TODO duplicate change event
+			.expectChange("id", "0500000001") //TODO duplicate change event
 			.expectChange("item", ["0000000010", "0000000020", "0000000030"]);
 
 		// code under test
@@ -2968,7 +2968,7 @@ sap.ui.require([
 		})
 			// Note: sap.m.Text#text turns value into string!
 			.expectChange("text", oText.validateProperty("text", 42))
-			.expectChange("text", oText.validateProperty("text", 42)); // TODO unexpected change
+			.expectChange("text", oText.validateProperty("text", 42)); //TODO unexpected change
 
 		return this.createView(assert, sView, oModel);
 	});
@@ -2993,7 +2993,7 @@ sap.ui.require([
 		})
 		// Note: sap.m.Text#text turns value into string!
 			.expectChange("text", oText.validateProperty("text", 42))
-			.expectChange("text", oText.validateProperty("text", 42)); // TODO unexpected change
+			.expectChange("text", oText.validateProperty("text", 42)); //TODO unexpected change
 
 		return this.createView(assert, sView, oModel);
 	});
@@ -3145,7 +3145,7 @@ sap.ui.require([
 				{
 					"STATUS" : "42"
 				})
-				.expectChange("status", null) // TODO unexpected change
+				.expectChange("status", null) //TODO unexpected change
 				.expectChange("status", "42");
 
 			that.oView.byId("function").getObjectBinding().execute();
@@ -3172,7 +3172,7 @@ sap.ui.require([
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
 					"Name" : "Jonathan Smith"
 				})
-				.expectChange("name", null) // TODO unexpected change
+				.expectChange("name", null) //TODO unexpected change
 				.expectChange("name", "Jonathan Smith");
 			oFunctionBinding.setParameter("EmployeeID", "1").execute();
 
@@ -3227,7 +3227,7 @@ sap.ui.require([
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=Name", {
 					"Name" : "Jonathan Smith"
 				})
-				.expectChange("name", null) // TODO unexpected change
+				.expectChange("name", null) //TODO unexpected change
 				.expectChange("name", "Jonathan Smith");
 			oFunctionBinding.setParameter("EmployeeID", "1").execute();
 
@@ -3284,7 +3284,7 @@ sap.ui.require([
 					"ID" : "1"
 				}
 			})
-			.expectChange("id", "1") // TODO unexpected change
+			.expectChange("id", "1") //TODO unexpected change
 			.expectChange("id", "1");
 
 		return this.createView(assert, sView, oModel).then(function () {
