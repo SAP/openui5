@@ -475,7 +475,8 @@ sap.ui.define([
 			return this._handlePersonalizationChangesOnStart()
 			.then(function(bReloadTriggered){
 				if (bReloadTriggered) {
-					return Promise.reject(false);
+					// FLP Plugin reacts on this error string and doesn't the error on the UI
+					return Promise.reject("Reload triggered");
 				}
 
 				// Take default plugins if no plugins handed over
