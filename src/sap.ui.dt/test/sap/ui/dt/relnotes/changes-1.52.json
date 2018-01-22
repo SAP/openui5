@@ -133,5 +133,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.5": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "90d1baea9e7212055bf0357c9d406c0161c48717",
+        "type": "FIX",
+        "text": " Stabilize test case by rounding numbers",
+        "references": []
+      }
+    ]
   }
 }

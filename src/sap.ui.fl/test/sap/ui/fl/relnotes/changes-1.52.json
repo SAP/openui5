@@ -97,5 +97,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.5": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "807e0f5c570cc60554ee27d9a5b2cfba8c605bf4",
+        "type": "FIX",
+        "text": " sap.ui.fl - controlDependencies check bugfix",
+        "references": []
+      }
+    ]
   }
 }

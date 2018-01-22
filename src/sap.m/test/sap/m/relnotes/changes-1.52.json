@@ -1301,5 +1301,76 @@
         "references": []
       }
     ]
+  },
+  "1.52.5": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "383394649ccd0363a2efeba49736dd1bf17f73a7",
+        "type": "FIX",
+        "text": " Control: refactor fnHandleInteraction",
+        "references": []
+      },
+      {
+        "id": "2c8a684fa9cc07ed0e3e98a555864f102c43e995",
+        "type": "FIX",
+        "text": " sap.m.DateTimeField: setDateValue accepts JS Date Object from iframe",
+        "references": []
+      },
+      {
+        "id": "fd6e0a191fd136d421f6c1bcd1698b87117f72f3",
+        "type": "FIX",
+        "text": " sap.m.Input: Description is now read correctly by JAWS",
+        "references": []
+      },
+      {
+        "id": "4794d0904e47e9634e87116b32a01cd331bb6752",
+        "type": "FIX",
+        "text": " sap.m.Input: Issue with calling selectedKey from ValueHelp is now fixed.",
+        "references": []
+      },
+      {
+        "id": "4130091a9c6659abbb4902eddacaeddd45dc0fa1",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: More indicator is displayed correctly now",
+        "references": []
+      },
+      {
+        "id": "40c7e24c4429f418013c1d006c3b5d55e48905ed",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Selecting an item now clears the input field",
+        "references": []
+      },
+      {
+        "id": "7b237253c783e8374864c434f69a24e924acd940",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: Now escapes title and text of the inner controls",
+        "references": []
+      },
+      {
+        "id": "627d49c35800cf7091ca0b8d94091e71f9fdad78",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Correct decimal precision",
+        "references": []
+      },
+      {
+        "id": "b6ea93584e1e95cfa82419af1f1c86334f9c94f5",
+        "type": "FIX",
+        "text": " sap.m.StandardTreeItem: setIcon function is enhanced",
+        "references": []
+      },
+      {
+        "id": "3c701652833a2aacdbfef57dd086f65180ef7fff",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Default None Grouping item can be set via setSelectedGroupItem API",
+        "references": []
+      },
+      {
+        "id": "731de09c673e436f1b1eb4dd081fe9ef37779202",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Now escapes text of the inner controls",
+        "references": []
+      }
+    ]
   }
 }

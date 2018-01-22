@@ -599,5 +599,58 @@
         "references": []
       }
     ]
+  },
+  "1.52.5": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "71987a0088b4903e28c176ecf6b487ffb46b0304",
+        "type": "FIX",
+        "text": " ComponentContainer: component must be loaded only once",
+        "references": []
+      },
+      {
+        "id": "383394649ccd0363a2efeba49736dd1bf17f73a7",
+        "type": "FIX",
+        "text": " Control: refactor fnHandleInteraction",
+        "references": []
+      },
+      {
+        "id": "e490dc427ab6fd3da3b053a8e04b3e326508aab9",
+        "type": "FIX",
+        "text": " Core#applyTheme: avoid flash of unstyled content (FOUC)",
+        "references": []
+      },
+      {
+        "id": "800e0bc4c00c1aac3c2145ba78fb45f9d7c6c47f",
+        "type": "FIX",
+        "text": " Core#applyTheme: avoid flash of unstyled content (FOUC) #2",
+        "references": []
+      },
+      {
+        "id": "96bbada49dfeec03419a2a0c87df560a1b329005",
+        "type": "FIX",
+        "text": " ODataListBinding: Change detection in combination with filtering",
+        "references": []
+      },
+      {
+        "id": "10d45dcaf5b274361ea9d9818544b8e121a0bb54",
+        "type": "FIX",
+        "text": " core.routing: wait for the root view in case it\u0027s loaded async",
+        "references": []
+      },
+      {
+        "id": "34e7b9dd8c389e7bc3b9db88c266a3d6fdaccbe2",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Tab navigation is now correct",
+        "references": []
+      },
+      {
+        "id": "e6425d036ffba3e197ff84e2b976df2b036e2d02",
+        "type": "FIX",
+        "text": " sap.ui.model.FilterProcessor: null check parameters",
+        "references": []
+      }
+    ]
   }
 }
