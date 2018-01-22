@@ -44,6 +44,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * the total number of messages should be incremented, but the user's work shouldn't be interrupted.
 		 * <h3>Responsive Behavior</h3>
 		 * On mobile phones, the message popover is automatically shown in full screen mode.
+		 * On desktop and tablet, the message popover opens in a popover. On desktop the opened popover is resizable.
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
