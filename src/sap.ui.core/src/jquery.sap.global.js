@@ -4188,7 +4188,7 @@
 		 * namespace, even when an AMD loader is present (as e.g. jQuery does)</li>
 		 * <li><code>sap.ui.define</code> currently loads modules with synchronous XHR calls. This is
 		 * basically a tribute to the synchronous history of UI5.
-		 * <b>BUT:</b> synchronous dependency loading and factory execution explicitly it not part of
+		 * <b>BUT:</b> synchronous dependency loading and factory execution explicitly is not part of
 		 * contract of <code>sap.ui.define</code>. To the contrary, it is already clear and planned
 		 * that asynchronous loading will be implemented, at least as an alternative if not as the only
 		 * implementation. Also check section <b>Asynchronous Contract</b> above.<br>

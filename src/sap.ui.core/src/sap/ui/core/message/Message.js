@@ -33,7 +33,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './MessageProcessor'],
 	 * @param {string} [mParameters.code] The message code
 	 * @param {boolean} [mParameters.technical=false] If the message is set as technical message
 	 * @param {sap.ui.core.message.MessageProcessor} [mParameters.processor]
-	 * @param {string} [mParameters.target] The message target: The syntax MessageProcessor dependent. Read the documentation of the respective MessageProcessor.
+	 * @param {string} [mParameters.target] The message target: The syntax is MessageProcessor dependent. Read the documentation of the respective MessageProcessor.
 	 * @param {boolean} [mParameters.persistent] Sets message persistent: If persistent is set <code>true</code> the message lifecycle is controlled by the application
 	 * @param {int} [mParameters.date=Date.now()] Sets message date which can be used to remove old messages. Number of milliseconds elapsed since 1 January 1970 00:00:00 UTC
 	 *
@@ -177,7 +177,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './MessageProcessor'],
 	};
 
 	/**
-	 * Set message target: The syntax MessageProcessor dependent. See the documentation of the
+	 * Set message target: The syntax is MessageProcessor dependent. See the documentation of the
 	 * respective MessageProcessor.
 	 *
 	 * @param {string} sTarget The Message target
