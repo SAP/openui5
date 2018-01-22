@@ -194,7 +194,7 @@ sap.ui.require([
 			var oModel;
 
 			this.mock(_Requestor).expects("create")
-				.withExactArgs(getServiceUrl(), {"Accept-Language" : "ab-CD"}, sinon.match.object,
+				.withExactArgs(getServiceUrl(), sinon.match.object, {"Accept-Language" : "ab-CD"},
 					sinon.match.object, sODataVersion)
 				.returns({});
 
@@ -398,8 +398,8 @@ sap.ui.require([
 			fnSubmitAuto = function () {};
 
 		oExpectedCreate
-			.withExactArgs(getServiceUrl(), {"Accept-Language" : "ab-CD"}, {"sap-client" : "123"},
-				sinon.match.object, "4.0")
+			.withExactArgs(getServiceUrl(), sinon.match.object, {"Accept-Language" : "ab-CD"},
+				{"sap-client" : "123"}, "4.0")
 			.returns(oRequestor);
 		oExpectedBind0 = this.mock(ODataMetaModel.prototype.fetchEntityContainer).expects("bind")
 			.returns(fnFetchEntityContainer);
@@ -421,7 +421,7 @@ sap.ui.require([
 			.withExactArgs(fnSubmitAuto);
 
 		// code under test - call fnOnCreateGroup
-		oModelInterface = oExpectedCreate.firstCall.args[3];
+		oModelInterface = oExpectedCreate.firstCall.args[1];
 		oModelInterface.fnOnCreateGroup("$auto");
 		oModelInterface.fnOnCreateGroup("foo");
 

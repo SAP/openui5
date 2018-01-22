@@ -235,8 +235,7 @@ sap.ui.define([
 						_MetadataRequestor.create(mHeaders, sODataVersion, this.mUriParameters),
 						this.sServiceUrl + "$metadata", mParameters.annotationURI, this,
 						mParameters.supportReferences);
-					this.oRequestor = _Requestor.create(this.sServiceUrl, mHeaders,
-						this.mUriParameters, {
+					this.oRequestor = _Requestor.create(this.sServiceUrl, {
 							fnFetchEntityContainer :
 								this.oMetaModel.fetchEntityContainer.bind(this.oMetaModel),
 							fnFetchMetadata : function (sPath) {
@@ -250,7 +249,7 @@ sap.ui.define([
 										that._submitBatch.bind(that, sGroupId));
 								}
 							}
-						}, sODataVersion);
+						}, mHeaders, this.mUriParameters, sODataVersion);
 					if (mParameters.earlyRequests) {
 						this.oMetaModel.fetchEntityContainer(true);
 						this.initializeSecurityToken();

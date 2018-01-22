@@ -1095,7 +1095,22 @@ sap.ui.define([
 		 * @param {string} sServiceUrl
 		 *   URL of the service document to request the CSRF token from; also used to resolve
 		 *   relative resource paths (see {@link #request})
-		 * @param {object} mHeaders
+		 * @param {object} oModelInterface
+		 *   An interface allowing to call back to the owning model
+		 * @param {function} oModelInterface.fnFetchEntityContainer
+		 *   A promise which is resolved with the $metadata "JSON" object as soon as the entity
+		 *   container is fully available, or rejected with an error.
+		 * @param {function} oModelInterface.fnFetchMetadata
+		 *   A function that returns a SyncPromise which resolves with the metadata instance for a
+		 *   given absolute model path (it is automatically converted to a metapath)
+		 * @param {function} oModelInterface.fnGetGroupProperty
+		 *   A function called with parameters <code>sGroupId</code> and <code>sPropertyName</code>
+		 *   returning the property value in question. Only 'submit' is supported for <code>
+		 *   sPropertyName</code>. Supported property values are: 'API', 'Auto' and 'Direct'.
+		 * @param {function (string)} [oModelInterface.fnOnCreateGroup]
+		 *   A callback function that is called with the group name as parameter when the first
+		 *   request is added to a group
+		 * @param {object} [mHeaders={}]
 		 *   Map of default headers; may be overridden with request-specific headers; certain
 		 *   OData V4 headers are predefined, but may be overridden by the default or
 		 *   request-specific headers:
@@ -1112,27 +1127,12 @@ sap.ui.define([
 		 *   A map of query parameters as described in
 		 *   {@link sap.ui.model.odata.v4.lib._Helper.buildQuery}; used only to request the CSRF
 		 *   token
-		 * @param {object} oModelInterface
-		 *   A interface allowing to call back to the owning model
-		 * @param {function} oModelInterface.fnFetchEntityContainer
-		 *   A promise which is resolved with the $metadata "JSON" object as soon as the entity
-		 *   container is fully available, or rejected with an error.
-		 * @param {function} oModelInterface.fnFetchMetadata
-		 *   A function that returns a SyncPromise which resolves with the metadata instance for a
-		 *   given absolute model path (it is automatically converted to a metapath)
-		 * @param {function} oModelInterface.fnGetGroupProperty
-		 *   A function called with parameters <code>sGroupId</code> and <code>sPropertyName</code>
-		 *   returning the property value in question. Only 'submit' is supported for <code>
-		 *   sPropertyName</code>. Supported property values are: 'API', 'Auto' and 'Direct'.
-		 * @param {function (string)} [oModelInterface.fnOnCreateGroup]
-		 *   A callback function that is called with the group name as parameter when the first
-		 *   request is added to a group
 		 * @param {string} [sODataVersion="4.0"]
 		 *   The version of the OData service. Supported values are "2.0" and "4.0".
 		 * @returns {object}
 		 *   A new <code>_Requestor</code> instance
 		 */
-		create : function (sServiceUrl, mHeaders, mQueryParams, oModelInterface, sODataVersion) {
+		create : function (sServiceUrl, oModelInterface, mHeaders, mQueryParams, sODataVersion) {
 			var oRequestor = new Requestor(sServiceUrl, mHeaders, mQueryParams, oModelInterface);
 
 			if (sODataVersion === "2.0") {

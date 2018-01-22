@@ -2102,9 +2102,7 @@ sap.ui.require([
 	QUnit.test("_Cache#create: with given sPath and delete before submit", function (assert) {
 		var oBody,
 			// real requestor to avoid reimplementing callback handling of _Requestor.request
-			oRequestor = _Requestor.create("/~/", undefined, undefined, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			}),
+			oRequestor = _Requestor.create("/~/", {fnGetGroupProperty : defaultGetGroupProperty}),
 			oCache = new _Cache(oRequestor),
 			oCacheMock = this.mock(oCache),
 			aCollection = [],
@@ -2528,9 +2526,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("CollectionCache: create and delete transient entry", function (assert) {
 		// real requestor to avoid reimplementing callback handling of _Requestor.request
-		var oRequestor = _Requestor.create("/~/", undefined, undefined,  {
-				fnGetGroupProperty : defaultGetGroupProperty
-			}),
+		var oRequestor = _Requestor.create("/~/", {fnGetGroupProperty : defaultGetGroupProperty}),
 			oCache = _Cache.create(oRequestor, "Employees"),
 			fnCancelCallback = sinon.spy(),
 			oDeletePromise,
@@ -2570,9 +2566,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("CollectionCache: delete created entity", function (assert) {
 		// real requestor to avoid reimplementing callback handling of _Requestor.request
-		var oRequestor = _Requestor.create("/~/", undefined, undefined,  {
-				fnGetGroupProperty : defaultGetGroupProperty
-			}),
+		var oRequestor = _Requestor.create("/~/", {fnGetGroupProperty : defaultGetGroupProperty}),
 			oCache = _Cache.create(oRequestor, "Employees"),
 			fnCallback = sinon.spy(),
 			oCreatedPromise,
@@ -3165,9 +3159,10 @@ sap.ui.require([
 					Budget : "555.55"
 				},
 				oRequestor = _Requestor.create(TestUtils.proxy(
-					"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/"), undefined, undefined,
-					{
-						fnFetchMetadata : function () { return SyncPromise.resolve({}); },
+					"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/"), {
+						fnFetchMetadata : function () {
+							return SyncPromise.resolve({});
+						},
 						fnGetGroupProperty : defaultGetGroupProperty
 					}),
 				sResourcePath = "TEAMS('TEAM_01')",
