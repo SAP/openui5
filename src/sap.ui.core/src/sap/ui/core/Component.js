@@ -1062,7 +1062,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 *
 	 * @param {string} sMessage The error message.
 	 * @param {string} sFile File where the error occurred
-	 * @param {number} iLine Line number of the error
+	 * @param {int} iLine Line number of the error
 	 * @public
 	 * @since 1.15.1
 	 * @name sap.ui.core.Component.prototype.onWindowError
@@ -1953,7 +1953,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * Load a Component without instantiating it.
 	 *
 	 * Provides support for loading Components asynchronously by setting
-	 * <code>oConfig.async</code> to true. In that case, the method returns a Javascript 6
+	 * <code>oConfig.async</code> to true. In that case, the method returns a JavaScript 6
 	 * Promise that will be fulfilled with the component class after loading.
 	 *
 	 * Using <code>async = true</code> doesn't necessarily mean that no more synchronous loading

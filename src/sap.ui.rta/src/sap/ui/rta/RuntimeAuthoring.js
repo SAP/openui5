@@ -582,8 +582,8 @@ sap.ui.define([
 	/**
 	 * Checks the Publish button and app variant support (i.e. Save As and Overview of App Variants) availability
 	 * @private
-	 * @returns {[bPublishAvaiable, bAppVariantSupportAvailable]} Returns an array of boolean values
-	 * @description The publish button shall not be available if the system is productive and if a merge error occured during merging changes into the view on startup
+	 * @returns {boolean[]} Returns an array of boolean values [bPublishAvailable, bAppVariantSupportAvailable]
+	 * @description The publish button shall not be available if the system is productive and if a merge error occurred during merging changes into the view on startup
 	 * The app variant support shall not be available if the system is productive and if the platform is not enabled (See Feature.js) to show the app variant tooling
 	 * isProductiveSystem should only return true if it is a test or development system with the provision of custom catalog extensions
 	 */
@@ -1192,7 +1192,7 @@ sap.ui.define([
 	 * Function to handle modification of an element
 	 *
 	 * @param {sap.ui.base.Event} oEvent Event object
-	 * @returns {promise} Returns promise that resolves after command was executed sucessfully
+	 * @returns {Promise} Returns promise that resolves after command was executed sucessfully
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._handleElementModified = function(oEvent) {

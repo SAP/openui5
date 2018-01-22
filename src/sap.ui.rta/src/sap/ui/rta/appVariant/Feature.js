@@ -143,7 +143,9 @@ sap.ui.define([
 			}
 		},
 		/**
-		 * @param {object, string, object} oRootControl sCurrentLayer oLrepSerializer
+		 * @param {object} oRootControl
+		 * @param {string} sCurrentLayer
+		 * @param {object} oLrepSerializer
 		 * @returns {boolean} returns a boolean value
 		 * @description App variant functionality is only supported in S/4 Hana Cloud Platform & S/4 Hana (On Premise)
 		 * with 'sap-ui-xx-rta-save-as=true' (toggle feature switch) as a part of url;

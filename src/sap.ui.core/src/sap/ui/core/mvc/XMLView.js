@@ -562,7 +562,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		* either the plain "xml" or the already initialized "controls" , see {@link sap.ui.core.mvc.XMLView.PreprocessorType}.
 		* For each type one preprocessor is executed. If there is a preprocessor passed to or activated at the
 		* view instance already, that one is used. When several preprocessors are registered for one hook, it has to be made
-		* sure, that they do not conflict when beeing processed serially.
+		* sure, that they do not conflict when being processed serially.
 		*
 		* It can be either a module name as string of an implementation of {@link sap.ui.core.mvc.View.Preprocessor} or a
 		* function with a signature according to {@link sap.ui.core.mvc.View.Preprocessor.process}.

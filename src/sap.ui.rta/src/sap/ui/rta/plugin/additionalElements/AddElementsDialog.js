@@ -271,7 +271,7 @@ sap.ui.define([
 	 * Open the Field Repository Dialog
 	 *
 	 * @param {sap.ui.core.Control} oControl Currently selected control
-	 * @returns {promise} empty promise
+	 * @returns {Promise} empty promise
 	 * @public
 	 */
 	AddElementsDialog.prototype.open = function(oControl) {

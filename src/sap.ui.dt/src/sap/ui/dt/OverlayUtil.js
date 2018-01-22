@@ -540,7 +540,7 @@ function(
 	 * This function returns all the siblings and parents inside the relevant container. Siblings in different aggregations are ignored.
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay Overlay from which we get the aggregations
 	 * @param {sap.ui.dt.ElementOverlay} oRelevantContainerOverlay Relevant container overlay
-	 * @param {integer} iLevel Current level in the hierarchy
+	 * @param {int} iLevel Current level in the hierarchy
 	 * @returns {object} Returns a map with all siblings sorted by the level
 	 * @private
 	 */

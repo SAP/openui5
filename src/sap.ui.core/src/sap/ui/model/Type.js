@@ -44,7 +44,7 @@ sap.ui.define(['sap/ui/base/Object'],
 	/**
 	 * Returns the name of this type.
 	 *
-	 * @return {String} the name of this type
+	 * @return {string} the name of this type
 	 * @public
 	 */
 	Type.prototype.getName = function() {

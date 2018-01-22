@@ -1277,8 +1277,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		/**
 		 * Returns a map containing patterns for formatting lists
 		 *
-		 *@param {string='standard'} sType The type of the list pattern. It can be 'standard' or 'or'.
-		 *@param {string='wide'} sStyle The style of the list pattern. It can be 'wide' or 'short'.
+		 *@param {string} [sType='standard'] The type of the list pattern. It can be 'standard' or 'or'.
+		 *@param {string} [sStyle='wide'] The style of the list pattern. It can be 'wide' or 'short'.
 		* @return {object} Map with list patterns
 		 */
 		getListFormat: function (sType, sStyle) {
@@ -1355,7 +1355,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		 * Returns the defined pattern for representing the calendar week number.
 		 *
 		 * @param {string} sStyle the style of the pattern. It can only be either "wide" or "narrow".
-		 * @param {number} iWeekNumber the week number
+		 * @param {int} iWeekNumber the week number
 		 * @return {string} the week number string
 		 *
 		 * @public

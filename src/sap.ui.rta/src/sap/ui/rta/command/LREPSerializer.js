@@ -151,7 +151,7 @@ sap.ui.define([
 	/**
 	 *
 	 * @param {string} sReferenceAppIdForChanges
-	 * @returns {promise} returns a promise with true or false
+	 * @returns {Promise} returns a promise with true or false
 	 * @description Shall be used to persist the unsaved changes (in the current RTA session) for new app variant;
 	 * Once the unsaved changes has been saved for the app variant, the cache (See Cache#update) will not be updated for the current app
 	 * and the dirty changes will be spliced;

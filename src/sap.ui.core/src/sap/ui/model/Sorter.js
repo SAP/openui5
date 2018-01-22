@@ -17,7 +17,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 	 * This object defines the sort order for the list binding.
 	 *
 	 *
-	 * @param {String} sPath the binding path used for sorting
+	 * @param {string} sPath the binding path used for sorting
 	 * @param {boolean} [bDescending=false] whether the sort order should be descending
 	 * @param {boolean|function} [vGroup] configure grouping of the content, can either be true to enable grouping
 	 *        based on the raw model property value, or a function which calculates the group value out of the

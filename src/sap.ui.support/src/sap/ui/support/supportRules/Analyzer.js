@@ -63,7 +63,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/supportRules/IssueManager","
 		 * @param {array} aRules Selected rules for execution
 		 * @param {object} oCoreFacade Metadata, Models, UI areas and Components of the Core object
 		 * @param {object} oExecutionScope selected execution scope from user in UI
-		 * @returns {promise} When all rules are analyzed
+		 * @returns {Promise} When all rules are analyzed
 		 */
 		Analyzer.prototype.start = function (aRules, oCoreFacade, oExecutionScope) {
 			var oIssueManagerFacade,

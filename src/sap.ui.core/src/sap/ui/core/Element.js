@@ -349,8 +349,10 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 
 
 	/**
-	 * This triggers immediate rerendering of its parent and thus of itself and its children.<br/> As <code>sap.ui.core.Element</code> "bubbles up" the
-	 * rerender, changes to child-<code>Elements</code> will also result in immediate rerendering of the whole sub tree.
+	 * This triggers immediate rerendering of its parent and thus of itself and its children.
+	 *
+	 * As <code>sap.ui.core.Element</code> "bubbles up" the rerender, changes to
+	 * child-<code>Elements</code> will also result in immediate rerendering of the whole sub tree.
 	 * @protected
 	 */
 	Element.prototype.rerender = function() {
@@ -1069,7 +1071,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	Element.prototype._onContextualSettingsChanged = function () {
 		var iWidth = this._getMediaContainerWidth(),
 			bShouldUseContextualWidth = iWidth !== undefined,
-			bProviderChanged = bShouldUseContextualWidth ^ !!this._bUsingContextualWidth,// true, false or false, true (convert to bool in case of default undefined)
+			bProviderChanged = bShouldUseContextualWidth ^ !!this._bUsingContextualWidth,// true, false or false, true (convert to boolean in case of default undefined)
 			aListeners = this._aContextualWidthListeners || [];
 
 		if (bProviderChanged) {

@@ -450,7 +450,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Device', 's
 			};
 
 			/**
-			 * @return {String} ID of the currently processed transaction
+			 * @return {string} ID of the currently processed transaction
 			 * @private
 			 * @since 1.32
 			 */
@@ -459,7 +459,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Device', 's
 			};
 
 			/**
-			 * @return {String} Root ID of the current session
+			 * @return {string} Root ID of the current session
 			 * @private
 			 * @since 1.32
 			 */
@@ -594,7 +594,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Device', 's
 			}
 
 			/**
-			 * @param {String} lvl tracing level to be calculated
+			 * @param {string} lvl tracing level to be calculated
 			 * @return {int[]} Array with two int representation of characters for trace level
 			 * @private
 			 * @since 1.32

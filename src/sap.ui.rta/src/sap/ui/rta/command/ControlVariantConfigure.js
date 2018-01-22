@@ -48,7 +48,7 @@ sap.ui.define([
 
 	/**
 	 * @public Triggers the configuration of a variant
-	 * @returns {promise} Returns resolve after execution
+	 * @returns {Promise} Returns resolve after execution
 	 */
 	ControlVariantConfigure.prototype.execute = function() {
 		var oVariantManagementControl = this.getControl();
@@ -69,7 +69,7 @@ sap.ui.define([
 
 	/**
 	 * @public Undo logic for the execution
-	 * @returns {promise} Returns resolve after undo
+	 * @returns {Promise} Returns resolve after undo
 	 */
 	ControlVariantConfigure.prototype.undo = function() {
 		var mPropertyBag;
