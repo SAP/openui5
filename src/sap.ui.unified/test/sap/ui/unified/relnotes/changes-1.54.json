@@ -109,6 +109,12 @@
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: Compact mode of days fixed",
         "references": []
+      },
+      {
+        "id": "b90728f9413d5f844e267769b07be3a1fdc9f022",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Enable drag and drop of appointments",
+        "references": []
       }
     ]
   }

@@ -67,6 +67,12 @@
         "type": "FIX",
         "text": "sap.ui.layout: Wrong i18n reference in SimpleForm DT Metadata",
         "references": []
+      },
+      {
+        "id": "75b6b7b99024549f601219d3474f051c77d6f128",
+        "type": "FEATURE",
+        "text": " Form: activate wrapping of Labels as default",
+        "references": []
       }
     ]
   }

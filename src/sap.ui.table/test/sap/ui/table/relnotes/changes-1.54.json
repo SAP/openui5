@@ -103,6 +103,24 @@
         "type": "FIX",
         "text": " Table: Role \"row\" added to tr elements in the table header",
         "references": []
+      },
+      {
+        "id": "2a956dedd3a112687b2f89bf39fedfb2f8f87e89",
+        "type": "FIX",
+        "text": " GridTable: No event default prevention on non-table DOM elements",
+        "references": []
+      },
+      {
+        "id": "a43f1c9a31d8db52f677282b3f991d7a319aa7af",
+        "type": "FIX",
+        "text": " Table: Scroll position stability improved",
+        "references": []
+      },
+      {
+        "id": "f35a6b9088079a65b7cb5c4efd55dd4237d8c4da",
+        "type": "FIX",
+        "text": " Table: Selected checkbox not visible properly",
+        "references": []
       }
     ]
   }
