@@ -73,6 +73,18 @@
         "type": "FIX",
         "text": " sap.ui.fl - controlDependencies check bugfix",
         "references": []
+      },
+      {
+        "id": "839fe13ca5a455c6365174dffa661d6ab671427f",
+        "type": "FIX",
+        "text": " Fix bug in Sorting and support deletion of variants",
+        "references": []
+      },
+      {
+        "id": "31e730cb5093bbadebe8818df063076adce39e5d",
+        "type": "FIX",
+        "text": " Move variant title property to content of content of variant",
+        "references": []
       }
     ]
   }

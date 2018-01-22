@@ -662,6 +662,7 @@
 
 	QUnit.test("DynamicPage Header - expanding/collapsing through the API", function (assert) {
 		var oDynamicPage = this.oDynamicPage,
+			$oDynamicPageHeader = oDynamicPage.getHeader().$(),
 			sSnappedClass = "sapFDynamicPageTitleSnapped",
 			oSetPropertySpy = this.spy(oDynamicPage, "setProperty");
 
@@ -674,13 +675,14 @@
 		assert.equal(oDynamicPage.getHeaderExpanded(), false, "setting it to false under regular conditions works");
 		assert.ok(oDynamicPage.$titleArea.hasClass(sSnappedClass));
 		assert.ok(oSetPropertySpy.calledWith("headerExpanded", false, true));
-
+		assert.strictEqual($oDynamicPageHeader.css("visibility"), "hidden", "Header should be excluded from the tab chain");
 		oSetPropertySpy.reset();
 
 		oDynamicPage.setHeaderExpanded(true);
 		assert.ok(oDynamicPage.getHeaderExpanded(), "header converted to expanded");
 		assert.ok(!oDynamicPage.$titleArea.hasClass(sSnappedClass));
 		assert.ok(oSetPropertySpy.calledWith("headerExpanded", true, true));
+		assert.strictEqual($oDynamicPageHeader.css("visibility"), "visible", "Header should be included in the tab chain again");
 
 		oSetPropertySpy.reset();
 
@@ -688,11 +690,13 @@
 		assert.equal(oDynamicPage.getHeaderExpanded(), false, "setting it to false via user interaction");
 		assert.ok(oDynamicPage.$titleArea.hasClass(sSnappedClass));
 		assert.ok(oSetPropertySpy.calledWith("headerExpanded", false, true));
+		assert.strictEqual($oDynamicPageHeader.css("visibility"), "hidden", "Header should be excluded from the tab chain");
 	});
 
 	QUnit.test("DynamicPage Header - expanding/collapsing by clicking the title", function (assert) {
 
 		var oDynamicPage = this.oDynamicPage,
+			$oDynamicPageHeader = oDynamicPage.getHeader().$(),
 			oDynamicPageTitle = oDynamicPage.getTitle(),
 			oFakeEvent = {
 				srcControl: oDynamicPageTitle
@@ -706,16 +710,19 @@
 		oDynamicPageTitle.ontap(oFakeEvent);
 
 		assert.equal(oDynamicPage.getHeaderExpanded(), false, "After one click, the header is collapsed");
+		assert.strictEqual($oDynamicPageHeader.css("visibility"), "hidden", "Header should be excluded from the tab chain");
 
 		oDynamicPage.setToggleHeaderOnTitleClick(false);
 
 		oDynamicPageTitle.ontap(oFakeEvent);
 		assert.equal(oDynamicPage.getHeaderExpanded(), false, "The header is still collapsed, because toggleHeaderOnTitleClick = false");
+		assert.strictEqual($oDynamicPageHeader.css("visibility"), "hidden", "Header should be still excluded from the tab chain");
 
 		oDynamicPage.setToggleHeaderOnTitleClick(true);
 
 		oDynamicPageTitle.ontap(oFakeEvent);
 		assert.equal(oDynamicPage.getHeaderExpanded(), true, "After restoring toggleHeaderOnTitleClick to true, the header again expands on click");
+		assert.strictEqual($oDynamicPageHeader.css("visibility"), "visible", "Header should be included in the tab chain again");
 	});
 
 	QUnit.test("DynamicPage toggle header indicators visibility", function (assert) {

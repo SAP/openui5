@@ -1,0 +1,67 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:form="sap.ui.layout.form"
+		controllerName="sap.m.sample.ColorPalette.ColorPalette"
+		xmlns="sap.m">
+
+	<Table id="samplesTable" headerText="ColorPalettePopover" class="sapUiLargeMarginBottom">
+		<columns>
+			<Column>
+				<Text text="Description"/>
+			</Column>
+			<Column width="20%">
+				<Text text="Action"/>
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem>
+				<cells>
+					<Label text='Default colors with both "Default Color" and "More Colors..." buttons'/>
+					<Button press="openFullSample" icon="sap-icon://text-color"/>
+				</cells>
+			</ColumnListItem>
+			<ColumnListItem>
+				<cells>
+					<Label text='Custom colors with "More Colors..." button'/>
+					<Button press="openCustomColorsSample" icon="sap-icon://palette"/>
+				</cells>
+			</ColumnListItem>
+			<ColumnListItem>
+				<cells>
+					<Label text='Three custom colors with "Default Color" buttons'/>
+					<Button press="openMinimalSampleWithDefaultColorButton" icon="sap-icon://color-fill"/>
+				</cells>
+			</ColumnListItem>
+			<ColumnListItem>
+			<cells>
+				<Label text='Custom colors without any additional buttons'/>
+				<Button press="openMinimalSample" icon="sap-icon://color-fill"/>
+			</cells>
+		</ColumnListItem>
+		</items>
+	</Table>
+
+
+	<form:SimpleForm
+			maxContainerCols="3"
+			editable="true"
+			backgroundDesign="Transparent">
+		<form:toolbar>
+			<Toolbar>
+				<content>
+					<Title text="Embedded ColorPalette in a SimpleForm"/>
+				</content>
+			</Toolbar>
+		</form:toolbar>
+		<form:content>
+			<Label text="Choose Name"/>
+			<Input placeholder="..."/>
+			<Label text="Choose Color"/>
+			<ColorPalette colorSelect="handleColorSelect"/>
+			<Label text="Choose Location"/>
+			<Input placeholder="..."/>
+		</form:content>
+	</form:SimpleForm>
+
+
+</mvc:View>

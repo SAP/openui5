@@ -3,8 +3,22 @@
 		"sample": {
 			"files": [
 				"Component.js",
+				"component.json",
 				"Main.view.xml",
-				"ValueHelp.js"
+				"ValueHelp.js",
+				"data/Items.json",
+				"data/metadata.xml",
+				"data/metadata_ItemCompanyCode.xml",
+				"data/metadata_ItemCompanyCode_ItemCustomer.xml",
+				"data/metadata_ItemCustomer.xml",
+				"data/metadata_none.xml",
+				"data/metadata_VL_SH_DEBIALAND1.xml",
+				"data/metadata_VL_SH_H_T001WAERS.xml",
+				"data/VL_CT_TCURC.json",
+				"data/VL_SH_DEBIA.json",
+				"data/VL_SH_DEBID.json",
+				"data/VL_SH_FARP_T005.json",
+				"data/VL_SH_H_T001.json"
 			]
 		}
 	},

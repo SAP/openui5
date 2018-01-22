@@ -985,6 +985,114 @@
         "type": "FIX",
         "text": " sap.m.ViewSettingsDialog: Now escapes text of the inner controls",
         "references": []
+      },
+      {
+        "id": "75b6b7b99024549f601219d3474f051c77d6f128",
+        "type": "FEATURE",
+        "text": " Form: activate wrapping of Labels as default",
+        "references": []
+      },
+      {
+        "id": "9af9d4d8a6188b25876c657e14e8928131ee484b",
+        "type": "FEATURE",
+        "text": " sap.m.ColorPalette: new control implemented.",
+        "references": []
+      },
+      {
+        "id": "fbcd63819da151d84ef3ffc9d9c807cf6195e65b",
+        "type": "FEATURE",
+        "text": " sap.m.ListItemBase: do not fire press event for text selection",
+        "references": []
+      },
+      {
+        "id": "b90728f9413d5f844e267769b07be3a1fdc9f022",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Enable drag and drop of appointments",
+        "references": []
+      },
+      {
+        "id": "69aa560705ed6d81e50bab586e2ae517f1bb9b7b",
+        "type": "FEATURE",
+        "text": " sap.m.StepInput: Typing restriction according to displayValuePrecision",
+        "references": []
+      },
+      {
+        "id": "fcc721c3e0a9c608e0a9f67b11fde3c34987ffae",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageHeaderActionButton usage in OverflowToolbar",
+        "references": []
+      },
+      {
+        "id": "a54dc759b62b83fd037cb093e1e72e2227d5caba",
+        "type": "FIX",
+        "text": " core.util.MockServer: memory optimization",
+        "references": []
+      },
+      {
+        "id": "05f0f265c40875d4910dd4b95b75e6024c767cae",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Select day when year or month are changed",
+        "references": []
+      },
+      {
+        "id": "eaf3bce54050da573d6427e2aa75a3e995ddccc8",
+        "type": "FIX",
+        "text": " sap.m.Dialog: correct header, subheader and footer DOM structure",
+        "references": []
+      },
+      {
+        "id": "96905b24b755d88d0bf680ae76babfb149868b04",
+        "type": "FIX",
+        "text": " sap.m.HeaderContainer : Qunit optimization for _getScrollValue method.",
+        "references": []
+      },
+      {
+        "id": "e12a3b198b7a2adeada88320623187497e34b720",
+        "type": "FIX",
+        "text": " sap.m.HeaderContainer : Qunit tests were failing for _getScrollValue method as round off was not done.Added round off.",
+        "references": []
+      },
+      {
+        "id": "d3e2729a4a27afc8bc90a22abe890435c9dc7b77",
+        "type": "FIX",
+        "text": " sap.m.Input: Issue with calling selectedKey from ValueHelp is now fixed.",
+        "references": []
+      },
+      {
+        "id": "34771ea3b96ca4d07a7a03cdd89bf1b832df854c",
+        "type": "FIX",
+        "text": " sap.m.LightBox: Resize handler is now correctly detached",
+        "references": []
+      },
+      {
+        "id": "ee858bcbe97063c86432ce7fdb2b59040f267eba",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: More indicator is displayed correctly now",
+        "references": []
+      },
+      {
+        "id": "0441955704ad6b03990e36ac2355784f711418ad",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Fixed issue when using sap.m.Select",
+        "references": []
+      },
+      {
+        "id": "affd1643d67dc15afa461fe8cd6236563b121f41",
+        "type": "FIX",
+        "text": " sap.m.PDFViewer: Height on mobile/tablet is always auto.",
+        "references": []
+      },
+      {
+        "id": "eea9aa341991fbe084efc70b537a7eb5d5827322",
+        "type": "FIX",
+        "text": " sap.m.StandardTreeItem: setIcon function is enhanced",
+        "references": []
+      },
+      {
+        "id": "8020612e668f5308e1f9297197529c00a6ca46f2",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Explored app sample adjusted",
+        "references": []
       }
     ]
   }

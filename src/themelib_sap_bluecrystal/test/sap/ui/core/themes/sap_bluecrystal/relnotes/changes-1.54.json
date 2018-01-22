@@ -31,6 +31,12 @@
         "type": "FIX",
         "text": " sap.m.Popover: correct header, subheader and footer DOM structure",
         "references": []
+      },
+      {
+        "id": "eaf3bce54050da573d6427e2aa75a3e995ddccc8",
+        "type": "FIX",
+        "text": " sap.m.Dialog: correct header, subheader and footer DOM structure",
+        "references": []
       }
     ]
   }

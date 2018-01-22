@@ -110,6 +110,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/base/ManagedO
 					oOldLabel.isDisplayOnly = oOldLabel._sapuiIsDisplayOnly;
 					oOldLabel._sapuiIsDisplayOnly = undefined;
 				}
+				if (oOldLabel.isWrapping) {
+					oOldLabel.isWrapping = oOldLabel._sapuiIsWrapping;
+					oOldLabel._sapuiIsWrapping = undefined;
+				}
 			}
 		}
 
@@ -125,6 +129,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/base/ManagedO
 				}
 				if (this._oLabel.isDisplayOnly) {
 					this._oLabel.isDisplayOnly = _labelIsDisplayOnly;
+				}
+				if (this._oLabel.setWrapping) {
+					this._oLabel.setWrapping(true);
 				}
 			} else {
 				this._oLabel.setText(oLabel);
@@ -142,6 +149,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/base/ManagedO
 			if (oLabel && oLabel.isDisplayOnly) {
 				oLabel._sapuiIsDisplayOnly = oLabel.isDisplayOnly;
 				oLabel.isDisplayOnly = _labelIsDisplayOnly;
+			}
+			if (oLabel && oLabel.isWrapping) {
+				oLabel._sapuiIsWrapping = oLabel.isWrapping;
+				oLabel.isWrapping = _labelIsWrapping;
 			}
 		}
 
@@ -406,6 +417,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/base/ManagedO
 		}
 
 		return false;
+
+	}
+
+	/*
+	 * overwrite Labels isWrapping function to set wrapping as default.
+	 *
+	 * If Wrapping is set explicitly on the Label, this is used.
+	 */
+	function _labelIsWrapping(){
+
+		if (this.getWrapping && !this.isPropertyInitial("wrapping")) {
+			return this.getWrapping();
+		}
+
+		return true;
 
 	}
 

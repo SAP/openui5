@@ -469,6 +469,60 @@
         "type": "FIX",
         "text": " Update theme URLs with query parameters on RTL change",
         "references": []
+      },
+      {
+        "id": "75b6b7b99024549f601219d3474f051c77d6f128",
+        "type": "FEATURE",
+        "text": " Form: activate wrapping of Labels as default",
+        "references": []
+      },
+      {
+        "id": "161f0f409047fdd8d98851f4a77a63486b99b863",
+        "type": "FEATURE",
+        "text": " NumberFormat: Support for unit of measures",
+        "references": []
+      },
+      {
+        "id": "e9fb3c1288c592985afc3e387a09f82e18f671b8",
+        "type": "FEATURE",
+        "text": " core: default implementations for life-cycle methods",
+        "references": []
+      },
+      {
+        "id": "88a116af50ad602406f7a22fab18a681bd4bf28e",
+        "type": "FEATURE",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: hierarchy support for charts",
+        "references": []
+      },
+      {
+        "id": "af1004c27a57a78b67d6d35fa2c5178c347e651d",
+        "type": "FIX",
+        "text": " ComponentContainer: component must be loaded only once",
+        "references": []
+      },
+      {
+        "id": "066bf95da120a1276b5954080d6cab3e40f5f7a0",
+        "type": "FIX",
+        "text": " Core#applyTheme: avoid flash of unstyled content (FOUC) #2",
+        "references": []
+      },
+      {
+        "id": "4ccfe96defb815efb5d9fafac252e099c188154f",
+        "type": "FIX",
+        "text": " analyticalBinding: handle null value from #getURIQueryOptionValue",
+        "references": []
+      },
+      {
+        "id": "a54dc759b62b83fd037cb093e1e72e2227d5caba",
+        "type": "FIX",
+        "text": " core.util.MockServer: memory optimization",
+        "references": []
+      },
+      {
+        "id": "7204117b0c13af8196f1c39ac45f17ee4c2c78ff",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Tab navigation is now correct",
+        "references": []
       }
     ]
   }

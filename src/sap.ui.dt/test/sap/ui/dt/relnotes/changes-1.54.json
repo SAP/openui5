@@ -85,6 +85,12 @@
         "type": "FIX",
         "text": " sap.ui.dt: MiniMenu sometimes not opening",
         "references": []
+      },
+      {
+        "id": "5325a53ccfb208609ffc53982488f9d5ce89ed6f",
+        "type": "FIX",
+        "text": " Stabilize test case by rounding numbers",
+        "references": []
       }
     ]
   }

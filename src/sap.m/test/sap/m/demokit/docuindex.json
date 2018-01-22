@@ -886,7 +886,8 @@
 			"sap.m.sample.PlanningCalendarOneLine",
 			"sap.m.sample.PlanningCalendarMinMax",
 			"sap.m.sample.PlanningCalendarModifyAppointments",
-			"sap.m.sample.PlanningCalendarWithLegend"]
+			"sap.m.sample.PlanningCalendarWithLegend",
+			"sap.m.sample.PlanningCalendarDnD"]
 		},
 		{
 		  "id": "sap.m.Popover",
@@ -1317,6 +1318,13 @@
 		  "samples" : [
 			"sap.m.sample.SplitContainer"
 		  ]
+		},
+		{
+		  "id": "sap.m.ColorPalette",
+		  "name": "Color Palette",
+		  "category": "User Input",
+		  "since": "1.54",
+		  "samples": ["sap.m.sample.ColorPalette"]
 		},
 		{
 		  "id": "sap.m.tutorial.walkthrough",
@@ -2873,10 +2881,20 @@
 		  "description": "PlanningCalendar inside the main part of a sap.ui.layout.DynamicSideContent and a sap.m.PlanningCalendarLegend inside the side part. The legend includes calendar and appointments sections."
 		},
 		{
+		  "id": "sap.m.sample.PlanningCalendarDnD",
+		  "name": "Planning Calendar - Drag and Drop",
+		  "description": "PlanningCalendar with draggable appointments"
+		},
+		{
 		  "id": "sap.m.sample.ImageContent",
 		  "name": "ImageContent",
 		  "description": "Shows ImageContent that can include an icon, a profile image, or a logo with a tooltip."
-		}
+		},
+		{
+		  "id": "sap.m.sample.ColorPalette",
+		  "name": "ColorPalette",
+		  "description": "The ColorPalette represents a predefined range of colors for easier selection. The control can be embedded in a form or can be opened as popover (by use of thin wrapper control sap.m.ColorPalettePopover."
+		 }
 		]
 	}
 }

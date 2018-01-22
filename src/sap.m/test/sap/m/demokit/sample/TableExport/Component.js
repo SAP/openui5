@@ -21,7 +21,8 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					files : [
 						"Table.view.xml",
 						"Table.controller.js",
-						"Formatter.js"
+						"Formatter.js",
+						"DemoPersoService.js"
 					]
 				}
 			}

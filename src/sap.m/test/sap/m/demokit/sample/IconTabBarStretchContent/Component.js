@@ -18,7 +18,8 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 			config : {
 				sample : {
 					files : [
-						"IconTabBar.view.xml"
+						"IconTabBar.view.xml",
+						"IconTabBar.controller.js"
 					]
 				}
 			}

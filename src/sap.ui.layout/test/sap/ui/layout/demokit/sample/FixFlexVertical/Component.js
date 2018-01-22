@@ -22,6 +22,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					stretch : true,
 					files : [
 						"V.view.xml",
+						"C.controller.js",
 						"style.css"
 					]
 				}

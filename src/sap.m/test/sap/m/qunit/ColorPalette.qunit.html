@@ -1,0 +1,308 @@
+<!DOCTYPE HTML>
+
+<!--
+  Tested control/class: sap.m.ColorPalette
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>ColorPalette - sap.m</title>
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-xx-bindingSyntax="complex"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-language="en-US">
+	</script>
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+
+	<script>
+		jQuery.sap.require("sap.m.ColorPalette");
+
+		ColorPalette = sap.m.ColorPalette,
+			Dialog = sap.m.Dialog;
+
+		var DEFAULT_COLORS = ["gold", "darkorange", "indianred", "darkmagenta", "cornflowerblue", "deepskyblue", "darkcyan",
+			"olivedrab", "darkslategray", "azure", "white", "lightgray", "darkgray", "dimgray", "black"];
+
+		QUnit.module("Internal API - todo - find a name");
+
+		QUnit.test("init", function (assert) {
+			//Act
+			var oCP = new ColorPalette();
+
+			// Assert
+			assert.strictEqual(oCP._bShowDefaultColorButton, false, "should lead to default value of _bShowDefaultColorButton");
+			assert.strictEqual(oCP._bShowMoreColorsButton, false, "should lead to default value of _bShowMoreColorsButton");
+
+			assert.deepEqual(oCP.onsapspace, oCP.ontap, "Keyboard handler for <sapspace> shuld be the same as for <tap>");
+			assert.deepEqual(oCP.onsapenter, oCP.ontap, "Keyboard handler for <sapenter> shuld be the same as for <tap>");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+		QUnit.test("exit", function (assert) {
+			//Prepare
+			var oCP = new ColorPalette(),
+				oSpyMoreColorsDialogDestroy,
+				oSpyItemNavDestroy,
+				oSpyRemoveDelegate,
+				oItemNavigation = new ColorPalette.prototype._ItemNavigation();
+
+			oCP._oMoreColorsDialog = new Dialog();
+			oCP._oItemNavigation = oItemNavigation;
+
+			oSpyMoreColorsDialogDestroy = this.spy(oCP._oMoreColorsDialog, "destroy");
+			oSpyItemNavDestroy = this.spy(oCP._oItemNavigation, "destroy");
+			oSpyRemoveDelegate = this.spy(oCP, "removeDelegate");
+
+			// Act
+			oCP.destroy();
+
+			// Assert
+			assert.equal(oSpyMoreColorsDialogDestroy.callCount, 1, "'More colors' dialog #destroy is called");
+			assert.strictEqual(this._oMoreColorsDialog, undefined, "There is no reference to the 'More colors' dialog");
+
+			assert.equal(oSpyItemNavDestroy.callCount, 1, "ItemNavigation#destroy is called");
+			assert.strictEqual(this._oItemNavigation, undefined, "There is no reference to the ItemNavigation");
+
+			assert.equal(oSpyRemoveDelegate.callCount, 1, "Call to removeDelegate should be executed");
+			assert.strictEqual(oSpyRemoveDelegate.getCall(0).args[0], oItemNavigation, "Delegate to the ItemNavigation" +
+				" instance should be removed");
+
+			// Cleanup
+			oSpyMoreColorsDialogDestroy.restore();
+			oSpyItemNavDestroy.restore();
+			oSpyRemoveDelegate.restore();
+		});
+
+
+		QUnit.test("ItemNavigation after rendering", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette();
+
+			oCP.placeAt("qunit-fixture");
+			// Act
+			oCP.onAfterRendering();
+
+			// Assert
+			assert.ok(oCP._oItemNavigation, ".. should be initialized");
+			assert.ok(oCP._oItemNavigation instanceof ColorPalette.prototype._ItemNavigation, "..should be of expected type");
+
+		});
+
+		QUnit.test(" _bShowDefaultColorButton - default value", function (assert) {
+			// Act
+			var oCP = new ColorPalette();
+
+			// Assert
+			assert.equal(oCP._getShowDefaultColorButton(), false, "..should be initially <false>");
+			assert.equal(oCP._getDefaultColorButton(), null, "..should not create a defaultColor button aggregation");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+
+		QUnit.test(" _setShowDefaultColorButton with invalid type", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				sInvalidType = "invalid type of string";
+
+			// Act
+			assert.throws(function () {
+
+					oCP._setShowDefaultColorButton(sInvalidType);
+				}, Error("Cannot set internal property 'showDefaultColorButton' - invalid value: " + sInvalidType),
+				"..should throw a certain exception");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+
+		QUnit.test(" _setShowDefaultColorButton, _getShowDefaultColorButton", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette();
+
+			// Act
+			oCP._setShowDefaultColorButton(true);
+
+			// Assert
+			assert.equal(oCP._getShowDefaultColorButton(), true, "..should be <true> after setter with <true> is called");
+			assert.ok(oCP._getDefaultColorButton(), "..should create a default button aggregation");
+			assert.equal(oCP._getDefaultColorButton().getVisible(), true, "..should setVisibility of the defaultColorButton accordingly");
+
+			// Act
+			oCP._setShowDefaultColorButton(false);
+
+			// Assert
+			assert.equal(oCP._getShowDefaultColorButton(), false, "..should be <false> after setter with <false> is called");
+			assert.equal(oCP._getDefaultColorButton().getVisible(), false, "..should setVisibility of the defaultColorButton accordingly");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+
+		QUnit.test(" _bShowMoreColorsButton - default value", function (assert) {
+			// Act
+			var oCP = new ColorPalette();
+
+			// Assert
+			assert.equal(oCP._getShowMoreColorsButton(), false, "..should be initially <false>");
+			assert.equal(oCP._getMoreColorsButton(), null, "..should not create moreColors button aggregation");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+		QUnit.test(" _setShowMoreColorsButton with invalid type", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				sInvalidType = "invalid type of string";
+
+			// Act
+			assert.throws(function () {
+
+					oCP._setShowMoreColorsButton(sInvalidType);
+				}, Error("Cannot set internal property 'showMoreColorsButton' - invalid value: " + sInvalidType),
+				"..should throw a certain exception");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+
+		QUnit.test(" _setShowMoreColorsButton, _getShowMoreColorsButton", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette();
+
+			// Act
+			oCP._setShowMoreColorsButton(true);
+
+			// Assert
+			assert.equal(oCP._getShowMoreColorsButton(), true, "..should be <true> after setter with <true> is called");
+			assert.ok(oCP._getMoreColorsButton(), null, "..should create moreColors button aggregation");
+			assert.equal(oCP._getMoreColorsButton().getVisible(), true, "..should setVisibility of the moreColors button accordingly");
+
+			// Act
+			oCP._setShowMoreColorsButton(false);
+
+			// Assert
+			assert.equal(oCP._getShowMoreColorsButton(), false, "..should be <false> after setter with <false> is called");
+			assert.equal(oCP._getMoreColorsButton().getVisible(), false, "..should setVisibility of the moreColors button accordingly");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+		QUnit.module("Public API");
+		QUnit.test("Property <colors> - default value", function (assert) {
+			// Act
+			var oCP = new ColorPalette();
+
+			// Assert
+			assert.deepEqual(oCP.getColors(), DEFAULT_COLORS, "should be as expected");
+			// Cleanup
+			oCP.destroy();
+		});
+
+		QUnit.test("Property <colors> - setColor with allowed amount of colors", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				aColors = ["green", "#fff000"],
+				oSpySetProperty = this.spy(oCP, "setProperty");
+
+			// Act
+			oCP.setColors(aColors);
+
+			// Assert
+			assert.equal(oSpySetProperty.callCount, 1, ".. should call setProperty");
+			assert.deepEqual(oSpySetProperty.getCall(0).args, ["colors", aColors], ".. with the given colors");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+		QUnit.test("Property <colors> - setColor with invalid color", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				aColors = ["greenn", "#fff000#"],
+				oSpySetProperty = this.spy(oCP, "setProperty"),
+				oSpyValidateProperty = this.spy(oCP, "validateProperty");
+
+			// Act
+			assert.throws(function () {
+					oCP.setColors(aColors);
+				}, '..should throw an exception with expected message'
+			);
+
+			assert.equal(oSpyValidateProperty.callCount, 1, ".. should delegate validation to the validateProperty");
+			assert.equal(oSpySetProperty.callCount, 0, ".. should not really call the setProperty");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+		QUnit.test("Property <colors> - setColor with valid colors, but less than allowed", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				aColors = DEFAULT_COLORS.slice().concat(["#FFFAAA"]);
+			oSpySetProperty = this.spy(oCP, "setProperty");
+
+			// Act
+			assert.throws(function () {
+					oCP.setColors(aColors);
+				},
+				Error("Cannot set property 'colors' - array must has minimum 2 and maximum 15 elements"),
+				"..should throw an exception with expected message"
+			);
+			assert.equal(oSpySetProperty.callCount, 0, ".. should not really call the setProperty");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+		QUnit.test("Property <colors> - setColor with valid colors, but more than allowed", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				aColors = ["green"],
+				oSpySetProperty = this.spy(oCP, "setProperty");
+
+			// Act
+			assert.throws(function () {
+					oCP.setColors(aColors);
+				},
+				Error("Cannot set property 'colors' - array must has minimum 2 and maximum 15 elements"),
+				'.. should throw an exception with expected message'
+			);
+
+			assert.equal(oSpySetProperty.callCount, 0, ".. should not really set call the setProperty");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+
+	</script>
+</head>
+<body class="sapUiBody" role="application">
+<h1 id="qunit-header">QUnit tests: sap.m.DatePicker</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<div id="qunit-fixture"></div>
+<ol id="qunit-tests"></ol>
+</body>
+</html>

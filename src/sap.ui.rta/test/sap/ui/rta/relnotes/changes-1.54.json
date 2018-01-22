@@ -193,6 +193,24 @@
         "type": "FIX",
         "text": "sap.ui.rta: Local changes used when setting transports on reset",
         "references": []
+      },
+      {
+        "id": "85944f8a13001d363ebb705e373c8e7d6f2e7230",
+        "type": "FEATURE",
+        "text": " sap.ui.rta: Appvariant Overview dialog view for SAP developer",
+        "references": []
+      },
+      {
+        "id": "839fe13ca5a455c6365174dffa661d6ab671427f",
+        "type": "FIX",
+        "text": " Fix bug in Sorting and support deletion of variants",
+        "references": []
+      },
+      {
+        "id": "31e730cb5093bbadebe8818df063076adce39e5d",
+        "type": "FIX",
+        "text": " Move variant title property to content of content of variant",
+        "references": []
       }
     ]
   }

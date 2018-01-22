@@ -103,6 +103,24 @@
         "type": "FIX",
         "text": " sap.m.RatingIndicator: Unselected icons used to have a wrong border color in contrast themes",
         "references": []
+      },
+      {
+        "id": "9af9d4d8a6188b25876c657e14e8928131ee484b",
+        "type": "FEATURE",
+        "text": " sap.m.ColorPalette: new control implemented.",
+        "references": []
+      },
+      {
+        "id": "f35a6b9088079a65b7cb5c4efd55dd4237d8c4da",
+        "type": "FIX",
+        "text": " Table: Selected checkbox not visible properly",
+        "references": []
+      },
+      {
+        "id": "eaf3bce54050da573d6427e2aa75a3e995ddccc8",
+        "type": "FIX",
+        "text": " sap.m.Dialog: correct header, subheader and footer DOM structure",
+        "references": []
       }
     ]
   }
