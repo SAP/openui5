@@ -302,7 +302,7 @@ span.sapMBtnInner.sapMBtnAccept {
 	color:            @sapUiButtonAcceptTextColor;
 }
 
-:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnAccept > .sapMBtnIcon {
+:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnAccept:not(.sapMBtnActive):not(.sapMToggleBtnPressed) > .sapMBtnIcon {
 	color:            @sapUiButtonAcceptTextColor;
 }
 
@@ -326,7 +326,7 @@ span.sapMBtnInner.sapMBtnReject {
 	color:            @sapUiButtonRejectTextColor;
 }
 
-:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnReject > .sapMBtnIcon {
+:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnReject:not(.sapMBtnActive):not(.sapMToggleBtnPressed) > .sapMBtnIcon {
 	color:            @sapUiButtonRejectTextColor;
 }
 
