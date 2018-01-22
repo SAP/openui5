@@ -193,7 +193,8 @@ sap.ui.define([
 			oContext.created().then(function () {
 				that._setSalesOrderBindingContext(oContext);
 				oUiModel.setProperty("/bCreateSalesOrderPending", false);
-				MessageBox.success("SalesOrder created: " + oContext.getProperty("SalesOrderID"));
+				MessageBox.success("SalesOrder created: " + oContext.getProperty("SalesOrderID")
+					+ ", " + oContext.getProperty("SO_2_BP/CompanyName"));
 			}, function (oError) {
 				// delete of transient entity
 				oUiModel.setProperty("/bCreateSalesOrderPending", false);

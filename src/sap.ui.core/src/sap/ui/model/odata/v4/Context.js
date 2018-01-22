@@ -113,8 +113,11 @@ sap.ui.define([
 
 	/**
 	 * Returns a promise that is resolved without data when the entity represented by this context
-	 * has been created in the backend. As long as it is not yet resolved or rejected the entity
-	 * represented by this context is transient.
+	 * has been created in the backend and all selected properties of this entity are available.
+	 * Expanded navigation properties are only available if the context's binding is refreshable.
+	 *
+	 * As long as the promise is not yet resolved or rejected, the entity represented by this
+	 * context is transient.
 	 *
 	 * @returns {Promise}
 	 *   A promise that is resolved without data when the entity represented by this context has
@@ -127,6 +130,7 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#create}.
 	 *
 	 * @public
+	 * @see sap.ui.model.odata.v4.ODataListBinding#isRefreshable
 	 * @since 1.43.0
 	 */
 	Context.prototype.created = function () {

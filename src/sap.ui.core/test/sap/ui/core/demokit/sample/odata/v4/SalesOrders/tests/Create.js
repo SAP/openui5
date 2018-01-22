@@ -85,6 +85,7 @@ sap.ui.define([
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
 			Then.onTheMainPage.checkID(0, "");
 			When.onTheMainPage.pressSaveSalesOrdersButton();
+			Then.onTheSuccessInfo.checkMessage(/SalesOrder created: \d*, SAP/);
 			When.onTheSuccessInfo.confirm();
 			if (!bRealOData) {
 				Then.onTheMainPage.checkSalesOrdersCount(11);
