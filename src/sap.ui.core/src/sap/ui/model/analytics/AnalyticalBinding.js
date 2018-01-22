@@ -1074,7 +1074,7 @@ sap.ui.define([
 	 */
 	AnalyticalBinding.prototype.updateAnalyticalInfo = function(aColumns, bForceChange) {
 		var oDimensionDetails,
-			oEntityType = this.oAnalyticalQueryResult.getEntityType(),
+			oEntityType,
 			aHierarchyProperties,
 			that = this;
 
@@ -1172,6 +1172,7 @@ sap.ui.define([
 			return;
 		}
 
+		oEntityType = this.oAnalyticalQueryResult.getEntityType();
 		// make a deep copy of the column definition, so we can ignore duplicate calls the next time, see above
 		// copy is necessary because the original analytical info will be changed and used internally, through out the binding "coding"
 		this._aLastChangedAnalyticalInfo = [];
