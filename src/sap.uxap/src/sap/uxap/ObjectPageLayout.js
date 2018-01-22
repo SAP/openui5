@@ -2346,6 +2346,7 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._getClosestScrolledSectionId = function (iScrollTop, iPageHeight, bSubSectionsOnly) {
 		bSubSectionsOnly = !!bSubSectionsOnly;
+		iScrollTop = Math.ceil(iScrollTop);
 
 		if (this.getUseIconTabBar() && this._oCurrentTabSection) {
 			return this._oCurrentTabSection.getId();
