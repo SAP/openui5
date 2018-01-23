@@ -58,15 +58,17 @@ sap.ui.define([
 	};
 
 	VariantController.prototype._setChangeFileContent = function (oChangeFileContent, oComponent) {
-		if (oChangeFileContent && oChangeFileContent.changes && oChangeFileContent.changes.variantSection) {
+		var oCacheEntry = Cache.getEntry(this.getComponentName(), this.getAppVersion());
+		if (Object.keys(this._mVariantManagement).length === 0) {
 			this._mVariantManagement = {};
+		}
+		if (oChangeFileContent && oChangeFileContent.changes && oChangeFileContent.changes.variantSection) {
 			Object.keys(oChangeFileContent.changes.variantSection).forEach(function (sVariantManagementReference) {
 				this._mVariantManagement[sVariantManagementReference] = {};
 				var oVariantManagementReference = oChangeFileContent.changes.variantSection[sVariantManagementReference];
 				var aVariants = oVariantManagementReference.variants.concat().sort(this.compareVariants);
 				var sVariantFromUrl;
 				var aURLVariants = Utils.getTechnicalURLParameterValues(oComponent, "sap-ui-fl-control-variant-id");
-				var oCacheEntry;
 
 				var iIndex = -1;
 				aVariants.forEach(function (oVariant, index) {
@@ -103,9 +105,9 @@ sap.ui.define([
 
 				//to set default variant from setDefault variantManagement changes
 				this._applyChangesOnVariantManagement(this._mVariantManagement[sVariantManagementReference]);
-				oCacheEntry = Cache.getEntry(this.getComponentName(), this.getAppVersion());
-				oCacheEntry.file.changes.variantSection = this._mVariantManagement;
 			}.bind(this));
+			// Reference cache entry with map - to keep in sync
+			oCacheEntry.file.changes.variantSection = this._mVariantManagement;
 		}
 	};
 

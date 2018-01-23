@@ -707,7 +707,7 @@ sap.ui.require([
 		assert.ok(this.oModel.fnManageClick, "the function 'this.fnManageClick' is available afterwards");
 	});
 
-	QUnit.test("when calling 'handleSave' with parameter from SaveAs button and default box checked", function(assert) {
+	QUnit.test("when calling '_handleSave' with parameter from SaveAs button and default box checked", function(assert) {
 		var done = assert.async();
 
 		var oVariantManagement = new VariantManagement("variantMgmtId1");
@@ -744,7 +744,7 @@ sap.ui.require([
 		var fnSetVariantPropertiesStub = sandbox.stub(this.oModel, "_setVariantProperties");
 		var fnSaveAllStub = sandbox.stub(this.oFlexController, "saveAll");
 
-		return this.oModel.handleSave(oEvent).then(function() {
+		return this.oModel._handleSave(oEvent).then(function() {
 			assert.ok(fnCopyVariantStub.calledOnce, "CopyVariant is called");
 			assert.ok(fnRemoveDirtyChangesStub.calledOnce, "RemoveDirtyChanges is called");
 			assert.ok(fnSetVariantPropertiesStub.calledOnce, "SetVariantProperties is called");
@@ -755,7 +755,7 @@ sap.ui.require([
 		}.bind(this));
 	});
 
-	QUnit.test("when calling 'handleSave' with parameter from SaveAs button and default box unchecked", function(assert) {
+	QUnit.test("when calling '_handleSave' with parameter from SaveAs button and default box unchecked", function(assert) {
 		var done = assert.async();
 
 		var oVariantManagement = new VariantManagement("variantMgmtId1");
@@ -792,7 +792,7 @@ sap.ui.require([
 		var fnSetVariantPropertiesStub = sandbox.stub(this.oModel, "_setVariantProperties");
 		var fnSaveAllStub = sandbox.stub(this.oFlexController, "saveAll");
 
-		return this.oModel.handleSave(oEvent).then(function() {
+		return this.oModel._handleSave(oEvent).then(function() {
 			assert.ok(fnCopyVariantStub.calledOnce, "CopyVariant is called");
 			assert.ok(fnRemoveDirtyChangesStub.calledOnce, "RemoveDirtyChanges is called");
 			assert.equal(fnSetVariantPropertiesStub.callCount, 0, "SetVariantProperties is not called");
@@ -803,7 +803,7 @@ sap.ui.require([
 		}.bind(this));
 	});
 
-	QUnit.test("when calling 'handleSave' with parameter from Save button", function(assert) {
+	QUnit.test("when calling '_handleSave' with parameter from Save button", function(assert) {
 		var done = assert.async();
 
 		var oVariantManagement = new VariantManagement("variantMgmtId1");
@@ -829,7 +829,7 @@ sap.ui.require([
 		var fnSetVariantPropertiesStub = sandbox.stub(this.oModel, "_setVariantProperties");
 		var fnSaveAllStub = sandbox.stub(this.oFlexController, "saveAll");
 
-		return this.oModel.handleSave(oEvent).then(function() {
+		return this.oModel._handleSave(oEvent).then(function() {
 			assert.equal(fnCopyVariantStub.callCount, 0, "CopyVariant is not called");
 			assert.equal(fnRemoveDirtyChangesStub.callCount, 0, "RemoveDirtyChanges is not called");
 			assert.equal(fnSetVariantPropertiesStub.callCount, 0, "SetVariantProperties is not called");

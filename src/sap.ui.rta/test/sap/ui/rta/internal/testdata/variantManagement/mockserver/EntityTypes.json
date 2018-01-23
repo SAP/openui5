@@ -8,6 +8,9 @@
         },
 		"VMTitle": "Object Page Title",
 	  	"VMSubtitle": "Object Page Subtitle",
+	  	"SectionTitle1": "Object page section with form",
+	  	"SectionTitle2":  "Object page section navproperty",
+  		"SectionTitle3": "Object page section with variant management inside",
         "Property01": "propValue01",
         "AccountingDocumentKeyComplex" : {
         	"ComplexProperty01" : "some complex Type data"

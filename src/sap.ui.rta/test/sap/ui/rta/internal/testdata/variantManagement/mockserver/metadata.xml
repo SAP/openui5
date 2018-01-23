@@ -37,15 +37,7 @@
 					Nullable="false" MaxLength="25"
 					sap:label="Entity1-Ignored Property" sap:quickinfo="Entity1-Ignored Property QuickInfo"
 					sap:creatable="false" sap:sortable="false" />
-				<Property Name="Property06" Type="Edm.String"
-					Nullable="false" MaxLength="25"
-					sap:label="Entity1-Property06-Unbound" sap:quickinfo="Unbound Property"
-					sap:creatable="false" sap:sortable="false" />
-				<Property Name="Property07" Type="Edm.String"
-					Nullable="false" MaxLength="25"
-					sap:label="Entity1-Property07-ignored-unbound" sap:quickinfo="Unbound Property"
-					sap:creatable="false" sap:sortable="false" />
-					<Property Name="Property08" Type="Edm.String"
+				<Property Name="Property08" Type="Edm.String"
 					Nullable="false" MaxLength="25" sap:quickinfo="Property without sap:label"
 					sap:creatable="false" sap:sortable="false" />
 				<Property Name="EntityType01_Complex" Type="VariantManagement.ComplexType03"

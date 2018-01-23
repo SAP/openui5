@@ -617,7 +617,7 @@ sap.ui.define([
 		};
 	};
 
-	VariantModel.prototype.handleCurrentVariantChange = function(oEvent) {
+	VariantModel.prototype._handleCurrentVariantChange = function(oEvent) {
 		var oPropertyBinding = oEvent.getSource();
 		var sVariantManagementReference = oPropertyBinding.getContext().getPath().replace(/^\//, '');
 
@@ -626,7 +626,7 @@ sap.ui.define([
 		}
 	};
 
-	VariantModel.prototype.handleSave = function(oEvent) {
+	VariantModel.prototype._handleSave = function(oEvent) {
 		var oVariantManagementControl = oEvent.getSource();
 		var bSetDefault = oEvent.getParameter("def");
 		var oAppComponent = Utils.getAppComponentForControl(this.oComponent) || Utils.getAppComponentForControl(oVariantManagementControl);
@@ -688,11 +688,11 @@ sap.ui.define([
 			//control property updateVariantInURL set initially
 			this.oData[sVariantManagementReference].updateVariantInURL = oVariantManagementControl.getUpdateVariantInURL();
 			//attach binding change event on VariantManagement control title
-			oVariantManagementControl.getTitle().getBinding("text").attachChange(this.handleCurrentVariantChange, this);
+			oVariantManagementControl.getTitle().getBinding("text").attachChange(this._handleCurrentVariantChange, this);
 
 			this._setModelPropertiesForControl(sVariantManagementReference, false, oVariantManagementControl);
 
-			oVariantManagementControl.attachSave(this.handleSave, this);
+			oVariantManagementControl.attachSave(this._handleSave, this);
 		}
 	};
 
