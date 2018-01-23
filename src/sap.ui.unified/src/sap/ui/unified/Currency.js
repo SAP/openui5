@@ -67,6 +67,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/format/N
 				value : {type : "float", group : "Appearance", defaultValue : 0},
 
 				/**
+				 * Determines the currency value as a string.
+				 *
+				 * String value is useful if you want to store really big values. If there are more than 21 digits
+				 * before the decimal point or if the number starts with “0.” followed by more than five zeros, it is
+				 * represented in exponential form. In these cases use the <code>stringValue</code> property to keep the number in
+				 * decimal format.
+				 *
+				 * <b>Note:</b> If set, it will take precedence over the <code>value</code> property.
+				 * @since 1.54
+				 */
+				stringValue : {type : "string", group : "Appearance", defaultValue : null},
+
+				/**
 				 * Determines the displayed currency code (ISO 4217).
 				 *
 				 * <b>Note:</b> If a * character is set instead of currency code,
@@ -277,7 +290,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/format/N
 			// Note: Take into account currencies that do not have decimal values. Example: JPY
 			iMaxPrecision = (iMaxPrecision <= 0 && iCurrencyDigits > 0 ? iMaxPrecision - 1 : iMaxPrecision);
 			iPadding = iMaxPrecision - iCurrencyDigits;
-			sFormattedCurrencyValue = this._oFormat.format(this.getValue(), sCurrency);
+			sFormattedCurrencyValue = this._oFormat.format(this.getStringValue() || this.getValue(), sCurrency);
 
 			if (iPadding == iMaxPrecision && iMaxPrecision > 0) {
 				sFormattedCurrencyValue += Currency.PUNCTUATION_SPACE;
