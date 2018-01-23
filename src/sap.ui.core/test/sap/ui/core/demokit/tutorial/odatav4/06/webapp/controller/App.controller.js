@@ -19,10 +19,12 @@ sap.ui.define([
 			var oJSONData = {
 				busy : false,
 				hasUIChanges : false,
+				usernameEmpty : true,
 				order : 0
 			};
 			var oModel = new JSONModel(oJSONData);
 			this.getView().setModel(oModel, "appView");
+			this.getView().setModel(sap.ui.getCore().getMessageManager().getMessageModel(), "message");
 		},
 
 
@@ -35,17 +37,28 @@ sap.ui.define([
 		 * Create a new entry.
 		 */
 		onCreate : function () {
-			this.byId("peopleList").getBinding("items").create({
-				"UserName" : "",
-				"FirstName" : "",
-				"LastName" : "",
-				"Age" : ""
-			});
+			var oList = this.byId("peopleList"),
+				oBinding = oList.getBinding("items"),
+				// Create a new entry through the table's list binding
+				oContext = oBinding.create({
+					"UserName" : "",
+					"FirstName" : "",
+					"LastName" : "",
+					"Age" : "18"
+				});
+
 			this._setUIChanges();
-			this.byId("peopleList").getItems()[0].focus();
-			this.byId("peopleList").getItems()[0].setSelected(true);
-			// OData Service demands an valid age >0, but the field gets initialized with 0
-			this.byId("peopleList").getItems()[0].getCells()[3].setValue(18);
+			// Indicate that the new username is initial
+			this.getView().getModel("appView").setProperty("/usernameEmpty", true);
+
+			// Select and focus the table row that contains the newly created entry
+			oList.getItems().some(function (oItem) {
+				if (oItem.getBindingContext() === oContext) {
+					oItem.focus();
+					oItem.setSelected(true);
+					return true;
+				}
+			});
 		},
 
 		/**
@@ -57,6 +70,10 @@ sap.ui.define([
 				this._setUIChanges();
 			} else {
 				this._setUIChanges(true);
+				// Check if the username in the changed table row is empty and set the appView property accordingly
+				if (oEvt.getSource().getParent().getBindingContext().getProperty("UserName")) {
+					this.getView().getModel("appView").setProperty("/usernameEmpty", false);
+				}
 			}
 		},
 
@@ -66,11 +83,12 @@ sap.ui.define([
 		onRefresh : function () {
 			var oBinding = this.byId("peopleList").getBinding("items");
 
-			if (oBinding && oBinding.hasPendingChanges()) {
-				MessageBox.error(this._getText("refreshFailedMessage"));
+			if (oBinding.hasPendingChanges()) {
+				MessageBox.error(this._getText("refreshNotPossibleMessage"));
 				return;
 			}
 			oBinding.refresh();
+			MessageToast.show(this._getText("refreshSuccessMessage"));
 		},
 
 		/**
@@ -91,7 +109,7 @@ sap.ui.define([
 				this._setBusy(false);
 				this._setUIChanges();
 				this.byId("peopleList").getBinding("items").refresh();
-				MessageToast.show(this._getText("creationSuccessMessage"));
+				MessageToast.show(this._getText("saveSuccessMessage"));
 			}.bind(this);
 			var fnError = function (oError) {
 				this._setBusy(false);

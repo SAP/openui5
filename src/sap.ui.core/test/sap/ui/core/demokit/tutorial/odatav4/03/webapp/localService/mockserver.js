@@ -27,11 +27,12 @@ sap.ui.define([
 			// Register the requests for which responses should be faked.
 			oSandbox.server.respondWith(rBaseUrl, handleAllRequests);
 
-			// Apply a filter to the fake XmlHttpRequest. Otherwise, ALL requests (e.g. our component, views etc.) would be intercepted.
+			// Apply a filter to the fake XmlHttpRequest.
+			// Otherwise, ALL requests (e.g. for the component, views etc.) would be intercepted.
 			sinon.FakeXMLHttpRequest.useFilters = true;
 			sinon.FakeXMLHttpRequest.addFilter(function (sMethod, sUrl) {
 				// If the filter returns true, the request will NOT be faked.
-				// We only want to fake requests that go to 'our' service.
+				// We only want to fake requests that go to the intended service.
 				return !rBaseUrl.test(sUrl);
 			});
 
@@ -97,7 +98,7 @@ sap.ui.define([
 	 * @returns {string} the user name.
 	 */
 	function getUserKeyFromUrl(sUrl) {
-		var aMatches = sUrl.match(/People\('(.+)'\)/);
+		var aMatches = sUrl.match(/People\('(.*)'\)/);
 		if (!Array.isArray(aMatches) || aMatches.length !== 2) {
 			throw new Error("Could not find a user key in " + sUrl);
 		}
@@ -463,7 +464,7 @@ sap.ui.define([
 			aParts = aOuterParts;
 		}
 
-		// If this request has several change sets, then our response must start with the outer boundary and
+		// If this request has several change sets, then the response must start with the outer boundary and
 		// content header
 		if (sInnerBoundary) {
 			sPartBoundary = "--" + sInnerBoundary;

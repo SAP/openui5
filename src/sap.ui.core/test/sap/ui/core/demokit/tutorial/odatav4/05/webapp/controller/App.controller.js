@@ -1,12 +1,13 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
+	"sap/m/MessageToast",
 	"sap/m/MessageBox",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterType",
 	"sap/ui/model/json/JSONModel"
-], function (Controller, MessageBox, Sorter, Filter, FilterOperator, FilterType, JSONModel) {
+], function (Controller, MessageToast, MessageBox, Sorter, Filter, FilterOperator, FilterType, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.tutorial.odatav4.controller.App", {
@@ -35,11 +36,12 @@ sap.ui.define([
 		onRefresh : function () {
 			var oBinding = this.byId("peopleList").getBinding("items");
 
-			if (oBinding && oBinding.hasPendingChanges()) {
-				MessageBox.error(this._getText("refreshFailedMessage"));
+			if (oBinding.hasPendingChanges()) {
+				MessageBox.error(this._getText("refreshNotPossibleMessage"));
 				return;
 			}
 			oBinding.refresh();
+			MessageToast.show(this._getText("refreshSuccessMessage"));
 		},
 
 		/**

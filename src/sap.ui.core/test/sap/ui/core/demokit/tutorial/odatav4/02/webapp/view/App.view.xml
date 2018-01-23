@@ -13,8 +13,7 @@
 						growingThreshold="10"
 						items="{
 							path: '/People'
-						}"
-						mode="SingleSelectMaster">
+						}">
 						<headerToolbar>
 							<OverflowToolbar>
 								<content>
