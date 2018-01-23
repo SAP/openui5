@@ -1656,8 +1656,8 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
 	box-sizing: border-box;
 }
 
-.sapUiTheme-sap_belize .apiDetailPage .sapMPanel.borrowedMethodsPanel .sapMPanelContent,
-.sapUiTheme-sap_belize_plus .apiDetailPage .sapMPanel.borrowedMethodsPanel .sapMPanelContent {
+.sapUiTheme-sap_belize .apiDetailPage .sapMPanel.borrowedListPanel .sapMPanelContent,
+.sapUiTheme-sap_belize_plus .apiDetailPage .sapMPanel.borrowedListPanel .sapMPanelContent {
 	padding: 0;
 }
 
