@@ -3825,11 +3825,19 @@
 	QUnit.test("Tab", function (assert) {
 		var oElem = setFocusOutsideOfTable(assert, "Focus1");
 		simulateTabEvent(oElem, false);
+		// Due to changed BusyIndicator handling - BusyIndicator is now tabbable
+		oElem = jQuery.sap.domById(oTable.getId() + "-busyIndicator");
+		checkFocus(oElem, assert);
+		simulateTabEvent(oElem, false);
 		checkFocus(jQuery.sap.domById("Focus2"), assert);
 	});
 
 	QUnit.test("Shift+Tab", function (assert) {
 		var oElem = setFocusOutsideOfTable(assert, "Focus2");
+		simulateTabEvent(oElem, true);
+		// Due to changed BusyIndicator handling - BusyIndicator is now tabbable
+		oElem = jQuery.sap.domById(oTable.getId() + "-busyIndicator");
+		checkFocus(oElem, assert);
 		simulateTabEvent(oElem, true);
 		checkFocus(jQuery.sap.domById("Focus1"), assert);
 	});
