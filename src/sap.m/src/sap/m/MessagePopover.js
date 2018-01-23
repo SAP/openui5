@@ -43,8 +43,9 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * The message popover is triggered from a messaging button in the footer toolbar. If an error has occurred at any validation point,
 		 * the total number of messages should be incremented, but the user's work shouldn't be interrupted.
 		 * <h3>Responsive Behavior</h3>
-		 * On mobile phones, the message popover is automatically shown in full screen mode.
-		 * On desktop and tablet, the message popover opens in a popover. On desktop the opened popover is resizable.
+		 * On mobile phones, the message popover is automatically shown in full screen mode.<br>
+		 * On desktop and tablet, the message popover opens in a popover.<br>
+		 * On desktop the opened popover is resizable if it is placed in a {@link sap.m.Toolbar}, {@link sap.m.Bar} or used in {@link sap.f.semantic.SemanticPage}
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
