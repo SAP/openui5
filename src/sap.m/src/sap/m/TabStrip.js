@@ -3,8 +3,8 @@
  */
 
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/delegate/ItemNavigation',
-	'sap/ui/base/ManagedObject', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/InvisibleText', './AccButton', './TabStripItem', 'sap/m/Select', 'sap/m/SelectList', 'sap/ui/Device', 'sap/ui/core/Renderer', 'sap/ui/core/ResizeHandler', 'sap/m/library', 'sap/ui/core/Icon', 'sap/m/SelectRenderer', 'sap/m/SelectListRenderer'],
-	function(jQuery, Control, IconPool, ItemNavigation, ManagedObject, ScrollEnablement, InvisibleText, AccButton, TabStripItem, Select, SelectList, Device, Renderer, ResizeHandler, library, Icon, SelectRenderer, SelectListRenderer) {
+	'sap/ui/base/ManagedObject', 'sap/ui/core/delegate/ScrollEnablement', './AccButton', './TabStripItem', 'sap/m/Select', 'sap/m/SelectList', 'sap/ui/Device', 'sap/ui/core/Renderer', 'sap/ui/core/ResizeHandler', 'sap/m/library', 'sap/ui/core/Icon', 'sap/m/SelectRenderer', 'sap/m/SelectListRenderer'],
+	function(jQuery, Control, IconPool, ItemNavigation, ManagedObject, ScrollEnablement, AccButton, TabStripItem, Select, SelectList, Device, Renderer, ResizeHandler, library, Icon, SelectRenderer, SelectListRenderer) {
 		"use strict";
 
 		// shortcut for sap.m.SelectType
@@ -188,26 +188,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 */
 		TabStrip.SCROLL_ANIMATION_DURATION = sap.ui.getCore().getConfiguration().getAnimation() ? 500 : 0;
 
-		/**
-		 * <code>TabStripItem</code> states translations
-		 *
-		 * @enum
-		 * @type {{closable: sap.ui.core.InvisibleText, modified: sap.ui.core.InvisibleText, notModified: sap.ui.core.InvisibleText}}
-		 */
-		TabStrip.ARIA_STATIC_TEXTS = {
-			/**
-			 * Holds the static text for "Closable" item that should be read by screen reader
-			 */
-			closable: new InvisibleText({text: oRb.getText("TABSTRIP_ITEM_CLOSABLE")}).toStatic(),
-			/**
-			 * Holds the static text for "Unsaved" item that should be read by screen reader
-			 */
-			modified: new InvisibleText({text: oRb.getText("TABSTRIP_ITEM_MODIFIED")}).toStatic(),
-			/**
-			 * Holds the static text for "Saved" item that should be read by screen reader
-			 */
-			notModified:  new InvisibleText({text: oRb.getText("TABSTRIP_ITEM_NOT_MODIFIED")}).toStatic()
-		};
 
 		/**
 		 * Initializes the control.

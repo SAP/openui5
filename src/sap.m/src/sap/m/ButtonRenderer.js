@@ -2,9 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/library', 'sap/ui/core/IconPool', 'sap/m/library', 'sap/m/Button'],
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/library', 'sap/ui/core/IconPool', 'sap/m/library', 'sap/ui/core/InvisibleText'],
 
-	function(jQuery, Device, coreLibrary, IconPool, library, Button) {
+	function(jQuery, Device, coreLibrary, IconPool, library, InvisibleText) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -62,21 +62,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/library', 'sap
 
 		//ARIA attributes
 		var mAccProps = {};
-		var sTextId = "";
 
-		switch (sType) {
-		case ButtonType.Accept:
-			sTextId = Button._oStaticAcceptText.getId();
-			break;
-		case ButtonType.Reject:
-			sTextId = Button._oStaticRejectText.getId();
-			break;
-		case ButtonType.Emphasized:
-			sTextId = Button._oStaticEmphasizedText.getId();
-			break;
-		default: // No need to do anything for other button types
-			break;
-		}
+		var sTextId = ButtonRenderer.getButtonTypeAriaLabelId(sType);
 		if (sTextId) {
 			mAccProps["describedby"] = {value: sTextId, append: true};
 		}
@@ -269,6 +256,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/library', 'sap
 			oRm.writeAttribute("tabindex", -1);
 		}
 	}
+
+	var mARIATextKeys = {
+		Accept: "BUTTON_ARIA_TYPE_ACCEPT",
+		Reject: "BUTTON_ARIA_TYPE_REJECT",
+		Emphasized: "BUTTON_ARIA_TYPE_EMPHASIZED"
+	};
+
+	ButtonRenderer.getButtonTypeAriaLabelId = function(sType) {
+		return InvisibleText.getStaticId("sap.m", mARIATextKeys[sType]);
+	};
 
 	return ButtonRenderer;
 

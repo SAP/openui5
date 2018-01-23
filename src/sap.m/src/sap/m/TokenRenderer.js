@@ -3,8 +3,8 @@
 * ${copyright}
 
 */
-sap.ui.define(["sap/ui/core/library"],
-	function(coreLibrary) {
+sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleText"],
+	function(coreLibrary, InvisibleText) {
 	"use strict";
 
 
@@ -56,14 +56,14 @@ sap.ui.define(["sap/ui/core/library"],
 
 		//ARIA attributes
 		oAccAttributes.describedby = {
-			value: oControl._sAriaTokenLabelId,
+			value: InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_LABEL"),
 			append: true
 		};
 
 		if (oControl.getEditable()) {
 			oAccAttributes.describedby = {
-					value: oControl._sAriaTokenDeletableId,
-					append: true
+				value: InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_DELETABLE"),
+				append: true
 			};
 		}
 

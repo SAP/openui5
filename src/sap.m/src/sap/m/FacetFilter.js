@@ -1809,14 +1809,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 				}
 			});
 
-			var sFacetFilterText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("FACETFILTER_ARIA_FACET_FILTER"),
-				sInvisibleLabelId = new InvisibleText({text: sFacetFilterText}).toStatic().getId();
-
-			this._aOwnedLabels.push(sInvisibleLabelId);
-
 			oSummaryBar._setRootAccessibilityRole("button");
-			oSummaryBar._sInternalAriaLabelId = sInvisibleLabelId;
-
 			this.setAggregation("summaryBar", oSummaryBar);
 		}
 		return oSummaryBar;

@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['./TabStripItem', './TabStrip', 'sap/ui/Device'], function(TabStripItem, TabStrip, Device) {
+sap.ui.define(['./TabStripItem', 'sap/ui/Device', 'sap/ui/core/InvisibleText'], function(TabStripItem,  Device, InvisibleText) {
 	"use strict";
 
 	/**
@@ -244,9 +244,9 @@ sap.ui.define(['./TabStripItem', './TabStrip', 'sap/ui/Device'], function(TabStr
 	 */
 	function getTabStripItemAccAttributes(oItem, oTabStripParent, oSelectedItem) {
 		var mAccAttributes = { role: "tab"},
-			sDescribedBy = TabStrip.ARIA_STATIC_TEXTS.closable.getId() + " ";
+			sDescribedBy = InvisibleText.getStaticId("sap.m", "TABSTRIP_ITEM_CLOSABLE") + " ";
 
-		sDescribedBy += oItem.getModified() ? TabStrip.ARIA_STATIC_TEXTS.modified.getId() : TabStrip.ARIA_STATIC_TEXTS.notModified.getId();
+		sDescribedBy += InvisibleText.getStaticId("sap.m", oItem.getModified() ? "TABSTRIP_ITEM_MODIFIED" : "TABSTRIP_ITEM_NOT_MODIFIED");
 		mAccAttributes["describedby"] = sDescribedBy;
 		mAccAttributes["labelledby"] = getTabTextDomId(oItem);
 		if (oTabStripParent && oTabStripParent.getRenderer && oTabStripParent.getRenderer().getContentDomId) {

@@ -796,19 +796,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		};
 
 		Select.prototype._getPickerHiddenLabelId = function() {
-			if (!sap.ui.getCore().getConfiguration().getAccessibility()) {
-				return "";
-			}
-
-			// Load the resources
-			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-
-			if (!Select._sPickerHiddenLabelId) {
-				Select._sPickerHiddenLabelId = new InvisibleText({
-					text: oResourceBundle.getText("INPUT_AVALIABLE_VALUES")
-				}).toStatic().getId();
-			}
-			return Select._sPickerHiddenLabelId;
+			return InvisibleText.getStaticId("sap.m", "INPUT_AVALIABLE_VALUES");
 		};
 
 		Select.prototype.updatePickerHeaderTitle = function() {
