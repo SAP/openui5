@@ -196,9 +196,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 		}.bind(this);
 
 		var fnError = function(oParams){
-			var oError = { message : oParams.textStatus, statusCode : oParams.request.status, statusText : oParams.request.statusText, responseText : oParams.request.responseText};
-			jQuery.sap.log.fatal("The following problem occurred: " + oParams.textStatus, oParams.request.responseText + ","
-						+ oParams.request.status + "," + oParams.request.statusText);
+			var oError = { message : oParams.textStatus, statusCode : oParams.status, statusText : oParams.statusText, responseText : oParams.responseText};
+			jQuery.sap.log.fatal("The following problem occurred: " + oParams.textStatus, oParams.responseText + ","
+						+ oParams.status + "," + oParams.statusText);
 
 			this.fireRequestCompleted({url : sURL, type : sType, async : bAsync, headers: mHeaders,
 				info : "cache=" + bCache + ";bMerge=" + bMerge, infoObject: {cache : bCache, merge : bMerge}, success: false, errorobject: oError});
