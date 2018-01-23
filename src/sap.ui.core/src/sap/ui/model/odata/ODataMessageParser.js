@@ -394,37 +394,38 @@ ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mReque
 		} else if (mFunctionInfo.returnType) {
 			mEntityType = this._metadata._getEntityTypeByName(mFunctionInfo.returnType);
 		}
+		if (mEntityType){
+			var mEntitySet = this._metadata._getEntitySetByType(mEntityType);
 
-		var mEntitySet = this._metadata._getEntitySetByType(mEntityType);
+			if (mEntitySet && mEntityType && mEntityType.key && mEntityType.key.propertyRef) {
 
-		if (mEntitySet && mEntityType && mEntityType.key && mEntityType.key.propertyRef) {
+				var sId = "";
+				var sParam;
 
-			var sId = "";
-			var sParam;
-
-			if (mEntityType.key.propertyRef.length === 1) {
-				// Just the ID in brackets
-				sParam = mEntityType.key.propertyRef[0].name;
-				if (mUrlData.parameters[sParam]) {
-					sId = mUrlData.parameters[sParam];
-				}
-			} else {
-				// Build ID string from keys
-				var aKeys = [];
-				for (i = 0; i < mEntityType.key.propertyRef.length; ++i) {
-					sParam = mEntityType.key.propertyRef[i].name;
+				if (mEntityType.key.propertyRef.length === 1) {
+					// Just the ID in brackets
+					sParam = mEntityType.key.propertyRef[0].name;
 					if (mUrlData.parameters[sParam]) {
-						aKeys.push(sParam + "=" + mUrlData.parameters[sParam]);
+						sId = mUrlData.parameters[sParam];
 					}
+				} else {
+					// Build ID string from keys
+					var aKeys = [];
+					for (i = 0; i < mEntityType.key.propertyRef.length; ++i) {
+						sParam = mEntityType.key.propertyRef[i].name;
+						if (mUrlData.parameters[sParam]) {
+							aKeys.push(sParam + "=" + mUrlData.parameters[sParam]);
+						}
+					}
+					sId = aKeys.join(",");
 				}
-				sId = aKeys.join(",");
-			}
 
-			sTarget = "/" + mEntitySet.name + "(" + sId + ")";
-		} else if (!mEntitySet) {
-			jQuery.sap.log.error("Could not determine path of EntitySet for function call: " + mUrlData.url);
-		} else {
-			jQuery.sap.log.error("Could not determine keys of EntityType for function call: " + mUrlData.url);
+				sTarget = "/" + mEntitySet.name + "(" + sId + ")";
+			} else if (!mEntitySet) {
+				jQuery.sap.log.error("Could not determine path of EntitySet for function call: " + mUrlData.url);
+			} else {
+				jQuery.sap.log.error("Could not determine keys of EntityType for function call: " + mUrlData.url);
+			}
 		}
 	}
 

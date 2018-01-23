@@ -255,12 +255,34 @@ var mPredefinedServiceResponses = {
 							"code":		Date.now(),
 							"message":	"This is a message for '/Products(1)'.",
 							"severity":	"warning",
-							"target": "/Products(1)/SupplierID",
+							"target": "/Products(1)/SupplierID"
 						}]
 					});
 					mResponseHeaders["location"] = "fakeservice://testdata/odata/northwind/Products(1)";
 					sAnswer = "";
 					break;
+
+				case "fakeservice://testdata/odata/northwind/functionWithInvalidReturnType":
+				iStatus = 204;
+				mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
+				mResponseHeaders["sap-message"] = JSON.stringify({
+					"code":		Date.now(),
+					"message":	"This is FunctionImport specific message with an invalid return type.",
+					"severity":	"error"
+				});
+				sAnswer = "";
+				break;
+
+				case "fakeservice://testdata/odata/northwind/functionWithInvalidEntitySet":
+				iStatus = 204;
+				mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
+				mResponseHeaders["sap-message"] = JSON.stringify({
+					"code":		Date.now(),
+					"message":	"This is FunctionImport specific message with an invalid entityset.",
+					"severity":	"error"
+				});
+				sAnswer = "";
+				break;
 
 				// Special case that delivers transient messages
 				case "fakeservice://testdata/odata/northwind/TransientTest1":
@@ -276,13 +298,13 @@ var mPredefinedServiceResponses = {
 							"code":		iDate + 1,
 							"message":	"This is a transient message using /#TRANSIENT# notation.",
 							"severity":	"error",
-							"target": "/#TRANSIENT#/TransientTest1/SupplierID",
+							"target": "/#TRANSIENT#/TransientTest1/SupplierID"
 						}, {
 							"code":		iDate + 2,
 							"message":	"This is a transient message using transient flag.",
 							"severity":	"error",
 							"transient": true,
-							"target": "/TransientTest1/SupplierID",
+							"target": "/TransientTest1/SupplierID"
 						}]
 					});
 					sAnswer = JSON.stringify({
@@ -2167,6 +2189,10 @@ mPredefinedServiceResponses.northwindMetadata = '\
 			</Association>\
 			<EntityContainer Name="FunctionImports">\
 				<FunctionImport Name="functionWithInvalidTarget" m:HttpMethod="POST">\
+				</FunctionImport>\
+				<FunctionImport Name="functionWithInvalidReturnType" ReturnType="InvalidReturnType" m:HttpMethod="POST">\
+				</FunctionImport>\
+				<FunctionImport Name="functionWithInvalidEntitySet" EntitySet="InvalidEntitySet" m:HttpMethod="POST">\
 				</FunctionImport>\
 			</EntityContainer>\
 		</Schema>\
