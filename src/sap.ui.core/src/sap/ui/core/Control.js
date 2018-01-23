@@ -57,7 +57,23 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				"busyIndicatorDelay" : {type: "int", defaultValue: 1000},
 
 				/**
-				 * Whether the control should be visible on the screen. If set to false, a placeholder is rendered instead of the real control
+				 * The size of the BusyIndicator. For controls with a width smaller 3rem a
+				 * <code>sap.ui.core.BusyIndicatorSize.Small</code> should be used.
+				 * If the size could vary in width and the width could get smaller than 3rem, the
+				 * <code>sap.ui.core.BusyIndicatorSize.Auto</code> option could be used.
+				 * The default is set to <code>sap.ui.core.BusyIndicatorSize.Medium</code>
+				 * For a full screen BusyIndicator use <code>sap.ui.core.BusyIndicatorSize.Large</code>.
+				 */
+				"busyIndicatorSize" : {type: "sap.ui.core.BusyIndicatorSize", defaultValue: 'Medium'},
+
+				/**
+				 * Whether the control should be visible on the screen.
+				 *
+				 * If set to false, a placeholder will be rendered to mark the location of the invisible
+				 * control in the DOM of the current page. The placeholder will be hidden and have
+				 * zero dimensions (<code>display: none</code>).
+				 *
+				 * See {@link sap.ui.core.RenderManager#writeInvisiblePlaceholderData RenderManager#writeInvisiblePlaceholderData} for details.
 				 */
 				"visible" : { type: "boolean", group : "Appearance", defaultValue: true },
 
@@ -662,7 +678,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		}
 
 		//Append busy indicator to control DOM
-		this._$BusyIndicator = BusyIndicatorUtils.addHTML($this, this.getId() + "-busyIndicator");
+		this._$BusyIndicator = BusyIndicatorUtils.addHTML($this, this.getId() + "-busyIndicator", this.getBusyIndicatorSize());
 
 		fnHandleInteraction.call(this, true);
 	}
