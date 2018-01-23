@@ -5,8 +5,13 @@
 // Provides class sap.ui.rta.plugin.EasyRemove.
 sap.ui.define([
 	'sap/ui/rta/plugin/Remove',
+	'sap/ui/dt/OverlayRegistry',
 	'sap/m/Button'
-], function(Remove, Button) {
+], function(
+	Remove,
+	OverlayRegistry,
+    Button
+) {
 	"use strict";
 
 	/**
@@ -27,9 +32,6 @@ sap.ui.define([
 	var EasyRemove = Remove.extend("sap.ui.rta.plugin.EasyRemove", /** @lends sap.ui.rta.plugin.EasyRemove.prototype */
 	{
 		metadata: {
-			// ---- object ----
-
-			// ---- control specific ----
 			library: "sap.ui.rta",
 			properties: {},
 			associations: {},
@@ -44,36 +46,29 @@ sap.ui.define([
 	 * @override
 	 */
 	EasyRemove.prototype.registerElementOverlay = function(oOverlay) {
-		this._oDelegate = {
-			"onAfterRendering" : function() {
-				if (oOverlay.$().hasClass("sapUiRtaPersDelete") && oOverlay.$().children(".sapUiRtaPersDeleteClick").length <= 0) {
-					var onDeletePressed = function(oOverlay) {
-						this.handler([oOverlay]);
-					}.bind(this);
-
-					var oDeleteButton = this._addButton(oOverlay);
-					oDeleteButton.attachBrowserEvent("contextmenu", function(oEvent) {
-						oEvent.stopPropagation();
-						oEvent.preventDefault();
-					});
-					oDeleteButton.attachPress(function(oEvent) {
-						var oOverlay = sap.ui.getCore().byId(oEvent.getSource().getId().replace("-DeleteIcon", ""));
-						onDeletePressed(oOverlay);
-						oEvent.cancelBubble();
-					});
-
-				}
-
-				oOverlay.removeEventDelegate(this._oDelegate, this);
-			}
-		};
-
-		var oControl = oOverlay.getElementInstance();
+		var oControl = oOverlay.getElement();
 		if (oControl.getMetadata().getName() === "sap.uxap.ObjectPageSection" && this.hasStableId(oOverlay)) {
 			oOverlay.addStyleClass("sapUiRtaPersDelete");
 		}
 
-		oOverlay.addEventDelegate(this._oDelegate, this);
+		if (oOverlay.hasStyleClass("sapUiRtaPersDelete") && oOverlay.$().children(".sapUiRtaPersDeleteClick").length <= 0) {
+			var onDeletePressed = function(oOverlay) {
+				this.handler([oOverlay]);
+			}.bind(this);
+
+			var oDeleteButton = this._addButton(oOverlay);
+			oDeleteButton.attachBrowserEvent("contextmenu", function(oEvent) {
+				oEvent.stopPropagation();
+				oEvent.preventDefault();
+			});
+			oDeleteButton.attachPress(function(oEvent) {
+				var oOverlay = sap.ui.getCore().byId(oEvent.getSource().getId().replace("-DeleteIcon", ""));
+				onDeletePressed(oOverlay);
+				oEvent.cancelBubble();
+			});
+
+		}
+
 		Remove.prototype.registerElementOverlay.apply(this, arguments);
 	};
 
@@ -119,10 +114,9 @@ sap.ui.define([
 	 * @override
 	 */
 	EasyRemove.prototype.deregisterElementOverlay = function(oOverlay) {
-		var oControl = oOverlay.getElementInstance();
+		var oControl = oOverlay.getElement();
 		if (oControl.getMetadata().getName() === "sap.uxap.ObjectPageSection") {
 			oOverlay.removeStyleClass("sapUiRtaPersDelete");
-			oOverlay.removeEventDelegate(this._oDelegate, this);
 			if (oOverlay._oDeleteButton) {
 				oOverlay._oDeleteButton.destroy();
 			}

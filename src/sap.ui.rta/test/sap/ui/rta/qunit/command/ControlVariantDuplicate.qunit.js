@@ -123,7 +123,7 @@ function(
 	QUnit.test("when calling command factory for duplicate variants and undo", function(assert) {
 		var done = assert.async();
 
-		var oOverlay = new ElementOverlay();
+		var oOverlay = new ElementOverlay({ element: this.oVariantManagement });
 		var fnCreateDefaultFileNameSpy = sinon.spy(Utils, "createDefaultFileName");
 		sinon.stub(OverlayRegistry, "getOverlay").returns(oOverlay);
 		sinon.stub(oOverlay, "getVariantManagement").returns("idMain1--variantManagementOrdersTable");

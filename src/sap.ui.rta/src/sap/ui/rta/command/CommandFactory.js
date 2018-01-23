@@ -23,7 +23,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 
 	var fnConfigureCreateContainerCommand = function(oElement, mSettings, oDesignTimeMetadata){
 		var oNewAddedElement = mSettings.element || sap.ui.getCore().byId(mSettings.element.id);
-		var oAction = oDesignTimeMetadata.getAggregationAction("createContainer", oNewAddedElement)[0];
+		var oAction = oDesignTimeMetadata.getActionDataFromAggregations("createContainer", oNewAddedElement)[0];
 		return oAction;
 	};
 
@@ -32,10 +32,9 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 		var oAction = oDesignTimeMetadata.getAction("move", oMovedElement);
 		// needed for Stashed Controls
 		if (!oAction && oDesignTimeMetadata.getMetadata().getName() === "sap.ui.dt.ElementDesignTimeMetadata") {
-			var sSourceAggregation = mSettings.source.aggregation;
-			var oAggregationDesignTimeMetadata = oDesignTimeMetadata.createAggregationDesignTimeMetadata(sSourceAggregation);
-			oAction = oAggregationDesignTimeMetadata.getAction("move", oMovedElement);
-			oAggregationDesignTimeMetadata.destroy();
+			oAction = oDesignTimeMetadata.getActionDataFromAggregations("move", oElement).filter(function(oAggAction){
+				return oAggAction.aggregation === mSettings.source.aggregation;
+			})[0];
 		}
 		return oAction;
 	};

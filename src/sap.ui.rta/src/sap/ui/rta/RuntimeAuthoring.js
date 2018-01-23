@@ -743,7 +743,7 @@ sap.ui.define([
 	RuntimeAuthoring.prototype._onKeyDown = function(oEvent) {
 		// if for example the addField Dialog/transport/reset Popup is open, we don't want the user to be able to undo/redo
 		var bMacintosh = Device.os.macintosh;
-		var bFocusInsideOverlayContainer = Overlay.getOverlayContainer().contains(document.activeElement);
+		var bFocusInsideOverlayContainer = Overlay.getOverlayContainer().get(0).contains(document.activeElement);
 		var bFocusInsideRtaToolbar = this.getShowToolbars() && this.getToolbar().getDomRef().contains(document.activeElement);
 		var bFocusOnBody = document.body === document.activeElement;
 		var bFocusInsideRenameField = jQuery(document.activeElement).parents('.sapUiRtaEditableField').length > 0;
@@ -875,7 +875,6 @@ sap.ui.define([
 		});
 
 		if (this._oDesignTime) {
-			jQuery(Overlay.getOverlayContainer()).removeClass("sapUiRta");
 			this._oDesignTime.destroy();
 			this._oDesignTime = null;
 
@@ -1146,24 +1145,16 @@ sap.ui.define([
 	 * @param {string} sNewControlID The id of the newly created container
 	 */
 	RuntimeAuthoring.prototype._setRenameOnCreatedContainer = function(vAction, sNewControlID) {
-		var oNewContainerOverlay = this.getPlugins()["createContainer"].getCreatedContainerOverlay(vAction, sNewControlID);
-		if (oNewContainerOverlay) {
-			oNewContainerOverlay.setSelected(true);
-
-			if (this.getPlugins()["rename"]) {
-				var oDelegate = {
-					"onAfterRendering" : function() {
-						// TODO : remove timeout
-						setTimeout(function() {
-							this.getPlugins()["rename"].startEdit(oNewContainerOverlay);
-						}.bind(this), 0);
-						oNewContainerOverlay.removeEventDelegate(oDelegate);
-					}.bind(this)
-				};
-
-				oNewContainerOverlay.addEventDelegate(oDelegate);
+		var sNewContainerID = this.getPlugins()["createContainer"].getCreatedContainerId(vAction, sNewControlID);
+		this._oDesignTime.attachEvent("elementOverlayCreated", function(oEvent){
+			var oNewOverlay = oEvent.getParameter("elementOverlay");
+			if (oNewOverlay.getElement().getId() === sNewContainerID) {
+				oNewOverlay.attachEventOnce("geometryChanged", function(oEvent){
+					oNewOverlay.setSelected(true);
+					this.getPlugins()["rename"].startEdit(oNewOverlay);
+				}.bind(this));
 			}
-		}
+		}.bind(this));
 	};
 
 	/**
@@ -1172,20 +1163,13 @@ sap.ui.define([
 	RuntimeAuthoring.prototype._setTitleOnCreatedVariant = function() {
 		var oVariantManagementControlOverlay = this.getPlugins()["controlVariant"].getVariantManagementControlOverlay();
 		if (oVariantManagementControlOverlay) {
-
-			var oDelegate = {
-				"onAfterRendering" : function() {
-					// TODO : remove timeout
-					setTimeout(function() {
-						this.getPlugins()["controlVariant"].startEdit(oVariantManagementControlOverlay);
-					}.bind(this), 0);
-					oVariantManagementControlOverlay.removeEventDelegate(oDelegate);
-				}.bind(this)
-			};
-
-			oVariantManagementControlOverlay.addEventDelegate(oDelegate);
-			//Important to trigger re-rendering
-			oVariantManagementControlOverlay.invalidate();
+			oVariantManagementControlOverlay.attachEventOnce("geometryChanged", function(oEvent){
+				var oOverlay = oEvent.getSource();
+				if (oOverlay.getGeometry() && oOverlay.getGeometry().visible){
+					oOverlay.setSelected(true);
+					this.getPlugins()["controlVariant"].startEdit(oOverlay);
+				}
+			}, this);
 		}
 	};
 
@@ -1208,7 +1192,7 @@ sap.ui.define([
 				if (vAction && sNewControlID){
 					this._setRenameOnCreatedContainer(vAction, sNewControlID);
 				} else if (vAction === "setTitle"){
-					this._setTitleOnCreatedVariant(vAction);
+					this._setTitleOnCreatedVariant();
 				}
 			}.bind(this))
 

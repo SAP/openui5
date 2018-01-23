@@ -299,7 +299,7 @@ function(
 			return bIsAvailable;
 		}.bind(this));
 		sandbox.stub(this.oSplitPlugin, "handleSplit", function(oSelectedElement){
-			assert.deepEqual(oSelectedElement, this.oButton1Overlay.getElementInstance(), "the 'handleSplit' method is called with the right element");
+			assert.deepEqual(oSelectedElement, this.oButton1Overlay.getElement(), "the 'handleSplit' method is called with the right element");
 		}.bind(this));
 		sandbox.stub(this.oSplitPlugin, "isEnabled", function(oOverlay){
 			assert.equal(oOverlay, this.oButton1Overlay, "the 'enabled' function calls isEnabled with the correct overlay");

@@ -1,0 +1,17 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>Overlay Sandbox</title>
+		<script src="../shared-config.js"></script>
+		<script>
+			window['sap-ui-config'].libs = 'sap.m, sap.ui.dt, sap.ui.layout';
+			window['sap-ui-config'].noConflict = true;
+			document.write('<script src="' + document.location.pathname.match(/(.+)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
+		</script>
+		<script src="overlay.js"></script>
+	</head>
+	<body>
+		<div id="content"></div>
+	</body>
+</html>

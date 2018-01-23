@@ -217,7 +217,7 @@ function(ManagedObject) {
 	 */
 	Plugin.prototype.getAction = function(oOverlay){
 		return oOverlay.getDesignTimeMetadata() ?
-			oOverlay.getDesignTimeMetadata().getAction(this.getActionName(), oOverlay.getElementInstance())
+			oOverlay.getDesignTimeMetadata().getAction(this.getActionName(), oOverlay.getElement())
 			: null;
 	};
 
@@ -241,7 +241,7 @@ function(ManagedObject) {
 		var vName = mAction.name;
 		if (vName){
 			if (typeof vName === "function") {
-				return vName.call(null, oOverlay.getElementInstance());
+				return vName.call(null, oOverlay.getElement());
 			} else {
 				return oOverlay.getDesignTimeMetadata() ? oOverlay.getDesignTimeMetadata().getLibraryText(vName) : "";
 			}

@@ -165,7 +165,7 @@ function(
 			assert.ok(oButton2.getVisible(), "then the Add-Button is displayed");
 			assert.ok(oButton2.getEnabled(), "then the Button is enabled");
 
-			var oVisibleStub = sandbox.stub(this.oSectionOverlay2, "isVisibleInDom").returns(true);
+			var oVisibleStub = sandbox.stub(this.oSectionOverlay2, "isVisible").returns(true);
 			this.oSection2.setVisible(true);
 			sap.ui.getCore().applyChanges();
 
@@ -175,7 +175,7 @@ function(
 			assert.notOk(oButton2.getEnabled(), "then the Button is disabled");
 
 			oVisibleStub.restore();
-			sandbox.stub(this.oSectionOverlay2, "isVisibleInDom").returns(false);
+			sandbox.stub(this.oSectionOverlay2, "isVisible").returns(false);
 			this.oSection2.setVisible(false);
 			sap.ui.getCore().applyChanges();
 

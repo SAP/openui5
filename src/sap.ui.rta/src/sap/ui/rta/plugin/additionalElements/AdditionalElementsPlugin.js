@@ -35,7 +35,7 @@ sap.ui.define([
 			relevantContainerOverlay : oRelevantContainerOverlay,
 			parentOverlay : oParentOverlay,
 			relevantContainer : oRelevantContainer,
-			parent : oParentOverlay.getElementInstance()
+			parent : oParentOverlay.getElement()
 		};
 	}
 
@@ -45,7 +45,7 @@ sap.ui.define([
 
 
 	function _getInvisibleElements (oParentOverlay, sAggregationName){
-		var oParentElement = oParentOverlay.getElementInstance();
+		var oParentElement = oParentOverlay.getElement();
 		var aInvisibleElements = ElementUtil.getAggregation(oParentElement, sAggregationName).filter(function(oControl){
 			var oOverlay = OverlayRegistry.getOverlay(oControl);
 
@@ -305,7 +305,7 @@ sap.ui.define([
 			var mParents = _getParents(bSibling, oOverlay);
 
 			var oDesignTimeMetadata = mParents.parentOverlay.getDesignTimeMetadata();
-			var aActions = oDesignTimeMetadata.getAggregationAction("addODataProperty", mParents.parent);
+			var aActions = oDesignTimeMetadata.getActionDataFromAggregations("addODataProperty", mParents.parent);
 
 			var oCheckElement = mParents.parent;
 
@@ -358,7 +358,7 @@ sap.ui.define([
 		showAvailableElements: function(bOverlayIsSibling, aOverlays, iIndex, sControlName) {
 			var oOverlay = aOverlays[0];
 			var mParents = _getParents(bOverlayIsSibling, oOverlay);
-			var oSiblingElement = bOverlayIsSibling && oOverlay.getElementInstance();
+			var oSiblingElement = bOverlayIsSibling && oOverlay.getElement();
 			var aPromises = [];
 
 			var mActions = this._getActions(bOverlayIsSibling, oOverlay);
@@ -708,7 +708,7 @@ sap.ui.define([
 	function _getSourceParent(oRevealedElement, mParents, oRevealedElementOverlay){
 		var oParent;
 		if (oRevealedElementOverlay) {
-			oParent = oRevealedElementOverlay.getParentElementOverlay().getElementInstance();
+			oParent = oRevealedElementOverlay.getParentElementOverlay().getElement();
 		}
 		if (!oParent && oRevealedElement.sParentId){
 			//stashed control has no parent, but remembers its parent id

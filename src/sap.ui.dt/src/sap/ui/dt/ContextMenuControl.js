@@ -152,7 +152,7 @@ sap.ui.define([
 				oMenuItem.data({
 					id: oItem.id
 				});
-				if ((oItem.startSection && typeof (oItem.startSection) === "boolean" ) || (typeof (oItem.startSection) === "function" && oItem.startSection(oTargetOverlay.getElementInstance()))) {
+				if ((oItem.startSection && typeof (oItem.startSection) === "boolean" ) || (typeof (oItem.startSection) === "function" && oItem.startSection(oTargetOverlay.getElement()))) {
 					oMenuItem.setStartsSection(true);
 				}
 
@@ -177,7 +177,7 @@ sap.ui.define([
 		if (this.getItems().length === 0 || !oTargetOverlay.getDomRef()) {
 			return;
 		}
-		this.openAsContextMenu(oOriginalEvent, oTargetOverlay);
+		this.openAsContextMenu(oOriginalEvent, oTargetOverlay.getDomRef());
 	};
 
 	/**

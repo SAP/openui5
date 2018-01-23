@@ -54,10 +54,10 @@ function(
 		var oParentOverlay = oElementOverlay.getParentElementOverlay();
 		if (oParentOverlay){
 			//calculate index in direct (maybe in hidden tree) parent
-			var oParent = oParentOverlay.getElementInstance();
+			var oParent = oParentOverlay.getElement();
 			var sParentAggregationName = oElementOverlay.getParentAggregationOverlay().getAggregationName();
 			var aChildren = ElementUtil.getAggregation(oParent, sParentAggregationName);
-			var oElement = oElementOverlay.getElementInstance();
+			var oElement = oElementOverlay.getElement();
 			var iIndex = aChildren.indexOf(oElement);
 
 			return {
@@ -147,7 +147,7 @@ function(
 	 * @private
 	 */
 	OverlayUtil.getClosestOverlayForType = function(sType, oOverlay) {
-		while (oOverlay && !ElementUtil.isInstanceOf(oOverlay.getElementInstance(), sType)) {
+		while (oOverlay && !ElementUtil.isInstanceOf(oOverlay.getElement(), sType)) {
 			oOverlay = oOverlay.getParentElementOverlay();
 		}
 
@@ -207,19 +207,19 @@ function(
 	 * @returns {array} Returns an array of child overlays {sap.ui.dt.ElementOverlay}
 	 * @private
 	 */
-	OverlayUtil.getAllChildOverlays = function(oOverlay) {
-		var aChildOverlays = [], aChildren = [];
-		if (!oOverlay) {
-			return aChildOverlays;
+	OverlayUtil.getAllChildOverlays = function(oElementOverlay) {
+		var aChildElementOverlays = [], aChildren = [];
+		if (!oElementOverlay) {
+			return aChildElementOverlays;
 		}
-		var aAggregationOverlays = oOverlay.getAggregationOverlays();
+		var aAggregationOverlays = oElementOverlay.getChildren();
 		for (var i = 0; i < aAggregationOverlays.length; i++) {
 			aChildren = aAggregationOverlays[i].getChildren();
 			if (aChildren && aChildren.length > 0) {
-				aChildOverlays = aChildOverlays.concat(aChildren);
+				aChildElementOverlays = aChildElementOverlays.concat(aChildren);
 			}
 		}
-		return aChildOverlays;
+		return aChildElementOverlays;
 	};
 
 	/**
@@ -413,7 +413,7 @@ function(
 	 * @private
 	 */
 	OverlayUtil.iterateOverAggregationLikeChildren = function(oElementOverlay, sAggregationName, fnCallback) {
-		var oElement = oElementOverlay.getElementInstance();
+		var oElement = oElementOverlay.getElement();
 		var vChildren;
 		if (oElementOverlay.getAggregationOverlay(sAggregationName).isAssociation()){
 			vChildren = ElementUtil.getAssociationInstances(oElement, sAggregationName);
@@ -504,7 +504,7 @@ function(
 	 */
 	OverlayUtil.findAllOverlaysInContainer = function(oOverlay) {
 		// The root control has no relevant container, therefore we use the element itself
-		var oRelevantContainer = oOverlay.getRelevantContainer() || oOverlay.getElementInstance();
+		var oRelevantContainer = oOverlay.getRelevantContainer() || oOverlay.getElement();
 		var oRelevantContainerOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
 		var aRelevantOverlays = [];
 

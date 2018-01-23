@@ -131,7 +131,7 @@ sap.ui.define([ "sap/ui/rta/command/CommandFactory",
 
 		QUnit.test("when getting a createContainer command for form", function(assert) {
 			var done = assert.async();
-			var sChangeType = this.oCreateContainerDesignTimeMetadata.getAggregationAction("createContainer", this.oForm)[0].changeType;
+			var sChangeType = this.oCreateContainerDesignTimeMetadata.getActionDataFromAggregations("createContainer", this.oForm)[0].changeType;
 			assert.ok(this.oCreateContainerCommand, "createContainer command for form exists");
 			assert.equal(this.oCreateContainerCommand.getChangeType(), sChangeType, "correct change type is assigned to a command");
 

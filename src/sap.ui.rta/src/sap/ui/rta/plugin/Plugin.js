@@ -129,25 +129,25 @@ function(
 	 */
 	BasePlugin.prototype.evaluateEditable = function(aOverlays, mPropertyBag) {
 		var fnCheckBinding = function(oOverlay, sAggregationName){
-			if (sAggregationName && oOverlay.getElementInstance().getBinding(sAggregationName)) {
+			if (sAggregationName && oOverlay.getElement().getBinding(sAggregationName)) {
 				return false;
 			}
 			return oOverlay.isRoot() || fnCheckBinding(
 				oOverlay.getParentElementOverlay(),
-				oOverlay.getElementInstance().sParentAggregationName
+				oOverlay.getElement().sParentAggregationName
 			);
 		};
 
 		var vEditable;
 		aOverlays.forEach(function(oOverlay) {
 			//check aggregation Binding recursively
-			if (oOverlay.getElementInstance() && !fnCheckBinding(oOverlay, oOverlay.getElementInstance().sParentAggregationName)) {
+			if (oOverlay.getElement() && !fnCheckBinding(oOverlay, oOverlay.getElement().sParentAggregationName)) {
 				vEditable = false;
 			} else {
 				// when a control gets destroyed it gets deregistered before it gets removed from the parent aggregation.
 				// this means that getElementInstance is undefined when we get here via removeAggregation mutation
 				// when an overlay is not registered yet, we should not evaluate editable. In this case getDesignTimeMetadata returns null.
-				vEditable = oOverlay.getElementInstance() && oOverlay.getDesignTimeMetadata() && this._isEditable(oOverlay, mPropertyBag);
+				vEditable = oOverlay.getElement() && oOverlay.getDesignTimeMetadata() && this._isEditable(oOverlay, mPropertyBag);
 			}
 			// for the createContainer and additionalElements plugin the isEditable function returns an object with 2 properties, asChild and asSibling.
 			// for every other plugin isEditable should be a boolean.
@@ -214,7 +214,7 @@ function(
 
 		if (oOverlay.getElementHasStableId() === undefined){
 			var bStable = false;
-			var oElement = oOverlay.getElementInstance();
+			var oElement = oOverlay.getElement();
 			var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
 			var fnGetStableElements = oDesignTimeMetadata && oDesignTimeMetadata.getData().getStableElements;
 			if (fnGetStableElements){
@@ -238,7 +238,7 @@ function(
 	BasePlugin.prototype.getVariantManagementReference = function (oOverlay, oAction, bForceRelevantContainer, oStashedElement) {
 		var oElement;
 		if (!oStashedElement) {
-			oElement = oOverlay.getElementInstance();
+			oElement = oOverlay.getElement();
 		} else {
 			oElement = oStashedElement;
 		}
@@ -272,10 +272,10 @@ function(
 	 */
 	BasePlugin.prototype.checkAggregationsOnSelf = function (oOverlay, sAction) {
 		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
-		var oElement = oOverlay.getElementInstance();
+		var oElement = oOverlay.getElement();
 		var bIsEditable = false;
 
-		var oAction = oDesignTimeMetadata.getAggregationAction(sAction, oOverlay.getElementInstance())[0];
+		var oAction = oDesignTimeMetadata.getActionDataFromAggregations(sAction, oOverlay.getElement())[0];
 		var sChangeType = oAction ? oAction.changeType : null;
 		var bChangeOnRelevantContainer = oAction && oAction.changeOnRelevantContainer;
 		if (bChangeOnRelevantContainer) {

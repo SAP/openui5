@@ -149,7 +149,7 @@ sap.ui.define([
 	 */
 	MiniMenu.prototype.open = function (oEvent, oOverlay, bContextMenu, bIsSubMenu) {
 		this._aPluginsWithBusyFunction = [];
-		this.setContextElement(oOverlay.getElementInstance());
+		this.setContextElement(oOverlay.getElement());
 
 		var aPlugins = this.getDesignTime().getPlugins();
 		aPlugins.forEach(function (oPlugin) {

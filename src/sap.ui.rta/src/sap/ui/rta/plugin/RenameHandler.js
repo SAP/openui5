@@ -57,7 +57,7 @@ sap.ui.define([
 		startEdit : function (oOverlay, vDomRef, sPluginMethodName) {
 			this._oEditedOverlay = oOverlay;
 
-			var oElement = oOverlay.getElementInstance();
+			var oElement = oOverlay.getElement();
 
 			var oDesignTimeMetadata = this._oEditedOverlay.getDesignTimeMetadata();
 
@@ -189,7 +189,7 @@ sap.ui.define([
 			if (this._$oEditableControlDomRef.text() === "_?_") {
 				this._$oEditableControlDomRef.text("");
 			}
-			//var oElement = this._oEditedOverlay.getElementInstance();
+			//var oElement = this._oEditedOverlay.getElement();
 			//if (oElement.variantManagementModeChange) {
 			//	oElement.fireVariantManagementModeChange({mode: ""});
 			//}

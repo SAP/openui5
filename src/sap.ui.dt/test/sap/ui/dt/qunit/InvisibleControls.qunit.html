@@ -73,18 +73,15 @@
 					});
 
 					this.oDesignTime.attachEventOnce("synced", function() {
-						sap.ui.getCore().applyChanges();
+						this.oSplitContainerOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oSplitContainer);
+						this.oSplitContainerMasterPagesAggregationOverlay = this.oSplitContainerOverlay.getAggregationOverlay("masterPages");
+						this.oSplitContainerDetailPagesAggregationOverlay = this.oSplitContainerOverlay.getAggregationOverlay("detailPages");
+
+						this.oPage1Overlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oPage1);
+						this.oPage2Overlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oPage2);
+
 						done();
-					});
-
-					this.oSplitContainerOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oSplitContainer);
-					this.oSplitContainerMasterPagesAggregationOverlay = this.oSplitContainerOverlay.getAggregationOverlay("masterPages");
-					this.oSplitContainerDetailPagesAggregationOverlay = this.oSplitContainerOverlay.getAggregationOverlay("detailPages");
-
-					this.oPage1Overlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oPage1);
-					this.oPage2Overlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oPage2);
-
-					sap.ui.getCore().applyChanges();
+					}, this);
 				},
 				afterEach: function() {
 					this.oDesignTime.destroy();
@@ -92,20 +89,16 @@
 				}
 			});
 
-
 			QUnit.test("when the SplitContainer is rendered", function(assert) {
-				assert.strictEqual(sap.ui.dt.OverlayRegistry.getOverlay(this.oButton1), undefined, "no overlays for controls in hidden page are created");
-				assert.ok(sap.ui.dt.OverlayRegistry.getOverlay(this.oButton2), "overlays for controls in visible page are created");
+				assert.notOk(sap.ui.dt.OverlayRegistry.getOverlay(this.oButton1).isVisible(), "no overlays for controls in hidden page are not visible");
+				assert.ok(sap.ui.dt.OverlayRegistry.getOverlay(this.oButton2).isVisible(), "overlays for controls in visible page are visible");
 			});
 
 			QUnit.test("when the visibility of hidden page is changed", function(assert) {
 				this.oPage1.setVisible(true);
 				sap.ui.getCore().applyChanges();
 
-				assert.ok(sap.ui.dt.OverlayRegistry.getOverlay(this.oButton1), "overlays for controls in this page are created");
-
-				this.oPage1.setVisible(false);
-				sap.ui.getCore().applyChanges();
+				assert.ok(sap.ui.dt.OverlayRegistry.getOverlay(this.oButton1).isVisible(), "overlays for controls in this page are visible");
 			});
 
 		</script>

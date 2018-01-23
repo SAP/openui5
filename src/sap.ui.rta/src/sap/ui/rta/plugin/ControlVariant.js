@@ -67,7 +67,7 @@ sap.ui.define([
 	 * @override
 	 */
 	ControlVariant.prototype.registerElementOverlay = function(oOverlay) {
-		var oControl = oOverlay.getElementInstance(),
+		var oControl = oOverlay.getElement(),
 			oModel = this._getVariantModel(oControl),
 			sVariantManagementReference;
 
@@ -78,7 +78,7 @@ sap.ui.define([
 		}
 
 		if (oControl instanceof VariantManagement) {
-			var oControl = oOverlay.getElementInstance(),
+			var oControl = oOverlay.getElement(),
 				vAssociationElement = oControl.getFor(),
 				aVariantManagementTargetElements;
 
@@ -162,7 +162,7 @@ sap.ui.define([
 
 		var oModel;
 		var sVariantManagementReference;
-		var oControl = oOverlay.getElementInstance();
+		var oControl = oOverlay.getElement();
 		if (oControl instanceof VariantManagement) {
 			oModel = this._getVariantModel(oControl);
 			sVariantManagementReference = oOverlay.getVariantManagement();
@@ -192,7 +192,7 @@ sap.ui.define([
 	};
 
 	ControlVariant.prototype._isVariantManagementControl = function(oOverlay) {
-		var oElement = oOverlay.getElementInstance(),
+		var oElement = oOverlay.getElement(),
 			vAssociationElement = oElement.getAssociation("for");
 		return !!(vAssociationElement && oElement instanceof VariantManagement);
 	};
@@ -218,7 +218,7 @@ sap.ui.define([
 	ControlVariant.prototype.isVariantSwitchEnabled = function(oOverlay) {
 		var aVariants = [];
 		if (this._isVariantManagementControl(oOverlay)) {
-			var oElement = oOverlay.getElementInstance(),
+			var oElement = oOverlay.getElement(),
 				sVariantManagementReference = oOverlay.getVariantManagement ? oOverlay.getVariantManagement() : undefined;
 			if (!sVariantManagementReference) {
 				return false;
@@ -327,7 +327,7 @@ sap.ui.define([
 	 */
 	ControlVariant.prototype.switchVariant = function(oTargetOverlay, sNewVariantReference, sCurrentVariantReference) {
 		var oDesignTimeMetadata = oTargetOverlay.getDesignTimeMetadata(),
-			oTargetElement = oTargetOverlay.getElementInstance();
+			oTargetElement = oTargetOverlay.getElement();
 
 		var oSwitchCommand = this.getCommandFactory().getCommandFor(oTargetElement, "switch", {
 			targetVariantReference: sNewVariantReference,
@@ -348,7 +348,7 @@ sap.ui.define([
 	};
 
 	ControlVariant.prototype.startEdit = function(oOverlay) {
-		var oVariantManagementControl = oOverlay.getElementInstance(),
+		var oVariantManagementControl = oOverlay.getElement(),
 			vDomRef = function () {
 				return oVariantManagementControl.getTitle().getDomRef("inner");
 			};
@@ -369,7 +369,7 @@ sap.ui.define([
 	ControlVariant.prototype.duplicateVariant = function(oOverlay) {
 		this.setVariantManagementControlOverlay(oOverlay);
 		var sVariantManagementReference = oOverlay.getVariantManagement();
-		var oElement = oOverlay.getElementInstance();
+		var oElement = oOverlay.getElement();
 		var oModel = this._getVariantModel(oElement);
 		var sCurrentVariantReference = oModel.getCurrentVariantReference(sVariantManagementReference);
 		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
@@ -390,7 +390,7 @@ sap.ui.define([
 		var sText = RenameHandler._getCurrentEditableFieldText.call(this),
 			oOverlay = this._oEditedOverlay,
 			oDesignTimeMetadata = oOverlay.getDesignTimeMetadata(),
-			oRenamedElement = oOverlay.getElementInstance(),
+			oRenamedElement = oOverlay.getElement(),
 			oModel = this._getVariantModel(oRenamedElement),
 			sErrorText,
 			sVariantManagementReference = oOverlay.getVariantManagement(),
@@ -498,7 +498,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ControlVariant.prototype.configureVariants = function(aOverlays) {
-		var oVariantManagementControl = aOverlays[0].getElementInstance();
+		var oVariantManagementControl = aOverlays[0].getElement();
 		var sVariantManagementReference = aOverlays[0].getVariantManagement();
 		var oModel = this._getVariantModel(oVariantManagementControl);
 		var oDesignTimeMetadata = aOverlays[0].getDesignTimeMetadata();
@@ -559,7 +559,7 @@ sap.ui.define([
 		}
 
 		if (this.isVariantSwitchAvailable(oOverlay)){
-			var oModel = this._getVariantModel(oOverlay.getElementInstance());
+			var oModel = this._getVariantModel(oOverlay.getElement());
 			var sManagementReferenceId = oOverlay.getVariantManagement();
 
 			var aSubmenuItems = oModel.getData()[sManagementReferenceId].variants.reduce(function(aReducedVariants, oVariant) {

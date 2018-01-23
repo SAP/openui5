@@ -64,7 +64,7 @@ sap.ui.define([
 	 */
 	Remove.prototype._isEditable = function(oOverlay) {
 		var bEditable = false;
-		var oElement = oOverlay.getElementInstance();
+		var oElement = oOverlay.getElement();
 
 		var oRemoveAction = this.getAction(oOverlay);
 		if (oRemoveAction && oRemoveAction.changeType) {
@@ -97,7 +97,7 @@ sap.ui.define([
 
 		if (typeof oAction.isEnabled !== "undefined") {
 			if (typeof oAction.isEnabled === "function") {
-				bIsEnabled = oAction.isEnabled(oOverlay.getElementInstance());
+				bIsEnabled = oAction.isEnabled(oOverlay.getElement());
 			} else {
 				bIsEnabled = oAction.isEnabled;
 			}
@@ -114,7 +114,7 @@ sap.ui.define([
 	 * @return {boolean} Returns true if the control can be removed
 	 */
 	Remove.prototype._canBeRemovedFromAggregation = function(oOverlay){
-		var oElement = oOverlay.getElementInstance();
+		var oElement = oOverlay.getElement();
 		var oParent = oElement.getParent();
 		if (!oParent){
 			return false;
@@ -141,7 +141,7 @@ sap.ui.define([
 	Remove.prototype._getConfirmationText = function(oOverlay) {
 		var oAction = this.getAction(oOverlay);
 		if (oAction && oAction.getConfirmationText) {
-			return oAction.getConfirmationText(oOverlay.getElementInstance());
+			return oAction.getConfirmationText(oOverlay.getElement());
 		}
 	};
 
@@ -221,7 +221,7 @@ sap.ui.define([
 		aSelectedOverlays
 			.forEach(function(oOverlay) {
 				var oCommand;
-				var oRemovedElement = oOverlay.getElementInstance();
+				var oRemovedElement = oOverlay.getElement();
 				var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
 				var oRemoveAction = this.getAction(oOverlay);
 				var sVariantManagementReference = this.getVariantManagementReference(oOverlay, oRemoveAction);
@@ -272,7 +272,7 @@ sap.ui.define([
 					);
 				}
 				oNextOverlaySelection = aCandidates.filter(function (oSibling) {
-					return oSibling.getElementInstance().getVisible();
+					return oSibling.getElement().getVisible();
 				}).shift();
 			}
 		}

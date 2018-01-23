@@ -12,7 +12,8 @@ sap.ui.define([
 	'sap/ui/rta/command/CommandFactory',
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/rta/util/BindingsExtractor'
+	'sap/ui/rta/util/BindingsExtractor',
+	'sap/ui/dt/MetadataPropagationUtil'
 ],
 function(
 	ElementMover,
@@ -23,7 +24,8 @@ function(
 	CommandFactory,
 	Plugin,
 	OverlayRegistry,
-	BindingsExtractor
+	BindingsExtractor,
+	MetadataPropagationUtil
 ) {
 	"use strict";
 
@@ -84,7 +86,7 @@ function(
 	};
 
 	RTAElementMover.prototype.isEditable = function(oOverlay, bOnRegistration) {
-		var oElement = oOverlay.getElementInstance();
+		var oElement = oOverlay.getElement();
 		var bMovable = false;
 		if (this.isMovableType(oElement) && this.checkMovable(oOverlay, bOnRegistration)) {
 			bMovable = true;
@@ -134,7 +136,7 @@ function(
 				bValid = false;
 			} else if (aValidAggregationOverlays.length === 1) {
 				var aVisibleOverlays = aValidAggregationOverlays[0].getChildren().filter(function(oChildOverlay) {
-					var oChildElement = oChildOverlay.getElementInstance();
+					var oChildElement = oChildOverlay.getElement();
 					// At least one sibling has to be visible and still attached to the parent
 					// In some edge cases, the child element is not available anymore (element already got destroyed)
 					return (oChildElement && oChildElement.getVisible() && oChildElement.getParent());
@@ -167,7 +169,7 @@ function(
 		if (oParentAggregationOverlay) {
 			oParentAggregationDtMetadata = oParentAggregationOverlay.getDesignTimeMetadata();
 		}
-		return oParentAggregationDtMetadata ? oParentAggregationDtMetadata.getAction("move", oOverlay.getElementInstance()) : undefined;
+		return oParentAggregationDtMetadata ? oParentAggregationDtMetadata.getAction("move", oOverlay.getElement()) : undefined;
 	};
 
 	/**
@@ -204,13 +206,14 @@ function(
 			return false;
 		}
 
-		var oMovedElement = oMovedOverlay.getElementInstance();
+		var oMovedElement = oMovedOverlay.getElement();
 		var oTargetOverlay = oAggregationOverlay.getParent();
 		var oMovedRelevantContainer = oMovedOverlay.getRelevantContainer();
-		var oTargetElement = oTargetOverlay.getElementInstance();
+		var oTargetElement = oTargetOverlay.getElement();
+		var oAggregationDtMetadata = oAggregationOverlay.getDesignTimeMetadata();
 
 		// determine target relevantContainer
-		var vTargetRelevantContainerAfterMove = oAggregationOverlay.getDesignTimeMetadata().getRelevantContainerForPropagation(oMovedElement);
+		var vTargetRelevantContainerAfterMove = MetadataPropagationUtil.getRelevantContainerForPropagation(oAggregationDtMetadata.getData(), oMovedElement);
 		vTargetRelevantContainerAfterMove = vTargetRelevantContainerAfterMove ? vTargetRelevantContainerAfterMove : oTargetElement;
 
 		// check for same relevantContainer
@@ -224,7 +227,7 @@ function(
 		}
 
 		// Binding context is not relevant if the element is being moved inside its parent
-		if (oMovedOverlay.getParent().getElementInstance() !== oTargetElement) {
+		if (oMovedOverlay.getParent().getElement() !== oTargetElement) {
 			// check if binding context is the same
 			var aBindings = BindingsExtractor.getBindings(oMovedElement, oMovedElement.getModel());
 			if (Object.keys(aBindings).length > 0 && oMovedElement.getBindingContext() && oTargetElement.getBindingContext()) {
@@ -271,7 +274,7 @@ function(
 
 		var oMovedOverlay = this.getMovedOverlay();
 		var oParentAggregationOverlay = oMovedOverlay.getParentAggregationOverlay();
-		var oMovedElement = oMovedOverlay.getElementInstance();
+		var oMovedElement = oMovedOverlay.getElement();
 		var oSource = this._getSource();
 		var oRelevantContainer = oMovedOverlay.getRelevantContainer();
 		var oTarget = OverlayUtil.getParentInformation(oMovedOverlay);
