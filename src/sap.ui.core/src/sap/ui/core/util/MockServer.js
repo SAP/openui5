@@ -329,7 +329,6 @@ sap.ui
 			MockServer.prototype.setEntitySetData = function(sEntitySetName, aData) {
 				if (this._oMockdata && this._oMockdata.hasOwnProperty(sEntitySetName)) {
 					this._oMockdata[sEntitySetName] = aData;
-					this._enhanceWithMetadata(this._mEntitySets[sEntitySetName], aData);
 				} else {
 					jQuery.sap.log.error("Unrecognized EntitySet name: " + sEntitySetName);
 				}
