@@ -348,6 +348,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns whether the binding is suspended.
+	 *
+	 * @returns {boolean} Whether the binding is suspended
+	 * @public
+	 */
+	// @override sap.ui.model.Binding#isSuspended
+	ODataBinding.prototype.isSuspended = function () {
+		if (this.bRelative && this.oContext && this.oContext.getBinding) {
+			return this.oContext.getBinding().isSuspended();
+		}
+		return this.bSuspended;
+	};
+
+	/**
 	 * Refreshes the binding. Prompts the model to retrieve data from the server using the given
 	 * group ID and notifies the control that new data is available. The method does nothing for a
 	 * suspended binding.
@@ -392,7 +406,7 @@ sap.ui.define([
 			throw new Error("Cannot refresh due to pending changes");
 		}
 		this.oModel.checkGroupId(sGroupId);
-		if (this.bSuspended) {
+		if (this.isSuspended()) {
 			return;
 		}
 

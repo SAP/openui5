@@ -213,7 +213,9 @@ sap.ui.require([
 		 * @returns {string} The ID of the text control which can be used for {@link #expectChange}
 		 */
 		addToTable : function (oTable, sPropertyPath, assert) {
-			var sId = "id" + sPropertyPath.replace("/", "_"),
+			var bAbsolute = oTable.getBinding("items").getPath()[0] === "/",
+				sId = "id" + sPropertyPath.replace("/", "_"),
+				oNewTemplate = oTable.getBindingInfo("items").template,
 				oText = new Text({
 					id : this.oView.createId(sId),
 					text : "{" + sPropertyPath + "}"
@@ -221,10 +223,13 @@ sap.ui.require([
 
 			// attach formatter to check value for dynamically created control
 			this.setFormatterInList(assert, oText, sId);
-			oTable.getBindingInfo("items").template.addCell(oText);
+			oNewTemplate.addCell(oText);
+			// ensure template control is not destroyed on re-creation of the "items" aggregation
+			delete oTable.getBindingInfo("items").template;
 			// It is not possible to modify the aggregation's template on an existing binding.
 			// Hence, we have to re-create.
-			oTable.bindItems(jQuery.extend({}, oTable.getBindingInfo("items"), {suspended : true}));
+			oTable.bindItems(jQuery.extend({}, oTable.getBindingInfo("items"),
+				{template : oNewTemplate, suspended : bAbsolute}));
 			return sId;
 		},
 
@@ -317,7 +322,7 @@ sap.ui.require([
 			var sExpectedValue,
 				aExpectedValues = vRow === undefined
 					? this.mChanges[sControlId]
-					: this.mListChanges[sControlId][vRow],
+					: this.mListChanges[sControlId] && this.mListChanges[sControlId][vRow],
 				sVisibleId = vRow === undefined ? sControlId : sControlId + "[" + vRow + "]";
 
 			if (!aExpectedValues || !aExpectedValues.length) {
@@ -643,8 +648,14 @@ sap.ui.require([
 		 * @param {string} sControlId The ID of the control to remove
 		 */
 		removeFromTable : function (oTable, sControlId) {
-			oTable.getBindingInfo("items").template.removeCell(this.oView.byId(sControlId));
-			oTable.bindItems(jQuery.extend({}, oTable.getBindingInfo("items"), {suspended : true}));
+			var bAbsolute = oTable.getBinding("items").getPath()[0] === "/",
+				oNewTemplate = oTable.getBindingInfo("items").template;
+
+			oNewTemplate.removeCell(this.oView.byId(sControlId));
+			// ensure template control is not destroyed on re-creation of the "items" aggregation
+			delete oTable.getBindingInfo("items").template;
+			oTable.bindItems(jQuery.extend({}, oTable.getBindingInfo("items"),
+				{template : oNewTemplate, suspended : bAbsolute}));
 		},
 
 		/**
@@ -3729,125 +3740,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Initially suspended context binding is resumed or not.
-	[true, false].forEach(function (bResume) {
-		var sTitle = "suspend/resume: suspended context binding, resume=" + bResume;
-
-		QUnit.test(sTitle, function (assert) {
-			var oModel = createTeaBusiModel({autoExpandSelect : true}),
-				sView = '\
-<FlexBox id="form" binding="{path : \'/Equipments(Category=\\\'Electronics\\\',ID=1)\', \
-		suspended : true}">\
-	<Text id="text" text="{Category}" />\
-</FlexBox>',
-				that = this;
-
-			this.expectChange("text"); // expect no change initially
-			return this.createView(assert, sView, oModel).then(function () {
-				if (bResume) {
-					that.expectRequest("Equipments(Category='Electronics',ID=1)"
-							+ "?$select=Category,ID", {
-							"Category" : "Electronics",
-							"ID" : 1
-						})
-						.expectChange("text", "Electronics");
-					that.oView.byId("form").getObjectBinding().resume();
-				}
-				return that.waitForChanges(assert);
-			});
-		});
-	});
-
-	//*********************************************************************************************
-	// Scenario: FlexBox with initially suspended context binding is changed by adding and removing
-	//   a form field. After resume, one request reflecting the changes is sent and the added field
-	//   is updated.
-	QUnit.test("suspend/resume: changes for suspended context binding", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
-			sView = '\
-<FlexBox id="form" binding="{path : \'/Equipments(Category=\\\'Electronics\\\',ID=1)\', \
-		suspended : true}">\
-	<Text id="idCategory" text="{Category}" />\
-	<Text id="idEmployeeId" text="{EmployeeId}" />\
-</FlexBox>',
-			that = this;
-
-		this.expectChange("idCategory"); // expect no change initially
-		return this.createView(assert, sView, oModel).then(function () {
-			var oForm = that.oView.byId("form"),
-				sId;
-
-			sId = that.addToForm(oForm, "Name", assert);
-			that.removeFromForm(oForm, "idEmployeeId");
-			that.expectRequest("Equipments(Category='Electronics',ID=1)?$select=Category,ID,Name", {
-					"Category" : "Electronics",
-					"ID" : 1,
-					"Name" : "Office PC"
-				})
-				.expectChange("idCategory", "Electronics")
-				.expectChange(sId, "Office PC");
-
-			oForm.getObjectBinding().resume();
-			return that.waitForChanges(assert);
-		});
-	});
-
-	//*********************************************************************************************
-	// Scenario: Table with suspended list binding is changed by adding and removing a column. After
-	//   resume, a request reflecting the changes is sent.
-	QUnit.test("suspend/resume: changes for suspended list binding", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
-			sView = '\
-<Table id="table" items="{path : \'/Equipments\', suspended : true, templateShareable : true}">\
-	<items>\
-		<ColumnListItem>\
-			<Text id="idCategory" text="{Category}" />\
-			<Text id="idEmployeeId" text="{EmployeeId}" />\
-		</ColumnListItem>\
-	</items>\
-</Table>',
-			that = this;
-
-		this.expectChange("idCategory", [])
-			.expectChange("idEmployeeId", []);
-		return this.createView(assert, sView, oModel).then(function () {
-			var sId0,
-				sId1,
-				oTable = that.oView.byId("table");
-
-			sId0 = that.addToTable(oTable, "Name", assert);
-			sId1 = that.addToTable(oTable, "EQUIPMENT_2_EMPLOYEE/Name", assert);
-			that.removeFromTable(oTable, "idEmployeeId");
-
-			that.expectRequest("Equipments?$select=Category,ID,Name"
-					+ "&$expand=EQUIPMENT_2_EMPLOYEE($select=ID,Name)&$skip=0&$top=100", {
-					value : [{
-						"Category" : "Electronics",
-						"ID" : 1,
-						"Name" : "Office PC",
-						"EQUIPMENT_2_EMPLOYEE" : {
-							"ID" : "2",
-							"Name" : "Frederic Fall"
-						}
-					}, {
-						"Category" : "Vehicle",
-						"ID" : 2,
-						"Name" : "VW Golf 2.0",
-						"EQUIPMENT_2_EMPLOYEE" : {
-							"ID" : "3",
-							"Name" : "Jonathan Smith"
-						}
-				}]})
-				.expectChange("idCategory", ["Electronics", "Vehicle"])
-				.expectChange(sId0, ["Office PC", "VW Golf 2.0"])
-				.expectChange(sId1, ["Frederic Fall", "Jonathan Smith"]);
-
-			oTable.getBinding("items").resume();
-			return that.waitForChanges(assert);
-		});
-	});
-
-	//*********************************************************************************************
 	// Scenario: <FunctionImport m:HttpMethod="GET" sap:action-for="..."> in V2 Adapter
 	// Usage of service: /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
 	//TODO $metadata of <FunctionImport> is broken, key properties and parameters do not match!
@@ -4029,6 +3921,374 @@ sap.ui.require([
 					oContextBinding.getBoundContext().getProperty("CreatedAt"),
 					"2017-08-10T00:00:00.000Z"); //TODO Precision="7"
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Initially suspended context binding is resumed or not.
+	[true, false].forEach(function (bResume) {
+		var sTitle = "suspend/resume: suspended context binding, resume=" + bResume;
+
+		QUnit.test(sTitle, function (assert) {
+			var oModel = createTeaBusiModel({autoExpandSelect : true}),
+				sView = '\
+<FlexBox id="form" binding="{path : \'/Equipments(Category=\\\'Electronics\\\',ID=1)\', \
+		suspended : true}">\
+	<Text id="text" text="{Category}" />\
+</FlexBox>',
+				that = this;
+
+			this.expectChange("text"); // expect no change initially
+			return this.createView(assert, sView, oModel).then(function () {
+				if (bResume) {
+					that.expectRequest("Equipments(Category='Electronics',ID=1)"
+							+ "?$select=Category,ID", {
+							"Category" : "Electronics",
+							"ID" : 1
+						})
+						.expectChange("text", "Electronics");
+					that.oView.byId("form").getObjectBinding().resume();
+				}
+				return that.waitForChanges(assert);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: FlexBox with initially suspended context binding is changed by adding and removing
+	//   a form field. After resume, one request reflecting the changes is sent and the added field
+	//   is updated.
+	QUnit.test("suspend/resume: changes for suspended context binding", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{path : \'/Equipments(Category=\\\'Electronics\\\',ID=1)\', \
+		suspended : true}">\
+	<Text id="idCategory" text="{Category}" />\
+	<Text id="idEmployeeId" text="{EmployeeId}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("idCategory"); // expect no change initially
+		return this.createView(assert, sView, oModel).then(function () {
+			var oForm = that.oView.byId("form"),
+				sId;
+
+			sId = that.addToForm(oForm, "Name", assert);
+			that.removeFromForm(oForm, "idEmployeeId");
+			that.expectRequest("Equipments(Category='Electronics',ID=1)?$select=Category,ID,Name", {
+					"Category" : "Electronics",
+					"ID" : 1,
+					"Name" : "Office PC"
+				})
+				.expectChange("idCategory", "Electronics")
+				.expectChange(sId, "Office PC");
+
+			oForm.getObjectBinding().resume();
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Table with suspended list binding is changed by adding and removing a column. After
+	//   resume, a request reflecting the changes is sent.
+	QUnit.test("suspend/resume: suspended list binding", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{path : \'/Equipments\', suspended : true, templateShareable : false}">\
+	<items>\
+		<ColumnListItem>\
+			<Text id="idCategory" text="{Category}" />\
+			<Text id="idEmployeeId" text="{EmployeeId}" />\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			that = this;
+
+		this.expectChange("idCategory", [])
+			.expectChange("idEmployeeId", []);
+		return this.createView(assert, sView, oModel).then(function () {
+			var sId0,
+				sId1,
+				oTable = that.oView.byId("table");
+
+			sId0 = that.addToTable(oTable, "Name", assert);
+			sId1 = that.addToTable(oTable, "EQUIPMENT_2_EMPLOYEE/Name", assert);
+			that.removeFromTable(oTable, "idEmployeeId");
+
+			that.expectRequest("Equipments?$select=Category,ID,Name"
+					+ "&$expand=EQUIPMENT_2_EMPLOYEE($select=ID,Name)&$skip=0&$top=100", {
+					value : [{
+						"Category" : "Electronics",
+						"ID" : 1,
+						"Name" : "Office PC",
+						"EQUIPMENT_2_EMPLOYEE" : {
+							"ID" : "2",
+							"Name" : "Frederic Fall"
+						}
+					}, {
+						"Category" : "Vehicle",
+						"ID" : 2,
+						"Name" : "VW Golf 2.0",
+						"EQUIPMENT_2_EMPLOYEE" : {
+							"ID" : "3",
+							"Name" : "Jonathan Smith"
+						}
+				}]})
+				.expectChange("idCategory", ["Electronics", "Vehicle"])
+				.expectChange(sId0, ["Office PC", "VW Golf 2.0"])
+				.expectChange(sId1, ["Frederic Fall", "Jonathan Smith"]);
+
+			oTable.getBinding("items").resume();
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: FlexBox with context binding is suspended after initialization and then changed by
+	//   adding and removing a form field. After resume, a new request reflecting the changes is
+	//   sent and the added field is updated.
+	QUnit.test("suspend/resume: *not* suspended context binding", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{/Equipments(Category=\'Electronics\',ID=1)}">\
+	<Text id="idCategory" text="{Category}" />\
+	<Text id="idEmployeeId" text="{EmployeeId}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Equipments(Category='Electronics',ID=1)"
+				+ "?$select=Category,EmployeeId,ID", {
+				"Category" : "Electronics",
+				"EmployeeId" : "0001",
+				"ID" : 1
+			})
+			.expectChange("idCategory", "Electronics")
+			.expectChange("idEmployeeId", "0001")
+			.expectChange("idCategory", "Electronics") // TODO unexpected changes
+			.expectChange("idEmployeeId", "0001");
+		return this.createView(assert, sView, oModel).then(function () {
+			var oForm = that.oView.byId("form"),
+				sId;
+
+			oForm.getObjectBinding().suspend();
+			sId = that.addToForm(oForm, "Name", assert);
+			that.removeFromForm(oForm, "idEmployeeId");
+			that.expectRequest("Equipments(Category='Electronics',ID=1)?$select=Category,ID,Name", {
+					"Category" : "Electronics",
+					"ID" : 1,
+					"Name" : "Office PC"
+				})
+				.expectChange(sId, "Office PC");
+
+			oForm.getObjectBinding().resume();
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Table with list binding is suspended after initialization and then changed by
+	//   adding and removing a column. After resume, a new request reflecting the changes is
+	//   sent and the added column is updated.
+	QUnit.test("suspend/resume: *not* suspended list binding", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{path : \'/Equipments\', templateShareable : false}">\
+	<items>\
+		<ColumnListItem>\
+			<Text id="idCategory" text="{Category}" />\
+			<Text id="idEmployeeId" text="{EmployeeId}" />\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			that = this;
+
+		this.expectRequest("Equipments?$select=Category,EmployeeId,ID&$skip=0&$top=100", {value : [{
+				"Category" : "Electronics",
+				"EmployeeId" : "0001",
+				"ID" : 1
+			}, {
+				"Category" : "Vehicle",
+				"EmployeeId" : "0002",
+				"ID" : 2
+			}]})
+			.expectChange("idCategory", ["Electronics", "Vehicle"])
+			.expectChange("idEmployeeId", ["0001", "0002"]);
+		return this.createView(assert, sView, oModel).then(function () {
+			var sId0,
+				sId1,
+				oTable = that.oView.byId("table");
+
+			sId0 = that.addToTable(oTable, "Name", assert);
+			sId1 = that.addToTable(oTable, "EQUIPMENT_2_EMPLOYEE/Name", assert);
+			that.removeFromTable(oTable, "idEmployeeId");
+
+			that.expectRequest("Equipments?$select=Category,ID,Name"
+						+ "&$expand=EQUIPMENT_2_EMPLOYEE($select=ID,Name)&$skip=0&$top=100", {
+					value : [{
+						"Category" : "Electronics",
+						"ID" : 1,
+						"Name" : "Office PC",
+						"EQUIPMENT_2_EMPLOYEE" : {
+							"ID" : "2",
+							"Name" : "Frederic Fall"
+						}
+					}, {
+						"Category" : "Vehicle",
+						"ID" : 2,
+						"Name" : "VW Golf 2.0",
+						"EQUIPMENT_2_EMPLOYEE" : {
+							"ID" : "3",
+							"Name" : "Jonathan Smith"
+						}
+				}]})
+				.expectChange("idCategory", ["Electronics", "Vehicle"])
+				.expectChange(sId0, ["Office PC", "VW Golf 2.0"])
+				.expectChange(sId1, ["Frederic Fall", "Jonathan Smith"]);
+
+			oTable.getBinding("items").resume();
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Outer form with context binding is suspended after initialization; outer form
+	//   contains inner form. Both forms are then changed by adding and removing a form field.
+	//   After resume, a new request reflecting the changes is sent and the added fields are
+	//   updated.
+	QUnit.test("suspend/resume: nested context bindings", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="outerForm" binding="{/Equipments(Category=\'Electronics\',ID=1)}">\
+	<Text id="idEquipmentName" text="{Name}" />\
+	<FlexBox id="innerForm" binding="{EQUIPMENT_2_EMPLOYEE}">\
+		<Text id="idEmployeeName" text="{Name}" />\
+		<Text id="idManagerId" text="{MANAGER_ID}" />\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Equipments(Category='Electronics',ID=1)?$select=Category,ID,Name"
+					+ "&$expand=EQUIPMENT_2_EMPLOYEE($select=ID,MANAGER_ID,Name)", {
+				"Category" : "Electronics",
+				"ID" : 1,
+				"Name" : "Office PC",
+				"EQUIPMENT_2_EMPLOYEE" : {
+					"ID" : "2",
+					"MANAGER_ID" : "5",
+					"Name" : "Frederic Fall"
+				}
+			})
+			.expectChange("idEquipmentName", "Office PC")
+			.expectChange("idEmployeeName", "Frederic Fall")
+			.expectChange("idManagerId", "5")
+			.expectChange("idEquipmentName", "Office PC") // TODO unexpected changes
+			.expectChange("idEmployeeName", "Frederic Fall")
+			.expectChange("idManagerId", "5");
+		return this.createView(assert, sView, oModel).then(function () {
+			var oOuterForm = that.oView.byId("outerForm"),
+				oInnerForm = that.oView.byId("innerForm"),
+				sIdEmployeeId,
+				sIdAge;
+
+			oOuterForm.getObjectBinding().suspend();
+			sIdEmployeeId = that.addToForm(oOuterForm, "EmployeeId", assert);
+			that.removeFromForm(oOuterForm, "idEquipmentName");
+			sIdAge = that.addToForm(oInnerForm, "AGE", assert);
+			that.removeFromForm(oInnerForm, "idManagerId");
+			that.expectRequest("Equipments(Category='Electronics',ID=1)"
+						+ "?$select=Category,EmployeeId,ID"
+						+ "&$expand=EQUIPMENT_2_EMPLOYEE($select=AGE,ID,Name)", {
+					"Category" : "Electronics",
+					"EmployeeId" : "0002",
+					"ID" : "1",
+					"EQUIPMENT_2_EMPLOYEE" : {
+						"AGE" : 32,
+						"ID" : "2",
+						"Name" : "Frederic Fall"
+					}
+				})
+				.expectChange(sIdEmployeeId, "0002")
+				.expectChange(sIdAge, "32");
+
+			oOuterForm.getObjectBinding().resume();
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Outer form with context binding is suspended after initialization; outer form
+	//   contains inner table. Both form and table are then changed by adding and removing a form
+	//   field resp. a table column.
+	//   After resume, a new request reflecting the changes is sent and the added field/column is
+	//   updated.
+	QUnit.test("suspend/resume: context binding with nested list binding", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{/TEAMS(\'TEAM_01\')}">\
+	<Text id="idMemberCount" text="{MEMBER_COUNT}" />\
+	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', templateShareable : false}">\
+		<ColumnListItem>\
+			<Text id="idAge" text="{AGE}" />\
+			<Text id="idName" text="{Name}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("TEAMS('TEAM_01')?$select=MEMBER_COUNT,Team_Id"
+					+ "&$expand=TEAM_2_EMPLOYEES($select=AGE,ID,Name)", {
+				"Team_Id": "TEAM_01",
+				"MEMBER_COUNT": 2,
+				"TEAM_2_EMPLOYEES": [{
+					"@odata.etag": "W/\"19770724000000.0000000\"",
+					"ID": "1",
+					"Name": "Frederic Fall",
+					"AGE": 52
+				}, {
+					"@odata.etag": "W/\"19770724000000.0000000\"",
+					"ID": "3",
+					"Name": "Jonathan Smith",
+					"AGE": 56
+				}]
+			})
+			.expectChange("idMemberCount", "2")
+			.expectChange("idMemberCount", "2") // TODO unexpected changes
+			.expectChange("idAge", ["52", "56"])
+			.expectChange("idName", ["Frederic Fall", "Jonathan Smith"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oForm = that.oView.byId("form"),
+				sIdManagerId,
+				sIdStatus,
+				oTable = that.oView.byId("table");
+
+			oForm.getObjectBinding().suspend();
+			sIdManagerId = that.addToForm(oForm, "MANAGER_ID", assert);
+			that.removeFromForm(oForm, "idMemberCount");
+			sIdStatus = that.addToTable(oTable, "STATUS", assert);
+			that.removeFromTable(oTable, "idAge");
+			that.expectRequest("TEAMS('TEAM_01')?$select=MANAGER_ID,Team_Id"
+						+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name,STATUS)", {
+					"Team_Id": "TEAM_01",
+					"MANAGER_ID": "3",
+					"TEAM_2_EMPLOYEES": [{
+						"@odata.etag": "W/\"19770724000000.0000000\"",
+						"ID": "1",
+						"Name": "Frederic Fall",
+						"STATUS": "Available"
+					}, {
+						"@odata.etag": "W/\"19770724000000.0000000\"",
+						"ID": "3",
+						"Name": "Jonathan Smith",
+						"STATUS": "Occupied"
+					}]
+				})
+				.expectChange(sIdManagerId, "3")
+				.expectChange("idName", ["Frederic Fall", "Jonathan Smith"])
+				.expectChange(sIdStatus, ["Available", "Occupied"]);
+
+			oForm.getObjectBinding().resume();
+			return that.waitForChanges(assert);
 		});
 	});
 });

@@ -187,17 +187,19 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("refresh: does nothing for suspended binding", function (assert) {
 		var oBinding = new ODataBinding({
-				bSuspended : true,
 				oModel : {
 					checkGroupId : function () {}
 				},
-				refreshInternal : function () {}
-			});
+				refreshInternal : function () {},
+				bSuspended : true
+			}),
+			oBindingMock = this.mock(oBinding);
 
-		this.mock(oBinding).expects("isRefreshable").withExactArgs().returns(true);
-		this.mock(oBinding).expects("hasPendingChanges").returns(false);
+		oBindingMock.expects("isRefreshable").withExactArgs().returns(true);
+		oBindingMock.expects("hasPendingChanges").returns(false);
 		this.mock(oBinding.oModel).expects("checkGroupId");
-		this.mock(oBinding).expects("refreshInternal").never();
+		oBindingMock.expects("isSuspended").withExactArgs().returns(true);
+		oBindingMock.expects("refreshInternal").never();
 
 		// code under test
 		oBinding.refresh("groupId");
@@ -1465,5 +1467,79 @@ sap.ui.require([
 				assert.strictEqual(oResult, undefined);
 			});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isSuspended: absolute binding", function (assert) {
+		var bSuspended = {/*use object for comparison in strictEqual*/},
+			oBinding = new ODataBinding({
+				oContext : {/* sap.ui.model.odata.v4.Context */getBinding : function () {} },
+				sPath : "/Employees",
+				bRelative : false,
+				bSuspended : bSuspended
+			});
+
+		this.mock(oBinding.oContext).expects("getBinding").never();
+
+		// code under test
+		assert.strictEqual(oBinding.isSuspended(), bSuspended);
+
+		oBinding.bSuspended = true; // simulate oBinding.suspend()
+
+		// code under test
+		assert.strictEqual(oBinding.isSuspended(), true);
+
+		oBinding.bSuspended = false; // simulate oBinding.resume()
+
+		// code under test
+		assert.strictEqual(oBinding.isSuspended(), false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isSuspended: quasi-absolute binding", function (assert) {
+		var bSuspended = {/*use object for comparison in strictEqual*/},
+			oBinding = new ODataBinding({
+				oContext : {/*base context, has no method getBinding*/},
+				sPath : "SO_2_SCHEDULE",
+				bRelative : true,
+				bSuspended : bSuspended
+			});
+
+		// code under test
+		assert.strictEqual(oBinding.isSuspended(), bSuspended);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isSuspended: unresolved relative binding", function (assert) {
+		var oBinding = new ODataBinding({
+				oContext : undefined,
+				sPath : "SO_2_SCHEDULE",
+				bRelative : true,
+				bSuspended : false // sap.ui.model.Binding constructor sets bSuspended to false
+			});
+
+		// code under test
+		assert.strictEqual(oBinding.isSuspended(), false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isSuspended: resolved relative binding", function (assert) {
+		var oParentBinding = {
+				isSuspended : function () {}
+			},
+			oBinding = new ODataBinding({
+				oContext : {/* sap.ui.model.odata.v4.Context */getBinding : function () {
+					return oParentBinding;
+				}},
+				sPath : "~path~",
+				bRelative : true,
+				bSuspended : false
+			}),
+			bSuspended = {/*use object for comparison in strictEqual*/};
+
+		this.mock(oParentBinding).expects("isSuspended").returns(bSuspended);
+
+		// code under test
+		assert.strictEqual(oBinding.isSuspended(), bSuspended);
 	});
 });

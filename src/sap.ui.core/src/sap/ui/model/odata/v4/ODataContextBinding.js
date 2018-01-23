@@ -523,7 +523,8 @@ sap.ui.define([
 
 	/**
 	 * Requests the value for the given path; the value is requested from this binding's
-	 * cache or from its context in case it has no cache.
+	 * cache or from its context in case it has no cache. For a suspended binding, requesting the
+	 * value is canceled by throwing a "canceled" error.
 	 *
 	 * @param {string} sPath
 	 *   Some absolute path
@@ -534,12 +535,20 @@ sap.ui.define([
 	 *   binding's cache is used
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
+	 * @throws {Error} If the binding is suspended, a "canceled" error is thrown
 	 *
 	 * @private
 	 */
 	ODataContextBinding.prototype.fetchValue = function (sPath, oListener, sGroupId) {
-		var that = this;
+		var oError,
+			that = this;
 
+		// dependent binding will update its value when the suspended binding is resumed
+		if (this.isSuspended()) {
+			oError = new Error("Suspended binding provides no value");
+			oError.canceled = "noDebugLog";
+			throw oError;
+		}
 		return this.oCachePromise.then(function (oCache) {
 			var bDataRequested = false,
 				sRelativePath;
@@ -614,6 +623,21 @@ sap.ui.define([
 				that.execute(sGroupId);
 			}
 		});
+	};
+
+	/**
+	 * Resumes this binding and all dependent bindings and fires a change event afterwards.
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.resumeInternal = function () {
+		this.mAggregatedQueryOptions = {};
+		this.mCacheByContext = undefined;
+		this.fetchCache(this.oContext);
+		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+			oDependentBinding.resumeInternal();
+		});
+		this._fireChange({reason : ChangeReason.Change});
 	};
 
 	/**

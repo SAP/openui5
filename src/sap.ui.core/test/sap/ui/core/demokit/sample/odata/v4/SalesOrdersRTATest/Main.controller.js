@@ -4,14 +4,17 @@
 sap.ui.define([
 		'sap/m/Button',
 		'sap/m/Column',
-		'sap/m/Label'
-], function (Button, Column, Label) {
+		'sap/m/Label',
+		'sap/m/Text',
+		"sap/ui/test/TestUtils"
+], function (Button, Column, Label, Text, TestUtils) {
 	"use strict";
 
 	return sap.ui.controller("sap.ui.core.sample.odata.v4.SalesOrdersRTATest.Main", {
 
 		onInit : function () {
 			var oAdaptSalesOrdersButton = new Button({
+					enabled : TestUtils.isRealOData(),
 					icon : "sap-icon://settings",
 					press : this.onAdaptSalesOrders.bind(this)
 				});
@@ -20,14 +23,17 @@ sap.ui.define([
 				"sap.ui.core.sample.odata.v4.SalesOrdersRTATest.AdaptDialog", this));
 			this.byId("SalesOrdersToolbar").addContent(oAdaptSalesOrdersButton);
 			this.byId("SalesOrderDetailsToolbar").addContent(new Button({
+				enabled : false,
 				icon : "sap-icon://settings",
 				press : this.onAdaptSODetails.bind(this)
 			}));
 			this.byId("BusinessPartnerToolbar").addContent(new Button({
+				enabled : false,
 				icon : "sap-icon://settings",
 				press : this.onAdaptBusinessPartner.bind(this)
 			}));
 			this.byId("SalesOrderLineItemsTitleToolbar").addContent(new Button({
+				enabled : false,
 				icon : "sap-icon://settings",
 				press : this.onAdaptSalesOrderItems.bind(this)
 			}));
@@ -97,11 +103,21 @@ sap.ui.define([
 			// It is not possible to modify the aggregation's template on an existing binding.
 			// Hence, we have to re-create.
 			function recreateBinding() {
-				oControl.bindItems(jQuery.extend({}, oControl.getBindingInfo("items"),
-					{
-						suspended : true
-					})
-				);
+				var oBindingInfo = oControl.getBindingInfo("items"),
+					oTemplate = oBindingInfo.template;
+
+				// ensure template is not shared between old and new binding
+				delete oBindingInfo.template;
+				oControl.bindItems(jQuery.extend({}, oBindingInfo, {
+					suspended : true,
+					template : oTemplate
+				}));
+				// Note: after re-creation of the binding, one has to set the new header context
+				//   for the $count binding in the title
+				if (oControl === that.byId("SalesOrders")) {
+					that.byId("SalesOrdersTitle").setBindingContext(
+						oControl.getBinding("items").getHeaderContext());
+				}
 			}
 
 			function addHandler(sPropertyPath) {

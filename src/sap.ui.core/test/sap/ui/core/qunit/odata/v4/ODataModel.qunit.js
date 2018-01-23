@@ -777,6 +777,17 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("reportError on canceled error, no debug log", function (assert) {
+		var oError = {canceled : "noDebugLog"};
+
+		this.oLogMock.expects("debug").never();
+		this.mock(sap.ui.getCore().getMessageManager()).expects("addMessages").never();
+
+		// code under test
+		createModel().reportError("Failure", "class", oError);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("destroy", function (assert) {
 		var oModel = createModel(),
 			oModelPrototypeMock = this.mock(Model.prototype);

@@ -4411,10 +4411,47 @@ sap.ui.require([
 			oBinding.refreshSingle(oContext, "groupId");
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("resumeInternal", function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/TEAMS"),
+			oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext),
+			oBindingMock = this.mock(oBinding),
+			oDependent0 = {resumeInternal : function () {}},
+			oDependent1 = {resumeInternal : function () {}},
+			oFetchCacheExpectation,
+			oFireChangeExpectation,
+			oGetDependentBindingsExpectation,
+			oResetExpectation;
+
+		oResetExpectation = oBindingMock.expects("reset").withExactArgs();
+		oFetchCacheExpectation = oBindingMock.expects("fetchCache")
+			.withExactArgs(sinon.match.same(oContext));
+		oGetDependentBindingsExpectation = this.mock(this.oModel).expects("getDependentBindings")
+			.withExactArgs(sinon.match.same(oBinding))
+			.returns([oDependent0, oDependent1]);
+		this.mock(oDependent0).expects("resumeInternal").withExactArgs();
+		this.mock(oDependent1).expects("resumeInternal").withExactArgs();
+		oFireChangeExpectation = oBindingMock.expects("_fireChange")
+			.withExactArgs({reason : ChangeReason.Change});
+
+		// code under test
+		oBinding.resumeInternal();
+
+		assert.ok(oFetchCacheExpectation.calledAfter(oResetExpectation));
+		assert.ok(oGetDependentBindingsExpectation.calledAfter(oFetchCacheExpectation));
+		assert.ok(oFireChangeExpectation.calledAfter(oGetDependentBindingsExpectation));
+	});
+	//TODO This is very similar to ODCB#resumeInternal; both should be refactored to
+	//  ODParentBinding#resumeInternal. Differences
+	// (a) bCheckUpdate parameter: dependent bindings of a list binding must not call checkUpdate on
+	//     dependent bindings while context bindings have to; analogous to #refreshInternal.
+	// (b) the "header context" of the list binding must update it's dependent bindings only after
+	//     _fireChange leading to a new request, see ODLB#reset.
+	// We need to have integration tests first for both differences.
 });
 
 //TODO integration: 2 entity sets with same $expand, but different $select
-//TODO support suspend/resume
 //TODO Provide "array" methods that can deal with -1 index (splice, forEach, length) and use it
 //     instead of if {} else {} code fragments
 //TODO extended change detection:

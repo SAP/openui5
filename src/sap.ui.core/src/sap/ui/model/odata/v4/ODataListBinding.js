@@ -1406,6 +1406,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Resumes this binding and all dependent bindings and fires a change event afterwards.
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.resumeInternal = function () {
+		this.reset();
+		this.fetchCache(this.oContext);
+		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+			oDependentBinding.resumeInternal();
+		});
+		this._fireChange({reason : ChangeReason.Change});
+	};
+
+	/**
 	 * Sets the context and resets the cached contexts of the list items.
 	 *
 	 * @param {sap.ui.model.Context} oContext
