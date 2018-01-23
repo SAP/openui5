@@ -85,7 +85,7 @@ sap.ui.define([
 	 *   Note: The root $metadata document and annotation files are just requested but not yet
 	 *   converted from XML to JSON unless really needed.
 	 *   Supported since 1.53.0
-	 *   <b>BEWARE:</b> Default value will change to <code>true</code> for 1.55.0!
+	 *   <b>BEWARE:</b> The default value may change to <code>true</code> in later releases.
 	 * @param {string} [mParameters.groupId="$auto"]
 	 *   Controls the model's use of batch requests: '$auto' bundles requests from the model in a
 	 *   batch request which is sent automatically before rendering; '$direct' sends requests
