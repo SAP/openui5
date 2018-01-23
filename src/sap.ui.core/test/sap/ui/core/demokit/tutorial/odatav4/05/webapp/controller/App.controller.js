@@ -9,7 +9,7 @@ sap.ui.define([
 ], function (Controller, MessageBox, Sorter, Filter, FilterOperator, FilterType, JSONModel) {
 	"use strict";
 
-	return Controller.extend("sap.ui.demo.odatav4.controller.App", {
+	return Controller.extend("sap.ui.core.tutorial.odatav4.controller.App", {
 
 		/**
 		 *  Hook for initializing the controller
@@ -17,21 +17,23 @@ sap.ui.define([
 		onInit : function () {
 			var oJSONData = {
 				busy : false,
-				order: 0
+				order : 0
 			};
 			var oModel = new JSONModel(oJSONData);
 			this.getView().setModel(oModel, "appView");
 		},
 
+
 		/* =========================================================== */
 		/*           begin: event handlers                             */
 		/* =========================================================== */
+
 
 		/**
 		 * Refresh the data.
 		 */
 		onRefresh : function () {
-			var oBinding = this.byId("people").getBinding("items");
+			var oBinding = this.byId("peopleList").getBinding("items");
 
 			if (oBinding && oBinding.hasPendingChanges()) {
 				MessageBox.error(this._getText("refreshFailedMessage"));
@@ -45,10 +47,10 @@ sap.ui.define([
 		 */
 		onSearch : function () {
 			var oView = this.getView(),
-				sValue = oView.byId("search").getValue();
+				sValue = oView.byId("searchField").getValue(),
+				oFilter = new Filter("LastName", FilterOperator.Contains, sValue);
 
-			var aFilters = [new Filter("LastName", FilterOperator.Contains, sValue)];
-			oView.byId("people").getBinding("items").filter(aFilters, FilterType.Application);
+			oView.byId("peopleList").getBinding("items").filter(oFilter, FilterType.Application);
 		},
 
 		/**
@@ -61,16 +63,18 @@ sap.ui.define([
 				iOrder = oView.getModel("appView").getProperty("/order");
 
 			// Cycle between the states
-			iOrder= (iOrder + 1) % aStates.length;
+			iOrder = (iOrder + 1) % aStates.length;
 			var sOrder = aStates[iOrder];
 
 			oView.getModel("appView").setProperty("/order", iOrder);
-			oView.byId("people").getBinding("items").sort(sOrder && new Sorter("LastName", sOrder === "desc"));
+			oView.byId("peopleList").getBinding("items").sort(sOrder && new Sorter("LastName", sOrder === "desc"));
 		},
+
 
 		/* =========================================================== */
 		/*           end: event handlers                               */
 		/* =========================================================== */
+
 
 		/**
 		 * Convenience method for retrieving a translatable text.

@@ -10,7 +10,7 @@ sap.ui.define([
 ], function (MessageBox, MessageToast, Controller, Sorter, Filter, FilterOperator, FilterType, JSONModel) {
 	"use strict";
 
-	return Controller.extend("sap.ui.demo.odatav4.controller.App", {
+	return Controller.extend("sap.ui.core.tutorial.odatav4.controller.App", {
 
 		/**
 		 *  Hook for initializing the controller
@@ -19,7 +19,7 @@ sap.ui.define([
 			var oJSONData = {
 				busy : false,
 				hasUIChanges : false,
-				order: 0
+				order : 0
 			};
 			var oModel = new JSONModel(oJSONData);
 			this.getView().setModel(oModel, "appView");
@@ -35,24 +35,24 @@ sap.ui.define([
 		 * Create a new entry.
 		 */
 		onCreate : function () {
-			this.byId("people").getBinding("items").create({
+			this.byId("peopleList").getBinding("items").create({
 				"UserName" : "",
 				"FirstName" : "",
 				"LastName" : "",
 				"Age" : ""
 			});
 			this._setUIChanges();
-			this.byId("people").getItems()[0].focus();
-			this.byId("people").getItems()[0].setSelected(true);
+			this.byId("peopleList").getItems()[0].focus();
+			this.byId("peopleList").getItems()[0].setSelected(true);
 			// OData Service demands an valid age >0, but the field gets initialized with 0
-			this.byId("people").getItems()[0].getCells()[3].setValue(18);
+			this.byId("peopleList").getItems()[0].getCells()[3].setValue(18);
 		},
 
 		/**
 		 * Delete an entry.
 		 */
 		onDelete : function () {
-			var oSelected = this.byId("people").getSelectedItem();
+			var oSelected = this.byId("peopleList").getSelectedItem();
 
 			if (oSelected) {
 				oSelected.getBindingContext().delete("$auto").then(function () {
@@ -65,6 +65,7 @@ sap.ui.define([
 
 		/**
 		 * Lock UI when changing data in the input controls
+		 * @param {sap.ui.base.Event} oEvt - Event data
 		 */
 		onInputChange : function (oEvt) {
 			if (oEvt.getParameter("escPressed")) {
@@ -78,7 +79,7 @@ sap.ui.define([
 		 * Refresh the data.
 		 */
 		onRefresh : function () {
-			var oBinding = this.byId("people").getBinding("items");
+			var oBinding = this.byId("peopleList").getBinding("items");
 
 			if (oBinding && oBinding.hasPendingChanges()) {
 				MessageBox.error(this._getText("refreshFailedMessage"));
@@ -91,7 +92,7 @@ sap.ui.define([
 		 * Reset any unsaved changes.
 		 */
 		onResetChanges : function () {
-			this.byId("people").getBinding("items").resetChanges();
+			this.byId("peopleList").getBinding("items").resetChanges();
 			this._setUIChanges();
 		},
 
@@ -120,13 +121,13 @@ sap.ui.define([
 			var fnSuccess = function () {
 				this._setBusy(false);
 				this._setUIChanges();
-				this.byId("people").getBinding("items").refresh();
+				this.byId("peopleList").getBinding("items").refresh();
 				MessageToast.show(this._getText("creationSuccessMessage"));
 			}.bind(this);
 			var fnError = function (oError) {
 				this._setBusy(false);
 				this._setUIChanges();
-				this.byId("people").getBinding("items").refresh();
+				this.byId("peopleList").getBinding("items").refresh();
 				MessageBox.error(oError.message);
 			}.bind(this);
 
@@ -139,10 +140,10 @@ sap.ui.define([
 		 */
 		onSearch : function () {
 			var oView = this.getView(),
-				sValue = oView.byId("search").getValue();
+				sValue = oView.byId("searchField").getValue(),
+				oFilter = new Filter("LastName", FilterOperator.Contains, sValue);
 
-			var aFilters = [new Filter("LastName", FilterOperator.Contains, sValue)];
-			oView.byId("people").getBinding("items").filter(aFilters, FilterType.Application);
+			oView.byId("peopleList").getBinding("items").filter(oFilter, FilterType.Application);
 		},
 
 		/**
@@ -155,11 +156,11 @@ sap.ui.define([
 				iOrder = oView.getModel("appView").getProperty("/order");
 
 			// Cycle between the states
-			iOrder= (iOrder + 1) % aStates.length;
+			iOrder = (iOrder + 1) % aStates.length;
 			var sOrder = aStates[iOrder];
 
 			oView.getModel("appView").setProperty("/order", iOrder);
-			oView.byId("people").getBinding("items").sort(sOrder && new Sorter("LastName", sOrder === "desc"));
+			oView.byId("peopleList").getBinding("items").sort(sOrder && new Sorter("LastName", sOrder === "desc"));
 		},
 
 

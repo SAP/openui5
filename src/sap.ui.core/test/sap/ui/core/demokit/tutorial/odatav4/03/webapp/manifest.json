@@ -12,7 +12,7 @@
 		"ach": "ach",
 		"dataSources": {
 			"default": {
-				"uri": "http://services.odata.org/TripPinRESTierService/(S(euc2jaq2ryeoswu4hs4unp33))/",
+				"uri": "http://services.odata.org/TripPinRESTierService/(S(id))/",
 				"type": "OData",
 				"settings": {
 					"odataVersion": "4.0"

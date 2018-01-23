@@ -8,12 +8,12 @@
 	<title>OData V4</title>
 
 	<script id="sap-ui-bootstrap"
-	        src="../../../../../../../../../resources/sap-ui-core.js"
-	        data-sap-ui-libs="sap.m"
-	        data-sap-ui-theme="sap_belize"
-	        data-sap-ui-compatVersion="edge"
-	        data-sap-ui-preload="async"
-	        data-sap-ui-resourceroots='{"sap.ui.core.tutorial.odatav4": ""}'>
+			src="../../../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_belize"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-preload="async"
+			data-sap-ui-resourceroots='{"sap.ui.core.tutorial.odatav4": ""}'>
 	</script>
 
 	<script>
@@ -23,8 +23,7 @@
 				"sap/m/Shell",
 				"sap/ui/core/ComponentContainer"
 			], function (mockserver, Shell, ComponentContainer) {
-				// Start the Sinon fake server so that requests to the
-				// service are intercepted and fake responses returned.
+				// Requests to the service are intercepted and fake responses returned.
 				// Comment this out to connect to the real service.
 				mockserver.start();
 

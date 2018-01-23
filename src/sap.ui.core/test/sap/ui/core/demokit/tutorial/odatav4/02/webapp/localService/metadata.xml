@@ -162,11 +162,11 @@
 					<NavigationPropertyBinding Path="Friends" Target="People"/>
 					<NavigationPropertyBinding Path="BestFriend" Target="People"/>
 					<NavigationPropertyBinding
-							Path="Microsoft.OData.Service.Sample.TrippinInMemory.Models.Employee/Peers"
-							Target="People"/>
+						Path="Microsoft.OData.Service.Sample.TrippinInMemory.Models.Employee/Peers"
+						Target="People"/>
 					<NavigationPropertyBinding
-							Path="Microsoft.OData.Service.Sample.TrippinInMemory.Models.Manager/DirectReports"
-							Target="People"/>
+						Path="Microsoft.OData.Service.Sample.TrippinInMemory.Models.Manager/DirectReports"
+						Target="People"/>
 				</EntitySet>
 				<EntitySet Name="Airlines" EntityType="Microsoft.OData.Service.Sample.TrippinInMemory.Models.Airline">
 					<Annotation Term="Org.OData.Core.V1.OptimisticConcurrency">

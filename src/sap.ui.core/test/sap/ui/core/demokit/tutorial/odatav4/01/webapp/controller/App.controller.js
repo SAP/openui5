@@ -4,7 +4,7 @@ sap.ui.define([
 ], function (Controller, JSONModel) {
 	"use strict";
 
-	return Controller.extend("sap.ui.demo.odatav4.controller.App", {
+	return Controller.extend("sap.ui.core.tutorial.odatav4.controller.App", {
 
 		/**
 		 *  Hook for initializing the controller
