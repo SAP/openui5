@@ -194,6 +194,28 @@
 		assert.equal(dti4.getValueStateText(), oDatePicker.getValueStateText(), "DatePicker valueStateText");
 	});
 
+	// BCP: 1880065660
+	QUnit.test("setDateValue with iframe's JS date object should set properly the date", function (assert) {
+		// arrange
+		var oDTI = new sap.m.DateTimeInput(),
+				iframe = document.createElement('iframe');
+		document.body.appendChild(iframe);
+		var oWindow = iframe.contentWindow;
+		oWindow.dateObj = new oWindow.Date(2017, 11, 12);
+
+		// act
+		oDTI.setDateValue(oWindow.dateObj);
+
+		// assert
+		assert.ok(true, "setDateValue did not throw an expection with date object from an iframe");
+
+		// cleanup
+		oDTI.destroy();
+		document.body.removeChild(iframe);
+		iframe = null;
+		oDTI = null;
+	});
+
 
 	QUnit.test("Invalid Value", function(assert) {
 		var sInvalidValue = ":)";
