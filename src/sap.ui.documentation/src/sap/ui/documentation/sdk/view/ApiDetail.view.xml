@@ -128,15 +128,8 @@
 										<m:items>
 											<m:ColumnListItem>
 												<m:cells>
-
-													<custom:ParamText class="sapUiDocumentationParamBold" text="{name}"/>
-
-													<layout:VerticalLayout visible="{= ${deprecated} !== undefined }">
-														<m:ObjectStatus icon="sap-icon://message-error" state="Error" text="Deprecated"/>
-													</layout:VerticalLayout>
-
+													<custom:ParamText class="sapUiDocumentationParamBold" text="{name}" deprecated="{= ${deprecated} !== undefined }"/>
 													<core:HTML content="{description}"/>
-
 												</m:cells>
 											</m:ColumnListItem>
 										</m:items>
@@ -306,10 +299,7 @@
 										<m:items>
 											<m:ColumnListItem visible="{= ${visibility} === 'public'}">
 												<m:cells>
-													<m:VBox>
-														<custom:ParamText text="{name}" phoneText="{name}" defaultFlag="{= ${/ui5-metadata/defaultAggregation} === ${path: 'name'} }"/>
-														<m:ObjectStatus visible="{= ${deprecated} !== undefined }" icon="sap-icon://message-error" state="Error" text="Deprecated"/>
-													</m:VBox>
+													<custom:ParamText text="{name}" deprecated="{= ${deprecated} !== undefined }" defaultFlag="{= ${/ui5-metadata/defaultAggregation} === ${path: 'name'} }"/>
 													<m:Text text="{cardinality}" wrapping="false"/>
 													<m:Link text="{type}"
 															href="#/api/{type}"
@@ -345,10 +335,7 @@
 										<m:items>
 											<m:ColumnListItem visible="{visibility === 'public'}">
 												<m:cells>
-													<m:VBox>
-														<custom:ParamText class="sapUiDocumentationParamBold" text="{name}"/>
-														<m:ObjectStatus visible="{= ${deprecated} !== undefined }" icon="sap-icon://message-error" state="Error" text="Deprecated"/>
-													</m:VBox>
+													<custom:ParamText class="sapUiDocumentationParamBold" text="{name}" deprecated="{= ${deprecated} !== undefined }"/>
 													<m:Text text="{cardinality}" wrapping="false"/>
 													<m:Link text="{type}"
 															href="#/api/{type}"

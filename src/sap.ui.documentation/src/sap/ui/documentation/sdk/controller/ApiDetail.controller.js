@@ -11,6 +11,7 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
 		"sap/uxap/ObjectPageSubSection",
 		"sap/ui/documentation/sdk/controller/util/APIInfo",
+		"sap/ui/documentation/sdk/controls/ParamText",
 		"sap/ui/layout/VerticalLayout",
 		"sap/m/Table",
 		"sap/m/Column",
@@ -23,7 +24,7 @@ sap.ui.define([
 		"sap/m/Panel",
 		"sap/ui/documentation/sdk/controls/BorrowedList"
 	], function (jQuery, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, ObjectPageSubSection, APIInfo,
-				 VerticalLayout, Table, Column, Label, ColumnListItem, Link, ObjectStatus, HTML, Title, Panel, BorrowedList) {
+				 ParamText, VerticalLayout, Table, Column, Label, ColumnListItem, Link, ObjectStatus, HTML, Title, Panel, BorrowedList) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.ApiDetail", {
@@ -319,21 +320,11 @@ sap.ui.define([
 										template: new ColumnListItem({
 											visible: "{= !!${path: 'name'} }",
 											cells: [
-												new VerticalLayout({
-													content: [
-														new Link({
-															text: "{name}",
-															href: "#/api/{/name}/methods/{name}",
-															press: this.scrollToMethod.bind(this),
-															wrapping: false
-														}),
-														new ObjectStatus({
-															icon: "sap-icon://message-error",
-															state: "Error",
-															text: "Deprecated",
-															visible: "{= ${deprecated} !== undefined }"
-														})
-													]
+												new ParamText({
+													text: "{name}",
+													href: "#/api/{/name}/methods/{name}",
+													deprecated: "{= ${deprecated} !== undefined }",
+													press: this.scrollToMethod.bind(this)
 												}),
 												new HTML({content: "{description}"})
 											]
@@ -413,21 +404,11 @@ sap.ui.define([
 										template: new ColumnListItem({
 											visible: "{= !!${path: 'name'} }",
 											cells: [
-												new VerticalLayout({
-													content: [
-														new Link({
-															text: "{name}",
-															href: "#/api/{/name}/events/{name}",
-															press: this.scrollToEvent.bind(this),
-															wrapping: false
-														}),
-														new ObjectStatus({
-															icon: "sap-icon://message-error",
-															state: "Error",
-															text: "Deprecated",
-															visible: "{= ${deprecated} !== undefined }"
-														})
-													]
+												new ParamText({
+													text: "{name}",
+													href: "#/api/{/name}/events/{name}",
+													press: this.scrollToEvent.bind(this),
+													deprecated: "{= ${deprecated} !== undefined }"
 												}),
 												new HTML({content: "{description}"})
 											]
