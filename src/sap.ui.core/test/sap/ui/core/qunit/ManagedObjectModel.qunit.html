@@ -17,9 +17,24 @@
 		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js" data-sap-ui-cover-only="sap/ui/model/controltree"></script>
 		<script src="ManagedObjectModel.qunit.js"></script>
 	</head>
+	
+	<script id="view" type="application/xml">
+		<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" id="view"
+			displayBlock="true" unknownProperty="true">
+			<Panel id="panel">
+				<content>
+					<Button text="Button" id="button1" />
+					<Button text="Text of button 2" id="button2" />
+					<Text text="Text" id="text" />
+				</content>
+			</Panel>
+		</mvc:View>
+	</script>
+	
 
 	<body class="sapUiBody">
 		<h1 id="qunit-header">QUnit tests: sap.ui.model.base.ManagedObjectModel</h1>
