@@ -91,7 +91,8 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 								},
 								"fileName": "variant0"
 							},
-							"changes" : []
+							"controlChanges" : [],
+							"variantChanges" : {}
 						},
 							{
 								"content" : {
@@ -100,7 +101,8 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 									},
 									"fileName": "variant1"
 								},
-								"changes" : []
+								"controlChanges" : [],
+								"variantChanges" : {}
 							}]
 					}
 				}
