@@ -103,7 +103,7 @@
 			mode="{= ${ui>/bCreateItemPending} ? 'None' : 'SingleSelectMaster'}"
 			selectionChange="onSalesOrdersSelect">
 			<headerToolbar>
-				<Toolbar>
+				<Toolbar id="SalesOrdersToolbar">
 					<Title id="SalesOrdersTitle" text="{$count} Sales Orders" titleStyle="H2">
 						<layoutData>
 							<ToolbarLayoutData shrinkable="false" />
@@ -250,11 +250,13 @@
 				</dependents>
 			</Toolbar>
 			<form:SimpleForm layout="ResponsiveGridLayout">
-				<form:SimpleForm backgroundDesign="Transparent" editable="true" labelSpanM="4"
-					layout="ResponsiveGridLayout">
-					<form:title>
-						<core:Title text="Sales Order"/>
-					</form:title>
+				<form:SimpleForm backgroundDesign="Transparent" editable="true"
+					id="SalesOrderDetails" labelSpanM="4" layout="ResponsiveGridLayout">
+					<form:toolbar>
+						<Toolbar design="Transparent" id="SalesOrderDetailsToolbar">
+							<Title text="Sales Order"/>
+						</Toolbar>
+					</form:toolbar>
 					<Label text="Sales Order ID" />
 					<Text id="Details_SalesOrderID" text="{SalesOrderID}" />
 					<Label text="Created At" />
@@ -270,7 +272,7 @@
 					editable="true" id="BusinessPartner" labelSpanM="4"
 					layout="ResponsiveGridLayout">
 					<form:toolbar>
-						<Toolbar design="Transparent">
+						<Toolbar design="Transparent" id="BusinessPartnerToolbar">
 							<Title text="Business Partner"/>
 							<Button enabled="{:= !${ui>/bRealOData} }" icon="sap-icon://delete"
 								id="deleteBusinessPartner" press="onDeleteBusinessPartner"
@@ -321,7 +323,7 @@
 					}" mode="SingleSelectMaster"
 				selectionChange="onSalesOrderLineItemSelect">
 				<headerToolbar>
-					<Toolbar>
+					<Toolbar id="SalesOrderLineItemsTitleToolbar">
 						<Title id="SalesOrderLineItemsTitle"
 							text="{headerContext>$count} Sales Order Line Items"
 							titleStyle="H2"/>

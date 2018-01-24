@@ -32,7 +32,7 @@ sap.ui.require([
 			}
 		});
 
-		sap.ui.test.Opa.getContext().sViewName = "sap.ui.core.sample.odata.v4.SalesOrdersRTATest.Main";
+		sap.ui.test.Opa.getContext().sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
 
 		// Create, modify and delete of an unsaved sales order
 		When.onTheMainPage.firstSalesOrderIsVisible();
