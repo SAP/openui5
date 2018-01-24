@@ -306,6 +306,19 @@ sap.ui.define([
 			this._iContentSize -= 1;
 		}
 
+		if (this._aActionSheetOnlyControls.length) {
+
+			var aVisibleActionSheetOnlyControls = this._aActionSheetOnlyControls.filter(function(oControl) {
+				return oControl.getVisible();
+			}),
+				bHasVisibleActionSheetOnlyControls = (aVisibleActionSheetOnlyControls.length > 0);
+
+			if (bHasVisibleActionSheetOnlyControls) {
+				// At least one control will be in the action sheet, so the overflow button is required within content
+				this._iContentSize += this._getOverflowButtonSize();
+			}
+		}
+
 		this._bControlsInfoCached = true;
 
 		// If the total width of all overflow-enabled children changed, fire a private event to notify interested parties
@@ -450,7 +463,7 @@ sap.ui.define([
 
 			if (aButtonsToMoveToActionSheet.length > 0) {
 				// At least one control will be in the action sheet, so the overflow button is needed
-				iContentSize = fnAddOverflowButton.call(this, iContentSize);
+				this._setOverflowButtonNeeded(true);
 			}
 		}
 
