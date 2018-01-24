@@ -56,7 +56,17 @@
 						<template>
 							<m:Label text="{
 								parts: ['speedValue', 'speedUnit'],
-								formatter: '.formatUnitCLDR'
+								formatter: '.formatUnit'
+							}"/>
+						</template>
+					</Column>
+
+					<Column sortProperty="customValue">
+						<m:Label text="Pets" />
+						<template>
+							<m:Label text="{
+								parts: ['customValue', 'customUnit'],
+								formatter: '.formatCustomUnit'
 							}"/>
 						</template>
 					</Column>
@@ -66,7 +76,7 @@
 						<template>
 							<m:Label text="{
 								parts: ['volumeValue', 'volumeUnit'],
-								formatter: '.formatUnitCLDR'
+								formatter: '.formatUnit'
 							}"/>
 						</template>
 					</Column>
@@ -81,7 +91,7 @@
 					<Column sortProperty="diskspaceUnit">
 						<m:Label text="Diskspace Unit" />
 						<template>
-							<m:Label text="{path: 'diskspaceUnit', formatter: '.formatDisplayNameCLDR'}"/>
+							<m:Label text="{path: 'diskspaceUnit', formatter: '.formatDisplayName'}"/>
 						</template>
 					</Column>
 

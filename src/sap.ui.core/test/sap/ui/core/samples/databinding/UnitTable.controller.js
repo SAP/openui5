@@ -69,6 +69,9 @@ sap.ui.define([
 
 				aItems[i].volumeValue = Math.random() * 1000;
 				aItems[i].volumeUnit = "volume-cup";
+
+				aItems[i].customValue = Math.floor(Math.random() * 10);
+				aItems[i].customUnit = "cats";
 			}
 
 			this.getView().setModel(new JSONModel(aItems));
@@ -79,7 +82,17 @@ sap.ui.define([
 		},
 
 		setupFormatters: function (oLocale) {
-			this.oUnitFormatterCLDR = NumberFormat.getUnitInstance({unitCodeType: "CLDR"}, oLocale);
+			this.oUnitFormatter = NumberFormat.getUnitInstance({}, oLocale);
+			this.oCustomUnitFormatter = NumberFormat.getUnitInstance({
+				customUnits: {
+					"cats": {
+						"displayName": "Kitties",
+						"unitPattern-count-zero": "no cats :(",
+						"unitPattern-count-one": "{0} cat",
+						"unitPattern-count-other": "{0} cats"
+					}
+				}
+			}, oLocale);
 			this.oCurrencyFormatter = NumberFormat.getCurrencyInstance({}, oLocale);
 			this.oNumberFormatter = NumberFormat.getFloatInstance({minFractionDigits: 2, maxFractionDigits: 2}, oLocale);
 		},
@@ -96,17 +109,21 @@ sap.ui.define([
 			return sap.ui.core.LocaleData.getInstance(oLocale);
 		},
 
-		formatUnitCLDR: function (v, u) {
-			return this.oUnitFormatterCLDR.format(v, u);
+		formatUnit: function (v, u) {
+			return this.oUnitFormatter.format(v, u);
+		},
+
+		formatCustomUnit: function (v, u) {
+			return this.oCustomUnitFormatter.format(v, u);
 		},
 
 		formatDiskvalue: function (v) {
 			return this.oNumberFormatter.format(v);
 		},
 
-		formatDisplayNameCLDR: function (sISOCode) {
+		formatDisplayName: function (sUnit) {
 			var oLocaleData = this.getLocaleData(this.getView().getModel("loc").getProperty("/currentLocale"));
-			return oLocaleData.getUnitDisplayNameByCLDRCode(sISOCode);
+			return oLocaleData.getUnitDisplayName(sUnit);
 		},
 
 		formatCurrency: function (v, u) {
