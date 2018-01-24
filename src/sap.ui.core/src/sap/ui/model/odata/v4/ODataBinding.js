@@ -8,7 +8,7 @@ sap.ui.define([
 ], function (SyncPromise, _Helper) {
 	"use strict";
 
-	var sModuleName = "sap.ui.model.odata.v4.ODataBinding";
+	var sClassName = "sap.ui.model.odata.v4.ODataBinding";
 
 	/**
 	 * A mixin for all OData V4 bindings.
@@ -89,7 +89,7 @@ sap.ui.define([
 		oCachePromise["catch"](function (oError) {
 			//Note: this may also happen if the promise to read data for the canonical path's
 			// key predicate is rejected with a canceled error
-			that.oModel.reportError("Failed to create cache for binding " + that, sModuleName,
+			that.oModel.reportError("Failed to create cache for binding " + that, sClassName,
 				oError);
 		});
 		this.oCachePromise = oCachePromise;
@@ -280,7 +280,7 @@ sap.ui.define([
 		var oPromise = this.withCache(function (oCache, sCachePath) {
 				return oCache.hasPendingChangesForPath(sCachePath);
 			}, sPath).catch(function (oError) {
-				jQuery.sap.log.error("Error in hasPendingChangesForPath", oError, sModuleName);
+				jQuery.sap.log.error("Error in hasPendingChangesForPath", oError, sClassName);
 				return false;
 			});
 
@@ -445,7 +445,7 @@ sap.ui.define([
 			}, sPath);
 
 		oPromise.catch(function (oError) {
-			jQuery.sap.log.error("Error in resetChangesForPath", oError, sModuleName);
+			jQuery.sap.log.error("Error in resetChangesForPath", oError, sClassName);
 		});
 		if (oPromise.isRejected()) {
 			throw oPromise.getResult();

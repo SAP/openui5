@@ -2327,7 +2327,7 @@ sap.ui.require([
 			assert.ok(oPromise.isRejected());
 			assert.strictEqual(oPromise.getResult().message,
 				oFixture.dataPath + ": " + oFixture.message);
-			oPromise.catch(function () {}); // avoid "Uncaught (in promise)"
+			oPromise.caught(); // avoid "Uncaught (in promise)"
 		});
 	});
 

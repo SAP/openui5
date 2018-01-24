@@ -84,6 +84,7 @@ sap.ui.require([
 		// rejected
 		oSyncPromiseMock.expects("isFulfilled").returns(false);
 		oSyncPromiseMock.expects("isRejected").returns(true);
+		oSyncPromiseMock.expects("caught");
 		assert.throws(function () {
 			fnGet.apply(oContext, aArguments);
 		}, oResult);

@@ -12,7 +12,7 @@ sap.ui.require([
 	/*eslint no-warning-comments: 0 */
 	"use strict";
 
-	var sModuleName = "sap.ui.model.odata.v4.ODataBinding";
+	var sClassName = "sap.ui.model.odata.v4.ODataBinding";
 
 	/**
 	 * Constructs a test object.
@@ -274,7 +274,7 @@ sap.ui.require([
 
 		this.mock(oBinding).expects("withCache").returns(SyncPromise.reject(oError));
 		this.oLogMock.expects("error").withExactArgs("Error in hasPendingChangesForPath", oError,
-			sModuleName);
+			sClassName);
 
 		// code under test
 		assert.strictEqual(oBinding.hasPendingChangesForPath("foo"), false);
@@ -422,7 +422,7 @@ sap.ui.require([
 
 		this.mock(oBinding).expects("withCache").returns(SyncPromise.reject(oError));
 		this.oLogMock.expects("error").withExactArgs("Error in resetChangesForPath", oError,
-			sModuleName);
+			sClassName);
 
 		// code under test
 		assert.throws(function () {
@@ -438,7 +438,7 @@ sap.ui.require([
 
 		this.mock(oBinding).expects("withCache").returns(oPromise);
 		this.oLogMock.expects("error").withExactArgs("Error in resetChangesForPath", oError,
-			sModuleName);
+			sClassName);
 
 		// code under test
 		oBinding.resetChangesForPath("foo");
@@ -1202,7 +1202,7 @@ sap.ui.require([
 		oPromise = oBinding.oCachePromise;
 
 		this.mock(oBinding.oModel).expects("reportError")
-			.withExactArgs("Failed to create cache for binding MyBinding", sModuleName,
+			.withExactArgs("Failed to create cache for binding MyBinding", sClassName,
 				sinon.match.instanceOf(Error));
 
 		// create new cache for this binding while other cache creation is pending
@@ -1243,7 +1243,7 @@ sap.ui.require([
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
 			.returns(SyncPromise.reject(oError));
 		this.mock(oBinding.oModel).expects("reportError")
-			.withExactArgs("Failed to create cache for binding MyBinding", sModuleName,
+			.withExactArgs("Failed to create cache for binding MyBinding", sClassName,
 				sinon.match.same(oError));
 
 		// code under test

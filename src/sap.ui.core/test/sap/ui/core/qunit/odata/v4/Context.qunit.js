@@ -344,11 +344,14 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("getProperty: rejected", function (assert) {
 		var oContext = Context.create(null, null, "/foo"),
-			oPromise = Promise.reject("read error"),
+			sMessage = "read error",
+			oPromise = Promise.reject(new Error(sMessage)),
 			oSyncPromise = SyncPromise.resolve(oPromise);
 
 		this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 			.returns(oSyncPromise);
+		this.oLogMock.expects("warning")
+			.withExactArgs(sMessage, "bar", "sap.ui.model.odata.v4.Context");
 
 		return oPromise["catch"](function () {
 			//code under test
