@@ -600,6 +600,7 @@ sap.ui.define([
 	};
 
 	var fnShowTechnicalError = function(vError) {
+		BusyIndicator.hide();
 		var sErrorMessage = vError.stack || vError.message || vError.status || vError;
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		jQuery.sap.log.error("Failed to transfer runtime adaptation changes to layered repository", sErrorMessage);
@@ -908,44 +909,19 @@ sap.ui.define([
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._onTransport = function() {
-		var fnHandleAllErrors = function (oError) {
-			BusyIndicator.hide();
-			if (oError.message !== 'createAndApply failed') {
-				FlexUtils.log.error("transport error" + oError);
-				return Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_TRANSPORT_ERROR", "MSG_TRANSPORT_ERROR", oError);
-			}
-		};
-
+		var oTransportSelection = new TransportSelection();
 		this._handleStopCutPaste();
 
-		return this._openSelection()
-			.then(this._checkTransportInfo)
-			.then(function(oTransportInfo) {
-				if (oTransportInfo) {
-					return this._serializeToLrep().then(function () {
-						return this._getFlexController().getComponentChanges({currentLayer: this.getLayer(), includeCtrlVariants: true}).then(function (aAllLocalChanges) {
-							if (aAllLocalChanges.length > 0) {
-								BusyIndicator.show(0);
-								return this._transportAllLocalChanges(oTransportInfo)
-										['catch'](fnHandleAllErrors);
-							}
-						}.bind(this));
-					}.bind(this))['catch'](fnShowTechnicalError);
-				}
-			}.bind(this)
-		);
-	};
-
-	RuntimeAuthoring.prototype._checkTransportInfo = function(oTransportInfo) {
-		if (oTransportInfo && oTransportInfo.transport && oTransportInfo.packageName !== "$TMP") {
-			return oTransportInfo;
-		} else {
-			return false;
-		}
-	};
-
-	RuntimeAuthoring.prototype._openSelection = function () {
-	   return new TransportSelection().openTransportSelection(null, this._oRootControl, Utils.getRtaStyleClassName());
+		BusyIndicator.show(500);
+		return this._serializeToLrep().then(function () {
+			BusyIndicator.hide();
+			return oTransportSelection.transportAllUIChanges(this._oRootControl, Utils.getRtaStyleClassName(), this.getLayer())
+				.then(function(sError) {
+					if (sError !== "Error") {
+						this._showMessageToast("MSG_TRANSPORT_SUCCESS");
+					}
+				}.bind(this));
+		}.bind(this))['catch'](fnShowTechnicalError);
 	};
 
 	/**
@@ -1073,46 +1049,6 @@ sap.ui.define([
 			onClose : fnConfirmDiscardAllChanges,
 			styleClass: Utils.getRtaStyleClassName()
 		});
-	};
-
-	/**
-	 * Prepare all changes and assign them to an existing transport.
-	 *
-	 * @private
-	 * @param {Object} mTransportInfo - Map containing the package name and the transport
-	 * @param {string} mTransportInfo.packageName - Name of the package
- 	 * @param {string} mTransportInfo.transport - ID of the transport
-	 * @returns {Promise} Returns a Promise which resolves without parameters
-	 */
-	RuntimeAuthoring.prototype._transportAllLocalChanges = function(mTransportInfo) {
-		return this._getFlexController().getComponentChanges({currentLayer: this.getLayer(), includeCtrlVariants: true}).then(function(aAllLocalChanges) {
-
-			// Pass list of changes to be transported with transport request to backend
-			var oTransports = new Transports();
-			var aTransportData = oTransports._convertToChangeTransportData(aAllLocalChanges);
-			var oTransportParams = {};
-			//packageName is '' in CUSTOMER layer (no package input field in transport dialog)
-			oTransportParams.package = mTransportInfo.packageName;
-			oTransportParams.transportId = mTransportInfo.transport;
-			oTransportParams.changeIds = aTransportData;
-
-			return oTransports.makeChangesTransportable(oTransportParams).then(function() {
-
-				// remove the $TMP package from all changes; has been done on the server as well,
-				// but is not reflected in the client cache until the application is reloaded
-				aAllLocalChanges.forEach(function(oChange) {
-
-					if (oChange.getPackage() === '$TMP') {
-						var oDefinition = oChange.getDefinition();
-						oDefinition.packageName = mTransportInfo.packageName;
-						oChange.setResponse(oDefinition);
-					}
-				});
-			}).then(function() {
-				BusyIndicator.hide();
-				this._showMessageToast("MSG_TRANSPORT_SUCCESS");
-			}.bind(this));
-		}.bind(this));
 	};
 
 	/**
