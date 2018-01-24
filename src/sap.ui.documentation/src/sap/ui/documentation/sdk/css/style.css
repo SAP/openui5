@@ -588,6 +588,7 @@ code {
 
 .sapUiJSD {
 	font-size: 0.875rem;
+	display: inline;
 }
 
 .sapUiJSD pre {
