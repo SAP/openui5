@@ -61,7 +61,9 @@
 						showHandleTooltip: true,
 						inputsAsTooltips: true
 					}),
-					new HBox({
+					new FlexBox({
+						alignItems: "Center",
+						wrap: "Wrap",
 						items: [
 							new ToggleButton({
 								text: "+",
@@ -75,29 +77,63 @@
 									this.setText(bPressed ? "-" : "+");
 								}
 							}),
-							new ToggleButton({
-								text: "Compact Mode",
-								pressed: !Device.system.phone && jQuery("html").hasClass("sapUiSizeCompact"),
-								press: function () {
-									jQuery("html").toggleClass("sapUiSizeCompact", this.getPressed());
-									jQuery("html").toggleClass("sapUiSizeCozy", !this.getPressed());
-								}
-							}),
-							new Select({
-								selectedKey: "sapUiTheme-sap_belize",
+							new HBox({
+								alignItems: "Center",
 								items: [
-									new Item({key: "sap_belize", text: "Belize"}),
-									new Item({key: "sap_belize_hcb", text: "Belize HCB"}),
-									new Item({key: "sap_belize_hcw", text: "Belize HCW"})
-								],
-								change: function (oEvent) {
-									var oSelectedTheme = oEvent.getParameter("selectedItem");
-									sap.ui.getCore().applyTheme(oSelectedTheme.getKey());
-								}
+									new Label({text: "Form Factor"}),
+									new ToggleButton({
+										text: "Compact Mode",
+										pressed: !Device.system.phone && jQuery("html").hasClass("sapUiSizeCompact"),
+										press: function () {
+											jQuery("body").toggleClass("sapUiSizeCompact", this.getPressed());
+											jQuery("body").toggleClass("sapUiSizeCozy", !this.getPressed());
+										}
+									})
+								]
+							}),
+							new HBox("settingsTheme", {
+								alignItems: "Center",
+								items: [
+									new Label({text: "Theme:"}),
+									new Select("settingsThemeName",
+										{
+											selectedKey: "sap_belize",
+											items: [
+												new Item({key: "sap_belize", text: "Belize"}),
+												new Item({key: "sap_belize_plus", text: "Belize Deep"}),
+												new Item({key: "sap_belize_hcb", text: "Belize HCB"}),
+												new Item({key: "sap_belize_hcw", text: "Belize HCW"})
+											],
+											change: function (oEvent) {
+												var oSelectedTheme = oEvent.getParameter("selectedItem"),
+													bIsBelize,
+													oContrastContainerToggleBtn;
+
+												sap.ui.getCore().applyTheme(oSelectedTheme.getKey());
+
+												bIsBelize = ["sap_belize", "sap_belize_plus"].indexOf(oSelectedTheme.getKey()) > -1;
+
+												oContrastContainerToggleBtn = sap.ui.getCore().byId("settingsContrastContainer");
+												oContrastContainerToggleBtn.setVisible(bIsBelize);
+												oContrastContainerToggleBtn.setPressed(false);
+												jQuery("body").toggleClass("sapContrast", false);
+												jQuery("body").toggleClass("sapContrastPlus", false);
+											}
+										}),
+									new ToggleButton("settingsContrastContainer",
+										{
+											text: "Contrast",
+											press: function (oEvent) {
+												var oSelectedTheme = sap.ui.getCore().byId("settingsThemeName").getSelectedItem();
+
+												var sContrastContainer = oSelectedTheme.getKey().indexOf("plus") > -1 ? "sapContrastPlus" : "sapContrast";
+												jQuery("body").toggleClass(sContrastContainer, this.getPressed());
+											}
+										})
+								]
 							})
 						]
-					})
-				]
+					})]
 			}).placeAt("beforecontent");
 
 			//As Popover
@@ -194,7 +230,7 @@
 							new Button({
 								icon: "sap-icon://delete",
 								press: function () {
-									oHBox.destroy(); //TODO - fix reordering of the items
+									oHBox.destroy();
 								}
 							})
 						]
