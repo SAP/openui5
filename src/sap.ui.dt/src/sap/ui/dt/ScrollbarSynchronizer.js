@@ -119,7 +119,7 @@ function(
 
 	ScrollbarSynchronizer.prototype._removeDeadNodes = function () {
 		this.getTargets().forEach(function (oDomNode) {
-			if (!document.contains(oDomNode)) {
+			if (!document.body.contains(oDomNode)) {
 				this.removeTarget(oDomNode);
 			}
 		}, this);

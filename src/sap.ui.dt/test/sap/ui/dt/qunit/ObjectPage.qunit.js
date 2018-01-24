@@ -52,7 +52,7 @@ function(
 			});
 			this.oVBox = new VBox({
 				items : [this.oLayout]
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
@@ -71,8 +71,6 @@ function(
 	QUnit.test("invisible section", function(assert) {
 		var fnDone = assert.async();
 
-		// TODO: Test failing because changing visibility does not trigger Overlay creation + synced event is not raised
-		// This will be fixed in the implementation: invisible Overlays should not be rendered - Therefore keep test as is
 		OverlayRegistry.getOverlay(this.oSection).attachEventOnce("geometryChanged", function() {
 			var oSectionOverlay = OverlayRegistry.getOverlay(this.oSection);
 			var oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
