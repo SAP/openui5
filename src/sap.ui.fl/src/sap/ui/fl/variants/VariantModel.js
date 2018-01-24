@@ -135,16 +135,6 @@ sap.ui.define([
 		};
 	};
 
-	VariantModel.prototype.clearVariantInURLForControl = function (oVariantManagementControl) {
-		var oAppComponent = Utils.getAppComponentForControl(this.oComponent) || Utils.getAppComponentForControl(oVariantManagementControl);
-		var sVariantManagementReference = this._getLocalId(oVariantManagementControl.getId(), oAppComponent);
-		var mVariantParametersInURL = this._getVariantIndexInURL(sVariantManagementReference);
-		if (mVariantParametersInURL.index > -1) {
-			mVariantParametersInURL.parameters.splice(mVariantParametersInURL.index, 1);
-			Utils.setTechnicalURLParameterValues("sap-ui-fl-control-variant-id", mVariantParametersInURL.parameters);
-		}
-	};
-
 	/**
 	 * Returns the current variant for a given variant management control
 	 * @param {String} sVariantManagementReference The variant management Ref
