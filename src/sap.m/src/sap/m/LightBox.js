@@ -119,7 +119,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					_busy: {type: "sap.m.BusyIndicator", multiple: false, visibility: "hidden"}
 				},
 				events: {},
-				defaultAggregation: 'imageContent'
+				defaultAggregation: 'imageContent',
+				designtime: "sap/m/designtime/LightBox.designtime"
 			}
 		});
 

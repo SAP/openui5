@@ -75,6 +75,7 @@ sap.ui.define([
 					},
 					aggregations: {
 					},
+					designtime: "sap/m/designtime/QuickView.designtime",
 					events: {
 						/**
 						 * This event fires after the QuickView is opened.

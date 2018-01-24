@@ -8,6 +8,13 @@ sap.ui.define([],
 		"use strict";
 
 		return {
+			name: {
+				singular: "DIALOG_NAME",
+				plural: "DIALOG_NAME_PLURAL"
+			},
+			palette: {
+				group: "DIALOG"
+			},
 			actions: {
 				rename: function (oDialog) {
 					// When a custom header is added the title is not visualized and we do not need a rename action.

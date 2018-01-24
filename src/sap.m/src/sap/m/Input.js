@@ -354,7 +354,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					value: { type: "string" }
 				}
 			}
-		}
+		},
+		designtime: "sap/m/designtime/Input.designtime"
 	}});
 
 
