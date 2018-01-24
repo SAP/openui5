@@ -1659,12 +1659,11 @@ sap.ui.require([
 	});
 
 	QUnit.test("Default Test Table", function(assert) {
-		oTable.setFixedColumnCount(0);
 		var oInput = new sap.ui.table.test.TestInputControl({tabbable: true});
-		oTable.addExtension(oInput);
-		sap.ui.getCore().applyChanges();
-
 		var iPreventDefaultCount = 0;
+
+		oTable.setFixedColumnCount(0);
+		oTable.addExtension(oInput);
 		oTable.addEventDelegate({
 			onsaphome: function(oEvent) {
 				if (oEvent.isDefaultPrevented()) {
@@ -1677,11 +1676,39 @@ sap.ui.require([
 				}
 			}
 		});
+		sap.ui.getCore().applyChanges();
+
+		/* Test on element outside the grid */
+
+		oInput.focus();
+		var oElem = checkFocus(oInput.getDomRef(), assert);
+
+		qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
+		oElem = checkFocus(oElem, assert);
+		assert.ok(iPreventDefaultCount === 0, "Event default not prevented");
+
+		iPreventDefaultCount = 0;
+		qutils.triggerKeydown(oElem, Key.END, false, false, false);
+		checkFocus(oElem, assert);
+		assert.ok(iPreventDefaultCount === 0, "Event default not prevented");
+
+		oInput.focus();
+		oElem = checkFocus(oInput.getDomRef(), assert);
+
+		iPreventDefaultCount = 0;
+		qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
+		oElem = checkFocus(oElem, assert);
+		assert.ok(iPreventDefaultCount === 0, "Event default not prevented");
+
+		iPreventDefaultCount = 0;
+		qutils.triggerKeydown(oElem, Key.END, false, false, false);
+		checkFocus(oElem, assert);
+		assert.ok(iPreventDefaultCount === 0, "Event default not prevented");
 
 		/* Test on column header */
 
 		// First cell
-		var oElem = checkFocus(getColumnHeader(0, true), assert);
+		oElem = checkFocus(getColumnHeader(0, true), assert);
 
 		// *HOME* -> SelectAll
 		qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
@@ -1777,21 +1804,6 @@ sap.ui.require([
 		qutils.triggerKeydown(oElem, Key.END, false, false, false);
 		checkFocus(getRowAction(0), assert);
 		assert.ok(iPreventDefaultCount === 4, "Event default prevented");
-
-		// Focus not on table element
-
-		iPreventDefaultCount = 0;
-
-		oInput.focus();
-		oElem = checkFocus(oInput.getDomRef(), assert);
-
-		qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
-		oElem = checkFocus(oElem, assert);
-		assert.ok(iPreventDefaultCount === 0, "Event default not prevented");
-
-		qutils.triggerKeydown(oElem, Key.END, false, false, false);
-		oElem = checkFocus(oElem, assert);
-		assert.ok(iPreventDefaultCount === 0, "Event default not prevented");
 	});
 
 	QUnit.test("No Row Header", function(assert) {
@@ -2171,9 +2183,6 @@ sap.ui.require([
 		// *END* -> Row Action
 		qutils.triggerKeydown(oElem, Key.END, false, false, false);
 		checkFocus(getRowAction(0), assert);
-
-		//Cleanup
-		initRowActions(oTable, 0, 0);
 	});
 
 	QUnit.test("Fixed Columns with Column Span", function(assert) {
