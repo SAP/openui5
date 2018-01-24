@@ -83,7 +83,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Contex
 		var oContext = this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
 			var oData;
 
-			if (that.bCreatePreliminaryContext) {
+			if (that.bCreatePreliminaryContext && oContext.isPreliminary()) {
 				that.oElementContext.setPreliminary(false);
 				that.oModel._updateContext(that.oElementContext, oContext.getPath());
 				that._fireChange({ reason: ChangeReason.Context }, false, true);
