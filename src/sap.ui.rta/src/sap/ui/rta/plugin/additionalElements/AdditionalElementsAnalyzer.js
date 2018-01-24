@@ -28,9 +28,17 @@
 		var mQuickInfoAnnotation = mProperty["com.sap.vocabularies.Common.v1.QuickInfo"];
 		mProp.quickInfo = mQuickInfoAnnotation && mQuickInfoAnnotation.String;
 
-		// Set the visible attribute on the property (see sap\ui\model\odata\_ODataMetaModelUtils.js) => will match field control and sap:visible = false
-		var mFieldControlAnnotation = mProperty["com.sap.vocabularies.Common.v1.FieldControl"];
-		mProp.visible = !(mFieldControlAnnotation && mFieldControlAnnotation.EnumMember === "com.sap.vocabularies.Common.v1.FieldControlType/Hidden");
+		//CDS UI.Hidden new way also for sap:visible = false
+		var mHiddenAnnotation = mProperty["com.sap.vocabularies.UI.v1.Hidden"];
+		mProp.hidden = mHiddenAnnotation && mHiddenAnnotation.Bool === "true";
+
+		if (!mProp.hidden){
+			// Old hidden annotation
+			var mFieldControlAnnotation = mProperty["com.sap.vocabularies.Common.v1.FieldControl"];
+			if (mFieldControlAnnotation){
+				mProp.hidden = mFieldControlAnnotation.EnumMember === "com.sap.vocabularies.Common.v1.FieldControlType/Hidden";
+			}
+		}
 		return mProp;
 	}
 
@@ -72,9 +80,8 @@
 
 	function _filterInvisibleProperties(aODataProperties, oElement, sAggregationName) {
 		return aODataProperties.filter(function(mProperty){
-			//sap:visible=false and or "com.sap.vocabularies.Common.v1.FieldControl" with EnumMember "com.sap.vocabularies.Common.v1.FieldControlType/Hidden"
-			//handled by MetadataAnalyser
-			return mProperty.visible;
+			//see _enrichProperty
+			return !mProperty.hidden;
 		}).filter(function(mProperty){
 			//@runtime hidden by field control value = 0
 			var mFieldControlAnnotation = mProperty["com.sap.vocabularies.Common.v1.FieldControl"];
