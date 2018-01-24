@@ -358,7 +358,7 @@
 
 	QUnit.test("Checking _handleVariantSaveAs", function(assert) {
 
-		sinon.stub(oModel, "handleSave");
+		sinon.stub(oModel, "_handleSave");
 		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
 
 		var bCalled = false;
@@ -379,7 +379,7 @@
 
 		this.oVariantManagement._handleVariantSaveAs("1");
 		assert.ok(bCalled);
-		assert.ok(oModel.handleSave.calledOnce);
+		assert.ok(oModel._handleSave.calledOnce);
 		assert.equal(this.oVariantManagement.oInputName.getValueState(), "None");
 
 		this.oVariantManagement._handleVariantSaveAs(" ");
@@ -393,7 +393,7 @@
 
 	QUnit.test("Checking _handleVariantSave", function(assert) {
 
-		sinon.stub(oModel, "handleSave");
+		sinon.stub(oModel, "_handleSave");
 		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
 
 		var bCalled = false;
@@ -412,7 +412,7 @@
 
 		this.oVariantManagement._handleVariantSave();
 		assert.ok(bCalled);
-		assert.ok(oModel.handleSave.calledOnce);
+		assert.ok(oModel._handleSave.calledOnce);
 	});
 
 	QUnit.test("Checking openManagementDialog", function(assert) {
