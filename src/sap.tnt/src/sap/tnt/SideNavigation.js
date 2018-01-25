@@ -3,10 +3,24 @@
  */
 
 // Provides control sap.t.SideNavigation.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler',
-		'sap/ui/core/Icon', 'sap/ui/core/delegate/ScrollEnablement'],
-	function (jQuery, library, Control, ResizeHandler,
-			  Icon, ScrollEnablement) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/Control',
+    'sap/ui/core/ResizeHandler',
+    'sap/ui/core/Icon',
+    'sap/ui/core/delegate/ScrollEnablement',
+    "./SideNavigationRenderer"
+],
+	function(
+	    jQuery,
+		library,
+		Control,
+		ResizeHandler,
+		Icon,
+		ScrollEnablement,
+		SideNavigationRenderer
+	) {
 		'use strict';
 
 		/**
