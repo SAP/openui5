@@ -3,8 +3,12 @@
  */
 
 //Provides control sap.ui.unified.Calendar.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/unified/library'],
-		function(jQuery, Control, library) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Control',
+	'sap/ui/unified/library',
+	"./HeaderRenderer"
+], function(jQuery, Control, library, HeaderRenderer) {
 	"use strict";
 
 	/**

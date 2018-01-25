@@ -3,9 +3,41 @@
  */
 
 //Provides control sap.ui.unified.Calendar.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/unified/calendar/CalendarUtils',
-               './calendar/Header', './calendar/TimesRow', './calendar/DatesRow', './calendar/MonthPicker', './calendar/YearPicker', 'sap/ui/core/date/UniversalDate', './library', 'sap/ui/core/format/DateFormat', 'sap/ui/Device', 'sap/ui/core/Locale', 'sap/ui/core/library'],
-               function(jQuery, Control, LocaleData, CalendarUtils, Header, TimesRow, DatesRow, MonthPicker, YearPicker, UniversalDate, library, DateFormat, Device, Locale, coreLibrary) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Control',
+	'sap/ui/core/LocaleData',
+	'sap/ui/unified/calendar/CalendarUtils',
+	'./calendar/Header',
+	'./calendar/TimesRow',
+	'./calendar/DatesRow',
+	'./calendar/MonthPicker',
+	'./calendar/YearPicker',
+	'sap/ui/core/date/UniversalDate',
+	'./library',
+	'sap/ui/core/format/DateFormat',
+	'sap/ui/Device',
+	'sap/ui/core/Locale',
+	'sap/ui/core/library',
+	"./CalendarTimeIntervalRenderer"
+], function(
+	jQuery,
+	Control,
+	LocaleData,
+	CalendarUtils,
+	Header,
+	TimesRow,
+	DatesRow,
+	MonthPicker,
+	YearPicker,
+	UniversalDate,
+	library,
+	DateFormat,
+	Device,
+	Locale,
+	coreLibrary,
+	CalendarTimeIntervalRenderer
+) {
 	"use strict";
 
 	// shortcut for sap.ui.core.CalendarType
