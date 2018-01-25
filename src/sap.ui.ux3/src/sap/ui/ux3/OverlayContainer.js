@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.ux3.OverlayContainer.
-sap.ui.define(['jquery.sap.global', './Overlay', './library'],
-	function(jQuery, Overlay, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    './Overlay',
+    './library',
+    "./OverlayContainerRenderer"
+],
+	function(jQuery, Overlay, library, OverlayContainerRenderer) {
 	"use strict";
 
 

@@ -3,8 +3,26 @@
  */
 
 // Provides control sap.ui.ux3.ExactList.
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Control', 'sap/ui/core/Popup', 'sap/ui/core/theming/Parameters', './library', 'jquery.sap.dom'],
-	function(jQuery, ListBox, Control, Popup, Parameters, library/* , jQuerySap */) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/commons/ListBox',
+    'sap/ui/core/Control',
+    'sap/ui/core/Popup',
+    'sap/ui/core/theming/Parameters',
+    './library',
+    "./ExactListRenderer",
+    'jquery.sap.dom'
+],
+	function(
+	    jQuery,
+		ListBox,
+		Control,
+		Popup,
+		Parameters,
+		library,
+		ExactListRenderer
+		/* , jQuerySap */
+	) {
 	"use strict";
 
 

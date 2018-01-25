@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.ux3.ThingInspector.
-sap.ui.define(['jquery.sap.global', './ActionBar', './Overlay', './ThingViewer', './library'],
-	function(jQuery, ActionBar, Overlay, ThingViewer) {
+sap.ui.define([
+    'jquery.sap.global',
+    './ActionBar',
+    './Overlay',
+    './ThingViewer',
+    "./ThingInspectorRenderer",
+    './library'
+],
+	function(jQuery, ActionBar, Overlay, ThingViewer, ThingInspectorRenderer) {
 	"use strict";
 
 

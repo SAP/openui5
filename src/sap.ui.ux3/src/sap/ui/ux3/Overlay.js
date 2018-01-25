@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.ux3.Overlay.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', './library'],
-	function(jQuery, Control, Popup, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/Control',
+    'sap/ui/core/Popup',
+    './library',
+    "./OverlayRenderer"
+],
+	function(jQuery, Control, Popup, library, OverlayRenderer) {
 	"use strict";
 
 	/**
