@@ -4,15 +4,26 @@
 
 // Provides control sap.f.DynamicPage.
 sap.ui.define([
-	"jquery.sap.global",
-	"./library",
-	"sap/ui/core/Control",
-	"sap/ui/core/ScrollBar",
-	"sap/ui/core/ResizeHandler",
-	"sap/ui/core/delegate/ScrollEnablement",
-	"sap/ui/Device",
-	"sap/f/DynamicPageTitle"
-], function (jQuery, library, Control, ScrollBar, ResizeHandler, ScrollEnablement, Device, DynamicPageTitle) {
+    "jquery.sap.global",
+    "./library",
+    "sap/ui/core/Control",
+    "sap/ui/core/ScrollBar",
+    "sap/ui/core/ResizeHandler",
+    "sap/ui/core/delegate/ScrollEnablement",
+    "sap/ui/Device",
+    "sap/f/DynamicPageTitle",
+    "./DynamicPageRenderer"
+], function(
+    jQuery,
+	library,
+	Control,
+	ScrollBar,
+	ResizeHandler,
+	ScrollEnablement,
+	Device,
+	DynamicPageTitle,
+	DynamicPageRenderer
+) {
 	"use strict";
 
 	/**
