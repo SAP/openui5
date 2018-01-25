@@ -183,15 +183,20 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/base/DataType', '
 			}
 
 			sColor = $Swatch.attr("data-sap-ui-color");
-			this._fireColorSelect(sColor);
+			this._fireColorSelect(sColor, false, oEvent);
 		};
 
 		ColorPalette.prototype.onsaptabnext = ColorPalette.prototype.onsaptabprevious = function (oEvent) {
 			var bOnDefaultColorButton = this._getShowDefaultColorButton() && jQuery.sap.containsOrEquals(oEvent.target, this._getDefaultColorButton().getDomRef()),
 				bOnMoreColorsButton = this._getShowMoreColorsButton() && jQuery.sap.containsOrEquals(oEvent.target, this._getMoreColorsButton().getDomRef());
 
-			if (bOnDefaultColorButton || bOnMoreColorsButton) {
-				this.fireEvent("_colorNotSelected");
+			if (bOnMoreColorsButton) {
+				this.fireEvent("_colorNotSelected", {_originalEvent: oEvent});
+				return;
+			}
+
+			if (bOnDefaultColorButton) {
+				this._fireColorSelect(this._getDefaultColor(), true, oEvent);
 				return;
 			}
 
@@ -212,8 +217,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/base/DataType', '
 				type: ButtonType.Transparent,
 				text: oLibraryResourceBundle.getText("COLOR_PALETTE_DEFAULT_COLOR"),
 				visible: this._getShowDefaultColorButton(),
-				press: function () {
-					this._fireColorSelect(this._getDefaultColor(), true);
+				press: function (oEvent) {
+					this._fireColorSelect(this._getDefaultColor(), true, oEvent);
 				}.bind(this)
 			});
 		};
@@ -227,13 +232,14 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/base/DataType', '
 		 * Sets a default color.
 		 * @param {sap.ui.core.CSSColor} color the color
 		 * @private
-		 * @returns void
+		 * @returns {sap.m.ColorPalette} <code>this</code> for method chaining
 		 */
 		ColorPalette.prototype._setDefaultColor = function (color) {
 			if (!CSSColor.isValid(color)) {
 				throw new Error("Cannot set internal property '_defaultColor' - invalid value: " + color);
 			}
 			this._oDefaultColor = color;
+			return this;
 		};
 
 
@@ -256,6 +262,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/base/DataType', '
 			if (this._getDefaultColorButton()) { /* still button may not be there */
 				this._getDefaultColorButton().setVisible(bValue);
 			}
+			return this;
 		};
 
 		ColorPalette.prototype._getDefaultColorButton = function () {
@@ -291,6 +298,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/base/DataType', '
 			if (this._getMoreColorsButton()) { /* still button may not be there */
 				this._getMoreColorsButton().setVisible(bValue);
 			}
+			return this;
 		};
 
 		ColorPalette.prototype._getMoreColorsButton = function () {
@@ -343,10 +351,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/base/DataType', '
 			// OK button
 			oDialog.setBeginButton(new Button({
 				text: oLibraryResourceBundle.getText("COLOR_PALETTE_MORE_COLORS_CONFIRM"),
-				press: function () {
+				press: function (oEvent) {
 					oDialog.close();
 					if (oDialog._oColorPicker.getColorString()) {
-						this._fireColorSelect(oDialog._oColorPicker.getColorString());
+						this._fireColorSelect(oDialog._oColorPicker.getColorString(), false, oEvent);
 					}
 				}.bind(this)
 			}));
@@ -390,10 +398,11 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/base/DataType', '
 		 * Helper function to fire the event "colorSelect"
 		 * @param {sap.ui.core.CSSColor} color the color
 		 * @param {boolean} [defaultAction=false] if the selection is performed via "Default color" button
+		 * @param {jQuery.Event} oOriginalEvent original event
 		 * @private
 		 */
-		ColorPalette.prototype._fireColorSelect = function (color, defaultAction) {
-			this.fireColorSelect({value: color, defaultAction: !!defaultAction});
+		ColorPalette.prototype._fireColorSelect = function (color, defaultAction, oOriginalEvent) {
+			this.fireColorSelect({value: color, defaultAction: defaultAction, _originalEvent: oOriginalEvent});
 		};
 
 		/**
@@ -451,28 +460,16 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/base/DataType', '
 		});
 
 		/**
-		 * Handles keyboard [HOME] key, which moves to the first color swatch item in the current row, unless the focus
-		 * is outside the swatch container
+		 * Handles keyboard [HOME] & [END] keys, where:
+		 * - [HOME] moves to the first color swatch item in the current row, unless the focus is outside the swatch container
+		 * - [END] moves to the last color swatch item in the current row, unless the focus is outside the swatch container
 		 * @param oEvent
 		 */
-		ItemNavigationHomeEnd.prototype.onsaphome = function (oEvent) {
-			this._onHomeEnd(oEvent, true);
-		};
-
-		/**
-		 * Handles keyboard [END] key, which moves to the last color swatch item in the current row, unless the focus
-		 * is outside the swatch container
-		 * @param oEvent
-		 */
-		ItemNavigationHomeEnd.prototype.onsapend = function (oEvent) {
-			this._onHomeEnd(oEvent, false);
-		};
-
-
-		ItemNavigationHomeEnd.prototype._onHomeEnd = function (oEvent, bHome) {
+		ItemNavigationHomeEnd.prototype._onHomeEnd = function (oEvent) {
 			var iCurrentSwatchIndex,
 				iNewSwatchIndex,
-				$AllSwatches;
+				$AllSwatches,
+				bHome = oEvent.type === "saphome";
 
 			if (!jQuery(oEvent.target).hasClass(CSS_CLASS_SWATCH)) {
 				return;
@@ -490,13 +487,15 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/base/DataType', '
 			$AllSwatches[iNewSwatchIndex].focus();
 		};
 
+		ItemNavigationHomeEnd.prototype.onsaphome = ItemNavigationHomeEnd.prototype.onsapend = ItemNavigationHomeEnd.prototype._onHomeEnd;
+
 		/**
 		 * Calculates the index of the first/last color swatch item in the current row of items.
 		 * @param {boolean} bHome the direction. If true, the index of the first color swatch item in the row will be returned,
 		 * otherwise - the last swatch index in the row will be returned.
-		 * @param {int} iCurrentSwatchIndex the index of the current swatch
+		 * @param {int} iCurrentSwatchIndex the index(zero based) of the current swatch
 		 * @param {int} iSwatchesCount the total amount of available swatch items
-		 * @return {int} the index of the first/last swatch item in the row.
+		 * @return {int} the index(zero based) of the first/last swatch item in the row.
 		 * @private
 		 */
 		ItemNavigationHomeEnd.prototype._calcIndexOfBorderSwatch = function (bHome, iCurrentSwatchIndex, iSwatchesCount) {
@@ -561,18 +560,18 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/base/DataType', '
 			/**
 			 * Returns a named color for given color. For example - "gold" for input "#FFB200".
 			 * @param sColor
-			 * @return {string} The named color, if such can really corresponds to the input color, or undefined otherwise.
+			 * @return {string|undefined} The named color, if such can really corresponds to the input color, or undefined otherwise.
 			 */
 			getNamedColor: function (sColor) {
 				var sHexColor = "";
 
 				if (!sColor || sColor.toLowerCase().indexOf("hsl") !== -1) {
-					return "";
+					return undefined;
 				}
 
 				// named color
 				if (sColor.indexOf("#") === -1) {
-					return this.NAME_COLORS_TO_RGB_MAP[sColor.toLowerCase()] ? sColor.toLowerCase() : "";
+					return this.NAME_COLORS_TO_RGB_MAP[sColor.toLowerCase()] ? sColor.toLowerCase() : undefined;
 				}
 
 				//HEX value
