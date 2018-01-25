@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.layout.DynamicSideContent.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 'sap/ui/layout/library'],
-	function (jQuery, Control, ResizeHandler, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/Control',
+    'sap/ui/core/ResizeHandler',
+    'sap/ui/layout/library',
+    "./DynamicSideContentRenderer"
+],
+	function(jQuery, Control, ResizeHandler, library, DynamicSideContentRenderer) {
 		"use strict";
 
 		// shortcut for sap.ui.layout.SideContentPosition

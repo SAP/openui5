@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.layout.form.Form.
-sap.ui.define(['sap/ui/core/Control', 'sap/ui/layout/library'],
-	function(Control, library) {
+sap.ui.define(['sap/ui/core/Control', 'sap/ui/layout/library', "./FormRenderer"],
+	function(Control, library, FormRenderer) {
 	"use strict";
 
 	/**

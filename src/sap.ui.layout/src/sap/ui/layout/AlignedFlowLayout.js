@@ -2,8 +2,14 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
-	function(jQuery, Control, library, ResizeHandler) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/Control',
+    './library',
+    'sap/ui/core/ResizeHandler',
+    "./AlignedFlowLayoutRenderer"
+],
+	function(jQuery, Control, library, ResizeHandler, AlignedFlowLayoutRenderer) {
 		"use strict";
 
 		/**

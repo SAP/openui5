@@ -3,7 +3,29 @@
 */
 
 // Provides control sap.ui.layout.ResponsiveSplitter.
-sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./ResponsiveSplitterUtilities", "./ResponsiveSplitterPage", "./PaneContainer", "./SplitPane", "sap/ui/core/delegate/ItemNavigation", "sap/ui/core/ResizeHandler"], function(jQuery, library, Control, RSUtil, ResponsiveSplitterPage, PaneContainer, SplitPane, ItemNavigation, ResizeHandler) {
+sap.ui.define([
+    "jquery.sap.global",
+    "./library",
+    "sap/ui/core/Control",
+    "./ResponsiveSplitterUtilities",
+    "./ResponsiveSplitterPage",
+    "./PaneContainer",
+    "./SplitPane",
+    "sap/ui/core/delegate/ItemNavigation",
+    "sap/ui/core/ResizeHandler",
+    "./ResponsiveSplitterRenderer"
+], function(
+    jQuery,
+	library,
+	Control,
+	RSUtil,
+	ResponsiveSplitterPage,
+	PaneContainer,
+	SplitPane,
+	ItemNavigation,
+	ResizeHandler,
+	ResponsiveSplitterRenderer
+) {
 	"use strict";
 
 	/**

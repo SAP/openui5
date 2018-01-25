@@ -3,8 +3,16 @@
  */
 
 // Provides control sap.ui.layout.Splitter.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/core/library', 'sap/ui/core/ResizeHandler', 'sap/ui/core/RenderManager'],
-	function(jQuery, Control, library, coreLibrary, ResizeHandler, RenderManager) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/Control',
+    './library',
+    'sap/ui/core/library',
+    'sap/ui/core/ResizeHandler',
+    'sap/ui/core/RenderManager',
+    './SplitterRenderer'
+],
+	function(jQuery, Control, library, coreLibrary, ResizeHandler, RenderManager, SplitterRenderer) {
 	"use strict";
 
 	// shortcut for sap.ui.core.Orientation

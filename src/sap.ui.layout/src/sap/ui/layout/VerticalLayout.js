@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.layout.VerticalLayout.
-sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', './library'],
-	function(Control, EnabledPropagator, library) {
+sap.ui.define([
+ 'sap/ui/core/Control',
+ 'sap/ui/core/EnabledPropagator',
+ './library',
+ "./VerticalLayoutRenderer"
+],
+	function(Control, EnabledPropagator, library, VerticalLayoutRenderer) {
 	"use strict";
 
 	/**

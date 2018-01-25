@@ -3,8 +3,24 @@
  */
 
 // Provides control sap.ui.layout.ResponsiveFlowLayout.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './ResponsiveFlowLayoutData', './library', 'sap/ui/core/ResizeHandler', 'sap/ui/Device'],
-	function(jQuery, Control, ResponsiveFlowLayoutData, library, ResizeHandler, Device) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/Control',
+    './ResponsiveFlowLayoutData',
+    './library',
+    'sap/ui/core/ResizeHandler',
+    'sap/ui/Device',
+    "./ResponsiveFlowLayoutRenderer"
+],
+	function(
+	    jQuery,
+		Control,
+		ResponsiveFlowLayoutData,
+		library,
+		ResizeHandler,
+		Device,
+		ResponsiveFlowLayoutRenderer
+	) {
 	"use strict";
 
 
