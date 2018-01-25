@@ -3,16 +3,55 @@
  */
 
 // Provides control sap.ui.table.Table.
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
-		'sap/ui/core/Control', 'sap/ui/core/Element', 'sap/ui/core/IconPool',
-		'sap/ui/model/ChangeReason', 'sap/ui/model/Filter', 'sap/ui/model/SelectionModel', 'sap/ui/model/Sorter', 'sap/ui/model/BindingMode',
-		'./Column', './Row', './library', './TableUtils', './TableExtension', './TableAccExtension', './TableKeyboardExtension',
-		'./TablePointerExtension', './TableScrollExtension', './TableDragAndDropExtension', 'jquery.sap.dom', 'jquery.sap.trace', 'jquery.sap.events'],
-	function(jQuery, Device,
-		Control, Element, IconPool,
-		ChangeReason, Filter, SelectionModel, Sorter, BindingMode,
-		Column, Row, library, TableUtils, TableExtension, TableAccExtension, TableKeyboardExtension,
-		TablePointerExtension, TableScrollExtension, TableDragAndDropExtension /*, jQuerySapPlugin,jQuerySAPTrace */) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/Device',
+    'sap/ui/core/Control',
+    'sap/ui/core/Element',
+    'sap/ui/core/IconPool',
+    'sap/ui/model/ChangeReason',
+    'sap/ui/model/Filter',
+    'sap/ui/model/SelectionModel',
+    'sap/ui/model/Sorter',
+    'sap/ui/model/BindingMode',
+    './Column',
+    './Row',
+    './library',
+    './TableUtils',
+    './TableExtension',
+    './TableAccExtension',
+    './TableKeyboardExtension',
+    './TablePointerExtension',
+    './TableScrollExtension',
+    './TableDragAndDropExtension',
+    "./TableRenderer",
+    'jquery.sap.dom',
+    'jquery.sap.trace',
+    'jquery.sap.events'
+],
+	function(
+	    jQuery,
+		Device,
+		Control,
+		Element,
+		IconPool,
+		ChangeReason,
+		Filter,
+		SelectionModel,
+		Sorter,
+		BindingMode,
+		Column,
+		Row,
+		library,
+		TableUtils,
+		TableExtension,
+		TableAccExtension,
+		TableKeyboardExtension,
+		TablePointerExtension,
+		TableScrollExtension,
+		TableDragAndDropExtension /*, jQuerySapPlugin,jQuerySAPTrace */,
+		TableRenderer
+	) {
 	"use strict";
 
 
