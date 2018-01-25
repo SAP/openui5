@@ -1131,6 +1131,20 @@
 				assert.equal(oRow2._getVisibleAppointments().length, 1, "The number of visible appointments is as expected");
 			});
 
+			QUnit.test("_setCustomAppointmentsSorterCallback", function (assert) {
+				//arrange and act
+				var fnCustom = this.spy();
+				oRow1._setCustomAppointmentsSorterCallback(fnCustom);
+				oRow1.placeAt('uiArea3');
+				sap.ui.getCore().applyChanges();
+
+				//assert
+				assert.equal(oRow1._fnCustomSortedAppointments, fnCustom,
+						"_setCustomAppointmentsSorterCallback sets a function to the _fnCustomSortedAppointments");
+				assert.ok(fnCustom.callCount > 0,
+						"_setCustomAppointmentsSorterCallback calls the custom sort function");
+			});
+
 		QUnit.module("RTL", {
 				beforeEach: function () {
 					//Arrange
