@@ -128,10 +128,9 @@ sap.ui.define([
 				// scroll to top of page
 				oPage.scrollTo(0);
 
-
 				this.getAPIReferenceCheckPromise(oSample.entityId).then(function (bHasAPIReference) {
-					oModelData.bHasAPIReference = bHasAPIReference;
-				});
+					this.getView().byId("apiRefButton").setVisible(bHasAPIReference);
+				}.bind(this));
 
 				this._viewModel.setData(oModelData);
 
