@@ -115,8 +115,10 @@ sap.ui.define([
 	/**
 	 * Checks if Overlay control has a valid parent and if it is
 	 * not the last visible control in the aggregation
+	 *
 	 * @param  {sap.ui.dt.Overlay} oOverlay Overlay for the control
 	 * @return {boolean} Returns true if the control can be removed
+	 * @private
 	 */
 	Remove.prototype._canBeRemovedFromAggregation = function(oOverlay){
 		var oElement = oOverlay.getElementInstance();
@@ -131,16 +133,19 @@ sap.ui.define([
 		if (aElements.length === 1){
 			return false;
 		}
+
+		// Fallback to 1 if no overlay is selected
+		var iNumberOfSelectedOverlays = this.getNumberOfSelectedOverlays() || 1;
 		var aInvisibleElements = aElements.filter(function(oElement){
 			var oElementOverlay = OverlayRegistry.getOverlay(oElement);
 			return !(oElementOverlay && oElementOverlay.getElementVisibility());
 		});
-		return !(aInvisibleElements.length === (aElements.length - 1));
+		return !(aInvisibleElements.length === (aElements.length - iNumberOfSelectedOverlays));
 	};
 
 	/**
 	 * @param  {sap.ui.dt.Overlay} oOverlay overlay object
-	 * @return {String}          confirmation text
+	 * @return {String} Returns the confirmation text
 	 * @private
 	 */
 	Remove.prototype._getConfirmationText = function(oOverlay) {

@@ -144,7 +144,7 @@ function(
 			sap.ui.getCore().applyChanges();
 
 			assert.ok(oDeleteButton2, "after removing the 1st section, the 2nd Delete-Icon is still displayed");
-			assert.notOk(oDeleteButton2.getEnabled(), "but disabbled");
+			assert.notOk(oDeleteButton2.getEnabled(), "but disabled");
 		});
 	});
 
