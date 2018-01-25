@@ -12,7 +12,7 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/ResizeHandler',
-	"./ToolbarRenderer"
+	'./ToolbarRenderer'
 ],
 function(
 	jQuery,

@@ -3,14 +3,45 @@
  */
 
 // Provides control sap.m.IconTabHeader.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator',
-		'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/IconPool', 'sap/ui/core/delegate/ScrollEnablement',
-		'./IconTabBarSelectList', './Button', './ResponsivePopover', './IconTabFilter',
-		'sap/ui/Device', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Icon', 'sap/ui/core/dnd/DragDropInfo', './IconTabBarDragAndDropUtil'],
-	function(jQuery, library, Control, EnabledPropagator,
-				ItemNavigation, IconPool, ScrollEnablement,
-				IconTabBarSelectList, Button, ResponsivePopover, IconTabFilter,
-				Device, ResizeHandler, Icon, DragDropInfo, IconTabBarDragAndDropUtil) {
+
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/EnabledPropagator',
+	'sap/ui/core/delegate/ItemNavigation',
+	'sap/ui/core/IconPool',
+	'sap/ui/core/delegate/ScrollEnablement',
+	'./IconTabBarSelectList',
+	'./Button',
+	'./ResponsivePopover',
+	'./IconTabFilter',
+	'sap/ui/Device',
+	'sap/ui/core/ResizeHandler',
+	'sap/ui/core/Icon',
+	'sap/ui/core/dnd/DragDropInfo',
+	'./IconTabBarDragAndDropUtil',
+	'./IconTabHeaderRenderer'
+],
+function(
+	jQuery,
+	library,
+	Control,
+	EnabledPropagator,
+	ItemNavigation,
+	IconPool,
+	ScrollEnablement,
+	IconTabBarSelectList,
+	Button,
+	ResponsivePopover,
+	IconTabFilter,
+	Device,
+	ResizeHandler,
+	Icon,
+	DragDropInfo,
+	IconTabBarDragAndDropUtil,
+	IconTabHeaderRenderer
+) {
 	"use strict";
 
 	// shortcut for sap.m.touch

@@ -3,8 +3,22 @@
  */
 
 // Provides control sap.m.RadioButtonGroup.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/library'],
-		function(jQuery, library, Control, ItemNavigation, coreLibrary) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/delegate/ItemNavigation',
+	'sap/ui/core/library',
+	'./RadioButtonGroupRenderer'
+],
+	function(
+		jQuery,
+		library,
+		Control,
+		ItemNavigation,
+		coreLibrary,
+		RadioButtonGroupRenderer
+		) {
 			"use strict";
 
 			// shortcut for sap.ui.core.TextDirection

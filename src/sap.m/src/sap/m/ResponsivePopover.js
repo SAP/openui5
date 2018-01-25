@@ -3,8 +3,28 @@
  */
 
 // Provides control sap.m.ResponsivePopover.
-sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/base/ManagedObject', 'sap/ui/Device'],
-	function(jQuery, Dialog, Popover, library, Control, IconPool, ManagedObject, Device) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./Dialog',
+	'./Popover',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/IconPool',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/Device',
+	'./ResponsivePopoverRenderer'
+],
+	function(
+		jQuery,
+		Dialog,
+		Popover,
+		library,
+		Control,
+		IconPool,
+		ManagedObject,
+		Device,
+		ResponsivePopoverRenderer
+	) {
 	"use strict";
 
 	// shortcut for sap.m.DialogType

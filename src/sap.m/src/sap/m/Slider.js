@@ -3,19 +3,33 @@
  */
 
 sap.ui.define([
-		'jquery.sap.global',
-		'./library',
-		'sap/ui/core/Control',
-		'sap/ui/core/EnabledPropagator',
-		'./SliderTooltipContainer',
-		'./SliderTooltip',
-		'./SliderUtilities',
-		'./ResponsiveScale',
-		'sap/ui/core/InvisibleText',
-		'sap/ui/core/library',
-		'sap/ui/core/ResizeHandler'
-	],
-	function(jQuery, library, Control, EnabledPropagator, SliderTooltipContainer, SliderTooltip, SliderUtilities, ResponsiveScale, InvisibleText, coreLibrary, ResizeHandler) {
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/EnabledPropagator',
+	'./SliderTooltipContainer',
+	'./SliderTooltip',
+	'./SliderUtilities',
+	'./ResponsiveScale',
+	'sap/ui/core/InvisibleText',
+	'sap/ui/core/library',
+	'sap/ui/core/ResizeHandler',
+	'./SliderRenderer'
+],
+function(
+	jQuery,
+	library,
+	Control,
+	EnabledPropagator,
+	SliderTooltipContainer,
+	SliderTooltip,
+	SliderUtilities,
+	ResponsiveScale,
+	InvisibleText,
+	coreLibrary,
+	ResizeHandler,
+	SliderRenderer
+	) {
 		"use strict";
 
 		// shortcut for sap.m.touch

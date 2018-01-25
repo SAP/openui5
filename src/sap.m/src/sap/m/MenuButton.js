@@ -3,8 +3,27 @@
  */
 
 // Provides control sap.m.MenuButton.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Button', './SplitButton', 'sap/ui/Device', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/library'],
-	function(jQuery, library, Control, Button, SplitButton, Device, EnabledPropagator, coreLibrary) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'./Button',
+	'./SplitButton',
+	'sap/ui/Device',
+	'sap/ui/core/EnabledPropagator',
+	'sap/ui/core/library',
+	"./MenuButtonRenderer"
+], function(
+	jQuery,
+	library,
+	Control,
+	Button,
+	SplitButton,
+	Device,
+	EnabledPropagator,
+	coreLibrary,
+	MenuButtonRenderer
+	) {
 		"use strict";
 
 		// shortcut for sap.m.MenuButtonMode

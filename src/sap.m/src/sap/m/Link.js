@@ -3,8 +3,26 @@
  */
 
 // Provides control sap.m.Link.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/InvisibleText', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/library', 'sap/ui/Device'],
-	function(jQuery, library, Control, InvisibleText, EnabledPropagator, coreLibrary, Device) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/InvisibleText',
+	'sap/ui/core/EnabledPropagator',
+	'sap/ui/core/library',
+	'sap/ui/Device',
+	'./LinkRenderer'
+],
+function(
+	jQuery,
+	library,
+	Control,
+	InvisibleText,
+	EnabledPropagator,
+	coreLibrary,
+	Device,
+	LinkRenderer
+	) {
 	"use strict";
 
 

@@ -3,9 +3,25 @@
  */
 
 // Provides control sap.m.FlexBox.
-sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', './library', 'sap/ui/core/Control', 'sap/ui/core/RenderManager', 'sap/m/FlexBoxRenderer'],
-	function(jQuery, FlexBoxStylingHelper, FlexItemData, library, Control, RenderManager, FlexBoxRenderer) {
-		"use strict";
+sap.ui.define([
+	'jquery.sap.global',
+	'./FlexBoxStylingHelper',
+	'./FlexItemData',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/RenderManager',
+	'./FlexBoxRenderer'
+],
+function(
+	jQuery,
+	FlexBoxStylingHelper,
+	FlexItemData,
+	library,
+	Control,
+	RenderManager,
+	FlexBoxRenderer
+) {
+	"use strict";
 
 	// shortcut for sap.m.BackgroundDesign
 	var BackgroundDesign = library.BackgroundDesign;

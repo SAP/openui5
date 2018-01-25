@@ -1,9 +1,7 @@
 /*
  * ! ${copyright}
  */
-sap.ui.define([
-	'sap/ui/core/Control', 'sap/ui/core/Icon'
-], function(Control, Icon) {
+sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/Icon', './ColumnHeaderRenderer'], function(Control, Icon, ColumnHeaderRenderer) {
 	"use strict";
 
 	/**

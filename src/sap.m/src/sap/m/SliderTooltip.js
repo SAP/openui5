@@ -3,14 +3,23 @@
 */
 
 sap.ui.define([
-		'jquery.sap.global',
-		'./library',
-		'./SliderUtilities',
-		'sap/ui/core/Control',
-		'sap/ui/core/library',
-		'./delegate/ValueStateMessage'
-	],
-	function (jQuery, Library, SliderUtilities, Control, coreLibrary, ValueStateMessage) {
+	'jquery.sap.global',
+	'./library',
+	'./SliderUtilities',
+	'sap/ui/core/Control',
+	'sap/ui/core/library',
+	'./delegate/ValueStateMessage',
+	'./SliderTooltipRenderer'
+],
+function(
+	jQuery,
+	Library,
+	SliderUtilities,
+	Control,
+	coreLibrary,
+	ValueStateMessage,
+	SliderTooltipRenderer
+	) {
 		"use strict";
 
 		var ValueState = coreLibrary.ValueState;

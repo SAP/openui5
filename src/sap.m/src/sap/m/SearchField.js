@@ -3,8 +3,27 @@
  */
 
 // Provides control sap.m.SearchField.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', './Suggest', 'sap/ui/Device', 'jquery.sap.keycodes'],
-	function(jQuery, library, Control, EnabledPropagator, IconPool, Suggest, Device) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/EnabledPropagator',
+	'sap/ui/core/IconPool',
+	'./Suggest',
+	'sap/ui/Device',
+	'./SearchFieldRenderer',
+	'jquery.sap.keycodes'
+],
+	function(
+	jQuery,
+	library,
+	Control,
+	EnabledPropagator,
+	IconPool,
+	Suggest,
+	Device,
+	SearchFieldRenderer
+	) {
 	"use strict";
 
 

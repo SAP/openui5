@@ -3,8 +3,29 @@
 */
 
 // Provides control sap.m.MessageStrip.
-sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./MessageStripUtilities",
-	"./Text", "./Link", "./FormattedText", "sap/ui/core/library", "sap/ui/Device"], function(jQuery, library, Control, MSUtils, Text, Link, FormattedText, coreLibrary, Device) {
+sap.ui.define([
+	"jquery.sap.global",
+	"./library",
+	"sap/ui/core/Control",
+	"./MessageStripUtilities",
+	"./Text",
+	"./Link",
+	"./FormattedText",
+	"sap/ui/core/library",
+	"sap/ui/Device",
+	"./MessageStripRenderer"
+], function(
+	jQuery,
+	library,
+	Control,
+	MSUtils,
+	Text,
+	Link,
+	FormattedText,
+	coreLibrary,
+	Device,
+	MessageStripRenderer
+) {
 	"use strict";
 
 	// shortcut for sap.ui.core.MessageType

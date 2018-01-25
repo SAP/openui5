@@ -3,8 +3,30 @@
  */
 
 //Provides control sap.m.DateTimePicker.
-sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', 'sap/ui/unified/DateRange', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/format/DateFormat', 'sap/ui/core/LocaleData', 'jquery.sap.keycodes'],
-		function(jQuery, DatePicker, Date1, DateRange, library, Control, Device, DateFormat, LocaleData) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./DatePicker',
+	'sap/ui/model/type/Date',
+	'sap/ui/unified/DateRange',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/Device',
+	'sap/ui/core/format/DateFormat',
+	'sap/ui/core/LocaleData',
+	'./DateTimePickerRenderer',
+	'jquery.sap.keycodes'
+], function(
+	jQuery,
+	DatePicker,
+	Date1,
+	DateRange,
+	library,
+	Control,
+	Device,
+	DateFormat,
+	LocaleData,
+	DateTimePickerRenderer
+	) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType

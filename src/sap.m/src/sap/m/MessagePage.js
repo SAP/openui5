@@ -13,8 +13,21 @@ sap.ui.define([
 	'sap/m/Image',
 	'sap/m/Button',
 	'sap/m/Title',
-	'sap/m/FormattedText'
-], function(jQuery, library, coreLibrary, Control, IconPool, Text, Image, Button, Title, FormattedText) {
+	'sap/m/FormattedText',
+	'./MessagePageRenderer'
+], function(
+	jQuery,
+	library,
+	coreLibrary,
+	Control,
+	IconPool,
+	Text,
+	Image,
+	Button,
+	Title,
+	FormattedText,
+	MessagePageRenderer
+) {
 		"use strict";
 
 		var TextAlign = coreLibrary.TextAlign;

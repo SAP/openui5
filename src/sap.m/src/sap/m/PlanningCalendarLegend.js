@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.PlanningCalendarLegend.
-sap.ui.define(['sap/ui/unified/CalendarLegend'],
-	function(CalendarLegend) {
+sap.ui.define(['sap/ui/unified/CalendarLegend', './PlanningCalendarLegendRenderer'],
+	function(CalendarLegend, PlanningCalendarLegendRenderer) {
 		"use strict";
 
 

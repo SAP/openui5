@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.m.ObjectNumber.
-sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/Renderer', 'sap/ui/core/library'],
-	function(library, Control, Renderer, coreLibrary) {
+sap.ui.define([
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/Renderer',
+	'sap/ui/core/library',
+	'./ObjectNumberRenderer'
+],
+	function(library, Control, Renderer, coreLibrary, ObjectNumberRenderer) {
 	"use strict";
 
 

@@ -9,8 +9,9 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/RenderManager',
 	'sap/ui/Device',
+	'./NavContainerRenderer',
 	'jquery.sap.events'
-], function (jQuery, library, Control, RenderManager, Device) {
+], function(jQuery, library, Control, RenderManager, Device, NavContainerRenderer) {
 	"use strict";
 
 

@@ -3,7 +3,13 @@
  */
 
 // Provides control sap.m.Shell.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/library', 'sap/m/ShellRenderer'],
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/library',
+	'sap/m/ShellRenderer'
+],
 	function(jQuery, library, Control, coreLibrary, ShellRenderer) {
 		"use strict";
 

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['./library', 'sap/ui/core/Control'],
-	function(library, Control) {
+sap.ui.define(['./library', 'sap/ui/core/Control', './TileContentRenderer'],
+	function(library, Control, TileContentRenderer) {
 	"use strict";
 
 	/**
