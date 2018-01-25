@@ -5,8 +5,8 @@
 // Provides helper sap.ui.table.TableUtils.
 sap.ui.define([
 	"jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/ResizeHandler", "sap/ui/core/library", "sap/ui/model/ChangeReason",
-	"./TableGrouping", "./TableColumnUtils", "./TableMenuUtils", "./library"
-], function(jQuery, Control, ResizeHandler, coreLibrary, ChangeReason, TableGrouping, TableColumnUtils, TableMenuUtils, library) {
+	"./TableGrouping", "./TableColumnUtils", "./TableMenuUtils", "./TableBindingUtils", "./library"
+], function(jQuery, Control, ResizeHandler, coreLibrary, ChangeReason, TableGrouping, TableColumnUtils, TableMenuUtils, TableBindingUtils, library) {
 	"use strict";
 
 	// Shortcuts
@@ -139,9 +139,11 @@ sap.ui.define([
 	 * @private
 	 */
 	var TableUtils = {
-		Grouping: TableGrouping, //Make grouping utils available here
-		Column: TableColumnUtils, //Make column utils available here
-		Menu: TableMenuUtils, //Make menu utils available here
+		// Make other utils available.
+		Grouping: TableGrouping,
+		Column: TableColumnUtils,
+		Menu: TableMenuUtils,
+		Binding: TableBindingUtils,
 
 		CELLTYPE: CELLTYPE,
 		ROW_HORIZONTAL_FRAME_SIZE: ROW_HORIZONTAL_FRAME_SIZE,
@@ -1125,12 +1127,13 @@ sap.ui.define([
 
 			return iFirstFixedButtomIndex;
 		}
-
 	};
 
-	TableGrouping.TableUtils = TableUtils; // Avoid cyclic dependency
-	TableColumnUtils.TableUtils = TableUtils; // Avoid cyclic dependency
-	TableMenuUtils.TableUtils = TableUtils; // Avoid cyclic dependency
+	// Avoid cyclic dependency.
+	TableGrouping.TableUtils = TableUtils;
+	TableColumnUtils.TableUtils = TableUtils;
+	TableMenuUtils.TableUtils = TableUtils;
+	TableBindingUtils.TableUtils = TableUtils;
 
 	return TableUtils;
 
