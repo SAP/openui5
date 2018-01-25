@@ -3,8 +3,25 @@
  */
 
 // Provides control sap.ui.core.Icon.
-sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './InvisibleText', './library', 'jquery.sap.keycodes'],
-	function(jQuery, Device, Control, IconPool, InvisibleText, library /* ,jQuerySapKeycodes */) {
+sap.ui.define([
+    'jquery.sap.global',
+    '../Device',
+    './Control',
+    './IconPool',
+    './InvisibleText',
+    './library',
+    "./IconRenderer",
+    'jquery.sap.keycodes'
+],
+	function(
+	    jQuery,
+		Device,
+		Control,
+		IconPool,
+		InvisibleText,
+		library /* ,jQuerySapKeycodes */,
+		IconRenderer
+	) {
 	"use strict";
 
 	// shortcut

@@ -3,8 +3,26 @@
  */
 
 // Provides control sap.ui.core.tmpl.TemplateControl.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/DeclarativeSupport', 'sap/ui/core/library', 'sap/ui/core/UIArea', './DOMElement', './Template'],
-	function(jQuery, Control, DeclarativeSupport, library, UIArea, DOMElement, Template) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/Control',
+    'sap/ui/core/DeclarativeSupport',
+    'sap/ui/core/library',
+    'sap/ui/core/UIArea',
+    './DOMElement',
+    './Template',
+    "./TemplateControlRenderer"
+],
+	function(
+	    jQuery,
+		Control,
+		DeclarativeSupport,
+		library,
+		UIArea,
+		DOMElement,
+		Template,
+		TemplateControlRenderer
+	) {
 	"use strict";
 
 

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.HTML.
-sap.ui.define(['jquery.sap.global', './Control', './RenderManager'],
-	function(jQuery, Control, RenderManager) {
+sap.ui.define(['jquery.sap.global', './Control', './RenderManager', "./HTMLRenderer"],
+	function(jQuery, Control, RenderManager, HTMLRenderer) {
 	"use strict";
 
 	// local shortcut

@@ -3,8 +3,16 @@
  */
 
 // Provides control sap.ui.core.ScrollBar.
-sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'jquery.sap.script', 'jquery.sap.trace'],
-	function(jQuery, Device, Control, library /*, jQuery*/) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/Device',
+    './Control',
+    './library',
+    "./ScrollBarRenderer",
+    'jquery.sap.script',
+    'jquery.sap.trace'
+],
+	function(jQuery, Device, Control, library /*, jQuery*/, ScrollBarRenderer) {
 	"use strict";
 
 

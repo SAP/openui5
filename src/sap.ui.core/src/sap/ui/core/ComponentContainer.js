@@ -3,8 +3,22 @@
  */
 
 // Provides control sap.ui.core.ComponentContainer.
-sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core', './library'],
-	function(ManagedObject, Control, Component, Core, library) {
+sap.ui.define([
+    'sap/ui/base/ManagedObject',
+    './Control',
+    './Component',
+    './Core',
+    './library',
+    "./ComponentContainerRenderer"
+],
+	function(
+	    ManagedObject,
+		Control,
+		Component,
+		Core,
+		library,
+		ComponentContainerRenderer
+	) {
 	"use strict";
 
 
