@@ -37,7 +37,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', './Button', './Responsive
 
 					/**
 					 * The color, which the app developer will receive when end-user chooses the "Default color" button.
-					 * @see event <code>colorSelect</code>
+					 * See event {@link sap.m.ColorPalettePopover#colorSelect}.
 					 */
 					defaultColor: {type: "sap.ui.core.CSSColor", group: "Appearance", defaultValue: null},
 
@@ -80,14 +80,16 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', './Button', './Responsive
 					 * Fired when the user selects a color.
 					 */
 					colorSelect: {
-						/**
-						 * The color that is returned when user chooses the "Default color" button.
-						 */
-						"value": {type: "sap.ui.core.CSSColor"},
-						/**
-						 * Denotes if the color has been chosen by selecting the "Default Color" button (true or false).
-						 */
-						"defaultAction": {type: "boolean"}
+						parameters: {
+							/**
+							 * The color that is returned when user chooses the "Default color" button.
+							 */
+							"value": {type: "sap.ui.core.CSSColor"},
+							/**
+							 * Denotes if the color has been chosen by selecting the "Default Color" button (true or false).
+							 */
+							"defaultAction": {type: "boolean"}
+						}
 					}
 				}
 			},
