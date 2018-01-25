@@ -161,7 +161,8 @@ sap.ui.require([
 									"title": "variant 0"
 								}
 							},
-							"controlChanges" : []
+							"controlChanges" : [],
+							"variantChanges" : {}
 						},
 						{
 							"content" : {
@@ -170,7 +171,8 @@ sap.ui.require([
 									"title": "variant 1"
 								}
 							},
-							"controlChanges" : [oChangeContent0, oChangeContent1]
+							"controlChanges" : [oChangeContent0, oChangeContent1],
+							"variantChanges" : {}
 						}],
 						"variantManagementChanges": {}
 					}
@@ -227,7 +229,8 @@ sap.ui.require([
 									"title": "variant 0"
 								}
 							},
-							"controlChanges" : [oChangeContent0, oChangeContent1, oChangeContent2]
+							"controlChanges" : [oChangeContent0, oChangeContent1, oChangeContent2],
+							"variantChanges" : {}
 						},
 						{
 							"content" : {
@@ -237,7 +240,8 @@ sap.ui.require([
 									"title": "variant 1"
 								}
 							},
-							"controlChanges" : [oChangeContent0, oChangeContent3, oChangeContent4]
+							"controlChanges" : [oChangeContent0, oChangeContent3, oChangeContent4],
+							"variantChanges" : {}
 						}],
 						"variantManagementChanges": {}
 					}
@@ -433,8 +437,10 @@ sap.ui.require([
 				}]
 			}
 		};
-		var oVariantController = new VariantController("MyComponent", "1.2.3", oFakeVariantResponse);
+		var oVariantController = new VariantController("MyComponent", "1.2.3", {});
 		var fnApplyChangesOnVariantSpy = sandbox.spy(oVariantController, "_applyChangesOnVariant");
+		oVariantController._setChangeFileContent(oFakeVariantResponse);
+
 		var oData = oVariantController._fillVariantModel();
 		assert.equal(fnApplyChangesOnVariantSpy.callCount, 3, "_applyChangesOnVariant called thrice for 3 variants");
 		assert.propEqual(oData, oExpectedData, "then correct variant model data is returned");
@@ -505,8 +511,9 @@ sap.ui.require([
 		};
 
 		sandbox.stub(Utils, "getTechnicalURLParameterValues").returns(["variant0"]);
-		var oVariantController = new VariantController("MyComponent", "1.2.3", oFakeVariantResponse);
+		var oVariantController = new VariantController("MyComponent", "1.2.3", {});
 		var fnApplyChangesOnVariantSpy = sandbox.spy(oVariantController, "_applyChangesOnVariant");
+		oVariantController._setChangeFileContent(oFakeVariantResponse);
 		var oData = oVariantController._fillVariantModel();
 		assert.equal(fnApplyChangesOnVariantSpy.callCount, 2, "_applyChangesOnVariant called twice for 2 variants");
 		assert.propEqual(oData, oExpectedData, "then correct variant model data is returned");
@@ -585,9 +592,9 @@ sap.ui.require([
 				}
 			}
 		};
+		assert.equal(oFakeVariantResponse.changes.variantSection["variantMgmtId1"].variants[0].content.content.title, "variant A", "then title of the variant is set to the intiial value");
+		assert.ok(oFakeVariantResponse.changes.variantSection["variantMgmtId1"].variants[0].content.content.favorite, "then variant set as favorite initially");
 		var oVariantController = new VariantController("MyComponent", "1.2.3", oFakeVariantResponse);
-		assert.strictEqual(oVariantController._mVariantManagement["variantMgmtId1"].variants[0].content.content.title, "variant A", "then title of the variant is set to the intiial value");
-		assert.ok(oVariantController._mVariantManagement["variantMgmtId1"].variants[0].content.content.favorite, "then variant set as favorite initially");
 		oVariantController._applyChangesOnVariant(oVariantController._mVariantManagement["variantMgmtId1"].variants[0]);
 		assert.strictEqual(oVariantController._mVariantManagement["variantMgmtId1"].variants[0].content.content.title, "New Variant Title2", "then title of the variant is set to the last change in the setTitle array");
 		assert.notOk(oVariantController._mVariantManagement["variantMgmtId1"].variants[0].content.content.favorite, "then variant set as not a favorite after");
@@ -978,7 +985,8 @@ sap.ui.require([
 										"title": "variant 0"
 									}
 								},
-								"controlChanges" : [this.oChangeContent0, this.oChangeContent1]
+								"controlChanges" : [this.oChangeContent0, this.oChangeContent1],
+								"variantChanges" : {}
 							},
 							{
 								"content" : {
@@ -988,7 +996,8 @@ sap.ui.require([
 										"title": "variant 1"
 									}
 								},
-								"controlChanges" : []
+								"controlChanges" : [],
+								"variantChanges" : {}
 							},
 							{
 								"content" : {
@@ -997,7 +1006,8 @@ sap.ui.require([
 										"title": "variant default"
 									}
 								},
-								"controlChanges" : [this.oChangeContent3]
+								"controlChanges" : [this.oChangeContent3],
+								"variantChanges" : {}
 							}],
 							"variantManagementChanges": {}
 						}
@@ -1107,7 +1117,8 @@ sap.ui.require([
 						"title": "variant 02"
 					}
 				},
-				"controlChanges" : [this.oChangeContent4]
+				"controlChanges" : [this.oChangeContent4],
+				"variantChanges" : {}
 			},
 			{
 				"content" : {
@@ -1116,7 +1127,8 @@ sap.ui.require([
 						"title": "variant default2"
 					}
 				},
-				"controlChanges" : [this.oChangeContent5]
+				"controlChanges" : [this.oChangeContent5],
+				"variantChanges" : {}
 			}],
 			"variantManagementChanges" : {}
 		};
@@ -1150,7 +1162,8 @@ sap.ui.require([
 						"title": "variant 02"
 					}
 				},
-				"controlChanges" : [this.oChangeContent4]
+				"controlChanges" : [this.oChangeContent4],
+				"variantChanges" : {}
 			},
 			{
 				"content" : {
@@ -1159,7 +1172,8 @@ sap.ui.require([
 						"title": "variant default2"
 					}
 				},
-				"controlChanges" : [this.oChangeContent5]
+				"controlChanges" : [this.oChangeContent5],
+				"variantChanges" : {}
 			}],
 			"variantManagementChanges" : {}
 		};

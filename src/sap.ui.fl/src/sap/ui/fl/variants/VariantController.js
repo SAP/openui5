@@ -66,7 +66,7 @@ sap.ui.define([
 			Object.keys(oChangeFileContent.changes.variantSection).forEach(function (sVariantManagementReference) {
 				this._mVariantManagement[sVariantManagementReference] = {};
 				var oVariantManagementReference = oChangeFileContent.changes.variantSection[sVariantManagementReference];
-				var aVariants = oVariantManagementReference.variants.concat().sort(this.compareVariants);
+				var aVariants = oVariantManagementReference.variants.concat();
 				var sVariantFromUrl;
 				var aURLVariants = Utils.getTechnicalURLParameterValues(oComponent, "sap-ui-fl-control-variant-id");
 
@@ -82,6 +82,8 @@ sap.ui.define([
 						oVariant.content.content.visible = true;
 					}
 
+					this._applyChangesOnVariant(oVariant);
+
 					// Only the first valid reference for that variant management id passed in the parameters is used to load the changes
 					aURLVariants.some(function(sURLVariant) {
 						if (oVariant.content.fileName === sURLVariant) {
@@ -90,9 +92,10 @@ sap.ui.define([
 						}
 					});
 
-				});
+				}.bind(this));
 				if (iIndex > -1) {
 					var oStandardVariant = aVariants.splice(iIndex, 1)[0];
+					aVariants.sort(this.compareVariants);
 					aVariants.splice(0, 0, oStandardVariant);
 				}
 				this._mVariantManagement[sVariantManagementReference].variants = aVariants;
@@ -417,7 +420,6 @@ sap.ui.define([
 				delete this._mVariantManagement[sKey].initialVariant;
 			}
 			this.getVariants(sKey).forEach(function(oVariant, index) {
-				this._applyChangesOnVariant(oVariant);
 				oVariantData[sKey].variants[index] = {
 					key : oVariant.content.fileName,
 					title : oVariant.content.content.title,
@@ -426,7 +428,7 @@ sap.ui.define([
 					favorite : oVariant.content.content.favorite,
 					visible : oVariant.content.content.visible
 				};
-			}.bind(this));
+			});
 		}.bind(this));
 
 		return oVariantData;
