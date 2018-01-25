@@ -12,21 +12,29 @@ sap.ui.define(function () {
 	var ObjectPageSectionRenderer = {};
 
 	ObjectPageSectionRenderer.render = function (oRm, oControl) {
+		var sTitle, bTitleVisible;
 
 		if (!oControl.getVisible() || !oControl._getInternalVisible()) {
 			return;
 		}
-		var sTitle = oControl._getInternalTitle() ? oControl._getInternalTitle() : oControl.getTitle();
+
+		sTitle = oControl._getTitle();
+		bTitleVisible = oControl._isTitleVisible();
 
 		oRm.write("<section ");
 		oRm.addClass("sapUxAPObjectPageSection");
+
+		if (!bTitleVisible) {
+			oRm.addClass("sapUxAPObjectPageSectionNoTitle");
+		}
+
 		oRm.writeClasses();
 		oRm.writeAttribute("role", "region");
 		oRm.writeAttributeEscaped("aria-labelledby", oControl.getAggregation("ariaLabelledBy").getId());
 		oRm.writeControlData(oControl);
 		oRm.write(">");
 
-		if (oControl.getShowTitle() && oControl._getInternalTitleVisible()) {
+		if (bTitleVisible) {
 			oRm.write("<div");
 			oRm.writeAttribute("role", "heading");
 			oRm.writeAttribute("aria-level", oControl._getARIALevel());

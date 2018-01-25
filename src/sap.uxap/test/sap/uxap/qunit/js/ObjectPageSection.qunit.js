@@ -143,6 +143,50 @@
 			"When the section has high importance then it should never be hidden");
 	});
 
+	QUnit.test("Section title display/hide", function (assert) {
+		var oObjectPageLayout = new sap.uxap.ObjectPageLayout({
+			sections: new sap.uxap.ObjectPageSection({
+				title: "Title",
+				subSections: [
+					new sap.uxap.ObjectPageSubSection({
+						blocks: [new sap.m.Text({text: "test"})]
+					})
+				]
+			})
+		}),
+		oFirstSection = oObjectPageLayout.getSections()[0],
+		$oFirstSection;
+
+		// Arrange
+		oObjectPageLayout.placeAt('qunit-fixture');
+		sap.ui.getCore().applyChanges();
+		$oFirstSection = oFirstSection.$();
+
+		// Assert
+		assert.strictEqual($oFirstSection.hasClass("sapUxAPObjectPageSectionNoTitle"), false,
+			"The correct styling is applied");
+
+		// Act
+		oFirstSection.setShowTitle(false);
+		sap.ui.getCore().applyChanges();
+		$oFirstSection = oFirstSection.$();
+
+		// Assert
+		assert.strictEqual($oFirstSection.hasClass("sapUxAPObjectPageSectionNoTitle"), true,
+			"The correct styling is applied");
+
+		// Act
+		oFirstSection.setShowTitle(true);
+		sap.ui.getCore().applyChanges();
+		$oFirstSection = oFirstSection.$();
+
+		// Assert
+		assert.strictEqual($oFirstSection.hasClass("sapUxAPObjectPageSectionNoTitle"), false,
+			"The correct styling is applied");
+
+		oObjectPageLayout.destroy();
+	});
+
 	QUnit.test("Behavior with different importance levels", function (assert) {
 		var fnGenerateTest = function (sImportance, sCurrentImportanceLevel, bExpectToBeHidden, assert) {
 			var sShouldBeHidden = "The section should be hidden",
