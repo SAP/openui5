@@ -3,8 +3,40 @@
  */
 
 // Provides control sap.ui.dt.test.report.Table.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/model/json/JSONModel', 'sap/ui/table/TreeTable', 'sap/ui/table/Column', 'sap/m/Toolbar', 'sap/m/Title', 'sap/m/ToolbarSpacer', 'sap/m/Button', 'sap/m/SearchField', 'sap/m/Text', 'sap/m/RatingIndicator', 'sap/ui/model/Filter', 'sap/ui/model/FilterOperator'],
-	function(jQuery, Control, JSONModel, TreeTable, Column, Toolbar, Title, ToolbarSpacer, Button, SearchField, Text, RatingIndicator, Filter, FilterOperator) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Control',
+	'sap/ui/model/json/JSONModel',
+	'sap/ui/table/TreeTable',
+	'sap/ui/table/Column',
+	'sap/m/Toolbar',
+	'sap/m/Title',
+	'sap/m/ToolbarSpacer',
+	'sap/m/Button',
+	'sap/m/SearchField',
+	'sap/m/Text',
+	'sap/m/RatingIndicator',
+	'sap/ui/model/Filter',
+	'sap/ui/model/FilterOperator',
+	"./TableRenderer"
+],
+function(
+	jQuery,
+	Control,
+	JSONModel,
+	TreeTable,
+	Column,
+	Toolbar,
+	Title,
+	ToolbarSpacer,
+	Button,
+	SearchField,
+	Text,
+	RatingIndicator,
+	Filter,
+	FilterOperator,
+	TableRenderer
+) {
 	"use strict";
 
 
