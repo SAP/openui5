@@ -43,3 +43,18 @@ html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare {
 	bottom: 1px;
 	right: 1px;
 }
+
+.sapMColorPalette .sapMColorPaletteSeparator {
+	height: 0.125rem;
+	html[data-sap-ui-browser^="ie"] &,
+	html[data-sap-ui-browser^="ed"] & {
+		height: 2px; //needed since IE & Edge would round the 0.125rem to 0.12
+	}
+	> hr {
+		border-top-width: 0.125rem;
+		html[data-sap-ui-browser^="ie"] &,
+		html[data-sap-ui-browser^="ed"] & {
+			border-top-width: 2px; //needed since IE & Edge would round the 0.125rem to 0.12
+		}
+	}
+}

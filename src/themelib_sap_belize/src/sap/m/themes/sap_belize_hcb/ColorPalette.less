@@ -43,8 +43,22 @@ html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare {
 	bottom: 1px;
 	right: 1px;
 
-	html[data-sap-ui-browser^="ie"]&, html[data-sap-ui-browser^="ed"]& {
+	html[data-sap-ui-browser^="ie"] &, html[data-sap-ui-browser^="ed"] & {
 		border-style: dashed; // IE, Edge does not display well 2px dotted white border (border looks darker)
 	}
 }
 
+.sapMColorPalette .sapMColorPaletteSeparator {
+	height: 0.125rem;
+	html[data-sap-ui-browser^="ie"] &,
+	html[data-sap-ui-browser^="ed"] & {
+		height: 2px; //needed since IE & Edge would round the 0.125rem to 0.12
+	}
+	> hr {
+		border-top-width: 0.125rem;
+		html[data-sap-ui-browser^="ie"] &,
+		html[data-sap-ui-browser^="ed"] & {
+			border-top-width: 2px; //needed since IE & Edge would round the 0.125rem to 0.12
+		}
+	}
+}
