@@ -2546,6 +2546,85 @@ sap.ui.require([
 			]);
 		});
 	}
+
+	//*********************************************************************************************
+	QUnit.test("getPathAndAddQueryOptions: Action", function (assert) {
+		var oOperationMetadata = {$kind : "Action"},
+			oRequestor = _Requestor.create("/");
+
+		// code under test
+		assert.strictEqual(
+			oRequestor.getPathAndAddQueryOptions("/OperationImport(...)", oOperationMetadata),
+			"OperationImport");
+
+		// code under test
+		assert.strictEqual(
+			oRequestor.getPathAndAddQueryOptions("/Entity('0815')/bound.Operation(...)",
+				oOperationMetadata),
+			"Entity('0815')/bound.Operation");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getPathAndAddQueryOptions: Function", function (assert) {
+		var oOperationMetadata = {
+				$kind : "Function",
+				$Parameter : [{
+					$Name : "føø",
+					$Type : "Edm.String"
+				}, {
+					$Name : "p2",
+					$Type : "Edm.Int16"
+				}, { // unused collection parameter must not lead to an error
+					$Name : "p3",
+					//$Nullable : true,
+					$IsCollection : true
+				}]
+			},
+			oRequestor = _Requestor.create("/"),
+			oRequestorMock = this.mock(oRequestor);
+
+		oRequestorMock.expects("formatPropertyAsLiteral")
+			.withExactArgs("bãr'1", oOperationMetadata.$Parameter[0]).returns("'bãr''1'");
+		oRequestorMock.expects("formatPropertyAsLiteral")
+			.withExactArgs(42,  oOperationMetadata.$Parameter[1]).returns("42");
+
+		assert.strictEqual(
+			// code under test
+			oRequestor.getPathAndAddQueryOptions("/some.Function(...)", oOperationMetadata,
+				{"føø" : "bãr'1", "p2" : 42}),
+			"some.Function(f%C3%B8%C3%B8='b%C3%A3r''1',p2=42)");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getPathAndAddQueryOptions: Function w/o parameters", function (assert) {
+		var oOperationMetadata = {$kind : "Function"},
+			oRequestor = _Requestor.create("/");
+
+		this.mock(oRequestor).expects("formatPropertyAsLiteral").never();
+
+		assert.strictEqual(
+			// code under test
+			oRequestor.getPathAndAddQueryOptions("/some.Function(...)", oOperationMetadata, {}),
+			"some.Function()");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getPathAndAddQueryOptions: Function w/ collection parameter", function (assert) {
+		var oOperationMetadata = {
+				$kind : "Function",
+				$Parameter : [{$Name : "foo", $IsCollection : true}]
+			},
+			oRequestor = _Requestor.create("/");
+
+		this.mock(oRequestor).expects("formatPropertyAsLiteral").never();
+
+		assert.throws(function () {
+			// code under test
+			oRequestor.getPathAndAddQueryOptions("/some.Function(...)", oOperationMetadata,
+				{"foo" : [42]});
+		}, new Error("Unsupported collection-valued parameter: foo"));
+	});
+	//TODO what about actions & collections?
 });
 // TODO: continue-on-error? -> flag on model
 // TODO: cancelChanges: what about existing GET requests in deferred queue (delete or not)?

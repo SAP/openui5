@@ -939,7 +939,12 @@ sap.ui.define([
 			oFunction.$ReturnType = oReturnType = {};
 			this.processTypedCollection(sReturnType, oReturnType);
 		}
-		if (this.consumeSapAnnotation("action-for")) {
+		if (sHttpMethod !== "GET") {
+			jQuery.sap.log.warning("Unsupported HttpMethod at FunctionImport '" + sName
+				+ "', removing this FunctionImport", undefined, sClassName);
+			this.consumeSapAnnotation("action-for");
+			this.consumeSapAnnotation("applicable-path");
+		} else if (this.consumeSapAnnotation("action-for")) {
 			jQuery.sap.log.warning("Unsupported 'sap:action-for' at FunctionImport '" + sName
 				+ "', removing this FunctionImport", undefined, sClassName);
 			this.consumeSapAnnotation("applicable-path");

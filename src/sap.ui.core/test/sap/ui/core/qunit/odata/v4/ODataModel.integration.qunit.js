@@ -19,11 +19,13 @@ sap.ui.require([
 	"sap/ui/table/Table"
 ], function (jQuery, ColumnListItem, CustomListItem, Text, Controller, ChangeReason, Filter,
 		FilterOperator, OperationMode, ODataListBinding, ODataModel, Sorter, TestUtils) {
-	/*global QUnit*/
+	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
+		sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+		sFlight = "/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/",
 		sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/";
 
 	/**
@@ -130,6 +132,8 @@ sap.ui.require([
 					: {source : "model/GWSAMPLE_BASIC.metadata.xml"},
 				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
 					: {source : "model/GWSAMPLE_BASIC.annotations.xml"},
+				"/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/$metadata"
+					: {source : "model/RMTSAMPLEFLIGHT.metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"
 					: {source : "odata/v4/data/metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
@@ -276,6 +280,43 @@ sap.ui.require([
 		},
 
 		/**
+		 * Creates a V4 OData model for V2 service <code>RMTSAMPLEFLIGHT</code>.
+		 *
+		 * @param {object} mModelParameters Map of parameters for model construction to enhance and
+		 *   potentially overwrite the parameters groupId, operationMode, serviceUrl,
+		 *   synchronizationMode which are set by default
+		 * @returns {ODataModel} The model
+		 */
+		createModelForV2FlightService : function (mModelParameters) {
+			var oLogMock = this.oLogMock;
+
+			// The following warnings are logged when the RMTSAMPLEFLIGHT metamodel is loaded
+			["semantics", "creatable", "creatable", "semantics", "semantics", "value-list",
+				"value-list", "label", "label", "value-list", "value-list", "value-list",
+				"value-list", "value-list", "value-list", "value-list", "label", "label",
+				"supported-formats", "addressable", "value-list"
+			].forEach(function (sAnnotation) {
+				oLogMock.expects("warning")
+					.withExactArgs("Unsupported annotation 'sap:" + sAnnotation + "'",
+						sinon.match.string, sClassName);
+			});
+			["UpdateAgencyPhoneNo"].forEach(function (sName) {
+				oLogMock.expects("warning")
+					.withExactArgs("Unsupported HttpMethod at FunctionImport '" + sName
+						+ "', removing this FunctionImport", undefined, sClassName);
+			});
+			["CheckFlightAvailability", "GetFlightDetails", "GetAgencyDetails"
+			].forEach(function (sName) {
+				oLogMock.expects("warning")
+					.withExactArgs("Unsupported 'sap:action-for' at FunctionImport '" + sName
+						+ "', removing this FunctionImport", undefined, sClassName);
+			});
+
+			mModelParameters = jQuery.extend({}, {odataVersion : "2.0"}, mModelParameters);
+			return createModel(sFlight, mModelParameters);
+		},
+
+		/**
 		 * Creates a V4 OData model for V2 service <code>GWSAMPLE_BASIC</code>.
 		 *
 		 * @param {object} mModelParameters Map of parameters for model construction to enhance and
@@ -287,18 +328,25 @@ sap.ui.require([
 			var oLogMock = this.oLogMock;
 
 			// The following warnings are logged when the GWSAMPLE_BASIC metamodel is loaded
-			["Confirm", "Cancel", "InvoiceCreated", "GoodsIssueCreated"].forEach(function (sName) {
+			[
+				"RegenerateAllData", "SalesOrder_Confirm", "SalesOrder_Cancel",
+				"SalesOrder_InvoiceCreated", "SalesOrder_GoodsIssueCreated"
+			].forEach(function (sName) {
 				oLogMock.expects("warning")
-					.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'SalesOrder_"
-						+ sName + "', removing this FunctionImport", undefined,
-						"sap.ui.model.odata.v4.lib._V2MetadataConverter");
+					.withExactArgs("Unsupported HttpMethod at FunctionImport '" + sName
+						+ "', removing this FunctionImport", undefined, sClassName);
 			});
+//			["Confirm", "Cancel", "InvoiceCreated", "GoodsIssueCreated"].forEach(function (sName) {
+//				oLogMock.expects("warning")
+//					.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'SalesOrder_"
+//						+ sName + "', removing this FunctionImport", undefined, sClassName);
+//			});
 			["filterable", "sortable"].forEach(function (sAnnotation) {
 				oLogMock.expects("warning")
 					.withExactArgs("Unsupported SAP annotation at a complex type in"
 						+ " '/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata'",
 						"sap:" + sAnnotation + " at property 'GWSAMPLE_BASIC.CT_String/String'",
-						"sap.ui.model.odata.v4.lib._V2MetadataConverter");
+						sClassName);
 			});
 
 			mModelParameters = jQuery.extend({}, {odataVersion : "2.0"}, mModelParameters);
@@ -370,6 +418,7 @@ sap.ui.require([
 					oResponse = oExpectedRequest.response;
 					delete oExpectedRequest.response;
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
+					oResponse = that.oModel.oRequestor.doConvertResponse(oResponse);
 				}
 
 				if (!that.aRequests.length) { // waiting may be over after promise has been handled
@@ -1500,9 +1549,8 @@ sap.ui.require([
 			})
 			.expectChange("name", "Frederic Fall")
 			.expectChange("city", "Walldorf")
-//TODO unexpected changes
-			.expectChange("name", "Frederic Fall")
-			.expectChange("city", "Walldorf");
+			.expectChange("name", "Frederic Fall") //TODO unexpected change
+			.expectChange("city", "Walldorf"); //TODO unexpected change
 
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
 	});
@@ -1521,8 +1569,7 @@ sap.ui.require([
 		this.expectRequest("EMPLOYEES('2')?$select=AGE,ID,Name", {
 				"Name" : "Jonathan Smith"
 			})
-//TODO unexpected change
-			.expectChange("name", "Jonathan Smith")
+			.expectChange("name", "Jonathan Smith") //TODO unexpected change
 			.expectChange("name", "Jonathan Smith");
 
 		return this.createView(
@@ -1738,9 +1785,8 @@ sap.ui.require([
 				})
 			.expectChange("name", "SAP NetWeaver Gateway Content")
 			.expectChange("TEAM_ID", "TEAM_03")
-//TODO unexpected changes
-			.expectChange("name", "SAP NetWeaver Gateway Content")
-			.expectChange("TEAM_ID", "TEAM_03");
+			.expectChange("name", "SAP NetWeaver Gateway Content") //TODO unexpected change
+			.expectChange("TEAM_ID", "TEAM_03"); //TODO unexpected change
 
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
 	});
@@ -1776,8 +1822,7 @@ sap.ui.require([
 					}
 				})
 			.expectChange("name", "SAP NetWeaver Gateway Content")
-//TODO unexpected changes
-			.expectChange("name", "SAP NetWeaver Gateway Content");
+			.expectChange("name", "SAP NetWeaver Gateway Content"); //TODO unexpected change
 
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
 	});
@@ -2034,9 +2079,8 @@ sap.ui.require([
 				})
 			.expectChange("name", "SAP NetWeaver Gateway Content")
 			.expectChange("age", "32")
-//TODO unexpected changes
-			.expectChange("name", "SAP NetWeaver Gateway Content")
-			.expectChange("age", "32");
+			.expectChange("name", "SAP NetWeaver Gateway Content") //TODO unexpected change
+			.expectChange("age", "32"); //TODO unexpected change
 
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
 	});
@@ -2751,7 +2795,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	// Scenario: test conversion of $select and $expand for V2 Adapter
-	// Usage of service: sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
+	// Usage of service: /sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
 	QUnit.test("V2 Adapter: select in expand", function (assert) {
 		var sView = '\
 <FlexBox id="form" binding="{path :\'/SalesOrderSet(\\\'0500000001\\\')\', \
@@ -2771,15 +2815,32 @@ sap.ui.require([
 				annotationURI : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
 			});
 
-		this.expectRequest("SalesOrderSet('0500000001')?$expand=ToLineItems" +
-				"&$select=ToLineItems/ItemPosition,SalesOrderID",
-			{
-				"SalesOrderID" : "0500000001",
-				"ToLineItems" : [
-					{"ItemPosition" : "0000000010"},
-					{"ItemPosition" : "0000000020"},
-					{"ItemPosition" : "0000000030"}
-				]
+		this.expectRequest("SalesOrderSet('0500000001')?$expand=ToLineItems"
+			+ "&$select=ToLineItems/ItemPosition,SalesOrderID", {
+				"d" : {
+					"__metadata" : {
+						"type" : "GWSAMPLE_BASIC.SalesOrder"
+					},
+					"SalesOrderID" : "0500000001",
+					"ToLineItems" : {
+						"results" : [{
+							"__metadata":{
+								"type":"GWSAMPLE_BASIC.SalesOrderLineItem"
+							},
+							"ItemPosition" : "0000000010"
+						}, {
+							"__metadata":{
+								"type":"GWSAMPLE_BASIC.SalesOrderLineItem"
+							},
+							"ItemPosition" : "0000000020"
+						}, {
+							"__metadata":{
+								"type":"GWSAMPLE_BASIC.SalesOrderLineItem"
+							},
+							"ItemPosition" : "0000000030"
+						}]
+					}
+				}
 			})
 			.expectChange("id", "0500000001")
 			.expectChange("id", "0500000001") //TODO duplicate change event
@@ -2796,7 +2857,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	// Scenario: test conversion of $orderby for V2 Adapter
-	// Usage of service: sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
+	// Usage of service: /sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
 	QUnit.test("V2 Adapter: $orderby", function (assert) {
 		var sView = '\
 <Table id="table" items="{path :\'/SalesOrderSet\',\
@@ -2812,14 +2873,26 @@ sap.ui.require([
 				annotationURI : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
 			});
 
-		this.expectRequest("SalesOrderSet?$orderby=SalesOrderID&$select=SalesOrderID" +
-				"&$skip=0&$top=100",
-			{
-				"value" : [
-					{"SalesOrderID" : "0500000001"},
-					{"SalesOrderID" : "0500000002"},
-					{"SalesOrderID" : "0500000003"}
-				]
+		this.expectRequest("SalesOrderSet?$orderby=SalesOrderID&$select=SalesOrderID"
+			+ "&$skip=0&$top=100", {
+				"d" : {
+					"results" : [{
+						"__metadata" : {
+							"type" : "GWSAMPLE_BASIC.SalesOrder"
+						},
+						"SalesOrderID" : "0500000001"
+					}, {
+						"__metadata" : {
+							"type" : "GWSAMPLE_BASIC.SalesOrder"
+						},
+						"SalesOrderID" : "0500000002"
+					}, {
+						"__metadata" : {
+							"type" : "GWSAMPLE_BASIC.SalesOrder"
+						},
+						"SalesOrderID" : "0500000003"
+					}]
+				}
 			})
 			.expectChange("id", ["0500000001", "0500000002", "0500000003"]);
 
@@ -2848,7 +2921,7 @@ sap.ui.require([
 		request : "Note%20eq%20null%20or%20not%20(datetime'2017-05-23T00:00:00'%20ge%20CreatedAt)"
 	}].forEach(function (oFixture) {
 		// Scenario: test conversion of $filter for V2 Adapter
-		// Usage of service: sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
+		// Usage of service: /sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
 		QUnit.test("V2 Adapter: $filter=" + oFixture.binding, function (assert) {
 			var sView = '\
 <Table id="table" items="{path :\'/SalesOrderSet\',\
@@ -2862,12 +2935,25 @@ sap.ui.require([
 </Table>';
 
 			this.expectRequest("SalesOrderSet?$filter=" + oFixture.request + "&$select=SalesOrderID"
-					+ "&$skip=0&$top=100",
-				{"value" : [
-						{"SalesOrderID" : "0500000001"},
-						{"SalesOrderID" : "0500000002"},
-						{"SalesOrderID" : "0500000003"}
-					]
+				+ "&$skip=0&$top=100", {
+					"d" : {
+						"results" : [{
+							"__metadata" : {
+								"type" : "GWSAMPLE_BASIC.SalesOrder"
+							},
+							"SalesOrderID" : "0500000001"
+						}, {
+							"__metadata" : {
+								"type" : "GWSAMPLE_BASIC.SalesOrder"
+							},
+							"SalesOrderID" : "0500000002"
+						}, {
+							"__metadata" : {
+								"type" : "GWSAMPLE_BASIC.SalesOrder"
+							},
+							"SalesOrderID" : "0500000003"
+						}]
+					}
 				})
 				.expectChange("id", ["0500000001", "0500000002", "0500000003"]);
 
@@ -3472,5 +3558,67 @@ sap.ui.require([
 			{"value" : [{"Name" : "Frederic Fall"}, {"Name" : "Jonathan Smith"}]}},
 		{"text" : ["Hello, Frederic Fall", "Hello, Jonathan Smith"]}
 	);
+
+	//*********************************************************************************************
+	// Scenario: <FunctionImport m:HttpMethod="GET"> in V2 Adapter
+	// Usage of service: /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
+	QUnit.test("V2 Adapter: FunctionImport", function (assert) {
+		var oModel = this.createModelForV2FlightService(),
+			that = this;
+
+		// code under test
+		return this.createView(assert, '', oModel).then(function () {
+			var oContextBinding = oModel.bindContext("/GetAvailableFlights(...)");
+
+			that.expectRequest("GetAvailableFlights?fromdate=datetime'2017-08-10T00:00:00'"
+				+ "&todate=datetime'2017-08-10T23:59:59'"
+				+ "&cityfrom='new%20york'&cityto='SAN%20FRANCISCO'", {
+				"d" : {
+					"results" : [{
+						"__metadata" : {
+							"type":"RMTSAMPLEFLIGHT.Flight"
+						},
+						"carrid" : "AA",
+						"connid" : "0017",
+						"fldate" : "\/Date(1502323200000)\/"
+					}, {
+						"__metadata" : {
+							"type":"RMTSAMPLEFLIGHT.Flight"
+						},
+						"carrid" : "DL",
+						"connid" : "1699",
+						"fldate" : "\/Date(1502323200000)\/"
+					}, {
+						"__metadata" : {
+							"type":"RMTSAMPLEFLIGHT.Flight"
+						},
+						"carrid" : "UA",
+						"connid" : "3517",
+						"fldate" : "\/Date(1502323200000)\/"
+					}]
+				}
+			});
+
+			oContextBinding
+				.setParameter("fromdate", "2017-08-10T00:00:00Z")
+				.setParameter("todate", "2017-08-10T23:59:59Z")
+				.setParameter("cityfrom", "new york")
+				.setParameter("cityto", "SAN FRANCISCO")
+				.execute();
+
+			return that.waitForChanges(assert).then(function () {
+				var oListBinding = oModel.bindList("value", oContextBinding.getBoundContext()),
+					aContexts = oListBinding.getContexts(0, Infinity);
+
+				aContexts.forEach(function (oContext, i) {
+					// Note: This just illustrates the status quo. It is not meant to say this must
+					// be kept stable.
+					assert.strictEqual(oContext.getPath(), "/GetAvailableFlights(...)/value/" + i);
+					//TODO Precision="0" vs. ".000"?!
+					assert.strictEqual(oContext.getProperty("fldate"), "2017-08-10T00:00:00.000Z");
+				});
+			});
+		});
+	});
 });
 //TODO test delete

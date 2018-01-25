@@ -1717,21 +1717,7 @@
 		"VH_LanguageSet" : {
 			"$kind" : "EntitySet",
 			"$Type" : "GWSAMPLE_BASIC.VH_Language"
-		},
-		"RegenerateAllData" : {
-			"$kind" : "ActionImport",
-			"$Action" : "GWSAMPLE_BASIC.RegenerateAllData"
 		}
 	},
-	"GWSAMPLE_BASIC.RegenerateAllData" : [{
-		"$kind" : "Action",
-		"$ReturnType" : {
-			"$Type" : "GWSAMPLE_BASIC.CT_String"
-		},
-		"$Parameter" : [{
-			"$Name" : "NoOfSalesOrders",
-			"$Type" : "Edm.Int32"
-		}]
-	}],
 	"$EntityContainer" : "GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities"
 }

@@ -628,6 +628,72 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the resource path relative to the service URL and adds query options in case of
+	 * a bound operation (V2: "sap:action-for"). Operation parameters are moved to query options,
+	 * undeclared parameters are removed.
+	 *
+	 * @param {string} sPath
+	 *   The absolute binding path to the bound operation or operation import, e.g.
+	 *   "/Entity('0815')/bound.Operation(...)" or "/OperationImport(...)"
+	 * @param {object} oOperationMetadata
+	 *   The operation's metadata
+	 * @param {object} mParameters
+	 *   A copy of the map of key-values pairs representing the operation's actual parameters
+	 * @param {object} mQueryOptions
+	 *   A copy of the map of key-value pairs representing the query string, the value in this pair
+	 *   has to be a string or an array of strings
+	 * @param {function|object} [vEntity]
+	 *   The existing entity data (or a function which may be called to access it) in case of a
+	 *   bound operation (V2: "sap:action-for")
+	 * @returns {string}
+	 *   The new path without leading slash and ellipsis
+	 * @throws {Error}
+	 *   If a collection-valued operation parameter is encountered
+	 *
+	 * @private
+	 */
+	_V2Requestor.prototype.getPathAndAddQueryOptions = function (sPath, oOperationMetadata,
+		mParameters, mQueryOptions, vEntity) {
+		var sName,
+			oTypeMetadata,
+			that = this;
+
+		sPath = sPath.slice(1, -5);
+
+		if (oOperationMetadata.$IsBound) {
+			sPath = sPath.slice(sPath.lastIndexOf(".") + 1);
+			if (typeof vEntity === "function") {
+				vEntity = vEntity();
+			}
+			// Note: $metadata is already available because oOperationMetadata has been read!
+			oTypeMetadata = this.getTypeForName(oOperationMetadata.$Parameter[0].$Type);
+			oTypeMetadata.$Key.forEach(function (sName) {
+				mQueryOptions[sName]
+					= that.formatPropertyAsLiteral(vEntity[sName], oTypeMetadata[sName]);
+			});
+		}
+
+		if (oOperationMetadata.$Parameter) {
+			oOperationMetadata.$Parameter.forEach(function (oParameter) {
+				sName = oParameter.$Name;
+				if (sName in mParameters) {
+					if (oParameter.$IsCollection) {
+						throw new Error("Unsupported collection-valued parameter: " + sName);
+					}
+					mQueryOptions[sName]
+						= that.formatPropertyAsLiteral(mParameters[sName], oParameter);
+					delete mParameters[sName];
+				}
+			});
+		}
+		for (sName in mParameters) {
+			delete mParameters[sName];
+		}
+
+		return sPath;
+	};
+
+	/**
 	 * Returns the type with the given qualified name.
 	 *
 	 * @param {string} sName The qualified type name

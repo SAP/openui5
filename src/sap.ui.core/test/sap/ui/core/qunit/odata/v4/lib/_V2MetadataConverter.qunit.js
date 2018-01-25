@@ -540,7 +540,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[undefined, "GET", "POST"].forEach(function (sMethod) {
+	[/*undefined,*/ "GET"/*, "POST"*/].forEach(function (sMethod) {
 		QUnit.test("convert: FunctionImport, Method=" + sMethod, function (assert) {
 			var sWhat = sMethod === "POST" ? "Action" : "Function",
 				sMethodAttribute = sMethod ? ' m:HttpMethod="' + sMethod + '"' : "",
@@ -597,7 +597,8 @@ sap.ui.require([
 		testConversion(assert, '\
 				<Schema Namespace="foo" Alias="f">\
 					<EntityContainer Name="Container">\
-						<FunctionImport Name="Baz" ReturnType="Edm.String" EntitySet="Bar"/>\
+						<FunctionImport m:HttpMethod="GET" Name="Baz" ReturnType="Edm.String"\
+							EntitySet="Bar"/>\
 					</EntityContainer>\
 				</Schema>',
 			{
@@ -631,8 +632,8 @@ sap.ui.require([
 		testConversion(assert, '\
 				<Schema Namespace="foo" Alias="f">\
 					<EntityContainer Name="Container">\
-						<FunctionImport Name="Bar"/>\
-						<FunctionImport Name="Baz" sap:action-for="EntityType">\
+						<FunctionImport m:HttpMethod="GET" Name="Bar"/>\
+						<FunctionImport m:HttpMethod="GET" Name="Baz" sap:action-for="EntityType">\
 							<Parameter Name="p1" Type="String"/>\
 						</FunctionImport>\
 					</EntityContainer>\
@@ -655,6 +656,33 @@ sap.ui.require([
 			});
 	});
 
+	//*********************************************************************************************
+	[undefined, "DELETE", "MERGE", "PATCH", "POST", "PUT"].forEach(function (sMethod) {
+		QUnit.test("convert: FunctionImport w/ m:HttpMethod = " + sMethod, function (assert) {
+			var sMethodAttribute = sMethod ? ' m:HttpMethod="' + sMethod + '"' : "";
+
+			this.oLogMock.expects("warning")
+				.withExactArgs("Unsupported HttpMethod at FunctionImport 'Baz',"
+					+ " removing this FunctionImport", undefined, sClassName);
+
+			testConversion(assert, '\
+					<Schema Namespace="foo" Alias="f">\
+						<EntityContainer Name="Container">\
+							<FunctionImport' + sMethodAttribute + ' Name="Baz">\
+							</FunctionImport>\
+						</EntityContainer>\
+					</Schema>',
+				{
+					"$EntityContainer" : "foo.Container",
+					"foo." : {
+						"$kind" : "Schema"
+					},
+					"foo.Container" : {
+						"$kind" : "EntityContainer"
+					}
+				});
+		});
+	});
 
 	//*********************************************************************************************
 	QUnit.test("try to read some random XML as V2", function (assert) {
@@ -698,12 +726,20 @@ sap.ui.require([
 		var oLogMock = this.oLogMock,
 			sUrl = "/GWSAMPLE_BASIC/$metadata";
 
-		["Confirm", "Cancel", "InvoiceCreated", "GoodsIssueCreated"].forEach(function (sName) {
+		[
+			"RegenerateAllData", "SalesOrder_Confirm", "SalesOrder_Cancel",
+			"SalesOrder_InvoiceCreated", "SalesOrder_GoodsIssueCreated"
+		].forEach(function (sName) {
 			oLogMock.expects("warning")
-				.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'SalesOrder_" + sName
-						+ "', removing this FunctionImport", undefined,
-					sClassName);
+				.withExactArgs("Unsupported HttpMethod at FunctionImport '" + sName
+					+ "', removing this FunctionImport", undefined, sClassName);
 		});
+//		["Confirm", "Cancel", "InvoiceCreated", "GoodsIssueCreated"].forEach(function (sName) {
+//			oLogMock.expects("warning")
+//				.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'SalesOrder_" + sName
+//						+ "', removing this FunctionImport", undefined,
+//					sClassName);
+//		});
 		["filterable", "sortable"].forEach(function (sAnnotation) {
 			oLogMock.expects("warning")
 				.withExactArgs("Unsupported SAP annotation at a complex type in '" + sUrl + "'",
@@ -1649,7 +1685,8 @@ sap.ui.require([
 		testConversion(assert, '\
 				<Schema Namespace="foo" Alias="f">\
 					<EntityContainer Name="Container">\
-						<FunctionImport Name="FunctionImport" sap:label="LabelFunctionImport">\
+						<FunctionImport m:HttpMethod="GET" Name="FunctionImport"\
+								sap:label="LabelFunctionImport">\
 							<Parameter Name="Parameter" Type="Edm.String"\
 									sap:label="LabelParameter">\
 							</Parameter>\
@@ -1770,7 +1807,7 @@ sap.ui.require([
 						<EntitySet Name="Suppliers" EntityType="GWSAMPLE_BASIC.BusinessPartner"\
 							sap:searchable="true"/>\
 <!-- loop over EntityContainer\'s children does not fail for non-EntitySets -->\
-						<FunctionImport Name="Foo" ReturnType="Edm.String"/>\
+						<FunctionImport m:HttpMethod="GET" Name="Foo" ReturnType="Edm.String"/>\
 					</EntityContainer>\
 <!-- EntitySets in ALL EntityContainers of a Schema are handled -->\
 					<EntityContainer Name="YetAnotherContainer">\
@@ -2157,6 +2194,8 @@ sap.ui.require([
 		warn(/<EntityContainer.*sap:foo="fuz".*>/, "foo", "fuz");
 		warn(/<EntitySet.*sap:bar="baz".*\/>/, "bar", "baz");
 		warn(/<FunctionImport.*sap:applicable-path="foo".*\/>/, "applicable-path", "foo");
+		oLogMock.expects("warning").withExactArgs("Unsupported HttpMethod at FunctionImport"
+			+ " 'BoundFunctionNoGET', removing this FunctionImport", undefined, sClassName);
 		oLogMock.expects("warning").withExactArgs("Unsupported 'sap:action-for' at FunctionImport"
 			+ " 'BoundFunction', removing this FunctionImport", undefined, sClassName);
 
@@ -2175,9 +2214,12 @@ sap.ui.require([
 				<EntityContainer Name="Container" sap:bar="baz" sap:foo="fuz">\
 					<EntitySet Name="MyEntitySet" EntityType="foo.MyEntityType" \
 						sap:content-version="1" sap:bar="baz"/>\
-					<FunctionImport Name="MyFunction" sap:applicable-path="foo"/>\
-					<FunctionImport Name="BoundFunction" sap:action-for="MyEntitySet"\
-						sap:applicable-path="bar"/>\
+					<FunctionImport Name="BoundFunctionNoGET"\
+						sap:action-for="MyEntitySet" sap:applicable-path="bar"/>\
+					<FunctionImport m:HttpMethod="GET" Name="MyFunction"\
+						sap:applicable-path="foo"/>\
+					<FunctionImport m:HttpMethod="GET" Name="BoundFunction"\
+						sap:action-for="MyEntitySet" sap:applicable-path="bar"/>\
 					<AssociationSet Name="MyAssociationSet" Association="foo.Assoc"\
 							sap:creatable="false" sap:deletable="false" sap:updatable="false">\
 						<End EntitySet="MyEntitySet" Role="A"/>\

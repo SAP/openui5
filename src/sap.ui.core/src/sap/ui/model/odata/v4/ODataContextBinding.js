@@ -281,75 +281,47 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Creates the cache (if necessary) and sends the GET/POST request.
+	 * Creates a single cache and sends a GET/POST request.
 	 *
+	 * @param {string} sGroupId
+	 *   The group ID to be used for the request
 	 * @param {string} sPath
 	 *   The absolute binding path to the bound operation or operation import, e.g.
 	 *   "/Entity('0815')/bound.Operation(...)" or "/OperationImport(...)"
 	 * @param {object} oOperationMetadata
 	 *   The operation's metadata
-	 * @param {string} [sGroupId=getGroupId()]
-	 *   The group ID to be used for the request; if not specified, the group ID for this binding is
-	 *   used, see {@link sap.ui.model.odata.v4.ODataContextBinding#constructor}.
+	 * @param {function} [fnGetEntity]
+	 *   An optional function which may be called to access the existing entity data in case of a
+	 *   bound operation
 	 * @returns {SyncPromise}
 	 *   The request promise
 	 * @throws {Error}
-	 *   If a collection-valued function parameter is encountered
+	 *   If a collection-valued parameter for an operation other than a V4 action is encountered
 	 *
 	 * @private
 	 */
-	ODataContextBinding.prototype.createCacheAndRequest = function (sPath, oOperationMetadata,
-		sGroupId) {
-		var oCache,
+	ODataContextBinding.prototype.createCacheAndRequest = function (sGroupId, sPath,
+		oOperationMetadata, fnGetEntity) {
+		var bAction = oOperationMetadata.$kind === "Action",
+			oCache,
+			vEntity = fnGetEntity,
 			sETag,
-			iIndex,
-			aOperationParameters,
-			sOperationPath,
-			aParameters,
-			oPromise,
-			mQueryOptions = jQuery.extend({}, this.oModel.mUriParameters, this.mQueryOptions),
-			that = this;
+			mParameters = jQuery.extend({}, this.oOperation.mParameters),
+			mQueryOptions = jQuery.extend({}, this.oModel.mUriParameters, this.mQueryOptions);
 
-		sGroupId = sGroupId || this.getGroupId();
-		this.oOperation.bAction = oOperationMetadata.$kind === "Action";
-		if (this.oOperation.bAction) {
-			// Recreate the cache, because the query options might have changed
-			oCache = _Cache.createSingle(this.oModel.oRequestor, sPath.slice(1, -5), mQueryOptions,
-				this.oModel.bAutoExpandSelect, true);
-			if (this.bRelative && this.oContext.getBinding) {
-				// @odata.etag is not added to path to avoid "failed to drill-down" in cache
-				// if no ETag is available
-				iIndex = this.sPath.lastIndexOf("/");
-				sETag = this.oContext.getObject(
-					iIndex >= 0 ? this.sPath.slice(0, iIndex) : "")["@odata.etag"];
-			}
-			oPromise = oCache.post(sGroupId, this.oOperation.mParameters, sETag);
-		} else {
-			// the function must always recreate the cache because the parameters influence the
-			// resource path
-			aOperationParameters = oOperationMetadata.$Parameter;
-			aParameters = [];
-			if (aOperationParameters) {
-				aOperationParameters.forEach(function (oParameter) {
-					var sName = oParameter.$Name;
-
-					if (sName in that.oOperation.mParameters) {
-						if (oParameter.$IsCollection) {
-							throw new Error("Unsupported: collection parameter");
-						}
-						aParameters.push(encodeURIComponent(sName) + "="
-							+ encodeURIComponent(_Helper.formatLiteral(
-								that.oOperation.mParameters[sName], oParameter.$Type)));
-					}
-				});
-			}
-			sOperationPath = sPath.slice(1).replace("...", aParameters.join(','));
-			oCache = _Cache.createSingle(this.oModel.oRequestor, sOperationPath, mQueryOptions,
-				this.oModel.bAutoExpandSelect);
-			oPromise = oCache.fetchValue(sGroupId);
+		this.oOperation.bAction = bAction;
+		if (bAction && fnGetEntity) {
+			vEntity = fnGetEntity();
+			sETag = vEntity["@odata.etag"];
 		}
+		sPath = this.oModel.oRequestor.getPathAndAddQueryOptions(sPath, oOperationMetadata,
+			mParameters, mQueryOptions, vEntity);
+		oCache = _Cache.createSingle(this.oModel.oRequestor, sPath, mQueryOptions,
+			this.oModel.bAutoExpandSelect, bAction);
 		this.oCachePromise = SyncPromise.resolve(oCache);
-		return oPromise;
+		return bAction
+			? oCache.post(sGroupId, mParameters, sETag)
+			: oCache.fetchValue(sGroupId);
 	};
 
 	/**
@@ -486,10 +458,13 @@ sap.ui.define([
 	 *   specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @returns {Promise}
 	 *   A promise that is resolved without data when the operation call succeeded, or rejected
-	 *   with an instance of <code>Error</code> in case of failure.
-	 * @throws {Error} If the binding is not a deferred operation binding (see
-	 *   {@link sap.ui.model.odata.v4.ODataContextBinding}), if the binding is not resolved, or if
-	 *   the given group ID is invalid.
+	 *   with an instance of <code>Error</code> in case of failure, for instance if a
+	 *   collection-valued function parameter is encountered.
+	 * @throws {Error} If the given group ID is invalid, if the binding is not a deferred operation
+	 *   binding (see {@link sap.ui.model.odata.v4.ODataContextBinding}), if the binding is not
+	 *   resolved or relative to a transient context
+	 *   (see {@link sap.ui.model.odata.v4.Context#isTransient}), or if deferred operation bindings
+	 *   are nested.
 	 *
 	 * @public
 	 * @since 1.37.0
@@ -498,6 +473,7 @@ sap.ui.define([
 		var oPromise, that = this;
 
 		this.oModel.checkGroupId(sGroupId);
+		sGroupId = sGroupId || this.getGroupId();
 		if (!this.oOperation) {
 			throw new Error("The binding must be deferred: " + this.sPath);
 		}
@@ -515,19 +491,22 @@ sap.ui.define([
 			}
 		}
 
-		oPromise = this._fetchOperationMetadata().then(function (oOperationMetaData) {
+		oPromise = this._fetchOperationMetadata().then(function (oOperationMetadata) {
 			if (that.bRelative) {
 				if (!that.oContext.getBinding) {
-					return that.createCacheAndRequest(
+					return that.createCacheAndRequest(sGroupId,
 						(that.oContext.getPath() === "/" ? "/" : that.oContext.getPath() + "/")
-						+ that.sPath, oOperationMetaData, sGroupId);
+						+ that.sPath, oOperationMetadata);
 				}
-				return that.getContext().fetchCanonicalPath().then(function (sPath) {
-					return that.createCacheAndRequest(sPath + "/" + that.sPath, oOperationMetaData,
-						sGroupId);
+				return that.getContext().fetchCanonicalPath().then(function (sCanonicalPath) {
+					var iIndex = that.sPath.lastIndexOf("/"),
+						sPath = iIndex >= 0 ? that.sPath.slice(0, iIndex) : "";
+
+					return that.createCacheAndRequest(sGroupId, sCanonicalPath + "/" + that.sPath,
+						oOperationMetadata, that.oContext.getObject.bind(that.oContext, sPath));
 				});
 			}
-			return that.createCacheAndRequest(that.sPath, oOperationMetaData, sGroupId);
+			return that.createCacheAndRequest(sGroupId, that.sPath, oOperationMetadata);
 		}).then(function (oResult) {
 			that._fireChange({reason : ChangeReason.Change});
 			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {

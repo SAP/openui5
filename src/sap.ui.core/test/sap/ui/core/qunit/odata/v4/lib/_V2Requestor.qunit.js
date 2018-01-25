@@ -1199,4 +1199,116 @@ sap.ui.require([
 			assert.strictEqual(fnGetHeader.callCount, oFixture.iCallCount);
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getPathAndAddQueryOptions: OperationImport", function (assert) {
+		var oModelInterface = {
+				fnFetchMetadata : null // do not call!
+			},
+			oOperationMetadata = {
+				"$Parameter" : [{
+					"$Name" : "Foo",
+					"$Type" : "Edm.Int16"
+				}, {
+					"$Name" : "ID",
+					"$Type" : "Edm.String"
+				}]
+			},
+			mParameters = {"ID" : "1", "Foo" : 42, "n/a" : NaN},
+			mQueryOptions = {},
+			oRequestor = _Requestor.create("/", oModelInterface, undefined, undefined, "2.0"),
+			oRequestorMock = this.mock(oRequestor);
+
+		oRequestorMock.expects("formatPropertyAsLiteral")
+			.withExactArgs(42, oOperationMetadata.$Parameter[0]).returns("42");
+		oRequestorMock.expects("formatPropertyAsLiteral")
+			.withExactArgs("1", oOperationMetadata.$Parameter[1]).returns("'1'");
+
+		assert.strictEqual(
+			// code under test
+			oRequestor.getPathAndAddQueryOptions("/OperationImport(...)", oOperationMetadata,
+				mParameters, mQueryOptions),
+			"OperationImport");
+		assert.deepEqual(mQueryOptions, {"ID" : "'1'", "Foo" : "42"});
+		assert.deepEqual(mParameters, {});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bAction) {
+		var sTitle = "getPathAndAddQueryOptions: bound " + (bAction ? "action" : "function");
+
+		QUnit.test(sTitle, function (assert) {
+			var oEntity = {"Foo" : 42, "ID" : "1"},
+				oModelInterface = {
+					fnFetchMetadata : function () {}
+				},
+				oOperationMetadata = {
+					"$IsBound" : true,
+					"$Parameter" : [{ // "$Name" : null, "$Nullable" : false,
+						"$Type" : "com.sap.ui5.OData.EdmTypes"
+					}, {
+						"$Name" : "Bar" //, "$Type" : "Edm.Boolean"
+					}]
+				},
+				mParameters = {"Bar" : true},
+				mQueryOptions = {},
+				oRequestor = _Requestor.create("/", oModelInterface, undefined, undefined, "2.0"),
+				oRequestorMock = this.mock(oRequestor),
+				oTypeMetadata = { // "$kind" : "EntityType",
+					"$Key" : ["ID", "Foo"],
+					"Foo" : {
+						"$kind" : "Property",
+						"$Type" : "Edm.Int16"
+					},
+					"ID" : {
+						"$kind" : "Property",
+						"$Type" : "Edm.String"
+					}
+				};
+
+			this.mock(oModelInterface).expects("fnFetchMetadata")
+				.withExactArgs("/com.sap.ui5.OData.EdmTypes")
+				.returns(SyncPromise.resolve(oTypeMetadata));
+			oRequestorMock.expects("formatPropertyAsLiteral").withExactArgs("1", oTypeMetadata.ID)
+				.returns("'1'");
+			oRequestorMock.expects("formatPropertyAsLiteral").withExactArgs(42, oTypeMetadata.Foo)
+				.returns("42");
+			oRequestorMock.expects("formatPropertyAsLiteral")
+				.withExactArgs(true, oOperationMetadata.$Parameter[1]).returns("true");
+
+			assert.strictEqual(
+				// code under test
+				oRequestor.getPathAndAddQueryOptions(
+					"/EdmTypesCollection('1')/com.sap.ui5.OData.ResetEdmTypes(...)",
+					oOperationMetadata, mParameters, mQueryOptions,
+					bAction ? oEntity : function () { return oEntity; }),
+				"ResetEdmTypes");
+			assert.deepEqual(mQueryOptions, {"Bar" : "true", "Foo" : "42", "ID" : "'1'"});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getPathAndAddQueryOptions: Operation w/o parameters", function (assert) {
+		var oOperationMetadata = {},
+			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+
+		this.mock(oRequestor).expects("formatPropertyAsLiteral").never();
+
+		assert.strictEqual(
+			// code under test
+			oRequestor.getPathAndAddQueryOptions("/some.Operation(...)", oOperationMetadata),
+			"some.Operation");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getPathAndAddQueryOptions: collection parameter", function (assert) {
+		var oOperationMetadata = {$Parameter : [{$Name : "foo", $IsCollection : true}]},
+			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+
+		assert.throws(function () {
+			// code under test
+			oRequestor.getPathAndAddQueryOptions("/ActionImport(...)", oOperationMetadata,
+				{"foo" : [42]});
+		}, new Error("Unsupported collection-valued parameter: foo"));
+	});
 });

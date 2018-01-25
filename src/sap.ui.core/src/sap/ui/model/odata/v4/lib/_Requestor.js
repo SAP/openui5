@@ -550,6 +550,48 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the resource path relative to the service URL, including function arguments.
+	 *
+	 * @param {string} sPath
+	 *   The absolute binding path to the bound operation or operation import, e.g.
+	 *   "/Entity('0815')/bound.Operation(...)" or "/OperationImport(...)"
+	 * @param {object} oOperationMetadata
+	 *   The operation's metadata
+	 * @param {object} mParameters
+	 *   A copy of the map of key-values pairs representing the operation's actual parameters
+	 * @returns {string}
+	 *   The new path without leading slash and ellipsis
+	 * @throws {Error}
+	 *   If a collection-valued operation parameter is encountered
+	 *
+	 * @private
+	 */
+	Requestor.prototype.getPathAndAddQueryOptions = function (sPath, oOperationMetadata,
+		mParameters) {
+		var aArguments = [],
+			that = this;
+
+		sPath = sPath.slice(1, -5);
+		if (oOperationMetadata.$kind === "Function") {
+			if (oOperationMetadata.$Parameter) {
+				oOperationMetadata.$Parameter.forEach(function (oParameter) {
+					var sName = oParameter.$Name;
+
+					if (sName in mParameters) {
+						if (oParameter.$IsCollection) {
+							throw new Error("Unsupported collection-valued parameter: " + sName);
+						}
+						aArguments.push(encodeURIComponent(sName) + "=" + encodeURIComponent(
+							that.formatPropertyAsLiteral(mParameters[sName], oParameter)));
+					}
+				});
+			}
+			sPath += "(" + aArguments.join(",") + ")";
+		}
+		return sPath;
+	};
+
+	/**
 	 * Returns this requestor's service URL.
 	 *
 	 * @returns {string}
@@ -1123,7 +1165,7 @@ sap.ui.define([
 		 *   <code>_Requestor</code> always sets the "Content-Type" header value to
 		 *   "application/json;charset=UTF-8;IEEE754Compatible=true" for OData V4 or
 		 *   "application/json;charset=UTF-8" for OData V2.
-		 * @param {object} mQueryParams
+		 * @param {object} [mQueryParams={}]
 		 *   A map of query parameters as described in
 		 *   {@link sap.ui.model.odata.v4.lib._Helper.buildQuery}; used only to request the CSRF
 		 *   token
