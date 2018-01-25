@@ -3,11 +3,39 @@
  */
 
 //Provides control sap.ui.unified.Calendar.
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
-		'sap/ui/core/Control', 'sap/ui/core/Locale', 'sap/ui/core/LocaleData', 'sap/ui/core/Renderer', 'sap/ui/core/format/DateFormat',
-		'./calendar/CalendarUtils', './calendar/Header', './calendar/MonthsRow', './calendar/YearPicker', './calendar/CalendarDate',
-		'./Calendar', './CalendarRenderer'],
-	function (jQuery, Device, Control, Locale, LocaleData, Renderer, DateFormat, CalendarUtils, Header, MonthsRow, YearPicker, CalendarDate, Calendar, CalendarRenderer) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/Device',
+	'sap/ui/core/Control',
+	'sap/ui/core/Locale',
+	'sap/ui/core/LocaleData',
+	'sap/ui/core/Renderer',
+	'sap/ui/core/format/DateFormat',
+	'./calendar/CalendarUtils',
+	'./calendar/Header',
+	'./calendar/MonthsRow',
+	'./calendar/YearPicker',
+	'./calendar/CalendarDate',
+	'./Calendar',
+	'./CalendarRenderer',
+	"./CalendarMonthIntervalRenderer"
+], function(
+	jQuery,
+	Device,
+	Control,
+	Locale,
+	LocaleData,
+	Renderer,
+	DateFormat,
+	CalendarUtils,
+	Header,
+	MonthsRow,
+	YearPicker,
+	CalendarDate,
+	Calendar,
+	CalendarRenderer,
+	CalendarMonthIntervalRenderer
+) {
 		"use strict";
 
 	/*
