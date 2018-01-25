@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.commons.DatePicker
-sap.ui.define(['jquery.sap.global', './DatePicker', './TextFieldRenderer'],
-	function(jQuery, DatePicker, TextFieldRenderer) {
+sap.ui.define(['jquery.sap.global', './TextFieldRenderer'],
+	function(jQuery, TextFieldRenderer) {
 	"use strict";
 
 

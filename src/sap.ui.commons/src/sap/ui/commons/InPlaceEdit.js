@@ -3,8 +3,26 @@
  */
 
 // Provides control sap.ui.commons.InPlaceEdit.
-sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 'sap/ui/core/Control', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/theming/Parameters'],
-	function(jQuery, TextField, TextView, library, Control, ValueStateSupport, Parameters) {
+sap.ui.define([
+    'jquery.sap.global',
+    './TextField',
+    './TextView',
+    './library',
+    'sap/ui/core/Control',
+    'sap/ui/core/ValueStateSupport',
+    'sap/ui/core/theming/Parameters',
+    "./InPlaceEditRenderer"
+],
+	function(
+	    jQuery,
+		TextField,
+		TextView,
+		library,
+		Control,
+		ValueStateSupport,
+		Parameters,
+		InPlaceEditRenderer
+	) {
 	"use strict";
 
 	/**

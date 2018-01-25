@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.Tree.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', "./TreeRenderer"],
+	function(jQuery, library, Control, TreeRenderer) {
 	"use strict";
 
 

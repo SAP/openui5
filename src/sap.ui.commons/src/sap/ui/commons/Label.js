@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.commons.Label.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/Popup', 'sap/ui/core/LabelEnablement'],
-	function(jQuery, library, Control, Popup, LabelEnablement) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/Control',
+    'sap/ui/core/Popup',
+    'sap/ui/core/LabelEnablement',
+    "./LabelRenderer"
+],
+	function(jQuery, library, Control, Popup, LabelEnablement, LabelRenderer) {
 	"use strict";
 
 

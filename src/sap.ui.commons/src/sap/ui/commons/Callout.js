@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.Callout.
-sap.ui.define(['jquery.sap.global', './CalloutBase', './library'],
-	function(jQuery, CalloutBase, library) {
+sap.ui.define(['jquery.sap.global', './CalloutBase', './library', "./CalloutRenderer"],
+	function(jQuery, CalloutBase, library, CalloutRenderer) {
 	"use strict";
 
 

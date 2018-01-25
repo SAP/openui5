@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.commons.Link.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/LabelEnablement'],
-	function(jQuery, library, Control, EnabledPropagator, LabelEnablement) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/EnabledPropagator',
+	'sap/ui/core/LabelEnablement',
+	"./LinkRenderer"
+],
+	function(jQuery, library, Control, EnabledPropagator, LabelEnablement, LinkRenderer) {
 	"use strict";
 
 

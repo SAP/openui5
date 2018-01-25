@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.commons.RatingIndicator.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/theming/Parameters'],
-	function(jQuery, library, Control, Parameters) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/Control',
+    'sap/ui/core/theming/Parameters',
+    "./RatingIndicatorRenderer"
+],
+	function(jQuery, library, Control, Parameters, RatingIndicatorRenderer) {
 	"use strict";
 
 

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.Image.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', "./ImageRenderer"],
+	function(jQuery, library, Control, ImageRenderer) {
 	"use strict";
 
 

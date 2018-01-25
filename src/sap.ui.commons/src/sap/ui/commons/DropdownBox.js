@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.commons.DropdownBox.
-sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/History', 'sap/ui/core/SeparatorItem'],
-	function(jQuery, ComboBox, library, History, SeparatorItem) {
+sap.ui.define([
+    'jquery.sap.global',
+    './ComboBox',
+    './library',
+    'sap/ui/core/History',
+    'sap/ui/core/SeparatorItem',
+    "./DropdownBoxRenderer"
+],
+	function(jQuery, ComboBox, library, History, SeparatorItem, DropdownBoxRenderer) {
 	"use strict";
 
 

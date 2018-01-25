@@ -3,8 +3,24 @@
  */
 
 // Provides control sap.ui.commons.MessageBar.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/Popup', './MessageToast', './MessageList'],
-	function(jQuery, library, Control, Popup, MessageToast, MessageList) {
+sap.ui.define([
+  'jquery.sap.global',
+  './library',
+  'sap/ui/core/Control',
+  'sap/ui/core/Popup',
+  './MessageToast',
+  './MessageList',
+  "./MessageBarRenderer"
+],
+	function(
+	  jQuery,
+	  library,
+	  Control,
+	  Popup,
+	  MessageToast,
+	  MessageList,
+	  MessageBarRenderer
+	) {
 	"use strict";
 
 

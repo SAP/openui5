@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.commons.Slider.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/ResizeHandler'],
-	function(jQuery, library, Control, EnabledPropagator, ResizeHandler) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/Control',
+    'sap/ui/core/EnabledPropagator',
+    'sap/ui/core/ResizeHandler',
+    "./SliderRenderer"
+],
+	function(jQuery, library, Control, EnabledPropagator, ResizeHandler, SliderRenderer) {
 	"use strict";
 
 
