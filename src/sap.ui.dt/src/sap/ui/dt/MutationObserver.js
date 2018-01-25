@@ -192,10 +192,13 @@ sap.ui.define([
 	 */
 	MutationObserver.prototype._fireDomChangeOnScroll = function(oEvent) {
 		var oTarget = oEvent.target;
-		if (!OverlayUtil.isInOverlayContainer(oTarget) &&
-			!OverlayUtil.getClosestOverlayForNode(oTarget) &&
-			oTarget !== document) {
-
+		if (
+			!OverlayUtil.isInOverlayContainer(oTarget)
+			&& !OverlayUtil.getClosestOverlayForNode(oTarget)
+			// The line below is required to avoid double scrollbars on the browser
+			// when the document is scrolled to negative values (relevant for Mac)
+			&& oTarget !== document
+		) {
 			this.fireDomChanged({
 				type : "scroll"
 			});
