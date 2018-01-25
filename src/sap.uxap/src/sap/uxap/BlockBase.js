@@ -31,7 +31,7 @@ sap.ui.define([
 		 *
 		 * @class
 		 *
-		 * A block is the main element that will be displayed, mainly in an object page, but not necessarily
+		 * A <code>sap.uxap.BlockBase</code> is the main element that will be displayed, mainly in an object page, but not necessarily
 		 * only there.
 		 *
 		 * A block is a control that uses an XML view for storing its internal control tree.
@@ -153,10 +153,14 @@ sap.ui.define([
 			this._bLazyLoading = false; //by default, no lazy loading so we can use it out of an objectPageLayout
 			this._bConnected = false;   //indicates connectToModels function has been called
 			this._oUpdatedModels = {};
+			this._oParentObjectPageSubSection = null; // the parent ObjectPageSubSection
 		};
 
 		BlockBase.prototype.onBeforeRendering = function () {
+			var oParentObjectPageLayout;
+
 			this._applyMapping();
+
 			if (!this.getMode() || this.getMode() === "") {
 				if (this.getMetadata().getView("defaultXML")) {
 					this.setMode("defaultXML");
@@ -169,13 +173,15 @@ sap.ui.define([
 			this._applyFormAdjustment();
 
 			//TODO: for iconTabBar mode, specify lazyLoading for selectedTab only?
-			this._bLazyLoading = this._getObjectPageLayout()
-								&& (this._getObjectPageLayout().getEnableLazyLoading() || this._getObjectPageLayout().getUseIconTabBar());
+			oParentObjectPageLayout = this._getObjectPageLayout();
+			this._bLazyLoading = oParentObjectPageLayout && (oParentObjectPageLayout.getEnableLazyLoading() || oParentObjectPageLayout.getUseIconTabBar());
 		};
 
 		BlockBase.prototype.onAfterRendering = function () {
-			if (this._getObjectPageLayout()) {
-				this._getObjectPageLayout()._requestAdjustLayout();
+			var oParentObjectPageLayout = this._getObjectPageLayout();
+
+			if (oParentObjectPageLayout) {
+				oParentObjectPageLayout._requestAdjustLayout();
 			}
 		};
 
@@ -216,7 +222,7 @@ sap.ui.define([
 		 * @private
 		 */
 		BlockBase.prototype._applyMapping = function () {
-			if (this._bLazyLoading && !this._bConnected) {
+			if (this._shouldLazyLoad()) {
 				jQuery.sap.log.debug("BlockBase ::: Ignoring the _applyMapping as the block is not connected");
 			} else {
 				this.getMappings().forEach(function (oMapping, iIndex) {
@@ -266,7 +272,7 @@ sap.ui.define([
 		 * @returns {*} propagateProperties function result
 		 */
 		BlockBase.prototype.propagateProperties = function (vName) {
-			if (this._bLazyLoading && !this._bConnected && !this._oUpdatedModels.hasOwnProperty(vName)) {
+			if (this._shouldLazyLoad() && !this._oUpdatedModels.hasOwnProperty(vName)) {
 				this._oUpdatedModels[vName] = true;
 			} else {
 				this._applyMapping(vName);
@@ -306,7 +312,7 @@ sap.ui.define([
 				this.setProperty("mode", sMode, false);
 				//if Lazy loading is enabled, and if the block is not connected
 				//delay the view creation (will be done in connectToModels function)
-				if (!this._bLazyLoading || this._bConnected) {
+				if (!this._shouldLazyLoad()) {
 					this._initView(sMode);
 				}
 			}
@@ -663,8 +669,10 @@ sap.ui.define([
 		 * @public
 		 */
 		BlockBase.prototype.setVisible = function (bValue, bSuppressInvalidate) {
+			var oParentObjectPageLayout = this._getObjectPageLayout();
+
 			this.setProperty("visible", bValue, bSuppressInvalidate);
-			this._getObjectPageLayout() && this._getObjectPageLayout()._requestAdjustLayoutAndUxRules();
+			oParentObjectPageLayout && oParentObjectPageLayout._requestAdjustLayoutAndUxRules();
 
 			return this;
 		};
@@ -721,7 +729,7 @@ sap.ui.define([
 		 * @returns {*}
 		 */
 		BlockBase.prototype.updateBindingContext = function (bSkipLocal, bSkipChildren, sModelName, bUpdateAll) {
-			if (!this._bLazyLoading || this._bConnected) {
+			if (!this._shouldLazyLoad()) {
 				return Control.prototype.updateBindingContext.call(this, bSkipLocal, bSkipChildren, sModelName, bUpdateAll);
 			} else {
 				jQuery.sap.log.debug("BlockBase ::: Ignoring the updateBindingContext as the block is not visible for now in the ObjectPageLayout");
@@ -736,11 +744,22 @@ sap.ui.define([
 		 * @returns {*}
 		 */
 		BlockBase.prototype.updateBindings = function (bUpdateAll, sModelName) {
-			if (!this._bLazyLoading || this._bConnected) {
+			if (!this._shouldLazyLoad()) {
 				return Control.prototype.updateBindings.call(this, bUpdateAll, sModelName);
 			} else {
 				jQuery.sap.log.debug("BlockBase ::: Ignoring the updateBindingContext as the block is not visible for now in the ObjectPageLayout");
 			}
+		};
+
+		/**
+		 * Determines whether the <code>sap.uxap.BlockBase</code> should be loaded lazily.
+		 * There are 3 prerequisites - lazy loading sould be enabled, the block should not be connected
+		 * and the block is used whithin <code>sap.uxap.ObjectPageSubSection</code>
+		 * @returns {Boolean}
+		 * @private
+		 */
+		BlockBase.prototype._shouldLazyLoad = function () {
+			return !!this._oParentObjectPageSubSection && this._bLazyLoading && !this._bConnected;
 		};
 
 		return BlockBase;
