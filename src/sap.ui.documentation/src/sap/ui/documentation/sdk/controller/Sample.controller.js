@@ -278,7 +278,7 @@ sap.ui.define([
 			},
 
 			onNavBack : function (oEvt) {
-				this.getRouter().myNavBack("home", {});
+				this.getRouter().navTo("entity", { id : this.entityId }, true);
 			},
 
 			onNavToCode : function (evt) {
