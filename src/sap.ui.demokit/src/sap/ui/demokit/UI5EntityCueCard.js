@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.demokit.UI5EntityCueCard.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/commons/Link', './EntityInfo', './library'],
-	function(jQuery, Control, Link, EntityInfo, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/Control',
+    'sap/ui/commons/Link',
+    './EntityInfo',
+    './library',
+    "./UI5EntityCueCardRenderer"
+],
+	function(jQuery, Control, Link, EntityInfo, library, UI5EntityCueCardRenderer) {
 	"use strict";
 
 
