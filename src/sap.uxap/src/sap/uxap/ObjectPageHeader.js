@@ -510,6 +510,18 @@ sap.ui.define([
 		};
 	};
 
+	var fnGenerateSetterProxy = function (sPropertyName, oSourceObject, oTargetObject) {
+		var sConvertedSetterName = "set" + sPropertyName.charAt(0).toUpperCase() + sPropertyName.slice(1);
+
+		oSourceObject[sConvertedSetterName] = function () {
+			var aArgumentsPassedToTheProperty = Array.prototype.slice.call(arguments);
+			aArgumentsPassedToTheProperty.unshift(sPropertyName);
+
+			oTargetObject.setProperty.apply(oTargetObject, aArgumentsPassedToTheProperty);
+			return this.setProperty.apply(this, aArgumentsPassedToTheProperty);
+		};
+	};
+
 	aPropertiesToOverride.forEach(fnGenerateSetter);
 	aObjectImageProperties.forEach(fnGenerateSetterForObjectImageProperties);
 
@@ -604,6 +616,10 @@ sap.ui.define([
 					this._oActionSheetButtonMap[oAction.getId()] = oActionSheetButton; //store the originalId/reference for later use (adaptLayout)
 
 					this._oOverflowActionSheet.addButton(oActionSheetButton);
+
+					fnGenerateSetterProxy("text", oAction, oActionSheetButton);
+					fnGenerateSetterProxy("icon", oAction, oActionSheetButton);
+					fnGenerateSetterProxy("enabled", oAction, oActionSheetButton);
 				}
 			}, this));
 		}
