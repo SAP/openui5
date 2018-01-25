@@ -330,14 +330,26 @@ function(
 		this.oPopover.attachAfterOpen(function() {
 			var oPopup = this.oPopover.oPopup;
 			var vPopupElement = oPopup._$().get(0);
+
 			this.oRta.getPopupManager().fnOriginalPopupOnAfterRendering = oPopup.onAfterRendering;
 			this.oPopover.oPopup.onAfterRendering = null;
-			vPopupElement.addEventListener("blur", function() {
-				assert.strictEqual(typeof this.oPopover.oPopup.onAfterRendering, "function", "then onAfterRendering is set back");
-				done();
-			}.bind(this), true);
+
 			this.oRta.getPopupManager()._removePopupPatch(this.oPopover);
 			assert.strictEqual(this.fnAddPopupListeners.callCount, 2, "then popup event listeners attached back, called twice, once while open() and once while re-attaching");
+
+			var fnCheckOnAfterRendering = function () {
+				assert.strictEqual(typeof this.oPopover.oPopup.onAfterRendering, "function", "then onAfterRendering is set back");
+				done();
+			}.bind(this);
+
+			//TODO find a better way to test without checking for document focus. Else case is triggered when the test window is in an inactive state*/
+			if (document.hasFocus()) {
+				vPopupElement.addEventListener("blur", function () {
+					fnCheckOnAfterRendering();
+				}, true);
+			} else {
+				fnCheckOnAfterRendering();
+			}
 			jQuery.sap.focus(oPopup.oContent);
 			jQuery.sap.delayedCall(0, this, function() {
 				vPopupElement.blur();
