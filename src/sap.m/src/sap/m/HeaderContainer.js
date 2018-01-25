@@ -1,8 +1,29 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/library', 'sap/ui/base/ManagedObject', 'sap/ui/core/Icon', 'jquery.sap.events'],
-	function (jQuery, library, Control, Device, ItemNavigation, coreLibrary, ManagedObject, Icon) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/Device',
+	'sap/ui/core/delegate/ItemNavigation',
+	'sap/ui/core/library',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/core/Icon',
+	'./HeaderContainerRenderer',
+	'jquery.sap.events'
+],
+function(
+	jQuery,
+	library,
+	Control,
+	Device,
+	ItemNavigation,
+	coreLibrary,
+	ManagedObject,
+	Icon,
+	HeaderContainerRenderer
+	) {
 		"use strict";
 
 		// shortcut for sap.ui.core.Orientation

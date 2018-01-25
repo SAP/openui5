@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.HBox.
-sap.ui.define(['./FlexBox', './library'],
-	function(FlexBox, library) {
+sap.ui.define(['./FlexBox', './library', './HBoxRenderer'],
+	function(FlexBox, library, HBoxRenderer) {
 	"use strict";
 
 

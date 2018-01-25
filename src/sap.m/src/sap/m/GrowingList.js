@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.GrowingList.
-sap.ui.define(['./List', './library'],
-	function(List, library) {
+sap.ui.define(['./List', './library', './GrowingListRenderer'],
+	function(List, library, GrowingListRenderer) {
 	"use strict";
 
 

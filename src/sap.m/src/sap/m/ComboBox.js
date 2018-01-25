@@ -2,8 +2,29 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './Popover', './SelectList', './library', 'sap/ui/Device', 'sap/ui/core/Item', 'jquery.sap.keycodes'],
-	function(jQuery, ComboBoxTextField, ComboBoxBase, Popover, SelectList, library, Device, Item) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./ComboBoxTextField',
+	'./ComboBoxBase',
+	'./Popover',
+	'./SelectList',
+	'./library',
+	'sap/ui/Device',
+	'sap/ui/core/Item',
+	'./ComboBoxRenderer',
+	'jquery.sap.keycodes'
+],
+	function(
+	jQuery,
+	ComboBoxTextField,
+	ComboBoxBase,
+	Popover,
+	SelectList,
+	library,
+	Device,
+	Item,
+	ComboBoxRenderer
+	) {
 		"use strict";
 
 		/**

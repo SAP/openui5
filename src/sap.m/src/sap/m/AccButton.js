@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.AccButton.
-sap.ui.define(['./Button'],
-	function(Button) {
+sap.ui.define(['./Button','./AccButtonRenderer'],
+	function(Button, AccButtonRenderer) {
 		"use strict";
 
 	/**

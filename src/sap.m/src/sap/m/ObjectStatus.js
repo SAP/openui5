@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.m.ObjectStatus.
-sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/library'],
-	function(library, Control, ValueStateSupport, coreLibrary) {
+sap.ui.define([
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/ValueStateSupport',
+	'sap/ui/core/library',
+	'./ObjectStatusRenderer'
+],
+	function(library, Control, ValueStateSupport, coreLibrary, ObjectStatusRenderer) {
 	"use strict";
 
 

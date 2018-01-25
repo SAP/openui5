@@ -2,8 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(["./library", "sap/ui/core/Control", "jquery.sap.global"],
-	function (library, Control, jQuery) {
+sap.ui.define([
+	"./library",
+	"sap/ui/core/Control",
+	"jquery.sap.global",
+	"./WizardStepRenderer"
+],
+	function(library, Control, jQuery, WizardStepRenderer) {
 
 	"use strict";
 

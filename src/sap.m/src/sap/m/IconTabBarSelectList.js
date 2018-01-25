@@ -3,10 +3,16 @@
  */
 
 // Provides control sap.m.IconTabBarSelectList.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control',
-	'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/dnd/DragDropInfo', './IconTabBarDragAndDropUtil'],
-	function(jQuery, library, Control,
-			ItemNavigation, DragDropInfo, IconTabBarDragAndDropUtil) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/delegate/ItemNavigation',
+	'sap/ui/core/dnd/DragDropInfo',
+	'./IconTabBarDragAndDropUtil',
+	'./IconTabBarSelectListRenderer'
+],
+	function(jQuery, library, Control, ItemNavigation, DragDropInfo, IconTabBarDragAndDropUtil, IconTabBarSelectListRenderer) {
 		"use strict";
 
 		/**

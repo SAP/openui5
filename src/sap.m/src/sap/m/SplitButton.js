@@ -3,8 +3,30 @@
  */
 
 // Provides control sap.m.SplitButton.
-sap.ui.define(['./library', 'sap/ui/core/Control', './Button', './ButtonRenderer', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/core/library', 'sap/ui/Device', 'sap/ui/core/InvisibleText'],
-	function(library, Control, Button, ButtonRenderer, EnabledPropagator, IconPool, coreLibrary, Device, InvisibleText) {
+sap.ui.define([
+	'./library',
+	'sap/ui/core/Control',
+	'./Button',
+	'./ButtonRenderer',
+	'sap/ui/core/EnabledPropagator',
+	'sap/ui/core/IconPool',
+	'sap/ui/core/library',
+	'sap/ui/Device',
+	'sap/ui/core/InvisibleText',
+	'./SplitButtonRenderer'
+],
+function(
+	library,
+	Control,
+	Button,
+	ButtonRenderer,
+	EnabledPropagator,
+	IconPool,
+	coreLibrary,
+	Device,
+	InvisibleText,
+	SplitButtonRenderer
+	) {
 		"use strict";
 
 		// shortcut for sap.ui.core.TextDirection

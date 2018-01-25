@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.m.PullToRefresh.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'jquery.sap.keycodes'],
-	function(jQuery, library, Control, Device) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/Device',
+	'./PullToRefreshRenderer',
+	'jquery.sap.keycodes'
+],
+	function(jQuery, library, Control, Device, PullToRefreshRenderer) {
 	"use strict";
 
 

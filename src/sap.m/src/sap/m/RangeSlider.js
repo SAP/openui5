@@ -2,8 +2,22 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["jquery.sap.global", "./Slider", "./SliderTooltip", "./SliderUtilities" ,"sap/ui/core/InvisibleText"],
-    function (jQuery, Slider, SliderTooltip, SliderUtilities, InvisibleText) {
+sap.ui.define([
+    "jquery.sap.global",
+    "./Slider",
+    "./SliderTooltip",
+    "./SliderUtilities",
+    "sap/ui/core/InvisibleText",
+    "./RangeSliderRenderer"
+],
+    function(
+    jQuery,
+    Slider,
+    SliderTooltip,
+    SliderUtilities,
+    InvisibleText,
+    RangeSliderRenderer
+    ) {
         "use strict";
 
         /**

@@ -24,9 +24,32 @@ sap.ui.define([
 	"./GroupHeaderListItem",
 	"sap/ui/core/library",
 	"sap/ui/base/ManagedObject",
+	"./MessageViewRenderer",
 	"jquery.sap.keycodes"
-], function (jQuery, Control, CustomData, IconPool, HTML, Icon, Button, Toolbar, ToolbarSpacer, List, StandardListItem,
-			 library, Text, SegmentedButton, Page, NavContainer, Link, MessageItem, GroupHeaderListItem, coreLibrary, ManagedObject) {
+], function(
+	jQuery,
+	Control,
+	CustomData,
+	IconPool,
+	HTML,
+	Icon,
+	Button,
+	Toolbar,
+	ToolbarSpacer,
+	List,
+	StandardListItem,
+	library,
+	Text,
+	SegmentedButton,
+	Page,
+	NavContainer,
+	Link,
+	MessageItem,
+	GroupHeaderListItem,
+	coreLibrary,
+	ManagedObject,
+	MessageViewRenderer
+) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState

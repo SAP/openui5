@@ -3,15 +3,28 @@
  */
 
 // Provides control sap.m.CheckBox.
-sap.ui.define(['jquery.sap.global',
+sap.ui.define([
+	'jquery.sap.global',
 	'./Label',
 	'./library',
 	'sap/ui/Device',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/EnabledPropagator',
-	'sap/ui/core/library'],
-	function(jQuery, Label, library, Device, Control, IconPool, EnabledPropagator, coreLibrary) {
+	'sap/ui/core/library',
+	'./CheckBoxRenderer'
+],
+	function(
+	jQuery,
+	Label,
+	library,
+	Device,
+	Control,
+	IconPool,
+	EnabledPropagator,
+	coreLibrary,
+	CheckBoxRenderer
+	) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState

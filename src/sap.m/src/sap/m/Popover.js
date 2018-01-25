@@ -3,9 +3,41 @@
  */
 
 // Provides control sap.m.Popover.
-sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', './library', 'sap/ui/core/Control',
-		'sap/ui/core/Popup', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/theming/Parameters', 'sap/ui/Device', 'sap/ui/base/ManagedObject', 'sap/ui/core/library', 'sap/ui/core/Element', 'sap/ui/core/ResizeHandler', 'jquery.sap.keycodes'],
-	function (jQuery, Bar, Button, InstanceManager, library, Control, Popup, ScrollEnablement, Parameters, Device, ManagedObject, coreLibrary, Element, ResizeHandler) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./Bar',
+	'./Button',
+	'./InstanceManager',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/Popup',
+	'sap/ui/core/delegate/ScrollEnablement',
+	'sap/ui/core/theming/Parameters',
+	'sap/ui/Device',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/core/library',
+	'sap/ui/core/Element',
+	'sap/ui/core/ResizeHandler',
+	'./PopoverRenderer',
+	'jquery.sap.keycodes'
+],
+	function(
+	jQuery,
+	Bar,
+	Button,
+	InstanceManager,
+	library,
+	Control,
+	Popup,
+	ScrollEnablement,
+	Parameters,
+	Device,
+	ManagedObject,
+	coreLibrary,
+	Element,
+	ResizeHandler,
+	PopoverRenderer
+	) {
 		"use strict";
 
 		// shortcut for sap.m.PopupHelper

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.VBox.
-sap.ui.define(['./FlexBox', './library'],
-	function(FlexBox, library) {
+sap.ui.define(['./FlexBox', './library', "./VBoxRenderer"],
+	function(FlexBox, library, VBoxRenderer) {
 	"use strict";
 
 	/**

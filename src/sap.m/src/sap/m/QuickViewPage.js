@@ -4,21 +4,58 @@
 
 // Provides control sap.m.QuickViewPage
 sap.ui.define([
-			'jquery.sap.global', './library', 'sap/ui/core/Control',
-				'sap/ui/core/IconPool', 'sap/ui/layout/form/SimpleForm',
-				'sap/ui/layout/VerticalLayout', 'sap/ui/layout/HorizontalLayout',
-				'./Page', './Button', './Bar',
-				'./Title', './Image', './Link', './Text',
-				'./Label', './HBox', 'sap/ui/core/Icon', 'sap/ui/core/Title',
-				'sap/ui/core/CustomData', 'sap/ui/core/library', 'sap/ui/layout/library', 'sap/ui/Device',  'sap/ui/layout/form/ResponsiveGridLayout'],
-		function(jQuery, library, Control,
-					IconPool, SimpleForm,
-					VerticalLayout, HorizontalLayout,
-					Page, Button, Bar,
-					Title, Image, Link, Text,
-					Label, HBox, Icon, CoreTitle,
-				 //SimpleForm is loading ResponsiveGridLayout too late, only need as a dependency
-					CustomData, coreLibrary, layoutLibrary, Device, ResponsiveGridLayout) {
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/IconPool',
+	'sap/ui/layout/form/SimpleForm',
+	'sap/ui/layout/VerticalLayout',
+	'sap/ui/layout/HorizontalLayout',
+	'./Page',
+	'./Button',
+	'./Bar',
+	'./Title',
+	'./Image',
+	'./Link',
+	'./Text',
+	'./Label',
+	'./HBox',
+	'sap/ui/core/Icon',
+	'sap/ui/core/Title',
+	'sap/ui/core/CustomData',
+	'sap/ui/core/library',
+	'sap/ui/layout/library',
+	'sap/ui/Device',
+	'sap/ui/layout/form/ResponsiveGridLayout',
+	'./QuickViewPageRenderer'
+],
+	function(
+		jQuery,
+		library,
+		Control,
+		IconPool,
+		SimpleForm,
+		VerticalLayout,
+		HorizontalLayout,
+		Page,
+		Button,
+		Bar,
+		Title,
+		Image,
+		Link,
+		Text,
+		Label,
+		HBox,
+		Icon,
+		CoreTitle,
+		//SimpleForm is loading ResponsiveGridLayout too late, only need as a dependency
+		CustomData,
+		coreLibrary,
+		layoutLibrary,
+		Device,
+		ResponsiveGridLayout,
+		QuickViewPageRenderer
+		) {
 			"use strict";
 
 			// shortcut for sap.m.URLHelper

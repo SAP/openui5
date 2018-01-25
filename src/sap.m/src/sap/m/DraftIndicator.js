@@ -2,7 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Control", "sap/m/Label", "sap/m/library", "jquery.sap.global"], function(Control, Label, library, jQuery) {
+sap.ui.define([
+	"sap/ui/core/Control",
+	"sap/m/Label",
+	"sap/m/library",
+	"jquery.sap.global",
+	"./DraftIndicatorRenderer"
+], function(Control, Label, library, jQuery, DraftIndicatorRenderer) {
 	"use strict";
 
 	// shortcut for sap.m.DraftIndicatorState

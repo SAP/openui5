@@ -3,9 +3,27 @@
  */
 
 // Provides control sap.m.ColorPalette
-sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/base/DataType', 'sap/ui/core/CSSColor', 'sap/ui/core/delegate/ItemNavigation',
-		'./Button', './Dialog', './library'],
-	function (Control, Device, DataType, CSSColor, ItemNavigation, Button, Dialog, library) {
+sap.ui.define([
+	'sap/ui/core/Control',
+	'sap/ui/Device',
+	'sap/ui/base/DataType',
+	'sap/ui/core/CSSColor',
+	'sap/ui/core/delegate/ItemNavigation',
+	'./Button',
+	'./Dialog',
+	'./library',
+	'./ColorPaletteRenderer'
+], function(
+	Control,
+	Device,
+	DataType,
+	CSSColor,
+	ItemNavigation,
+	Button,
+	Dialog,
+	library,
+	ColorPaletteRenderer
+	) {
 		"use strict";
 
 		// shortcut to ColorPicker (lazy initialized)

@@ -2,8 +2,16 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/m/Image', 'jquery.sap.keycodes'],
-	function(jQuery, library, Control, IconPool, Image) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/IconPool',
+	'sap/m/Image',
+	'./NumericContentRenderer',
+	'jquery.sap.keycodes'
+],
+	function(jQuery, library, Control, IconPool, Image, NumericContentRenderer) {
 	"use strict";
 
 	/**

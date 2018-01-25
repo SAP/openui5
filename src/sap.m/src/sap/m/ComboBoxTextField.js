@@ -2,8 +2,22 @@
  * ${copyright}
  */
 
-sap.ui.define(['./InputBase', './library', 'sap/ui/core/InvisibleText', 'sap/ui/core/library', 'sap/ui/Device'],
-	function(InputBase, library, InvisibleText, coreLibrary, Device) {
+sap.ui.define([
+	'./InputBase',
+	'./library',
+	'sap/ui/core/InvisibleText',
+	'sap/ui/core/library',
+	'sap/ui/Device',
+	"./ComboBoxTextFieldRenderer"
+],
+	function(
+		InputBase,
+		library,
+		InvisibleText,
+		coreLibrary,
+		Device,
+		ComboBoxTextFieldRenderer
+	) {
 		"use strict";
 
 		// shortcut for sap.ui.core.ValueState

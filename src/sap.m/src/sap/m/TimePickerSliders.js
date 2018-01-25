@@ -2,8 +2,36 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control', 'sap/ui/model/type/Date', 'sap/ui/model/odata/type/ODataType', 'sap/ui/core/format/DateFormat', './TimePickerSlidersRenderer', './TimePickerSlider', './VisibleItem', 'sap/ui/core/LocaleData', 'sap/ui/Device', 'sap/ui/core/Locale'],
-	function (jQuery, coreLibrary, Control, SimpleDateType, ODataType, DateFormat, SlidersRenderer, TimePickerSlider, VisibleItem, LocaleData, Device, Locale) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/library',
+	'sap/ui/core/Control',
+	'sap/ui/model/type/Date',
+	'sap/ui/model/odata/type/ODataType',
+	'sap/ui/core/format/DateFormat',
+	'./TimePickerSlidersRenderer',
+	'./TimePickerSlider',
+	'./VisibleItem',
+	'sap/ui/core/LocaleData',
+	'sap/ui/Device',
+	'sap/ui/core/Locale',
+	'./TimePickerSlidersRenderer'
+],
+	function(
+		jQuery,
+		coreLibrary,
+		Control,
+		SimpleDateType,
+		ODataType,
+		DateFormat,
+		SlidersRenderer,
+		TimePickerSlider,
+		VisibleItem,
+		LocaleData,
+		Device,
+		Locale,
+		TimePickerSlidersRenderer
+	) {
 		"use strict";
 
 		var DEFAULT_STEP = 1,

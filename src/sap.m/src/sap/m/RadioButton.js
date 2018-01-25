@@ -3,8 +3,22 @@
  */
 
 // Provides control sap.m.RadioButton.
-sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', './RadioButtonGroup', 'sap/ui/core/library'],
-	function(library, Control, EnabledPropagator, RadioButtonGroup, coreLibrary) {
+sap.ui.define([
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/EnabledPropagator',
+	'./RadioButtonGroup',
+	'sap/ui/core/library',
+	'./RadioButtonRenderer'
+],
+function(
+	library,
+	Control,
+	EnabledPropagator,
+	RadioButtonGroup,
+	coreLibrary,
+	RadioButtonRenderer
+	) {
 	"use strict";
 
 
