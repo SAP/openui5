@@ -11,7 +11,9 @@
 		<script src="../shared-config.js"></script>
 		<script>
 			window['sap-ui-config'].libs = "sap.ui.dt";
-			window['sap-ui-config'].resourceroots = {"qunit":"./"};
+			window['sap-ui-config'].resourceroots = {
+				"qunit":"./"
+			};
 			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
 		</script>
 		<script>
