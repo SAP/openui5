@@ -442,7 +442,7 @@ var mPathChecks = {
 	},
 	"palette/group" : {
 		mandatory: false,
-		values: ["ACTION", "DISPLAY", "LAYOUT", "LIST", "INPUT", "CONTAINER", "CHART", "TILE"],
+		values: ["ACTION", "DISPLAY", "LAYOUT", "LIST", "INPUT", "CONTAINER", "CHART", "TILE", "DIALOG"],
 		validate: function(vValue) {
 			return mPathChecks["palette/group"].values.indexOf(vValue) === -1 ? "invalid" : "valid";
 		}
