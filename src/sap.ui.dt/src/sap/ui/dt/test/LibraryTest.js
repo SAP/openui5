@@ -156,7 +156,7 @@ sap.ui.define(['sap/ui/model/resource/ResourceModel', 'sap/ui/model/json/JSONMod
 		"/palette" : {
 			optional: true,
 			check: function (assert, mEntry, sControlName) {
-				var aValidGroups = ["ACTION", "DISPLAY", "LAYOUT", "LIST", "INPUT", "CONTAINER", "CHART", "TILE"];
+				var aValidGroups = ["ACTION", "DISPLAY", "LAYOUT", "LIST", "INPUT", "CONTAINER", "CHART", "TILE", "DIALOG"];
 				assert.strictEqual(typeof mEntry, "object", sControlName + " defines optional entry /palette/");
 				assert.strictEqual(aValidGroups.indexOf(mEntry.group) > -1, true, "palette entry defines valid group " + mEntry.group);
 				if (mEntry.icons) { //icons in palette optional
