@@ -93,17 +93,17 @@
 		{
 			"control": "sap.m.FeedContent",
 			"url": "../FeedContent.html",
-			"appComponent" : "CA-UI5-BS-FCW"
+			"appComponent" : "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.FeedInput",
 			"url": "../FeedInput.html",
-			"appComponent": "CA-UI5-BS-FCW"
+			"appComponent": "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.FeedListItem",
 			"url": "../FeedListItem.html",
-			"appComponent": "CA-UI5-BS-FCW"
+			"appComponent": "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.FormattedText",
@@ -113,12 +113,12 @@
 		{
 			"control": "sap.m.GenericTile",
 			"url": "../GenericTile.html",
-			"appComponent" : "CA-UI5-BS-FCW"
+			"appComponent" : "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.HeaderContainer",
 			"url":  "../HeaderContainer.html",
-			"appComponent" : "CA-UI5-BS-FCW"
+			"appComponent" : "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.semantic.FullscreenPage",
@@ -229,7 +229,7 @@
 		{
 			"control": "sap.m.NewsContent",
 			"url": "../NewsContent.html",
-			"appComponent" : "CA-UI5-BS-FCW"
+			"appComponent" : "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.NotificationListGroup",
@@ -244,7 +244,7 @@
 		{
 			"control": "sap.m.NumericContent",
 			"url": "../NumericContent.html",
-			"appComponent" : "CA-UI5-BS-FCW"
+			"appComponent" : "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.ObjectAttribute",
@@ -394,7 +394,7 @@
 		{
 			"control": "sap.m.SlideTile",
 			"url": "../SlideTile.html",
-			"appComponent": "CA-UI5-BS-FCW"
+			"appComponent": "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.SplitApp",
@@ -470,7 +470,7 @@
 		{
 			"control": "sap.m.TileContent",
 			"url": "../TileContent.html",
-			"appComponent": "CA-UI5-BS-FCW"
+			"appComponent": "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.Title",
@@ -495,12 +495,12 @@
 		{
 			"control": "sap.m.UploadCollection",
 			"url": "../UploadCollection.html",
-			"appComponent": "CA-UI5-BS-FCW"
+			"appComponent": "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.UploadCollectionForPendingUpload",
 			"url": "../UploadCollectionForPendingUpload.html",
-			"appComponent": "CA-UI5-BS-FCW"
+			"appComponent": "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.ViewSettingsDialog",
