@@ -48,7 +48,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/base/DataType', '
 		 * The <code>ColorPalette</code> provides the users with a range of predefined colors.
 		 *
 		 * You can customize them with the use of the <code>colors</code> property.
-		 * You can specify a default color and display a "Default color" button
+		 * You can specify a <code>defaultColor</code> and display a "Default color" button
 		 * for the user to choose directly. You can display a "More colors..." button
 		 * that opens an additional color picker for the user to choose specific colors
 		 * that are not present in the predefined range.
@@ -60,7 +60,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/base/DataType', '
 		 * right color through the color picker.
 		 *
 		 * The control can be embedded in a form or can be opened as popover (by use of thin
-		 * wrapper control <code>sap.m.ColorPalettePopover<code>..
+		 * wrapper control <code>sap.m.ColorPalettePopover<code>).
+		 * @see {sap.m.ColorPalettePopover}
 		 *
 		 * <b>Note:</b> The {@link sap.ui.unified.ColorPicker} is used internally only if the <code>ColorPicker</code>
 		 * is opened (not used for the initial rendering). If the <code>sap.ui.unified</code> library is not loaded
@@ -119,14 +120,16 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/base/DataType', '
 					 * Fired when the user selects a color.
 					 */
 					colorSelect: {
-						/**
-						 * The color that is returned when user chooses the "Default color" button.
-						 */
-						"value": {type: "sap.ui.core.CSSColor"},
-						/**
-						 * Denotes if the color has been chosen by selecting the "Default Color" button (true or false)
-						 */
-						"defaultAction": {type: "boolean"}
+						parameters: {
+							/**
+							 * The color that is returned when user chooses the "Default color" button.
+							 */
+							"value": {type: "sap.ui.core.CSSColor"},
+							/**
+							 * Denotes if the color has been chosen by selecting the "Default Color" button (true or false)
+							 */
+							"defaultAction": {type: "boolean"}
+						}
 					}
 				}
 			}
