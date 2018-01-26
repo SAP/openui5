@@ -39,6 +39,11 @@
 	box-sizing: border-box;
 	overflow: auto;
 	white-space: normal;
+
+	/* This is needed in order to remove the additional outline added by tabindex=-1*/
+	&:focus {
+		outline: none;
+	}
 }
 
 .sapMPanelExpandablePart {
