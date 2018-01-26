@@ -14,7 +14,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/layout/library'],
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * A <code>Form</code> control arranges labels and fields (like input fields) into groups and rows. There are different ways to visualize forms for different screen sizes.
+	 * A <code>Form</code> control arranges labels and fields (like input fields) into groups and rows.
+	 * There are different ways to visualize forms for different screen sizes.
 	 *
 	 * A <code>Form</code> is structured into <code>FormContainers</code>. Each <code>FormContainer</code> consists of <code>FormElements</code>.
 	 * The <code>FormElements</code> consists of a label and the form fields.
@@ -27,8 +28,12 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/layout/library'],
 	 * The <code>Form</code> (and its sub-controls) automatically add label and field assignment to enable screen reader support.
 	 * It also adds keyboard support to navigate between the fields and groups inside the form.
 	 *
-	 * <b>Note:</b> Do not put any layout controls into the <code>FormElements</code>. This could destroy the visual layout,
-	 * keyboard support and screen-reader support.
+	 * <b>Warning:</b> Do not put any layout or other container controls into the <code>FormElement</code>.
+	 * Views are also not supported. This could damage the visual layout, keyboard support and screen-reader support.
+	 *
+	 * If editable controls are used as content, the <code>editable</code> property must be set to <code>true</code>,
+	 * otherwise to <code>false</code>. If the <code>editable</code> property is set incorrectly, there will be visual issues
+	 * like wrong label alignment or wrong spacing between the controls.
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -52,7 +57,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/layout/library'],
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
 			/**
-			 * Applies a device-specific and theme-specific line-height to the form rows if the form has editable content.
+			 * Applies a device-specific and theme-specific line height and label alignment to the form rows if the form has editable content.
 			 * If set, all (not only the editable) rows of the form will get the line height of editable fields.
 			 *
 			 * The accessibility <code>aria-readonly</code> attribute is set according to this property.
