@@ -3351,14 +3351,13 @@ sap.ui.define([
 	 * Un-sets the flag that deactivates scrolling requested with the <code>sap.uxap.ObjectPageLayout.prototype._scrollTo</code> function
 	 * This flag is used by RTA for the purpose of postponing/resuming the auto-scrolling of the ObjectPage to its selected section
 	 * so that the scrolling does not start before RTA operation fully completed
-	 * @param {Boolean} bRestoreState whether to also scroll to the currently selected section. If this value is <code>false</code> then the page will remain in an invalid state, as its scroll position may not comply to its selected section.
 	 * @sap-restricted
 	 * @private
 	 */
-	ObjectPageLayout.prototype._resumeScroll = function (bRestoreState) {
+	ObjectPageLayout.prototype._resumeScroll = function () {
 		this._bSuppressScroll = false;
-		if (bRestoreState) {
-			this.scrollToSection(this.getSelectedSection());
+		if (this._iStoredScrollPosition) {
+			this._scrollTo(this._iStoredScrollPosition, 0);
 		}
 	};
 
