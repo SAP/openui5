@@ -32,6 +32,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @class
 	 * ListItemBase contains the base features of all specific list items.
+	 * <b>Note:</b> If not mentioned otherwise in the individual subclasses, list items must only be used in the <code>items</code> aggregation of <code>sap.m.ListBase</code> controls.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
