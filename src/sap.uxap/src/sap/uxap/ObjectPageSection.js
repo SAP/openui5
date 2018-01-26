@@ -175,8 +175,17 @@ sap.ui.define([
 	 */
 	ObjectPageSection.prototype._getAriaLabelledBy = function () {
 		return new InvisibleText({
-			text: this._getInternalTitle() || this.getTitle()
+			text: this._getTitle()
 		}).toStatic();
+	};
+
+	/**
+	 * Determines if the <code>ObjectPageSection</code> title is visible.
+	 * @private
+	 * @returns {Boolean}
+	 */
+	ObjectPageSection.prototype._isTitleVisible = function () {
+		return this.getShowTitle() && this._getInternalTitleVisible();
 	};
 
 	/**
