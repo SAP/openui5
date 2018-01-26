@@ -146,7 +146,7 @@ sap.ui.define([
 				 * Child pages have an additional (darker/lighter) stripe on the left side of their header content area.
 				 *
 				 * <b>Note</b>: This property is only taken into account if an instance of
-				 * <code>sap.uxap.ObjectPageHeader</code>is used for the <code>headerTitle</code> aggregation.
+				 * <code>sap.uxap.ObjectPageHeader</code> is used for the <code>headerTitle</code> aggregation.
 				 * @since 1.34.0
 				 */
 				isChildPage: {type: "boolean", group: "Appearance", defaultValue: false},
@@ -155,7 +155,7 @@ sap.ui.define([
 				 * Determines whether Header Content will always be expanded on desktop.
 				 *
 				 * <b>Note</b>: This property is only taken into account if an instance of
-				 * <code>sap.uxap.ObjectPageHeader</code>is used for the <code>headerTitle</code> aggregation.
+				 * <code>sap.uxap.ObjectPageHeader</code> is used for the <code>headerTitle</code> aggregation.
 				 * @since 1.34.0
 				 */
 				alwaysShowContentHeader: {type: "boolean", group: "Behavior", defaultValue: false},
@@ -180,7 +180,7 @@ sap.ui.define([
 				 * must provide other means for expanding/collapsing the <code>sap.uxap.ObjectPageDynamicHeaderContent</code>, if necessary.
 				 *
 				 * <b>Note:</b> This property is only taken into account if an instance of
-				 * <code>sap.uxap.ObjectPageDynamicHeaderTitle</code>is used for the <code>headerTitle</code> aggregation.
+				 * <code>sap.uxap.ObjectPageDynamicHeaderTitle</code> is used for the <code>headerTitle</code> aggregation.
 				 * @since 1.52
 				 */
 				toggleHeaderOnTitleClick: {type: "boolean", group: "Behavior", defaultValue: true},
@@ -190,7 +190,7 @@ sap.ui.define([
 				 * For example, if the user expands the header by clicking on the title and then scrolls down the page, the header will remain expanded.
 				 *
 				 * <b>Notes:</b>
-				 * <ul><li>This property is only taken into account if an instance of <code>sap.uxap.ObjectPageDynamicHeaderTitle</code>is used for the <code>headerTitle</code> aggregation.</li>
+				 * <ul><li>This property is only taken into account if an instance of <code>sap.uxap.ObjectPageDynamicHeaderTitle</code> is used for the <code>headerTitle</code> aggregation.</li>
 				 * <li>Based on internal rules, the value of the property is not always taken into account - for example,
 				 * when the control is rendered on tablet or mobile and the control`s title and header
 				 * are with height larger than the given threshold.</li></ul>
@@ -202,7 +202,7 @@ sap.ui.define([
 				 * Determines whether an Edit button will be displayed in Header Content.
 				 *
 				 * <b>Note</b>: This property is only taken into account if an instance of
-				 * <code>sap.uxap.ObjectPageHeader</code>is used for the <code>headerTitle</code> aggregation.
+				 * <code>sap.uxap.ObjectPageHeader</code> is used for the <code>headerTitle</code> aggregation.
 				 * @since 1.34.0
 				 */
 				showEditHeaderButton: {type: "boolean", group: "Behavior", defaultValue: false},
