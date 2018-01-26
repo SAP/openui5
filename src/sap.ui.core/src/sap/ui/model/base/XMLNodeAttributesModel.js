@@ -116,6 +116,7 @@ sap.ui.define([
 	 * @public
 	 */
 	XMLNodeAttributesModel.prototype.getProperty = function(sPath, oContext) {
+		sPath = sPath || "/";
 		var oResult, bContext = sPath.length == 0;
 		var evalMode = this.evalMode.simple;
 
@@ -225,6 +226,10 @@ sap.ui.define([
 	XMLNodeAttributesModel.prototype._getTopProperty = function(sPath, evalMode) {
 		var oResult = null;
 		var oProperty;
+		if (sPath.length == 0) {
+			// get the object itself
+			return this.oNode;
+		}
 
 		if (this.mProperties.hasOwnProperty(sPath)) {
 			// get a property
