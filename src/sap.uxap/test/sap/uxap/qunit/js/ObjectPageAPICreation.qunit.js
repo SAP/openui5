@@ -259,6 +259,21 @@
 
 	});
 
+	QUnit.module("test setSelectedSection functionality");
+
+	QUnit.test("test setSelectedSection with initially empty ObjectPage", function (assert) {
+		var oObjectPage = oFactory.getObjectPage(),
+			sSectionId = "section1";
+
+		// act
+		oObjectPage.setSelectedSection(sSectionId);
+
+		// assert
+		assert.strictEqual(oObjectPage.getSelectedSection(), sSectionId, "The given section should be the selected one");
+
+		oObjectPage.destroy();
+	});
+
 	QUnit.module("IconTabBar section selection", {
 		beforeEach: function () {
 			this.NUMBER_OF_SECTIONS = 3;
