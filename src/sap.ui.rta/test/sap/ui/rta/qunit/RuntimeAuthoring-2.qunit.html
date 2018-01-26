@@ -24,15 +24,15 @@
 
 		<script src="../shared-config.js"></script>
 		<script>
-			document.write('\
-				<script \
-					id="sap-ui-bootstrap" \
-					data-sap-ui-resourceroots=\'{"sap.ui.rta.test": "../internal/testdata/rta/", "sap.ui.rta.qunit": "../qunit"}\'\
-					data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.comp, sap.ui.rta" \
-					src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js" \
-				><' + '/script>'
-			);
+			window['sap-ui-config'].libs = 'sap.m, sap.ui.layout, sap.ui.comp, sap.ui.rta';
+			window['sap-ui-config'].resourceroots = {
+				"sap.ui.rta.test": "../internal/testdata/rta/",
+				"sap.ui.rta.qunit": "../qunit",
+				"sap.ui.rta.qunitrta": "../internal/testdata/rta/" // Needs complete app due to variant management test
+			};
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
 		</script>
+
 		<script>
 			jQuery.sap.includeStyleSheet(jQuery.sap.getModulePath('sap.ui.thirdparty.qunit') + '.css');
 			jQuery.sap.require('sap.ui.thirdparty.qunit');
