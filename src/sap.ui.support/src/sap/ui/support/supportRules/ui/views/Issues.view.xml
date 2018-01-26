@@ -107,7 +107,7 @@
 					rowHeight="24"
 					visibleRowCountMode="Auto">
 					<t:columns>
-						<t:Column label="Issues">
+						<t:Column label="Issues" resizable="false">
 							<t:template>
 								<FormattedText htmlText="{formatedName}"/>
 							</t:template>
@@ -140,7 +140,8 @@
 									width="35px"
 									resizable="false">
 									<t:template>
-										<c:Icon color="{severityColor}"
+										<c:Icon class="issuesSeverityIcon"
+												color="{severityColor}"
 												src="{severityIcon}">
 											<c:layoutData>
 												<FlexItemData growFactor="1" />
