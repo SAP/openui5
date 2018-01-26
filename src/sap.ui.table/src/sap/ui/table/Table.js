@@ -70,7 +70,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : 'auto'},
 
 			/**
-			 * The height of the row content in pixel. The actual row height is additionally influenced by other factors, such as the border width.
+			 * The height of the row content in pixel. The actual row height is also influenced by other factors, such as the border width.
 			 * If no value is set, a default height is applied based on the content density configuration.
 			 */
 			rowHeight : {type : "int", group : "Appearance", defaultValue : null},
