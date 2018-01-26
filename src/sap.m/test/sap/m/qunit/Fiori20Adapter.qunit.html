@@ -635,10 +635,10 @@
 
             QUnit.module("Fiori2 post adaptation of application content");
 
-            QUnit.test("Header is adapted if page body content is added at a later time", function(assert) {
+            QUnit.test("Header is adapted if the root navigable control is added at a later time", function(assert) {
 
-                var oApp = new sap.m.NavContainer({pages: [new sap.m.Page("rootPage")]});
-                oApp.placeAt("content");
+                var oRootPage = new sap.m.Page();
+                oRootPage.placeAt("content");
                 sap.ui.getCore().applyChanges();
 
                 var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
@@ -652,14 +652,13 @@
                         },
                         oSpy = sinon.spy(fnViewListener);
                 Fiori20Adapter.attachViewChange(oSpy);
-                Fiori20Adapter.traverse(oApp, oAdaptOptions);
+                Fiori20Adapter.traverse(oRootPage, oAdaptOptions);
 
-                sap.ui.getCore().byId("rootPage").addContent(new sap.m.App({
+                oRootPage.addContent(new sap.m.App({
                     pages: [new sap.m.Page({
                         title: "Test"
                     })]
                 }));
-                sap.ui.getCore().applyChanges();
 
                 // Assert
                 assert.ok(oTitleInfo.text, "Test", "title is adapted");
@@ -667,7 +666,7 @@
                 // cleanup
                 Fiori20Adapter.detachViewChange(oSpy);
 
-                oApp.destroy();
+                oRootPage.destroy();
             });
 
 
