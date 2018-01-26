@@ -2123,7 +2123,9 @@ sap.ui.define([
 
 		// solution [implemented bellow] is to compare (1) the currently visible section with (2) the currently selected section in the anchorBar
 		// and reselect if the two do not match
-		this._adjustHeaderHeights();
+		if (this._hasDynamicTitle()) {
+			this._adjustHeaderHeights();
+		}
 		this._requestAdjustLayout() // call adjust layout to calculate the new section sizes
 			.then(function () {
 				iScrollTop = this._$opWrapper.scrollTop();
