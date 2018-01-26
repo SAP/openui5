@@ -754,6 +754,39 @@
 			// assert
 			assert.ok(oSlider._setEnabled.calledWith(true), "_setEnabled should be called with true");
 		});
+
+		QUnit.module("Misc", {
+			beforeEach: function () {
+				this.oTPS = new sap.m.TimePickerSliders();
+
+				this.oTPS.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.oTPS.destroy();
+				this.oTPS = null;
+			}
+		});
+
+		// BCP: 1880065660
+		QUnit.test("_setTimeValues with iframe's JS date object should set properly the date", function (assert) {
+			// arrange
+			var iframe = document.createElement('iframe');
+			document.body.appendChild(iframe);
+			var oWindow = iframe.contentWindow;
+			oWindow.dateObj = new oWindow.Date(2017, 11, 12);
+
+			// act
+			this.oTPS._setTimeValues(oWindow.dateObj);
+
+			// assert
+			assert.ok(true, "_setTimeValues did not throw an expection with date object from an iframe");
+
+			// cleanup
+			document.body.removeChild(iframe);
+			iframe = null;
+		});
+
 	</script>
 </head>
 <body class="sapUiBody">
