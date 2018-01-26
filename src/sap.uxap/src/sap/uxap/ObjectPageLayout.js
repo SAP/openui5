@@ -935,7 +935,9 @@ sap.ui.define([
 	 * @public
 	 */
 	ObjectPageLayout.prototype.setSelectedSection = function (vSectionBase) {
-		var sSelectedSectionId;
+		var sSelectedSectionId,
+			vClosestSection,
+			sSectionIdToSet;
 
 		if (vSectionBase instanceof ObjectPageSectionBase) {
 			sSelectedSectionId = vSectionBase.getId();
@@ -956,7 +958,9 @@ sap.ui.define([
 		//note there was no validation whether oSection was child of ObjectPage/visible/non-empty,
 		//because at the point of calling this setter, the sections setup may not be complete yet
 		//but we still need to save the selectedSection value
-		return this.setAssociation("selectedSection", ObjectPageSection._getClosestSection(sSelectedSectionId).getId(), true);
+		vClosestSection = ObjectPageSection._getClosestSection(sSelectedSectionId);
+		sSectionIdToSet = (vClosestSection instanceof ObjectPageSection) ? vClosestSection.getId() : vClosestSection;
+		return this.setAssociation("selectedSection", sSectionIdToSet, true);
 	};
 
 	/**
