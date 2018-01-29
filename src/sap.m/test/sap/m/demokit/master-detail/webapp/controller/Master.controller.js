@@ -3,13 +3,14 @@ sap.ui.define([
 		"sap/ui/demo/masterdetail/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/model/Filter",
+		"sap/ui/model/Sorter",
 		"sap/ui/model/FilterOperator",
 		"sap/m/GroupHeaderListItem",
 		"sap/ui/Device",
 		"sap/ui/demo/masterdetail/model/formatter",
 		"sap/ui/demo/masterdetail/model/grouper",
 		"sap/ui/demo/masterdetail/model/GroupSortState"
-	], function (BaseController, JSONModel, Filter, FilterOperator, GroupHeaderListItem, Device, formatter, grouper, GroupSortState) {
+	], function (BaseController, JSONModel, Filter, Sorter, FilterOperator, GroupHeaderListItem, Device, formatter, grouper, GroupSortState) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.demo.masterdetail.controller.Master", {
@@ -33,7 +34,23 @@ sap.ui.define([
 					// taken care of by the master list itself.
 					iOriginalBusyDelay = oList.getBusyIndicatorDelay();
 
-				this._oGroupSortState = new GroupSortState(oViewModel, grouper.groupUnitNumber(this.getResourceBundle()));
+				this._oGroupFunctions = {
+					UnitNumber : function(oContext) {
+						var unitNumber = oContext.getProperty("UnitNumber"),
+							key, text;
+						if (unitNumber <= 20) {
+							key = "LE20";
+							text = this.getResourceBundle().getText("masterGroup1Header1");
+						} else {
+							key = "GT20";
+							text = this.getResourceBundle().getText("masterGroup1Header2");
+						}
+						return {
+							key: key,
+							text: text
+						};
+					}.bind(this)
+				};
 
 				this._oList = oList;
 				// keeps the filter and search state
@@ -118,52 +135,35 @@ sap.ui.define([
 			},
 
 			/**
-			 * Event handler for the sorter selection.
-			 * @param {sap.ui.base.Event} oEvent the select event
+			 * Event handler for the filter, sort and group buttons to open the ViewSettingsDialog.
+			 * @param {sap.ui.base.Event} oEvent the button press event
 			 * @public
 			 */
-			onSort : function (oEvent) {
-				var sKey = oEvent.getSource().getSelectedItem().getKey(),
-					aSorters = this._oGroupSortState.sort(sKey);
-
-				this._applyGroupSort(aSorters);
-			},
-
-			/**
-			 * Event handler for the grouper selection.
-			 * @param {sap.ui.base.Event} oEvent the search field event
-			 * @public
-			 */
-			onGroup : function (oEvent) {
-				var sKey = oEvent.getSource().getSelectedItem().getKey(),
-					aSorters = this._oGroupSortState.group(sKey);
-
-				this._applyGroupSort(aSorters);
-			},
-
-			/**
-			 * Event handler for the filter button to open the ViewSettingsDialog.
-			 * which is used to add or remove filters to the master list. This
-			 * handler method is also called when the filter bar is pressed,
-			 * which is added to the beginning of the master list when a filter is applied.
-			 * @public
-			 */
-			onOpenViewSettings : function () {
+			onOpenViewSettings : function (oEvent) {
 				if (!this._oViewSettingsDialog) {
 					this._oViewSettingsDialog = sap.ui.xmlfragment("sap.ui.demo.masterdetail.view.ViewSettingsDialog", this);
 					this.getView().addDependent(this._oViewSettingsDialog);
 					// forward compact/cozy style into Dialog
 					this._oViewSettingsDialog.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 				}
-				this._oViewSettingsDialog.open();
+				var sIcon = oEvent.getSource().getProperty("icon"),
+					sDialogTab = "";
+				if (sIcon.match("sort")) {
+					sDialogTab = "sort";
+				} else if (sIcon.match("group")) {
+					sDialogTab = "group";
+				} else {
+					sDialogTab = "filter";
+				}
+				this._oViewSettingsDialog.open(sDialogTab);
 			},
 
 			/**
 			 * Event handler called when ViewSettingsDialog has been confirmed, i.e.
-			 * has been closed with 'OK'. In the case, the currently chosen filters
-			 * are applied to the master list, which can also mean that the currently
-			 * applied filters are removed from the master list, in case the filter
-			 * settings are removed in the ViewSettingsDialog.
+			 * has been closed with 'OK'. In the case, the currently chosen filters, sorters or groupers
+			 * are applied to the master list, which can also mean that they
+			 * are removed from the master list, in case they are
+			 * removed in the ViewSettingsDialog.
 			 * @param {sap.ui.base.Event} oEvent the confirm event
 			 * @public
 			 */
@@ -191,6 +191,31 @@ sap.ui.define([
 				this._oListFilterState.aFilter = aFilters;
 				this._updateFilterBar(aCaptions.join(", "));
 				this._applyFilterSearch();
+				this._applySortGroup(oEvent);
+			},
+
+			/**
+			 * Apply the chosen sorter and grouper to the master list
+			 * @param {sap.ui.base.Event} oEvent the confirm event
+			 * @private
+			 */
+			_applySortGroup: function (oEvent) {
+				var mParams = oEvent.getParameters(),
+					sPath,
+					bDescending,
+					aSorters = [];
+				// apply sorter to binding
+				// (grouping comes before sorting)
+				if (mParams.groupItem) {
+					sPath = mParams.groupItem.getKey();
+					bDescending = mParams.groupDescending;
+					var vGroup = this._oGroupFunctions[sPath];
+					aSorters.push(new Sorter(sPath, bDescending, vGroup));
+				}
+				sPath = mParams.sortItem.getKey();
+				bDescending = mParams.sortDescending;
+				aSorters.push(new Sorter(sPath, bDescending));
+				this._oList.getBinding("items").sort(aSorters);
 			},
 
 			/**
@@ -281,6 +306,9 @@ sap.ui.define([
 						this.getRouter().getTargets().display("detailNoObjectsAvailable");
 					}.bind(this)
 				);
+
+				//Set the layout property of the FCL control to 'OneColumn'
+				this.getModel("appView").setProperty("/layout", "OneColumn");
 			},
 
 			/**
@@ -291,6 +319,8 @@ sap.ui.define([
 			 */
 			_showDetail : function (oItem) {
 				var bReplace = !Device.system.phone;
+				// set the layout property of FCL control to show two columns
+				this.getModel("appView").setProperty("/layout", "TwoColumnsMidExpanded");
 				this.getRouter().navTo("object", {
 					objectId : oItem.getBindingContext().getProperty("ObjectID")
 				}, bReplace);
@@ -325,15 +355,6 @@ sap.ui.define([
 					// only reset the no data text to default when no new search was triggered
 					oViewModel.setProperty("/noDataText", this.getResourceBundle().getText("masterListNoDataText"));
 				}
-			},
-
-			/**
-			 * Internal helper method to apply both group and sort state together on the list binding
-			 * @param {sap.ui.model.Sorter[]} aSorters an array of sorters
-			 * @private
-			 */
-			_applyGroupSort : function (aSorters) {
-				this._oList.getBinding("items").sort(aSorters);
 			},
 
 			/**
