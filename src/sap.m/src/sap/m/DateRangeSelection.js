@@ -373,7 +373,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 	 */
 	DateRangeSelection.prototype.setDateValue = function(oDateValue) {
 
-		if (oDateValue && !(oDateValue instanceof Date)) {
+		if (this._isValidDate(oDateValue)) {
 			throw new Error("Date must be a JavaScript date object; " + this);
 		}
 
@@ -419,7 +419,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 
 	DateRangeSelection.prototype.setSecondDateValue = function(oSecondDateValue) {
 
-		if (oSecondDateValue && !(oSecondDateValue instanceof Date)) {
+		if (this._isValidDate(oSecondDateValue)) {
 			throw new Error("Date must be a JavaScript date object; " + this);
 		}
 
