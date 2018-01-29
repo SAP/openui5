@@ -34,6 +34,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @return {int} The generated hash-code
 	 * @since 1.39
 	 * @private
+	 * @sap-restricted sap.ui.core
 	 */
 	jQuery.sap.hashCode = function(sString) {
 		var i = sString.length, iHash = 0;

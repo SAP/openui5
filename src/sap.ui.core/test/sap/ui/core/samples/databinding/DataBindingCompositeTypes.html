@@ -11,40 +11,43 @@
 <!-- Extend the "libs" property if you like to import additional libraries  -->
 <!-- ********************************************************************** -->
 <script id="sap-ui-bootstrap"
-	src="../../../../../../resources/sap-ui-core.js">
+	src="../../../../../../resources/sap-ui-core.js"
+	data-sap-ui-libs="sap.ui.commons,sap.ui.layout">
 </script>
 
 <script>
 
-	try{
-		sap.ui.getCore().loadLibrary("sap.ui.commons");
-	}catch(e){
-		alert("This test page requires the library 'sap.ui.commons' which is not available.");
-		throw(e);
-	}
 
-	try{
-		sap.ui.getCore().loadLibrary("sap.ui.layout");
-	}catch(e){
-		alert("This test page requires the library 'sap.ui.layout' which is not available.");
-		throw(e);
-	}
+sap.ui.require(["sap/ui/model/json/JSONModel",
+				"sap/ui/core/format/NumberFormat",
+				"sap/ui/model/type/Unit",
+				"sap/ui/model/CompositeType",
+				"sap/ui/commons/Label",
+				"sap/ui/commons/TextField",
+				"sap/ui/commons/CheckBox",
+				"sap/ui/layout/form/SimpleForm"],
+	function (JSONModel, NumberFormat, UnitType, CompositeType, Label, TextField, CheckBox, SimpleForm) {
 
-	var oModel = new sap.ui.model.json.JSONModel();
+	var oModel = new JSONModel();
 	oModel.setData({
 		firstName: "Peter",
 		lastName: "Clark",
 		original: "abc123",
 		compare: "abc123",
-		amount: 23,
-		unit: "kg",
+		age: 30,
+		amount: 75,
+		unit: "mass-kilogram",
 		salary: 10000,
-		currency: "EUR"
+		currency: "EUR",
+		ventilationSpeed: 1337,
+		ventilationUnit: "acceleration-g-force",
+		ventilationPrecision: 3,
+		ventilationFormatStyle: "long"
 	});
 	sap.ui.getCore().setModel(oModel);
 
 	// Simple composite type using string concatenation
-	sap.ui.model.CompositeType.extend("NameType", {
+	CompositeType.extend("NameType", {
 		formatValue: function(aValues) {
 			return aValues[1] + ", " + aValues[0];
 		},
@@ -58,7 +61,7 @@
 	});
 
 	// Checkbox type for testing parseWithValues
-	sap.ui.model.CompositeType.extend("CheckType", {
+	CompositeType.extend("CheckType", {
 		constructor: function(){
 			this.bParseWithValues = true;
 		},
@@ -78,12 +81,11 @@
 	});
 
 	// More advanced composite type using raw values and numberformat
-	sap.ui.model.CompositeType.extend("CurrencyType", {
+	CompositeType.extend("CurrencyType", {
 		constructor: function(){
-			sap.ui.model.CompositeType.apply(this, arguments);
+			CompositeType.apply(this, arguments);
 			this.bUseRawValues = true;
-			jQuery.sap.require("sap.ui.core.format.NumberFormat");
-			this.oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance(this.oFormatOptions);
+			this.oFormat = NumberFormat.getCurrencyInstance(this.oFormatOptions);
 		},
 		formatValue: function(aValues) {
 			return this.oFormat.format(aValues);
@@ -94,52 +96,96 @@
 		validateValue: function(aValues) {
 			return true;
 		}
-	})
+	});
 
-	var oSimpleForm = new sap.ui.layout.form.SimpleForm({
+	CompositeType.extend("UnitType", {
+		constructor: function(){
+			CompositeType.apply(this, arguments);
+			this.bUseRawValues = true;
+			this.oFormat = NumberFormat.getUnitInstance(this.oFormatOptions);
+		},
+		formatValue: function(aValues) {
+			return this.oFormat.format(aValues);
+		},
+		parseValue: function(sValue) {
+			return this.oFormat.parse(sValue);
+		},
+		validateValue: function(aValues) {
+			return true;
+		}
+	});
+
+	// More advanced composite type using raw values and numberformat
+	UnitType.extend("VentilationType", {
+		constructor: function(oFormatOptions, oConstraints){
+			UnitType.apply(this, [oFormatOptions, oConstraints, ["decimals","style"]]);
+		}
+	});
+
+	var oSimpleForm = new SimpleForm({
 		title: "Simple bindings",
 		content: [
-			new sap.ui.commons.Label({text:"First name"}),
-			new sap.ui.commons.TextField({
+			new Label({text:"First name"}),
+			new TextField({
 				value: "{/firstName}"
 			}),
-			new sap.ui.commons.Label({text:"Last name"}),
-			new sap.ui.commons.TextField({
+			new Label({text:"Last name"}),
+			new TextField({
 				value: "{/lastName}"
 			}),
-			new sap.ui.commons.Label({text:"Original"}),
-			new sap.ui.commons.TextField({
+			new Label({text:"Original"}),
+			new TextField({
 				value: "{/original}"
 			}),
-			new sap.ui.commons.Label({text:"Compare"}),
-			new sap.ui.commons.TextField({
+			new Label({text:"Compare"}),
+			new TextField({
 				value: "{/compare}"
 			}),
-			new sap.ui.commons.Label({text:"Amount"}),
-			new sap.ui.commons.TextField({
+			new Label({text:"Age"}),
+			new TextField({
+				value: {path: "/age", type:"sap.ui.model.type.Integer"}
+			}),
+			new Label({text:"Amount"}),
+			new TextField({
 				value: {path: "/amount", type:"sap.ui.model.type.Float"}
 			}),
-			new sap.ui.commons.Label({text:"Unit"}),
-			new sap.ui.commons.TextField({
+			new Label({text:"Unit"}),
+			new TextField({
 				value: "{/unit}"
 			}),
-			new sap.ui.commons.Label({text:"Salary"}),
-			new sap.ui.commons.TextField({
+			new Label({text:"Salary"}),
+			new TextField({
 				value: {path: "/salary", type:"sap.ui.model.type.Float"}
 			}),
-			new sap.ui.commons.Label({text:"Currency"}),
-			new sap.ui.commons.TextField({
+			new Label({text:"Currency"}),
+			new TextField({
 				value: "{/currency}"
+			}),
+			new Label({text:"ventilationSpeed"}),
+			new TextField({
+				value: "{/ventilationSpeed}"
+			}),
+			new Label({text:"ventilationUnit"}),
+			new TextField({
+				value: "{/ventilationUnit}"
+			}),
+			new Label({text:"ventilationPrecision"}),
+			new TextField({
+				value: {path: "/ventilationPrecision", type:"sap.ui.model.type.Integer"}
+			}),
+			new Label({text:"ventilationFormatStyle"}),
+			new TextField({
+				value: "{/ventilationFormatStyle}"
 			})
 		]
 	});
 	oSimpleForm.placeAt("content");
 
-	var oCompositeForm = new sap.ui.layout.form.SimpleForm({
+	var oCompositeForm = new SimpleForm({
 		title: "Composite bindings",
 		content: [
-			new sap.ui.commons.Label({text:"Full name"}),
-			new sap.ui.commons.TextField({
+			new Label({text:"Full name"}),
+			new TextField({
 				value: {
 					parts: [
 						{path: "/firstName"},
@@ -147,8 +193,8 @@
 					]
 				}
 			}),
-			new sap.ui.commons.Label({text:"Full name (with composite type)"}),
-			new sap.ui.commons.TextField({
+			new Label({text:"Full name (with composite type)"}),
+			new TextField({
 				value: {
 					parts: [
 						{path: "/firstName"},
@@ -157,8 +203,8 @@
 					type: new NameType()
 				}
 			}),
-			new sap.ui.commons.Label({text:"Checkbox (with composite type)"}),
-			new sap.ui.commons.CheckBox({
+			new Label({text:"Checkbox (with composite type)"}),
+			new CheckBox({
 				checked: {
 					parts: [
 						{path: "/original"},
@@ -167,17 +213,26 @@
 					type: new CheckType()
 				}
 			}),
-			new sap.ui.commons.Label({text:"Amount/Unit"}),
-			new sap.ui.commons.TextField({
+			new Label({text:"Age"}),
+			new TextField({
 				value: {
 					parts: [
-						{path: "/amount", type:"sap.ui.model.type.Float", formatOptions:{minFractionDigits: 2}},
-						{path: "/unit"}
+						{path: "/age", type:"sap.ui.model.type.Integer", formatOptions:{maxIntegerDigits:3}}
 					]
 				}
 			}),
-			new sap.ui.commons.Label({text:"Salary/Currency (with composite type)"}),
-			new sap.ui.commons.TextField({
+			new Label({text:"Amount/Unit"}),
+			new TextField({
+				value: {
+					parts: [
+						{path: "/amount"},
+						{path: "/unit"}
+					],
+					type: new UnitType()
+				}
+			}),
+			new Label({text:"Salary/Currency (with composite type)"}),
+			new TextField({
 				value: {
 					parts: [
 						{path: "/salary"},
@@ -186,11 +241,23 @@
 					type: new CurrencyType({showMeasure: false})
 				}
 			}),
+			new Label({text:"Ventilation"}),
+			new TextField({
+				value: {
+					parts: [
+						{path: "/ventilationSpeed"},
+						{path: "/ventilationUnit"},
+						{path: "/ventilationPrecision"},
+						{path: "/ventilationFormatStyle"}
+					],
+					type: new VentilationType()
+				}
+			})
 		]
 	});
 	oCompositeForm.placeAt("content");
 
-
+});
 
 </script>
 </head>
