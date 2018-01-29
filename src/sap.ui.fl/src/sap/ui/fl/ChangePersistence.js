@@ -741,41 +741,6 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Adjust the dirty changes by setting the new namespace/component and later calls the method saveDirtyChanges.
-	 *
-	 * @param {string} sReferenceForChange ID of the new app variant for which the dirty changes would be saved
-	 * @returns {Promise} Returns a resolved promise after all dirty changes were saved
-	 */
-	ChangePersistence.prototype.saveAsDirtyChanges = function(sReferenceForChange) {
-		return Settings.getInstance().then(function(oSettings) {
-
-			var oPropertyBag = {
-				reference: sReferenceForChange
-			};
-			var sNamespace = Utils.createNamespace(oPropertyBag, "changes");
-
-			var aDirtyChanges = this.getDirtyChanges();
-
-			aDirtyChanges.forEach(function(oChange) {
-				if (oSettings.isAtoEnabled()) {
-					oChange.setRequest("ATO_NOTIFICATION");
-				}
-
-				oChange.setNamespace(sNamespace);
-				oChange.setComponent(sReferenceForChange);
-
-				// TODO: This is a temporary solution and will be removed ASAP
-				// Since this is a hook to mark the changes which are going to be taken over by an app variant.
-				// Later to bring the UI of the current app back to the former state, we are triggering undo (LREPSerializer#saveAsCommands) which in the last deletes a change (which was saved for App Variant) permanently in the persistence.
-				// To avoid this, we have a check 'isChangeRelevantForAppVariant' in (Change#markForDeletion), which stops the change to be deleted but manipulates the state of change to be already PERSISTED.
-				oChange.setChangeRelevantForAppVariant(true);
-			});
-
-			return this.saveDirtyChanges(true);
-		}.bind(this));
-	};
-
 	ChangePersistence.prototype._performSingleSaveAction = function (oDirtyChange) {
 		return function() {
 			if (oDirtyChange.getPendingAction() === "NEW") {
