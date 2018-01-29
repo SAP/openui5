@@ -283,7 +283,7 @@
 				QUnit.test("Invalidate from parent aggregation specialDates", function (oAssert) {
 					// Arrange
 					this.oM.getDomRef = function () {
-						return true; // Mock object getDomRef() method return
+						return document.createElement("div"); // Mock object getDomRef() method return
 					};
 					this.oM._bNoFocus = false; // Mock focus return boolean
 
