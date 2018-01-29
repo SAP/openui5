@@ -4,10 +4,12 @@
 
 // Provides object sap.ui.dt.MetadataPropagationUtil.
 sap.ui.define([
-	'jquery.sap.global'
+	'jquery.sap.global',
+	'sap/ui/dt/Util'
 ],
 function(
-	jQuery
+	jQuery,
+	Util
 ) {
 	"use strict";
 
@@ -45,8 +47,13 @@ function(
 			mNewPropagationInfo.relevantContainerFunction = function() { return true; };
 			mNewPropagationInfo.relevantContainerElement = oElement;
 		} else {
-			throw new Error("wrong type: it should be either a function or a boolean value and it is:" +
+			var oError = Util.wrapError("Wrong type: it should be either a function or a boolean value and it is:" +
 				typeof mElementDtMetadataForAggregation.propagateRelevantContainer);
+
+			var sLocation = 'sap.ui.dt.MetadataPropagationUtil#_getCurrentRelevantContainerPropagation';
+			oError.name = 'Error in ' + sLocation;
+			oError.message = Util.printf("{0} / {1}", sLocation, oError.message);
+			throw oError;
 		}
 		return mNewPropagationInfo;
 	};
@@ -59,8 +66,13 @@ function(
 			mNewPropagationInfo.relevantContainerElement = oElement;
 			mNewPropagationInfo.metadataFunction = mElementDtMetadataForAggregation.propagateMetadata;
 		} else {
-			throw new Error("wrong type: it should be a function and it is:",
-				typeof mElementDtMetadataForAggregation.propagateMetadata);
+			var oError = Util.wrapError("Wrong type: it should be a function and it is:" +
+				typeof mElementDtMetadataForAggregation.propagateRelevantContainer);
+
+			var sLocation = 'sap.ui.dt.MetadataPropagationUtil#_getCurrentDesigntimePropagation';
+			oError.name = 'Error in ' + sLocation;
+			oError.message = Util.printf("{0} / {1}", sLocation, oError.message);
+			throw oError;
 		}
 		return mNewPropagationInfo;
 	};

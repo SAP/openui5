@@ -712,11 +712,11 @@ function(
 	}, function () {
 		QUnit.test("when the container is scrolled", function(assert) {
 			var fnDone = assert.async();
-			this.$container.scrollTop(50);
-			setTimeout(function() {
+			this.oOverlay.attachEventOnce('geometryChanged', function () {
 				assert.deepEqual(this.oOverlay.$().offset(), this.oButton.$().offset(), "overlay has same position as a control");
 				fnDone();
-			}.bind(this), 0);
+			}, this);
+			this.$container.scrollTop(50);
 		});
 	});
 

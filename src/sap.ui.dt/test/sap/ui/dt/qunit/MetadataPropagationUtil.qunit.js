@@ -173,7 +173,7 @@ sap.ui.require([
 		QUnit.test("when 'propagateMetadataToAggregationOverlay' is called", function(assert) {
 			assert.throws(function() {
 					MetadataPropagationUtil.propagateMetadataToAggregationOverlay(this.oPropObject, this.oButton);
-				}, /wrong type: it should be either a function or a boolean value/,
+				}, /Wrong type: it should be either a function or a boolean value/,
 				"then '_setPropagationInfo' should throw an exception");
 		});
 	});
@@ -214,7 +214,7 @@ sap.ui.require([
 		QUnit.test("when 'propagateMetadataToAggregationOverlay' is called", function(assert) {
 			assert.throws(function() {
 				MetadataPropagationUtil.propagateMetadataToAggregationOverlay(this.oMetadataFunction, this.oElement);
-			}, /wrong type: it should be a function and it is:/,
+			}, /Wrong type: it should be a function and it is:/,
 			"then '_setPropagationInfo' should throw the following exception: wrong type: it should be a function...");
 		});
 
