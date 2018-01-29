@@ -222,6 +222,8 @@ sap.ui.define([
 		// extend the contexts from metadataContexts
 		for (var j = 0; j < oMetadataContexts.parts.length; j++) {
 			addSingleContext(mContexts, oVisitor, oMetadataContexts.parts[j], oMetadataContexts, sDefaultMetaModel);
+			// Make sure every previously defined context can be used in the next binding
+			oVisitor = oVisitor["with"](mContexts, false);
 		}
 
 		var oMdCModel = new JSONModel(oMetadataContexts);
