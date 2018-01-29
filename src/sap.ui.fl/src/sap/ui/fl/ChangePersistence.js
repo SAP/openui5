@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Change", "sap/ui/fl/Variant", "sap/ui/fl/Utils", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/context/ContextManager", "sap/ui/fl/registry/Settings", "sap/ui/fl/variants/VariantController"
-], function(Change, Variant, Utils, LRepConnector, Cache, ContextManager, Settings, VariantController) {
+	"sap/ui/fl/Change", "sap/ui/fl/Variant", "sap/ui/fl/Utils", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/context/ContextManager", "sap/ui/fl/registry/Settings", "sap/ui/fl/transport/TransportSelection", "sap/ui/fl/variants/VariantController", "sap/ui/core/BusyIndicator", "sap/m/MessageBox"
+], function(Change, Variant, Utils, LRepConnector, Cache, ContextManager, Settings, TransportSelection, VariantController, BusyIndicator, MessageBox) {
 	"use strict";
 
 	/**
@@ -54,6 +54,7 @@ sap.ui.define([
 		}
 
 		this._oVariantController = new VariantController(this._mComponent.name, this._mComponent.appVersion, {});
+		this._oTransportSelection = new TransportSelection();
 		this._oConnector = this._createLrepConnector();
 		this._aDirtyChanges = [];
 		this._oMessagebundle = undefined;
@@ -925,6 +926,68 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.loadSwitchChangesMapForComponent = function(sVariantManagementId, sCurrentVariant, sNewVariant) {
 		return this._oVariantController.getChangesForVariantSwitch(sVariantManagementId, sCurrentVariant, sNewVariant, this._mChanges.mChanges);
+	};
+
+	ChangePersistence.prototype.transportAllUIChanges = function(oRootControl, sStyleClass, sLayer) {
+		var fnHandleAllErrors = function (oError) {
+			BusyIndicator.hide();
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+			var sMessage = oResourceBundle.getText("MSG_TRANSPORT_ERROR", oError ? [oError.message || oError] : undefined);
+			var sTitle = oResourceBundle.getText("HEADER_TRANSPORT_ERROR");
+			Utils.log.error("transport error" + oError);
+			MessageBox.show(sMessage, {
+				icon: MessageBox.Icon.ERROR,
+				title: sTitle,
+				styleClass: sStyleClass
+			});
+			return "Error";
+		};
+
+		return this._oTransportSelection.openTransportSelection(null, oRootControl, sStyleClass)
+			.then(function(oTransportInfo) {
+				if (this._oTransportSelection.checkTransportInfo(oTransportInfo)) {
+					BusyIndicator.show(0);
+					return this.getChangesForComponent({currentLayer: sLayer, includeCtrlVariants: true})
+						.then(function(aAllLocalChanges) {
+							return this._oTransportSelection._prepareChangesForTransport(oTransportInfo, aAllLocalChanges)
+								.then(function() {
+									BusyIndicator.hide();
+								});
+						}.bind(this));
+				}
+			}.bind(this))
+			['catch'](fnHandleAllErrors);
+	};
+
+	/**
+	 * Reset changes on the server.
+	 *
+	 * @returns {Promise} promise that resolves without parameters
+	 */
+	ChangePersistence.prototype.resetChanges = function () {
+		var sActiveLayer = Utils.getCurrentLayer();
+
+		return this.getChangesForComponent({currentLayer: sActiveLayer, includeCtrlVariants: true})
+			.then(function(aChanges) {
+				return Settings.getInstance(this.getComponentName())
+					.then(function(oSettings) {
+						if (!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured()) {
+							return this._oTransportSelection.setTransports(aChanges, sap.ui.getCore().getComponent(this.getComponentName()));
+						}
+					}.bind(this))
+						.then(function() {
+							var sUriOptions =
+								"?reference=" + this.getComponentName() +
+								"&appVersion=" + this._mComponent.appVersion +
+								"&layer=" + sActiveLayer +
+								"&generator=Change.createInitialFileContent";
+							if (aChanges[0].getRequest().length > 0) {
+								sUriOptions = sUriOptions + "&changelist=" + aChanges[0].getRequest();
+							}
+
+							return this._oConnector.send("/sap/bc/lrep/changes/" + sUriOptions, "DELETE");
+						}.bind(this));
+			}.bind(this));
 	};
 
 	return ChangePersistence;
