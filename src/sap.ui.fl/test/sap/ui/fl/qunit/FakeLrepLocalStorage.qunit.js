@@ -57,6 +57,7 @@ sap.ui.require(["sap/ui/fl/FakeLrepLocalStorage"], function(FakeLrepLocalStorage
 
 			FakeLrepLocalStorage.saveChange(oTestData.sChangeId1, oTestData.oChange1);
 			FakeLrepLocalStorage.saveChange(oTestData.sChangeId2, oTestData.oChange2);
+			FakeLrepLocalStorage.saveChange(oTestData.sVariantId1, oTestData.oVariant1);
 		},
 		afterEach : function(assert) {
 			sandbox.restore();
@@ -72,9 +73,9 @@ sap.ui.require(["sap/ui/fl/FakeLrepLocalStorage"], function(FakeLrepLocalStorage
 		oParsedChange1FromGetChange = FakeLrepLocalStorage.getChange(oTestData.sChangeId1);
 
 		// assert
-		assert.equal(FakeLrepLocalStorage.getNumChanges(), 2, "then after saving there should be 2 changes");
+		assert.equal(FakeLrepLocalStorage.getNumChanges(), 3, "then after saving there should be 3 changes");
 		assert.deepEqual(oTestData.oChange1, oParsedChange1FromGetChange, "then the first saved and retrieved change should be the same");
-		assert.equal(FakeLrepLocalStorage.getChanges().length, 2, "then the received change array has 2 entries");
+		assert.equal(FakeLrepLocalStorage.getChanges().length, 3, "then the received change array has 3 entries");
 	});
 
 	QUnit.test("when I delete a specific change", function(assert) {
@@ -83,8 +84,18 @@ sap.ui.require(["sap/ui/fl/FakeLrepLocalStorage"], function(FakeLrepLocalStorage
 		FakeLrepLocalStorage.deleteChange(oTestData.sChangeId1);
 
 		// assert
-		assert.equal(FakeLrepLocalStorage.getNumChanges(), 1, "then after deleting 1 change, there schould be 1 change");
+		assert.equal(FakeLrepLocalStorage.getNumChanges(), 2, "then after deleting 1 change, there schould be 2 changes");
 		assert.equal(FakeLrepLocalStorage.getChange(oTestData.sChangeId1), undefined, "then if I try to get the deleted change it schould be undefined");
+	});
+
+	QUnit.test("when I delete a specific variant change", function(assert) {
+
+		// act
+		FakeLrepLocalStorage.deleteChange(oTestData.sVariantId1);
+
+		// assert
+		assert.equal(FakeLrepLocalStorage.getNumChanges(), 2, "then after deleting 1 variant change, there schould be 2 changes");
+		assert.equal(FakeLrepLocalStorage.getChange(oTestData.sVariantId1), undefined, "then if I try to get the deleted change it schould be undefined");
 	});
 
 	QUnit.test("when I delete all changes", function(assert) {
