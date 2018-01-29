@@ -8,7 +8,7 @@ sap.ui.define([
 	'sap/ui/dt/ElementOverlay',
 	'sap/ui/dt/AggregationOverlay',
 	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/Selection',
+	'sap/ui/dt/SelectionManager',
 	'sap/ui/dt/ElementDesignTimeMetadata',
 	'sap/ui/dt/AggregationDesignTimeMetadata',
 	'sap/ui/dt/ElementUtil',
@@ -23,7 +23,7 @@ function(
 	ElementOverlay,
 	AggregationOverlay,
 	OverlayRegistry,
-	Selection,
+	SelectionManager,
 	ElementDesignTimeMetadata,
 	AggregationDesignTimeMetadata,
 	ElementUtil,
@@ -228,8 +228,8 @@ function(
 		// number of element overlays waiting for their designTimeMetadata
 		this._iOverlaysPending = 0;
 
-		this._oSelection = this.createSelection();
-		this._oSelection.attachEvent("change", function (oEvent) {
+		this._oSelectionManager = this._createSelectionManager();
+		this._oSelectionManager.attachEvent("change", function (oEvent) {
 			this.fireSelectionChange({selection: oEvent.getParameter("selection")});
 		}, this);
 
@@ -276,25 +276,34 @@ function(
 		});
 
 		this._destroyAllOverlays();
-		this._oSelection.destroy();
+		this._oSelectionManager.destroy();
 	};
 
 	/**
-	 * Creates an instance of a Selection to handle the overlays selection inside of the DesignTime
-	 * @return {sap.ui.dt.Selection} the instance of the Selection
-	 * @protected
+	 * Creates an instance of a SelectionManager to handle the overlays selection inside of the DesignTime
+	 * @return {sap.ui.dt.SelectionManager} the instance of the Selection Manager
+	 * @private
 	 */
-	DesignTime.prototype.createSelection = function () {
-		return new Selection();
+	DesignTime.prototype._createSelectionManager = function () {
+		return new SelectionManager();
 	};
 
 	/**
 	 * Returns array with current selected overlays
 	 * @return {sap.ui.dt.Overlay[]} selected overlays
-	 * @public
+	 * @deprecated
 	 */
 	DesignTime.prototype.getSelection = function () {
-		return this._oSelection.getSelection();
+		return this.getSelectionManager().getSelection();
+	};
+
+	/**
+	 * Returns the Selection Manager
+	 * @return {sap.ui.dt.SelectionManager} the instance of the Selection Manager
+	 * @public
+	 */
+	DesignTime.prototype.getSelectionManager = function () {
+		return this._oSelectionManager;
 	};
 
 	/**
@@ -305,7 +314,7 @@ function(
 	 */
 	DesignTime.prototype.setSelectionMode = function (oMode) {
 		this.setProperty("selectionMode", oMode);
-		this._oSelection.setMode(oMode);
+		this.getSelectionManager().setMode(oMode);
 
 		return this;
 	};
@@ -758,7 +767,7 @@ function(
 		}
 
 		if (oElementOverlay.getSelected()) {
-			this._oSelection.remove(oElementOverlay);
+			this.getSelectionManager()._remove(oElementOverlay);
 		}
 
 		this.fireElementOverlayDestroyed({overlay: oElementOverlay});
@@ -783,7 +792,7 @@ function(
 		var oElementOverlay = oEvent.getSource();
 		var bSelected = oEvent.getParameter("selected");
 
-		this._oSelection.set(oElementOverlay, bSelected);
+		this.getSelectionManager()[bSelected ? "_add" : "_remove"](oElementOverlay);
 	};
 
 	/**
