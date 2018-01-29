@@ -1068,6 +1068,10 @@ sap.ui.require([
 			"TEAMS/EntityWithComplexKey/a/b" : {$kind : "ComplexType"},
 			"TEAMS/EntityWithComplexKey/c" : {$kind : "ComplexType"}
 		}
+	}, { // bound function in V2 adapter: sResourcePath does not yield a valid V4 meta path
+		types : {
+			"TEAMS" : undefined
+		}
 	}].forEach(function (oFixture, i) {
 		QUnit.test("Cache#fetchTypes #" + i, function (assert) {
 			var oCache,
@@ -1084,6 +1088,7 @@ sap.ui.require([
 
 			// code under test
 			oPromise = oCache.fetchTypes();
+
 			assert.strictEqual(oCache.fetchTypes(), oPromise, "second call returns same promise");
 			return oPromise.then(function (mTypeForMetaPath) {
 				assert.deepEqual(mTypeForMetaPath, oFixture.types);

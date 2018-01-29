@@ -371,6 +371,7 @@ sap.ui.define([
 		this.associations = {}; // maps qualified name -> association
 		this.associationSet = null; // the current associationSet
 		this.associationSets = []; // list of associationSets
+		this.aBoundOperations = []; // list of bound operations
 		this.constraintRole = null; // the current Principal/Dependent
 		// maps annotatable path to a map of converted V2 annotations for current Schema
 		this.convertedV2Annotations = {};
@@ -629,6 +630,7 @@ sap.ui.define([
 
 		this.setDefaultEntityContainer();
 		this.updateNavigationPropertiesAndCreateBindings();
+		this.processBoundOperations();
 		this.processUnitConversion();
 	};
 
@@ -918,7 +920,8 @@ sap.ui.define([
 	 * @param {Element} oElement The element
 	 */
 	V2MetadataConverter.prototype.processFunctionImport = function (oElement) {
-		var sHttpMethod = oElement.getAttributeNS(sMicrosoftNamespace, "HttpMethod"),
+		var sAnnotationActionFor,
+			sHttpMethod = oElement.getAttributeNS(sMicrosoftNamespace, "HttpMethod"),
 			sKind = sHttpMethod === "POST" ? "Action" : "Function",
 			oFunction = {
 				$kind : sKind
@@ -944,14 +947,24 @@ sap.ui.define([
 				+ "', removing this FunctionImport", undefined, sClassName);
 			this.consumeSapAnnotation("action-for");
 			this.consumeSapAnnotation("applicable-path");
-		} else if (this.consumeSapAnnotation("action-for")) {
-			jQuery.sap.log.warning("Unsupported 'sap:action-for' at FunctionImport '" + sName
-				+ "', removing this FunctionImport", undefined, sClassName);
-			this.consumeSapAnnotation("applicable-path");
 		} else {
-			// add Function and FunctionImport to the result
-			this.entityContainer[sName] = oFunctionImport;
+			// add Function to the result
 			this.result[sQualifiedName] = [oFunction];
+
+			sAnnotationActionFor = this.consumeSapAnnotation("action-for");
+			if (sAnnotationActionFor) {
+				oFunction.$IsBound = true;
+				oFunction.$Parameter = [{
+					"$Name" : null,
+					"$Nullable" : false,
+					"$Type" : this.resolveAlias(sAnnotationActionFor)
+				}];
+				this.aBoundOperations.push(oFunction);
+				this.consumeSapAnnotation("applicable-path");
+			} else {
+				// add FunctionImport to the result
+				this.entityContainer[sName] = oFunctionImport;
+			}
 		}
 		// Remember the current function (even if it has not been added to the result), so that
 		// processParameter adds to this. This avoids that parameters belonging to a removed
@@ -1268,6 +1281,26 @@ sap.ui.define([
 			pushPropertyPath("@Org.OData.Capabilities.V1.SortRestrictions",
 				"NonSortableProperties", "sortable");
 		}
+	};
+
+	/**
+	 * Post-processing of all bound operations: key properties are removed from parameters.
+	 */
+	V2MetadataConverter.prototype.processBoundOperations = function () {
+		var that = this;
+
+		this.aBoundOperations.forEach(function (oOperation) {
+			var oEntityType = that.result[oOperation.$Parameter[0].$Type];
+
+			oEntityType.$Key.forEach(function (sKeyName) {
+				oOperation.$Parameter.some(function (oParameter, i) {
+					if (oParameter.$Name === sKeyName) {
+						oOperation.$Parameter.splice(i, 1);
+						return true;
+					}
+				});
+			});
+		});
 	};
 
 	/**

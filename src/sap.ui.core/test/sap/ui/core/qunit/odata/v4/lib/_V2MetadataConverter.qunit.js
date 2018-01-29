@@ -625,26 +625,41 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("convert: FunctionImport w/ sap:action-for", function (assert) {
-		this.oLogMock.expects("warning")
-			.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'Baz',"
-				+ " removing this FunctionImport", undefined, sClassName);
-
 		testConversion(assert, '\
 				<Schema Namespace="foo" Alias="f">\
 					<EntityContainer Name="Container">\
 						<FunctionImport m:HttpMethod="GET" Name="Bar"/>\
-						<FunctionImport m:HttpMethod="GET" Name="Baz" sap:action-for="EntityType">\
-							<Parameter Name="p1" Type="String"/>\
+						<FunctionImport m:HttpMethod="GET" Name="SalesOrderLineItemFunction"\
+							ReturnType="Edm.String"\
+							sap:action-for="f.SalesOrderLineItem">\
+							<Parameter Name="ItemPosition" Type="Edm.String" Nullable="false"/>\
+							<Parameter Name="SalesOrderID" Type="Edm.String" Nullable="false"/>\
 						</FunctionImport>\
 					</EntityContainer>\
+					<EntityType Name="SalesOrderLineItem">\
+						<Key>\
+							<PropertyRef Name="SalesOrderID"/>\
+							<PropertyRef Name="ItemPosition"/>\
+						</Key>\
+						<Property Name="SalesOrderID" Type="Edm.String" Nullable="false"/>\
+						<Property Name="ItemPosition" Type="Edm.String" Nullable="false"/>\
+					</EntityType>\
 				</Schema>',
 			{
-				"$EntityContainer" : "foo.Container",
-				"foo." : {
-					"$kind" : "Schema"
-				},
 				"foo.Bar" : [{
 					"$kind" : "Function"
+				}],
+				"foo.SalesOrderLineItemFunction" : [{
+					"$kind" : "Function",
+					"$IsBound" : true,
+					"$Parameter" : [{
+						"$Name" : null,
+						"$Nullable" : false,
+						"$Type" : "foo.SalesOrderLineItem"
+					}],
+					"$ReturnType" : {
+						"$Type" : "Edm.String"
+					}
 				}],
 				"foo.Container" : {
 					"$kind" : "EntityContainer",
@@ -653,7 +668,7 @@ sap.ui.require([
 						"$Function" : "foo.Bar"
 					}
 				}
-			});
+			}, true);
 	});
 
 	//*********************************************************************************************
@@ -2196,13 +2211,14 @@ sap.ui.require([
 		warn(/<FunctionImport.*sap:applicable-path="foo".*\/>/, "applicable-path", "foo");
 		oLogMock.expects("warning").withExactArgs("Unsupported HttpMethod at FunctionImport"
 			+ " 'BoundFunctionNoGET', removing this FunctionImport", undefined, sClassName);
-		oLogMock.expects("warning").withExactArgs("Unsupported 'sap:action-for' at FunctionImport"
-			+ " 'BoundFunction', removing this FunctionImport", undefined, sClassName);
 
 		testConversion(assert, '\
 			<Schema Namespace="foo" sap:bar="baz">\
 				<ComplexType Name="MyComplexType" sap:bar="baz"/>\
 				<EntityType Name="MyEntityType" sap:content-version="1" sap:bar="baz">\
+					<Key>\
+						<PropertyRef Name="MyProperty"/>\
+					</Key>\
 					<Property Name="MyProperty" Type="Edm.String" sap:bar="baz"/>\
 					<NavigationProperty Name="ToSomewhere" Relationship="foo.Assoc" \
 						ToRole="A" sap:bar="baz"/>\
@@ -2215,11 +2231,11 @@ sap.ui.require([
 					<EntitySet Name="MyEntitySet" EntityType="foo.MyEntityType" \
 						sap:content-version="1" sap:bar="baz"/>\
 					<FunctionImport Name="BoundFunctionNoGET"\
-						sap:action-for="MyEntitySet" sap:applicable-path="bar"/>\
+						sap:action-for="foo.MyEntityType" sap:applicable-path="bar"/>\
 					<FunctionImport m:HttpMethod="GET" Name="MyFunction"\
 						sap:applicable-path="foo"/>\
 					<FunctionImport m:HttpMethod="GET" Name="BoundFunction"\
-						sap:action-for="MyEntitySet" sap:applicable-path="bar"/>\
+						sap:action-for="foo.MyEntityType" sap:applicable-path="bar"/>\
 					<AssociationSet Name="MyAssociationSet" Association="foo.Assoc"\
 							sap:creatable="false" sap:deletable="false" sap:updatable="false">\
 						<End EntitySet="MyEntitySet" Role="A"/>\
