@@ -211,6 +211,18 @@
         "type": "FIX",
         "text": " Move variant title property to content of content of variant",
         "references": []
+      },
+      {
+        "id": "06093a0dc0e4bb8d92f131c659ab1e57003e07de",
+        "type": "FIX",
+        "text": " sap.ui.rta Respect UI.Hidden annotation",
+        "references": []
+      },
+      {
+        "id": "4a28dc3a82d76167020541044fb59f91a665376d",
+        "type": "FIX",
+        "text": ": PopupManager test fix when document doesn\u0027t have focus",
+        "references": []
       }
     ]
   }

@@ -1093,6 +1093,60 @@
         "type": "FIX",
         "text": " sap.m.Wizard: Explored app sample adjusted",
         "references": []
+      },
+      {
+        "id": "7fad9ea75573d19669e244a7fd41a7946ab405ca",
+        "type": "FEATURE",
+        "text": " sap.m.Toolbar: Added \"style\" property",
+        "references": []
+      },
+      {
+        "id": "fbfb3da20eb53339e105cd85add13a831bc8c9cd",
+        "type": "FIX",
+        "text": " sap.m.Button: Now when Reject or Accept button is pressed, the icon has correct color",
+        "references": []
+      },
+      {
+        "id": "c43122e2ce5d3fc3b71748f67f9aaa6de0568734",
+        "type": "FIX",
+        "text": " sap.m.HeaderContainer : Added fix to check the next item is arrow key and attempt to jump out of Header container on Tab key press.",
+        "references": []
+      },
+      {
+        "id": "039bb8fe8b660d9cc5733e985382ef0f153574db",
+        "type": "FIX",
+        "text": " sap.m.HeaderContainer : Removed qunits related to _getScrollValue method which was getting failed because of browser dependency on return value.",
+        "references": []
+      },
+      {
+        "id": "4ac1f7ed0bf210e32f4dd378346058635d9219c2",
+        "type": "FIX",
+        "text": " sap.m.Image: DetailBox opens when Image is used with list binding",
+        "references": []
+      },
+      {
+        "id": "1cbb0b0d028d2a0025c05c4e153b5935e1a39c5e",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Now when Reject or Accept button is pressed, the icon has correct color",
+        "references": []
+      },
+      {
+        "id": "ef07ba9cdd98984f6cbb0b1f597e5baf1f8cb247",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Fixed content size calculations",
+        "references": []
+      },
+      {
+        "id": "04485acbd6ceed1f959dd0c8651a906629844bc8",
+        "type": "FIX",
+        "text": " sap.m.PDFViewer: Mention blob URL and dataURI in documentation.",
+        "references": []
+      },
+      {
+        "id": "41af74fb7e304637640ca43df3530eb8888578c2",
+        "type": "FIX",
+        "text": " sap.m: instanceof Date in public methods corrected",
+        "references": []
       }
     ]
   }

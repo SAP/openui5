@@ -121,6 +121,12 @@
         "type": "FIX",
         "text": " sap.m.Dialog: correct header, subheader and footer DOM structure",
         "references": []
+      },
+      {
+        "id": "7fad9ea75573d19669e244a7fd41a7946ab405ca",
+        "type": "FEATURE",
+        "text": " sap.m.Toolbar: Added \"style\" property",
+        "references": []
       }
     ]
   }
