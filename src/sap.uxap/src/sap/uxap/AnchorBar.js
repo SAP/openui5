@@ -18,9 +18,10 @@ sap.ui.define([
 	"sap/ui/core/CustomData",
 	"./HierarchicalSelect",
 	"./library",
+	"sap/uxap/AnchorBarRenderer",
 	"jquery.sap.keycodes"
 ], function (jQuery, Button, mobileLibrary, Popover, Toolbar, IconPool, Item, ResizeHandler,
-			 ScrollEnablement, HorizontalLayout, Device, CustomData, HierarchicalSelect, library) {
+			 ScrollEnablement, HorizontalLayout, Device, CustomData, HierarchicalSelect, library, AnchorBarRenderer) {
 	"use strict";
 
 	// shortcut for sap.m.SelectType
@@ -591,14 +592,9 @@ sap.ui.define([
 	/*******************************************************************************
 	 * Horizontal scrolling
 	 ******************************************************************************/
-	AnchorBar._hierarchicalSelectModes = {
-		"Icon": "icon",   // Only icon - overview button mode
-		"Text": "text"    // Text - phone mode
-	};
-
 	AnchorBar.prototype._applyHierarchicalSelectMode = function () {
 
-		if (this._sHierarchicalSelectMode === AnchorBar._hierarchicalSelectModes.Icon) {
+		if (this._sHierarchicalSelectMode === AnchorBarRenderer._AnchorBarHierarchicalSelectMode.Icon) {
 			this.$().find(".sapUxAPAnchorBarScrollContainer").show();
 
 			this._oSelect.setWidth("auto");
@@ -614,15 +610,15 @@ sap.ui.define([
 			this._oSelect.setType(SelectType.Default);
 		}
 
-		this.$().toggleClass("sapUxAPAnchorBarOverflow", this._sHierarchicalSelectMode === AnchorBar._hierarchicalSelectModes.Icon);
+		this.$().toggleClass("sapUxAPAnchorBarOverflow", this._sHierarchicalSelectMode === AnchorBarRenderer._AnchorBarHierarchicalSelectMode.Icon);
 	};
 
 	AnchorBar.prototype._adjustSize = function () {
 
 		//size changed => check if switch in display-mode (phone-view vs. desktop-view) needed
 		var sNewMode = library.Utilities.isPhoneScenario(this._getCurrentMediaContainerRange()) ?
-			AnchorBar._hierarchicalSelectModes.Text :
-			AnchorBar._hierarchicalSelectModes.Icon;
+			AnchorBarRenderer._AnchorBarHierarchicalSelectMode.Text :
+			AnchorBarRenderer._AnchorBarHierarchicalSelectMode.Icon;
 
 		if (sNewMode !== this._sHierarchicalSelectMode) {
 			this._sHierarchicalSelectMode = sNewMode;
@@ -630,7 +626,7 @@ sap.ui.define([
 		}
 
 		//size changed => check if overflow gradients needed
-		if (this._sHierarchicalSelectMode === AnchorBar._hierarchicalSelectModes.Icon) {
+		if (this._sHierarchicalSelectMode === AnchorBarRenderer._AnchorBarHierarchicalSelectMode.Icon) {
 
 			//don't go any further if the positions of the items are not calculated yet
 			if (this._iMaxPosition < 0) {
@@ -1009,7 +1005,7 @@ sap.ui.define([
 		//initial state
 		if (this._bHasButtonsBar) {
 			jQuery.sap.delayedCall(AnchorBar.DOM_CALC_DELAY, this, function () {
-				if (this._sHierarchicalSelectMode === AnchorBar._hierarchicalSelectModes.Icon) {
+				if (this._sHierarchicalSelectMode === AnchorBarRenderer._AnchorBarHierarchicalSelectMode.Icon) {
 					this._computeBarSectionsInfo();
 				}
 				this._adjustSize();
