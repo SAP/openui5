@@ -171,6 +171,50 @@
 				oDP = null;
 			});
 
+			// BCP: 1880065660
+			QUnit.test("setMinDate with iframe's JS date object should set properly the min date value", function (assert) {
+				// arrange
+				var oDP = new sap.m.DatePicker(),
+						iframe = document.createElement('iframe');
+				document.body.appendChild(iframe);
+				var oWindow = iframe.contentWindow;
+				oWindow.dateObj = new oWindow.Date(2017, 11, 12);
+
+				// act
+				oDP.setMinDate(oWindow.dateObj);
+
+				// assert
+				assert.ok(true, "setMinDate did not throw an expection with date object from an iframe");
+
+				// cleanup
+				oDP.destroy();
+				document.body.removeChild(iframe);
+				iframe = null;
+				oDP = null;
+			});
+
+			// BCP: 1880065660
+			QUnit.test("setMaxDate with iframe's JS date object should set properly the max date value", function (assert) {
+				// arrange
+				var oDP = new sap.m.DatePicker(),
+						iframe = document.createElement('iframe');
+				document.body.appendChild(iframe);
+				var oWindow = iframe.contentWindow;
+				oWindow.dateObj = new oWindow.Date(2017, 11, 12);
+
+				// act
+				oDP.setMaxDate(oWindow.dateObj);
+
+				// assert
+				assert.ok(true, "setMaxDate did not throw an expection with date object from an iframe");
+
+				// cleanup
+				oDP.destroy();
+				document.body.removeChild(iframe);
+				iframe = null;
+				oDP = null;
+			});
+
 			QUnit.module("interaction");
 
 			QUnit.test("change date by typing", function(assert) {

@@ -531,6 +531,24 @@
 
 		});
 
+		// BCP: 1880065660
+		QUnit.test("_checkJSDateObject with iframe's JS date object should work properly", function (assert) {
+			// arrange
+			var iframe = document.createElement('iframe');
+			document.body.appendChild(iframe);
+			var oWindow = iframe.contentWindow;
+			oWindow.dateObj = new oWindow.Date(2017, 11, 12);
+
+			// act
+			CalendarUtils._checkJSDateObject(oWindow.dateObj);
+
+			// assert
+			assert.ok(true, "_checkJSDateObject did not throw an expection with date object from an iframe");
+
+			// cleanup
+			document.body.removeChild(iframe);
+			iframe = null;
+		});
 
 
 		QUnit.module("Handling year and date check");

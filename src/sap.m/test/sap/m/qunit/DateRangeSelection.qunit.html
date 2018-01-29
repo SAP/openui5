@@ -267,6 +267,50 @@
 				assert.strictEqual(oInfo.description, "2014-03-26 @ 2014-03-27 Placeholder Date Tooltip", "Description");
 				oInput.destroy();
 			});
+
+			// BCP: 1880065660
+			QUnit.test("setDateValue with iframe's JS date object should set properly the date", function (assert) {
+				// arrange
+				var oDateRangeSelector = new sap.m.DateRangeSelection(),
+						iframe = document.createElement('iframe');
+				document.body.appendChild(iframe);
+				var oWindow = iframe.contentWindow;
+				oWindow.dateObj = new oWindow.Date(2017, 11, 12);
+
+				// act
+				oDateRangeSelector.setDateValue(oWindow.dateObj);
+
+				// assert
+				assert.ok(true, "setDateValue did not throw an expection with date object from an iframe");
+
+				// cleanup
+				oDateRangeSelector.destroy();
+				document.body.removeChild(iframe);
+				iframe = null;
+				oDateRangeSelector = null;
+			});
+
+			// BCP: 1880065660
+			QUnit.test("setSecondDateValue with iframe's JS date object should set properly the date", function (assert) {
+				// arrange
+				var oDateRangeSelector = new sap.m.DateRangeSelection(),
+						iframe = document.createElement('iframe');
+				document.body.appendChild(iframe);
+				var oWindow = iframe.contentWindow;
+				oWindow.dateObj = new oWindow.Date(2017, 11, 12);
+
+				// act
+				oDateRangeSelector.setSecondDateValue(oWindow.dateObj);
+
+				// assert
+				assert.ok(true, "setSecondDateValue did not throw an expection with date object from an iframe");
+
+				// cleanup
+				oDateRangeSelector.destroy();
+				document.body.removeChild(iframe);
+				iframe = null;
+				oDateRangeSelector = null;
+			});
 		</script>
 	</head>
 

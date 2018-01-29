@@ -326,7 +326,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', './Calenda
 		 * @private
 		 */
 		CalendarUtils._checkJSDateObject = function(oDate) {
-			if (!(oDate instanceof Date)) {
+			if (jQuery.type(oDate) !== "date") {
 				throw new Error("Date must be a JavaScript date object.");
 			}
 		};
