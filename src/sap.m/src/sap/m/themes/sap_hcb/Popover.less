@@ -17,33 +17,33 @@
 }
 
 /* padding for title in header is removed because of ticket 0120031469 0004432742 2013*/
-.sapMPopoverHeader > .sapMBarMiddle > .sapMBarPH {
+.sapMPopoverHeader .sapMBarMiddle > .sapMBarPH {
 	box-sizing: border-box;
 }
 
-.sapMPopoverHeader > .sapMBarMiddle > .sapMBarPH > .sapMLabel {
+.sapMPopoverHeader .sapMBarMiddle > .sapMBarPH > .sapMLabel {
 	display: inline-block;
 }
 
 /*for only two buttons in footer's contentMiddle aggregation*/
-.sapMPopoverSpecialFooter > .sapMBarMiddle {
+.sapMPopoverSpecialFooter .sapMBarMiddle {
 	display: block;
 	height: 100%;
 	padding: 0 0.25rem;
 	box-sizing: border-box;
 }
 
-.sapMPopoverSpecialFooter > .sapMBarMiddle > .sapMBarPH {
+.sapMPopoverSpecialFooter .sapMBarMiddle > .sapMBarPH {
 	display: block;
 	padding: 0;
 }
 
-.sapMPopoverSpecialFooter > .sapMBarLeft,
-.sapMPopoverSpecialFooter > .sapMBarRight {
+.sapMPopoverSpecialFooter .sapMBarLeft,
+.sapMPopoverSpecialFooter .sapMBarRight {
 	display: none;
 }
 
-html[data-sap-ui-browser='ie9'] .sapMPopoverSpecialFooter > .sapMBarMiddle > .sapMBarPH {
+html[data-sap-ui-browser='ie9'] .sapMPopoverSpecialFooter .sapMBarMiddle > .sapMBarPH {
 	/*
 		In IE 9, .sapMBarPH gets style width: 100% when there's content only in the contentMiddle.
 		This style pushes the popover to maximum width. Therefore this inline style has to be overwritten by important.
@@ -51,12 +51,12 @@ html[data-sap-ui-browser='ie9'] .sapMPopoverSpecialFooter > .sapMBarMiddle > .sa
 	width: auto !important;
 }
 
-.sapMPopoverSpecialFooter > .sapMBarMiddle > .sapMBarPH > .sapMBtn {
+.sapMPopoverSpecialFooter .sapMBarMiddle > .sapMBarPH > .sapMBtn {
 	width: 50%;
 	padding-left: 0.25rem;
 }
 
-.sapMPopoverSpecialFooter > .sapMBarMiddle > .sapMBarPH {
+.sapMPopoverSpecialFooter .sapMBarMiddle > .sapMBarPH {
 
 	.sapMBtn:last-child {
 		margin-left: 0;
@@ -279,8 +279,8 @@ html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverFooterAlignArr.sapMPopoverA
 	}
 
 	/* 2.5rem height for header and footer in popover */
-	& > header:first-of-type.sapMHeader-CTX,
-	& > footer:last-of-type.sapMFooter-CTX {
+	& > div:first-of-type.sapMHeader-CTX,
+	& > div:last-of-type.sapMFooter-CTX {
 		height: 2.5rem;
 
 		.sapMBarLeft,
