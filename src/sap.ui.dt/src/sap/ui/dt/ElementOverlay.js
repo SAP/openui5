@@ -824,13 +824,11 @@ function(
 		} else {
 			var oGeometry = this.getGeometry(true);
 			if (oGeometry) {
-				if (oGeometry.domRef) {
-					bVisible = oGeometry.visible;
-				} else if (jQuery.isFunction(this.getDesignTimeMetadata().getData().isVisible)) {
-					bVisible = this.getDesignTimeMetadata().getData().isVisible(oElement);
-				} else if (oElement instanceof Control) {
-					bVisible = oElement.getVisible();
-				}
+				bVisible = oGeometry.visible;
+			} else if (jQuery.isFunction(this.getDesignTimeMetadata().getData().isVisible)) {
+				bVisible = this.getDesignTimeMetadata().getData().isVisible(oElement);
+			} else if (oElement instanceof Control) {
+				bVisible = !!oElement.getDomRef() && oElement.getVisible();
 			}
 		}
 
