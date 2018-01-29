@@ -8,14 +8,14 @@ sap.ui.require([
 	/*global QUnit */
 	"use strict";
 
-	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrders - Create Relative");
+	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrdersRTATest - Create Relative");
 
 	//*****************************************************************************
 	opaTest("Create, modify and delete within relative listbinding", function (Given, When, Then) {
 
 		Given.iStartMyUIComponent({
 			componentConfig : {
-				name : "sap.ui.core.sample.odata.v4.SalesOrders"
+				name : "sap.ui.core.sample.odata.v4.SalesOrdersRTATest"
 			}
 		});
 

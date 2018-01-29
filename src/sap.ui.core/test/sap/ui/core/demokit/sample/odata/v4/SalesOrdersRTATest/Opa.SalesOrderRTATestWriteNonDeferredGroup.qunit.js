@@ -17,7 +17,7 @@ sap.ui.require([
 
 			Given.iStartMyUIComponent({
 				componentConfig : {
-					name : "sap.ui.core.sample.odata.v4.SalesOrders"
+					name : "sap.ui.core.sample.odata.v4.SalesOrdersRTATest"
 				}
 			});
 
