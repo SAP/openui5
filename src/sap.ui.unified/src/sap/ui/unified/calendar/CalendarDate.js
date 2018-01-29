@@ -282,7 +282,13 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/date/UniversalDate'],
 		 * @returns {sap.ui.unified.calendar.CalendarDate} the calendar date corresponding to the given JavaScript Date.
 		 */
 		CalendarDate.fromLocalJSDate = function (oJSDate, sCalendarType) {
-			if (!(oJSDate instanceof Date)) {
+			// Cross frame check for a date should be performed here otherwise setDateValue would fail in OPA tests
+			// because Date object in the test is different than the Date object in the application (due to the iframe).
+			// We can use jQuery.type or this method:
+			// function isValidDate (date) {
+			//	return date && Object.prototype.toString.call(date) === "[object Date]" && !isNaN(date);
+			//}
+			if (jQuery.type(oJSDate) !== "date") {
 				throw new Error("Date parameter must be a JavaScript Date object: [" + oJSDate + "].");
 			}
 			return new CalendarDate(oJSDate.getFullYear(), oJSDate.getMonth(), oJSDate.getDate(), sCalendarType);
