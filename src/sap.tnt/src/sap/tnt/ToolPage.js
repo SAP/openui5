@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.t.ToolPage.
-sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/ResizeHandler'],
-	function (library, Control, Device, ResizeHandler) {
+sap.ui.define([
+    './library',
+    'sap/ui/core/Control',
+    'sap/ui/Device',
+    'sap/ui/core/ResizeHandler',
+    "./ToolPageRenderer"
+],
+	function(library, Control, Device, ResizeHandler, ToolPageRenderer) {
 		'use strict';
 
 		/**
