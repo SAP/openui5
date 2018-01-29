@@ -36,6 +36,7 @@ sap.ui.define([
 		},
 
 		_loadCategories: function(oEvent) {
+			var oModel = this.getModel();
 			this._loadSuppliers();
 			var oProductList = this.byId("productList");
 			this._changeNoDataTextToIndicateLoading(oProductList);
@@ -43,13 +44,27 @@ sap.ui.define([
 			oBinding.attachDataReceived(this.fnDataReceived, this);
 			var sId = oEvent.getParameter("arguments").id;
 			this._sProductId = oEvent.getParameter("arguments").productId;
-
-			this.getView().bindElement({
-				path : "/ProductCategories('" + sId + "')",
-				parameters: {
-					expand: "Products"
-				}
-			});
+			// the binding should be done after insuring that the metadata is loaded successfully
+			oModel.metadataLoaded().then(function () {
+				var oView = this.getView(),
+					sPath = "/" + this.getModel().createKey("ProductCategories", {
+					Category: sId
+				});
+				oView.bindElement({
+					path : sPath,
+					parameters: {
+						expand: "Products"
+					},
+					events: {
+						dataRequested: function () {
+							oView.setBusy(true);
+						},
+						dataReceived: function () {
+							oView.setBusy(false);
+						}
+					}
+				});
+			}.bind(this));
 		},
 
 		/**
