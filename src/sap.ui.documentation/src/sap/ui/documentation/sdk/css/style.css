@@ -61,6 +61,16 @@ pre.sapUiDocumentationAPICode,
 	background-color: #fff;
 }
 
+html:not(.sapUiMedia-StdExt-Phone) .sapUiDocumentationFooter {
+	height: 4rem;
+}
+
+.sapUiBlockLayoutSizeL:not(.sapUiBlockLayoutKeepFontSize) .sapUiDocumentationFooter > .sapUiBlockCellContent,
+.sapUiBlockLayoutSizeXL:not(.sapUiBlockLayoutKeepFontSize) .sapUiDocumentationFooter > .sapUiBlockCellContent {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+}
+
 /************************************************* Custom control styles *********************************************/
 
 /* Search */
