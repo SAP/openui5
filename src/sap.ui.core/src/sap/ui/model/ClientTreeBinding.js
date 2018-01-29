@@ -291,22 +291,16 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './TreeBinding', 'sap/ui/m
 	 * @private
 	 */
 	ClientTreeBinding.prototype.applyFilter = function(){
-		var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 		// reset previous stored filter contexts
 		this.filterInfo.aFilteredContexts = [];
 		this.filterInfo.oParentContext = {};
-		if (!sResolvedPath) {
-			return;
-		}
-		// start with binding path root
-		var oContext = this.oModel.getContext(sResolvedPath);
-		this._applyFilterRecursive(oContext);
+		this._applyFilterRecursive();
 	};
 
 	/**
 	 * Filters the tree recursively.
 	 * Performs the real filtering and stores all filtered contexts and its parent context into an array.
-	 * @param {object} oParentContext the context where to start. The children of this node context are then filtered recursively.
+	 * @param {object} [oParentContext] the context where to start. The children of this node context are then filtered recursively.
 	 * @private
 	 */
 	ClientTreeBinding.prototype._applyFilterRecursive = function(oParentContext){
@@ -319,7 +313,15 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './TreeBinding', 'sap/ui/m
 		}
 
 		this.bIsFiltering = true;
-		var aUnfilteredContexts = this.getNodeContexts(oParentContext, 0, Number.MAX_VALUE); // For client bindings: get *all* available contexts
+
+		var aUnfilteredContexts;
+		if (oParentContext) {
+			aUnfilteredContexts = this.getNodeContexts(oParentContext, 0, Number.MAX_VALUE); // For client bindings: get *all* available contexts
+		} else {
+			// Root
+			aUnfilteredContexts = this.getRootContexts(0, Number.MAX_VALUE);
+		}
+
 		this.bIsFiltering = false;
 
 		if (aUnfilteredContexts.length > 0) {

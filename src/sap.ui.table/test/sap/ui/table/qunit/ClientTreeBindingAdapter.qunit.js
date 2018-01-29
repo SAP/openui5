@@ -624,8 +624,48 @@ sap.ui.require([
 		done();
 	});
 
-	QUnit.test("getSelectedNodesCount with filter", function(assert) {
-		var done = assert.async();
+	QUnit.test("getSelectedNodesCount with single selection", function(assert) {
+		createTreeBindingAdapter("/bing/root", [], null, {
+			numberOfExpandedLevels: 1
+		});
+
+		oBinding.getContexts(0, 100);
+
+		oBinding.setSelectedIndex(1);
+		assert.equal(oBinding.getSelectedNodesCount(), 1, "Correct selected nodes count after selectAll call");
+		assert.equal(oBinding.getLength(), 12, "Correct binding length");
+	});
+
+	QUnit.test("getSelectedNodesCount with selectAll", function(assert) {
+		createTreeBindingAdapter("/bing/root", [], null, {
+			numberOfExpandedLevels: 1
+		});
+
+		oBinding.getContexts(0, 100);
+
+		oBinding.selectAll();
+		assert.equal(oBinding.getSelectedNodesCount(), 12, "Correct selected nodes count after selectAll call");
+		assert.equal(oBinding.getLength(), 12, "Correct binding length");
+	});
+
+	QUnit.test("getSelectedNodesCount with selectAll and expand", function(assert) {
+		createTreeBindingAdapter("/bing/root", [], null, {
+			numberOfExpandedLevels: 1
+		});
+
+		oBinding.getContexts(0, 100);
+
+		oBinding.selectAll();
+		assert.equal(oBinding.getSelectedNodesCount(), 12, "Correct selected nodes count after selectAll call");
+		assert.equal(oBinding.getLength(), 12, "Correct binding length");
+
+		oBinding.expand(1);
+		oBinding.getContexts(0, 100); // rebuild tree after expand
+		assert.equal(oBinding.getSelectedNodesCount(), 12, "Correct selected nodes count after expand of last node");
+		assert.equal(oBinding.getLength(), 15, "Correct binding length");
+	});
+
+	QUnit.test("getSelectedNodesCount with selectAll and filter", function(assert) {
 		createTreeBindingAdapter("/bing/root", [], null, {
 			displayRootNode: true,
 			numberOfExpandedLevels: 3
@@ -637,10 +677,33 @@ sap.ui.require([
 			operator: sap.ui.model.FilterOperator.EQ,
 			value1: "Hip-Hop"
 		}));
+
 		oBinding.selectAll();
 		assert.equal(oBinding.getSelectedNodesCount(), 2, "Correct selected nodes count after selectAll call");
 		assert.equal(oBinding.getLength(), 2, "Correct binding length");
-		done();
+	});
+
+	QUnit.test("getSelectedNodesCount with selectAll and filter and expand", function(assert) {
+		createTreeBindingAdapter("/bing/root", [], null, {
+			numberOfExpandedLevels: 1
+		});
+
+		oBinding.getContexts(0, 100);
+
+		oBinding.filter(new sap.ui.model.Filter({
+			path: "name",
+			operator: sap.ui.model.FilterOperator.Contains,
+			value1: "chuck"
+		}));
+
+		oBinding.selectAll();
+		assert.equal(oBinding.getSelectedNodesCount(), 2, "Correct selected nodes count after selectAll call");
+		assert.equal(oBinding.getLength(), 2, "Correct binding length");
+
+		oBinding.expand(1);
+		oBinding.getContexts(0, 100); // rebuild tree after expand
+		assert.equal(oBinding.getSelectedNodesCount(), 2, "Correct selected nodes count after expand of last node");
+		assert.equal(oBinding.getLength(), 3, "Correct binding length");
 	});
 
 	/**
