@@ -1904,6 +1904,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		return this;
 	};
 
+	Table.prototype.setMinAutoRowCount = function(iMinAutoRowCount) {
+		if (parseInt(iMinAutoRowCount, 10) < 1) {
+			jQuery.sap.log.error("The minAutoRowCount property must be greater than 0. The value has been set to 1.", this);
+			iMinAutoRowCount = 1;
+		}
+		this.setProperty("minAutoRowCount", iMinAutoRowCount);
+	};
+
 	Table.prototype.setRowHeight = function(iRowHeight) {
 		this.setProperty("rowHeight", iRowHeight);
 		this._iTableRowContentHeight = undefined;
@@ -3618,11 +3626,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._determineMinAutoRowCount = function() {
-		var iVisibleRowCount = this.getVisibleRowCount();
-		var iMinAutoRowCount = this.getMinAutoRowCount();
-		var iMinRowCount = iMinAutoRowCount || iVisibleRowCount || 5;
+		var iMinRowCount = this.getMinAutoRowCount();
 		if (this.getVisibleRowCountMode() == VisibleRowCountMode.Interactive && !this.bOutput) {
-			iMinRowCount = iVisibleRowCount || iMinAutoRowCount || 5;
+			iMinRowCount = this.getVisibleRowCount() || iMinRowCount;
 		}
 		return iMinRowCount;
 	};

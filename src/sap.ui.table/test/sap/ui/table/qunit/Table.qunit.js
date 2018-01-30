@@ -433,6 +433,26 @@ sap.ui.require([
 		fnError.restore(); // restoring original jQuery.sap.log.error() method, else exception is thrown
 	});
 
+	QUnit.test("MinAutoRowCount", function(assert) {
+		var oErrorLogSpy = sinon.spy(jQuery.sap.log, "error");
+
+		assert.strictEqual(oTable.getMinAutoRowCount(), 5, "The default value is correct");
+
+		oTable.setMinAutoRowCount(-1);
+		assert.ok(oErrorLogSpy.callCount === 1, "Setting to -1: Error was logged");
+		assert.strictEqual(oTable.getMinAutoRowCount(), 1, "Setting to -1: Property was set to the default value");
+
+		oTable.setMinAutoRowCount("0");
+		assert.ok(oErrorLogSpy.callCount === 2, "Setting to \"0\": Error was logged");
+		assert.strictEqual(oTable.getMinAutoRowCount(), 1, "Setting to \"0\": Value did not change");
+
+		oTable.setMinAutoRowCount(2);
+		assert.ok(oErrorLogSpy.callCount === 2, "Setting to 2: Error was not logged");
+		assert.strictEqual(oTable.getMinAutoRowCount(), 2, "Setting to 2: New value is set");
+
+		oErrorLogSpy.restore();
+	});
+
 	QUnit.test("EnableColumnReordering", function(assert) {
 		assert.expect(1);
 		oTable.setEnableColumnReordering(true);
