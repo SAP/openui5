@@ -74,13 +74,6 @@ sap.ui.define([
 
 		if (oOverlay.hasStyleClass("sapUiRtaPersAdd")) {
 			var bAddButton = oOverlay.hasStyleClass("sapUiRtaPersAdd") && oOverlay.$().children(".sapUiRtaPersAddIconOuter").length <= 0;
-			var oParentControl = oOverlay.getElement().getParent();
-			var oParentOverlay = OverlayRegistry.getOverlay(oParentControl);
-			if (oParentControl.getMetadata().getName() === "sap.uxap.ObjectPageLayout") {
-				if (oParentOverlay.hasStyleClass("sapUiRtaPersAddTop") && oParentOverlay.getAggregationOverlay("sections").$().children(".sapUiRtaPersAddIconOuter").length > -1) {
-					oParentControl.$("sectionsContainer").addClass("sapUiRtaPaddingTop");
-				}
-			}
 			if (bAddButton) {
 				fnAddButton(oOverlay, oOverlay.$(), true, oOverlay.getDesignTimeMetadata().getName().singular);
 			}
@@ -123,8 +116,15 @@ sap.ui.define([
 	EasyAdd.prototype._isEditable = function(oOverlay) {
 		var bIsEditable = AdditionalElementsPlugin.prototype._isEditable.apply(this, arguments);
 		if (oOverlay._oAddButton) {
-			var sOverlayIsSibling = oOverlay.hasStyleClass("sapUiRtaPersAddTop") ? "asChild" : "asSibling";
+			var bIsLayout = oOverlay.hasStyleClass("sapUiRtaPersAddTop");
+			var sOverlayIsSibling = bIsLayout ? "asChild" : "asSibling";
 			oOverlay._oAddButton.setEnabled(bIsEditable[sOverlayIsSibling]);
+			if (bIsLayout) {
+				var oLayout = oOverlay.getElement();
+				oLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+					oLayout.$("sectionsContainer").addClass("sapUiRtaPaddingTop");
+				});
+			}
 		}
 		return bIsEditable;
 	};
