@@ -2,7 +2,7 @@
 		xmlns="sap.m"
 		xmlns:l="sap.ui.layout"
 		xmlns:core="sap.ui.core">
-	<l:BlockLayoutCell	class="demokitInitialPagesColorPatternFContrast">
+	<l:BlockLayoutCell	class="demokitInitialPagesColorPatternFContrast sapUiDocumentationFooter">
 		<FlexBox
 				alignItems="{= ${device>/system/phone} ? 'Start' : 'Center' }"
 				justifyContent="SpaceBetween"
@@ -12,7 +12,8 @@
 				<Image
 						src="./resources/sap/ui/documentation/sdk/images/logo_sap.png"
 						densityAware="false"
-						height="2.5rem">
+						width="4.25rem"
+						height="2rem">
 				</Image>
 				<FlexBox
 						direction ="{= ${device>/system/phone} ? 'Column' : 'Row' }"
