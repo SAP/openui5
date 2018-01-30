@@ -4,23 +4,41 @@
 
 // Provides control sap.uxap.ObjectPageLayout.
 sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/core/ResizeHandler",
-	"sap/ui/core/Control",
-	"sap/ui/Device",
-	"sap/ui/core/delegate/ScrollEnablement",
-	"./ObjectPageSectionBase",
-	"./ObjectPageSection",
-	"./ObjectPageSubSection",
-	"./ObjectPageHeaderContent",
-	"./LazyLoading",
-	"./ObjectPageLayoutABHelper",
-	"./ThrottledTaskHelper",
-	"sap/ui/core/ScrollBar",
-	"sap/ui/core/library",
-	"./library",
-	"jquery.sap.keycodes"
-], function(jQuery, ResizeHandler, Control, Device, ScrollEnablement, ObjectPageSectionBase, ObjectPageSection, ObjectPageSubSection, ObjectPageHeaderContent, LazyLoading, ABHelper, ThrottledTask, ScrollBar, coreLibrary, library) {
+    "jquery.sap.global",
+    "sap/ui/core/ResizeHandler",
+    "sap/ui/core/Control",
+    "sap/ui/Device",
+    "sap/ui/core/delegate/ScrollEnablement",
+    "./ObjectPageSectionBase",
+    "./ObjectPageSection",
+    "./ObjectPageSubSection",
+    "./ObjectPageHeaderContent",
+    "./LazyLoading",
+    "./ObjectPageLayoutABHelper",
+    "./ThrottledTaskHelper",
+    "sap/ui/core/ScrollBar",
+    "sap/ui/core/library",
+    "./library",
+    "./ObjectPageLayoutRenderer",
+    "jquery.sap.keycodes"
+], function(
+    jQuery,
+	ResizeHandler,
+	Control,
+	Device,
+	ScrollEnablement,
+	ObjectPageSectionBase,
+	ObjectPageSection,
+	ObjectPageSubSection,
+	ObjectPageHeaderContent,
+	LazyLoading,
+	ABHelper,
+	ThrottledTask,
+	ScrollBar,
+	coreLibrary,
+	library,
+	ObjectPageLayoutRenderer
+) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel

@@ -3,7 +3,7 @@
  */
 
 // Provides control sap.uxap.ObjectPageHeaderActionButton.
-sap.ui.define(["sap/m/Button", "./library"], function (Button, library) {
+sap.ui.define(["sap/m/Button", "./library", "./ObjectPageHeaderActionButtonRenderer"], function(Button, library, ObjectPageHeaderActionButtonRenderer) {
 	"use strict";
 
 	/**

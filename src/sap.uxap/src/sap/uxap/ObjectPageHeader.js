@@ -4,22 +4,38 @@
 
 // Provides control sap.uxap.ObjectPageHeader.
 sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/core/Control",
-	"sap/ui/core/IconPool",
-	"sap/ui/core/CustomData",
-	"sap/ui/Device",
-	"sap/m/Breadcrumbs",
-	"./ObjectPageHeaderActionButton",
-	"sap/ui/core/ResizeHandler",
-	"sap/m/Button",
-	"sap/m/ActionSheet",
-	"./ObjectImageHelper",
-	"./ObjectPageHeaderContent",
-	"./library",
-	"sap/m/library"
-], function (jQuery, Control, IconPool, CustomData, Device, Breadcrumbs, ObjectPageHeaderActionButton,
-			 ResizeHandler, Button, ActionSheet, ObjectImageHelper, ObjectPageHeaderContent, library, mobileLibrary) {
+    "jquery.sap.global",
+    "sap/ui/core/Control",
+    "sap/ui/core/IconPool",
+    "sap/ui/core/CustomData",
+    "sap/ui/Device",
+    "sap/m/Breadcrumbs",
+    "./ObjectPageHeaderActionButton",
+    "sap/ui/core/ResizeHandler",
+    "sap/m/Button",
+    "sap/m/ActionSheet",
+    "./ObjectImageHelper",
+    "./ObjectPageHeaderContent",
+    "./library",
+    "sap/m/library",
+    "./ObjectPageHeaderRenderer"
+], function(
+    jQuery,
+	Control,
+	IconPool,
+	CustomData,
+	Device,
+	Breadcrumbs,
+	ObjectPageHeaderActionButton,
+	ResizeHandler,
+	Button,
+	ActionSheet,
+	ObjectImageHelper,
+	ObjectPageHeaderContent,
+	library,
+	mobileLibrary,
+	ObjectPageHeaderRenderer
+) {
 	"use strict";
 
 	// shortcut for sap.uxap.Importance
