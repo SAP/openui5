@@ -21,6 +21,7 @@ sap.ui.define([
 		},
 
 		onInit: function () {
+			this._router = this.getRouter();
 			var oViewModel = new JSONModel({
 				welcomeCarouselShipping: 'img/ShopCarouselShipping.jpg',
 				welcomeCarouselInviteFriend: 'img/ShopCarouselInviteFriend.jpg',
@@ -94,7 +95,7 @@ sap.ui.define([
 			var oContext = oEvent.getSource().getBindingContext("view");
 			var sCategoryId = oContext.getProperty("Product/Category");
 			var sProductId = oContext.getProperty("Product/ProductId");
-			this.getOwnerComponent().getRouter().navTo("product", {
+			this._router.navTo("product", {
 				id: sCategoryId,
 				productId: sProductId
 			});
