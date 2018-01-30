@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.core.mvc.View.
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Control', 'sap/ui/core/mvc/Controller', 'sap/ui/core/library'],
-	function(jQuery, ManagedObject, Control, Controller, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/base/ManagedObject',
+    'sap/ui/core/Control',
+    'sap/ui/core/mvc/Controller',
+    'sap/ui/core/library',
+    "./ViewRenderer"
+],
+	function(jQuery, ManagedObject, Control, Controller, library, ViewRenderer) {
 	"use strict";
 
 

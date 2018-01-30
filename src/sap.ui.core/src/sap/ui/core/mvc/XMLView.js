@@ -3,8 +3,32 @@
  */
 
 // Provides control sap.ui.core.mvc.XMLView.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/core/library', './View', 'sap/ui/model/resource/ResourceModel', 'sap/ui/base/ManagedObject', 'sap/ui/core/Control', 'sap/ui/core/RenderManager', 'sap/ui/core/cache/CacheManager', 'jquery.sap.xml', 'jquery.sap.script'],
-	function(jQuery, XMLTemplateProcessor, library, View, ResourceModel, ManagedObject, Control, RenderManager, Cache/* , jQuerySap */) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/XMLTemplateProcessor',
+    'sap/ui/core/library',
+    './View',
+    'sap/ui/model/resource/ResourceModel',
+    'sap/ui/base/ManagedObject',
+    'sap/ui/core/Control',
+    'sap/ui/core/RenderManager',
+    'sap/ui/core/cache/CacheManager',
+    "./XMLViewRenderer",
+    'jquery.sap.xml',
+    'jquery.sap.script'
+],
+	function(
+	    jQuery,
+		XMLTemplateProcessor,
+		library,
+		View,
+		ResourceModel,
+		ManagedObject,
+		Control,
+		RenderManager,
+		Cache/* , jQuerySap */,
+		XMLViewRenderer
+	) {
 	"use strict";
 
 	// actual constants

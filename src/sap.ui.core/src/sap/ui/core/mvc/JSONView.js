@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.core.mvc.JSONView.
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/library', 'sap/ui/model/resource/ResourceModel', './View'],
-	function(jQuery, ManagedObject, library, ResourceModel, View) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/base/ManagedObject',
+    'sap/ui/core/library',
+    'sap/ui/model/resource/ResourceModel',
+    './View',
+    "./JSONViewRenderer"
+],
+	function(jQuery, ManagedObject, library, ResourceModel, View, JSONViewRenderer) {
 	"use strict";
 
 	// shortcut for enum(s)
