@@ -212,6 +212,34 @@
 			assert.ok(jQuery.sap.byId(this.oResponsivePopover.getId() + "-closeButton").length === 1, "CloseButton should be rendered");
 		});
 
+		QUnit.test("Close button should not be forwarded to an internal aggregation Toolbar", function (assert) {
+			this.stub(sap.ui.Device, "system", { phone: true, desktop: false });
+
+			var oToolbar = new sap.m.Toolbar(),
+				oResponsivePopover = new sap.m.ResponsivePopover({
+					showHeader: false,
+					content: [
+						new sap.m.NavContainer( {
+							pages: [
+								new sap.m.Page({
+									customHeader: oToolbar
+								})
+							]
+						})
+					]
+				});
+
+			// Open the ResponsivePopover
+			oResponsivePopover.openBy(this.oButton);
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+
+			assert.ok(true, "does not throw an exception");
+			assert.strictEqual(oToolbar.getContent().length, 0, "no content should be added to the Toolbar");
+
+			oResponsivePopover.destroy();
+		});
+
 		QUnit.test("Getter for begin/end button", function(assert) {
 			// Act and Arrange
 			this.stub(sap.ui.Device, "system", { phone: true });
