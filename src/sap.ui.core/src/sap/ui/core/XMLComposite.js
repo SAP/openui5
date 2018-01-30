@@ -97,6 +97,9 @@ sap.ui.define([
 			} else if (mAggregations.hasOwnProperty(aPath[0])) {
 				var oAggregation = mAggregations[aPath[0]], sControlName = oMetadata.getName(), sNamespace = sControlName.slice(0, sControlName.lastIndexOf("."));
 				var oAggregationModel, oContent = oElement.getElementsByTagNameNS(sNamespace, aPath[0])[0];
+				if (!oContent) {
+					return null;
+				}
 
 				if (oAggregation.multiple) {
 					// return a list of context
