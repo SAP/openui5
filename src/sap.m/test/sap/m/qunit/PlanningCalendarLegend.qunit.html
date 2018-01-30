@@ -117,58 +117,6 @@
 	<!-- Test functions -->
 	<script>
 		QUnit.module("API");
-		QUnit.test("getStandardItems initial default value", function (assert) {
-			//Act
-			var oPCLegend = new sap.m.PlanningCalendarLegend();
-			//Assert
-			assert.deepEqual(oPCLegend.getStandardItems(), ['Today', 'Selected', 'WorkingDay', 'NonWorkingDay'], "Default value");
-
-			//Cleanup
-			oPCLegend.destroy();
-		});
-
-		QUnit.test("setStandardItems with undefined/null", function (assert) {
-			//Prepare
-			var oPCLegend = new sap.m.PlanningCalendarLegend();
-
-			//Act
-			oPCLegend.setStandardItems();
-
-			//Assert
-			assert.deepEqual(oPCLegend.getStandardItems(), ['Today', 'Selected', 'WorkingDay', 'NonWorkingDay'], "Should return the default value");
-
-			//Cleanup
-			oPCLegend.destroy();
-		});
-
-		QUnit.test("setStandardItems with wrong type", function (assert) {
-			//Prepare
-			var oPCLegend = new sap.m.PlanningCalendarLegend();
-
-			//Act && Assert
-			assert.throws(function () {
-						oPCLegend.setStandardItems('Tomorrow');
-					}, new Error("Invalid value 'Tomorrow'. Property standardItems must contain values from sap.ui.unified.StandardCalendarLegendItem."),
-					"Setting value not part of the enumeration sap.ui.unified.StandardCalendarLegendItem should throw error");//'Tomorrow' is invalid.
-
-			//Cleanup
-			oPCLegend.destroy();
-		});
-
-		QUnit.test("setStandardItems", function (assert) {
-			//Prepare
-			var oPCLegend = new sap.m.PlanningCalendarLegend(),
-					aStandardItems = [sap.ui.unified.StandardCalendarLegendItem.Today, sap.ui.unified.StandardCalendarLegendItem.Selected];
-
-			//Act
-			oPCLegend.setStandardItems(aStandardItems);
-
-			//Assert
-			assert.deepEqual(oPCLegend.getStandardItems(), aStandardItems, "Should return the same items");
-
-			//Cleanup
-			oPCLegend.destroy();
-		});
 
 		QUnit.test("setColumnWidth - any value", function (assert) {
 			//Act

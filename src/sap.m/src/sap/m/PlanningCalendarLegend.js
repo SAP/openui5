@@ -3,12 +3,10 @@
  */
 
 // Provides control sap.m.PlanningCalendarLegend.
-sap.ui.define(['sap/ui/unified/CalendarLegend', './library', 'sap/ui/unified/library'],
-	function(CalendarLegend, library, unifiedLibrary) {
+sap.ui.define(['sap/ui/unified/CalendarLegend'],
+	function(CalendarLegend) {
 		"use strict";
 
-		// shortcut for sap.ui.unified.StandardCalendarLegendItem
-		var StandardCalendarLegendItem = unifiedLibrary.StandardCalendarLegendItem;
 
 		/**
 		 * Constructor for a new <code>PlanningCalendarLegend</code>.
@@ -20,7 +18,7 @@ sap.ui.define(['sap/ui/unified/CalendarLegend', './library', 'sap/ui/unified/lib
 		 * A legend for the {@link sap.m.PlanningCalendar} that displays the special dates and appointments in colors with their corresponding description.
 		 * The <code>PlanningCalendarLegend</code> extends {@link sap.ui.unified.CalendarLegend} and
 		 * overwrites the default value for property <code>columnWidth</code> to <code>auto</code>
-		 * @extends sap.ui.core.Control
+		 * @extends sap.ui.unified.CalendarLegend
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -33,14 +31,8 @@ sap.ui.define(['sap/ui/unified/CalendarLegend', './library', 'sap/ui/unified/lib
 		 */
 		var PlanningCalendarLegend = CalendarLegend.extend("sap.m.PlanningCalendarLegend", /** @lends sap.m.PlanningCalendarLegend.prototype */ { metadata : {
 
-			library : "sap.ui.unified",
+			library : "sap.m",
 			properties: {
-				/**
-				 * Determines the standard items related to the calendar days, such as today, selected, working, non-working.
-				 * Values must be one of <code>sap.ui.unified.StandardCalendarLegendItem</code>.
-				 */
-				standardItems: { type: "string[]", group: "Misc", defaultValue: ['Today', 'Selected', 'WorkingDay', 'NonWorkingDay'] },
-
 				/**
 				 * Defines the text displayed in the header of the items list. It is commonly related to the calendar days.
 				 */
@@ -75,23 +67,6 @@ sap.ui.define(['sap/ui/unified/CalendarLegend', './library', 'sap/ui/unified/lib
 				sWidth = PlanningCalendarLegend._COLUMN_WIDTH_DEFAULT;
 			}
 			return this.setProperty("columnWidth", sWidth);
-		};
-
-		PlanningCalendarLegend.prototype.setStandardItems = function(aValues) {
-			var i;
-
-			if (aValues) {
-				aValues = this.validateProperty("standardItems", aValues);
-				for (i = 0; i < aValues.length; i++) {
-					if (!StandardCalendarLegendItem[aValues[i]]) {
-						throw new Error("Invalid value '" + aValues[i] + "'. Property standardItems must contain values from sap.ui.unified.StandardCalendarLegendItem.");
-					}
-				}
-			}
-
-			this.setProperty("standardItems", aValues);
-			CalendarLegend.prototype._addStandardItems.call(this, this.getStandardItems(), true);
-			return this;
 		};
 
 		return PlanningCalendarLegend;
