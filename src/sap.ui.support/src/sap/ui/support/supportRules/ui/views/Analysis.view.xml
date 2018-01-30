@@ -70,9 +70,9 @@
 							<t:rowActionTemplate>
 									<t:RowAction>
 										<t:items>
-											<t:RowActionItem icon="sap-icon://edit" press="editRule"  visible="{= ${libName} === 'temporary'}" />
-											<t:RowActionItem icon="sap-icon://delete" press="deleteTemporaryRule" visible="{= ${libName} === 'temporary'}" />
-											<t:RowActionItem icon="sap-icon://copy" press="duplicateRule" visible="{= ${libName} !== 'temporary' &amp;&amp; ${type} !== 'lib'}" />
+											<t:RowActionItem icon="sap-icon://edit" text="Edit" press="editRule"  visible="{= ${libName} === 'temporary'}" />
+											<t:RowActionItem icon="sap-icon://delete" text="Delete" press="deleteTemporaryRule" visible="{= ${libName} === 'temporary'}" />
+											<t:RowActionItem icon="sap-icon://copy" text="Copy" press="duplicateRule" visible="{= ${libName} !== 'temporary' &amp;&amp; ${type} !== 'lib'}" />
 										</t:items>
 									</t:RowAction>
 							</t:rowActionTemplate>
