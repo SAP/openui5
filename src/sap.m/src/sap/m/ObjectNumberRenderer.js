@@ -67,7 +67,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library'],
 			});
 		}
 
-
 		oRm.write(">");
 
 		this.renderText(oRm, oON);
@@ -101,28 +100,13 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library'],
 	};
 
 	ObjectNumberRenderer.renderHiddenARIAElement = function(oRm, oON) {
-		var sARIAStateText = "",
-			oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		if (oON.getState() == ValueState.None) {
 			return;
 		}
 
 		oRm.write("<span id='" + oON.getId() + "-state' class='sapUiInvisibleText' aria-hidden='true'>");
-
-		switch (oON.getState()) {
-			case ValueState.Error:
-				sARIAStateText = oRB.getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR");
-				break;
-			case ValueState.Warning:
-				sARIAStateText = oRB.getText("OBJECTNUMBER_ARIA_VALUE_STATE_WARNING");
-				break;
-			case ValueState.Success:
-				sARIAStateText = oRB.getText("OBJECTNUMBER_ARIA_VALUE_STATE_SUCCESS");
-				break;
-		}
-
-		oRm.write(sARIAStateText);
+		oRm.write(oON._getStateText());
 		oRm.write("</span>");
 	};
 
