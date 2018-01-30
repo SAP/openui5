@@ -4,12 +4,13 @@
 
 // Provides control sap.f.Avatar.
 sap.ui.define([
-	"jquery.sap.global",
-	"./library",
-	"sap/ui/core/Control",
-	"sap/ui/core/IconPool",
-	"jquery.sap.keycodes"
-], function (jQuery, library, Control, IconPool) {
+    "jquery.sap.global",
+    "./library",
+    "sap/ui/core/Control",
+    "sap/ui/core/IconPool",
+    "./AvatarRenderer",
+    "jquery.sap.keycodes"
+], function(jQuery, library, Control, IconPool, AvatarRenderer) {
 	"use strict";
 
 	// shortcut for sap.f.AvatarType

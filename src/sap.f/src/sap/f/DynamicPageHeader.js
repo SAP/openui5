@@ -3,13 +3,23 @@
  */
 
 // Provides control sap.f.DynamicPageHeader.
-sap.ui.define(["./library",
-	"sap/ui/Device",
-	"sap/ui/core/Control",
-	"sap/m/library",
-	"sap/m/ToggleButton",
-	"sap/m/Button"
-], function (library, Device, Control, mobileLibrary, ToggleButton, Button) {
+sap.ui.define([
+    "./library",
+    "sap/ui/Device",
+    "sap/ui/core/Control",
+    "sap/m/library",
+    "sap/m/ToggleButton",
+    "sap/m/Button",
+    "./DynamicPageHeaderRenderer"
+], function(
+    library,
+	Device,
+	Control,
+	mobileLibrary,
+	ToggleButton,
+	Button,
+	DynamicPageHeaderRenderer
+) {
 		"use strict";
 
 		// shortcut for sap.m.ButtonType

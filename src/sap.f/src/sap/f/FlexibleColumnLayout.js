@@ -4,16 +4,27 @@
 
 // Provides control sap.f.FlexibleColumnLayout.
 sap.ui.define([
-	"jquery.sap.global",
-	"./library",
-	"sap/ui/Device",
-	"sap/ui/core/ResizeHandler",
-	"sap/ui/core/Control",
-	"sap/m/library",
-	"sap/m/Button",
-	"sap/m/NavContainer",
-	"jquery.sap.events"
-], function (jQuery, library, Device, ResizeHandler, Control, mobileLibrary, Button, NavContainer) {
+    "jquery.sap.global",
+    "./library",
+    "sap/ui/Device",
+    "sap/ui/core/ResizeHandler",
+    "sap/ui/core/Control",
+    "sap/m/library",
+    "sap/m/Button",
+    "sap/m/NavContainer",
+    "./FlexibleColumnLayoutRenderer",
+    "jquery.sap.events"
+], function(
+    jQuery,
+	library,
+	Device,
+	ResizeHandler,
+	Control,
+	mobileLibrary,
+	Button,
+	NavContainer,
+	FlexibleColumnLayoutRenderer
+) {
 	"use strict";
 
 

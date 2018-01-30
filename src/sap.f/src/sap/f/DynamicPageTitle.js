@@ -4,14 +4,24 @@
 
 // Provides control sap.f.DynamicPageTitle.
 sap.ui.define([
-	"./library",
-	"sap/ui/core/Control",
-	"sap/ui/base/ManagedObjectObserver",
-	"sap/m/Toolbar",
-	"sap/m/ToolbarSeparator",
-	"sap/m/OverflowToolbar",
-	"sap/m/Button"
-], function (library, Control, ManagedObjectObserver, Toolbar, ToolbarSeparator, OverflowToolbar, Button) {
+    "./library",
+    "sap/ui/core/Control",
+    "sap/ui/base/ManagedObjectObserver",
+    "sap/m/Toolbar",
+    "sap/m/ToolbarSeparator",
+    "sap/m/OverflowToolbar",
+    "sap/m/Button",
+    "./DynamicPageTitleRenderer"
+], function(
+    library,
+	Control,
+	ManagedObjectObserver,
+	Toolbar,
+	ToolbarSeparator,
+	OverflowToolbar,
+	Button,
+	DynamicPageTitleRenderer
+) {
 	"use strict";
 
 	// shortcut for sap.f.DynamicPageTitleArea

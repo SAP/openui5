@@ -2,30 +2,34 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Control",
-	"sap/ui/base/ManagedObject",
-	"sap/f/library",
-	"sap/f/DynamicPage",
-	"sap/f/DynamicPageTitle",
-	"sap/f/DynamicPageHeader",
-	"sap/m/OverflowToolbar",
-	"sap/m/ActionSheet",
-	"./SemanticTitle",
-	"./SemanticFooter",
-	"./SemanticShareMenu",
-	"./SemanticConfiguration"
-], function(Control,
-			ManagedObject,
-			library,
-			DynamicPage,
-			DynamicPageTitle,
-			DynamicPageHeader,
-			OverflowToolbar,
-			ActionSheet,
-			SemanticTitle,
-			SemanticFooter,
-			SemanticShareMenu,
-			SemanticConfiguration) {
+    "sap/ui/core/Control",
+    "sap/ui/base/ManagedObject",
+    "sap/f/library",
+    "sap/f/DynamicPage",
+    "sap/f/DynamicPageTitle",
+    "sap/f/DynamicPageHeader",
+    "sap/m/OverflowToolbar",
+    "sap/m/ActionSheet",
+    "./SemanticTitle",
+    "./SemanticFooter",
+    "./SemanticShareMenu",
+    "./SemanticConfiguration",
+    "./SemanticPageRenderer"
+], function(
+    Control,
+	ManagedObject,
+	library,
+	DynamicPage,
+	DynamicPageTitle,
+	DynamicPageHeader,
+	OverflowToolbar,
+	ActionSheet,
+	SemanticTitle,
+	SemanticFooter,
+	SemanticShareMenu,
+	SemanticConfiguration,
+	SemanticPageRenderer
+) {
 	"use strict";
 
 	// shortcut for sap.f.DynamicPageTitleArea
