@@ -222,14 +222,6 @@ sap.ui.define([
 						oData.shortDescription = oEntity.description;
 					}
 
-					// make intro text active if a documentation link is set
-					if (oEntity.docuLink) {
-						oData.show.introLink = true;
-						oData.docuLink = oEntity.docuLink.replace("docs/guide", "topic").replace(/\.html$/, "");
-					} else {
-						oData.show.introLink = false;
-					}
-
 					if (!oData.baseName) {
 						oData.baseName = oEntity.name;
 					}
@@ -240,8 +232,21 @@ sap.ui.define([
 
 				// apply entity related stuff
 				oData.show.samples = bShouldShowSamplesSection;
+				oData.show.introLink = false;
 				oData.count.samples = iSamplesCount;
 				oData.entity = oEntity;
+
+				if (oDoc) {
+					// make intro text active if a documentation link is set
+					if (oDoc.docuLink) {
+						oData.show.introLink = true;
+						oData.docuLink = "#/topic/" + oDoc.docuLink;
+						oData.docuLinkText = oDoc.docuLinkText;
+					}
+
+					oData.uxGuidelinesLink = oDoc.uxGuidelinesLink;
+					oData.uxGuidelinesLinkText = oDoc.uxGuidelinesLinkText;
+				}
 
 				// done
 				return oData;
@@ -260,6 +265,9 @@ sap.ui.define([
 					shortDescription: (oDoc) ? this._formatDeprecatedDescription(oDoc.deprecation) : null,
 					description: (oDoc) ? this._wrapInSpanTag(oDoc.doc) : null,
 					docuLink: null,
+					docuLinkText: null,
+					uxGuidelinesLink: null,
+					uxGuidelinesLinkText: null,
 					values: oDoc ? oDoc.values : [],
 					show: {
 						baseType: (oDoc) ? !!oDoc.baseType : false,
