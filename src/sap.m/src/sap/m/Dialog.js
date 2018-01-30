@@ -927,7 +927,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		Dialog.prototype._createHeader = function () {
 			if (!this._header) {
 				// set parent of header to detect changes on title
-				this._header = new Bar(this.getId() + "-header").addStyleClass("sapMDialogTitle");
+				this._header = new Bar(this.getId() + "-header");
 				this._header._setRootAccessibilityRole("heading");
 				this.setAggregation("_header", this._header, false);
 			}
@@ -1214,7 +1214,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			var oCustomHeader = this.getCustomHeader();
 
 			if (oCustomHeader) {
-				return oCustomHeader;
+				return oCustomHeader._setRootAccessibilityRole("heading");
 			} else {
 				var bShowHeader = this.getShowHeader();
 
@@ -1345,7 +1345,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 */
 		Dialog.prototype._getToolbar = function () {
 			if (!this._oToolbar) {
-				this._oToolbar = new AssociativeOverflowToolbar(this.getId() + "-footer").addStyleClass("sapMTBNoBorders").applyTagAndContextClassFor("footer");
+				this._oToolbar = new AssociativeOverflowToolbar(this.getId() + "-footer").addStyleClass("sapMTBNoBorders");
 				this._oToolbar._isControlsInfoCached = function () {
 					return false;
 				};
@@ -1481,13 +1481,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				this._header.addContentMiddle(this._headerTitle);
 			}
 			return this;
-		};
-
-		Dialog.prototype.setCustomHeader = function (oCustomHeader) {
-			if (oCustomHeader) {
-				oCustomHeader.addStyleClass("sapMDialogTitle");
-			}
-			this.setAggregation("customHeader", oCustomHeader);
 		};
 
 		Dialog.prototype.setState = function (sState) {

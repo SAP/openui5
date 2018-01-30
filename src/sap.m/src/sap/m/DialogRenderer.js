@@ -35,14 +35,6 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 				bDraggable = oControl.getDraggable(),
 				oValueStateText = oControl.getAggregation("_valueState");
 
-			if (oHeader) {
-				oHeader.applyTagAndContextClassFor("header");
-			}
-
-			if (oSubHeader) {
-				oSubHeader.applyTagAndContextClassFor("subheader");
-			}
-
 			// write the HTML into the render manager
 			// the initial size of the dialog have to be 0, because if there is a large dialog content the initial size can be larger than the html's height (scroller)
 			// The scroller will make the initial window width smaller and in the next recalculation the maxWidth will be larger.
@@ -154,12 +146,23 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 			}
 
 			if (oHeader) {
+				oHeader._applyContextClassFor("header");
+				oRm.write("<header");
+				oRm.addClass("sapMDialogTitle");
+				oRm.writeClasses();
+				oRm.write(">");
 				oRm.renderControl(oHeader);
+				oRm.write("</header>");
 			}
 
 			if (oSubHeader) {
-				oSubHeader.addStyleClass("sapMDialogSubHeader");
+				oSubHeader._applyContextClassFor("subheader");
+				oRm.write("<header");
+				oRm.addClass("sapMDialogSubHeader");
+				oRm.writeClasses();
+				oRm.write(">");
 				oRm.renderControl(oSubHeader);
+				oRm.write("</header>");
 			}
 
 			if (oValueStateText) {
@@ -187,7 +190,13 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 			oRm.write("</section>");
 
 			if (!(noToolbarAndNobuttons || emptyToolbarAndNoButtons)) {
+				oRm.write("<footer");
+				oRm.addClass("sapMDialogFooter");
+				oRm.writeClasses();
+				oRm.write(">");
+				oControl._oToolbar._applyContextClassFor("footer");
 				oRm.renderControl(oControl._oToolbar);
+				oRm.write("</footer>");
 			}
 
 			if (sap.ui.Device.system.desktop) {

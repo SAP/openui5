@@ -823,8 +823,8 @@
 				this.clock.tick(500);
 
 				// Assert
-				var dialogHeaderId = oDialog.getDomRef('header').getAttribute('id');
-				var subHeaderId = oDialog.$().find('.sapMDialogSubHeader').attr('id');
+				var dialogHeaderId = oDialog.$().find('header > .sapMBar').attr('id');
+				var subHeaderId = oDialog.$().find('.sapMDialogSubHeader > .sapMBar').attr('id');
 				var dialogAriaLabelledBy = oDialog.getAriaLabelledBy();
 				assert.strictEqual(oDialog.getDomRef().getAttribute('aria-labelledby'), dialogHeaderId + ' ' + subHeaderId +
 						' ' + TEXT_ID);
