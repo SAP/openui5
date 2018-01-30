@@ -84,6 +84,7 @@ function(
 		}, this);
 
 		this.oSection.setVisible(true);
+		sap.ui.getCore().applyChanges();
 	});
 
 });
