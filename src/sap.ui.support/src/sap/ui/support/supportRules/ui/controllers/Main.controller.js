@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/support/supportRules/WCBChannels",
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/Storage",
-	"sap/ui/thirdparty/URI"
-], function (Controller, JSONModel, CommunicationBus, SharedModel, channelNames, constants, storage, URI) {
+	"sap/ui/thirdparty/URI",
+	"sap/m/library"
+], function (Controller, JSONModel, CommunicationBus, SharedModel, channelNames, constants, storage, URI, mLibrary) {
 	"use strict";
 
 	return Controller.extend("sap.ui.support.supportRules.ui.controllers.Main", {
@@ -153,21 +154,55 @@ sap.ui.define([
 			this.ensureOpened();
 		},
 
-		goToWiki: function () {
-			var url,
-				version = "",
-				fullVersion = sap.ui.getVersionInfo().version,
-				majorVersion = jQuery.sap.Version(fullVersion).getMajor(),
-				minorVersion = jQuery.sap.Version(fullVersion).getMinor();
+		_pingUrl: function (sUrl) {
+			return jQuery.ajax({
+				type: "HEAD",
+				async:true,
+				context: this,
+				url: sUrl
+			});
+		},
 
-			if (minorVersion % 2 !== 0) {
-				minorVersion--;
+		/**
+		 * Pings the passed url for checking that this is valid path and if the ping is
+		 * success redirects to passed url. If something goes wrong it fallback
+		 * to default public url
+		 * @param sUrl URL that needs to be ping and redirect to.
+		 * @private
+		 */
+		_redirectToUrlWithFallback:function (sUrl) {
+			this._pingUrl(sUrl).then(function success() {
+				mLibrary.URLHelper.redirect(sUrl, true);
+			}, function error() {
+				jQuery.sap.log.info("Support Assistant tried to load documentation link in " + sUrl + "but fail");
+				sUrl = "https://ui5.sap.com/#/topic/57ccd7d7103640e3a187ed55e1d2c163";
+				mLibrary.URLHelper.redirect(sUrl, true);
+			});
+		},
+
+		goToWiki: function () {
+			var sUrl = "",
+				sVersion = "",
+				sFullVersion = sap.ui.getVersionInfo().version,
+				iMajorVersion = jQuery.sap.Version(sFullVersion).getMajor(),
+				iMinorVersion = jQuery.sap.Version(sFullVersion).getMinor(),
+				sOrigin = window.location.origin;
+
+			//This check is to make sure that version is even. Example: 1.53 will back down to 1.52
+			// This is used to generate the correct path to demokit
+			if (iMinorVersion % 2 !== 0) {
+				iMinorVersion--;
 			}
 
-			version += String(majorVersion) + String(minorVersion);
-			// TODO: add right path to supprot assitan section when documentation is publicly released (1.48).
-			url = "https://help.sap.com/viewer/DRAFT/OpenUI5_" + version + "/615d9e4aaa34447fbd4aa5f19dfde9b8.html";
-			window.open(url, '_blank');
+			sVersion += String(iMajorVersion) + "." + String(iMinorVersion);
+
+			if (sOrigin.indexOf("veui5infra") !== -1) {
+				sUrl = sOrigin + "/sapui5-sdk-internal/#/topic/57ccd7d7103640e3a187ed55e1d2c163";
+			} else {
+				sUrl = sOrigin + "/demokit-" + sVersion + "/#/topic/57ccd7d7103640e3a187ed55e1d2c163";
+			}
+
+			this._redirectToUrlWithFallback(sUrl);
 		},
 
 		setRulesLabel: function (libs) {

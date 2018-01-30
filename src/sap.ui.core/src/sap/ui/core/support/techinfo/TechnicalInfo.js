@@ -72,7 +72,7 @@ sap.ui.define([
 		 *  Opens the support tools online help in a new tab
 		 */
 		onShowHelp: function () {
-			mobileLibrary.URLHelper.redirect("https://sapui5.hana.ondemand.com/#docs/guide/37a34cc084014bcdb1d13e6c0976042a.html", true);
+			mobileLibrary.URLHelper.redirect("https://ui5.sap.com/#/topic/616a3ef07f554e20a3adf749c11f64e9.html#loio616a3ef07f554e20a3adf749c11f64e9", true);
 		},
 
 		/**
