@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/m/ToolbarRenderer", "sap/ui/core/Renderer", "sap/m/BarInPageEnabler", "./AnchorBar", "./library"],
-	function (ToolbarRenderer, Renderer, BarInPageEnabler, AnchorBar, library) {
+sap.ui.define(["sap/m/ToolbarRenderer", "sap/ui/core/Renderer", "sap/m/BarInPageEnabler", "./library"],
+	function (ToolbarRenderer, Renderer, BarInPageEnabler, library) {
 		"use strict";
 
 		/**
@@ -11,6 +11,12 @@ sap.ui.define(["sap/m/ToolbarRenderer", "sap/ui/core/Renderer", "sap/m/BarInPage
 		 * @static
 		 */
 		var AnchorBarRenderer = Renderer.extend(ToolbarRenderer);
+
+		var _AnchorBarHierarchicalSelectMode = AnchorBarRenderer._AnchorBarHierarchicalSelectMode = {
+			Icon: "icon",
+			Text: "text"
+		};
+
 		AnchorBarRenderer.renderBarContent = function (rm, oToolbar) {
 			if (oToolbar._bHasButtonsBar) {
 
@@ -56,7 +62,7 @@ sap.ui.define(["sap/m/ToolbarRenderer", "sap/ui/core/Renderer", "sap/m/BarInPage
 
 		AnchorBarRenderer.decorateRootElement = function (rm, oToolbar) {
 			ToolbarRenderer.decorateRootElement.apply(this, arguments);
-			if (oToolbar._sHierarchicalSelectMode === AnchorBar._hierarchicalSelectModes.Icon) {
+			if (oToolbar._sHierarchicalSelectMode === _AnchorBarHierarchicalSelectMode.Icon) {
 				rm.addClass("sapUxAPAnchorBarOverflow");
 			}
 		};
