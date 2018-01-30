@@ -16,6 +16,8 @@
 	<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 	<script>
 
@@ -337,6 +339,69 @@
 
 			// Clean up
 			oObjectNumber.destroy();
+		});
+
+		QUnit.test("Value state Error set with setState when the state initialy was Warning", function(assert) {
+
+			var oRenderSpy,
+				oObjectNumber = new sap.m.ObjectNumber({
+				number: 256,
+				unit: "EUR",
+				state: sap.ui.core.ValueState.Warning
+			});
+
+			oObjectNumber.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oRenderSpy = this.spy(oObjectNumber, "invalidate");
+			oObjectNumber.setState(sap.ui.core.ValueState.Error);
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			var $valueState = oObjectNumber.$("state");
+			assert.strictEqual($valueState.length, 1, "There is a label for the value state.");
+			assert.ok($valueState.hasClass("sapUiInvisibleText"), "The label is invisible.");
+			assert.strictEqual($valueState.attr("aria-hidden"), "true", "The label has aria-hidden=\"true\".");
+			assert.strictEqual($valueState.text(),
+						sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR"),
+						"The text for value state \"Error\" is taken from the message bundle."
+			);
+			assert.strictEqual(oRenderSpy.callCount, 0, "ObjectNumber did not rerender");
+
+			// Clean up
+			oObjectNumber.destroy();
+			oRenderSpy.restore();
+		});
+
+		QUnit.test("Value state Error set with setState when the state initialy was None", function(assert) {
+
+			var oRenderSpy,
+				oObjectNumber = new sap.m.ObjectNumber({
+				number: 256,
+				unit: "EUR"
+			});
+
+			oObjectNumber.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oRenderSpy = this.spy(oObjectNumber, "invalidate");
+			oObjectNumber.setState(sap.ui.core.ValueState.Error);
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			var $valueState = oObjectNumber.$("state");
+			assert.strictEqual($valueState.length, 1, "There is a label for the value state.");
+			assert.ok($valueState.hasClass("sapUiInvisibleText"), "The label is invisible.");
+			assert.strictEqual($valueState.attr("aria-hidden"), "true", "The label has aria-hidden=\"true\".");
+			assert.strictEqual($valueState.html(),
+						sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR"),
+						"The text for value state \"Error\" is taken from the message bundle."
+			);
+			assert.strictEqual(oRenderSpy.callCount, 1, "ObjectNumber was rerendered");
+
+			// Clean up
+			oObjectNumber.destroy();
+			oRenderSpy.restore();
 		});
 
 		function ariaLabelSetCorrectly(labelState){
