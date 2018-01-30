@@ -28,12 +28,6 @@
 	var sURI = "http://services.odata.org/V3/Northwind/Northwind.svc/";
 	sURI = "../../../../../proxy/http/" + sURI.replace("http://","");
 
-	// create a dummy AMD fdefine to check if shim works for datajs
-	window.define = function() {
-		throw Error("define should not be called");
-	}
-	window.define.amd = { vendor : "SAPUI5 QUnit Test" };
-
 	function initModel(sURI, bJSON){
 		var oModel = new sap.ui.model.odata.ODataModel(sURI, bJSON);
 		return oModel;

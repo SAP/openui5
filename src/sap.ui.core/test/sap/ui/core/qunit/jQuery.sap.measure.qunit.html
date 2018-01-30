@@ -168,7 +168,7 @@
 		QUnit.module("test measure rendering");
 
 		QUnit.test("render Button", function(assert) {
-			assert.expect(7);
+			assert.expect(5);
 			var oButton = new sap.ui.commons.Button("B1",{text:"Test"}).placeAt("target1");
 			sap.ui.getCore().applyChanges();
 			var aMeasurements = jQuery.sap.measure.getAllMeasurements();
@@ -182,10 +182,24 @@
 			assert.ok(oMeasurement, "Measurement for rendering all UIAreas found");
 			oMeasurement = jQuery.sap.measure.getMeasurement("target1---rerender");
 			assert.ok(oMeasurement, "Measurement for rendering UIArea found");
-			oMeasurement = jQuery.sap.measure.getMeasurement("sap/ui/commons/Button.js");
+			
+			/*
+			 * @evo-todo temp. disable test as JS resources are no longer loaded with jQuery.ajax 
+			 * In general, loading JS Resources no longer might be done with an XHR (e.g. <script> tag), how to write a generic test?
+					 
+			oMeasurement = jQuery.sap.measure.getMeasurement(URI("../../../../../resources/sap/ui/commons/Button.js").absoluteTo(document.location.origin + document.location.pathname).href());
+			if (!oMeasurement){
+				// check if debug sources are used
+				oMeasurement = jQuery.sap.measure.getMeasurement(URI("../../../../../resources/sap/ui/commons/Button-dbg.js").absoluteTo(document.location.origin + document.location.pathname).href());
+			}
 			assert.ok(oMeasurement, "Measurement for request for Button.js found");
-			oMeasurement = jQuery.sap.measure.getMeasurement("sap/ui/commons/ButtonRenderer.js");
+			oMeasurement = jQuery.sap.measure.getMeasurement(URI("../../../../../resources/sap/ui/commons/ButtonRenderer.js").absoluteTo(document.location.origin + document.location.pathname).href());
+			if (!oMeasurement){
+				// check if debug sources are used
+				oMeasurement = jQuery.sap.measure.getMeasurement(URI("../../../../../resources/sap/ui/commons/ButtonRenderer-dbg.js").absoluteTo(document.location.origin + document.location.pathname).href());
+			}
 			assert.ok(oMeasurement, "Measurement for request for ButtonRenderer.js found");
+			*/
 
 		});
 

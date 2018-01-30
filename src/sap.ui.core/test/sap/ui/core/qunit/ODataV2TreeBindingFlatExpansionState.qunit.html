@@ -31,12 +31,6 @@
 
 	jQuery.sap.require("sap.ui.model.odata.v2.ODataModel");
 
-	// create a dummy AMD fdefine to check if shim works for datajs
-	window.define = function() {
-		throw Error("define should not be called");
-	};
-	window.define.amd = { vendor : "SAPUI5 QUnit Test" };
-
 	// create binding
 	function createTreeBinding(sPath, oContext, aFilters, mParameters, aSorters){
 		oBinding = oModel.bindTree(sPath, oContext, aFilters, mParameters, aSorters).initialize();
