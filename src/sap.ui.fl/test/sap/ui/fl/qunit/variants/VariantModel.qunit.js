@@ -371,22 +371,6 @@ sap.ui.require([
 		assert.ok(fnSetTechnicalURLParameterValuesStub.calledOnce, "then 'setTechnicalURLParameterValues' not called");
 	});
 
-	QUnit.test("when calling 'clearVariantInURLForControl'", function(assert) {
-		var aUrlTechnicalParameters = ["fakevariant", "variant0"];
-		var oDummyControl = {
-			getId : function() {}
-		};
-		var fnGetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "getTechnicalURLParameterValues").returns(aUrlTechnicalParameters);
-		var fnSetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "setTechnicalURLParameterValues");
-		sandbox.stub(this.oModel, "_getLocalId").returns("variantMgmtId1");
-		sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variant0").returns(true);
-		sandbox.stub(Utils, "getUshellContainer").returns(true);
-		this.oModel.clearVariantInURLForControl(oDummyControl);
-		assert.ok(fnGetTechnicalURLParameterValuesStub.calledWithExactly(this.oModel.oComponent, 'sap-ui-fl-control-variant-id'), "then 'sap-ui-fl-control-variant-id' parameter values are requested");
-		assert.ok(fnSetTechnicalURLParameterValuesStub.calledWithExactly('sap-ui-fl-control-variant-id', [aUrlTechnicalParameters[0]]), "then 'sap-ui-fl-control-variant-id' parameter value for the provided variant management control was cleared");
-	});
-
-
 	QUnit.test("when calling '_removeDirtyChanges'", function(assert) {
 		sandbox.stub(Utils, "getAppComponentForControl").returns(this.oComponent);
 		sandbox.stub(this.oFlexController._oChangePersistence, "getDirtyChanges").returns(
