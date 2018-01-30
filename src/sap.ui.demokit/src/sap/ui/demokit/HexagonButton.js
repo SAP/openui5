@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.demokit.HexagonButton.
-sap.ui.define(['sap/ui/core/Control', './library'],
-	function(Control, library) {
+sap.ui.define(['sap/ui/core/Control', './library', "./HexagonButtonRenderer"],
+	function(Control, library, HexagonButtonRenderer) {
 	"use strict";
 
 

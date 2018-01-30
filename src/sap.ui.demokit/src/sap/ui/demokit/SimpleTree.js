@@ -3,8 +3,24 @@
  */
 
 // This is internal control dedicated for Demo Kit application usage
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/model/Filter', 'sap/ui/model/FilterOperator', 'sap/m/SearchField'],
-	function(jQuery, Control, ItemNavigation, Filter, FilterOperator, SearchField) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/Control',
+    'sap/ui/core/delegate/ItemNavigation',
+    'sap/ui/model/Filter',
+    'sap/ui/model/FilterOperator',
+    'sap/m/SearchField',
+    "./SimpleTreeRenderer"
+],
+	function(
+	    jQuery,
+		Control,
+		ItemNavigation,
+		Filter,
+		FilterOperator,
+		SearchField,
+		SimpleTreeRenderer
+	) {
 		"use strict";
 
 		var SimpleTree = Control.extend("sap.ui.demokit.SimpleTree", { metadata : {
