@@ -217,7 +217,7 @@
 		return {
 			selected : false,
 			label : RtaUtils.getLabelForElement(oElement, mAction.getLabel),
-			tooltip : RtaUtils.getLabelForElement(oElement, mAction.getLabel),
+			tooltip : oElement.quickInfoFromOData || oElement.name || RtaUtils.getLabelForElement(oElement, mAction.getLabel),
 			referencedComplexPropertyName: oElement.referencedComplexPropertyName ? oElement.referencedComplexPropertyName : "",
 			duplicateComplexName: oElement.duplicateComplexName ? oElement.duplicateComplexName : false,
 			bindingPaths: oElement.bindingPaths,
@@ -396,6 +396,8 @@
 	 */
 	function _enhanceInvisibleElement(oInvisibleElement, mODataProperty) {
 		oInvisibleElement.labelFromOData = mODataProperty.fieldLabel;
+		oInvisibleElement.quickInfoFromOData = mODataProperty.quickInfo;
+		oInvisibleElement.name = mODataProperty.name;
 		if (oInvisibleElement.fieldLabel !== oInvisibleElement.labelFromOData) {
 			oInvisibleElement.renamedLabel = true;
 		}
