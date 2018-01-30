@@ -50,6 +50,11 @@ sap.ui.require([
 		assert.ok(TableUtils.Column.TableUtils === TableUtils, "Dependency forwarding of TableUtils correct");
 	});
 
+	QUnit.test("Binding", function(assert) {
+		assert.ok(!!TableUtils.Binding, "Binding namespace available");
+		assert.ok(TableUtils.Binding.TableUtils === TableUtils, "Dependency forwarding of TableUtils correct");
+	});
+
 	QUnit.test("isRowSelectionAllowed", function(assert) {
 		function check(sSelectionBehavior, sSelectionMode, bGroup, bExpected) {
 			oTreeTable.setSelectionBehavior(sSelectionBehavior);

@@ -135,16 +135,9 @@ sap.ui.define(['jquery.sap.global', './Column', './library', 'sap/ui/core/Elemen
 					var oBinding = oParent.getBinding("rows");
 					if (oBinding) {
 						this._oBindingLabel = library.TableHelper.createLabel();
-						var oModel = oBinding.getModel();
-						// if the metadata of the underlying odatamodel is not yet loaded -> the setting of the text of the label must be delayed
-						if (oModel.oMetadata && oModel.oMetadata.isLoaded()) {
+						TableUtils.Binding.metadataLoaded(oParent).then(function() {
 							this._oBindingLabel.setText(oBinding.getPropertyLabel(this.getLeadingProperty()));
-						} else {
-							var that = this;
-							oModel.attachMetadataLoaded(function () {
-								that._oBindingLabel.setText(oBinding.getPropertyLabel(that.getLeadingProperty()));
-							});
-						}
+						}.bind(this));
 					}
 				}
 			}

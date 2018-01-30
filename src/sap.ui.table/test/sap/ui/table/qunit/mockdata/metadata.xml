@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0"
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+	<edmx:DataServices m:DataServiceVersion="2.0"
+		xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+		<Schema Namespace="EPM_DEVELOPER_SCENARIO_SRV" xml:lang="en"
+			xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+
+			<EntityType Name="Product" sap:content-version="1"
+				xmlns:sap="http://www.sap.com/Protocols/SAPData">
+				<Key>
+					<PropertyRef Name="ProductId" />
+				</Key>
+				<Property Name="CategoryName" Type="Edm.String" Nullable="false"
+					MaxLength="255" sap:label="Cantegroy name" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<Property Name="ProductId" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:label="Product ID" sap:creatable="false"
+					sap:updatable="false" />
+				<Property Name="Category" Type="Edm.String" Nullable="false"
+					MaxLength="40" sap:label="Product Category" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" />
+				<Property Name="Name" Type="Edm.String" Nullable="false"
+					MaxLength="255" sap:label="Name" sap:creatable="false"
+					sap:updatable="false" />
+				<Property Name="ShortDescription" Type="Edm.String"
+					Nullable="false" MaxLength="255" sap:label="ShortDescription"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false" />
+				<Property Name="LongDescription" Type="Edm.String"
+					Nullable="false" MaxLength="255" sap:label="LongDescription"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false"
+					sap:filterable="false" />
+				<Property Name="SupplierId" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:label="Business Partner ID" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<Property Name="SupplierName" Type="Edm.String" Nullable="false"
+					MaxLength="80" sap:label="Company Name" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<Property Name="QuantityUnit" Type="Edm.String" Nullable="false"
+					MaxLength="3" sap:label="Quantity Unit" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<Property Name="Weight" Type="Edm.Decimal" Nullable="false"
+					Precision="13" Scale="3" sap:label="Weight" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<Property Name="WeightUnit" Type="Edm.String" Nullable="false"
+					MaxLength="3" sap:label="Weight Unit" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<Property Name="Price" Type="Edm.Decimal" Nullable="false"
+					Precision="23" Scale="4" sap:label="Price" sap:creatable="false"
+					sap:updatable="false" sap:filterable="false" />
+				<Property Name="CurrencyCode" Type="Edm.String" Nullable="false"
+					MaxLength="5" sap:label="Currency Code" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<Property Name="DimensionWidth" Type="Edm.Decimal"
+					Nullable="false" Precision="13" Scale="3" sap:label="Dimension Width"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false"
+					sap:filterable="false" />
+				<Property Name="DimensionDepth" Type="Edm.Decimal"
+					Nullable="false" Precision="13" Scale="3" sap:label="Dimension Depth"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false"
+					sap:filterable="false" />
+				<Property Name="DimensionHeight" Type="Edm.Decimal"
+					Nullable="false" Precision="13" Scale="3" sap:label="Dimension Height"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false"
+					sap:filterable="false" />
+				<Property Name="DimensionUnit" Type="Edm.String" Nullable="false"
+					MaxLength="3" sap:label="Dimension Unit" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<Property Name="PictureUrl" Type="Edm.String" Nullable="false"
+					MaxLength="255" sap:label="Product Image URL" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+			</EntityType>
+
+			<EntityType Name="ProductCategory" sap:content-version="1"
+				xmlns:sap="http://www.sap.com/Protocols/SAPData">
+				<Key>
+					<PropertyRef Name="Category" />
+				</Key>
+				<Property Name="Category" Type="Edm.String" Nullable="false"
+					MaxLength="40" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="CategoryName" Type="Edm.String" Nullable="false"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false"
+					sap:filterable="false" />
+				<Property Name="MainCategory" Type="Edm.String" Nullable="false"
+					MaxLength="40" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="MainCategoryName" Type="Edm.String"
+					Nullable="false" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="NumberOfProducts" Type="Edm.Int32"
+					Nullable="false" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+			</EntityType>
+
+			<EntityContainer Name="EPM_DEVELOPER_SCENARIO_SRV"
+				m:IsDefaultEntityContainer="true">
+				<EntitySet Name="Products" EntityType="EPM_DEVELOPER_SCENARIO_SRV.Product"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:pageable="false" sap:content-version="1"
+					xmlns:sap="http://www.sap.com/Protocols/SAPData" />
+				<EntitySet Name="ProductCategories"
+					EntityType="EPM_DEVELOPER_SCENARIO_SRV.ProductCategory"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:pageable="false" sap:content-version="1"
+					xmlns:sap="http://www.sap.com/Protocols/SAPData" />
+			</EntityContainer>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
