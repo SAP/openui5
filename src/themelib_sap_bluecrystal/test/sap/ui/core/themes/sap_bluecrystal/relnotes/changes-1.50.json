@@ -119,5 +119,28 @@
         "references": []
       }
     ]
+  },
+  "1.50.9": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "3f234eb76551a9e1f1000e3aad7595515f6cebbf",
+        "type": "FIX",
+        "text": " sap.m.Dialog: correct header, subheader and footer DOM structure",
+        "references": []
+      },
+      {
+        "id": "2fa075b6b1daebb40def993d4a444b6617b55672",
+        "type": "FIX",
+        "text": " sap.m.Popover: correct header, subheader and footer DOM structure",
+        "references": []
+      },
+      {
+        "id": "78d81f9d14746439570a5841a241dff75158c249",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Vertically aligned correctly alongside other controls",
+        "references": []
+      }
+    ]
   }
 }

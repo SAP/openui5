@@ -286,5 +286,28 @@
         "references": []
       }
     ]
+  },
+  "1.50.9": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "3f234eb76551a9e1f1000e3aad7595515f6cebbf",
+        "type": "FIX",
+        "text": " sap.m.Dialog: correct header, subheader and footer DOM structure",
+        "references": []
+      },
+      {
+        "id": "78d81f9d14746439570a5841a241dff75158c249",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Vertically aligned correctly alongside other controls",
+        "references": []
+      },
+      {
+        "id": "0bcb507f496a49fdedaa9807cd11961e336f8c1f",
+        "type": "FIX",
+        "text": " sap.m.Tile: Focus is cleared indicated in HCB and HCW",
+        "references": []
+      }
+    ]
   }
 }

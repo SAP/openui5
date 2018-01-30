@@ -799,5 +799,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.26": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "a29144dfd9cb783ac36093fa8abe9f7934c91b25",
+        "type": "FIX",
+        "text": " Table: Horizontal scrolling with the touchpad",
+        "references": []
+      }
+    ]
   }
 }

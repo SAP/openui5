@@ -133,5 +133,16 @@
         "references": []
       }
     ]
+  },
+  "1.50.9": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "cdd03b79323c64b5522d3bded8af30791e5080b8",
+        "type": "FIX",
+        "text": ": RTA - disable actions on binded aggregations",
+        "references": []
+      }
+    ]
   }
 }

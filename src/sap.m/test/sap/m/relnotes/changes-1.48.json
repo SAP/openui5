@@ -2585,5 +2585,99 @@
         "references": []
       }
     ]
+  },
+  "1.48.17": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "4b5f3cf568f6829109b4c23593be75a0ea3db81e",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: focus fixed for HCB",
+        "references": []
+      },
+      {
+        "id": "81863da6a016597cb12b01ceffaf09bb75dba15a",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: getAccessibilityInfo returns the tooltip also",
+        "references": []
+      },
+      {
+        "id": "4e43fa41c3ccfffd306ff72d655cb99d1e3db37c",
+        "type": "FIX",
+        "text": " sap.m.Page: Documentation updated",
+        "references": []
+      },
+      {
+        "id": "2cd53b094137815f07983ff8b5922afd7d48d872",
+        "type": "FIX",
+        "text": " sap.m.Page: showHeader property working correctly with floatingFooter",
+        "references": []
+      },
+      {
+        "id": "3dc08520e6f87637a5a68772626ddbec743eb9c6",
+        "type": "FIX",
+        "text": " sap.m.Slider: sap.m.RangeSlider exception fixed.",
+        "references": []
+      },
+      {
+        "id": "42e69620b459107aa7e6265cce8e7ccfaa2ce889",
+        "type": "FIX",
+        "text": " sap.m.Text: maxLines property is now working",
+        "references": []
+      },
+      {
+        "id": "5a616c93c4336e49743d90406c94b9698bca6010",
+        "type": "FIX",
+        "text": " sap.m: Replace non-breaking spaces with normal spaces",
+        "references": []
+      }
+    ]
+  },
+  "1.48.18": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "0869d925cb995839d90040bf4804672de4d012c5",
+        "type": "FIX",
+        "text": " sap.m.Button: Reference to the text content of the button is added to the AriaLabelledBy only when the button has text",
+        "references": []
+      },
+      {
+        "id": "848b0411af6180329cae60c5e5a4d8a2d4dfce2e",
+        "type": "FIX",
+        "text": " sap.m.DateTimeField: setDateValue accepts JS Date Object from iframe",
+        "references": []
+      },
+      {
+        "id": "5108d699516c07ec47138c187fb50709a022eb60",
+        "type": "FIX",
+        "text": " sap.m.Input: Description is now read correctly by JAWS",
+        "references": []
+      },
+      {
+        "id": "4b5487393a2a1f52b5f58fc1f155b2134c63caf7",
+        "type": "FIX",
+        "text": " sap.m.Input: Issue with calling selectedKey from ValueHelp is now fixed.",
+        "references": []
+      },
+      {
+        "id": "aac78fd17c521ba4f1541e8625ca38fa94087a45",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Selecting an item now clears the input field",
+        "references": []
+      },
+      {
+        "id": "40027040a5df31734248aa06698466cfe155a9b3",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Now correctly goes into overflow when used inside OverflowToolbar",
+        "references": []
+      },
+      {
+        "id": "95ec9165c1951c76694d04bfce08bbac29f0b97d",
+        "type": "FIX",
+        "text": " sap.m.StandardTreeItem: setIcon function is enhanced",
+        "references": []
+      }
+    ]
   }
 }

@@ -255,5 +255,28 @@
         "references": []
       }
     ]
+  },
+  "1.50.9": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "8edacc9136469f2d261839161aebb511d8af4392",
+        "type": "FIX",
+        "text": " Control: refactor fnHandleInteraction",
+        "references": []
+      },
+      {
+        "id": "389bf7b46297ee305fb12a1e5e3d0ce26fdbed99",
+        "type": "FIX",
+        "text": " Table: Horizontal scrolling with the touchpad",
+        "references": []
+      },
+      {
+        "id": "c58df2c25da8edec7e088b462287aa6c5d7d0635",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - wrong number of displayed rows",
+        "references": []
+      }
+    ]
   }
 }
