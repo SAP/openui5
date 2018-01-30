@@ -5,11 +5,11 @@
 // Provides class sap.ui.dt.SelectionManager.
 sap.ui.define([
 	'sap/ui/base/ManagedObject',
-	'sap/ui/dt/OverlayUtil',
+	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/Util',
 	'./library'
 ],
-function(ManagedObject, OverlayUtil, Util) {
+function(ManagedObject, OverlayRegistry, Util) {
 	"use strict";
 
 	/**
@@ -74,7 +74,7 @@ function(ManagedObject, OverlayUtil, Util) {
 	 * @public
 	 * @return {sap.ui.dt.Overlay[]} selected overlays
 	 */
-	SelectionManager.prototype.getSelection = function() {
+	SelectionManager.prototype.get = function() {
 		return this._aSelection.slice();
 	};
 
@@ -104,6 +104,7 @@ function(ManagedObject, OverlayUtil, Util) {
 			bSelectionChanged = true;
 		}, this);
 		this._aSelection = [];
+		this._updateMode(this.get());
 
 		// add selection if parameter provided
 		if (vSelection){
@@ -116,7 +117,7 @@ function(ManagedObject, OverlayUtil, Util) {
 		} else if (bSelectionChanged){
 			// Selection has changed, fire event
 			this.fireChange({
-				selection : this.getSelection()
+				selection : this.get()
 			});
 		}
 		return bSelectionChanged;
@@ -145,8 +146,7 @@ function(ManagedObject, OverlayUtil, Util) {
 		// add the overlay(s) to the current selection
 		aSelection.forEach(function(oSelection){
 			var oOverlay = null;
-			// TODO: replace OverlayUtil.getOverlayforObject() later with OverlayRegistry.getOverlay()
-			oOverlay = OverlayUtil.getOverlayforObject(oSelection);
+			oOverlay = OverlayRegistry.getOverlay(oSelection);
 			// check if already selected
 			if (oOverlay && (this._aSelection.indexOf(oOverlay) === -1)) {
 				if (oOverlay.setSelected(true, true).getSelected()){
@@ -157,8 +157,9 @@ function(ManagedObject, OverlayUtil, Util) {
 		}, this);
 		// fire event if selection changed
 		if (bSelectionChanged){
+			this._updateMode(this.get());
 			this.fireChange({
-				selection : this.getSelection()
+				selection : this.get()
 			});
 		}
 		return bSelectionChanged;
@@ -187,7 +188,7 @@ function(ManagedObject, OverlayUtil, Util) {
 		// remove the overlay(s) from the current selection
 		aSelection.forEach(function(oSelection){
 			var oOverlay = null;
-			oOverlay = OverlayUtil.getOverlayforObject(oSelection);
+			oOverlay = OverlayRegistry.getOverlay(oSelection);
 			// check if already selected
 			if (oOverlay && (this._aSelection.indexOf(oOverlay) !== -1)) {
 				this._aSelection = this._aSelection.filter(function (oItem) {
@@ -199,8 +200,9 @@ function(ManagedObject, OverlayUtil, Util) {
 		}, this);
 		// fire event if selection changed
 		if (bSelectionChanged){
+			this._updateMode(this.get());
 			this.fireChange({
-				selection : this.getSelection()
+				selection : this.get()
 			});
 		}
 		return bSelectionChanged;
@@ -214,7 +216,7 @@ function(ManagedObject, OverlayUtil, Util) {
 
 		this._aSelection = this._aSelection.concat(oOverlay);
 		this.fireChange({
-			selection : this.getSelection()
+			selection : this.get()
 		});
 	};
 
@@ -230,7 +232,7 @@ function(ManagedObject, OverlayUtil, Util) {
 			});
 		}
 		this.fireChange({
-			selection : this.getSelection()
+			selection : this.get()
 		});
 	};
 
@@ -248,6 +250,19 @@ function(ManagedObject, OverlayUtil, Util) {
 				oOverlay.setSelected(false, true);
 			});
 			this._aSelection = [];
+		}
+	};
+
+	/**
+	 * Updates the mode in relation to the current selection
+	 * @param  {sap.ui.dt.Overlay[]} aSelection array with selected overlays
+	 * @private
+	 */
+	SelectionManager.prototype._updateMode = function(aSelection) {
+		if (aSelection.length > 1){
+			this.setMode(sap.ui.dt.SelectionMode.Multi);
+		} else {
+			this.setMode(sap.ui.dt.SelectionMode.Single);
 		}
 	};
 

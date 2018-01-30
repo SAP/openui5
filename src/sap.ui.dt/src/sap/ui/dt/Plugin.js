@@ -236,7 +236,16 @@ function(ManagedObject) {
 	 * @return {integer} Returns the number of selected overlays as integer
 	 */
 	Plugin.prototype.getNumberOfSelectedOverlays = function() {
-		return this.getDesignTime().getSelection().length;
+		return this.getSelectedOverlays().length;
+	};
+
+	/**
+	 * Asks the Design Time which overlays are selected
+	 *
+	 * @return {sap.ui.dt.ElementOverlay[]} selected overlays
+	 */
+	Plugin.prototype.getSelectedOverlays = function() {
+		return this.getDesignTime().getSelectionManager().get();
 	};
 
 	/**

@@ -167,7 +167,7 @@ function(
 			assert.ok(OverlayRegistry.getOverlay(this.oButton1), "overlay for button1 exists");
 			assert.ok(OverlayRegistry.getOverlay(this.oButton2), "overlay for button2 exists");
 
-			assert.strictEqual(this.oDesignTime.getSelection().length, 0, "and a new selection is created and initially empty");
+			assert.strictEqual(this.oDesignTime.getSelectionManager().get().length, 0, "and a new selection is created and initially empty");
 		});
 
 		QUnit.test("when '_onAddAggregation' is called and a foreign error occurs during overlay creation", function(assert){

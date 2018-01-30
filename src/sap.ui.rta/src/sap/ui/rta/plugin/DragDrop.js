@@ -143,7 +143,7 @@ function(
 
 		ControlDragDrop.prototype.onDragStart.apply(this, arguments);
 
-		this.getDesignTime().getSelection().forEach(function(oOverlay) {
+		this.getSelectedOverlays().forEach(function(oOverlay) {
 			oOverlay.setSelected(false);
 		});
 

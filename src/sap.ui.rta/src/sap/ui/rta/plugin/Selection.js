@@ -237,7 +237,7 @@ function(
 		}
 
 		var oCurrentSelectedOverlay = oEvent.getParameter("selection")[oEvent.getParameter("selection").length - 1];
-		var aSelections = this.getDesignTime().getSelection();
+		var aSelections = this.getSelectedOverlays();
 		if (aSelections && aSelections.length === 1) {
 			oCurrentSelectedOverlay.setSelected(true);
 			return;

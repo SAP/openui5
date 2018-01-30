@@ -691,7 +691,7 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.prototype.getSelection = function() {
 		if (this._oDesignTime) {
-			return this._oDesignTime.getSelection();
+			return this._oDesignTime.getSelectionManager().get();
 		} else {
 			return [];
 		}

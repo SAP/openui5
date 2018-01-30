@@ -294,7 +294,7 @@ function(
 	 * @deprecated
 	 */
 	DesignTime.prototype.getSelection = function () {
-		return this.getSelectionManager().getSelection();
+		return this.getSelectionManager().get();
 	};
 
 	/**

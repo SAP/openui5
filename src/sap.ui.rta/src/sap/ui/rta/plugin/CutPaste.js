@@ -150,7 +150,7 @@ function(
 					return this.cut(aOverlays[0]);
 				}.bind(this),
 				enabled: function (){
-					return this.getDesignTime().getSelection().length === 1;
+					return this.getSelectedOverlays().length === 1;
 				}.bind(this),
 				rank: 70,
 				icon: "sap-icon://scissors"

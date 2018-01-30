@@ -607,7 +607,15 @@ function(
 		var oContextMenuPlugin = this.oRta.getPlugins()["contextMenu"];
 
 		// An item must be selected to call the context menu
-		sandbox.stub(oContextMenuPlugin.getDesignTime(), "getSelection").returns([oFormOverlay]);
+		sandbox.stub(oContextMenuPlugin, "getDesignTime").returns({
+			getSelectionManager : function(){
+				return {
+					get: function(){
+						return [oFormOverlay];
+					}
+				};
+			}
+		});
 
 		var oEvent = {
 			getParameter : function(sParamName){

@@ -81,7 +81,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Combine.prototype.isAvailable = function(oOverlay) {
-		var aSelectedOverlays = this.getDesignTime().getSelection();
+		var aSelectedOverlays = this.getSelectedOverlays();
 
 		if (aSelectedOverlays.length <= 1) {
 			return false;
@@ -97,7 +97,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Combine.prototype.isEnabled = function(oOverlay) {
-		var aSelectedOverlays = this.getDesignTime().getSelection();
+		var aSelectedOverlays = this.getSelectedOverlays();
 
 		// check that at least 2 fields can be combined
 		if (!this.isAvailable(oOverlay) || aSelectedOverlays.length <= 1) {
@@ -138,7 +138,7 @@ sap.ui.define([
 		var oDesignTimeMetadata = oElementOverlay.getDesignTimeMetadata();
 
 		var aToCombineElements = [];
-		var aSelectedOverlays = this.getDesignTime().getSelection();
+		var aSelectedOverlays = this.getSelectedOverlays();
 
 		for (var i = 0; i < aSelectedOverlays.length; i++) {
 			var oSelectedElement = aSelectedOverlays[i].getElement();

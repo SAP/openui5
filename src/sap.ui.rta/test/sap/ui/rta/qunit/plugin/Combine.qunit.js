@@ -15,6 +15,7 @@ sap.ui.define([
 	'sap/m/OverflowToolbar',
 	'sap/m/OverflowToolbarButton',
 	'sap/m/CheckBox',
+	'sap/ui/dt/SelectionManager',
 	// should be last:
 	'sap/ui/thirdparty/sinon',
 	'sap/ui/thirdparty/sinon-ie',
@@ -32,7 +33,8 @@ function(
 	Panel,
 	OverflowToolbar,
 	OverflowToolbarButton,
-	CheckBox
+	CheckBox,
+	SelectionManager
 ) {
 	'use strict';
 
@@ -260,7 +262,7 @@ function(
 		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, {});
 		fnSetOverlayDesigntimeMetadata(this.oButton2Overlay, {});
 
-		sandbox.stub(this.oDesignTime, "getSelection").returns(
+		sandbox.stub(SelectionManager.prototype, "get").returns(
 				[this.oButton1Overlay, this.oButton2Overlay]);
 
 		assert.strictEqual(
@@ -276,7 +278,7 @@ function(
 		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
 		fnSetOverlayDesigntimeMetadata(this.oButton2Overlay, oDesignTimeMetadata2);
 
-		sandbox.stub(this.oDesignTime, "getSelection").returns(
+		sandbox.stub(SelectionManager.prototype, "get").returns(
 				[this.oButton1Overlay, this.oButton2Overlay]);
 
 		assert.strictEqual(
@@ -290,7 +292,7 @@ function(
 
 	QUnit.test("when only one control is selected", function(assert) {
 		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
-		sandbox.stub(this.oDesignTime, "getSelection").returns([this.oButton1Overlay]);
+		sandbox.stub(SelectionManager.prototype, "get").returns([this.oButton1Overlay]);
 
 		assert.strictEqual(
 			this.oCombinePlugin.isAvailable(this.oButton1Overlay), false,
@@ -301,7 +303,7 @@ function(
 	});
 
 	QUnit.test("when controls which enabled-function delivers false are selected", function(assert) {
-		sandbox.stub(this.oDesignTime, "getSelection").returns([
+		sandbox.stub(SelectionManager.prototype, "get").returns([
 			this.oButton1Overlay,
 			this.oButton2Overlay
 		]);
@@ -317,7 +319,7 @@ function(
 	});
 
 	QUnit.test("when a control without changetype is selected", function(assert) {
-		sandbox.stub(this.oDesignTime, "getSelection").returns([
+		sandbox.stub(SelectionManager.prototype, "get").returns([
 			this.oButton1Overlay,
 			this.oButton4Overlay
 		]);
@@ -333,7 +335,7 @@ function(
 	});
 
 	QUnit.test("when controls from different relevant containers are selected", function(assert) {
-		sandbox.stub(this.oDesignTime, "getSelection").returns([
+		sandbox.stub(SelectionManager.prototype, "get").returns([
 			this.oButton1Overlay,
 			this.oButton5Overlay
 		]);
@@ -351,7 +353,7 @@ function(
 	QUnit.test("when handleCombine is called with two selected elements", function(assert) {
 		var spy = sandbox.spy(this.oCombinePlugin, "fireElementModified");
 
-		sandbox.stub(this.oDesignTime, "getSelection").returns([
+		sandbox.stub(SelectionManager.prototype, "get").returns([
 			this.oButton1Overlay,
 			this.oButton2Overlay
 		]);
@@ -370,7 +372,7 @@ function(
 	});
 
 	QUnit.test("when Controls of different type with same change type are selected", function(assert) {
-		sandbox.stub(this.oDesignTime, "getSelection").returns([
+		sandbox.stub(SelectionManager.prototype, "get").returns([
 			this.oOverflowToolbarButton1Overlay,
 			this.oButton6Overlay
 		]);
@@ -408,7 +410,7 @@ function(
 	});
 
 	QUnit.test("when Controls of different type with different change type are selected", function(assert) {
-		sandbox.stub(this.oDesignTime, "getSelection").returns([
+		sandbox.stub(SelectionManager.prototype, "get").returns([
 			this.oOverflowToolbarButton1Overlay,
 			this.oCheckBox1Overlay
 		]);
