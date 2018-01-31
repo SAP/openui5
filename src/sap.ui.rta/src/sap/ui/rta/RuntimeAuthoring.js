@@ -9,9 +9,7 @@ sap.ui.define([
 		"sap/ui/rta/toolbar/Fiori",
 		"sap/ui/rta/toolbar/Standalone",
 		"sap/ui/rta/toolbar/Personalization",
-		"sap/ui/dt/ElementUtil",
 		"sap/ui/dt/DesignTime",
-		"sap/ui/dt/OverlayRegistry",
 		"sap/ui/dt/Overlay",
 		"sap/ui/rta/command/Stack",
 		"sap/ui/rta/command/CommandFactory",
@@ -35,7 +33,6 @@ sap.ui.define([
 		"sap/ui/dt/plugin/TabHandling",
 		"sap/ui/fl/FlexControllerFactory",
 		"sap/ui/rta/Utils",
-		"sap/ui/fl/transport/Transports",
 		"sap/ui/fl/transport/TransportSelection",
 		"sap/ui/fl/Utils",
 		"sap/ui/fl/registry/Settings",
@@ -55,9 +52,7 @@ sap.ui.define([
 		FioriToolbar,
 		StandaloneToolbar,
 		PersonalizationToolbar,
-		ElementUtil,
 		DesignTime,
-		OverlayRegistry,
 		Overlay,
 		CommandStack,
 		CommandFactory,
@@ -81,7 +76,6 @@ sap.ui.define([
 		TabHandlingPlugin,
 		FlexControllerFactory,
 		Utils,
-		Transports,
 		TransportSelection,
 		FlexUtils,
 		FlexSettings,
@@ -719,7 +713,7 @@ sap.ui.define([
 	};
 
 	RuntimeAuthoring.prototype.transport = function() {
-		this._onTransport();
+		return this._onTransport();
 	};
 
 	// ---- backward compatibility API
