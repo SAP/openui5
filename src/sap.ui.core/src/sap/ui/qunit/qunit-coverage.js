@@ -6,7 +6,7 @@
 (function() {
 	"use strict";
 
-	/*global jQuery */
+	/*global jQuery, sap */
 
 	if (typeof QUnit === "undefined") {
 		throw new Error("qunit-coverage.js: QUnit is not loaded yet!");
@@ -46,7 +46,9 @@
 	}
 
 	if (sBaseUrl === null) {
-		if (jQuery && jQuery.sap &&  jQuery.sap.getModulePath) {
+		if ( typeof sap === 'object' && sap.ui && sap.ui.require && sap.ui.require.toUrl ) {
+			sFullUrl = sap.ui.require.toUrl("sap/ui/thirdparty/blanket.js");
+		} else if (jQuery && jQuery.sap && jQuery.sap.getModulePath) {
 			sFullUrl = jQuery.sap.getModulePath("sap.ui.thirdparty.blanket", ".js");
 		} else {
 			throw new Error("qunit-coverage.js: The script tag seems to be malformed!");
@@ -57,6 +59,38 @@
 
 	// check for coverage beeing active or not
 	if (QUnit.urlParams.coverage) {
+
+		var translate = function(sScript, sModuleName) {
+
+			// avoid duplicate instrumentation on server and client-side
+			if (sScript.indexOf("window['sap-ui-qunit-coverage'] = 'server';") === 0) {
+				return sScript;
+			}
+
+			// manage includes and excludes with blanket utils
+			// check for blanket option (set via JS) and fall back to attribute of qunit-coverage script tag
+			var sFilter = blanket.options("sap-ui-cover-only") || sFilterAttr;
+			var sAntiFilter = blanket.options("sap-ui-cover-never") || sAntiFilterAttr;
+
+			if (typeof sAntiFilter !== "undefined" && blanket.utils.matchPatternAttribute(sModuleName, sAntiFilter)) {
+				// NEVER INSTRUMENT (excluded)
+			} else if (typeof sFilter === "undefined" || blanket.utils.matchPatternAttribute(sModuleName, sFilter)) {
+				// INSTRUMENT (included)
+
+				blanket.instrument({
+					inputFile: sScript,
+					inputFileName: sModuleName,
+					instrumentCache: false
+				}, function(sInstrumentedScript) {
+					sScript = sInstrumentedScript;
+				});
+
+			} else {
+				// DONT INSTRUMENT (not explicitly excluded / included)
+			}
+
+			return sScript;
+		};
 
 		// load and execute qunit-reporter-junit script synchronously via XHR
 		var req = new window.XMLHttpRequest();
@@ -77,38 +111,10 @@
 				// prevent QUnit.start() call in blanket
 				blanket.options("existingRequireJS", true);
 
-				if (jQuery && jQuery.sap) {
-					jQuery.sap.require._hook = function(sScript, sModuleName) {
-
-						// avoid duplicate instrumentation on server and client-side
-						if (sScript.indexOf("window['sap-ui-qunit-coverage'] = 'server';") === 0) {
-							return sScript;
-						}
-
-						// manage includes and excludes with blanket utils
-						// check for blanket option (set via JS) and fall back to attribute of qunit-coverage script tag
-						var sFilter = blanket.options("sap-ui-cover-only") || sFilterAttr;
-						var sAntiFilter = blanket.options("sap-ui-cover-never") || sAntiFilterAttr;
-
-						if (typeof sAntiFilter !== "undefined" && blanket.utils.matchPatternAttribute(sModuleName, sAntiFilter)) {
-							// NEVER INSTRUMENT (excluded)
-						} else if (typeof sFilter === "undefined" || blanket.utils.matchPatternAttribute(sModuleName, sFilter)) {
-							// INSTRUMENT (included)
-
-							blanket.instrument({
-								inputFile: sScript,
-								inputFileName: sModuleName,
-								instrumentCache: false
-							}, function(sInstrumentedScript) {
-								sScript = sInstrumentedScript;
-							});
-
-						} else {
-							// DONT INSTRUMENT (not explicitly excluded / included)
-						}
-
-						return sScript;
-					};
+				if ( typeof sap === 'object' && sap.ui && sap.ui._ui5loader ) {
+					sap.ui._ui5loader.translate = translate;
+				} else if (jQuery && jQuery.sap) {
+					jQuery.sap.require._hook = translate;
 				} else {
 					throw new Error("qunit-coverage.js: jQuery.sap.global is not loaded - require hook cannot be set!");
 				}

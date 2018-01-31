@@ -13,7 +13,8 @@
 			var contextPath = "/" + window.location.pathname.split("/")[1];
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/Bootstrap.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapCustomBootTaskPreloadCss.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapLoadAll.qunit.html");
+			// @evo-todo re-enable or abandon "load-all" 
+			// suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapLoadAll.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapMinimal.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapPreload.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapPreloadAsync.qunit.html");
