@@ -126,7 +126,7 @@ sap.ui.define([
 						|| jQuery(oTarget).closest(".sapUiRtaToolbar").length > 0;
 
 					var bRelevantNode = jQuery.contains(document, oTarget)
-						&& oTarget.id !== "sap-ui-static"
+						&& oTarget.id !== sap.ui.getCore().getStaticAreaRef().getAttribute('id')
 						&& jQuery(oTarget).closest("#sap-ui-preserve").length === 0;
 
 					if (bRelevantNode && !bIsFromRTA) {

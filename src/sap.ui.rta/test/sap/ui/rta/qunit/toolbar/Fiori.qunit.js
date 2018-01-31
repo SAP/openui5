@@ -1,5 +1,7 @@
 /*global QUnit*/
 
+QUnit.config.autostart = false;
+
 sap.ui.require([
 	'jquery.sap.global',
 	'sap/ui/rta/toolbar/Fiori',
@@ -8,13 +10,15 @@ sap.ui.require([
 	"sap/ui/thirdparty/sinon"
 ],
 function(
-	$,
+	jQuery,
 	Fiori,
 	Adaptation,
 	Image,
 	sinon
 ) {
 	'use strict';
+
+	QUnit.start();
 
 	var sandbox = sinon.sandbox.create();
 
@@ -29,7 +33,7 @@ function(
 				done();
 			}, this);
 
-			this.oImage.placeAt("content");
+			this.oImage.placeAt("qunit-fixtures");
 			sap.ui.getCore().applyChanges();
 
 			sandbox.stub(sap.ui.rta.Utils, "getFiori2Renderer").returns({
@@ -54,7 +58,7 @@ function(
 										$: function() {
 											return {
 												find: function() {
-													return $(this.oImage.getDomRef());
+													return jQuery(this.oImage.getDomRef());
 												}.bind(this)
 											};
 										}.bind(this)
@@ -66,12 +70,10 @@ function(
 				}.bind(this)
 			});
 		},
-
 		afterEach: function() {
 			this.oToolbar.destroy();
 			this.oImage.destroy();
 			sandbox.restore();
-
 		}
 	}, function() {
 		QUnit.test("when the toolbar gets initialized", function(assert) {
@@ -83,14 +85,14 @@ function(
 			assert.equal(oImage.getMetadata().getName(), "sap.m.Image", "then the logo control is set correctly");
 			assert.equal(oImage.getSrc(), "logo", "then the name of the logo is correctly set");
 
-			var oErrorSpy = sinon.spy(jQuery.sap.log, "error");
+			var oErrorSpy = sandbox.spy(jQuery.sap.log, "error");
 			this.oToolbar._checkLogoSize(jQuery({naturalWidth: 5, naturalHeight: 5}), 6, 6);
 			assert.equal(oErrorSpy.callCount, 1, "then an error was thrown");
 
 			this.oToolbar.show();
 			assert.equal(this.sAdd, "sapUiRtaFioriHeaderInvisible", "then the correct StyleClass got added");
 
-			sinon.stub(Adaptation.prototype, "hide").returns(Promise.resolve());
+			sandbox.stub(Adaptation.prototype, "hide").returns(Promise.resolve());
 			return this.oToolbar.hide().then(function() {
 				assert.equal(this.sRemove, "sapUiRtaFioriHeaderInvisible", "then the correct StyleClass got removed");
 			}.bind(this));
