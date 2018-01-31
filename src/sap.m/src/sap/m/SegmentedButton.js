@@ -259,7 +259,8 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 	 */
 	SegmentedButton.prototype._getRenderedButtonWidths = function (aButtons) {
 		return aButtons.map(function (oButton) {
-			return oButton.$().outerWidth();
+			var oButtonDomRef = oButton.getDomRef();
+			return oButtonDomRef && oButtonDomRef.getBoundingClientRect ? oButtonDomRef.getBoundingClientRect().width : oButton.$().outerWidth();
 		});
 	};
 
