@@ -1,21 +1,26 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/test/Opa',
-	'sap/ui/test/Opa5'
-], function ($, Opa, Opa5) {
+	'sap/ui/test/Opa5',
+	"sap/m/Button"
+], function ($, Opa, Opa5, Button) {
 	"use strict";
 
 	var iExecutionDelay = Opa.config.executionDelay;
 
-	QUnit.module("matchers without fake time");
+	QUnit.module("matchers without fake time", {
+		beforeEach: function () {
+			this.oButton = new Button("testButton", {text : "foo"});
+			this.oButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oButton.destroy();
+		}
+	});
 
 	QUnit.test("Should find a control by id without matchers", function(assert) {
-		// Arrange
-		var oButton = new sap.ui.commons.Button("testButton"),
-			done = assert.async();
-		oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
+		var done = assert.async();
 		var oSuccessSpy = this.spy();
 
 		// System under Test
@@ -30,22 +35,16 @@ sap.ui.define([
 		});
 		oOpa5.emptyQueue().done(function() {
 			var oSuccessButton = oSuccessSpy.args[0][0];
-			assert.strictEqual(oSuccessButton, oButton, "found a control");
-
+			assert.strictEqual(oSuccessButton, this.oButton, "found a control");
 			done();
-		});
+		}.bind(this));
 
 
 	});
 
 	QUnit.test("Should not call check if no matcher is matching on a single control", function(assert) {
-		// Arrange
-		var oButton = new sap.ui.commons.Button("myButton", {text : "foo"}),
-			done = assert.async();
-		oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
 		var oCheckSpy = this.spy();
+		var done = assert.async();
 
 		// System under Test
 		var oOpa5 = new Opa5();
@@ -56,33 +55,21 @@ sap.ui.define([
 
 		// Act
 		oOpa5.waitFor({
-			id : "myButton",
+			id : "testButton",
 			matchers : [ oMatcher ],
 			check : oCheckSpy,
 			timeout : 1, //second
 			pollingInterval : 200 //millisecond
 		});
 		oOpa5.emptyQueue().fail(function () {
-			// Assert
 			assert.strictEqual(oCheckSpy.callCount, 0, "did not call the check");
-
-			// Cleanup
-			oButton.destroy();
-
 			done();
 		});
 	});
 
 	QUnit.test("Should skip a check if matchers filtered out all controls", function(assert) {
-		// Arrange
-		var oButton = new sap.ui.commons.Button("myButton", {text : "foo"});
-		var oButton2 = new sap.ui.commons.Button("myButton2", {text : "bar"}),
-			done = assert.async();
-		oButton.placeAt("qunit-fixture");
-		oButton2.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
 		var oCheckSpy = this.spy();
+		var done = assert.async();
 
 		var oTextMatcher = new Opa5.matchers.PropertyStrictEquals({
 			name : "text",
@@ -100,20 +87,25 @@ sap.ui.define([
 			timeout : 1 //second
 		});
 		Opa5.emptyQueue().fail(function () {
-			// Assert
 			assert.strictEqual(oCheckSpy.callCount, 0, "did not call the check");
-
-			// Cleanup
-			oButton.destroy();
-			oButton2.destroy();
-
 			done();
 		});
 	});
 
 	QUnit.module("matchers in waitfor", {
-		beforeEach : function () { sinon.config.useFakeTimers = true; },
-		afterEach : function () { sinon.config.useFakeTimers = false; }
+		beforeEach : function () {
+			sinon.config.useFakeTimers = true;
+			this.oButton = new Button("myButton", {text : "foo"});
+			this.oButton2 = new Button("myButton2", {text : "bar"});
+			this.oButton.placeAt("qunit-fixture");
+			this.oButton2.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function () {
+			sinon.config.useFakeTimers = false;
+			this.oButton.destroy();
+			this.oButton2.destroy();
+		}
 	});
 
 	QUnit.test("Should execute a matcher and pass its value to success if no control is searched", function (assert) {
@@ -143,11 +135,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should not call check if no matcher is matching", function(assert) {
-		// Arrange
-		var oButton = new sap.ui.commons.Button("myButton", {text : "foo"});
-		oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
 		var oCheckSpy = this.spy();
 
 		// System under Test
@@ -178,15 +165,9 @@ sap.ui.define([
 
 		// Cleanup
 		this.clock.tick(1000);
-		oButton.destroy();
 	});
 
 	QUnit.test("Should call check when all matchers are matching", function(assert) {
-		// Arrange
-		var oButton = new sap.ui.commons.Button("myButton", {text : "foo"});
-		oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
 		var oSuccessSpy = this.spy();
 
 		// System under Test
@@ -218,25 +199,15 @@ sap.ui.define([
 		assert.strictEqual(oTextMatcherSpy.callCount, 0, "did not call the oTextMatcher yet");
 		assert.strictEqual(oEnabledMatcherSpy.callCount, 1, "called the oEnabledMatcher");
 
-		oButton.setEnabled(false);
+		this.oButton.setEnabled(false);
 		this.clock.tick(200);
 		assert.strictEqual(oTextMatcherSpy.callCount, 1, "did call the oTextMatcher");
 		assert.strictEqual(oEnabledMatcherSpy.callCount, 2, "did call the oEnabledMatcher again");
 
 		assert.strictEqual(oSuccessSpy.callCount, 1, "did call the success");
-
-		// Cleanup
-		oButton.destroy();
 	});
 
 	QUnit.test("Should only pass matching controls to success", function(assert) {
-		// Arrange
-		var oButton = new sap.ui.commons.Button("myButton", {text : "foo"});
-		var oButton2 = new sap.ui.commons.Button("myButton2", {text : "bar"});
-		oButton.placeAt("qunit-fixture");
-		oButton2.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
 		var oSuccessSpy = this.spy();
 
 		var oTextMatcher = new Opa5.matchers.PropertyStrictEquals({
@@ -265,18 +236,9 @@ sap.ui.define([
 
 		assert.strictEqual(aControls.length, 1, "did pass only one button");
 		assert.strictEqual(aControls[0].sId, "myButton2", "did pass the correct button");
-
-		// Cleanup
-		oButton.destroy();
-		oButton2.destroy();
 	});
 
 	QUnit.test("Should only pass a single matching control to success", function(assert) {
-		// Arrange
-		var oButton = new sap.ui.commons.Button("myButton", {text : "foo"});
-		oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
 		var oSuccessSpy = this.spy();
 
 		var oTextMatcher = new Opa5.matchers.PropertyStrictEquals({
@@ -304,17 +266,9 @@ sap.ui.define([
 		var oControl = oSuccessSpy.args[0][0];
 
 		assert.strictEqual(oControl.sId, "myButton", "did pass the correct button");
-
-		// Cleanup
-		oButton.destroy();
 	});
 
 	QUnit.test("Should call a matcher which is an inline function", function(assert) {
-		// Arrange
-		var oButton = new sap.ui.commons.Button("myButton3");
-		oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
 		// System under Test
 		var oOpa5 = new Opa5();
 		oOpa5.extendConfig({pollingInterval : 200 /*millisecond*/});
@@ -331,13 +285,13 @@ sap.ui.define([
 			return true;
 		});
 		oOpa5.waitFor({
-			id : "myButton3",
+			id : "myButton",
 			matchers : fnMatcher,
 			check : fnCheckSpy1,
 			timeout : 1 //second
 		});
 		oOpa5.waitFor({
-			id : "myButton3",
+			id : "myButton",
 			matchers : [ fnMatcher ],
 			check : fnCheckSpy2,
 			timeout : 1 //second
@@ -355,7 +309,6 @@ sap.ui.define([
 
 		// Cleanup
 		this.clock.tick(1000);
-		oButton.destroy();
 	});
 
 	var waitForIdWithChangingMatchers = function(vId, oCheckSpy, oSuccessSpy) {
@@ -389,13 +342,6 @@ sap.ui.define([
 	};
 
 	QUnit.test("Should pass multiple truthy results of matching to the next matchers and to success as array", function(assert) {
-		// Arrange
-		var oButton = new sap.ui.commons.Button("myButton", {text : "foo"});
-		var oButton2 = new sap.ui.commons.Button("myButton2", {text : "bar"});
-		oButton.placeAt("qunit-fixture");
-		oButton2.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
 		var oSuccessSpy = this.spy();
 		var oCheckSpy = this.spy();
 
@@ -415,18 +361,9 @@ sap.ui.define([
 		assert.strictEqual(aCheckText.length, aText.length, "Check got same amout of values");
 		assert.strictEqual(aCheckText[0], aText[0], "The first value is same");
 		assert.strictEqual(aCheckText[1], aText[1], "The second value is same");
-
-		// Cleanup
-		oButton.destroy();
-		oButton2.destroy();
 	});
 
 	QUnit.test("Should pass only truthy result of matching to the next matchers and to success as value", function(assert) {
-		// Arrange
-		var oButton = new sap.ui.commons.Button("myButton", {text : "foo"});
-		oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
 		var oSuccessSpy = this.spy();
 		var oCheckSpy = this.spy();
 
@@ -442,9 +379,6 @@ sap.ui.define([
 		var aCheckText = oCheckSpy.args[0][0][0];
 
 		assert.strictEqual(aCheckText, aText, "Check got same value as success");
-
-		// Cleanup
-		oButton.destroy();
 	});
 
 });

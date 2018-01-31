@@ -235,19 +235,6 @@
 						})
 					});
 
-					opaTest("Should show trace logs if log level is set to TRACE", function (oOpa) {
-						// iFrame content should be loaded with opaLogLevel=trace
-						oOpa.waitFor({
-							check: function () {
-								// the trace message would be cleared before check
-								// throw exception here so that there will be no more polling
-								var o = _OpaLogger.getLogger("sap.ui.test.TestComponent");
-								o.trace("TraceLog");
-								throw new Error("Test exception");
-							}
-						});
-					});
-
 					QUnit.start();
 				}
 		);
