@@ -59,7 +59,7 @@ sap.ui.define(['sap/ui/base/Object'],
 	/**
 	 * Getter for path of the context itself or a subpath
 	 * @public
-	 * @param {string} sPath the binding path
+	 * @param {string} [sPath] the binding path (optional)
 	 * @return {string} the binding path
 	 */
 	Context.prototype.getPath = function(sPath) {
