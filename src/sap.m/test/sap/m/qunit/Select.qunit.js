@@ -8202,7 +8202,7 @@
 		oSelect.destroy();
 	});
 
-	QUnit.module("change event");
+	QUnit.module("Events");
 
 	QUnit.test("change of selected item onChange should not re-trigger change event", function (assert) {
 		var oItem1 =  new sap.ui.core.Item({key: "1", text : "1"}),
@@ -8230,6 +8230,21 @@
 		assert.strictEqual(oSelect.getSelectedItem(), oItem1, "The selected item is correct");
 
 		// cleanup
+		oSelect.destroy();
+	});
+
+
+	QUnit.test("Tab handling shouldn't mark the event", function(assert) {
+		var oSelect = new sap.m.Select(),
+			$oTabNextEvent = jQuery.Event("tabNextTestEvent"),
+			$oTabPreviousEvent = jQuery.Event("tabPreviousTestEvent");
+
+		oSelect.onsaptabnext($oTabNextEvent);
+		assert.notOk($oTabNextEvent.isMarked(), "The event isn't marked by the onsaptabnext method");
+
+		oSelect.onsaptabprevious($oTabPreviousEvent);
+		assert.notOk($oTabPreviousEvent.isMarked(), "The event isn't marked by the onsaptabprevious method");
+
 		oSelect.destroy();
 	});
 
