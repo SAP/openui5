@@ -162,6 +162,7 @@ function(
 		constructor: function () {
 			this._aStyleClasses = this._aStyleClasses.slice(0);
 			this._oScrollbarSynchronizers = new Map();
+			this._aBindParameters = [];
 
 			Element.apply(this, arguments);
 
@@ -171,8 +172,18 @@ function(
 
 			this.asyncInit()
 				.then(function () {
-					this._bInit = true;
-					this.fireInit();
+					// Can happen that destroy() is called during asynchronous initialization
+					if (this._bShouldBeDestroyed) {
+						this.fireInitFailed({
+							error: Util.createError(
+								"Overlay#asyncInit",
+								"ElementOverlay is destroyed during initialization ('" + this.getId() + "')"
+							)
+						});
+					} else {
+						this._bInit = true;
+						this.fireInit();
+					}
 				}.bind(this))
 				.catch(function(vError) {
 					var oError = Util.wrapError(vError);
@@ -187,10 +198,15 @@ function(
 					this.fireInitFailed({
 						error: oError
 					});
-
 				}.bind(this));
 
-
+			// Attach stored browser events
+			this.attachEvent('afterRendering', function (oEvent) {
+				var $DomRef = jQuery(oEvent.getParameter('domRef'));
+				this._aBindParameters.forEach(function (mBrowserEvent) {
+					$DomRef.bind(mBrowserEvent.sEventType, mBrowserEvent.fnProxy);
+				});
+			}, this);
 		},
 
 		/**
@@ -222,8 +238,9 @@ function(
 		 */
 		_aStyleClasses: ['sapUiDtOverlay'],
 
-		_width: 0,
-		_height: 0
+		_bShouldBeDestroyed: false,
+
+		_aBindParameters: null
 	});
 
 	// ========================================================
@@ -321,19 +338,26 @@ function(
 		this._bRendered = true;
 
 		if (!bSuppressEvent) {
-			this.fireAfterRendering();
+			this.fireAfterRendering({
+				domRef: this._$domRef.get(0)
+			});
 		}
 
 		return this._$domRef;
 	};
 
-	Overlay.prototype.isReady = function () {
-		return this._bInit && this._bRendered;
+	Overlay.prototype.isInit = function () {
+		return this._bInit;
 	};
 
 	Overlay.prototype.isRendered = function () {
 		return this._bRendered;
 	};
+
+	Overlay.prototype.isReady = function () {
+		return this.isInit() && this.isRendered();
+	};
+
 
 	Overlay.prototype.addStyleClass = function (sClassName) {
 		if (!this.hasStyleClass(sClassName)) {
@@ -378,7 +402,9 @@ function(
 			jQuery.sap.log.error('FIXME: Do not destroy overlay twice (overlayId = ' + this.getId() + ')!');
 			return;
 		}
+
 		this.fireBeforeDestroy();
+
 		Element.prototype.destroy.apply(this, arguments);
 	};
 
@@ -396,6 +422,7 @@ function(
 
 		this.$().remove();
 		delete this._bInit;
+		delete this._bShouldBeDestroyed;
 		delete this._$domRef;
 		delete this._oScrollbarSynchronizers;
 		window.clearTimeout(this._iCloneDomTimeout);
@@ -598,15 +625,15 @@ function(
 		if (sEventType && (typeof (sEventType) === "string")) { // do nothing if the first parameter is empty or not a string
 			if (typeof fnHandler === "function") {   // also do nothing if the second parameter is not a function
 				// store the parameters for bind()
-				if (!this.aBindParameters) {
-					this.aBindParameters = [];
+				if (!this._aBindParameters) {
+					this._aBindParameters = [];
 				}
 				oListener = oListener || this;
 
 				// FWE jQuery.proxy can't be used as it breaks our contract when used with same function but different listeners
 				var fnProxy = fnHandler.bind(oListener);
 
-				this.aBindParameters.push({
+				this._aBindParameters.push({
 					sEventType: sEventType,
 					fnHandler: fnHandler,
 					oListener: oListener,
@@ -639,11 +666,11 @@ function(
 				oListener = oListener || this;
 
 				// remove the bind parameters from the stored array
-				if (this.aBindParameters) {
-					for (i = this.aBindParameters.length - 1; i >= 0; i--) {
-						oParamSet = this.aBindParameters[i];
+				if (this._aBindParameters) {
+					for (i = this._aBindParameters.length - 1; i >= 0; i--) {
+						oParamSet = this._aBindParameters[i];
 						if ( oParamSet.sEventType === sEventType  && oParamSet.fnHandler === fnHandler  &&  oParamSet.oListener === oListener ) {
-							this.aBindParameters.splice(i, 1);
+							this._aBindParameters.splice(i, 1);
 							// if control is rendered, directly call unbind()
 							$.unbind(sEventType, oParamSet.fnProxy);
 						}

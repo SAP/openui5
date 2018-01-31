@@ -173,7 +173,8 @@ function(
 			{},
 			Overlay.prototype._getAttributes.apply(this, arguments),
 			{
-				"data-sap-ui-dt-for": this.getElement().getId()
+				"data-sap-ui-dt-for": this.getElement().getId(),
+				"draggable": this.getMovable()
 			}
 		);
 	};
@@ -204,7 +205,7 @@ function(
 	 * Called when the ElementOverlay is destroyed
 	 * @protected
 	 */
-	ElementOverlay.prototype.exit = function() {
+	ElementOverlay.prototype.exit = function () {
 		if (this._oMutationObserver) {
 			this._oMutationObserver.detachDomChanged(this._onDomChanged, this);
 			delete this._oMutationObserver;
@@ -697,7 +698,11 @@ function(
 	 * @private
 	 */
 	ElementOverlay.prototype._onElementDestroyed = function() {
-		this.destroy();
+		if (this._bInit) {
+			this.destroy();
+		} else {
+			this._bShouldBeDestroyed = true;
+		}
 	};
 
 	/**

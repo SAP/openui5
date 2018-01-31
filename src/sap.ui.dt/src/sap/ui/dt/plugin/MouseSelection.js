@@ -59,7 +59,6 @@ function(Plugin) {
 		oOverlay.attachBrowserEvent('click', this._onClick, oOverlay);
 	};
 
-
 	// * @override
 	MouseSelection.prototype.deregisterElementOverlay = function(oOverlay) {
 		oOverlay.detachBrowserEvent('click', this._onClick, oOverlay);

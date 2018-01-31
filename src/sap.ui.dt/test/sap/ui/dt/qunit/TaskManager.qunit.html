@@ -1,9 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
-
-		<title>Test Page for sap.ui.dt.Util</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>Test Page for sap.ui.dt.TaskManager</title>
 		<script src="../shared-config.js"></script>
 		<script>
 			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
@@ -14,14 +13,12 @@
 			jQuery.sap.require('sap.ui.qunit.qunit-junit');
 			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
 
-			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/dt/Util.js]');
+			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/dt/TaskManager.js]');
 
-			jQuery.sap.includeScript('./Util.qunit.js');
+			jQuery.sap.includeScript('./TaskManager.qunit.js');
 		</script>
-
 	</head>
 	<body>
 		<div id="qunit"></div>
-		<div id='qunit-fixture'></div>
 	</body>
 </html>

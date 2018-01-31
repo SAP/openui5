@@ -60,7 +60,7 @@
 					draggableTypes : aMOVABLE_TYPES
 				});
 
-				var oDesignTime = new sap.ui.dt.DesignTime({
+				window.oDesignTime = new sap.ui.dt.DesignTime({
 					rootElements : [oView],
 					plugins : [
 						oSelectionPlugin,
@@ -73,15 +73,12 @@
 					.on("dragstart", function() {
 						var oButton = new sap.m.Button({text: "New button"});
 
-						Promise.all([
-							new Promise(function (fnResolve) {
-								oDesignTime.attachEventOnce("synced", fnResolve);
-							}),
-							oDesignTime.createOverlay(oButton).then(function (oOverlay) {
-								oDraggedOverlay = oOverlay;
-								oDraggedOverlay.render();
-							})
-						]).then(function () {
+						oDesignTime.createOverlay({
+							element: oButton,
+							root: true,
+						}).then(function (oOverlay) {
+							oDraggedOverlay = oOverlay;
+							oDraggedOverlay.placeInOverlayContainer();
 							oDraggedOverlay.$().trigger("dragstart");
 						});
 
