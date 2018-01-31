@@ -12,7 +12,8 @@ sap.ui.define([
 	'sap/ui/dt/DOMUtil',
 	'sap/ui/dt/ScrollbarSynchronizer',
 	'sap/ui/dt/Util',
-	'sap/ui/dt/Map'
+	'sap/ui/dt/Map',
+	'sap/ui/Device'
 ],
 function(
 	jQuery,
@@ -23,7 +24,8 @@ function(
 	DOMUtil,
 	ScrollbarSynchronizer,
 	Util,
-	Map
+	Map,
+	Device
 ) {
 	"use strict";
 
@@ -623,19 +625,7 @@ function(
 	 * @protected
 	 */
 	Overlay.prototype._setPosition = function($Target, oGeometry, $Parent) {
-		var bRTL = sap.ui.getCore().getConfiguration().getRTL();
-
-		var iParentScrollTop = $Parent ? $Parent.scrollTop() : null;
-		var iParentScrollLeft = $Parent ? $Parent.scrollLeft() : null;
-		var mParentOffset = $Parent ? $Parent.offset() : null;
-
-		var mPosition = DOMUtil.getOffsetFromParent(oGeometry.position, mParentOffset, iParentScrollTop, iParentScrollLeft);
-
-		if (bRTL) {
-			var iParentWidth = this.isRoot() ? jQuery(window).width() : $Parent.width();
-			mPosition.left = mPosition.left - (iParentWidth - oGeometry.size.width);
-		}
-
+		var mPosition = DOMUtil.getOffsetFromParent(oGeometry, $Parent ? $Parent.get(0) : null);
 		$Target.css("transform", "translate(" + mPosition.left + "px, " + mPosition.top + "px)");
 	};
 

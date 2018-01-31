@@ -4,10 +4,14 @@
 
 // Provides object sap.ui.dt.DOMUtil.
 sap.ui.define([
-	'jquery.sap.global'
+	'jquery.sap.global',
+	'sap/ui/Device',
+	'sap/ui/dt/Util'
 ],
 function(
-	jQuery
+	jQuery,
+	Device,
+	Util
 ) {
 	"use strict";
 
@@ -42,16 +46,29 @@ function(
 
 	/**
 	 * Returns the offset for an element based on the parent position and scrolling
-	 * @param  {object} oPosition     Position object containing left and top values
-	 * @param  {object} mParentOffset Offset object from the parent containing left and top values
-	 * @param  {number} iScrollTop    Scrolling position from top in pixels
-	 * @param  {number} iScrollLeft   Scrolling position from left in pixels
-	 * @return {object}               Returns the calculated offset containing left and top values
+	 * @typedef {object} SizeObject
+	 * @property {number} width Element width
+	 * @property {number} height Element height
+	 * @typedef {object} PositionObject
+	 * @property {number} left Element left coordinate
+	 * @property {number} top Element top coordinate
+	 * @typedef {object} GeometryObject
+	 * @property {SizeObject} size Element size
+	 * @property {PositionObject} position Element position
+	 * @property {boolean} visible Element visibility
+	 * @param {GeometryObject} oGeometry - Position object containing left and top values
+	 * @param {HTMLElement} oParent - Parent element
+	 * @return {PositionObject} - Returns the calculated offset containing left and top values
 	 */
-	DOMUtil.getOffsetFromParent = function(oPosition, mParentOffset, iScrollTop, iScrollLeft) {
+	DOMUtil.getOffsetFromParent = function(oGeometry, oParent) {
+		var $Parent = oParent ? jQuery(oParent) : null;
+		var iScrollTop = $Parent ? $Parent.scrollTop() : null;
+		var iScrollLeft = oParent ? DOMUtil.getScrollLeft(oParent) : null;
+		var mParentOffset = $Parent ? $Parent.offset() : null;
+
 		var mOffset = {
-			left : oPosition.left,
-			top : oPosition.top
+			left: oGeometry.position.left,
+			top: oGeometry.position.top
 		};
 
 		if (mParentOffset) {
@@ -59,7 +76,50 @@ function(
 			mOffset.top -= (mParentOffset.top - (iScrollTop ? iScrollTop : 0));
 		}
 
+		if (sap.ui.getCore().getConfiguration().getRTL()) {
+			var iParentWidth = $Parent ? $Parent.width() : jQuery(window).width();
+			//TODO: Workaround - remove when bugs in Chrome (issue 832569) and Safari (issue 336512063) get solved
+			if ((Device.browser.blink || Util.isWebkit()) && DOMUtil.hasVerticalScrollBar($Parent)) {
+				mOffset.left -= DOMUtil.getScrollbarWidth();
+			}
+			// Workaround end
+			mOffset.left = mOffset.left - (iParentWidth - oGeometry.size.width);
+		}
+
 		return mOffset;
+	};
+
+	/**
+	 * TEMPORARY METHOD - Remove when browser behavior is consistent accross the board
+	 * The specification for the behavior of scrollLeft values in Right-to-Left (RTL)
+	 * is still in draft, so different browsers calculate it differently.
+	 * We return the result from Webkit/Gecko, which is becoming the standard.
+	 * @param {HTMLElement} oElement Element to read scrollLeft from
+	 * @return {number} returns browser agnostic scrollLeft value (negative in RTL)
+	 */
+	DOMUtil.getScrollLeft = function(oElement) {
+		var iScrollLeft = oElement.scrollLeft;
+		// The adjustment is only required in RTL mode
+		if (
+			!sap.ui.getCore().getConfiguration().getRTL()
+			|| !DOMUtil.hasHorizontalScrollBar(oElement)
+		) {
+			return iScrollLeft;
+		}
+		// Blink (Chrome) considers zero scrollLeft when the scrollBar is all the way to the left
+		// and moves positively to the right
+		if (Device.browser.blink){
+			var iMaxScrollValue = oElement.scrollWidth - oElement.clientWidth;
+			return iScrollLeft - iMaxScrollValue;
+		// Internet Explorer considers zero scrollLeft when the scrollbar is all the way
+		// to the right (initial position) and moves positively to the left
+		} else if (Device.browser.msie || Device.browser.edge) {
+			return -iScrollLeft;
+		// Firefox (Gecko) & Safari (Webkit) consider zero scrollLeft when the scrollbar is
+		// all the way to the right (initial position) and moves negatively to the left [desired behavior]
+		} else {
+			return iScrollLeft;
+		}
 	};
 
 	/**

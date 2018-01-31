@@ -1,16 +1,10 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
 		<title>Test Page for sap.ui.dt.DOMUtil</title>
-
+		<script src="../shared-config.js"></script>
 		<style>
-			#content {
-				position: absolute;
-				left: 400px;
-				top : 10px;
-				z-index: 1000;
-			}
 			#left-part .withAfterElement::after {
 				content: ":";
 			}
@@ -31,263 +25,30 @@
 
 		</style>
 
-		<script src="../shared-config.js"></script>
-		<script id="sap-ui-bootstrap"
-				data-sap-ui-noConflict="true"
-				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
-				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
-				src="../../../../../resources/sap-ui-core.js">
-		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script>
+			window["sap-ui-config"].noConflict = "true";
 
-			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			window["sap-ui-config"].resourceroots = {
+				"dt.view": "testdata/designtime/"
+			};
 
-			jQuery.sap.require("sap.ui.dt.DOMUtil");
-			jQuery.sap.require("sap.m.Button");
+			window["sap-ui-config"].libs = "sap.ui.dt,sap.m,sap.ui.layout";
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
+		</script>
+		<script>
+			sap.ui.requireSync("sap/ui/qunit/qunit-2-css");
+			sap.ui.requireSync("sap/ui/thirdparty/qunit-2");
+			sap.ui.requireSync("sap/ui/qunit/qunit-junit");
+			sap.ui.requireSync("sap/ui/qunit/qunit-coverage");
 
-			/**
-			 * getZIndex
-			 */
-			QUnit.module("Given that a control is rendered", {
-				beforeEach : function() {
-					this.iWidth = 100;
-					this.iHeight = 48;
-					this.oButton = new sap.m.Button({
-						width: this.iWidth + "px",
-						text : "Button"
-					});
+			window.blanket && window.blanket.options("sap-ui-cover-only", "DOMUtil.js");
 
-					this.oButton.placeAt("content");
-					// Render Controls
-					sap.ui.getCore().applyChanges();
-				},
-				afterEach : function() {
-					this.oButton.destroy();
-				}
-			});
-
-			QUnit.test("when the DOM reference is available", function(assert) {
-				var oButtonDomRef = this.oButton.getDomRef();
-				var mSize = sap.ui.dt.DOMUtil.getSize(oButtonDomRef);
-				assert.deepEqual(mSize, {width: this.iWidth, height: this.iHeight}, 'then the static method "getSize" returns the right value');
-
-				var zIndex = sap.ui.dt.DOMUtil.getZIndex(oButtonDomRef);
-				assert.equal(zIndex, "1000", 'and the static method "getZIndex" returns the right value');
-			});
-
-			QUnit.test("when a transition style is applied to the underlying element", function(assert) {
-				this.oButton.addStyleClass("shrink");
-				var oButtonDomRef = this.oButton.getDomRef();
-				var mSizeAfterTransition = sap.ui.dt.DOMUtil.getSize(oButtonDomRef);
-				assert.deepEqual(mSizeAfterTransition, {width: 0.1 * this.iWidth, height: 0.5 * this.iHeight}, 'then the static method "getSize" returns the right value');
-				this.oButton.removeStyleClass("shrink");
-			});
-
-			/**
-			 * cloneDOMAndStyles
-			 */
-			QUnit.module("Given that some DOM element with child nodes is rendered...", {
-				beforeEach : function() {
-					this.oDomElement = jQuery("<div class='parent' id='parent'></div>");
-
-					jQuery("<div class='child' id='first-child'></div>").appendTo(this.oDomElement);
-					jQuery("<div class='child' id='second-child'></div>").appendTo(this.oDomElement);
-
-					this.oDomElement.appendTo("#content");
-				},
-				afterEach : function() {
-					this.oDomElement.remove();
-				}
-			});
-
-			/**
-			 * getDomRefForCSSSelector test
-			 */
-			QUnit.test("when the getDomRefForCSSSelector is called for :sap-domref", function(assert) {
-				var oDomRef = sap.ui.dt.DOMUtil.getDomRefForCSSSelector(this.oDomElement, ":sap-domref");
-				assert.strictEqual(oDomRef.length, 1, "one element found");
-				assert.strictEqual(oDomRef.get(0).getAttribute("id"), "parent", "right element found");
-			});
-
-			QUnit.test("when the getDomRefForCSSSelector is called for :sap-domref > #first-child", function(assert) {
-				var oDomRef = sap.ui.dt.DOMUtil.getDomRefForCSSSelector(this.oDomElement, ":sap-domref > #first-child");
-				assert.strictEqual(oDomRef.length, 1, "one element found");
-				assert.strictEqual(oDomRef.get(0).getAttribute("id"), "first-child", "right element found");
-			});
-
-			QUnit.test("when the getDomRefForCSSSelector is called for :first-child", function(assert) {
-				var oDomRef = sap.ui.dt.DOMUtil.getDomRefForCSSSelector(this.oDomElement, ":first-child");
-				assert.strictEqual(oDomRef.length, 1, "one element found");
-				assert.strictEqual(oDomRef.get(0).getAttribute("id"), "first-child", "right element found");
-			});
-
-			QUnit.test("when the getDomRefForCSSSelector is called for :sap-domref > .child", function(assert) {
-				var oDomRef = sap.ui.dt.DOMUtil.getDomRefForCSSSelector(this.oDomElement, ":sap-domref > .child");
-				assert.strictEqual(oDomRef.length, 2, "two elements found");
-			});
-
-			QUnit.test("when the getDomRefForCSSSelector is called for '> #third-child,> #first-child'", function(assert) {
-				var oDomRef = sap.ui.dt.DOMUtil.getDomRefForCSSSelector(this.oDomElement, "> #third-child, > #first-child");
-				assert.strictEqual(oDomRef.length, 1, "one element found");
-				assert.strictEqual(oDomRef.get(0).getAttribute("id"), "first-child", "right element found");
-			});
-
-			/**
-			 * cloneDOMAndStyles
-			 */
-			QUnit.module("Given that some DOM element with child nodes is rendered...", {
-				beforeEach : function() {
-					jQuery("<div style='float: left; width: 50%; height: 100%;' id='left-part'></div>").appendTo("#content");
-					jQuery("<div style='float: left; width: 50%; height: 100%;' id='right-part'></div>").appendTo("#content");
-
-					this.oDomElement = jQuery("<div data-find='div' class='withBeforeElement' style='width:200px; height: 200px;'><span data-find='span' class='withAfterElement' style='color: rgb(255, 0, 0);'>Text</span></div>");
-					this.oDomElement.appendTo("#left-part");
-				},
-				afterEach : function() {
-					this.oDomElement.remove();
-					jQuery("#content").empty();
-				}
-			});
-
-			QUnit.test("when this element, it's children and styling is copied", function(assert) {
-				sap.ui.dt.DOMUtil.cloneDOMAndStyles(this.oDomElement, jQuery("#right-part"));
-
-				var oCopyDiv = jQuery("#right-part > [data-find=div]");
-				assert.ok(oCopyDiv, "element is copied");
-				assert.strictEqual(oCopyDiv.css("width"), "200px", "styles for element are also copied");
-
-				var sBeforeDivContent = window.getComputedStyle( this.oDomElement.get(0), ':before' ).getPropertyValue('content').replace(/[\"\']/g, "");
-				var sBeforeCopyDivContent = oCopyDiv.children().first().html();
-				assert.strictEqual(sBeforeCopyDivContent, sBeforeDivContent, "and the pseudoElements are also copied");
-
-				var oCopySpan = oCopyDiv.find("> [data-find=span]");
-				assert.ok(oCopySpan, "child elemen is copied");
-				assert.strictEqual(oCopySpan.css("color"), 'rgb(255, 0, 0)', "styles for child elemen are also copied");
-
-				var sAfterSpanContent = window.getComputedStyle( this.oDomElement.find(">span").get(0), ':after' ).getPropertyValue('content').replace(/[\"\']/g, "");
-				var sAfterCopySpanContent =oCopySpan.children().last().html();
-				assert.strictEqual(sAfterCopySpanContent, sAfterSpanContent, "and the pseudoElements are also copied");
-			});
-
-			/**
-			 * hasScrollBar
-			 */
-			QUnit.module("Given that a container and a content are rendered", {
-				beforeEach : function() {
-					this.oContent = jQuery("<div id='container-content' style='width: 200px; height: 200px;'></div>");
-					this.oContainer = jQuery("<div id='container' style='background: #000; width: 200px; height: 200px;'></div>");
-					this.oContainer.append(this.oContent).appendTo("#content");
-				},
-				afterEach : function() {
-					this.oContainer.remove();
-				}
-			});
-
-			QUnit.test("when the content is higher but container has no overflow property set", function(assert) {
-				this.oContent.css({
-					height: 400
-				});
-
-				assert.strictEqual(hasScrollBar(this.oContainer), false, "no scroll");
-			});
-
-			QUnit.test("when the content is higher and container has overflow auto", function(assert) {
-				this.oContent.css({
-					height: 400
-				});
-
-				this.oContainer.css({
-					overflow: "auto"
-				});
-
-				assert.strictEqual(hasScrollBar(this.oContainer), true, "scroll is shown");
-			});
-
-			QUnit.test("when the content is wider and container has overflow scroll", function(assert) {
-				this.oContent.css({
-					width: 400
-				});
-
-				this.oContainer.css({
-					"overflow-x": "scroll"
-				});
-
-				assert.strictEqual(hasScrollBar(this.oContainer), true, "scroll is shown");
-			});
-
-			var hasScrollBar = sap.ui.dt.DOMUtil.hasScrollBar;
-
-			/**
-			 * Test copyComputedStyle
-			 */
-			QUnit.module("Given that some DOM element with and without styles is rendered...", {
-				beforeEach : function() {
-					this.oSrcDomElement = jQuery("<div class='child' id='first-child' " +
-						"style='background: #000; width: 200px; height: 200px;'" +
-						"></div>")
-						.appendTo("#content");
-					this.oDestDomElement = jQuery("<div class='child' id='second-child'></div>")
-						.appendTo("#content");
-
-					// jQuery("<div style='float: left; width: 50%; height: 100%;' id='left-part'></div>").appendTo("#content");
-					// jQuery("<div style='float: left; width: 50%; height: 100%;' id='right-part'></div>").appendTo("#content");
-
-					// this.oDomElement = jQuery("<div data-find='div' class='withBeforeElement' style='width:200px; height: 200px;'><span data-find='span' class='withAfterElement' style='color: rgb(255, 0, 0);'>Text</span></div>");
-					// this.oDomElement.appendTo("#left-part");
-				},
-				afterEach : function() {
-					this.oSrcDomElement.remove();
-					this.oDestDomElement.remove();
-					jQuery("#content").empty();
-				}
-			});
-
-			QUnit.test("when copyComputedStyle is called and css-attribute display is set to none", function(assert) {
-				this.oSrcDomElement.css({
-					"display": "none"
-				});
-				sap.ui.dt.DOMUtil.copyComputedStyle(this.oSrcDomElement, this.oDestDomElement);
-				var mSrcStyles = window.getComputedStyle(this.oSrcDomElement.get(0));
-				var mDestStyles = window.getComputedStyle(this.oDestDomElement.get(0));
-				assert.strictEqual(mDestStyles["display"], "none", "css-attribute display is copied to source dom element");
-				assert.notEqual(mDestStyles["background-color"], mSrcStyles["background-color"],
-					"css-attribute background on source and dest Element are not equal");
-			});
-
-			QUnit.test("when copyComputedStyle is called without pseudoElements", function(assert) {
-				sap.ui.dt.DOMUtil.copyComputedStyle(this.oSrcDomElement, this.oDestDomElement);
-				var mSrcStyles = window.getComputedStyle(this.oSrcDomElement.get(0));
-				var mDestStyles = window.getComputedStyle(this.oDestDomElement.get(0));
-				assert.strictEqual(mDestStyles["background-color"], mSrcStyles["background-color"],
-					"css styles of source and dest element are equal");
-			});
-
-			QUnit.test("when copyComputedStyle is called with pseudoElements", function(assert) {
-				jQuery("<div style='float: left; width: 50%; height: 100%;' id='left-part'></div>").appendTo("#content");
-				jQuery("<div style='float: left; width: 50%; height: 100%;' id='right-part'></div>").appendTo("#content");
-
-				var oDomElement = jQuery("<div data-find='div' class='withBeforeElementAndAttrContent' style='width:200px; height: 200px;'>" +
-					"<span data-find='span' class='withAfterElement' style='color: rgb(255, 0, 0);'>Text</span></div>");
-				oDomElement.appendTo("#left-part");
-
-				sap.ui.dt.DOMUtil.copyComputedStyle(oDomElement, this.oDestDomElement);
-				var oSpan = jQuery("#second-child").find("span");
-				assert.strictEqual(oSpan.length, 1, "oDestDomElement contains a span element as well as the source oDomElement");
-			});
-
+			//Replace with your qunit path
+			jQuery.sap.includeScript("./DOMUtil.qunit.js");
 		</script>
 	</head>
 	<body>
-		<h1 id="qunit-header">QUnit page for sap.ui.dt.DOMUtil</h1>
-		<h2 id="qunit-banner"></h2>
-	 	<h2 id="qunit-userAgent"></h2>
-		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>
-		<div id="content">
-		</div>
+		<div id="qunit"></div>
+		<div id="qunit-fixture" style="position: fixed; top: auto; right: 0; bottom: 0; left: auto; width: 600px; height: 600px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);"></div>
 	</body>
 </html>
