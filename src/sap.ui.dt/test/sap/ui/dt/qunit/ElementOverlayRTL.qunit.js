@@ -40,7 +40,12 @@ sap.ui.require([
 	});
 
 	QUnit.test("then", function(assert) {
-		assert.deepEqual(this.oOverlay.$().offset(), this.oButton.$().offset(), "overlay has same position as the control");
+		// Math.ceil is required for IE and Edge
+		assert.deepEqual(
+			Math.ceil(this.oOverlay.$().offset()),
+			Math.ceil(this.oButton.$().offset()),
+			"overlay has same position as the control"
+		);
 	});
 
 	QUnit.start();
