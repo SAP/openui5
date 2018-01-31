@@ -389,22 +389,18 @@ sap.ui.define([
 
 		var done = assert.async();
 
-		sap.ui.require(["sap/ui/core/Component", "sap/ui/core/ComponentContainer"], function(Component, ComponentContainer) {
-
-			var oComponentContainer = new ComponentContainer({
-				name: "samples.components.button",
-				componentCreated: function(oEvent) {
-					assert.ok(true, "ComponentContainer notified that the Component has been created");
-					assert.ok(oEvent.getParameter("component") instanceof Component, "Component instance has been passed as event parameter");
-					assert.strictEqual(oEvent.getParameter("component"), this.getComponentInstance(), "Component instance has been passed as event parameter");
-					done();
-				}
-			});
-
-			// simulate rendering
-			oComponentContainer.onBeforeRendering();
-
+		var oComponentContainer = new ComponentContainer({
+			name: "samples.components.button",
+			componentCreated: function(oEvent) {
+				assert.ok(true, "ComponentContainer notified that the Component has been created");
+				assert.ok(oEvent.getParameter("component") instanceof Component, "Component instance has been passed as event parameter");
+				assert.strictEqual(oEvent.getParameter("component"), this.getComponentInstance(), "Component instance has been passed as event parameter");
+				done();
+			}
 		});
+
+		// simulate rendering
+		oComponentContainer.onBeforeRendering();
 
 	});
 
@@ -416,24 +412,99 @@ sap.ui.define([
 			done();
 		}, 2000);
 
-		sap.ui.require(["sap/ui/core/Component", "sap/ui/core/ComponentContainer"], function(Component, ComponentContainer) {
+		var oComponentContainer = new ComponentContainer({
+			name: "samples.components.button",
+			async: true,
+			componentCreated: function(oEvent) {
+				assert.ok(true, "ComponentContainer notified that the Component has been created");
+				assert.ok(oEvent.getParameter("component") instanceof Component, "Component instance has been passed as event parameter");
+				assert.strictEqual(oEvent.getParameter("component"), this.getComponentInstance(), "Component instance has been passed as event parameter");
+				clearTimeout(iTimeout);
+				done();
+			}
+		});
 
-			var oComponentContainer = new ComponentContainer({
-				name: "samples.components.button",
-				async: true,
-				componentCreated: function(oEvent) {
-					assert.ok(true, "ComponentContainer notified that the Component has been created");
-					assert.ok(oEvent.getParameter("component") instanceof Component, "Component instance has been passed as event parameter");
-					assert.strictEqual(oEvent.getParameter("component"), this.getComponentInstance(), "Component instance has been passed as event parameter");
-					clearTimeout(iTimeout);
-					done();
+		// simulate rendering
+		oComponentContainer.onBeforeRendering();
+
+	});
+
+	QUnit.module("Manifest First", {
+		beforeEach : function() {
+
+			// setup fake server
+			var oManifest = this.oManifest = {
+				"sap.app" : {
+					"id" : "samples.components.sample"
 				}
+			};
+
+			var oServer = this.oServer = sinon.sandbox.useFakeServer();
+
+			oServer.xhr.useFilters = true;
+			oServer.xhr.filters = [];
+			oServer.xhr.addFilter(function(method, url) {
+				return url !== "/anylocation/manifest.json?sap-language=EN";
 			});
 
-			// simulate rendering
-			oComponentContainer.onBeforeRendering();
+			oServer.autoRespond = true;
+			oServer.respondWith("GET", "/anylocation/manifest.json?sap-language=EN", [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oManifest)
+			]);
 
+		},
+		afterEach : function() {}
+	});
+
+
+	QUnit.test("Manifest delegation to component instance (sync)", function(assert) {
+
+		var oServer = this.oServer, oManifest = this.oManifest;
+
+		// start test
+		var oComponentContainer = new ComponentContainer({
+			manifest: "/anylocation/manifest.json",
+			async: false
 		});
+
+		// simulate rendering
+		oComponentContainer.onBeforeRendering();
+
+		// check the manifest being available properly
+		var oComponent = oComponentContainer.getComponentInstance();
+		assert.ok(oComponent.getManifest(), "Manifest is available");
+		assert.deepEqual(oComponent.getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
+
+	});
+
+	QUnit.test("Manifest delegation to component instance (async)", function(assert) {
+
+		var done = assert.async();
+		var iTimeout = setTimeout(function() {
+			assert.ok(false, 'Test timed out');
+			done();
+		}, 2000);
+
+		var oServer = this.oServer, oManifest = this.oManifest;
+
+		// start test
+		var oComponentContainer = new ComponentContainer({
+			manifest: "/anylocation/manifest.json",
+			componentCreated: function(oEvent) {
+				var oComponent = oEvent.getParameter("component");
+				assert.ok(oComponent.getManifest(), "Manifest is available");
+				assert.deepEqual(oComponent.getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
+				clearTimeout(iTimeout);
+				done();
+			}
+		});
+
+		// simulate rendering
+		oComponentContainer.onBeforeRendering();
 
 	});
 
