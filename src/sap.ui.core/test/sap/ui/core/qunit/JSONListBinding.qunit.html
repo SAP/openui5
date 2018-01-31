@@ -210,7 +210,7 @@
 		var listBinding = bindings[0];
 		listBinding.sort([
 			new sap.ui.model.Sorter("gender", false, true),
-			new sap.ui.model.Sorter("firstName")
+			new sap.ui.model.Sorter("lastName")
 		]);
 		listBinding.enableExtendedChangeDetection(false, "lastName");
 
@@ -220,7 +220,8 @@
 		assert.equal(contexts.length, 7, "Current contexts should contain 7 items");
 
 		// Change the gender in a way that the sort order is not affected
-		testData.teamMembers[2].gender = null;
+		testData.teamMembers[4].gender = null;
+		testData.teamMembers[6].firstName = "Paul";
 		listBinding.checkUpdate();
 
 		newContexts = listBinding.getContexts();
@@ -377,11 +378,11 @@
 			sorted[i] = oModel.getProperty(context.getPath());
 		});
 		assert.equal(sorted.length, 5, "ListBinding sorted length");
-		assert.equal(sorted[0].value, null, "ListBinding sort value");
-		assert.equal(sorted[1].value, 1, "ListBinding sort value");
-		assert.equal(sorted[2].value, 2, "ListBinding sort value");
-		assert.equal(sorted[3].value, 3, "ListBinding sort value");
-		assert.equal(sorted[4].value, 4, "ListBinding sort value");
+		assert.equal(sorted[0].value, 1, "ListBinding sort value");
+		assert.equal(sorted[1].value, 2, "ListBinding sort value");
+		assert.equal(sorted[2].value, 3, "ListBinding sort value");
+		assert.equal(sorted[3].value, 4, "ListBinding sort value");
+		assert.equal(sorted[4].value, null, "ListBinding sort value");
 
 		listBinding.sort(new sap.ui.model.Sorter("value", true));
 		sortedContexts = listBinding.getContexts();
@@ -390,11 +391,11 @@
 			sorted[i] = oModel.getProperty(context.getPath());
 		});
 		assert.equal(sorted.length, 5, "ListBinding sorted length");
-		assert.equal(sorted[0].value, 4, "ListBinding sort value");
-		assert.equal(sorted[1].value, 3, "ListBinding sort value");
-		assert.equal(sorted[2].value, 2, "ListBinding sort value");
-		assert.equal(sorted[3].value, 1, "ListBinding sort value");
-		assert.equal(sorted[4].value, null, "ListBinding sort value");
+		assert.equal(sorted[0].value, null, "ListBinding sort value");
+		assert.equal(sorted[1].value, 4, "ListBinding sort value");
+		assert.equal(sorted[2].value, 3, "ListBinding sort value");
+		assert.equal(sorted[3].value, 2, "ListBinding sort value");
+		assert.equal(sorted[4].value, 1, "ListBinding sort value");
 	});
 
 	// should also work with other ListBinding implementations
