@@ -4,31 +4,35 @@
 
 // Provides control sap.uxap.ObjectPageSubSection.
 sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/layout/Grid",
-	"sap/ui/layout/GridData",
-	"./ObjectPageSectionBase",
-	"./ObjectPageLazyLoader",
-	"./BlockBase",
-	"sap/m/Button",
-	"sap/ui/Device",
-	"sap/ui/core/StashedControlSupport",
-	"sap/ui/base/ManagedObjectObserver",
-	"./library",
-	"sap/m/library",
-	"jquery.sap.keycodes"
-], function (jQuery,
-			Grid,
-			GridData,
-			ObjectPageSectionBase,
-			ObjectPageLazyLoader,
-			BlockBase,
-			Button,
-			Device,
-			StashedControlSupport,
-			ManagedObjectObserver,
-			library,
-			mobileLibrary) {
+    "jquery.sap.global",
+    "sap/ui/layout/Grid",
+    "sap/ui/layout/GridData",
+    "./ObjectPageSectionBase",
+    "./ObjectPageLazyLoader",
+    "./BlockBase",
+    "sap/m/Button",
+    "sap/ui/Device",
+    "sap/ui/core/StashedControlSupport",
+    "sap/ui/base/ManagedObjectObserver",
+    "./library",
+    "sap/m/library",
+    "./ObjectPageSubSectionRenderer",
+    "jquery.sap.keycodes"
+], function(
+    jQuery,
+	Grid,
+	GridData,
+	ObjectPageSectionBase,
+	ObjectPageLazyLoader,
+	BlockBase,
+	Button,
+	Device,
+	StashedControlSupport,
+	ManagedObjectObserver,
+	library,
+	mobileLibrary,
+	ObjectPageSubSectionRenderer
+) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType

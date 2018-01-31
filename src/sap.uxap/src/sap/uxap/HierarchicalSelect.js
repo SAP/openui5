@@ -3,7 +3,13 @@
  */
 
 // Provides control sap.uxap.HierarchicalSelect.
-sap.ui.define(["jquery.sap.global", "sap/m/Select", "sap/ui/Device", "./library"], function (jQuery, Select, Device, library) {
+sap.ui.define([
+    "jquery.sap.global",
+    "sap/m/Select",
+    "sap/ui/Device",
+    "./library",
+    "./HierarchicalSelectRenderer"
+], function(jQuery, Select, Device, library, HierarchicalSelectRenderer) {
 	"use strict";
 
 	/**
