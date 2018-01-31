@@ -103,7 +103,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 	 *
 	 * This is the default comparator function used for clientside sorting, if no custom comparator is given in the
 	 * constructor. It does compare just by using equal/less than/greater than with automatic type casting, except
-	 * for null values, which are always last, and string values where localeCompare is used.
+	 * for null values, which are last in ascending order, and string values where localeCompare is used.
 	 *
 	 * The comparator method returns -1, 0 or 1, depending on the order of the two items and is
 	 * suitable to be used as a comparator method for Array.sort.
@@ -117,10 +117,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		if (a == b) {
 			return 0;
 		}
-		if (a == null) {
+		if (b == null) {
 			return -1;
 		}
-		if (b == null) {
+		if (a == null) {
 			return 1;
 		}
 		if (typeof a == "string" && typeof b == "string") {
