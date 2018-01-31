@@ -69,7 +69,13 @@ sap.ui.define(["sap/ui/bootstrap/Info", "sap/base/util/extend", "sap/base/log"],
 	oCfg.themeroots = oCfg.themeroots || {};
 	oCfg.resourceroots[''] = oCfg.resourceroots[''] || _oBootstrap.resourceRoot;
 
-	oCfg['xx-loadallmode'] = /(^|\/)(sap-?ui5|[^\/]+-all).js([?#]|$)/.test(_oBootstrap.url);
+	// map loadall mode to sync preload mode
+	if ( /(^|\/)(sap-?ui5|[^\/]+-all).js([?#]|$)/.test(_oBootstrap.url) ) {
+		log.error(
+			"The all-in-one file 'sap-ui-core-all.js' has been abandoned in favour of standard preloads." +
+			" Please migrate to sap-ui-core.js and consider to use async preloads.");
+		oCfg.preload = 'sync';
+	}
 
 	// if a script tag has been identified, collect its configuration info
 	if ( oScriptTag ) {
