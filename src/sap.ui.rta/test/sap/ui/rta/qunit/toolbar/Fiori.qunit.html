@@ -2,33 +2,25 @@
 <html>
 	<head>
 		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+		<meta charset="utf-8">
 		<title>Test Page for sap.ui.rta.toolbar.Fiori</title>
+		<script src="../shared-config.js"></script>
 		<script>
-			document.write([
-				'<script',
-					'id="sap-ui-bootstrap"',
-					'data-sap-ui-theme="sap_belize"',
-					'data-sap-ui-noConflict="true"',
-					'data-sap-ui-libs="sap.ui.rta,sap.m,sap.ui.dt"',
-					'src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"',
-				'></' + 'script>'
-			].join(' '));
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
 		</script>
 		<script>
 			jQuery.sap.require("sap.ui.qunit.qunit-2-css");
 			jQuery.sap.require('sap.ui.thirdparty.qunit-2');
 			jQuery.sap.require('sap.ui.qunit.qunit-junit');
-			jQuery.sap.require('sap.ui.qunit.QUnitUtils');
-			jQuery.sap.require('sap.ui.thirdparty.sinon');
 			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
+
+			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/rta/toolbar]');
+
 			jQuery.sap.includeScript('./Fiori.qunit.js');
 		</script>
 	</head>
 	<body>
-		<h2 id='qunit-banner'></h2>
-		<div id='qunit-testrunner-toolbar'></div>
-		<ol id='qunit-tests'></ol>
-		<div id='sap-ui-static'></div>
-		<div id='content'></div>
+		<div id="qunit"></div>
+		<div id="qunit-fixtures"></div>
 	</body>
 </html>

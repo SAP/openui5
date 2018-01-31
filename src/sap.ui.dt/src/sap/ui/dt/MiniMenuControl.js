@@ -572,7 +572,7 @@ sap.ui.define([
 			var iPopHeight = parseInt($Popover.css("height"), 10) + 2 * iArr;
 			var iPopZIndex = $Popover.css("z-index") - 1;
 
-			jQuery("#sap-ui-static").append("<div id=\"MiniMenuWrapper\" style = \"position:absolute;top:" + iPopTop + "px;left:" + iPopLeft + "px;width:" + iPopWidth + "px;height:" + iPopHeight + "px;z-index:" + iPopZIndex + "\" />");
+			jQuery(sap.ui.getCore().getStaticAreaRef()).append("<div id=\"MiniMenuWrapper\" style = \"position:absolute;top:" + iPopTop + "px;left:" + iPopLeft + "px;width:" + iPopWidth + "px;height:" + iPopHeight + "px;z-index:" + iPopZIndex + "\" />");
 
 		},
 

@@ -127,7 +127,7 @@ function(
 	 */
 	Base.prototype.placeToContainer = function () {
 		// Render toolbar
-		this.placeAt(jQuery('#sap-ui-static').get(0));
+		this.placeAt(sap.ui.getCore().getStaticAreaRef());
 	};
 
 	/**
