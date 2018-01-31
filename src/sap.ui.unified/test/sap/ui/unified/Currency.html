@@ -17,19 +17,29 @@
 			modelData: [
 				{
 					value: 3000.56,
-					currency: 'JPY'
+					currency: 'JPY',
+					useSymbol: true
+				},
+				{
+					value: 3000.56,
+					currency: 'JPY',
+					useSymbol: false
 				},
 				{
 					value: 33.5,
-					currency: 'EUR'
+					currency: 'EUR',
+					useSymbol: true
 				},
 				{
 					value: 33.534,
-					currency: 'USD'
+					currency: 'USD',
+					useSymbol: true
+
 				},
 				{
 					value: '*',
-					currency: '*'
+					currency: '*',
+					useSymbol: true
 				}
 			]
 		});
@@ -57,6 +67,7 @@
 				type: new sap.ui.model.type.String()
 			},
 			currency: '{currency}',
+			useSymbol: '{useSymbol}',
 			maxPrecision: 0
 		});
 
