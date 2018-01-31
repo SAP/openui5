@@ -113,7 +113,6 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					"xx-appCacheBusterMode" : { type : "string",   defaultValue : "sync" },
 					"xx-appCacheBusterHooks": { type : "object",   defaultValue : undefined, noUrl:true }, // e.g.: { handleURL: fn, onIndexLoad: fn, onIndexLoaded: fn }
 					"xx-disableCustomizing" : { type : "boolean",  defaultValue : false,     noUrl:true },
-					"xx-loadAllMode"        : { type : "boolean",  defaultValue : false,     noUrl:true },
 					"xx-viewCache"          : { type : "boolean",  defaultValue : true },
 					"xx-test-mobile"        : { type : "boolean",  defaultValue : false },
 					"xx-depCache"           : { type : "boolean",  defaultValue : false },
