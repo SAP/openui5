@@ -238,7 +238,6 @@ sap.ui.define([
 		Control.prototype.applySettings.apply(this, arguments);
 	};
 
-
 	/*
 	 * Helper to create the settings object for the Component Factory or the
 	 * createComponent function.
@@ -246,14 +245,17 @@ sap.ui.define([
 	function createComponentConfig(oComponentContainer) {
 		var sName = oComponentContainer.getName();
 		var sUsage = oComponentContainer.getUsage();
+		var sManifest = oComponentContainer.getManifest();
+		var sUrl = oComponentContainer.getUrl();
+		var mSettings = oComponentContainer.getSettings();
 		var mConfig = {
 			name: sName ? sName : undefined,
 			usage: sUsage ? sUsage : undefined,
-			manifest: oComponentContainer.getManifest(),
+			manifest: sManifest !== null ? sManifest : undefined,
 			async: oComponentContainer.getAsync(),
-			url: oComponentContainer.getUrl(),
+			url: sUrl ? sUrl : undefined,
 			handleValidation: oComponentContainer.getHandleValidation(),
-			settings: oComponentContainer.getSettings()
+			settings: mSettings !== null ? mSettings : undefined
 		};
 		return mConfig;
 	}
