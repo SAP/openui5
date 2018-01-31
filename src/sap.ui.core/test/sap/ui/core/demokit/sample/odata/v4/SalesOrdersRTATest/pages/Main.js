@@ -15,14 +15,15 @@ sap.ui.require([
 function (MessageBox, Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactable,
 		Properties) {
 	"use strict";
-	var GROSS_AMOUNT_COLUMN_INDEX = 2,
+	var COMPANY_NAME_COLUMN_INDEX = 1,
+		GROSS_AMOUNT_COLUMN_INDEX = 2,
 		ID_COLUMN_INDEX = 0,
 		ITEM_COLUMN_INDEX = 1,
 		NOTE_COLUMN_INDEX = 4,
 		SOITEM_NOTE_COLUMN_INDEX = 11,
 		SOITEM_QUANTITY_COLUMN_INDEX = 7,
 		sLastNewNoteValue,
-		sViewName = "sap.ui.core.sample.odata.v4.SalesOrdersRTATest.Main";
+		sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
 
 	/*
 	 * Search for the control with the given ID, extract the number and compare with the expected
@@ -557,7 +558,9 @@ function (MessageBox, Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press
 							if (!sap.ui.test.Opa.getContext().aOrderIds) {
 								sap.ui.test.Opa.getContext().aOrderIds = [];
 							}
-							sap.ui.test.Opa.getContext().aOrderIds.push(sSalesOrderId);
+							if (sap.ui.test.Opa.getContext().aOrderIds.indexOf(sSalesOrderId) < 0) {
+								sap.ui.test.Opa.getContext().aOrderIds.push(sSalesOrderId);
+							}
 
 							Opa5.assert.ok(true, "SalesOrderID remembered:" + sSalesOrderId);
 						}
@@ -764,6 +767,19 @@ function (MessageBox, Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press
 
 							Opa5.assert.strictEqual(oRow.getCells()[3].getText(),
 								sExpectProductName, "Product name of new created SOItem");
+						},
+						viewName : sViewName
+					});
+				},
+				checkCompanyName : function (iRow, sExpectedCompanyName) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						success : function (oSalesOrderTable) {
+							Opa5.assert.strictEqual(oSalesOrderTable.getItems()[iRow].getCells()
+								[COMPANY_NAME_COLUMN_INDEX].getText(), sExpectedCompanyName,
+								"CompanyName of row " + iRow + " as expected "
+									+ sExpectedCompanyName);
 						},
 						viewName : sViewName
 					});

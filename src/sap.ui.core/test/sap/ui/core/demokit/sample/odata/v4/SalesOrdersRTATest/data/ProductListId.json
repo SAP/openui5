@@ -1,4 +1,0 @@
-{
-	"@odata.context" : "../$metadata#ProductList('HT-1000')/ProductID",
-	"value" : "HT-1000"
-}
