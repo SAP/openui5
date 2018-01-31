@@ -195,7 +195,7 @@ sap.ui.require([
 				"originalLanguage": Utils.getCurrentLanguage(),
 				"conditions": {},
 				"support": {
-					"generator": "Variant.createInitialFileContent",
+					"generator": "Change.createInitialFileContent",
 					"service": "",
 					"user": "",
 					"sapui5Version": sap.ui.version

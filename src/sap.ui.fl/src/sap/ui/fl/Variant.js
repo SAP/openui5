@@ -587,7 +587,7 @@ sap.ui.define([
 				originalLanguage: Utils.getCurrentLanguage(),
 				conditions: {},
 				support: {
-					generator: oPropertyBag.generator || "Variant.createInitialFileContent",
+					generator: oPropertyBag.generator || "Change.createInitialFileContent",
 					service: oPropertyBag.service || "",
 					user: "",
 					sapui5Version: sap.ui.version

@@ -96,7 +96,7 @@
 						"originalLanguage":"EN",
 						"conditions":{},
 						"support":{
-							"generator":"Variant.createInitialFileContent",
+							"generator":"Change.createInitialFileContent",
 							"service":"",
 							"user":""
 						}
@@ -196,7 +196,7 @@
 						"reference":"sap.ui.rta.test.Demo.md.Component",
 						"layer":"CUSTOMER",
 						"support":{
-							"generator":"Variant.createInitialFileContent",
+							"generator":"Change.createInitialFileContent",
 							"service":"",
 							"user":"SAP"
 						},
@@ -274,7 +274,7 @@
 						"originalLanguage":"EN",
 						"conditions":{},
 						"support":{
-							"generator":"Variant.createInitialFileContent",
+							"generator":"Change.createInitialFileContent",
 							"service":"",
 							"user":""
 						}
@@ -366,7 +366,7 @@
 						"originalLanguage":"EN",
 						"conditions":{},
 						"support":{
-							"generator":"Variant.createInitialFileContent",
+							"generator":"Change.createInitialFileContent",
 							"service":"",
 							"user":""
 						}
@@ -441,7 +441,7 @@
 						"originalLanguage":"EN",
 						"conditions":{},
 						"support":{
-							"generator":"Variant.createInitialFileContent",
+							"generator":"Change.createInitialFileContent",
 							"service":"",
 							"user":""
 						}
