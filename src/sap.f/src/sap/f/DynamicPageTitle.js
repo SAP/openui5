@@ -7,6 +7,7 @@ sap.ui.define([
     "./library",
     "sap/ui/core/Control",
     "sap/ui/base/ManagedObjectObserver",
+    "sap/m/library",
     "sap/m/Toolbar",
     "sap/m/ToolbarSeparator",
     "sap/m/OverflowToolbar",
@@ -16,6 +17,7 @@ sap.ui.define([
     library,
 	Control,
 	ManagedObjectObserver,
+	mobileLibrary,
 	Toolbar,
 	ToolbarSeparator,
 	OverflowToolbar,
@@ -25,7 +27,8 @@ sap.ui.define([
 	"use strict";
 
 	// shortcut for sap.f.DynamicPageTitleArea
-	var DynamicPageTitleArea = library.DynamicPageTitleArea;
+	var DynamicPageTitleArea = library.DynamicPageTitleArea,
+		ToolbarStyle = mobileLibrary.ToolbarStyle;
 	var oCore = sap.ui.getCore();
 
 	/**
@@ -539,7 +542,8 @@ sap.ui.define([
 	DynamicPageTitle.prototype._getActionsToolbar = function () {
 		if (!this.getAggregation("_actionsToolbar")) {
 			this.setAggregation("_actionsToolbar", new OverflowToolbar({
-				id: this.getId() + "-_actionsToolbar"
+				id: this.getId() + "-_actionsToolbar",
+				style: ToolbarStyle.Clear
 			}).addStyleClass("sapFDynamicPageTitleActionsBar"), true); // suppress invalidate, as this is always called onBeforeRendering
 		}
 
@@ -554,7 +558,8 @@ sap.ui.define([
 	DynamicPageTitle.prototype._getNavigationActionsToolbar = function () {
 		if (!this.getAggregation("_navActionsToolbar")) {
 			this.setAggregation("_navActionsToolbar", new Toolbar({
-				id: this.getId() + "-navActionsToolbar"
+				id: this.getId() + "-navActionsToolbar",
+				style: ToolbarStyle.Clear
 			}).addStyleClass("sapFDynamicPageTitleActionsBar"), true);
 		}
 

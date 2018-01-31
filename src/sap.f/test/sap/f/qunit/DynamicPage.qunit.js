@@ -2142,6 +2142,16 @@
 		assert.equal(oDynamicPage._getEntireHeaderHeight(), 0, "correct with no header and no title");
 	});
 
+	QUnit.test("DynamicPageTitle _getActionsToolbar returns toolbar with correct style", function (assert) {
+		var oActionsToolbar = this.oDynamicPage.getTitle()._getActionsToolbar();
+		assert.equal(oActionsToolbar.getStyle(), sap.m.ToolbarStyle.Clear, "actions toolbar has correct style");
+	});
+
+	QUnit.test("DynamicPageTitle _getNavigationActionsToolbar returns toolbar with correct style", function (assert) {
+		var oNavActionsToolbar = this.oDynamicPage.getTitle()._getNavigationActionsToolbar();
+		assert.equal(oNavActionsToolbar.getStyle(), sap.m.ToolbarStyle.Clear, "nav-actions toolbar has correct style");
+	});
+
 	/* --------------------------- DynamicPage Toggle Header On Scroll ---------------------------------- */
 	QUnit.module("DynamicPage - Toggle Header On Scroll", {
 		beforeEach: function () {
