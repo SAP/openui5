@@ -43,4 +43,44 @@ sap.ui.require(["jquery.sap.global", "sap/ui/core/ComponentContainer", "sap/m/Sh
 
 	});
 
+	QUnit.test("blocks are target of lazy loading feature", function (assert) {
+
+		var fnGetBlock = function() {
+			return new sap.uxap.BlockBase();
+		},
+		aBlocksOutsideSubSection = [fnGetBlock(), fnGetBlock(), fnGetBlock()],
+		aBlocksInsideSubSection = [fnGetBlock(), fnGetBlock(), fnGetBlock()],
+		oObjectPageLayout = new sap.uxap.ObjectPageLayout({
+			enableLazyLoading: true,
+			headerContent: aBlocksOutsideSubSection,
+			sections:[
+					new sap.uxap.ObjectPageSection({
+
+						subSections: [
+							new sap.uxap.ObjectPageSubSection({
+								blocks: aBlocksInsideSubSection
+							})
+						]
+				})
+			]
+		}),
+		fnAssertShouldBeLoadedLazily = function(assert, oBlock, bExpected) {
+			var bShouldLazyLoad = oBlock._shouldLazyLoad();
+			assert.strictEqual(bShouldLazyLoad, bExpected, " The block " + oBlock.getId() + " is target of lazy loading " + bShouldLazyLoad);
+		};
+
+		// Assert: the blocks ObejctPageSubSection are target of lazy laoding
+		aBlocksInsideSubSection.forEach(function(oBlock) {
+			fnAssertShouldBeLoadedLazily(assert, oBlock, true);
+		});
+
+		// Assert: the blocks outside the ObejctPageSubSection are not target of lazy laoding
+		aBlocksOutsideSubSection.forEach(function(oBlock) {
+			fnAssertShouldBeLoadedLazily(assert, oBlock, false);
+		});
+
+
+		oObjectPageLayout.destroy();
+	});
+
 });
