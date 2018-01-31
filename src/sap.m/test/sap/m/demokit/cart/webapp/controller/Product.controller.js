@@ -96,10 +96,6 @@ sap.ui.define([
 
 		onNavButtonPress : function () {
 			this.getOwnerComponent().myNavBack();
-		},
-
-		onPicturePress: function () {
-			this.byId("lightBox").open();
 		}
 	});
 });

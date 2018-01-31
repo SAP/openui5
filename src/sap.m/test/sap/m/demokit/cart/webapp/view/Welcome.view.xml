@@ -150,14 +150,20 @@
 										renderType="Bare"
 										justifyContent="Center">
 										<Image
-											src="{
-												path: 'view>Product/PictureUrl',
-												formatter : '.formatter.pictureUrl'
-											}"
-											densityAware="false"
-											press="onPicturePress"
-											width="50%"
-											height="50%"/>
+											src="{view>Product/PictureUrl}"
+											width="100%"
+											height="100%"
+											densityAware="false">
+											<detailBox>
+												<LightBox>
+													<imageContent>
+														<LightBoxItem
+															imageSrc="{view>Product/PictureUrl}"
+															title="{view>Product/Name}"/>
+													</imageContent>
+												</LightBox>
+											</detailBox>
+										</Image>
 									</FlexBox>
 									<Button
 										tooltip="{i18n>addToCart}"
@@ -236,14 +242,20 @@
 										renderType="Bare"
 										justifyContent="Center">
 										<Image
-											src="{
-												path: 'view>Product/PictureUrl',
-												formatter : '.formatter.pictureUrl'
-											}"
-											densityAware="false"
-											press="onPicturePress"
+											src="{view>Product/PictureUrl}"
 											width="100%"
-											height="100%"/>
+											height="100%"
+											densityAware="false">
+											<detailBox>
+												<LightBox>
+													<imageContent>
+														<LightBoxItem
+															imageSrc="{view>Product/PictureUrl}"
+															title="{view>Product/Name}"/>
+													</imageContent>
+												</LightBox>
+											</detailBox>
+										</Image>
 									</FlexBox>
 									<Button
 										tooltip="{i18n>addToCart}"
@@ -322,14 +334,20 @@
 										renderType="Bare"
 										justifyContent="Center">
 										<Image
-											src="{
-												path: 'view>Product/PictureUrl',
-												formatter : '.formatter.pictureUrl'
-											}"
-											densityAware="false"
-											press="onPicturePress"
+											src="{view>Product/PictureUrl}"
 											width="100%"
-											height="100%"/>
+											height="100%"
+											densityAware="false">
+											<detailBox>
+												<LightBox>
+													<imageContent>
+														<LightBoxItem
+															imageSrc="{view>Product/PictureUrl}"
+															title="{view>Product/Name}"/>
+													</imageContent>
+												</LightBox>
+											</detailBox>
+										</Image>
 									</FlexBox>
 									<Button
 										tooltip="{i18n>addToCart}"
@@ -362,17 +380,5 @@
 				</l:BlockLayout>
 			</Panel>
 		</content>
-		<dependents>
-			<LightBox id="lightBox">
-				<imageContent>
-					<LightBoxItem
-						imageSrc="{
-							path: 'view>PictureUrl',
-							formatter : '.formatter.pictureUrl'
-						}"
-						title="{view>Name}"/>
-				</imageContent>
-			</LightBox>
-		</dependents>
 	</Page>
 </mvc:View>
