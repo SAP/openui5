@@ -192,6 +192,18 @@
 			testApplyTheme(assert, "sap_hcb");
 		});
 
+		QUnit.test("RTL switch doesn't use suppress FOUC feature", function(assert) {
+
+			sap.ui.getCore().getConfiguration().setRTL(true);
+			aLibraries.forEach(function(lib) {
+				var oLibraryCss = jQuery.sap.domById("sap-ui-theme-" + lib);
+				assert.ok(oLibraryCss, "Link for " + lib + " stylesheet should be available.");
+				var oOldLibraryCss = document.querySelectorAll("link[data-sap-ui-foucmarker='sap-ui-theme-" + lib + "']");
+				assert.equal(oOldLibraryCss && oOldLibraryCss.length || 0, 0, "Old stylesheet for library " + lib + " has been removed.");
+			});
+
+		});
+
 		</script>
 	</head>
 	<body>
