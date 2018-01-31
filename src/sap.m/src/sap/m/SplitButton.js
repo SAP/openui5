@@ -27,6 +27,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './Button', './ButtonRenderer
 		 * @version ${version}
 		 *
 		 * @constructor
+		 * @sap-restricted sap.m.MenuButton,sap.ui.richtextEditor.ToolbarWrapper
 		 * @private
 		 * @alias sap.m.SplitButton
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
