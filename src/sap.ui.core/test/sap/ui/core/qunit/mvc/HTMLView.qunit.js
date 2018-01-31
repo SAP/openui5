@@ -91,7 +91,7 @@ sap.ui.define([
 
 		var htmlWithElementBinding = [
 			'<template data-controller-name="example.mvc.test">',
-			'  <div data-sap-ui-type="sap.ui.testlib.TestButton" id="btn" data-sap-ui-binding="{data}" data-enabled="{booleanValue}" data-text="{stringValue}" data-width="{integerValue}"></div>',
+			'  <div data-sap-ui-type="sap.ui.testlib.TestButton" id="btn" data-sap-ui-binding="{/data}" data-enabled="{booleanValue}" data-text="{stringValue}" data-width="{integerValue}"></div>',
 			'</template>'
 		].join('');
 
@@ -124,10 +124,10 @@ sap.ui.define([
 		assert.equal(oViewWithBindings2.byId("btn").getWidth(), oModel2.getData().integerValue, "Check 'width' property of button 'btn'");
 
 		var oViewWithElementBinding = sap.ui.htmlview({viewContent:htmlWithElementBinding});
-		oViewWithBindings1.setModel(oModel1);
-		assert.equal(oViewWithBindings1.byId("btn").getEnabled(), oModel1.getData().data.booleanValue, "Check 'enabled' property of button 'btn'");
-		assert.equal(oViewWithBindings1.byId("btn").getText(), oModel1.getData().data.stringValue, "Check 'text' property of button 'btn'");
-		assert.equal(oViewWithBindings1.byId("btn").getWidth(), oModel1.getData().data.integerValue, "Check 'width' property of button 'btn'");
+		oViewWithElementBinding.setModel(oModel1);
+		assert.equal(oViewWithElementBinding.byId("btn").getEnabled(), oModel1.getData().data.booleanValue, "Check 'enabled' property of button 'btn'");
+		assert.equal(oViewWithElementBinding.byId("btn").getText(), oModel1.getData().data.stringValue, "Check 'text' property of button 'btn'");
+		assert.equal(oViewWithElementBinding.byId("btn").getWidth(), oModel1.getData().data.integerValue, "Check 'width' property of button 'btn'");
 
 		var oViewWithoutBindings = sap.ui.htmlview({viewContent:htmlWithoutBindings});
 		oViewWithoutBindings.setModel(oModel1);

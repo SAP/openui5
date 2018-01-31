@@ -136,6 +136,8 @@ sap.ui.define([
 			});
 
 			QUnit.test("cache additional data", function(assert) {
+				var oSpy = this.oSpy, aAdditionalData = ["foo"];
+
 				function _viewFactory() {
 					return viewFactory({
 						keys: ["key"],
@@ -150,20 +152,21 @@ sap.ui.define([
 						}]
 					}).loaded();
 				}
-				var oSpy = this.oSpy, aAdditionalData = ["foo"];
 
 				assert.expect(2);
-				return _viewFactory().then(function(oView) {
-					// check preprocessor side effect
-					assert.deepEqual(oSpy.args[0][1].additionalData, ["foo", "bar"]);
-					oView.destroy();
-					// reset original data
-					aAdditionalData = ["foo"];
-				}).then(_viewFactory).then(function(oView) {
-					// check replacement from cache
-					assert.deepEqual(aAdditionalData, ["foo", "bar"]);
-					oView.destroy();
-				});
+				return _viewFactory()
+					.then(function(oView) {
+						// check preprocessor side effect
+						assert.deepEqual(oSpy.args[0][1].additionalData, ["foo", "bar"]);
+						oView.destroy();
+						// reset original data
+						aAdditionalData = ["foo"];
+					})
+					.then(_viewFactory).then(function(oView) {
+						// check replacement from cache
+						assert.deepEqual(aAdditionalData, ["foo", "bar"]);
+						oView.destroy();
+					});
 			});
 
 			QUnit.test("generic key parts", function(assert) {

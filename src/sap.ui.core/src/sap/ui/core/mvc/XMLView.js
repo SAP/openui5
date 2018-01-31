@@ -34,7 +34,8 @@ sap.ui.define([
 	// actual constants
 	var RenderPrefixes = RenderManager.RenderPrefixes,
 		ViewType = library.mvc.ViewType,
-		sXMLViewCacheError = "XMLViewCacheError";
+		sXMLViewCacheError = "XMLViewCacheError",
+		notCacheRelevant = {};
 
 
 	/**
@@ -265,6 +266,9 @@ sap.ui.define([
 
 		function validateCacheKey(oView, aFutureKeyParts) {
 			return Promise.all(aFutureKeyParts).then(function(aKeys) {
+				aKeys = aKeys.filter(function(oElement) {
+					return oElement !== notCacheRelevant;
+				});
 				if (aKeys.every(isValidKey)) {
 					return aKeys.join('_');
 				} else {
@@ -285,14 +289,27 @@ sap.ui.define([
 		}
 
 		function getCacheKeyProviders(oView) {
-			var mPreprocessors = View._mPreprocessors["XML"],
+			var mPreprocessors = oView.getPreprocessors(),
 				oPreprocessorInfo = oView.getPreprocessorInfo(/*bSync =*/false),
 				aFutureCacheKeys = [];
 
 			function pushFutureKey(o) {
-				if (o.preprocessor.getCacheKey) {
-					aFutureCacheKeys.push(o.preprocessor.getCacheKey(oPreprocessorInfo));
-				}
+				aFutureCacheKeys.push(o.preprocessor
+					.then(function(oPreprocessorImpl) {
+						if (oPreprocessorImpl.getCacheKey) {
+							return oPreprocessorImpl.getCacheKey(oPreprocessorInfo);
+						} else {
+							/* We cannot check for the getCacheKey function synchronous, but we later need
+							 * to differentiate wether the result of getCacheKey returns an invalid result
+							 * (null/undefined) or the function simply does not exist.
+							 * Therefore we use the 'notCacheRelevant' token to mark preProcessors that does
+							 * not provide a getCacheKey function and so are not relevant for caching.
+							 * See validateCacheKey function.
+							 */
+							return notCacheRelevant;
+						}
+					})
+				);
 			}
 
 			for (var sType in mPreprocessors) {

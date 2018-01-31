@@ -277,9 +277,9 @@ sap.ui.define([
 			};
 
 			// instruct the mock before view creation to not miss the important call
-			oPreprocessors.foo.preprocessor = {
+			oPreprocessors.foo.preprocessor = Promise.resolve({
 				process: XMLPreprocessor.process
-			};
+			});
 			this.expectProcess.returns(Promise.resolve(oResult));
 			this.expectProcess.once().withExactArgs(oSource, oViewInfo, oPreprocessors.foo._settings);
 
@@ -308,20 +308,28 @@ sap.ui.define([
 				settings: { foo: undefined }
 			}
 		},
-			oView = new View({
-				preprocessors: oPreprocessors,
-				viewName: "foo",
-				async: true
-			}),
-			oSpy = this.spy(oPreprocessors.foo.preprocessor, "process");
+		oView = new View({
+			preprocessors: oPreprocessors,
+			viewName: "foo",
+			async: true
+		});
 
-		oView.runPreprocessor("foo", {}).then(function() {
-			oPreprocessors.foo.settings.foo = "bar";
-			sinon.assert.calledOnce(oSpy);
-			assert.strictEqual(oSpy.args[0][2].settings.foo, oPreprocessors.foo.settings.foo, "Configured object instance gets passed to the preprocessor");
-			assert.ok(oSpy.args[0][2].settings.foo === "bar", "Property got set correctly");
-			assert.ok(Object.keys(oSpy.args[0][2]).length == 2, "Nothing has been added to the pp config");
-			done();
+		oView.loaded()
+			.then(function(oView) {
+			var oSpy;
+				oPreprocessors.foo.preprocessor
+					.then(function(oPreprocessorImpl) {
+						oSpy = sinon.spy(oPreprocessorImpl, "process");
+					});
+
+			oView.runPreprocessor("foo", {}).then(function() {
+				oPreprocessors.foo.settings.foo = "bar";
+				sinon.assert.calledOnce(oSpy);
+				assert.strictEqual(oSpy.args[0][2].settings.foo, oPreprocessors.foo.settings.foo, "Configured object instance gets passed to the preprocessor");
+				assert.ok(oSpy.args[0][2].settings.foo === "bar", "Property got set correctly");
+				assert.ok(Object.keys(oSpy.args[0][2]).length == 2, "Nothing has been added to the pp config");
+				done();
+			});
 		});
 	});
 
@@ -380,12 +388,12 @@ sap.ui.define([
 			oView = new View({
 				preprocessors: {
 					xml: [{
-						preprocessor: {
+						preprocessor: Promise.resolve({
 							process: function(val) {
 								bCalled = true;
 								return Promise.resolve(val);
 							}
-						}
+						})
 					}]
 				},
 				async: true
