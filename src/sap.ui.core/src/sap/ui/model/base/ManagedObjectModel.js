@@ -37,6 +37,7 @@ sap.ui.define([
 				properties: {},
 				aggregations: {}
 			};
+			this.mListBinding = {};
 			JSONModel.apply(this, [oData]);
 
 			this._oObserver = new ManagedObjectObserver(this.observerChanges.bind(this));
@@ -126,11 +127,19 @@ sap.ui.define([
 	 */
 	ManagedObjectModel.prototype.addBinding = function(oBinding) {
 		JSONModel.prototype.addBinding.apply(this, arguments);
-		this.checkUpdate();
+		if (oBinding instanceof ManagedObjectModelAggregationBinding) {
+			var sAggregationName = oBinding.sPath.replace("/","");
+			this.mListBinding[sAggregationName] = oBinding;
+		}
+		oBinding.checkUpdate(false);
 	};
 
 	ManagedObjectModel.prototype.removeBinding = function(oBinding) {
 		JSONModel.prototype.removeBinding.apply(this, arguments);
+		if (oBinding instanceof ManagedObjectModelAggregationBinding) {
+			var sAggregationName = oBinding.sPath.replace("/","");
+			delete this.mListBinding[sAggregationName];
+		}
 		if (oBinding._bAttached) {
 			oBinding._bAttached = false;
 			this._getObject(oBinding.getPath(), oBinding.getContext(), false);
@@ -515,6 +524,15 @@ sap.ui.define([
 					properties: true,
 					aggegations: true
 				});
+			}
+
+			if (this.mListBinding[oChange.name]) {
+				var oListBinding = this._oObject.getBinding(oChange.name);
+				var oAggregation = this._oObject.getAggregation(oChange.name);
+
+				if (oListBinding && oListBinding.getLength() != oAggregation.length) {
+					return;
+				}
 			}
 		}
 

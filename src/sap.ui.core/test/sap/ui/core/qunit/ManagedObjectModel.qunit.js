@@ -472,21 +472,21 @@ QUnit.test("ManagedObject Model  - List Binding", function(assert) {
 	iLength = 1;
 	this.obj.addSubObj(this.subObj);
 	assert.equal(iCalls, iCount, "Binding change event fired for list aggregation");
-	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[0]) === that.subObj, true, "Binding change event fired for list aggregation");
+	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[0]) === that.subObj, true, "Contexts are correctly applied");
 
 	iCount = 1;
 	iLength = 1;
 	this.obj.addSubObj(this.subObj);
 	assert.equal(iCalls, iCount, "Change event called " + iCount + " as expected, remove, add");
-	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[0]) === that.subObj, true, "Binding change event fired for list aggregation");
+	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[0]) === that.subObj, true, "Contexts are correctly applied");
 
 	iCount = 2;
 	iLength = 2;
 	this.subObj2 = new sap.ui.test.TestElement("subObject1");
 	this.obj.addSubObj(this.subObj2);
 	assert.equal(iCalls, iCount, "Change event called " + iCount + " as expected");
-	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[0]) === that.subObj, true, "Binding change event fired for list aggregation");
-	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[1]) === that.subObj2, true, "Binding change event fired for list aggregation");
+	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[0]) === that.subObj, true, "Contexts are correctly applied");
+	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[1]) === that.subObj2, true, "Contexts are correctly applied");
 
 	iCount = 4;
 	iIndex = 1;
@@ -496,8 +496,8 @@ QUnit.test("ManagedObject Model  - List Binding", function(assert) {
 	iLength = 2;
 	this.obj.insertSubObj(this.subObj2, 0);
 	assert.equal(iCalls, iCount, "Change event called " + iCount + " as expected");
-	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[1]) === that.subObj, true, "Binding change event fired for list aggregation");
-	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[0]) === that.subObj2, true, "Binding change event fired for list aggregation");
+	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[1]) === that.subObj, true, "Contexts are correctly applied");
+	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[0]) === that.subObj2, true, "Contexts are correctly applied");
 
 	// check that no additional event is called
 	assert.equal(this.oManagedObjectModel.setProperty("/value", "hello"), true, "Property set");
