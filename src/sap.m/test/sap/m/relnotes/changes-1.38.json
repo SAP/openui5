@@ -3562,5 +3562,40 @@
         "references": []
       }
     ]
+  },
+  "1.38.32": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "d088120cd2c45cfc347c32532f36cffcd9e69fa7",
+        "type": "FIX",
+        "text": " sap.m.Button: fire press event on keydown for \u0027enter\u0027 and keyup for \u0027space\u0027",
+        "references": []
+      },
+      {
+        "id": "108b3433348495aaaf2aa2e27d7024eda10f9ff0",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Open Popover in small screens corrected",
+        "references": []
+      },
+      {
+        "id": "b9526d2cf1944692d709089f4c5e0f01d56bacea",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: focus fixed for HCB",
+        "references": []
+      },
+      {
+        "id": "82f17b19114456ceff955983beaeefad7a313139",
+        "type": "FIX",
+        "text": " sap.m.Page: Documentation updated",
+        "references": []
+      },
+      {
+        "id": "4638f02c6a892831799c5345de916c4dd9715041",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Cloned item now works with binding",
+        "references": []
+      }
+    ]
   }
 }
