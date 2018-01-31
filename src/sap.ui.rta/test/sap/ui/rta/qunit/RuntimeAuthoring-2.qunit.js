@@ -5,17 +5,10 @@ sap.ui.require([
 	// Controls
 	'sap/m/Button',
 	'sap/m/MessageBox',
-	'sap/ui/comp/smartform/Group',
-	'sap/ui/comp/smartform/GroupElement',
-	'sap/ui/comp/smartform/SmartForm',
 	// internal
-	'sap/ui/Device',
 	'sap/ui/dt/plugin/ContextMenu',
-	'sap/ui/dt/DesignTimeMetadata',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/fl/registry/Settings',
-	'sap/ui/fl/registry/ChangeRegistry',
-	'sap/ui/fl/LrepConnector',
 	'sap/ui/fl/Change',
 	'sap/ui/fl/Utils',
 	'sap/ui/rta/Utils',
@@ -29,7 +22,6 @@ sap.ui.require([
 	'sap/ui/rta/plugin/Rename',
 	'sap/ui/rta/plugin/ControlVariant',
 	'sap/ui/base/Event',
-	'sap/ui/base/EventProvider',
 	'sap/ui/rta/command/BaseCommand',
 	'sap/ui/rta/qunit/RtaQunitUtils',
 	// should be last
@@ -39,16 +31,9 @@ sap.ui.require([
 ], function(
 	Button,
 	MessageBox,
-	Group,
-	GroupElement,
-	SmartForm,
-	Device,
 	ContextMenu,
-	DesignTimeMetadata,
 	OverlayRegistry,
 	Settings,
-	ChangeRegistry,
-	LrepConnector,
 	Change,
 	Utils,
 	RtaUtils,
@@ -62,10 +47,10 @@ sap.ui.require([
 	RenamePlugin,
 	ControlVariantPlugin,
 	Event,
-	EventProvider,
 	RTABaseCommand,
 	RtaQunitUtils,
-	sinon) {
+	sinon
+) {
 	"use strict";
 
 	QUnit.start();

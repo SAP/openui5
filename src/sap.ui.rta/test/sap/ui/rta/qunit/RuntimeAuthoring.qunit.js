@@ -820,6 +820,56 @@ sap.ui.require([
 		assert.equal(mDesignTimeMetadata2.some.deep, null, "Scope can delete keys");
 	});
 
+	QUnit.module("Given that RuntimeAuthoring is created but not started", {
+		beforeEach : function(assert) {
+			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
+			this.oRta = new RuntimeAuthoring({
+				rootControl : this.oRootControl,
+				showToolbars : false,
+				flexSettings: {
+					layer: "CUSTOMER"
+				}
+			});
+			sandbox.stub(BusyIndicator, "show");
+		},
+		afterEach : function(assert) {
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("When transport function is called and transportAllUIChanges returns Promise.resolve()", function(assert) {
+			sandbox.stub(this.oRta, "_serializeToLrep").returns(Promise.resolve());
+			var oTransportStub = sandbox.stub(TransportSelection.prototype, "transportAllUIChanges").returns(Promise.resolve());
+			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
+			return this.oRta.transport().then(function() {
+				assert.equal(oMessageToastStub.callCount, 1, "then the messageToast was shown");
+				assert.equal(oTransportStub.firstCall.args[1], RtaUtils.getRtaStyleClassName(), "the styleClass was passed correctly");
+				assert.equal(oTransportStub.firstCall.args[2], "CUSTOMER", "the layer was passed correctly");
+			});
+		});
+
+		QUnit.test("When transport function is called and transportAllUIChanges returns Promise.reject()", function(assert) {
+			sandbox.stub(this.oRta, "_serializeToLrep").returns(Promise.resolve());
+			sandbox.stub(TransportSelection.prototype, "transportAllUIChanges").returns(Promise.reject(new Error("Error")));
+			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
+			var oShowErrorStub = sandbox.stub(jQuery.sap.log, "error");
+			var oErrorBoxStub = sandbox.stub(MessageBox, "error");
+			return this.oRta.transport().then(function() {
+				assert.equal(oMessageToastStub.callCount, 0, "then the messageToast was not shown");
+				assert.equal(oShowErrorStub.callCount, 1, "then the error was logged");
+				assert.equal(oErrorBoxStub.callCount, 1, "and a MessageBox.error was shown");
+			});
+		});
+
+		QUnit.test("When transport function is called and transportAllUIChanges returns Promise.resolve() with 'Error' as parameter", function(assert) {
+			sandbox.stub(this.oRta, "_serializeToLrep").returns(Promise.resolve());
+			sandbox.stub(TransportSelection.prototype, "transportAllUIChanges").returns(Promise.resolve('Error'));
+			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
+			return this.oRta.transport().then(function() {
+				assert.equal(oMessageToastStub.callCount, 0, "then the messageToast was not shown");
+			});
+		});
+	});
 
 	QUnit.done(function( details ) {
 		oComp.destroy();
