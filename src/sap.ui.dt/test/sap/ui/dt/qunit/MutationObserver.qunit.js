@@ -5,31 +5,35 @@ QUnit.config.autostart = false;
 sap.ui.require([
 	'sap/ui/dt/MutationObserver',
 	'sap/ui/dt/OverlayUtil',
+	'sap/ui/dt/Overlay',
 	'sap/ui/dt/DesignTime',
 	'sap/ui/dt/OverlayRegistry',
+	'sap/m/Panel',
 	'sap/m/Button',
+	'sap/ui/layout/VerticalLayout',
 	'sap/ui/thirdparty/sinon'
 ],
 function(
 	MutationObserver,
 	OverlayUtil,
+	Overlay,
 	DesignTime,
 	OverlayRegistry,
+	Panel,
 	Button,
+	VerticalLayout,
 	sinon
 ) {
 	'use strict';
 	QUnit.start();
-
-	// var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given that a MutationObserver is created", {
 		beforeEach : function() {
 			this.oLabel = new sap.m.Label({
 				text : "text"
 			});
-			this.oMutationObserver = new sap.ui.dt.MutationObserver();
-			this.oLabel.placeAt("content");
+			this.oMutationObserver = new MutationObserver();
+			this.oLabel.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach : function() {
@@ -77,78 +81,105 @@ function(
 		this.oLabel.$().append("<div />");
 	});
 
-	// QUnit.module("Given that a MutationObserver and DesignTime with root control have been created", {
-	// 	beforeEach : function(assert) {
-	//
-	// 		sandbox.stub(sap.ui.dt.OverlayUtil, "isInOverlayContainer").returns(false);
-	// 		sandbox.stub(sap.ui.dt.OverlayUtil, "getClosestOverlayForNode").returns(false);
-	//
-	// 		var aButtons0 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19].map(function(i) {
-	// 			return new sap.m.Button("button" + i);
-	// 		});
-	// 		this.oVerticalLayout0 = new sap.ui.layout.VerticalLayout({
-	// 			id : "__layout0",
-	// 			content : aButtons0
-	// 		});
-	//
-	// 		var aButtons1 = [20,21,22,23,24,25].map(function(i) {
-	// 			return new sap.m.Button("button" + i);
-	// 		});
-	// 		this.oVerticalLayout1 = new sap.ui.layout.VerticalLayout({
-	// 			id : "__layout1",
-	// 			content : aButtons1
-	// 		});
-	//
-	// 		this.oVerticalLayoutRoot = new sap.ui.layout.VerticalLayout({
-	// 			id : "__layout2",
-	// 			content : [this.oVerticalLayout0, this.oVerticalLayout1]
-	// 		}).placeAt("content");
-	//
-	// 		sap.ui.getCore().applyChanges();
-	//
-	// 		this.oDesignTime = new sap.ui.dt.DesignTime({
-	// 			rootElements : [this.oVerticalLayoutRoot]
-	// 		});
-	//
-	// 		var done = assert.async();
-	//
-	// 		this.oDesignTime.attachEventOnce("synced", function() {
-	// 			this.oVerticalLayout1Overlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oVerticalLayout1);
-	// 			this.oVerticalLayoutRootOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oVerticalLayoutRoot);
-	// 			done();
-	// 		}.bind(this));
-	// 	},
-	// 	afterEach : function() {
-	// 		this.oVerticalLayout0.destroy();
-	// 		this.oVerticalLayout1.destroy();
-	// 		this.oVerticalLayoutRoot.destroy();
-	// 		this.oDesignTime.destroy();
-	// 		sandbox.restore();
-	// 	}
-	// });
-	//
-	// QUnit.test("when whole document is scrolled", function(assert) {
-	// 	var done = assert.async();
-	// 	var fnAssertScrollEvent = function(oEvent) {
-	// 		assert.ok(oEvent, "then a 'scroll' event is fired because of the mutation observer");
-	// 		document.removeEventListener("scroll", fnAssertScrollEvent, { once: true });
-	// 		done();
-	// 	};
-	// 	document.addEventListener("scroll", fnAssertScrollEvent, { once: true });
-	// 	this.oVerticalLayoutRootOverlay._oMutationObserver.attachDomChanged(function(oEvent) {
-	// 		if (oEvent.mParameters.type === "scroll") {
-	// 			assert.notEqual(oEvent.mParameters.type, "scroll", "then a 'domChanged' with 'scroll'-type shouldn't be triggered");
-	// 		}
-	// 	});
-	// 	jQuery(document).scrollTop(50);
-	// });
-	//
-	// QUnit.test("when verticalLayoutOverlay is scrolled", function(assert) {
-	// 	var done = assert.async();
-	// 	this.oVerticalLayoutRootOverlay._oMutationObserver.attachEventOnce("domChanged", function(oEvent) {
-	// 		assert.strictEqual(oEvent.mParameters.type, "scroll", "then a 'domChanged' with 'scroll'-type is triggered");
-	// 			done();
-	// 	}, this.oVerticalLayoutRootOverlay);
-	// 	jQuery(this.oVerticalLayout1.getDomRef()).scrollTop(50);
-	// });
+	QUnit.module("Given a Vertical Layout with a scrollable Panel and another Vertical Layout with two scrollable panels for which DT is started...", {
+		beforeEach : function(assert) {
+
+			var aButtons0 = [20,21,22,23,24,25].map(function(i) {
+				return new Button("button" + i);
+			});
+			this.Panel0 = new Panel({
+				id : "SmallPanel",
+				content : aButtons0,
+				width : "100px",
+				height : "100px"
+			});
+
+			var aButtons1 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19].map(function(i) {
+				return new Button("button" + i);
+			});
+			this.Panel1 = new Panel({
+				id : "BigPanel",
+				content : aButtons1,
+				width : "100px",
+				height : "1500px"
+			});
+
+			var aOutsideButtons = [26,27,28,29,30,31].map(function(i) {
+				return new Button("button" + i);
+			});
+
+			this.oOutsidePanel = new Panel({
+				id : "OutsidePanel",
+				content : aOutsideButtons,
+				width : "100px",
+				height : "100px"
+			});
+
+			this.oVerticalLayoutOutsideDT = new VerticalLayout({
+				id : "OutsiderVerticalLayout",
+				content : this.oOutsidePanel
+			});
+
+			this.oVerticalLayoutRoot = new VerticalLayout({
+				id : "RootVerticalLayout",
+				content : [this.Panel0, this.Panel1]
+			});
+
+			this.oOuterPanel = new Panel({
+				id : "OuterPanel",
+				content : [this.oVerticalLayoutOutsideDT, this.oVerticalLayoutRoot],
+				height : "1200px"
+			}).placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			// Makes the area where DT will be active more prominent
+			jQuery(this.oVerticalLayoutRoot.getDomRef()).css("border", "solid");
+
+			this.oDesignTime = new DesignTime({
+				rootElements : [this.oVerticalLayoutRoot]
+			});
+
+			var done = assert.async();
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oVerticalLayoutRootOverlay = OverlayRegistry.getOverlay(this.oVerticalLayoutRoot);
+				done();
+			}.bind(this));
+		},
+		afterEach : function() {
+			this.oOuterPanel.destroy();
+			this.oDesignTime.destroy();
+		}
+	});
+
+	QUnit.test("when the panel outside of DT is scrolled", function(assert) {
+		var done = assert.async();
+		var spy = sinon.spy();
+		setTimeout(function(){
+			assert.equal(spy.called, false, "then the event was not fired");
+			done();
+		});
+		this.oOutsidePanel.$().find('>.sapMPanelContent').scrollTop(50);
+	});
+
+	QUnit.test("when the outer vertical layout is scrolled", function(assert) {
+		var done = assert.async();
+		Overlay.getMutationObserver().attachEventOnce("domChanged", function(oEvent) {
+			assert.strictEqual(oEvent.mParameters.type, "scroll", "then a 'domChanged' with 'scroll'-type is triggered");
+			done();
+		});
+		this.oOuterPanel.$().find('>.sapMPanelContent').scrollTop(50);
+	});
+
+	QUnit.test("when a panel inside DT is scrolled", function(assert) {
+		var done = assert.async();
+		var spy = sinon.spy();
+		Overlay.getMutationObserver().attachEventOnce("domChanged", spy);
+		setTimeout(function(){
+			assert.equal(spy.called, false, "then the event was not fired");
+			done();
+		});
+		this.Panel0.$().find('>.sapMPanelContent').scrollTop(50);
+	});
 });
