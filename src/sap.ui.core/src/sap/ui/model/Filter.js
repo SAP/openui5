@@ -63,6 +63,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator', 's
 	 * @param {object|string|sap.ui.model.Filter[]} vFilterInfo Filter info object or a path or an array of filters
 	 * @param {string} vFilterInfo.path Binding path for this filter
 	 * @param {function} vFilterInfo.test Function which is used to filter the items and which should return a Boolean value to indicate whether the current item passes the filter
+	 * @param {function} vFilterInfo.comparator Function which is used to compare two values, this is used for processing of equal, less than and greater than operators
 	 * @param {sap.ui.model.FilterOperator} vFilterInfo.operator Operator used for the filter
 	 * @param {object} vFilterInfo.value1 First value to use with the given filter operator
 	 * @param {object} [vFilterInfo.value2=null] Second value to use with the filter operator (only for some operators)
@@ -87,6 +88,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator', 's
 				this.aFilters = vFilterInfo.filters || vFilterInfo.aFilters; // support legacy name 'aFilters' (intentionally not documented)
 				this.bAnd = vFilterInfo.and || vFilterInfo.bAnd; // support legacy name 'bAnd' (intentionally not documented)
 				this.fnTest = vFilterInfo.test;
+				this.fnCompare = vFilterInfo.comparator;
 			} else {
 				//If parameters are used we have to check whether a regular or a multi filter is specified
 				if (jQuery.isArray(vFilterInfo)) {
@@ -123,6 +125,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator', 's
 		}
 
 	});
+
+	/**
+	 * Compares two values
+	 *
+	 * This is the default comparator function used for clientside filtering, if no custom comparator is given in the
+	 * constructor. It does compare just by using equal/less than/greater than with automatic type casting, except
+	 * for null values, which are neither less or greater, and string values where localeCompare is used.
+	 *
+	 * The comparator method returns -1, 0, 1 for comparable values and NaN for non-comparable values.
+	 *
+	 * @param {any} a the first value to compare
+	 * @param {any} b the second value to compare
+	 * @returns {int} -1, 0, 1 or NaN depending on the compare result
+	 * @public
+	 */
+	Filter.defaultComparator = function(a, b) {
+		if (a == b) {
+			return 0;
+		}
+		if (a == null || b == null) {
+			return NaN;
+		}
+		if (typeof a == "string" && typeof b == "string") {
+			return a.localeCompare(b);
+		}
+		if (a < b) {
+			return -1;
+		}
+		if (a > b) {
+			return 1;
+		}
+		return NaN;
+	};
+
 
 	return Filter;
 

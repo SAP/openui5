@@ -532,14 +532,21 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 		return oDecimal1.sign * iResult;
 	}
 
+	var rTime = /^PT(\d\d)H(\d\d)M(\d\d)S$/;
+
 	/**
-	 * Extracts the milliseconds if the value is a date/time instance.
+	 * Extracts the milliseconds if the value is a date/time instance or formatted string.
 	 * @param {any} vValue
 	 *   the value (may be <code>undefined</code> or <code>null</code>)
 	 * @returns {any}
 	 *   the number of milliseconds or the value itself
 	 */
 	function extractMilliseconds(vValue) {
+		if (typeof vValue === "string" && rTime.test(vValue)) {
+			vValue = parseInt(RegExp.$1, 10) * 3600000 +
+				parseInt(RegExp.$2, 10) * 60000 +
+				parseInt(RegExp.$3, 10) * 1000;
+		}
 		if (vValue instanceof Date) {
 			return vValue.getTime();
 		}
