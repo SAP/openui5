@@ -359,12 +359,6 @@ sap.ui.require([
 					.withExactArgs("Unsupported HttpMethod at FunctionImport '" + sName
 						+ "', removing this FunctionImport", undefined, sClassName);
 			});
-			["CheckFlightAvailability", "GetFlightDetails", "GetAgencyDetails"
-			].forEach(function (sName) {
-				oLogMock.expects("warning")
-					.withExactArgs("Unsupported 'sap:action-for' at FunctionImport '" + sName
-						+ "', removing this FunctionImport", undefined, sClassName);
-			});
 
 			mModelParameters = jQuery.extend({}, {odataVersion : "2.0"}, mModelParameters);
 			return createModel(sFlight, mModelParameters);
@@ -390,11 +384,6 @@ sap.ui.require([
 					.withExactArgs("Unsupported HttpMethod at FunctionImport '" + sName
 						+ "', removing this FunctionImport", undefined, sClassName);
 			});
-//			["Confirm", "Cancel", "InvoiceCreated", "GoodsIssueCreated"].forEach(function (sName) {
-//				oLogMock.expects("warning")
-//					.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'SalesOrder_"
-//						+ sName + "', removing this FunctionImport", undefined, sClassName);
-//			});
 			["filterable", "sortable"].forEach(function (sAnnotation) {
 				oLogMock.expects("warning")
 					.withExactArgs("Unsupported SAP annotation at a complex type in"
@@ -3862,6 +3851,75 @@ sap.ui.require([
 				.expectChange(sId1, ["Frederic Fall", "Jonathan Smith"]);
 
 			oTable.getBinding("items").resume();
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: <FunctionImport m:HttpMethod="GET" sap:action-for="..."> in V2 Adapter
+	// Usage of service: /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
+	//TODO $metadata of <FunctionImport> is broken, key properties and parameters do not match!
+	// --> server expects GetFlightDetails?airlineid='AA'&connectionid='0017'&fldate=datetime'...'
+	QUnit.test("V2 Adapter: bound function", function (assert) {
+		var oModel = this.createModelForV2FlightService(),
+			//TODO key predicate MUST use V4 literal form! fldate=\'2017-08-10T00:00:00Z\'
+			sView = '\
+<FlexBox binding="{/FlightCollection(carrid=\'AA\'&amp;connid=\'0017\'&amp;fldate=datetime\'2017-08-10T00:00:00\')}">\
+	<Text id="carrid" text="{carrid}" />\
+	<FlexBox id="function" binding="{RMTSAMPLEFLIGHT.GetFlightDetails(...)}">\
+		<Text id="distance" text="{distance}" />\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("FlightCollection(carrid='AA'&connid='0017'"
+			+ "&fldate=datetime'2017-08-10T00:00:00')", {
+				"d" : {
+					"__metadata" : {
+						"type":"RMTSAMPLEFLIGHT.Flight"
+					},
+					"carrid" : "AA",
+					"connid" : "0017",
+					"fldate" : "\/Date(1502323200000)\/"
+				}
+			})
+			.expectChange("carrid", "AA")
+			.expectChange("carrid", "AA") //TODO unexpected change
+			.expectChange("distance", null); //TODO unexpected change
+
+		// code under test
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("GetFlightDetails?carrid='AA'&connid='0017'"
+				+ "&fldate=datetime'2017-08-10T00:00:00'", {
+					"d" : {
+//TODO why does the server send this?
+//						"GetFlightDetails" : {
+							"__metadata" : {
+								"type" : "RMTSAMPLEFLIGHT.FlightDetails"
+							},
+							"countryFrom" : "US",
+							"cityFrom" : "new york",
+							"airportFrom" : "JFK",
+							"countryTo" : "US",
+							"cityTo" : "SAN FRANCISCO",
+							"airportTo" : "SFO",
+							"flightTime" : 361,
+							"departureTime" : "PT11H00M00S",
+							"arrivalTime" : "PT14H01M00S",
+							"distance" : "2572.0000",
+							"distanceUnit" : "SMI",
+							"flightType" : "",
+							"period" : 0
+						}
+//					}
+				})
+				.expectChange("distance", "2,572.0000");
+			//TODO Cache#fetchTypes determines a V4 meta path from this.sResourcePath, which is V2
+			that.oLogMock.expects("warning").withExactArgs("Unknown child GetFlightDetails of"
+				+ " RMTSAMPLEFLIGHT.RMTSAMPLEFLIGHT_Entities", "/GetFlightDetails/",
+				"sap.ui.model.odata.v4.ODataMetaModel");
+
+			that.oView.byId("function").getObjectBinding().execute();
 			return that.waitForChanges(assert);
 		});
 	});

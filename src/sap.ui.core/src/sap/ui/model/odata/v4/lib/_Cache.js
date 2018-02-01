@@ -493,12 +493,12 @@ sap.ui.define([
 		 * Adds a promise to aPromises to fetch the type for the given path, put it into
 		 * mTypeForMetaPath and recursively add the key properties' types if they are complex.
 		 * @param {string} sMetaPath The meta path of the resource + navigation or key path (which
-		 *   may lead to an entity or complex type)
+		 *   may lead to an entity or complex type or to <code>undefined</code>)
 		 */
 		function fetchType(sMetaPath) {
 			aPromises.push(that.oRequestor.fetchTypeForPath(sMetaPath).then(function (oType) {
 				mTypeForMetaPath[sMetaPath] = oType;
-				if (oType.$Key) {
+				if (oType && oType.$Key) {
 					oType.$Key.forEach(function (vKey) {
 						var iIndexOfSlash, sKeyPath;
 
