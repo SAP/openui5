@@ -89,25 +89,16 @@
 										</template:if>
 
 										<template:if test="{data>/hasChildren}">
-											<m:Table items="{ path : '/nodes'}"
-													 showSeparators="Inner"
-													 fixedLayout="false"
-													 class="sapUiSmallMarginTop">
-												<m:columns>
-													<m:Column vAlign="Top"><m:Label text="Namespaces &amp; Classes"/></m:Column>
-													<m:Column vAlign="Top" minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader">
-														<m:Label text="Description"/>
-													</m:Column>
-												</m:columns>
-												<m:items>
-													<m:ColumnListItem>
-														<m:cells>
-															<m:Link href="{ref}" text="{name}"/>
-															<core:HTML content="{description}"/>
-														</m:cells>
-													</m:ColumnListItem>
-												</m:items>
-											</m:Table>
+											<custom:LightTable
+												 rows="{ path : '/nodes'}"
+												 columnTitles="Namespaces &amp; Classes,Description"
+												 columnCount="2"
+												 class="sapUiSmallMarginTop">
+												<custom:Row>
+													<m:Link href="{ref}" text="{name}"/>
+													<core:HTML content="{description}"/>
+												</custom:Row>
+											</custom:LightTable>
 										</template:if>
 
 									</layout:VerticalLayout>
@@ -123,24 +114,15 @@
 							<subSections>
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
-										<m:Table items="{ path : '/properties'}"
-												 showSeparators="Inner"
-												 fixedLayout="false"
-												 class="sapUiSmallMarginTop">
-											<m:columns>
-												<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
-												<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader" vAlign="Top"><m:Label text=""/></m:Column>
-												<m:Column vAlign="Top" minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
-											</m:columns>
-											<m:items>
-												<m:ColumnListItem>
-													<m:cells>
-														<custom:ParamText class="sapUiDocumentationParamBold" text="{name}" deprecated="{= ${deprecated} !== undefined }"/>
-														<core:HTML content="{description}"/>
-													</m:cells>
-												</m:ColumnListItem>
-											</m:items>
-										</m:Table>
+										<custom:LightTable rows="{ path : '/properties'}"
+											 columnCount="2"
+											 columnTitles="Name,Description"
+											 class="sapUiSmallMarginTop">
+											<custom:Row>
+												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}" deprecated="{= ${deprecated} !== undefined }"/>
+												<core:HTML content="{description}"/>
+											</custom:Row>
+										</custom:LightTable>
 									</custom:blocks>
 								</custom:ObjectPageSubSection>
 							</subSections>
@@ -165,59 +147,35 @@
 											<core:HTML content="{/constructor/codeExample}"/>
 
 											<template:if test="{= !!${data>/constructor/parameters} }">
-												<m:Table items="{ path: '/constructor/parameters'}"
-														showSeparators="Inner"
-														fixedLayout="true">
-													<m:columns>
-														<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
-														<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
-														<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Default Value"/></m:Column>
-														<m:Column vAlign="Top" minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="50%"><m:Label text="Description"/></m:Column>
-													</m:columns>
-													<m:items>
-														<m:ColumnListItem>
-															<m:cells>
-																<custom:ParamText text="{name}" phoneText="{phoneName}" depth="{depth}" optional="{optional}"/>
-
-																<layout:VerticalLayout content="{path: 'types', templateShareable: 'false'}">
-																	<m:HBox>
-																		<m:items>
-																			<m:Link text="{name}"
-																					href="#/api/{name}"
-																					enabled="{= !!${linkEnabled} }"/>
-																		</m:items>
-																	</m:HBox>
-																</layout:VerticalLayout>
-
-																<m:Text text="{defaultValue}" wrapping="false"/>
-
-																<core:HTML content="{description}"/>
-															</m:cells>
-														</m:ColumnListItem>
-													</m:items>
-												</m:Table>
+												<custom:LightTable rows="{ path: '/constructor/parameters'}"
+														columnTitles="Param,Type,Default Value,Description"
+														columnCount="4"
+														class="sapUiDocumentationParamsTable">
+													<custom:Row>
+														<custom:ParamText text="{name}" phoneText="{phoneName}" depth="{depth}" optional="{optional}"/>
+														<layout:VerticalLayout content="{path: 'types', templateShareable: 'false'}" width="100%">
+															<m:Link text="{name}"
+																	href="#/api/{name}"
+																	enabled="{= !!${linkEnabled} }"/>
+														</layout:VerticalLayout>
+														<m:Text text="{defaultValue}" wrapping="false"/>
+														<core:HTML content="{description}"/>
+													</custom:Row>
+												</custom:LightTable>
 											</template:if>
 
 											<template:if test="{= ${data>/constructor/throws} !== undefined}">
-												<m:Table items="{ path : '/constructor/throws', templateShareable: 'false'}"
-														 showSeparators="Inner"
-														 class="sapUiDocumentationReturnsTable"
-														 fixedLayout="true">
-													<m:columns>
-														<m:Column vAlign="Top"><m:Label text="Throws"/></m:Column>
-														<m:Column vAlign="Top" minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="50%"><m:Label text="Description"/></m:Column>
-													</m:columns>
-													<m:items>
-														<m:ColumnListItem>
-															<m:cells>
-																<m:Link text="{type}"
-																		href="#/api/{type}"
-																		enabled="{= !!${linkEnabled} }"/>
-																<core:HTML content="{description}"/>
-															</m:cells>
-														</m:ColumnListItem>
-													</m:items>
-												</m:Table>
+												<custom:LightTable rows="{ path : '/constructor/throws', templateShareable: 'false'}"
+														columnTitles="Throws,Desktop"
+														columnCount="2"
+														class="sapUiDocumentationReturnsTable">
+													<custom:Row>
+														<m:Link text="{type}"
+																href="#/api/{type}"
+																enabled="{= !!${linkEnabled} }"/>
+														<core:HTML content="{description}"/>
+													</custom:Row>
+												</custom:LightTable>
 											</template:if>
 										</layout:VerticalLayout>
 									</custom:blocks>
@@ -233,58 +191,40 @@
 							<subSections>
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
-										<m:Table items="{ path : '/ui5-metadata/properties'}"
-												 showSeparators="Inner"
-												 fixedLayout="false"
-												 class="sapUiSmallMarginTop">
-											<m:columns>
-												<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
-
-												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
-												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Default Value"/></m:Column>
-												<m:Column vAlign="Top" minScreenWidth="Tablet" demandPopin="true"><m:Label text="Description"/></m:Column>
-											</m:columns>
-											<m:items>
-												<m:ColumnListItem>
-													<m:cells>
-
-														<custom:ParamText class="sapUiDocumentationParamBold" text="{name}"/>
-
-														<m:Link text="{type}"
-																href="#/api/{= ${type}.replace('[]', '') }"
-																enabled="{= !!${linkEnabled} }"/>
-
-														<m:Text text="{defaultValue}" wrapping="false"/>
-
-														<m:VBox>
-															<core:HTML content="{description}"/>
-
-															<m:ObjectStatus text="Visibility: {visibility}" state="{= ${visibility} === 'public' ? 'Success' : 'Warning'}"/>
-
-															<m:MessageStrip
-																visible="{=${deprecatedText} !== undefined}"
-																text="{deprecatedText}"
-																type="Error"
-																showIcon="true"
-																showCloseButton="false"
-																enableFormattedText="true"
-																class="sapUiTinyMarginBottom sapUiTinyMarginTop">
-															</m:MessageStrip>
-															<m:MessageStrip
-																visible="{=${experimental} !== undefined}"
-																text="Experimental API since {experimental/since} {experimental/text}"
-																type="Warning"
-																showIcon="true"
-																showCloseButton="false"
-																enableFormattedText="true"
-																class="sapUiTinyMarginBottom sapUiTinyMarginTop">
-															</m:MessageStrip>
-														</m:VBox>
-
-													</m:cells>
-												</m:ColumnListItem>
-											</m:items>
-										</m:Table>
+										<custom:LightTable rows="{ path : '/ui5-metadata/properties'}"
+											columnTitles="Name,Type,Default Value,Description"
+											columnCount="4"
+											class="sapUiSmallMarginTop">
+											<custom:Row>
+												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}"/>
+												<m:Link text="{type}"
+														href="#/api/{= ${type}.replace('[]', '') }"
+														enabled="{= !!${linkEnabled} }"/>
+												<m:Text text="{defaultValue}" wrapping="false"/>
+												<layout:VerticalLayout width="100%">
+													<core:HTML content="{description}"/>
+													<m:ObjectStatus text="Visibility: {visibility}" state="{= ${visibility} === 'public' ? 'Success' : 'Warning'}"/>
+													<m:MessageStrip
+														visible="{=${deprecatedText} !== undefined}"
+														text="{deprecatedText}"
+														type="Error"
+														showIcon="true"
+														showCloseButton="false"
+														enableFormattedText="true"
+														class="sapUiTinyMarginBottom sapUiTinyMarginTop">
+													</m:MessageStrip>
+													<m:MessageStrip
+														visible="{=${experimental} !== undefined}"
+														text="Experimental API since {experimental/since} {experimental/text}"
+														type="Warning"
+														showIcon="true"
+														showCloseButton="false"
+														enableFormattedText="true"
+														class="sapUiTinyMarginBottom sapUiTinyMarginTop">
+													</m:MessageStrip>
+												</layout:VerticalLayout>
+											</custom:Row>
+										</custom:LightTable>
 									</custom:blocks>
 								</custom:ObjectPageSubSection>
 							</subSections>
@@ -298,30 +238,19 @@
 							<subSections>
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
-										<m:Table items="{ path : '/ui5-metadata/aggregations'}"
-												 showSeparators="Inner"
-												 fixedLayout="false"
-												 class="sapUiSmallMarginTop">
-											<m:columns>
-												<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
-												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Cardinality"/></m:Column>
-												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
-												<m:Column vAlign="Top" minScreenWidth="Tablet" demandPopin="true"><m:Label text="Description"/></m:Column>
-											</m:columns>
-											<m:items>
-												<m:ColumnListItem visible="{= ${visibility} === 'public'}">
-													<m:cells>
-														<custom:ParamText text="{name}" deprecated="{= ${deprecated} !== undefined }" defaultFlag="{= ${/ui5-metadata/defaultAggregation} === ${path: 'name'} }"/>
-														<m:Text text="{cardinality}" wrapping="false"/>
-														<m:Link text="{type}"
-																href="#/api/{type}"
-																enabled="{= !!${linkEnabled} }"/>
-
-														<core:HTML content="{description}"/>
-													</m:cells>
-												</m:ColumnListItem>
-											</m:items>
-										</m:Table>
+										<custom:LightTable rows="{ path : '/ui5-metadata/aggregations'}"
+											columnTitles="Name,Cardinality,Type,Description"
+											columnCount="4"
+											class="sapUiSmallMarginTop">
+											<custom:Row visible="{= ${visibility} === 'public'}">
+												<custom:ParamText text="{name}" deprecated="{= ${deprecated} !== undefined }" defaultFlag="{= ${/ui5-metadata/defaultAggregation} === ${path: 'name'} }"/>
+												<m:Text text="{cardinality}" wrapping="false"/>
+												<m:Link text="{type}"
+														href="#/api/{type}"
+														enabled="{= !!${linkEnabled} }"/>
+												<core:HTML content="{description}"/>
+											</custom:Row>
+										</custom:LightTable>
 									</custom:blocks>
 								</custom:ObjectPageSubSection>
 							</subSections>
@@ -335,30 +264,19 @@
 							<subSections>
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
-										<m:Table items="{ path : '/ui5-metadata/associations'}"
-												 showSeparators="Inner"
-												 fixedLayout="false"
-												 class="sapUiSmallMarginTop">
-											<m:columns>
-												<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
-												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Cardinality"/></m:Column>
-												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
-												<m:Column vAlign="Top" minScreenWidth="Tablet" demandPopin="true"><m:Label text="Description"/></m:Column>
-											</m:columns>
-											<m:items>
-												<m:ColumnListItem visible="{visibility === 'public'}">
-													<m:cells>
-														<custom:ParamText class="sapUiDocumentationParamBold" text="{name}" deprecated="{= ${deprecated} !== undefined }"/>
-														<m:Text text="{cardinality}" wrapping="false"/>
-														<m:Link text="{type}"
-																href="#/api/{type}"
-																enabled="{= !!${linkEnabled} }"/>
-
-														<core:HTML content="{description}"/>
-													</m:cells>
-												</m:ColumnListItem>
-											</m:items>
-										</m:Table>
+										<custom:LightTable rows="{ path : '/ui5-metadata/associations'}"
+											columnCount="4"
+											columnTitles="Name,Cardinality,Type,Description"
+											class="sapUiSmallMarginTop">
+											<custom:Row visible="{visibility === 'public'}">
+												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}" deprecated="{= ${deprecated} !== undefined }"/>
+												<m:Text text="{cardinality}" wrapping="false"/>
+												<m:Link text="{type}"
+														href="#/api/{type}"
+														enabled="{= !!${linkEnabled} }"/>
+												<core:HTML content="{description}"/>
+											</custom:Row>
+										</custom:LightTable>
 									</custom:blocks>
 								</custom:ObjectPageSubSection>
 							</subSections>
@@ -373,7 +291,7 @@
 							<subSections>
 								<custom:ObjectPageSubSection title="{name}">
 									<custom:blocks>
-										<layout:VerticalLayout>
+										<layout:VerticalLayout width="100%">
 
 											<core:HTML content="{description}"/>
 
@@ -398,26 +316,17 @@
 												class="sapUiSmallMarginBottom">
 											</m:MessageStrip>
 
-											<m:Table items="{ path : 'parameters', templateShareable: 'false'}"
-													 showSeparators="Inner"
-													 fixedLayout="true">
-												<m:columns>
-													<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
-													<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
-													<m:Column vAlign="Top" minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
-												</m:columns>
-												<m:items>
-													<m:ColumnListItem>
-														<m:cells>
-															<custom:ParamText text="{name}" phoneText="{phoneName}" depth="{depth}" optional="{optional}"/>
-															<m:Link text="{type}"
-																	href="#/api/{type}"
-																	enabled="{= !!${linkEnabled} }"/>
-															<core:HTML content="{description}"/>
-														</m:cells>
-													</m:ColumnListItem>
-												</m:items>
-											</m:Table>
+											<custom:LightTable rows="{ path : 'parameters', templateShareable: 'false'}"
+												columnTitles="Param,Type,Description"
+												columnCount="3">
+												<custom:Row>
+													<custom:ParamText text="{name}" phoneText="{phoneName}" depth="{depth}" optional="{optional}"/>
+													<m:Link text="{type}"
+															href="#/api/{type}"
+															enabled="{= !!${linkEnabled} }"/>
+													<core:HTML content="{description}"/>
+												</custom:Row>
+											</custom:LightTable>
 
 										</layout:VerticalLayout>
 									</custom:blocks>
@@ -443,7 +352,7 @@
 
 													<core:HTML content="{path: 'method>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 
-													<layout:VerticalLayout visible="{= ${method>examples} !== undefined}">
+													<layout:VerticalLayout visible="{= ${method>examples} !== undefined}" width="100%">
 														<template:repeat list="{method>examples}" var="example">
 															<core:HTML content="{path: 'example>data', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 														</template:repeat>
@@ -477,83 +386,58 @@
 													<core:HTML content="{method>code}" />
 
 													<template:if test="{= !!${method>parameters} &amp;&amp; ${method>parameters}.length > 0}">
-														<m:Table showSeparators="Inner"
-																fixedLayout="true">
-															<m:columns>
-																<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
-																<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
-																<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Default Value"/></m:Column>
-																<m:Column vAlign="Top" minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="50%"><m:Label text="Description"/></m:Column>
-															</m:columns>
-															<m:items>
-																<template:repeat list="{method>parameters}" var="parameter">
-																	<m:ColumnListItem>
-																		<m:cells>
-																			<custom:ParamText text="{parameter>name}" phoneText="{parameter>phoneName}" depth="{parameter>depth}" optional="{parameter>optional}"/>
-																			<layout:VerticalLayout class="sapUiDocumentationOrList">
-																				<template:repeat list="{parameter>types}" var="type">
-																					<m:Link text="{type>value}"
-																							href="#/api/{= ${path: 'type>value'}.replace('[]', '') }"
-																							enabled="{= !!${type>linkEnabled} }"/>
-																				</template:repeat>
-																			</layout:VerticalLayout>
-																			<m:Text text="{parameter>defaultValue}" wrapping="false"/>
-																			<core:HTML content="{path: 'parameter>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
-																		</m:cells>
-																	</m:ColumnListItem>
-																</template:repeat>
-															</m:items>
-														</m:Table>
+														<custom:LightTable
+																columnCount="4"
+																columnTitles="Param,Type,Default Value,Description"
+																class="sapUiDocumentationParamsTable">
+															<template:repeat list="{method>parameters}" var="parameter">
+																<custom:Row>
+																	<custom:ParamText text="{parameter>name}" phoneText="{parameter>phoneName}" depth="{parameter>depth}" optional="{parameter>optional}"/>
+																	<layout:VerticalLayout class="sapUiDocumentationOrList" width="100%">
+																		<template:repeat list="{parameter>types}" var="type">
+																			<m:Link text="{type>value}"
+																					href="#/api/{= ${path: 'type>value'}.replace('[]', '') }"
+																					enabled="{= !!${type>linkEnabled} }"/>
+																		</template:repeat>
+																	</layout:VerticalLayout>
+																	<m:Text text="{{parameter>defaultValue}" wrapping="false"/>
+																	<core:HTML content="{path: 'parameter>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+																</custom:Row>
+															</template:repeat>
+														</custom:LightTable>
 													</template:if>
 
 													<template:if test="{= ${method>returnValue} !== undefined}">
-														<m:Table showSeparators="Inner"
-																 class="sapUiDocumentationReturnsTable"
-																 fixedLayout="true">
-															<m:columns>
-																<m:Column vAlign="Top"><m:Label text="Returns"/></m:Column>
-																<m:Column vAlign="Top" minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="50%"><m:Label text="Description"/></m:Column>
-															</m:columns>
-															<m:items>
-																<m:ColumnListItem>
-																	<m:cells>
-
-																		<layout:VerticalLayout class="sapUiDocumentationOrList">
-																			<template:repeat list="{method>returnValue/types}" var="rtype">
-																				<m:Link text="{rtype>value}"
-																						href="#/api/{= ${path: 'rtype>value'}.replace('[]', '') }"
-																						enabled="{= !!${rtype>linkEnabled} }"/>
-																			</template:repeat>
-																		</layout:VerticalLayout>
-
-																		<core:HTML content="{path: 'method>returnValue/description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
-																	</m:cells>
-																</m:ColumnListItem>
-															</m:items>
-														</m:Table>
+														<custom:LightTable columnCount="2"
+																	columnTitles="Returns,Description"
+																	class="sapUiDocumentationReturnsTable">
+															<custom:Row>
+																<layout:VerticalLayout class="sapUiDocumentationOrList" width="100%">
+																	<template:repeat list="{method>returnValue/types}" var="rtype">
+																		<m:Link text="{rtype>value}"
+																				href="#/api/{= ${path: 'rtype>value'}.replace('[]', '') }"
+																				enabled="{= !!${rtype>linkEnabled} }"/>
+																	</template:repeat>
+																</layout:VerticalLayout>
+																<core:HTML content="{path: 'method>returnValue/description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+															</custom:Row>
+														</custom:LightTable>
 													</template:if>
 
 													<template:if test="{= ${method>throws} !== undefined}">
-														<m:Table showSeparators="Inner"
-																 class="sapUiDocumentationReturnsTable"
-																 fixedLayout="true">
-															<m:columns>
-																<m:Column vAlign="Top"><m:Label text="Throws"/></m:Column>
-																<m:Column vAlign="Top" minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="50%"><m:Label text="Description"/></m:Column>
-															</m:columns>
-															<m:items>
-																<template:repeat list="{method>throws}" var="throws">
-																	<m:ColumnListItem>
-																		<m:cells>
-																			<m:Link text="{throws>type}"
-																				href="#/api/{throws>type}"
-																				enabled="{= !!${throws>linkEnabled} }"/>
-																			<core:HTML content="{path: 'throws>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
-																		</m:cells>
-																	</m:ColumnListItem>
-																</template:repeat>
-															</m:items>
-														</m:Table>
+														<custom:LightTable
+																columnTitles="Throws,Description"
+																columnCount="2"
+																class="sapUiDocumentationReturnsTable">
+															<template:repeat list="{method>throws}" var="throws">
+																<custom:Row>
+																	<m:Link text="{throws>type}"
+																		href="#/api/{throws>type}"
+																		enabled="{= !!${throws>linkEnabled} }"/>
+																	<core:HTML content="{path: 'throws>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+																</custom:Row>
+															</template:repeat>
+														</custom:LightTable>
 													</template:if>
 
 												</layout:VerticalLayout>
@@ -574,27 +458,18 @@
 							<subSections>
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
-										<m:Table items="{ path : '/ui5-metadata/specialSettings'}"
-												 showSeparators="Inner"
-												 fixedLayout="false"
-												 class="sapUiSmallMarginTop">
-											<m:columns>
-												<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
-												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
-												<m:Column vAlign="Top" minScreenWidth="Tablet" demandPopin="true"><m:Label text="Description"/></m:Column>
-											</m:columns>
-											<m:items>
-												<m:ColumnListItem>
-													<m:cells>
-														<custom:ParamText class="sapUiDocumentationParamBold" text="{name}"/>
-														<m:Link text="{type}"
-																href="#/api/{type}"
-																enabled="{= !!${linkEnabled} }"/>
-														<core:HTML content="{description}"/>
-													</m:cells>
-												</m:ColumnListItem>
-											</m:items>
-										</m:Table>
+										<custom:LightTable rows="{ path : '/ui5-metadata/specialSettings'}"
+											columnCount="3"
+											columnTitles="Name,Type,Description"
+											class="sapUiSmallMarginTop">
+											<custom:Row>
+												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}"/>
+												<m:Link text="{type}"
+														href="#/api/{type}"
+														enabled="{= !!${linkEnabled} }"/>
+												<core:HTML content="{description}"/>
+											</custom:Row>
+										</custom:LightTable>
 									</custom:blocks>
 								</custom:ObjectPageSubSection>
 							</subSections>
@@ -613,24 +488,13 @@
 
 											<core:HTML content="{description}"/>
 
-											<m:Table
-												 showSeparators="Inner"
-												 fixedLayout="true">
-											<m:columns>
-												<m:Column vAlign="Top" width="45%"><m:Label text="Namespace"/></m:Column>
-												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Target Type"/></m:Column>
-												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Applies To"/></m:Column>
-											</m:columns>
-											<m:items>
-												<m:ColumnListItem>
-													<m:cells>
-														<core:HTML content="{namespace}"/>
-														<core:HTML content="{target'}"/>
-														<core:HTML content="{appliesTo}"/>
-													</m:cells>
-												</m:ColumnListItem>
-											</m:items>
-										</m:Table>
+											<custom:LightTable columnTitles="Namespace,Target Type,Applies To" columnCount="3">
+											<custom:Row>
+												<core:HTML content="{namespace}"/>
+												<core:HTML content="{target'}"/>
+												<core:HTML content="{appliesTo}"/>
+											</custom:Row>
+										</custom:LightTable>
 
 										</layout:VerticalLayout>
 									</custom:blocks>
