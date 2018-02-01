@@ -21,24 +21,40 @@
 	"use strict";
 
 	var oCfg = window['sap-ui-config'],
-		aScripts = document.scripts,
-		i, mMatch, sBaseUrl, bNojQuery;
+		sBaseUrl, bNojQuery,
+		aScripts, rBootScripts, i;
 
+	function findBaseUrl(oScript, rUrlPattern) {
+		var sUrl = oScript && oScript.getAttribute("src"),
+			oMatch = rUrlPattern.exec(sUrl);
+		if ( oMatch ) {
+			sBaseUrl = oMatch[1] || "";
+			bNojQuery = /sap-ui-core-nojQuery\.js(?:\?|#|$)/.test(sUrl);
+			return true;
+		}
+	}
+
+	// Prefer script tags which have the sap-ui-bootstrap ID
+	// This prevents issues when multiple script tags point to files named
+	// "sap-ui-core.js", for example when using the cache buster for UI5 resources
+	if ( !findBaseUrl(document.querySelector('SCRIPT[src][id=sap-ui-bootstrap]'), /^((?:.*\/)?resources\/)/ ) ) {
+
+		// only when there's no such script tag, check all script tags
+		rBootScripts = /^(.*\/)?(?:sap-ui-(?:core|custom|boot|merged)(?:-\w*)?|jquery.sap.global|ui5loader-autoconfig)\.js(?:[?#]|$)/;
+		aScripts = document.scripts;
+		for ( i = 0; i < aScripts.length; i++ ) {
+			if ( findBaseUrl(aScripts[i], rBootScripts) ) {
+				break;
+			}
+		}
+
+	}
+
+	// configuration via window['sap-ui-config'] always overrides an auto detected base URL
 	if ( typeof oCfg === 'object'
 		 && typeof oCfg.resourceRoots === 'object'
 		 && typeof oCfg.resourceRoots[''] === 'string' ) {
 		sBaseUrl = oCfg.resourceRoots[''];
-	}
-
-	for (i = 0; i < aScripts.length; i++) {
-		mMatch = /(.*\/)(?:sap-ui-custom(?:-\w*)?|sap-ui-core(?:-(\w*))?|jquery.sap.global|ui5loader-autoconfig)\.js$/i.exec(aScripts[i].getAttribute("src"));
-		if (mMatch) {
-			if ( sBaseUrl == null ) {
-				sBaseUrl = mMatch[1];
-			}
-			bNojQuery = mMatch[2] === "nojQuery";
-			break;
-		}
 	}
 
 	if (sBaseUrl == null) {
@@ -127,7 +143,8 @@
 			},
 			'sap/ui/thirdparty/jqueryui/jquery-ui-position': {
 				amd: true,
-				deps: ['sap/ui/thirdparty/jquery']
+				deps: ['sap/ui/thirdparty/jquery'],
+				exports: 'jQuery'
 			},
 			'sap/ui/thirdparty/jquery-mobile-custom': {
 				amd: true,
@@ -241,7 +258,7 @@
 		_define('sap/ui/thirdparty/jquery', function() {
 			return jQuery;
 		});
-		if (jQuery.position) {
+		if (jQuery.prototype.position) {
 			_define('sap/ui/thirdparty/jqueryui/jquery-ui-position', function() {
 				return jQuery;
 			});
