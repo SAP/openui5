@@ -52,11 +52,13 @@ sap.ui.define(["./library", "sap/ui/core/Control", "jquery.sap.global"],
 				/**
 				 * Indicates whether or not the step is validated.
 				 * When a step is validated a Next button is visualized in the Wizard control.
+				 * @since 1.32
 				 */
 				validated: {type: "boolean", group: "Behavior", defaultValue: true},
 				/**
 				 * Indicates whether or not the step is optional.
 				 * When a step is optional an "(Optional)" label is displayed under the step's title.
+				 * @since 1.54
 				 */
 				optional: {type: "boolean", group: "Appearance", defaultValue: false}
 			},
@@ -87,11 +89,13 @@ sap.ui.define(["./library", "sap/ui/core/Control", "jquery.sap.global"],
 				 * This association is used only when the <code>enableBranching</code> property of the Wizard is set to true.
 				 * Use the association to store the next steps that are about to come after the current.
 				 * If this is going to be a final step - leave this association empty.
+				 * @since 1.32
 				 */
 				subsequentSteps : {type : "sap.m.WizardStep", multiple : true, singularName : "subsequentStep"},
 				/**
 				 * The next step to be taken after the step is completed.
 				 * Set this association value in the complete event of the current WizardStep.
+				 * @since 1.32
 				 */
 				nextStep : {type: "sap.m.WizardStep", multiple: false}
 			}
