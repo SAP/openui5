@@ -46,6 +46,7 @@ module.exports = [
 	"Switch.spec.js",
 	"Toolbar.spec.js",
 	"TableSelectDialog.spec.js",
+	"TabStrip.spec.js",
 	"Text.spec.js",
 	"TimePicker.spec.js",
 	"Token.spec.js",
