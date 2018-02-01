@@ -51,6 +51,13 @@
 				{form:"NFKC", string:"ṩ", representation:"\\u1E69"},
 				{form:"NFKD", string:"ṩ", representation:"\\u0073\\u0323\\u0307"},
 			],
+			dataWithNullValues:[
+				{value: 4},
+				{value: 2},
+				{value: null},
+				{value: 1},
+				{value: 3}
+			],
 			sortData:[
 				{word: "Fuß"},
 				{word: "Füssen"},
@@ -354,6 +361,36 @@
 		expect(0);
 	});
 
+	test("null values", function() {
+		createListBinding("/dataWithNullValues");
+		var listBinding = bindings[0], sortedContexts, sorted;
+		listBinding.sort(new sap.ui.model.Sorter("value"));
+		sortedContexts = listBinding.getContexts();
+		sorted = [];
+		jQuery(sortedContexts).each(function(i, context){
+			sorted[i] = oModel.getProperty(context.getPath());
+		});
+		equal(sorted.length, 5, "ListBinding sorted length");
+		equal(sorted[0].value, 1, "ListBinding sort value");
+		equal(sorted[1].value, 2, "ListBinding sort value");
+		equal(sorted[2].value, 3, "ListBinding sort value");
+		equal(sorted[3].value, 4, "ListBinding sort value");
+		equal(sorted[4].value, null, "ListBinding sort value");
+
+		listBinding.sort(new sap.ui.model.Sorter("value", true));
+		sortedContexts = listBinding.getContexts();
+		sorted = [];
+		jQuery(sortedContexts).each(function(i, context){
+			sorted[i] = oModel.getProperty(context.getPath());
+		});
+		equal(sorted.length, 5, "ListBinding sorted length");
+		equal(sorted[0].value, null, "ListBinding sort value");
+		equal(sorted[1].value, 4, "ListBinding sort value");
+		equal(sorted[2].value, 3, "ListBinding sort value");
+		equal(sorted[3].value, 2, "ListBinding sort value");
+		equal(sorted[4].value, 1, "ListBinding sort value");
+	});
+
 	// should also work with other ListBinding implementations
 	test("locale sort", function(){
 		createListBinding("/sortData");
@@ -623,6 +660,33 @@
 		});
 		equal(filtered.length, 1, "ListBinding filtered length");
 		equal(filtered[0].firstName, "Marc", "ListBinding filter value");
+
+	});
+
+	test("null values", function() {
+		createListBinding("/dataWithNullValues");
+		var listBinding = bindings[0], filteredContexts, filtered;
+		listBinding.sort(new sap.ui.model.Sorter("value"));
+
+		listBinding.filter([new sap.ui.model.Filter("value", "GT", 2)]);
+		filteredContexts = listBinding.getContexts();
+		filtered = [];
+		jQuery(filteredContexts).each(function(i, context){
+			filtered[i] = oModel.getProperty(context.getPath());
+		});
+		equal(filtered.length, 2, "ListBinding filtered length");
+		equal(filtered[0].value, 3, "ListBinding filter value");
+		equal(filtered[1].value, 4, "ListBinding filter value");
+
+		listBinding.filter([new sap.ui.model.Filter("value", "LT", 3)]);
+		filteredContexts = listBinding.getContexts();
+		filtered = [];
+		jQuery(filteredContexts).each(function(i, context){
+			filtered[i] = oModel.getProperty(context.getPath());
+		});
+		equal(filtered.length, 2, "ListBinding filtered length");
+		equal(filtered[0].value, 1, "ListBinding filter value");
+		equal(filtered[1].value, 2, "ListBinding filter value");
 
 	});
 
