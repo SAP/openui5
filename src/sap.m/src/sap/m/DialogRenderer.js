@@ -1,12 +1,15 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/m/Dialog"],
-	function(library, Device, Dialog) {
+sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/library"],
+	function(library, Device, coreLibrary) {
 		"use strict";
 
 		// shortcut for sap.m.DialogType
 		var DialogType = library.DialogType;
+
+		// shortcut for sap.ui.core.ValueState
+		var ValueState = coreLibrary.ValueState;
 
 		/**
 		 * Dialog renderer.
@@ -14,6 +17,13 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/m/Dialog"],
 		 * @namespace
 		 */
 		var DialogRenderer = {};
+
+		// Mapping of ValueState to style class
+		DialogRenderer._mStateClasses = {};
+		DialogRenderer._mStateClasses[ValueState.None] = "";
+		DialogRenderer._mStateClasses[ValueState.Success] = "sapMDialogSuccess";
+		DialogRenderer._mStateClasses[ValueState.Warning] = "sapMDialogWarning";
+		DialogRenderer._mStateClasses[ValueState.Error] = "sapMDialogError";
 
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -67,7 +77,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/m/Dialog"],
 				oRm.addClass("sapMDialogStretched");
 			}
 
-			oRm.addClass(Dialog._mStateClasses[sState]);
+			oRm.addClass(DialogRenderer._mStateClasses[sState]);
 
 			// No Footer
 			var noToolbarAndNobuttons = !oControl._oToolbar && !oLeftButton && !oRightButton;

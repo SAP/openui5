@@ -3,13 +3,46 @@
  */
 
 // Provides control sap.m.Dialog.
-sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './AssociativeOverflowToolbar', './ToolbarSpacer',
-	'./library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Popup', 'sap/ui/core/delegate/ScrollEnablement',
-	'sap/ui/core/RenderManager', 'sap/ui/core/InvisibleText', 'sap/ui/core/ResizeHandler', 'sap/ui/Device', 'sap/ui/base/ManagedObject', 'sap/ui/core/library', 'jquery.sap.mobile'],
-	function (jQuery, Bar, InstanceManager, AssociativeOverflowToolbar, ToolbarSpacer, library, Control, IconPool,
-			  Popup, ScrollEnablement, RenderManager, InvisibleText, ResizeHandler, Device, ManagedObject, coreLibrary) {
+sap.ui.define([
+		'jquery.sap.global',
+		'./Bar',
+		'./InstanceManager',
+		'./AssociativeOverflowToolbar',
+		'./ToolbarSpacer',
+		'./library',
+		'sap/ui/core/Control',
+		'sap/ui/core/IconPool',
+		'sap/ui/core/Popup',
+		'sap/ui/core/delegate/ScrollEnablement',
+		'sap/ui/core/RenderManager',
+		'sap/ui/core/InvisibleText',
+		'sap/ui/core/ResizeHandler',
+		'sap/ui/Device',
+		'sap/ui/base/ManagedObject',
+		'sap/ui/core/library',
+		"./DialogRenderer",
+		'jquery.sap.mobile'
+	],
+	function(
+		jQuery,
+		Bar,
+		InstanceManager,
+		AssociativeOverflowToolbar,
+		ToolbarSpacer,
+		library,
+		Control,
+		IconPool,
+		Popup,
+		ScrollEnablement,
+		RenderManager,
+		InvisibleText,
+		ResizeHandler,
+		Device,
+		ManagedObject,
+		coreLibrary,
+		DialogRenderer
+	) {
 		"use strict";
-
 
 		// shortcut for sap.ui.core.OpenState
 		var OpenState = coreLibrary.OpenState;
@@ -315,12 +348,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		});
 
 		Dialog._bPaddingByDefault = (sap.ui.getCore().getConfiguration().getCompatibilityVersion("sapMDialogWithPadding").compareTo("1.16") < 0);
-
-		Dialog._mStateClasses = {};
-		Dialog._mStateClasses[ValueState.None] = "";
-		Dialog._mStateClasses[ValueState.Success] = "sapMDialogSuccess";
-		Dialog._mStateClasses[ValueState.Warning] = "sapMDialogWarning";
-		Dialog._mStateClasses[ValueState.Error] = "sapMDialogError";
 
 		Dialog._mIcons = {};
 		Dialog._mIcons[ValueState.Success] = IconPool.getIconURI("message-success");
@@ -1498,8 +1525,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 			this.setProperty("state", sState, true);
 
-			for (sName in Dialog._mStateClasses) {
-				$this.toggleClass(Dialog._mStateClasses[sName], !!mFlags[sName]);
+			for (sName in DialogRenderer._mStateClasses) {
+				$this.toggleClass(DialogRenderer._mStateClasses[sName], !!mFlags[sName]);
 			}
 			this.setIcon(Dialog._mIcons[sState], true);
 			return this;
