@@ -285,8 +285,10 @@
 	/**
 	 * Stack of modules that are currently being executed in case of synchronous processing.
 	 *
-	 * Allows to identify the executing modules in case of multi module files (e.g. sap-ui-core).
-	 * @type {string[]}
+	 * Allows to identify the executing module (e.g. when resolving dependencies or in case of
+	 * in case of bundles like sap-ui-core).
+	 *
+	 * @type {Array.<{name:string,used:boolean}>}
 	 * @private
 	 */
 		_execStack = [ ],
@@ -1297,7 +1299,10 @@
 
 				// execute the script in the __global context
 				oModule.state = EXECUTING;
-				_execStack.push(sModuleName);
+				_execStack.push({
+					name: sModuleName,
+					used: false
+				});
 				if ( typeof oModule.data === "function" ) {
 					oModule.data.call(__global);
 				} else if ( Array.isArray(oModule.data) ) {
@@ -1442,7 +1447,8 @@
 	}
 
 	function define(sModuleName, aDependencies, vFactory, bExport) {
-		var sResourceName;
+		var sResourceName,
+			oCurrentExecInfo;
 
 		// optional id
 		if ( typeof sModuleName === 'string' ) {
@@ -1472,17 +1478,27 @@
 			return;
 		}
 
+		oCurrentExecInfo = _execStack.length > 0 ? _execStack[_execStack.length - 1] : null;
 		if ( !sResourceName ) {
-			sResourceName = _execStack[_execStack.length - 1];
-			_execStack[_execStack.length - 1] = null;
-			if ( !sResourceName ) {
+
+			if ( oCurrentExecInfo && !oCurrentExecInfo.used ) {
+				sResourceName = oCurrentExecInfo.name;
+				oCurrentExecInfo.used = true;
+			} else {
 				// give anonymous modules a unique pseudo ID
-				sResourceName = '~anonymous~' + (++iAnonymousModuleCount);
-				log.error("no define without name, using substitute name " + sResourceName);
+				sResourceName = '~anonymous~' + (++iAnonymousModuleCount) + '.js';
+				if ( oCurrentExecInfo ) {
+					sResourceName = oCurrentExecInfo.name.slice(0, oCurrentExecInfo.name.lastIndexOf('/') + 1) + sResourceName;
+				}
+				log.error(
+					"Modules that use an anonymous define() call must be loaded with a require() call; " +
+					"they must not be executed via script tag or nested into other modules. " +
+					"All other usages will fail in future releases or when standard AMD loaders are used " +
+					"or when ui5loader runs in async mode. Now using substitute name " + sResourceName);
 			}
-		} else if ( _execStack.length > 0 && sResourceName !== _execStack[_execStack.length - 1] ) {
-			log.debug("module names don't match: requested: " + sModuleName + ", defined: ", _execStack[_execStack.length - 1]);
-			Module.get(_execStack[_execStack.length - 1]).addAlias(sModuleName);
+		} else if ( oCurrentExecInfo && !oCurrentExecInfo.used && sResourceName !== oCurrentExecInfo.name ) {
+			log.debug("module names don't match: requested: " + sModuleName + ", defined: ", oCurrentExecInfo.name);
+			Module.get(oCurrentExecInfo.name).addAlias(sModuleName);
 		}
 		defineModule(sResourceName, aDependencies, vFactory, bExport, /* bAsync = */ false);
 

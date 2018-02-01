@@ -10,7 +10,8 @@
 				data-sap-ui-noConflict="true"
 				data-sap-ui-logLevel="INFO"
 				data-sap-ui-libs="sap.ui.commons"
-				src="../../../../../resources/sap-ui-core.js">
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-resourceroots='{"modules":"testdata/modules/"}'>
 		</script>
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen">
 		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
@@ -241,6 +242,45 @@
 			assert.equal(sap.ui.require("my/second/module"), "2nd", "after loading 'Second', sap.ui.require should return the expected value for second");
 
 		});
+
+
+
+		// ========================================================================================
+		// Exotic Scenarios
+		// ========================================================================================
+
+		QUnit.module("Exotic Scenarios");
+
+		QUnit.test("Nested anonymous sap.ui.defin with relative dependencies", function(assert) {
+			var done = assert.async();
+
+			sap.ui.require([
+				'modules/exotic-use-cases/deferred',
+				'modules/exotic-use-cases/nested-anonymous-define-with-relative-dependencies'
+			], function(deferred, main) {
+
+				deferred.then(function(result) {
+					assert.strictEqual(result.dependency1, "dependency1", "a relative dependency of the outer module should be resolved correctly");
+					assert.strictEqual(result.dependency2, "dependency2", "a relative dependency of the inner module should be resolved correctly");
+					assert.strictEqual(typeof result.outerModule, "object", "outer module should have got a module object");
+					assert.strictEqual(result.outerModule.id, "modules/exotic-use-cases/nested-anonymous-define-with-relative-dependencies",
+							"module object for the outer module should report the expected ID");
+					assert.strictEqual(result.outerUrl, sap.ui._ui5loader.toUrl("modules/exotic-use-cases/data.json"),
+							"contextual require for the outer module should resolve relative URLs as expected");
+					assert.strictEqual(typeof result.innerModule, "object", "outer module should have got a module object");
+					assert.strictEqual(result.innerModule.id, "modules/exotic-use-cases/~anonymous~1",
+							"module object for the inner module should report an anonymous ID");
+					assert.strictEqual(result.innerUrl, sap.ui._ui5loader.toUrl("modules/exotic-use-cases/data.json"),
+							"contextual require for the inner module should resolve relative URLs as expected");
+					done();
+				});
+
+			}, function(err) {
+				assert.ok(false, "module with nested define calls couldn't be required successfully");
+				done();
+			});
+		});
+
 
 
 		//****************************************************
