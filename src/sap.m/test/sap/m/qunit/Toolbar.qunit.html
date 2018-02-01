@@ -427,7 +427,7 @@
 	QUnit.test("should behave correct according to latest flex box support", function(assert) {
 		// stub for latest flex support
 		var spy = this.spy(sap.m.Toolbar.prototype, "_registerContentResize");
-		this.stub(sap.m.Toolbar, "hasNewFlexBoxSupport", true);
+		this.stub(sap.m.ToolbarRenderer, "hasNewFlexBoxSupport", true);
 		var oTB = createToolbar({
 			Toolbar : {},
 			Label : {text: "text"}
@@ -442,7 +442,7 @@
 	QUnit.test("should behave correct according to old flex box support", function(assert) {
 		// stub for latest old flex support
 		var spy = this.spy(sap.m.Toolbar.prototype, "_registerContentResize");
-		this.stub(sap.m.Toolbar, "hasNewFlexBoxSupport", false);
+		this.stub(sap.m.ToolbarRenderer, "hasNewFlexBoxSupport", false);
 		var oTB = createToolbar({
 			Toolbar : {},
 			Label : {text: "text"}

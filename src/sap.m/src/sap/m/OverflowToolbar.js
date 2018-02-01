@@ -14,12 +14,23 @@ sap.ui.define([
 	"sap/m/OverflowToolbarAssociativePopover",
 	"sap/m/OverflowToolbarAssociativePopoverControls",
 	"sap/ui/core/IconPool",
-	"sap/ui/Device"
-], function (jQuery, library, ToggleButton, InvisibleText, Toolbar, ToolbarSpacer, OverflowToolbarLayoutData,
-			 OverflowToolbarAssociativePopover, OverflowToolbarAssociativePopoverControls,
-			 IconPool, Device) {
+	"sap/ui/Device",
+	"./OverflowToolbarRenderer"
+], function(
+	jQuery,
+	library,
+	ToggleButton,
+	InvisibleText,
+	Toolbar,
+	ToolbarSpacer,
+	OverflowToolbarLayoutData,
+	OverflowToolbarAssociativePopover,
+	OverflowToolbarAssociativePopoverControls,
+	IconPool,
+	Device,
+	OverflowToolbarRenderer
+) {
 	"use strict";
-
 
 	// shortcut for sap.m.PlacementType
 	var PlacementType = library.PlacementType;
@@ -249,7 +260,7 @@ sap.ui.define([
 	 */
 	OverflowToolbar.prototype._polyfillFlexboxSupport = function () {
 		// Modern clients have flexbox natively, do nothing
-		if (Toolbar.hasNewFlexBoxSupport) {
+		if (OverflowToolbarRenderer.hasNewFlexBoxSupport) {
 			return;
 		}
 
