@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/core/library", "sap/m/ObjectAttribute"],
-	function(coreLibrary, ObjectAttribute) {
+sap.ui.define(["sap/ui/core/library"],
+	function(coreLibrary) {
 	"use strict";
 
 
@@ -15,6 +15,10 @@ sap.ui.define(["sap/ui/core/library", "sap/m/ObjectAttribute"],
 	 * @namespace
 	 */
 	var ObjectAttributeRenderer = {
+		MAX_LINES: {
+			SINGLE_LINE: 1,
+			MULTI_LINE: 2
+		}
 	};
 
 	/**
@@ -95,9 +99,9 @@ sap.ui.define(["sap/ui/core/library", "sap/m/ObjectAttribute"],
 
 		if (oAttrAggregation && oParent) {
 			if ((oParent instanceof sap.m.ObjectHeader) && !oOA.getParent().getResponsive()) {
-				oOA._setControlWrapping(oAttrAggregation, true, ObjectAttribute.MAX_LINES.MULTI_LINE);
+				oOA._setControlWrapping(oAttrAggregation, true, ObjectAttributeRenderer.MAX_LINES.MULTI_LINE);
 			} else {
-				oOA._setControlWrapping(oAttrAggregation, false, ObjectAttribute.MAX_LINES.SINGLE_LINE);
+				oOA._setControlWrapping(oAttrAggregation, false, ObjectAttributeRenderer.MAX_LINES.SINGLE_LINE);
 			}
 			oRm.renderControl(oAttrAggregation);
 		} else {

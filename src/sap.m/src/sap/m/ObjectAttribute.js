@@ -3,11 +3,16 @@
  */
 
 // Provides control sap.m.ObjectAttribute.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/library', 'sap/m/Text'],
-	function(jQuery, library, Control, coreLibrary, Text) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/library',
+	'sap/m/Text',
+	"./ObjectAttributeRenderer"
+],
+function(jQuery, library, Control, coreLibrary, Text, ObjectAttributeRenderer) {
 	"use strict";
-
-
 
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
@@ -95,11 +100,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	}});
 
-	ObjectAttribute.MAX_LINES = {
-		SINGLE_LINE: 1,
-		MULTI_LINE: 2
-	};
-
 	/**
 	 *  Initializes member variables.
 	 *
@@ -121,7 +121,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			sTextDir = this.getTextDirection(),
 			oParent = this.getParent(),
 			bPageRTL = sap.ui.getCore().getConfiguration().getRTL(),
-			iMaxLines = ObjectAttribute.MAX_LINES.MULTI_LINE,
+			iMaxLines = ObjectAttributeRenderer.MAX_LINES.MULTI_LINE,
 			bWrap = true,
 			oppositeDirectionMarker = '';
 
@@ -141,7 +141,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		//if attribute is used inside responsive ObjectHeader or in ObjectListItem - only 1 line
 		if (oParent instanceof sap.m.ObjectListItem) {
 			bWrap = false;
-			iMaxLines = ObjectAttribute.MAX_LINES.SINGLE_LINE;
+			iMaxLines = ObjectAttributeRenderer.MAX_LINES.SINGLE_LINE;
 		}
 
 		this._setControlWrapping(oAttrAggregation, bWrap, iMaxLines);
