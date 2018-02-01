@@ -103,7 +103,7 @@
 			<TimePicker value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'short'}}" visible="{ui>/v4}"/>
 			<Label text="TimeOfDay, style: &quot;long&quot;" visible="{ui>/v4}"/>
 			<Input value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'long'}}" visible="{ui>/v4}"/>
-			<TimePicker value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'long'}}" visible="{ui>/v4}"/>
+			<TimePicker value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay'}" visible="{ui>/v4}"/>
 			<Label text="TimeOfDay, relative: &quot;true&quot;" visible="{ui>/v4}"/>
 			<Input value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', formatOptions: {relative: 'true'}}" visible="{ui>/v4}"/>
 			<TimePicker value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', formatOptions: {relative: 'true'}}" visible="{ui>/v4}"/>
