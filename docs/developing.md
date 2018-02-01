@@ -68,8 +68,8 @@ The build is responsible for the following tasks:
  * Creation of the bundled library.css and library-RTL.css file for all available themes
  * Minification of CSS
  * Minification of JavaScript
- * Combination of JavaScript modules of a libraries into a single library-preload.js file
- * Combination of the most important UI5 Core modules into sap-ui-core.js
+ * Merging the JavaScript modules of the libraries into a single library-preload.js file
+ * Merging of the most important UI5 Core modules into sap-ui-core.js
 
 #### Troubleshooting
 
