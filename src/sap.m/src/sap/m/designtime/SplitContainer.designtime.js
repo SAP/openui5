@@ -8,6 +8,13 @@ sap.ui.define([],
 	"use strict";
 
 	return {
+		name: {
+			singular: "SPLIT_CONTAINER_NAME",
+			plural: "SPLIT_CONTAINER_NAME_PLURAL"
+		},
+		palette: {
+			group: "CONTAINER"
+		},
 		aggregations : {
 			masterPages : {
 				domRef : ":sap-domref > .sapMSplitContainerMaster, :sap-domref > .sapMSplitContainerMobile"

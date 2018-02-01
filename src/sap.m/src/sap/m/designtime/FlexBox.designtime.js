@@ -25,8 +25,11 @@ sap.ui.define([],
 				}
 			},
 			name: {
-				singular: "FLEXBOX_CONTROL_NAME",
-				plural: "FLEXBOX_CONTROL_NAME_PLURAL"
+				singular: "FLEX_BOX_NAME",
+				plural: "FLEX_BOX_NAME_PLURAL"
+			},
+			templates: {
+				create: "sap/m/designtime/FlexBox.create.fragment.xml"
 			}
 		};
 	}, /* bExport= */ false);

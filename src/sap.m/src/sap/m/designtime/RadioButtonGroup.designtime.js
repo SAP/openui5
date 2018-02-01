@@ -8,6 +8,10 @@ sap.ui.define([],
 		"use strict";
 
 		return {
+			name: {
+				singular: "RADIO_BUTTON_GROUP_NAME",
+				plural: "RADIO_BUTTON_GROUP_NAME_PLURAL"
+			},
 			palette: {
 				group: "INPUT",
 				icons: {

@@ -44,7 +44,8 @@ sap.ui.define([
 							group : "Behavior",
 							defaultValue : true
 						}
-					}
+					},
+					designtime: "sap/m/designtime/QuickViewCard.designtime"
 
 				}
 			});

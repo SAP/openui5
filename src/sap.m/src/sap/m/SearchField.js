@@ -140,6 +140,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		},
 		defaultAggregation : "suggestionItems",
+		designtime: "sap/m/designtime/SearchField.designtime",
 		aggregations : {
 
 			/**

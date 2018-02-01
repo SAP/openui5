@@ -8,6 +8,10 @@ sap.ui.define([],
 		"use strict";
 
 		return {
+			name: {
+				singular: "ICON_TAB_BAR_NAME",
+				plural: "ICON_TAB_BAR_NAME_PLURAL"
+			},
 			palette: {
 				group: "CONTAINER",
 				icons: {
