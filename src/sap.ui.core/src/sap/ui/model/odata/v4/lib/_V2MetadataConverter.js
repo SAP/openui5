@@ -844,13 +844,13 @@ sap.ui.define([
 		};
 
 		oAnnotatable = this.v2annotatable(sName, this.convertEntitySetAnnotation);
-		// These annotations have to be retained until all v2 annotations have been visited
+		// These annotations have to be retained until all V2 annotations have been visited
 		oAnnotatable.consume("creatable");
 		oAnnotatable.consume("deletable");
 		oAnnotatable.consume("updatable");
 
 		if (oAnnotatable.consume("searchable") !== "true") {
-			// default for sap:searchable is false --> add v4 annotation, if value of v2 annotation
+			// default for sap:searchable is false --> add V4 annotation, if value of V2 annotation
 			// is not true
 			oAnnotatable.convert("searchable", false);
 		}
@@ -923,23 +923,24 @@ sap.ui.define([
 		var sAnnotationActionFor,
 			sHttpMethod = oElement.getAttributeNS(sMicrosoftNamespace, "HttpMethod"),
 			sKind = sHttpMethod === "POST" ? "Action" : "Function",
-			oFunction = {
+			sLabel,
+			sName = oElement.getAttribute("Name"),
+			oOperation = {
 				$kind : sKind
 			},
-			sName = oElement.getAttribute("Name"),
-			sQualifiedName = this.namespace + sName,
-			oFunctionImport = {
+			oOperationImport = {
 				$kind : sKind + "Import"
 			},
+			sQualifiedName = this.namespace + sName,
 			sReturnType = oElement.getAttribute("ReturnType"),
 			oReturnType;
 
-		oFunctionImport["$" + sKind] = sQualifiedName;
-		this.processAttributes(oElement, oFunctionImport, {
+		oOperationImport["$" + sKind] = sQualifiedName;
+		this.processAttributes(oElement, oOperationImport, {
 			"EntitySet" : this.setValue
 		});
 		if (sReturnType) {
-			oFunction.$ReturnType = oReturnType = {};
+			oOperation.$ReturnType = oReturnType = {};
 			this.processTypedCollection(sReturnType, oReturnType);
 		}
 		if (sHttpMethod !== "GET" && sHttpMethod !== "POST") {
@@ -949,30 +950,35 @@ sap.ui.define([
 			this.consumeSapAnnotation("applicable-path");
 		} else {
 			// add Function to the result
-			this.result[sQualifiedName] = [oFunction];
+			this.result[sQualifiedName] = [oOperation];
 
 			sAnnotationActionFor = this.consumeSapAnnotation("action-for");
 			if (sAnnotationActionFor) {
-				oFunction.$IsBound = true;
-				oFunction.$Parameter = [{
+				oOperation.$IsBound = true;
+				oOperation.$Parameter = [{
 					"$Name" : null,
 					"$Nullable" : false,
 					"$Type" : this.resolveAlias(sAnnotationActionFor)
 				}];
-				this.aBoundOperations.push(oFunction);
+				this.aBoundOperations.push(oOperation);
 				this.consumeSapAnnotation("applicable-path");
+
+				sLabel = this.consumeSapAnnotation("label");
+				if (sLabel) {
+					oOperation[mV2toV4["label"].term] = sLabel;
+				}
 			} else {
 				// add FunctionImport to the result
-				this.entityContainer[sName] = oFunctionImport;
+				this.entityContainer[sName] = oOperationImport;
+
+				this.v2annotatable(sName);
+				this.convertLabel(this.oAnnotatable);
 			}
 		}
-		// Remember the current function (even if it has not been added to the result), so that
+		// Remember the current operation (even if it has not been added to the result), so that
 		// processParameter adds to this. This avoids that parameters belonging to a removed
 		// FunctionImport are added to the predecessor.
-		this.oOperation = oFunction;
-
-		this.v2annotatable(sName);
-		this.convertLabel(this.oAnnotatable);
+		this.oOperation = oOperation;
 	};
 
 	/**
@@ -981,8 +987,8 @@ sap.ui.define([
 	 * @param {Element} oElement The element
 	 */
 	V2MetadataConverter.prototype.processParameter = function (oElement) {
-		var oFunction = this.oOperation,
-			sLabel,
+		var sLabel,
+			oOperation = this.oOperation,
 			oParameter = {
 				$Name : oElement.getAttribute("Name")
 			};
@@ -990,7 +996,7 @@ sap.ui.define([
 		this.processFacetAttributes(oElement, oParameter);
 		this.processTypedCollection(oElement.getAttribute("Type"), oParameter);
 
-		this.getOrCreateArray(oFunction, "$Parameter").push(oParameter);
+		this.getOrCreateArray(oOperation, "$Parameter").push(oParameter);
 
 		sLabel = this.consumeSapAnnotation("label");
 		if (sLabel) {
@@ -1457,7 +1463,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * This function is called by each v2 item for which V4 target annotations can be created. It
+	 * This function is called by each V2 item for which V4 target annotations can be created. It
 	 * defines the target path for the annotations. The V4 annotations will be placed to
 	 * <code>convertedV2Annotations</code>. The annotatables form a stack (via 'parent'),
 	 * this functions pushes a new annotatable on the stack. It will be removed automatically by
