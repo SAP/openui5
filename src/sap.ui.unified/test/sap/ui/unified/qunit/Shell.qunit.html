@@ -196,7 +196,7 @@
 		QUnit.test("Open Curtain", function(assert) {
 			var done = assert.async();
 			function checkVisibility(){
-				return jQuery.sap.byId("shell-curtcntnt").is(":visible");
+				return !jQuery.sap.byId("shell").hasClass("sapUiUfdShellCurtainClosed");
 			}
 
 			assert.ok(!checkVisibility(), "Curtain initially hidden");
@@ -230,7 +230,7 @@
 		QUnit.test("Close Curtain", function(assert) {
 			var done = assert.async();
 			function checkVisibility(){
-				return jQuery.sap.byId("shell-curtcntnt").is(":visible");
+				return !jQuery.sap.byId("shell").hasClass("sapUiUfdShellCurtainClosed");
 			}
 
 			assert.ok(checkVisibility(), "Curtain visible");
