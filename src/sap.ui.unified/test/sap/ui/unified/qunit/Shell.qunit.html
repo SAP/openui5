@@ -194,7 +194,7 @@
 
 		asyncTest("Open Curtain", function() {
 			function checkVisibility(){
-				return jQuery.sap.byId("shell-curtcntnt").is(":visible");
+				return !jQuery.sap.byId("shell").hasClass("sapUiUfdShellCurtainClosed");
 			}
 
 			ok(!checkVisibility(), "Curtain initially hidden");
@@ -226,7 +226,7 @@
 
 		asyncTest("Close Curtain", function() {
 			function checkVisibility(){
-				return jQuery.sap.byId("shell-curtcntnt").is(":visible");
+				return !jQuery.sap.byId("shell").hasClass("sapUiUfdShellCurtainClosed");
 			}
 
 			ok(checkVisibility(), "Curtain visible");
