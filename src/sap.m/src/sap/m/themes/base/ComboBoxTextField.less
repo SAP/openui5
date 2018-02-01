@@ -8,15 +8,38 @@
 /* ------------------------------ */
 
 .sapMComboBoxTextField {
+	background-color: @sapUiFieldBackground;
 	border: 1px solid @sapUiFieldBorderColor;
 	margin: 0.25rem 0;
 	height: 2.5rem;
+
+	&:not(.sapMComboBoxTextFieldReadonly):not(.sapMComboBoxTextFieldState):not(.sapMComboBoxTextFieldDisabled):hover {
+		border-color: @sapUiFieldHoverBorderColor !important;
+	}
+
+	& .sapMInputDivWrapper {
+		height: 100% !important;
+		max-width: 100%;
+
+		&:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):not(.sapMInputBaseDisabledInner):hover {
+			background: transparent;
+			border-color: transparent;
+		}
+	}
 }
 
 input.sapMComboBoxTextFieldInner {
 	border: none;
 	margin: 0;
 	height: 100% !important;
+
+	&:not(.sapMComboBoxTextFieldInnerReadonly) {
+		background-color: transparent;
+	}
+}
+
+.sapMComboBoxTextFieldInnerWidthExtraPadding:not(.sapMComboBoxTextFieldInnerReadonly) {
+	padding-right: 3rem;
 }
 
 .sapUiSizeCondensed .sapUiTableCell .sapMComboBoxTextField {
