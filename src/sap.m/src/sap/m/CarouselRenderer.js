@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/m/Carousel", "sap/m/library", "sap/ui/Device"],
-	function(Carousel, library, Device) {
+sap.ui.define(["sap/m/library", "sap/ui/Device"],
+	function(library, Device) {
 	"use strict";
 
 
@@ -21,7 +21,11 @@ sap.ui.define(["sap/m/Carousel", "sap/m/library", "sap/ui/Device"],
 	var CarouselRenderer = {
 	};
 
-	/**
+	//The number 9 is by visual specification. Less than 9 pages - bullets for page indicator. 9 or more pages - numeric page indicator.
+	CarouselRenderer._BULLETS_TO_NUMBERS_THRESHOLD = 9;
+
+
+		/**
 	 * Renders the Carousel's HTML, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the render output buffer
@@ -33,7 +37,7 @@ sap.ui.define(["sap/m/Carousel", "sap/m/library", "sap/ui/Device"],
 			sPageIndicatorPlacement = oCarousel.getPageIndicatorPlacement(),
 			sArrowsPlacement = oCarousel.getArrowsPlacement(),
 			sId = oCarousel.getId(),
-			iBulletsToNumbersThreshold = Carousel._BULLETS_TO_NUMBERS_THRESHOLD,
+			iBulletsToNumbersThreshold = CarouselRenderer._BULLETS_TO_NUMBERS_THRESHOLD,
 			iIndex = oCarousel._getPageNumber(oCarousel.getActivePage());
 		this._renderOpeningDiv(rm, oCarousel);
 
