@@ -388,8 +388,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks whether the "DataServiceVersion" header is not set or has the value "2.0" otherwise
-	 * an error is thrown.
+	 * Checks whether the "DataServiceVersion" header is not set or has the value "1.0" or "2.0"
+	 * otherwise an error is thrown.
 	 *
 	 * @param {function} fnGetHeader
 	 *   A callback function to get a header attribute for a given header name with case-insensitive
@@ -399,7 +399,8 @@ sap.ui.define([
 	 * @param {boolean} [bVersionOptional=false]
 	 *   Indicates whether the OData service version is optional, which is the case for all OData V2
 	 *   responses. So this parameter is ignored.
-	 * @throws {Error} If the "DataServiceVersion" header is neither "2.0" nor not set at all
+	 * @throws {Error} If the "DataServiceVersion" header is neither "1.0" nor "2.0" nor not set at
+	 *   all
 	 */
 	_V2Requestor.prototype.doCheckVersionHeader = function (fnGetHeader, sResourcePath,
 			bVersionOptional) {
@@ -407,15 +408,17 @@ sap.ui.define([
 			vODataVersion = !sDataServiceVersion && fnGetHeader("OData-Version");
 
 		if (vODataVersion) {
-			throw new Error("Expected 'DataServiceVersion' header with value '2.0' but received"
-				+ " 'OData-Version' header with value '" + vODataVersion + "' in response for "
-				+ this.sServiceUrl + sResourcePath);
+			throw new Error("Expected 'DataServiceVersion' header with value '1.0' or '2.0' but "
+				+ "received 'OData-Version' header with value '" + vODataVersion
+				+ "' in response for " + this.sServiceUrl + sResourcePath);
 		}
-		if (sDataServiceVersion === "2.0" || !sDataServiceVersion) {
+		if (sDataServiceVersion === "1.0" || sDataServiceVersion === "2.0"
+				|| !sDataServiceVersion) {
 			return;
 		}
-		throw new Error("Expected 'DataServiceVersion' header with value '2.0' but received value '"
-			+ sDataServiceVersion + "' in response for " + this.sServiceUrl + sResourcePath);
+		throw new Error("Expected 'DataServiceVersion' header with value '1.0' or '2.0' but "
+			+ "received value '" + sDataServiceVersion + "' in response for " + this.sServiceUrl
+			+ sResourcePath);
 	};
 
 	/**
