@@ -138,6 +138,7 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	TabStripRenderer.beginTabStrip = function (oRm, oControl) {
 		oRm.write("<div");
 		oRm.addClass("sapMTabStrip");
+		oRm.addClass("sapContrastPlus");
 		oRm.writeControlData(oControl);
 		oRm.writeClasses();
 		oRm.write(">");

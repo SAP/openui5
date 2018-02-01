@@ -27,7 +27,6 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.write("<div ");
 			oRm.writeControlData(oControl);
 			oRm.addClass("sapMTabContainer");
-			oRm.addClass("sapContrastPlus");
 			oRm.writeClasses();
 			oRm.write(">");
 
