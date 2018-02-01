@@ -1881,6 +1881,33 @@ sap.ui.require([
 	});
 
 	//*****************************************************************************************
+	QUnit.test("isChangeSetOptional", function (assert) {
+		var oRequestor = _Requestor.create("/");
+
+		assert.strictEqual(oRequestor.isChangeSetOptional(), true);
+	});
+
+	//*****************************************************************************************
+	QUnit.test("submitBatch: unwrap single change", function (assert) {
+		var oRequestor = _Requestor.create("/Service/", oModelInterface),
+			oRequestorMock = this.mock(oRequestor);
+
+		oRequestor.request("POST", "Products", "groupId", {}, {Name : "bar"});
+		oRequestorMock.expects("isChangeSetOptional").withExactArgs().returns(true);
+		oRequestorMock.expects("request")
+			.withExactArgs("POST", "$batch", undefined, {"Accept" : "multipart/mixed"}, [
+				sinon.match({
+					method : "POST",
+					url : "Products",
+					body : {Name : "bar"}
+				})
+			]).returns(Promise.resolve([{}]));
+
+		// code under test
+		return oRequestor.submitBatch("groupId");
+	});
+
+	//*****************************************************************************************
 	QUnit.test("relocate", function (assert) {
 		var oBody1 = {},
 			oBody2 = {},
@@ -2625,6 +2652,13 @@ sap.ui.require([
 		}, new Error("Unsupported collection-valued parameter: foo"));
 	});
 	//TODO what about actions & collections?
+
+	//*****************************************************************************************
+	QUnit.test("isActionBodyOptional", function (assert) {
+		var oRequestor = _Requestor.create("/");
+
+		assert.strictEqual(oRequestor.isActionBodyOptional(), false);
+	});
 });
 // TODO: continue-on-error? -> flag on model
 // TODO: cancelChanges: what about existing GET requests in deferred queue (delete or not)?

@@ -376,14 +376,6 @@ sap.ui.require([
 			var oLogMock = this.oLogMock;
 
 			// The following warnings are logged when the GWSAMPLE_BASIC metamodel is loaded
-			[
-				"RegenerateAllData", "SalesOrder_Confirm", "SalesOrder_Cancel",
-				"SalesOrder_InvoiceCreated", "SalesOrder_GoodsIssueCreated"
-			].forEach(function (sName) {
-				oLogMock.expects("warning")
-					.withExactArgs("Unsupported HttpMethod at FunctionImport '" + sName
-						+ "', removing this FunctionImport", undefined, sClassName);
-			});
 			["filterable", "sortable"].forEach(function (sAnnotation) {
 				oLogMock.expects("warning")
 					.withExactArgs("Unsupported SAP annotation at a complex type in"
@@ -3914,13 +3906,129 @@ sap.ui.require([
 //					}
 				})
 				.expectChange("distance", "2,572.0000");
-			//TODO Cache#fetchTypes determines a V4 meta path from this.sResourcePath, which is V2
-			that.oLogMock.expects("warning").withExactArgs("Unknown child GetFlightDetails of"
-				+ " RMTSAMPLEFLIGHT.RMTSAMPLEFLIGHT_Entities", "/GetFlightDetails/",
-				"sap.ui.model.odata.v4.ODataMetaModel");
+			if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING,
+					"sap.ui.model.odata.v4.ODataMetaModel")) {
+				//TODO Cache#fetchTypes determines a V4 meta path from sResourcePath, which is V2
+				that.oLogMock.expects("warning").withExactArgs("Unknown child GetFlightDetails of"
+					+ " RMTSAMPLEFLIGHT.RMTSAMPLEFLIGHT_Entities", "/GetFlightDetails/",
+					"sap.ui.model.odata.v4.ODataMetaModel");
+			}
 
 			that.oView.byId("function").getObjectBinding().execute();
 			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: <FunctionImport m:HttpMethod="POST"> in V2 Adapter
+	// Usage of service: /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
+	QUnit.test("V2 Adapter: ActionImport", function (assert) {
+		var oModel = this.createModelForV2FlightService(),
+			that = this;
+
+		// code under test
+		return this.createView(assert, '', oModel).then(function () {
+			var oContextBinding = oModel.bindContext("/__FAKE__ActionImport(...)"),
+				oPromise;
+
+			that.expectRequest({
+					groupId : "$direct",
+					headers : {"If-Match" : undefined},
+					method : "POST",
+					url : "__FAKE__ActionImport?carrid='AA'"
+						+ "&guid=guid'0050568D-393C-1ED4-9D97-E65F0F3FCC23'"
+						+ "&fldate=datetime'2017-08-10T00:00:00'&flightTime=42"
+				}, {
+					"d" : {
+						"__metadata" : {
+							"type" : "RMTSAMPLEFLIGHT.Flight"
+						},
+						"carrid" : "AA",
+						"connid" : "0017",
+						"fldate" : "\/Date(1502323200000)\/",
+						"PRICE" : "2222.00",
+						"SEATSMAX" : 320
+					}
+				});
+
+			oPromise = oContextBinding
+				.setParameter("carrid", "AA")
+				.setParameter("guid", "0050568D-393C-1ED4-9D97-E65F0F3FCC23")
+				.setParameter("fldate", "2017-08-10T00:00:00Z")
+				.setParameter("flightTime", 42)
+				.execute();
+
+			return Promise.all([oPromise, that.waitForChanges(assert)]).then(function () {
+				var oContext = oContextBinding.getBoundContext();
+
+				assert.strictEqual(oContext.getProperty("carrid"), "AA");
+				assert.strictEqual(oContext.getProperty("connid"), "0017");
+				//TODO Precision="0"
+				assert.strictEqual(oContext.getProperty("fldate"), "2017-08-10T00:00:00.000Z");
+				assert.strictEqual(oContext.getProperty("SEATSMAX"), 320);
+
+				// Note: this is async due to type retrieval
+				return oContext.requestProperty("PRICE", true).then(function (sValue) {
+					assert.strictEqual(sValue, "2,222.00");
+				});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: <FunctionImport m:HttpMethod="POST" sap:action-for="..."> in V2 Adapter
+	// Usage of service: /sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
+	QUnit.test("V2 Adapter: bound action", function (assert) {
+		var oModel = this.createModelForV2SalesOrderService(),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'0815\')}">\
+	<Text id="id0" text="{SalesOrderID}" />\
+	<FlexBox id="action" binding="{GWSAMPLE_BASIC.SalesOrder_Confirm(...)}">\
+		<Text id="id1" text="{SalesOrderID}" />\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderSet('0815')", {
+				"d" : {
+					"__metadata" : {
+						"type" : "GWSAMPLE_BASIC.SalesOrder"
+					},
+					"SalesOrderID" : "0815"
+				}
+			})
+			.expectChange("id0", "0815")
+			.expectChange("id1", null); //TODO unexpected change
+
+		// code under test
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContextBinding = that.oView.byId("action").getObjectBinding(),
+				oPromise;
+
+			that.expectRequest({
+					groupId : "$direct",
+					headers : {"If-Match" : undefined},
+					method : "POST",
+					url : "SalesOrder_Confirm?SalesOrderID='0815'"
+				}, {
+					"d" : {
+						"__metadata" : {
+							"type" : "GWSAMPLE_BASIC.SalesOrder"
+						},
+						"SalesOrderID" : "08/15",
+						"CreatedAt" : "\/Date(1502323200000)\/"
+					}
+				})
+				.expectChange("id0", "0815") //TODO unexpected change
+				.expectChange("id1", "08/15");
+
+			oPromise = oContextBinding.execute();
+
+			return Promise.all([oPromise, that.waitForChanges(assert)]).then(function () {
+				assert.strictEqual(
+					oContextBinding.getBoundContext().getProperty("CreatedAt"),
+					"2017-08-10T00:00:00.000Z"); //TODO Precision="7"
+			});
 		});
 	});
 });

@@ -1362,6 +1362,9 @@ sap.ui.define([
 		if (this.bPosting) {
 			throw new Error("Parallel POST requests not allowed");
 		}
+		if (this.oRequestor.isActionBodyOptional() && !Object.keys(oData).length) {
+			oData = undefined;
+		}
 		this.oPromise = SyncPromise.resolve(
 			this.oRequestor
 				.request("POST", this.sResourcePath + this.sQueryString, sGroupId,

@@ -94,6 +94,7 @@ sap.ui.require([
 					return "('" + oInstance.key + "')";
 				},
 				getServiceUrl : function () {return "/~/";},
+				isActionBodyOptional : function () {},
 				relocate : function () {},
 				removePatch : function () {},
 				removePost : function () {},
@@ -2726,6 +2727,29 @@ sap.ui.require([
 			oCache.post(sGroupId, oPostData);
 		}, new Error("Parallel POST requests not allowed"));
 		return oPromise;
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bOptional) {
+		var sTitle = "SingleCache: Invoke Parameterless Actions with Empty Request Body: "
+				+ bOptional;
+
+		QUnit.test(sTitle, function (assert) {
+			var oData = {},
+				sETag = "ETag",
+				sGroupId = "group",
+				sResourcePath = "LeaveRequest('1')/Submit",
+				oCache = this.createSingle(sResourcePath, undefined, true);
+
+			this.oRequestorMock.expects("isActionBodyOptional").withExactArgs().returns(bOptional);
+			this.oRequestorMock.expects("request")
+				.withExactArgs("POST", sResourcePath, sGroupId, {"If-Match" : sETag},
+					bOptional ? undefined : sinon.match.same(oData))
+				.resolves();
+
+			// code under test
+			return oCache.post(sGroupId, oData, sETag);
+		});
 	});
 
 	//*********************************************************************************************

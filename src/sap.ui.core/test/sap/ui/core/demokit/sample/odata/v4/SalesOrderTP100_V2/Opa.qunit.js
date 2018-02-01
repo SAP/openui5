@@ -16,13 +16,6 @@ sap.ui.require([
 		var aExpectedLogs = [{
 				component : "sap.ui.model.odata.v4.lib._V2MetadataConverter",
 				level : jQuery.sap.log.Level.WARNING,
-//				message: "Unsupported 'sap:action-for' at FunctionImport '"
-//					+ "SEPM_C_SLSORDER_TP_100Set_to_delivered', removing this FunctionImport"
-				message: "Unsupported HttpMethod at FunctionImport '"
-					+ "SEPM_C_SLSORDER_TP_100Set_to_delivered', removing this FunctionImport"
-			}, {
-				component : "sap.ui.model.odata.v4.lib._V2MetadataConverter",
-				level : jQuery.sap.log.Level.WARNING,
 				message: "Unsupported annotation 'sap:supported-formats'"
 			}, {
 				component : "sap.ui.model.odata.v4.lib._V2MetadataConverter",

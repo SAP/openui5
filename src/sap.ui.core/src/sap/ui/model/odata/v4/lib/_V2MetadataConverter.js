@@ -942,7 +942,7 @@ sap.ui.define([
 			oFunction.$ReturnType = oReturnType = {};
 			this.processTypedCollection(sReturnType, oReturnType);
 		}
-		if (sHttpMethod !== "GET") {
+		if (sHttpMethod !== "GET" && sHttpMethod !== "POST") {
 			jQuery.sap.log.warning("Unsupported HttpMethod at FunctionImport '" + sName
 				+ "', removing this FunctionImport", undefined, sClassName);
 			this.consumeSapAnnotation("action-for");
