@@ -624,6 +624,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Note: sap:label at <Parameter> which represents "this" is lost, of course!
 	QUnit.test("convert: FunctionImport w/ sap:action-for", function (assert) {
 		testConversion(assert, '\
 				<Schema Namespace="foo" Alias="f">\
@@ -631,15 +632,21 @@ sap.ui.require([
 						<FunctionImport m:HttpMethod="GET" Name="Bar"/>\
 						<FunctionImport m:HttpMethod="GET" Name="SalesOrderLineItemFunction"\
 							ReturnType="Edm.String"\
-							sap:action-for="f.SalesOrderLineItem">\
-							<Parameter Name="ItemPosition" Type="Edm.String" Nullable="false"/>\
-							<Parameter Name="SalesOrderID" Type="Edm.String" Nullable="false"/>\
+							sap:action-for="f.SalesOrderLineItem" sap:label="S.O.L.I.F.">\
+							<Parameter Name="ItemPosition" Type="Edm.String" Nullable="false"\
+								sap:label="Item Pos."/>\
+							<Parameter Name="SalesOrderID" Type="Edm.String" Nullable="false"\
+								sap:label="Sales Order ID"/>\
 						</FunctionImport>\
 						<FunctionImport m:HttpMethod="POST" Name="SalesOrderLineItemAction"\
-							ReturnType="Edm.String" sap:action-for="f.SalesOrderLineItem">\
-							<Parameter Name="SalesOrderID" Type="Edm.String" Nullable="false"/>\
-							<Parameter Name="NoteLanguage" Type="Edm.String" Nullable="false"/>\
-							<Parameter Name="ItemPosition" Type="Edm.String" Nullable="false"/>\
+							ReturnType="Edm.String" sap:action-for="f.SalesOrderLineItem"\
+							sap:label="S.O.L.I.A.">\
+							<Parameter Name="SalesOrderID" Type="Edm.String" Nullable="false"\
+								sap:label="Sales Order ID"/>\
+							<Parameter Name="NoteLanguage" Type="Edm.String" Nullable="false"\
+								sap:label="Note Language"/>\
+							<Parameter Name="ItemPosition" Type="Edm.String" Nullable="false"\
+								sap:label="Item Pos."/>\
 						</FunctionImport>\
 					</EntityContainer>\
 					<EntityType Name="SalesOrderLineItem">\
@@ -652,9 +659,31 @@ sap.ui.require([
 					</EntityType>\
 				</Schema>',
 			{
+				"$EntityContainer": "foo.Container",
+				"foo.": {
+					// Note: no "$Annotations"!
+					"$kind": "Schema"
+				},
 				"foo.Bar" : [{
 					"$kind" : "Function"
 				}],
+				"foo.SalesOrderLineItem": {
+					"$Key": [
+						"SalesOrderID",
+						"ItemPosition"
+					],
+					"$kind": "EntityType",
+					"ItemPosition": {
+						"$Nullable": false,
+						"$Type": "Edm.String",
+						"$kind": "Property"
+					},
+					"SalesOrderID": {
+						"$Nullable": false,
+						"$Type": "Edm.String",
+						"$kind": "Property"
+					}
+				},
 				"foo.SalesOrderLineItemAction" : [{
 					"$kind" : "Action",
 					"$IsBound" : true,
@@ -665,11 +694,13 @@ sap.ui.require([
 					}, {
 						"$Name" : "NoteLanguage",
 						"$Nullable" : false,
-						"$Type" : "Edm.String"
+						"$Type" : "Edm.String",
+						"@com.sap.vocabularies.Common.v1.Label" : "Note Language"
 					}],
 					"$ReturnType" : {
 						"$Type" : "Edm.String"
-					}
+					},
+					"@com.sap.vocabularies.Common.v1.Label" : "S.O.L.I.A."
 				}],
 				"foo.SalesOrderLineItemFunction" : [{
 					"$kind" : "Function",
@@ -681,7 +712,8 @@ sap.ui.require([
 					}],
 					"$ReturnType" : {
 						"$Type" : "Edm.String"
-					}
+					},
+					"@com.sap.vocabularies.Common.v1.Label" : "S.O.L.I.F."
 				}],
 				"foo.Container" : {
 					"$kind" : "EntityContainer",
@@ -690,7 +722,7 @@ sap.ui.require([
 						"$Function" : "foo.Bar"
 					}
 				}
-			}, true);
+			});
 	});
 
 	//*********************************************************************************************
@@ -845,7 +877,7 @@ sap.ui.require([
 			},
 			'@com.sap.vocabularies.UI.v1.Hidden' : true
 		}
-	}, { // combination of v2 annotations
+	}, { // combination of V2 annotations
 		annotationsV2 : 'sap:text="PathExpression" sap:label="Value"',
 		expectedAnnotationsV4 : {
 			'@com.sap.vocabularies.Common.v1.Label' : 'Value',
