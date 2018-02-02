@@ -3,10 +3,24 @@
  */
 
 // Provides control sap.ui.layout.FixFlex.
-sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledPropagator", "sap/ui/core/ResizeHandler",
-				"./library", "sap/ui/core/delegate/ScrollEnablement"],
-	function (jQuery, Control, EnabledPropagator,
-				ResizeHandler, library, ScrollEnablement) {
+sap.ui.define([
+    "jquery.sap.global",
+    "sap/ui/core/Control",
+    "sap/ui/core/EnabledPropagator",
+    "sap/ui/core/ResizeHandler",
+    "./library",
+    "sap/ui/core/delegate/ScrollEnablement",
+    "./FixFlexRenderer"
+],
+	function(
+	    jQuery,
+		Control,
+		EnabledPropagator,
+		ResizeHandler,
+		library,
+		ScrollEnablement,
+		FixFlexRenderer
+	) {
 		"use strict";
 
 		/**

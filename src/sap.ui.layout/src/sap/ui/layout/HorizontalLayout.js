@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.layout.HorizontalLayout.
-sap.ui.define(['sap/ui/core/Control', './library'],
-	function(Control, library) {
+sap.ui.define(['sap/ui/core/Control', './library', "./HorizontalLayoutRenderer"],
+	function(Control, library, HorizontalLayoutRenderer) {
 	"use strict";
 
 

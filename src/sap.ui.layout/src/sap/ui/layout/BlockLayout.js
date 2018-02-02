@@ -2,8 +2,14 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Control', './library', 'jquery.sap.global', 'sap/ui/core/ResizeHandler'],
-	function(Control, library, jQuery, ResizeHandler) {
+sap.ui.define([
+    'sap/ui/core/Control',
+    './library',
+    'jquery.sap.global',
+    'sap/ui/core/ResizeHandler',
+    "./BlockLayoutRenderer"
+],
+	function(Control, library, jQuery, ResizeHandler, BlockLayoutRenderer) {
 		"use strict";
 
 		/**

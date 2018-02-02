@@ -5,9 +5,9 @@
 // Provides control sap.ui.layout.form.SimpleForm.
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
                './Form', './FormContainer', './FormElement', './FormLayout',
-               'sap/ui/base/ManagedObjectObserver', 'sap/ui/layout/library', 'sap/ui/core/ResizeHandler'],
+               'sap/ui/base/ManagedObjectObserver', 'sap/ui/layout/library', 'sap/ui/core/ResizeHandler', './SimpleFormRenderer'],
 	function(jQuery, Control, Form, FormContainer, FormElement, FormLayout,
-             ManagedObjectObserver, library, ResizeHandler) {
+	         ManagedObjectObserver, library, ResizeHandler, SimpleFormRenderer) {
 	"use strict";
 
 	// shortcut for sap.ui.layout.BackgroundDesign
