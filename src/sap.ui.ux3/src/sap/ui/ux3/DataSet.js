@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.ux3.DataSet.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', './library'],
-	function(jQuery, Control, ResizeHandler, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/Control',
+    'sap/ui/core/ResizeHandler',
+    './library',
+    "./DataSetRenderer"
+],
+	function(jQuery, Control, ResizeHandler, library, DataSetRenderer) {
 	"use strict";
 
 

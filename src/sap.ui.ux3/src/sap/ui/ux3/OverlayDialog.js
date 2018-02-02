@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.ux3.OverlayDialog.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/IntervalTrigger', './Overlay', './library'],
-	function(jQuery, IntervalTrigger, Overlay, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/IntervalTrigger',
+    './Overlay',
+    './library',
+    "./OverlayDialogRenderer"
+],
+	function(jQuery, IntervalTrigger, Overlay, library, OverlayDialogRenderer) {
 	"use strict";
 
 	/**

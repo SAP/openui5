@@ -3,8 +3,22 @@
  */
 
 // Provides control sap.ui.ux3.NavigationBar.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation', './library', 'jquery.sap.dom'],
-	function(jQuery, Control, ItemNavigation, library/* , jQuerySap */) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Control',
+	'sap/ui/core/delegate/ItemNavigation',
+	'./library',
+	"./NavigationBarRenderer",
+	'jquery.sap.dom'
+],
+	function(
+		jQuery,
+		Control,
+		ItemNavigation,
+		library,
+		NavigationBarRenderer
+		/* jQuerySap */
+	) {
 	"use strict";
 
 

@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.ux3.ThingViewer.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
-	function(jQuery, Control) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/Control',
+    "./ThingViewerRenderer",
+    './library'
+],
+	function(jQuery, Control, ThingViewerRenderer) {
 	"use strict";
 
 

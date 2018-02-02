@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.ux3.ExactArea.
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Toolbar', 'sap/ui/core/Control', './library'],
-	function(jQuery, Toolbar, Control, library) {
+sap.ui.define([
+ 'jquery.sap.global',
+ 'sap/ui/commons/Toolbar',
+ 'sap/ui/core/Control',
+ './library',
+ "./ExactAreaRenderer"
+],
+	function(jQuery, Toolbar, Control, library, ExactAreaRenderer) {
 	"use strict";
 
 
