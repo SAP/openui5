@@ -7,11 +7,13 @@ sap.ui.define([
 			aggregations: {
 				items: {
 					type: "sap.ui.core.Control",
-					multiple: true
+					multiple: true,
+					forwarding: { idSuffix: "--VBox", aggregation: "items" }
 				},
 				items2: {
 					type: "sap.ui.core.Control",
-					multiple: true
+					multiple: true,
+					forwarding: { idSuffix: "--ForwardText", aggregation: "textItems" }
 				}
 			},
 			defaultAggregation: "items"

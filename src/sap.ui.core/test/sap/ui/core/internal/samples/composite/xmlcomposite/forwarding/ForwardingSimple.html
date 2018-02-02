@@ -12,15 +12,12 @@
         </script>
 
     <script>
-        jQuery.sap.require("sap.ui.core.XMLComposite");
         jQuery.sap.require("composites.ForwardText");
-        jQuery.sap.require("composites.ForwardTextDecl");
 
         //add a ForwardText with single aggregation
-        var oForwardTextDecl = new composites.ForwardTextDecl({
+        var oForwardText = new composites.ForwardText({
             text: new sap.m.Text({
                 text: "Text added to text aggregation",
-
             }),
             textItems: [
                 new sap.m.Text({
@@ -31,7 +28,7 @@
                 })
             ]
         });
-        oForwardTextDecl.placeAt("body");
+        oForwardText.placeAt("body");
     </script>
 </head>
 

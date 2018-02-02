@@ -1,6 +1,10 @@
-<FragmentDefinition xmlns:m="sap.m" xmlns="sap.ui.core">
-    <m:VBox>
-        <AggregationProxy ref="{$this>textToggleButton}"/>
+<FragmentDefinition 
+    xmlns:m="sap.m" 
+    xmlns="sap.ui.core" 
+    xmlns:tf="composites">
+    <m:VBox id="VBox">
+        <tf:ControlContainer id="CC"/>
         <m:Button text="Refresh" press="onPressRefresh"/>
     </m:VBox>
 </FragmentDefinition>
+<!-- <m:VBox><AggregationProxy ref="{$this>textToggleButton}"/><m:Button text="Refresh" press="onPressRefresh"/></m:VBox> -->
