@@ -645,6 +645,23 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("fetchValue: suspended binding", function (assert) {
+		var oBinding = this.oModel.bindContext("/absolute");
+
+		oBinding.suspend();
+		this.mock(oBinding).expects("isSuspended").withExactArgs().returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oBinding.fetchValue("/absolute/bar");
+		}, function (oError) {
+			assert.strictEqual(oError.message, "Suspended binding provides no value");
+			assert.strictEqual(oError.canceled, "noDebugLog");
+			return true;
+		}, "expect canceled error");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("deregisterChange: absolute binding", function (assert) {
 		var oBinding = this.oModel.bindContext("/absolute"),
 			oListener = {};
@@ -969,7 +986,8 @@ sap.ui.require([
 				function createContext(sPath) {
 					return bBaseContext
 						? that.oModel.createBindingContext(sPath)
-						: Context.create(that.oModel, {}, sPath);
+						: Context.create(that.oModel, {isSuspended : function () { return false; }},
+							sPath);
 				}
 
 				function expectChangeAndRefreshDependent() {
@@ -1614,6 +1632,41 @@ sap.ui.require([
 			assert.strictEqual(oBinding.doCreateCache("EMPLOYEES('1')", mCacheQueryOptions),
 				oCache);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resumeInternal", function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/TEAMS('42')"),
+			oBinding = this.oModel.bindContext("TEAM_2_EMPLOYEE", oContext),
+			oBindingMock = this.mock(oBinding),
+			oDependent0 = {resumeInternal : function () {}},
+			oDependent1 = {resumeInternal : function () {}},
+			oFetchCacheExpectation,
+			oFireChangeExpectation,
+			oGetDependentBindingsExpectation;
+
+		oFetchCacheExpectation = oBindingMock.expects("fetchCache")
+			.withExactArgs(sinon.match.same(oContext))
+			// check correct sequence: on fetchCache call, aggregated query options must be reset
+			.callsFake(function () {
+				assert.deepEqual(oBinding.mAggregatedQueryOptions, {});
+				assert.strictEqual(oBinding.mCacheByContext, undefined);
+			});
+		oGetDependentBindingsExpectation = this.mock(this.oModel).expects("getDependentBindings")
+			.withExactArgs(sinon.match.same(oBinding))
+			.returns([oDependent0, oDependent1]);
+		this.mock(oDependent0).expects("resumeInternal").withExactArgs();
+		this.mock(oDependent1).expects("resumeInternal").withExactArgs();
+		oFireChangeExpectation = oBindingMock.expects("_fireChange")
+			.withExactArgs({reason : ChangeReason.Change});
+		oBinding.mAggregatedQueryOptions = {$select : ["Team_Id"]};
+		oBinding.mCacheByContext = {};
+
+		// code under test
+		oBinding.resumeInternal();
+
+		assert.ok(oGetDependentBindingsExpectation.calledAfter(oFetchCacheExpectation));
+		assert.ok(oFireChangeExpectation.calledAfter(oGetDependentBindingsExpectation));
 	});
 
 	//*********************************************************************************************

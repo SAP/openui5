@@ -1090,8 +1090,6 @@ sap.ui.define([
 	/**
 	 * Reports a technical error by adding a message to the MessageManager and logging the error to
 	 * the console. Takes care that the error is only added once to the MessageManager.
-	 * Errors caused by cancellation of backend requests are not reported but just logged to the
-	 * console with level DEBUG.
 	 *
 	 * @param {string} sLogMessage
 	 *   The message to write to the console log
@@ -1099,12 +1097,22 @@ sap.ui.define([
 	 *   The name of the class reporting the error
 	 * @param {Error} oError
 	 *   The error
+	 * @param {boolean|"noDebugLog"} [oError.canceled]
+	 *   A boolean value indicates whether the error is not reported but just logged to the
+	 *   console with level DEBUG; example: errors caused by cancellation of backend requests.
+	 *   For the string value "noDebugLog", the method does nothing; example: errors caused by
+	 *   suspended bindings.
 	 *
 	 * @private
 	 */
 	ODataModel.prototype.reportError = function (sLogMessage, sReportingClassName, oError) {
-		var sDetails = oError.stack || oError.message;
+		var sDetails;
 
+		if (oError.canceled === "noDebugLog") {
+			return;
+		}
+
+		sDetails = oError.stack || oError.message;
 		if (sDetails.indexOf(oError.message) < 0) {
 			sDetails = oError.message + "\n" + oError.stack;
 		}

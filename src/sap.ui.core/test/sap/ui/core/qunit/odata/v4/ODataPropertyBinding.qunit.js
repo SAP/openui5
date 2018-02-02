@@ -1777,6 +1777,19 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("resumeInternal", function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/ProductList('42')"),
+			oBinding = this.oModel.bindProperty("Category", oContext),
+			oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext));
+		oBindingMock.expects("checkUpdate").withExactArgs();
+
+		// code under test
+		oBinding.resumeInternal();
+	});
+
+	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		//*****************************************************************************************
 		QUnit.test("PATCH an entity", function (assert) {

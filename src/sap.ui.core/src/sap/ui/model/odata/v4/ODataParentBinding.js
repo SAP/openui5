@@ -394,8 +394,8 @@ sap.ui.define([
 			});
 		}
 
-		if (this.oOperation || sChildPath === "$count" || sChildPath.slice(-7) === "/$count"
-				|| sChildPath[0] === "@") {
+		if (this.isSuspended() || this.oOperation || sChildPath === "$count"
+				|| sChildPath.slice(-7) === "/$count" || sChildPath[0] === "@") {
 			return SyncPromise.resolve(true);
 		}
 
@@ -528,7 +528,7 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.Binding#initialize
 	ODataParentBinding.prototype.initialize = function () {
-		if ((!this.bRelative || this.oContext) && !this.bSuspended) {
+		if ((!this.bRelative || this.oContext) && !this.isSuspended()) {
 			this._fireChange({reason : ChangeReason.Change});
 		}
 	};
@@ -654,6 +654,8 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.Binding#resume
 	ODataParentBinding.prototype.resume = function () {
+		var that = this;
+
 		if (this.oOperation) {
 			throw new Error("Cannot resume an operation binding: " + this);
 		}
@@ -661,8 +663,16 @@ sap.ui.define([
 			throw new Error("Cannot resume a relative binding: " + this);
 		}
 
+		if (!this.bSuspended) {
+			return;
+		}
+
 		this.bSuspended = false;
-		this._fireChange({reason : ChangeReason.Change});
+		// dependent bindings are only removed in a *new task* in ManagedObject#updateBindings
+		// => must only resume in prerendering task
+		sap.ui.getCore().addPrerenderingTask(function () {
+			that.resumeInternal();
+		});
 	};
 
 	/**
