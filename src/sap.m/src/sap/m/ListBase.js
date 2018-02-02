@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ListBase.
-sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/InvisibleText', 'sap/ui/core/LabelEnablement', 'sap/ui/Device', 'jquery.sap.keycodes'],
-	function(jQuery, GroupHeaderListItem, ListItemBase, library, Control, ItemNavigation, InvisibleText, LabelEnablement, Device) {
+sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/InvisibleText', 'sap/ui/core/LabelEnablement', 'sap/ui/Device', 'sap/m/GrowingEnablement', 'jquery.sap.keycodes'],
+	function (jQuery, GroupHeaderListItem, ListItemBase, library, Control, ItemNavigation, InvisibleText, LabelEnablement, Device, GrowingEnablement) {
 	"use strict";
 
 
@@ -647,8 +647,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 		if (this.getGrowing() != bGrowing) {
 			this.setProperty("growing", bGrowing, !bGrowing);
 			if (bGrowing) {
-				jQuery.sap.require("sap.m.GrowingEnablement");
-				this._oGrowingDelegate = new sap.m.GrowingEnablement(this);
+				this._oGrowingDelegate = new GrowingEnablement(this);
 			} else if (this._oGrowingDelegate) {
 				this._oGrowingDelegate.destroy();
 				this._oGrowingDelegate = null;
