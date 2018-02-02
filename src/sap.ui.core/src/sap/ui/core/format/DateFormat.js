@@ -17,11 +17,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 	 * The DateFormat is a static class for formatting and parsing single date and time values or date and time intervals according
 	 * to a set of format options.
 	 *
-	 * Supported format options are pattern based on Unicode LDML Date Format notation.
+	 * Supported format options are pattern based on Unicode LDML Date Format notation. Please note that only a subset of the LDML date symbols
+	 * is supported.
 	 * If no pattern is specified a default pattern according to the locale settings is used.
 	 *
 	 * @public
-	 * @see http://unicode.org/reports/tr35/#Date_Field_Symbol_Table
+	 * @see http://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
 	 * @alias sap.ui.core.format.DateFormat
 	 */
 	var DateFormat = function() {
