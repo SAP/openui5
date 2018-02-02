@@ -431,7 +431,7 @@ sap.ui.define([
 									visible: "{= !!${annotation} }",
 									cells: [
 										new Link({
-											text: "{= ${annotation} !== 'undefined' ? ${annotation} : '(' + ${namespace} + ')' }",
+											text: "{= ${annotation} !== 'undefined' ? ${annotation} : '(' + ${namespaceText} + ')' }",
 											press: this.scrollToAnnotation.bind(this),
 											wrapping: false
 										}),
