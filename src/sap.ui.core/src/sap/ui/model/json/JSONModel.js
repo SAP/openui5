@@ -55,7 +55,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	});
 
 	/**
-	 * Sets the JSON encoded data to the model.
+	 * Sets the data, passed as a JS object tree, to the model.
 	 *
 	 * @param {object} oData the data to set on the model
 	 * @param {boolean} [bMerge=false] whether to merge the data instead of replacing it
@@ -123,17 +123,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	};
 
 	/**
-	 * Sets the JSON encoded string data to the model.
+	 * Sets the data, passed as a string in JSON format, to the model.
 	 *
-	 * @param {string} sJSONText the string data to set on the model
+	 * @param {string} sJSON the JSON data to set on the model
 	 * @param {boolean} [bMerge=false] whether to merge the data instead of replacing it
 	 *
 	 * @public
 	 */
-	JSONModel.prototype.setJSON = function(sJSONText, bMerge){
+	JSONModel.prototype.setJSON = function(sJSON, bMerge){
 		var oJSONData;
 		try {
-			oJSONData = jQuery.parseJSON(sJSONText);
+			oJSONData = jQuery.parseJSON(sJSON);
 			this.setData(oJSONData, bMerge);
 		} catch (e) {
 			jQuery.sap.log.fatal("The following problem occurred: JSON parse Error: " + e);
