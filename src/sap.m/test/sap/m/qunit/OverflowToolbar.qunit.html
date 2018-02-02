@@ -1457,6 +1457,34 @@
 			oOverflowTB.destroy();
 		});
 
+		QUnit.test("[_resetAndInvalidateToolbar] resets also values in _aControlSizes object", function (assert) {
+			// Create a toolbar 550px wide with 5 buttons x 100px each, so all can fit (button margins included)
+			var aDefaultContent = [
+				new sap.m.Button({text: "1", width: "100px"}),
+				new sap.m.Button({text: "2", width: "100px"}),
+				new sap.m.Button({text: "3", width: "100px"}),
+				new sap.m.Button({text: "4", width: "100px"}),
+				new sap.m.Button({text: "5", width: "100px"})
+			],
+			oOverflowTB = createOverflowToolbar({
+				width: "550px"
+			}, aDefaultContent);
+
+			oOverflowTB.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			oOverflowTB._resetAndInvalidateToolbar();
+
+			for (var iControlSize in oOverflowTB._aControlSizes) {
+				if (oOverflowTB._aControlSizes.hasOwnProperty(iControlSize)) {
+					assert.strictEqual(oOverflowTB._aControlSizes[iControlSize], 0, "Cached control size is 0");
+				}
+			}
+
+			oOverflowTB.destroy();
+		});
+
 		QUnit.test("[_cacheControlsInfo] Control caching works properly", function (assert) {
 			var spyCache = this.spy(sap.m.OverflowToolbar.prototype, "_cacheControlsInfo"),
 					aDefaultContent = [
