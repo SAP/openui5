@@ -42,6 +42,7 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery, Actio
 			 * The title for each step is visible on hover.
 			 * <b>Note:</b> The number of titles should equal the number of steps,
 			 * otherwise no titles will be rendered.
+			 * @since 1.32
 			 */
 			stepTitles: {type: "string[]", group: "Appearance", defaultValue: []},
 
@@ -50,6 +51,7 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery, Actio
 			 * The icon for each step is directly visible in the WizardProgressNavigator.
 			 * <b>Note:</b> The number of icons should equal the number of steps,
 			 * otherwise no icons will be rendered.
+			 * @since 1.32
 			 */
 			stepIcons: {type: "sap.ui.core.URI[]", group: "Appearance", defaultValue: []},
 
