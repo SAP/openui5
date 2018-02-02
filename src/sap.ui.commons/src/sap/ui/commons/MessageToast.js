@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.commons.MessageToast.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/thirdparty/jqueryui/jquery-ui-core'],
-	function(jQuery, library, Control, jqueryuicore) {
+sap.ui.define([
+  'jquery.sap.global',
+  './library',
+  'sap/ui/core/Control',
+  'sap/ui/thirdparty/jqueryui/jquery-ui-core',
+  "./MessageToastRenderer"
+],
+	function(jQuery, library, Control, jqueryuicore, MessageToastRenderer) {
 	"use strict";
 
 

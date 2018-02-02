@@ -4,8 +4,13 @@
  */
 
 // Provides control sap.ui.commons.CalloutBase.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
-	function(jQuery, library, TooltipBase) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/TooltipBase',
+    "./CalloutBaseRenderer"
+],
+	function(jQuery, library, TooltipBase, CalloutBaseRenderer) {
 	"use strict";
 
 

@@ -3,8 +3,22 @@
  */
 
 // Provides control sap.ui.commons.Toolbar.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/Popup', 'sap/ui/core/delegate/ItemNavigation', './ToolbarRenderer'],
-	function (jQuery, library, Control, Popup, ItemNavigation, ToolbarRenderer) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/Control',
+    'sap/ui/core/Popup',
+    'sap/ui/core/delegate/ItemNavigation',
+    './ToolbarRenderer'
+],
+	function(
+	    jQuery,
+		library,
+		Control,
+		Popup,
+		ItemNavigation,
+		ToolbarRenderer
+	) {
 		"use strict";
 
 		/**

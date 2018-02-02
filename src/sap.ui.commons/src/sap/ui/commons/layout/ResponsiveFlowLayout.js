@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.commons.layout.ResponsiveFlowLayout.
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/layout/ResponsiveFlowLayout'],
-	function(jQuery, library, ResponsiveFlowLayout1) {
+sap.ui.define([
+ 'jquery.sap.global',
+ 'sap/ui/commons/library',
+ 'sap/ui/layout/ResponsiveFlowLayout',
+ "./ResponsiveFlowLayoutRenderer"
+],
+	function(jQuery, library, ResponsiveFlowLayout1, ResponsiveFlowLayoutRenderer) {
 	"use strict";
 
 

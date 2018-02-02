@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.commons.Button.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool'],
-	function(jQuery, library, Control, EnabledPropagator, IconPool) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/Control',
+    'sap/ui/core/EnabledPropagator',
+    'sap/ui/core/IconPool',
+    "./ButtonRenderer"
+],
+	function(jQuery, library, Control, EnabledPropagator, IconPool, ButtonRenderer) {
 	"use strict";
 
 

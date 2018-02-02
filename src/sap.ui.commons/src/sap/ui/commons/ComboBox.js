@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.commons.ComboBox.
-sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Popup', 'jquery.sap.strings'],
-	function(jQuery, TextField, library, Popup/* , jQuerySap */) {
+sap.ui.define([
+    'jquery.sap.global',
+    './TextField',
+    './library',
+    'sap/ui/core/Popup',
+    "./ComboBoxRenderer",
+    'jquery.sap.strings'
+],
+	function(jQuery, TextField, library, Popup, ComboBoxRenderer /*, jQuerySap */) {
 	"use strict";
 
 

@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.commons.layout.VerticalLayout.
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/layout/VerticalLayout'],
-	function(jQuery, library, VerticalLayout1) {
+sap.ui.define([
+ 'jquery.sap.global',
+ 'sap/ui/commons/library',
+ 'sap/ui/layout/VerticalLayout',
+ "./VerticalLayoutRenderer"
+],
+	function(jQuery, library, VerticalLayout1, VerticalLayoutRenderer) {
 	"use strict";
 
 

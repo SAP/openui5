@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.commons.form.SimpleForm.
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/layout/form/SimpleForm'],
-	function(jQuery, library, SimpleForm1) {
+sap.ui.define([
+ 'jquery.sap.global',
+ 'sap/ui/commons/library',
+ 'sap/ui/layout/form/SimpleForm',
+ "./SimpleFormRenderer"
+],
+	function(jQuery, library, SimpleForm1, SimpleFormRenderer) {
 	"use strict";
 
 

@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.commons.RichTooltip.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
-	function(jQuery, library, TooltipBase) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/TooltipBase',
+    "./RichTooltipRenderer"
+],
+	function(jQuery, library, TooltipBase, RichTooltipRenderer) {
 	"use strict";
 
 

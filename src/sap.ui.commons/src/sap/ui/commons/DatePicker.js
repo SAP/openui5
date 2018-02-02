@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.commons.DatePicker.
-sap.ui.define(['jquery.sap.global', './TextField', 'sap/ui/model/type/Date', 'sap/ui/core/date/UniversalDate', './library'],
-	function(jQuery, TextField, Date1, UniversalDate, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    './TextField',
+    'sap/ui/model/type/Date',
+    'sap/ui/core/date/UniversalDate',
+    './library',
+    "./DatePickerRenderer"
+],
+	function(jQuery, TextField, Date1, UniversalDate, library, DatePickerRenderer) {
 	"use strict";
 
 	/**

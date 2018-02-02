@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.commons.SegmentedButton.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation'],
-	function(jQuery, Control, ItemNavigation) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/Control',
+    'sap/ui/core/delegate/ItemNavigation',
+    "./SegmentedButtonRenderer"
+],
+	function(jQuery, Control, ItemNavigation, SegmentedButtonRenderer) {
 	"use strict";
 
 

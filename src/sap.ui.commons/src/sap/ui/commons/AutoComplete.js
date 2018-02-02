@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.commons.AutoComplete.
-sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'jquery.sap.strings'],
-	function(jQuery, ComboBox, library/* , jQuerySap */) {
+sap.ui.define([
+    'jquery.sap.global',
+    './ComboBox',
+    './library',
+    "./AutoCompleteRenderer",
+    'jquery.sap.strings'
+],
+	function(jQuery, ComboBox, library, AutoCompleteRenderer /*, jQuerySap */) {
 	"use strict";
 
 

@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.commons.Dialog.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/Popup', 'sap/ui/core/RenderManager'],
-	function (jQuery, library, Control, Popup, RenderManager) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/Control',
+    'sap/ui/core/Popup',
+    'sap/ui/core/RenderManager',
+    "./DialogRenderer"
+],
+	function(jQuery, library, Control, Popup, RenderManager, DialogRenderer) {
 		"use strict";
 
 

@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.commons.Menu.
-sap.ui.define(['jquery.sap.global', './MenuItemBase', './library', 'sap/ui/unified/Menu'],
-	function(jQuery, MenuItemBase, library, Menu1) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./MenuItemBase',
+	'./library',
+	'sap/ui/unified/Menu',
+	"./MenuRenderer"
+],
+	function(jQuery, MenuItemBase, library, Menu1, MenuRenderer) {
 	"use strict";
 
 

@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.commons.form.ResponsiveLayout.
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/layout/form/ResponsiveLayout'],
-	function(jQuery, library, ResponsiveLayout1) {
+sap.ui.define([
+ 'jquery.sap.global',
+ 'sap/ui/commons/library',
+ 'sap/ui/layout/form/ResponsiveLayout',
+ "./ResponsiveLayoutRenderer"
+],
+	function(jQuery, library, ResponsiveLayout1, ResponsiveLayoutRenderer) {
 	"use strict";
 
 
