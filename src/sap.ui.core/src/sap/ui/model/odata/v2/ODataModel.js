@@ -3769,7 +3769,7 @@ sap.ui.define([
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use <code>groupId</code> instead
 	 * @param {string} [mParameters.groupId] ID of a request group; requests belonging to the same group will be bundled in one batch request
 	 * @param {string} [mParameters.changeSetId] ID of the <code>ChangeSet</code> that this request should belong to
-	 * @param {string} [mParameters.refreshAfterChange] Defines whether to update all bindings after submitting this change operation. See {@link #setRefreshAfterChange}
+	 * @param {string} [mParameters.refreshAfterChange] Since 1.46; defines whether to update all bindings after submitting this change operation. See {@link #setRefreshAfterChange}
 	           If given, this overrules the model-wide <code>refreshAfterChange</code> flag for this operation only.
 	 *
 	 * @return {object} An object which has an <code>abort</code> function to abort the current request.
@@ -3842,7 +3842,7 @@ sap.ui.define([
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use <code>groupId</code> instead
 	 * @param {string} [mParameters.groupId] ID of a request group; requests belonging to the same group will be bundled in one batch request
 	 * @param {string} [mParameters.changeSetId] ID of the <code>ChangeSet</code> that this request should belong to
-	 * @param {string} [mParameters.refreshAfterChange] Defines whether to update all bindings after submitting this change operation. See {@link #setRefreshAfterChange}
+	 * @param {string} [mParameters.refreshAfterChange] Since 1.46; defines whether to update all bindings after submitting this change operation. See {@link #setRefreshAfterChange}
 	           If given, this overrules the model-wide <code>refreshAfterChange</code> flag for this operation only.
 	 * @return {object} An object which has an <code>abort</code> function to abort the current request.
 	 *
@@ -3910,7 +3910,7 @@ sap.ui.define([
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use <code>groupId</code> instead
 	 * @param {string} [mParameters.groupId] ID of a request group; requests belonging to the same group will be bundled in one batch request
 	 * @param {string} [mParameters.changeSetId] ID of the <code>ChangeSet</code> that this request should belong to
-	 * @param {string} [mParameters.refreshAfterChange] Defines whether to update all bindings after submitting this change operation. See {@link #setRefreshAfterChange}
+	 * @param {string} [mParameters.refreshAfterChange] Since 1.46; defines whether to update all bindings after submitting this change operation. See {@link #setRefreshAfterChange}
 	           If given, this overrules the model-wide <code>refreshAfterChange</code> flag for this operation only.
 	 *
 	 * @return {object} An object which has an <code>abort</code> function to abort the current request.
@@ -3990,7 +3990,7 @@ sap.ui.define([
 	 * @param {string} [mParameters.groupId] ID of a request group; requests belonging to the same group will be bundled in one batch request
 	 * @param {string} [mParameters.eTag] If the function import changes an entity, the ETag for this entity could be passed with this parameter
 	 * @param {string} [mParameters.changeSetId] ID of the <code>ChangeSet</code> that this request should belong to
-	 * @param {string} [mParameters.refreshAfterChange] Defines whether to update all bindings after submitting this change operation. See {@link #setRefreshAfterChange}
+	 * @param {string} [mParameters.refreshAfterChange] Since 1.46; defines whether to update all bindings after submitting this change operation. See {@link #setRefreshAfterChange}
 	           If given, this overrules the model-wide <code>refreshAfterChange</code> flag for this operation only.
 	 *
 	 * @return {object} An object which has a <code>contextCreated</code> function that returns a <code>Promise</code>.
@@ -4966,7 +4966,7 @@ sap.ui.define([
 	 * @param {function} [mParameters.error] The error callback function
 	 * @param {map} [mParameters.headers] A map of headers
 	 * @param {map} [mParameters.urlParameters] A map of URL parameters
-	 * @param {string} [mParameters.refreshAfterChange] Defines whether to update all bindings after submitting this change operation. See {@link #setRefreshAfterChange}
+	 * @param {string} [mParameters.refreshAfterChange] Since 1.46; defines whether to update all bindings after submitting this change operation. See {@link #setRefreshAfterChange}
 	           If given, this overrules the model-wide <code>refreshAfterChange</code> flag for this operation only.
 	 *
 	 * @return {sap.ui.model.Context} A Context object that points to the new created entry.
