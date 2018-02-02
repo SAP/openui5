@@ -510,8 +510,12 @@
 
 		oNavContainer.attachEventOnce("afterNavigate", function() {
 			var oFacetFilterListPage = oNavContainer.getPages()[1];
+			var oFacetFilterListBar = oFacetFilterListPage.getContent()[0];
+			var oFacetFilterList = oFacetFilterListPage.getContent()[1];
 			var oCurrentPage = oNavContainer.getCurrentPage();
 			assert.strictEqual(oFacetFilterListPage, oCurrentPage, "The current page should be the facet filter item page");
+			assert.ok(oFacetFilterListBar instanceof sap.m.Bar, 'The first content item is the Bar that contains selectAll checkbox');
+			assert.strictEqual(oFFL1, oFacetFilterList, 'The second content item is the Facet filter list page');
 
 			var oPageSubHeader = oCurrentPage.getSubHeader();
 			assert.ok(oPageSubHeader, "Page should have a sub header");
@@ -522,6 +526,46 @@
 			assert.ok(oPageSubHeaderSearchField instanceof sap.m.SearchField, "Page sub header should be a SearchField");
 			assert.equal(sList1Title, oCurrentPage.getTitle(), "Current page should display the first facet filter list");
 			assert.ok(oFFL1.getItems()[0].getDomRef(), "Facet filter item should be rendered");
+			// in MultiSelect mode focus is on 1st item of 2nd content item, since the first content item is the Bar with "Select All" checkbox
+			assert.ok(jQuery.sap.byId(oFFL1.getItems()[0].getId()).is(":focus"), 'The first Facet filter item should be focused');
+
+			destroyFF(oFF);
+			done();
+		});
+		oFF._navToFilterItemsPage(oFacetListItem1);
+	});
+
+	QUnit.test("FacetFilter._navToFilterItemsPage in SingleSelectMaster mode of FacetFilterList", function(assert) {
+		var done = assert.async();
+
+		var sList1Title = "List1", sList2Title = "List2", sItem1 = "List1 Val1", sItem2 = "List2 Val1";
+
+		var oFFL1 = new sap.m.FacetFilterList({title: sList1Title});
+		// set SingleSelectMaster mode of the FacetFilterList by default it is MultiSelect
+		oFFL1.setMode(sap.m.ListMode.SingleSelectMaster);
+		oFFL1.addItem(new sap.m.FacetFilterItem({text: sItem1}));
+		var oFFL2 = new sap.m.FacetFilterList({title: sList2Title});
+		oFFL2.addItem(new sap.m.FacetFilterItem({text: sItem2}));
+		var oFF = new sap.m.FacetFilter( {
+			lists: [oFFL1, oFFL2]
+		});
+		oFF.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oFF.openFilterDialog();
+
+		var oNavContainer = oFF.getAggregation("dialog").getContent()[0];
+		var oFacetPage = sap.ui.getCore().byId(oNavContainer.getInitialPage());
+		var oFacetList = oFacetPage.getContent()[0];
+		var oFacetListItem1 = oFacetList.getItems()[0];
+
+		oNavContainer.attachEventOnce("afterNavigate", function() {
+			var oFacetFilterList = oNavContainer.getPages()[1].getContent()[0];
+
+			assert.strictEqual(oFFL1, oFacetFilterList, 'The first content item is the Facet filter list page');
+			assert.ok(oFFL1.getItems()[0].getDomRef(), "Facet filter item should be rendered");
+			// in SingleSelectMaster focus is on the 1st content item 1st item
+			assert.ok(jQuery.sap.byId(oFFL1.getItems()[0].getId()).is(":focus"), 'The first Facet filter item should be focused');
 
 			destroyFF(oFF);
 			done();

@@ -1285,9 +1285,11 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			// a slight visual change in the filter items page just prior to navigation.
 			var oToPage = oEvent.getParameters()["to"];
 			var oFromPage = oEvent.getParameters()['from'];
-			//keyboard acc - focus on 1st item of 2nd page
+			//keyboard acc
 			if (oFromPage === oFacetPage) {
-				var oFirstItem = oToPage.getContent(0)[1].getItems()[0];
+				// in SingleSelectMaster focus on the 1st content item 1st item
+				// in MultiSelect mode focus on 1st item of 2nd content item, since the first content item is the Bar with "Select All" checkbox
+				var oFirstItem = (that._displayedList.getMode() === ListMode.MultiSelect) ? oToPage.getContent(0)[1].getItems()[0] : oToPage.getContent(0)[0].getItems()[0];
 				if (oFirstItem) {
 					oFirstItem.focus();
 				}
