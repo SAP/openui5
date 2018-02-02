@@ -237,20 +237,24 @@ sap.ui.define([
 				var aChangesForControl = mChangeFromPersistence[sControlId];
 				var oControl = sap.ui.getCore().byId(sControlId);
 				var aAppliedChanges = [];
-				var aFailedChanges = [];
+				var aFailedChangesJs = [];
+				var aFailedChangesXml = [];
 				if (oControl) {
 					if (oControl.data(FlexController.appliedChangesCustomDataKey)) {
 						aAppliedChanges = oControl.data(FlexController.appliedChangesCustomDataKey).split(",");
 					}
-					if (oControl.data(FlexController.failedChangesCustomDataKey)) {
-						aFailedChanges = oControl.data(FlexController.failedChangesCustomDataKey).split(",");
+					if (oControl.data(FlexController.failedChangesCustomDataKeyJs)) {
+						aFailedChangesJs = oControl.data(FlexController.failedChangesCustomDataKeyJs).split(",");
+					}
+					if (oControl.data(FlexController.failedChangesCustomDataKeyXml)) {
+						aFailedChangesXml = oControl.data(FlexController.failedChangesCustomDataKeyXml).split(",");
 					}
 				}
 
-				mChangedControls[sControlId] = aChangesForControl.map(_collectDataForSingleChange.bind(this, oControl, aAppliedChanges, aFailedChanges, mChanges));
+				mChangedControls[sControlId] = aChangesForControl.map(_collectDataForSingleChange.bind(this, oControl, aAppliedChanges, aFailedChangesJs, aFailedChangesXml, mChanges));
 			}
 
-			function _collectDataForSingleChange(oControl, aAppliedChanges, aFailedChanges, mChanges, oChange) {
+			function _collectDataForSingleChange(oControl, aAppliedChanges, aFailedChangesJs, aFailedChangesXml, mChanges, oChange) {
 				var oChangeDetails = {
 					id : oChange.getId(),
 					changeType : oChange.getChangeType(),
@@ -265,11 +269,18 @@ sap.ui.define([
 					isInSubTree : false // filled later
 				};
 
+				var aAllFailedChanges = aFailedChangesJs.concat(aFailedChangesXml);
+
 				if (oChangeDetails.controlPresent && aAppliedChanges.indexOf(oChange.getId()) > -1) {
 					oChangeDetails.indexInAppliedChanges = aAppliedChanges.indexOf(oChange.getId());
 				}
-				if (oChangeDetails.controlPresent && aFailedChanges.indexOf(oChange.getId()) > -1) {
-					oChangeDetails.indexOfFirstFailing = aFailedChanges.indexOf(oChange.getId());
+				if (oChangeDetails.controlPresent && aFailedChangesJs.indexOf(oChange.getId()) > -1) {
+					oChangeDetails.modifier = "JS";
+					oChangeDetails.indexOfFirstFailing = aAllFailedChanges.indexOf(oChange.getId());
+				}
+				if (oChangeDetails.controlPresent && aFailedChangesXml.indexOf(oChange.getId()) > -1) {
+					oChangeDetails.modifier = "XML";
+					oChangeDetails.indexOfFirstFailing = aAllFailedChanges.indexOf(oChange.getId());
 				}
 
 				if (oChange._aDependentIdList) {
