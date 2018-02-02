@@ -33,7 +33,7 @@ sap.ui.define(["./library", "sap/ui/core/Control", "sap/ui/core/library", "./Inf
 		 * <ul>
 		 * <li>If the text is longer than the width of the control, it doesn’t wrap. Instead, it’s represented as ellipsis. </li>
 		 * <li>When truncated, the full text in the control is not visible. Therefore, it’s recommended to make more space for longer items to be fully displayed.</li>
-		 * <li>Colors are not semantic and have no visual representation in sap_belize_hcb and ap_belize_hcw themes.</li>
+		 * <li>Colors are not semantic and have no visual representation in sap_belize_hcb and sap_belize_hcw themes.</li>
 		 * <li>The control shows plain text only, formatting is not visualized.</li>
 		 * </ul>
 		 *
@@ -60,8 +60,8 @@ sap.ui.define(["./library", "sap/ui/core/Control", "sap/ui/core/library", "./Inf
 					 */
 					text: { type: "string", defaultValue: "", bindable: "bindable" },
 					/**
-					 * Specifies the type of the <code>InfoLabel</code paddings - loose or narrow.
-					 * <b>Note:</b> By default the padding is loose. It is reccomended to use narrow (smaller) paddings for numeric text values.
+					 * Specifies the type of the <code>InfoLabel</code> paddings - loose or narrow.
+					 * <b>Note:</b> By default the padding is loose. It is recommended to use narrow (smaller) paddings for numeric texts.
 					 */
 					renderMode: { type: "sap.tnt.RenderMode", defaultValue: RenderMode.Loose, group: "Appearance" },
 					/**
@@ -78,6 +78,7 @@ sap.ui.define(["./library", "sap/ui/core/Control", "sap/ui/core/library", "./Inf
 
 					/**
 					* Determines if the <code>InfoLabel</code> is in <code>displayOnly</code> mode.
+					* When set to <code>true</code> the control size adjusts to fit other controls, for example non-editable <code>Forms</code>.
 			 		*/
 					displayOnly: { type: "boolean", group: "Appearance", defaultValue: false },
 
@@ -89,7 +90,7 @@ sap.ui.define(["./library", "sap/ui/core/Control", "sap/ui/core/library", "./Inf
 			}
 		});
 
-		InfoLabel.prototype.init = function() {
+		InfoLabel.prototype.init = function () {
 			// Init static text for ARIA
 			if (sap.ui.getCore().getConfiguration().getAccessibility() && !InfoLabelRenderer._sAriaText) {
 				InfoLabelRenderer._sAriaText = sap.ui.getCore().getLibraryResourceBundle('sap.tnt').getText("INFOLABEL_DEFAULT");
@@ -98,6 +99,8 @@ sap.ui.define(["./library", "sap/ui/core/Control", "sap/ui/core/library", "./Inf
 		};
 
 		InfoLabel.prototype.setText = function (sText) {
+			sText = this.validateProperty("text", sText);
+
 			var sValue = this.getText();
 			var $Control = this.$();
 
@@ -121,6 +124,8 @@ sap.ui.define(["./library", "sap/ui/core/Control", "sap/ui/core/library", "./Inf
 		};
 
 		InfoLabel.prototype.setColorScheme = function (iColorScheme) {
+			iColorScheme = this.validateProperty("colorScheme", iColorScheme);
+
 			var iColorSchemeCurrent = this.getColorScheme();
 			var $Control = this.$();
 
