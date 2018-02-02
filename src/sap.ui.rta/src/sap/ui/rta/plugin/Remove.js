@@ -186,8 +186,7 @@ sap.ui.define([
 		if (aOverlays){
 			aSelection = aOverlays;
 		} else {
-			var oDesignTime = this.getDesignTime();
-			aSelection = oDesignTime.getSelection();
+			aSelection = this.getSelectedOverlays();
 		}
 
 		aSelection = aSelection.filter(this.isEnabled, this);

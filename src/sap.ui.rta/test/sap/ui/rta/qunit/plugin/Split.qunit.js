@@ -12,6 +12,7 @@ sap.ui.define([
 	'sap/ui/rta/plugin/Split',
 	'sap/m/Button',
 	'sap/m/Panel',
+	'sap/ui/dt/SelectionManager',
 	// should be last:
 	'sap/ui/thirdparty/sinon',
 	'sap/ui/thirdparty/sinon-ie',
@@ -25,7 +26,8 @@ function(
 	Utils,
 	SplitPlugin,
 	Button,
-	Panel
+	Panel,
+	SelectionManager
 ) {
 	'use strict';
 
@@ -152,7 +154,7 @@ function(
 		};
 		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, oDesignTimeMetadata1);
 
-		sandbox.stub(this.oDesignTime, "getSelection").returns([
+		sandbox.stub(SelectionManager.prototype, "get").returns([
 			this.oButton1Overlay
 		]);
 
@@ -186,7 +188,7 @@ function(
 
 		fnSetOverlayDesigntimeMetadata(this.oButton2Overlay, oDesignTimeMetadata2);
 
-		sandbox.stub(this.oDesignTime, "getSelection").returns([
+		sandbox.stub(SelectionManager.prototype, "get").returns([
 			this.oButton2Overlay
 		]);
 
@@ -217,7 +219,7 @@ function(
 
 		fnSetOverlayDesigntimeMetadata(this.oButton2Overlay, oDesignTimeMetadata3);
 
-		sandbox.stub(this.oDesignTime, "getSelection").returns([
+		sandbox.stub(SelectionManager.prototype, "get").returns([
 			this.oButton2Overlay
 		]);
 
@@ -236,7 +238,7 @@ function(
 		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
 		fnSetOverlayDesigntimeMetadata(this.oButton3Overlay, DEFAULT_DTM);
 
-		sandbox.stub(this.oDesignTime, "getSelection").returns([
+		sandbox.stub(SelectionManager.prototype, "get").returns([
 			this.oButton1Overlay,
 			this.oButton3Overlay
 		]);
@@ -257,7 +259,7 @@ function(
 		var spy = sandbox.spy(this.oSplitPlugin, "fireElementModified");
 		fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
 
-		sandbox.stub(this.oDesignTime, "getSelection").returns([
+		sandbox.stub(SelectionManager.prototype, "get").returns([
 			this.oButton1Overlay
 		]);
 

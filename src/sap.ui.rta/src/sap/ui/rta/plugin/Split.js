@@ -68,7 +68,7 @@ sap.ui.define([
 			return false;
 		}
 
-		var aSelectedOverlays = this.getDesignTime().getSelection();
+		var aSelectedOverlays = this.getSelectedOverlays();
 		if (aSelectedOverlays.length !== 1) {
 			return false;
 		}

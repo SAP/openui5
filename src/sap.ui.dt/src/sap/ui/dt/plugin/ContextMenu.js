@@ -190,8 +190,7 @@ sap.ui.define([
 
 		aMenuItems.some(function(oItem) {
 			if (sId === oItem.id) {
-				var oDesignTime = this.getDesignTime();
-				aSelection = oDesignTime.getSelection();
+				aSelection = this.getSelectedOverlays();
 
 				jQuery.sap.assert(aSelection.length > 0, "sap.ui.rta - Opening context menu, with empty selection - check event order");
 

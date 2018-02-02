@@ -141,7 +141,7 @@ sap.ui.define([
 
 			if (oDesignTime) {
 				oDesignTime.attachSelectionChange(RenameHandler._onDesignTimeSelectionChange, this);
-				this._aSelection = oDesignTime.getSelection();
+				this._aSelection = this.getSelectedOverlays();
 			}
 		},
 
