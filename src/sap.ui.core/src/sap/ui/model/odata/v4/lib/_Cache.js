@@ -1226,7 +1226,7 @@ sap.ui.define([
 		if (!this.oPromise) {
 			this.oPromise = SyncPromise.resolve(this.oRequestor.request("GET",
 				this.sResourcePath + this.sQueryString, sGroupId, undefined, undefined,
-				fnDataRequested));
+				fnDataRequested, undefined, this.sMetaPath));
 			this.bSentReadRequest = true;
 		}
 		return this.oPromise.then(function (oResult) {

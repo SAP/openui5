@@ -757,11 +757,12 @@ sap.ui.require([
 	 *   and response as value
 	 * @param {object|object[]} mValueByControl A map or an array of maps containing control id as
 	 *   key and the expected control values as value
-	 * @param {sap.ui.model.odata.v4.ODataModel} [oModel] The model; it is attached to the view
-	 *   and to the test instance.
+	 * @param {string|sap.ui.model.odata.v4.ODataModel} [vModel]
+	 *   The model (or the name of a function at <code>this</code> which creates it); it is attached
+	 *   to the view and to the test instance.
 	 *   If no model is given, the <code>TEA_BUSI</code> model is created and used.
 	 */
-	function testViewStart(sTitle, sView, mResponseByRequest, mValueByControl, oModel) {
+	function testViewStart(sTitle, sView, mResponseByRequest, mValueByControl, vModel) {
 
 		QUnit.test(sTitle, function (assert) {
 			var sControlId, sRequest, that = this;
@@ -780,7 +781,10 @@ sap.ui.require([
 			} else {
 				expectChanges(mValueByControl);
 			}
-			return this.createView(assert, sView, oModel);
+			if (typeof vModel === "string") {
+				vModel = this[vModel]();
+			}
+			return this.createView(assert, sView, vModel);
 		});
 	}
 
@@ -4116,6 +4120,16 @@ sap.ui.require([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Minimal test for an absolute ODataPropertyBinding. This scenario is comparable with
+	// "FavoriteProduct" in the SalesOrders application.
+	testViewStart("V2 Adapter: Absolute ODataPropertyBinding",
+		'<Text id="text" text="{/ProductSet(\'HT-1000\')/CreatedAt}" />',
+		{"ProductSet('HT-1000')/CreatedAt" : {"d" : {"CreatedAt" : "/Date(1502323200000)/"}}},
+		{"text" : "Aug 10, 2017, 2:00:00 AM"},
+		"createModelForV2SalesOrderService"
+	);
 
 	//*********************************************************************************************
 	// Scenario: Table with suspended list binding is changed by adding and removing a column. After
