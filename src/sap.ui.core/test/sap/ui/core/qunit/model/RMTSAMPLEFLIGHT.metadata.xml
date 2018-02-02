@@ -336,6 +336,12 @@
 					<Parameter Name="agency_id" Type="Edm.String" Mode="In" MaxLength="8"/>
 					<Parameter Name="telephone" Type="Edm.String" Mode="In" MaxLength="30" Nullable="true"/>
 				</FunctionImport>
+				<FunctionImport Name="__FAKE__ActionImport" ReturnType="RMTSAMPLEFLIGHT.Flight" EntitySet="FlightCollection" m:HttpMethod="POST">
+					<Parameter Name="carrid" Type="Edm.String"/>
+					<Parameter Name="guid" Type="Edm.Guid"/>
+					<Parameter Name="fldate" Type="Edm.DateTime" Precision="0"/>
+					<Parameter Name="flightTime" Type="Edm.Int32"/>
+				</FunctionImport>
 			</EntityContainer>
 			<Annotations Target="RMTSAMPLEFLIGHT.VL_BOOK_SMOKER/ID" xmlns="http://docs.oasis-open.org/odata/ns/edm">
 				<Annotation Term="Common.ValueList"/>

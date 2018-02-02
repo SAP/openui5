@@ -621,6 +621,29 @@ sap.ui.define([
 	};
 
 	/**
+	 * Tells whether an empty object in the request body is optional for parameterless actions.
+	 * For OData V4, this is false, but for 4.01 it will become true.
+	 *
+	 * @returns {boolean} <code>false</code>
+	 *
+	 * @private
+	 */
+	Requestor.prototype.isActionBodyOptional = function () {
+		return false;
+	};
+
+	/**
+	 * Tells whether change sets are optional. For OData V4, this is true.
+	 *
+	 * @returns {boolean} <code>true</code>
+	 *
+	 * @private
+	 */
+	Requestor.prototype.isChangeSetOptional = function () {
+		return true;
+	};
+
+	/**
 	 * Returns a sync promise that is resolved when the requestor is ready to be used. The V4
 	 * requestor is ready immediately. Subclasses may behave differently.
 	 *
@@ -1037,7 +1060,7 @@ sap.ui.define([
 
 		if (aChangeSet.length === 0) {
 			aRequests.splice(0, 1); // delete empty change set
-		} else if (aChangeSet.length === 1) {
+		} else if (aChangeSet.length === 1 && this.isChangeSetOptional()) {
 			aRequests[0] = aChangeSet[0]; // unwrap change set
 		} else {
 			aRequests[0] = aChangeSet;

@@ -540,7 +540,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[/*undefined,*/ "GET"/*, "POST"*/].forEach(function (sMethod) {
+	["GET", "POST"].forEach(function (sMethod) {
 		QUnit.test("convert: FunctionImport, Method=" + sMethod, function (assert) {
 			var sWhat = sMethod === "POST" ? "Action" : "Function",
 				sMethodAttribute = sMethod ? ' m:HttpMethod="' + sMethod + '"' : "",
@@ -635,6 +635,12 @@ sap.ui.require([
 							<Parameter Name="ItemPosition" Type="Edm.String" Nullable="false"/>\
 							<Parameter Name="SalesOrderID" Type="Edm.String" Nullable="false"/>\
 						</FunctionImport>\
+						<FunctionImport m:HttpMethod="POST" Name="SalesOrderLineItemAction"\
+							ReturnType="Edm.String" sap:action-for="f.SalesOrderLineItem">\
+							<Parameter Name="SalesOrderID" Type="Edm.String" Nullable="false"/>\
+							<Parameter Name="NoteLanguage" Type="Edm.String" Nullable="false"/>\
+							<Parameter Name="ItemPosition" Type="Edm.String" Nullable="false"/>\
+						</FunctionImport>\
 					</EntityContainer>\
 					<EntityType Name="SalesOrderLineItem">\
 						<Key>\
@@ -648,6 +654,22 @@ sap.ui.require([
 			{
 				"foo.Bar" : [{
 					"$kind" : "Function"
+				}],
+				"foo.SalesOrderLineItemAction" : [{
+					"$kind" : "Action",
+					"$IsBound" : true,
+					"$Parameter" : [{
+						"$Name" : null,
+						"$Nullable" : false,
+						"$Type" : "foo.SalesOrderLineItem"
+					}, {
+						"$Name" : "NoteLanguage",
+						"$Nullable" : false,
+						"$Type" : "Edm.String"
+					}],
+					"$ReturnType" : {
+						"$Type" : "Edm.String"
+					}
 				}],
 				"foo.SalesOrderLineItemFunction" : [{
 					"$kind" : "Function",
@@ -672,7 +694,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[undefined, "DELETE", "MERGE", "PATCH", "POST", "PUT"].forEach(function (sMethod) {
+	[undefined, "DELETE", "MERGE", "PATCH", "PUT"].forEach(function (sMethod) {
 		QUnit.test("convert: FunctionImport w/ m:HttpMethod = " + sMethod, function (assert) {
 			var sMethodAttribute = sMethod ? ' m:HttpMethod="' + sMethod + '"' : "";
 
@@ -741,20 +763,6 @@ sap.ui.require([
 		var oLogMock = this.oLogMock,
 			sUrl = "/GWSAMPLE_BASIC/$metadata";
 
-		[
-			"RegenerateAllData", "SalesOrder_Confirm", "SalesOrder_Cancel",
-			"SalesOrder_InvoiceCreated", "SalesOrder_GoodsIssueCreated"
-		].forEach(function (sName) {
-			oLogMock.expects("warning")
-				.withExactArgs("Unsupported HttpMethod at FunctionImport '" + sName
-					+ "', removing this FunctionImport", undefined, sClassName);
-		});
-//		["Confirm", "Cancel", "InvoiceCreated", "GoodsIssueCreated"].forEach(function (sName) {
-//			oLogMock.expects("warning")
-//				.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'SalesOrder_" + sName
-//						+ "', removing this FunctionImport", undefined,
-//					sClassName);
-//		});
 		["filterable", "sortable"].forEach(function (sAnnotation) {
 			oLogMock.expects("warning")
 				.withExactArgs("Unsupported SAP annotation at a complex type in '" + sUrl + "'",

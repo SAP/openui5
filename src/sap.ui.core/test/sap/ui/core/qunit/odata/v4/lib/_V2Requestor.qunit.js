@@ -1315,4 +1315,18 @@ sap.ui.require([
 				{"foo" : [42]});
 		}, new Error("Unsupported collection-valued parameter: foo"));
 	});
+
+	//*****************************************************************************************
+	QUnit.test("isChangeSetOptional", function (assert) {
+		var oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+
+		assert.strictEqual(oRequestor.isChangeSetOptional(), false);
+	});
+
+	//*****************************************************************************************
+	QUnit.test("isActionBodyOptional", function (assert) {
+		var oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+
+		assert.strictEqual(oRequestor.isActionBodyOptional(), true);
+	});
 });

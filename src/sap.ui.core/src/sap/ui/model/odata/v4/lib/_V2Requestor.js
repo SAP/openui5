@@ -715,6 +715,31 @@ sap.ui.define([
 	};
 
 	/**
+	 * Tells whether an empty object in the request body is optional for (parameterless) actions.
+	 * For OData V2, this is true in the sense that the request body should be empty and parameters
+	 * are all part of the resource path.
+	 *
+	 * @returns {boolean} <code>true</code>
+	 *
+	 * @private
+	 */
+	_V2Requestor.prototype.isActionBodyOptional = function () {
+		return true;
+	};
+
+	/**
+	 * Tells whether change sets are optional. For OData V2, this is false, i.e. even single change
+	 * requests must be wrapped within a change set.
+	 *
+	 * @returns {boolean} <code>false</code>
+	 *
+	 * @private
+	 */
+	_V2Requestor.prototype.isChangeSetOptional = function () {
+		return false;
+	};
+
+	/**
 	 * Returns a sync promise that is resolved when the requestor is ready to be used. Waits for the
 	 * metadata to be available.
 	 *

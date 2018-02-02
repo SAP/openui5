@@ -1453,6 +1453,54 @@
 			"$Type" : "Edm.String"
 		}
 	},
+	"GWSAMPLE_BASIC.SalesOrder_Cancel": [{
+		"$IsBound": true,
+		"$Parameter": [{
+			"$Name": null,
+			"$Nullable": false,
+			"$Type": "GWSAMPLE_BASIC.SalesOrder"
+		}],
+		"$ReturnType": {
+			"$Type": "GWSAMPLE_BASIC.SalesOrder"
+		},
+		"$kind": "Action"
+	}],
+	"GWSAMPLE_BASIC.SalesOrder_Confirm": [{
+		"$IsBound": true,
+		"$Parameter": [{
+			"$Name": null,
+			"$Nullable": false,
+			"$Type": "GWSAMPLE_BASIC.SalesOrder"
+		}],
+		"$ReturnType": {
+			"$Type": "GWSAMPLE_BASIC.SalesOrder"
+		},
+		"$kind": "Action"
+	}],
+	"GWSAMPLE_BASIC.SalesOrder_GoodsIssueCreated": [{
+		"$IsBound": true,
+		"$Parameter": [{
+			"$Name": null,
+			"$Nullable": false,
+			"$Type": "GWSAMPLE_BASIC.SalesOrder"
+		}],
+		"$ReturnType": {
+			"$Type": "GWSAMPLE_BASIC.SalesOrder"
+		},
+		"$kind": "Action"
+	}],
+	"GWSAMPLE_BASIC.SalesOrder_InvoiceCreated": [{
+		"$IsBound": true,
+		"$Parameter": [{
+			"$Name": null,
+			"$Nullable": false,
+			"$Type": "GWSAMPLE_BASIC.SalesOrder"
+		}],
+		"$ReturnType": {
+			"$Type": "GWSAMPLE_BASIC.SalesOrder"
+		},
+		"$kind": "Action"
+	}],
 	"GWSAMPLE_BASIC.VH_AddressType" : {
 		"$kind" : "EntityType",
 		"$Key" : ["AddressType"],
@@ -1717,7 +1765,21 @@
 		"VH_LanguageSet" : {
 			"$kind" : "EntitySet",
 			"$Type" : "GWSAMPLE_BASIC.VH_Language"
+		},
+		"RegenerateAllData" : {
+			"$kind" : "ActionImport",
+			"$Action" : "GWSAMPLE_BASIC.RegenerateAllData"
 		}
 	},
+	"GWSAMPLE_BASIC.RegenerateAllData" : [{
+		"$kind" : "Action",
+		"$ReturnType" : {
+			"$Type" : "GWSAMPLE_BASIC.CT_String"
+		},
+		"$Parameter" : [{
+			"$Name" : "NoOfSalesOrders",
+			"$Type" : "Edm.Int32"
+		}]
+	}],
 	"$EntityContainer" : "GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities"
 }
