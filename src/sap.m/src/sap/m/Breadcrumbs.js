@@ -13,8 +13,21 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/IconPool",
 	"sap/ui/Device",
-	"sap/m/library"
-], function (Control, Text, Link, Select, Item, ItemNavigation, ResizeHandler, IconPool, Device, library) {
+	"sap/m/library",
+	"./BreadcrumbsRenderer"
+], function(
+	Control,
+	Text,
+	Link,
+	Select,
+	Item,
+	ItemNavigation,
+	ResizeHandler,
+	IconPool,
+	Device,
+	library,
+	BreadcrumbsRenderer
+) {
 	"use strict";
 
 	// shortcut for sap.m.SelectType
@@ -119,10 +132,6 @@ sap.ui.define([
 
 	Breadcrumbs.PAGEUP_AND_PAGEDOWN_JUMP_SIZE = 5;
 
-	Breadcrumbs._getResourceBundle = function () {
-		return sap.ui.getCore().getLibraryResourceBundle("sap.m");
-	};
-
 	/*************************************** Internal aggregation handling  ******************************************/
 
 	Breadcrumbs.prototype._getAugmentedId = function (sSuffix) {
@@ -138,7 +147,7 @@ sap.ui.define([
 				autoAdjustWidth: true,
 				icon: IconPool.getIconURI("slim-arrow-down"),
 				type: SelectType.IconOnly,
-				tooltip: Breadcrumbs._getResourceBundle().getText("BREADCRUMB_SELECT_TOOLTIP")
+				tooltip: BreadcrumbsRenderer._getResourceBundleText("BREADCRUMB_SELECT_TOOLTIP")
 			})));
 		}
 		return this.getAggregation("_select");
