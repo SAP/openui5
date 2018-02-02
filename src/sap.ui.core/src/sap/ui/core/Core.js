@@ -840,7 +840,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		if (sThemeName && this.sTheme != sThemeName) {
 			var sCurrentTheme = this.sTheme;
 
-			this._updateThemeUrls(sThemeName);
+			this._updateThemeUrls(sThemeName, /* bSuppressFOUC */ true);
 			this.sTheme = sThemeName;
 			this.oConfiguration._setTheme(sThemeName);
 
@@ -855,7 +855,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	// this function is also used by "sap.ui.core.ThemeCheck" to load a fallback theme for a single library
-	Core.prototype._updateThemeUrl = function(oLink, sThemeName) {
+	Core.prototype._updateThemeUrl = function(oLink, sThemeName, bSuppressFOUC) {
 		var sLibName = oLink.id.slice(13), // length of "sap-ui-theme-"
 		    sLibFileName = oLink.href.slice(oLink.href.lastIndexOf("/") + 1),
 		    sStandardLibFilePrefix = "library",
@@ -880,7 +880,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			// which enables once the attribute data-sap-ui-foucmarker is
 			// present on the link to be replaced (usage of the Promise
 			// API is not sufficient as it will change the sync behavior)
-			oLink.setAttribute("data-sap-ui-foucmarker", oLink.id);
+			if (bSuppressFOUC) {
+				oLink.setAttribute("data-sap-ui-foucmarker", oLink.id);
+			}
 			// Replace the current <link> tag with a new one.
 			// Changing "oLink.href" would also trigger loading the new stylesheet but
 			// the load/error handlers would not get called which causes issues with the ThemeCheck
@@ -890,11 +892,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	// modify style sheet URLs to point to the given theme, using the current RTL mode
-	Core.prototype._updateThemeUrls = function(sThemeName) {
+	Core.prototype._updateThemeUrls = function(sThemeName, bSuppressFOUC) {
 		var that = this;
 		// select "our" stylesheets
 		jQuery("link[id^=sap-ui-theme-]").each(function() {
-			that._updateThemeUrl(this, sThemeName);
+			that._updateThemeUrl(this, sThemeName, bSuppressFOUC);
 		});
 	};
 
