@@ -26,7 +26,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 	 *        is provided it must either return a primitive type value as the group key or an object containing
 	 *        a "key" property and additional properties needed for group visualization.
 	 * @param {function} [fnComparator] a custom comparator function, which is used for clientside sorting instead
-	 *        of the default comparator method.
+	 *        of the default comparator method. Information about parameters and expected return values of such a
+	 *        method can be found in the default comparator documentation.
 	 * @public
 	 * @alias sap.ui.model.Sorter
 	 * @extends sap.ui.base.Object
