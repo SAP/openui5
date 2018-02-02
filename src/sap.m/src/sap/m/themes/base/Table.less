@@ -252,6 +252,15 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 	border-bottom: 1px solid @sapUiListBorderColor;
 }
 
+/* table sticky column headers */
+.sapMListTblStickyColHdr,
+html[data-sap-ui-browser^='cr'] .sapMListTblStickyColHdr > .sapMTableTH {
+	position: sticky;
+	position: -webkit-sticky;
+	top: 0;
+	z-index: 100;
+}
+
 /* table footer */
 .sapMListTblFooter > td {
 	border-top: 1px solid @sapUiListTableFooterBorder;

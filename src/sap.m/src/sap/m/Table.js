@@ -21,6 +21,8 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library',
 	// shortcut for sap.m.PopinLayout
 	var PopinLayout = library.PopinLayout;
 
+	// shortcut for sap.m.Sticky
+	var Sticky = library.Sticky;
 
 
 	/**
@@ -89,7 +91,25 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library',
 			 * <b>Note:</b> The <code>demandPopin</code> and <code>minScreenWidth</code> properties of the <code>Column</code> control must be configured appropriately.
 			 * @since 1.52
 			 */
-			popinLayout : {type : "sap.m.PopinLayout", group : "Appearance", defaultValue : PopinLayout.Block}
+			popinLayout : {type : "sap.m.PopinLayout", group : "Appearance", defaultValue : PopinLayout.Block},
+
+			/**
+			 * Defines the section of the <code>sap.m.Table</code> control that remains fixed at the top of the page during vertical scrolling as long as the table is in the viewport.
+			 *
+			 * <b>Note:</b> There is limited browser support, hence the API is in experimental state.
+			 * Browsers that currently support this feature are Chrome (desktop and mobile), Safari (desktop and mobile) and Edge 41.
+			 *
+			 * There are also some known issues with respect to the scrolling behavior and focus handling. A few are given below:
+			 *
+			 * If the table is placed in certain layout containers, for example, the <code>sap.ui.layout.Grid</code> control,
+			 * the column headers are not fixed at the top of the viewport. Similar behavior is also observed with the <code>sap.m.ObjectPage</code> control.
+			 *
+			 * This API should not be used in a productive environment.
+			 *
+			 * @experimental As of 1.54
+			 * @since 1.54
+			 */
+			sticky : {type : "sap.m.Sticky", group : "Appearance", defaultValue : Sticky.None}
 		},
 		aggregations : {
 
