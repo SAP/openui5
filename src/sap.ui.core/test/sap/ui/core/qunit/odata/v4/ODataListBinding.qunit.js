@@ -4430,8 +4430,8 @@ sap.ui.require([
 		oGetDependentBindingsExpectation = this.mock(this.oModel).expects("getDependentBindings")
 			.withExactArgs(sinon.match.same(oBinding))
 			.returns([oDependent0, oDependent1]);
-		this.mock(oDependent0).expects("resumeInternal").withExactArgs();
-		this.mock(oDependent1).expects("resumeInternal").withExactArgs();
+		this.mock(oDependent0).expects("resumeInternal").withExactArgs(false);
+		this.mock(oDependent1).expects("resumeInternal").withExactArgs(false);
 		oFireChangeExpectation = oBindingMock.expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Change});
 

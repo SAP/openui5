@@ -349,9 +349,13 @@ sap.ui.define([
 
 	/**
 	 * Returns whether the binding is suspended.
+	 * Before 1.53.0, this method always returned false.
 	 *
 	 * @returns {boolean} Whether the binding is suspended
 	 * @public
+	 * @see sap.ui.model.odata.v4.ODataContextBinding#suspend
+	 * @see sap.ui.model.odata.v4.ODataListBinding#suspend
+	 * @since 1.37.0
 	 */
 	// @override sap.ui.model.Binding#isSuspended
 	ODataBinding.prototype.isSuspended = function () {

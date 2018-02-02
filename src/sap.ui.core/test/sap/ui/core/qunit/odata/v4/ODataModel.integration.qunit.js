@@ -215,7 +215,7 @@ sap.ui.require([
 		addToTable : function (oTable, sPropertyPath, assert) {
 			var bAbsolute = oTable.getBinding("items").getPath()[0] === "/",
 				sId = "id" + sPropertyPath.replace("/", "_"),
-				oNewTemplate = oTable.getBindingInfo("items").template,
+				oTemplate = oTable.getBindingInfo("items").template,
 				oText = new Text({
 					id : this.oView.createId(sId),
 					text : "{" + sPropertyPath + "}"
@@ -223,13 +223,13 @@ sap.ui.require([
 
 			// attach formatter to check value for dynamically created control
 			this.setFormatterInList(assert, oText, sId);
-			oNewTemplate.addCell(oText);
+			oTemplate.addCell(oText);
 			// ensure template control is not destroyed on re-creation of the "items" aggregation
 			delete oTable.getBindingInfo("items").template;
 			// It is not possible to modify the aggregation's template on an existing binding.
 			// Hence, we have to re-create.
 			oTable.bindItems(jQuery.extend({}, oTable.getBindingInfo("items"),
-				{template : oNewTemplate, suspended : bAbsolute}));
+				{suspended : bAbsolute, template : oTemplate}));
 			return sId;
 		},
 
@@ -649,13 +649,13 @@ sap.ui.require([
 		 */
 		removeFromTable : function (oTable, sControlId) {
 			var bAbsolute = oTable.getBinding("items").getPath()[0] === "/",
-				oNewTemplate = oTable.getBindingInfo("items").template;
+				oTemplate = oTable.getBindingInfo("items").template;
 
-			oNewTemplate.removeCell(this.oView.byId(sControlId));
+			oTemplate.removeCell(this.oView.byId(sControlId));
 			// ensure template control is not destroyed on re-creation of the "items" aggregation
 			delete oTable.getBindingInfo("items").template;
 			oTable.bindItems(jQuery.extend({}, oTable.getBindingInfo("items"),
-				{template : oNewTemplate, suspended : bAbsolute}));
+				{suspended : bAbsolute, template : oTemplate}));
 		},
 
 		/**
@@ -4064,8 +4064,8 @@ sap.ui.require([
 			})
 			.expectChange("idCategory", "Electronics")
 			.expectChange("idEmployeeId", "0001")
-			.expectChange("idCategory", "Electronics") // TODO unexpected changes
-			.expectChange("idEmployeeId", "0001");
+			.expectChange("idCategory", "Electronics") // TODO unexpected change
+			.expectChange("idEmployeeId", "0001"); // TODO unexpected change
 		return this.createView(assert, sView, oModel).then(function () {
 			var oForm = that.oView.byId("form"),
 				sId;
@@ -4181,9 +4181,9 @@ sap.ui.require([
 			.expectChange("idEquipmentName", "Office PC")
 			.expectChange("idEmployeeName", "Frederic Fall")
 			.expectChange("idManagerId", "5")
-			.expectChange("idEquipmentName", "Office PC") // TODO unexpected changes
-			.expectChange("idEmployeeName", "Frederic Fall")
-			.expectChange("idManagerId", "5");
+			.expectChange("idEquipmentName", "Office PC") // TODO unexpected change
+			.expectChange("idEmployeeName", "Frederic Fall") // TODO unexpected change
+			.expectChange("idManagerId", "5"); // TODO unexpected change
 		return this.createView(assert, sView, oModel).then(function () {
 			var oOuterForm = that.oView.byId("outerForm"),
 				oInnerForm = that.oView.byId("innerForm"),
@@ -4252,7 +4252,7 @@ sap.ui.require([
 				}]
 			})
 			.expectChange("idMemberCount", "2")
-			.expectChange("idMemberCount", "2") // TODO unexpected changes
+			.expectChange("idMemberCount", "2") // TODO unexpected change
 			.expectChange("idAge", ["52", "56"])
 			.expectChange("idName", ["Frederic Fall", "Jonathan Smith"]);
 
@@ -4288,6 +4288,59 @@ sap.ui.require([
 				.expectChange(sIdStatus, ["Available", "Occupied"]);
 
 			oForm.getObjectBinding().resume();
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: List binding of a table is suspended and then resumed with no change to the table,
+	//    so that the list binding is not re-created. Property bindings from existing rows must not
+	//    call checkUpdate in resumeInternal while the list binding is "empty" as it has not yet
+	//    fired a change event. This would lead to "Failed to drill-down" errors.
+	QUnit.test("suspend/resume: no checkUpdate for existing property bindings in a list binding",
+			function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{path : \'/Equipments\', templateShareable : false}">\
+	<items>\
+		<ColumnListItem>\
+			<Text id="idEquipmentName" text="{Name}" />\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			that = this;
+
+		this.expectRequest("Equipments?$select=Category,ID,Name&$skip=0&$top=100", {
+				value : [{
+					"Category": "Electronics",
+					"ID": 1,
+					"Name": "Office PC"
+				}, {
+					"Category": "Electronics",
+					"ID": 2,
+					"Name": "Tablet X"
+				}]
+			})
+			.expectChange("idEquipmentName", ["Office PC", "Tablet X"]);
+		return this.createView(assert, sView, oModel).then(function () {
+			var oListBinding = that.oView.byId("table").getBinding("items");
+
+			oListBinding.suspend();
+
+			that.expectRequest("Equipments?$select=Category,ID,Name&$skip=0&$top=100", {
+					value : [{
+						"Category": "Electronics",
+						"ID": 1,
+						"Name": "Office PC"
+					}, {
+						"Category": "Electronics",
+						"ID": 2,
+						"Name": "Tablet X"
+					}]
+				})
+				.expectChange("idEquipmentName", ["Office PC", "Tablet X"]);
+
+			oListBinding.resume();
 			return that.waitForChanges(assert);
 		});
 	});

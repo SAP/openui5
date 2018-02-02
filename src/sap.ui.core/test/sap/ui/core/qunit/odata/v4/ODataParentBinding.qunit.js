@@ -2033,7 +2033,7 @@ sap.ui.require([
 			this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
 				.withExactArgs(sinon.match.func)
 				.callsFake(function (fnCallback) {
-					oBindingMock.expects("resumeInternal").withExactArgs();
+					oBindingMock.expects("resumeInternal").withExactArgs(true);
 					fnCallback();
 				});
 
@@ -2089,8 +2089,8 @@ sap.ui.require([
 			}, new Error("Cannot resume a relative binding: ~"));
 		});
 	});
-	//TODO bCheckUpdate parameter to resumeInternal; test: nested context binding in list binding?
-	//     integration.qunit for "outer table, inner form"?
+	//TODO Fix issue with ODataModel.integration.qunit
+	//  "suspend/resume: list binding with nested context binding, only context binding is adapted"
 	//TODO ODLB#resumeInternal: checkUpdate on dependent bindings of header context after change
 	//  event (see ODLB#reset)
 	//TODO check: resumeInternal has no effect for operations
@@ -2098,6 +2098,6 @@ sap.ui.require([
 	//TODO error handling for write APIs, refresh
 	//   (change only in resume is probably not sufficient)
 	//TODO Performance: Compare previous aggregated query options with current state and
-		// do not recreate cache if there is no diff (e.g no UI change applied, UI change
-		// does not affect current $expand/$select)
+	// do not recreate cache if there is no diff (e.g no UI change applied, UI change
+	// does not affect current $expand/$select)
 });
