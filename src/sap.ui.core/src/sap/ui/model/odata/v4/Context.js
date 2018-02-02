@@ -97,7 +97,7 @@ sap.ui.define([
 				this.iIndex = iIndex;
 			}
 		}),
-		sClassname = "sap.ui.model.odata.v4.Context",
+		sClassName = "sap.ui.model.odata.v4.Context",
 		rEndsWithODataBind = /@odata\.bind$/;
 
 	/**
@@ -113,8 +113,11 @@ sap.ui.define([
 
 	/**
 	 * Returns a promise that is resolved without data when the entity represented by this context
-	 * has been created in the backend. As long as it is not yet resolved or rejected the entity
-	 * represented by this context is transient.
+	 * has been created in the backend and all selected properties of this entity are available.
+	 * Expanded navigation properties are only available if the context's binding is refreshable.
+	 *
+	 * As long as the promise is not yet resolved or rejected, the entity represented by this
+	 * context is transient.
 	 *
 	 * @returns {Promise}
 	 *   A promise that is resolved without data when the entity represented by this context has
@@ -127,6 +130,7 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#create}.
 	 *
 	 * @public
+	 * @see sap.ui.model.odata.v4.ODataListBinding#isRefreshable
 	 * @since 1.43.0
 	 */
 	Context.prototype.created = function () {
@@ -372,9 +376,13 @@ sap.ui.define([
 			oSyncPromise = fetchPrimitiveValue(this, sPath, bExternalFormat);
 
 		if (oSyncPromise.isRejected()) {
+			oSyncPromise.caught();
 			oError = oSyncPromise.getResult();
 			if (oError.isNotPrimitive) {
 				throw oError;
+			} else {
+				// Note: errors due to data requests have already been logged
+				jQuery.sap.log.warning(oError.message, sPath, sClassName);
 			}
 		}
 		return oSyncPromise.isFulfilled() ? oSyncPromise.getResult() : undefined;
@@ -566,7 +574,7 @@ sap.ui.define([
 
 		function reportError (oError) {
 			that.oModel.reportError("Failed to set property for path: "
-				+ that.oModel.resolve(sPath, that), sClassname, oError);
+				+ that.oModel.resolve(sPath, that), sClassName, oError);
 		}
 
 		function getRelativePathOrThrowError(vTarget) {
@@ -598,9 +606,9 @@ sap.ui.define([
 
 		this.getModel().getMetaModel().fetchUpdateData(sPath, this).then(function (oResult) {
 			return that.getBinding().withCache(function (oCache, sCachePath, oBinding) {
-				oCache.update(oBinding.getUpdateGroupId(),
-					oResult.propertyPath, vTargets, reportError, oResult.editUrl,
-					sCachePath)["catch"](reportError);
+				oCache.update(oBinding.getUpdateGroupId(), oResult.propertyPath, vTargets,
+						reportError, oResult.editUrl, sCachePath)
+					["catch"](reportError);
 			}, oResult.entityPath);
 		})["catch"](reportError);
 	};

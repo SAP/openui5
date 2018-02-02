@@ -15,13 +15,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.Context", {
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-		},
-
-		afterEach : function () {
-			this.oLogMock.verify();
 		}
 	});
 
@@ -238,7 +234,7 @@ sap.ui.require([
 		assert.ok(oContext.isTransient(), "unresolved created Promise -> transient");
 
 		fnResolve();
-		oContext.created().then(function () {
+		return oContext.created().then(function () {
 			// code under test
 			assert.notOk(oContext.isTransient(), "resolved -> not transient");
 		});
@@ -344,11 +340,14 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("getProperty: rejected", function (assert) {
 		var oContext = Context.create(null, null, "/foo"),
-			oPromise = Promise.reject("read error"),
+			sMessage = "read error",
+			oPromise = Promise.reject(new Error(sMessage)),
 			oSyncPromise = SyncPromise.resolve(oPromise);
 
 		this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 			.returns(oSyncPromise);
+		this.oLogMock.expects("warning")
+			.withExactArgs(sMessage, "bar", "sap.ui.model.odata.v4.Context");
 
 		return oPromise["catch"](function () {
 			//code under test
@@ -438,7 +437,8 @@ sap.ui.require([
 			this.mock(oCache).expects("update")
 				.withExactArgs("updateGroupId", sinon.match.same(oUpdateData.propertyPath),
 					vValueExpected, sinon.match.func, sinon.match.same(oUpdateData.editUrl),
-					sinon.match.same(sPropertyPath));
+					sinon.match.same(sPropertyPath))
+				.returns(SyncPromise.resolve());
 
 			//code under test
 			oCreatedContext.setProperty(sPropertyPath, vValue);

@@ -5,25 +5,20 @@ sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/test/TestUtils"
 ], function (jQuery, TestUtils) {
-	/*global QUnit, sinon */
+	/*global QUnit */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.test.TestUtils", {
 		beforeEach : function () {
-			this.oSandbox = sinon.sandbox.create();
-			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 
 			// workaround: Chrome extension "UI5 Inspector" calls this method which loads the
 			// resource "sap-ui-version.json" and thus interferes with mocks for jQuery.ajax
-			this.oSandbox.stub(sap.ui, "getVersionInfo");
-		},
-
-		afterEach : function () {
-			this.oSandbox.verifyAndRestore();
+			this.mock(sap.ui).expects("getVersionInfo").atLeast(0);
 		}
 	});
 
@@ -83,7 +78,7 @@ sap.ui.require([
 			};
 
 		QUnit.test("TestUtils: GET, " + i, function (assert) {
-			TestUtils.useFakeServer(this.oSandbox, "sap/ui/core/qunit/odata/v4/data", mUrls);
+			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit/odata/v4/data", mUrls);
 			return jQuery.ajax("/Foo/bar", {
 				method : "GET",
 				headers : oFixture.requestHeaders
@@ -98,7 +93,7 @@ sap.ui.require([
 		});
 
 		QUnit.test("TestUtils: $batch with GET, " + i, function (assert) {
-			TestUtils.useFakeServer(this.oSandbox, "sap/ui/core/qunit/odata/v4/data", mUrls);
+			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit/odata/v4/data", mUrls);
 			return jQuery.ajax("/$batch", {
 				data : "--batch_id-0123456789012-345\r\n"
 					+ "Content-Type:application/http\r\n"
@@ -173,7 +168,7 @@ sap.ui.require([
 			var sTitle = sMethod + ", " + i;
 
 			QUnit.test("TestUtils: " + sTitle, function (assert) {
-				TestUtils.useFakeServer(this.oSandbox, "sap/ui/core/qunit/odata/v4/data", {});
+				TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit/odata/v4/data", {});
 				return jQuery.ajax("/Foo/bar", {
 					data : sMethod === "DELETE" ? "" : "{\"foo\":\"bar\"}",
 					method : sMethod,
@@ -188,7 +183,7 @@ sap.ui.require([
 			});
 
 			QUnit.test("TestUtils: $batch with " + sTitle, function (assert) {
-				TestUtils.useFakeServer(this.oSandbox, "sap/ui/core/qunit/odata/v4/data", {});
+				TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit/odata/v4/data", {});
 				return jQuery.ajax("/$batch", {
 					data : "--batch_id-0123456789012-345\r\n"
 						+ "Content-Type:application/http\r\n"

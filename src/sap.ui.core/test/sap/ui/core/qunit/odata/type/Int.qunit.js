@@ -40,14 +40,13 @@ sap.ui.require([
 		//*****************************************************************************************
 		QUnit.module(sName, {
 			beforeEach : function () {
-				this.oLogMock = sinon.mock(jQuery.sap.log);
+				this.oLogMock = this.mock(jQuery.sap.log);
 				this.oLogMock.expects("warning").never();
 				this.oLogMock.expects("error").never();
 				sap.ui.getCore().getConfiguration().setLanguage("en-US");
 				oType = createType();
 			},
 			afterEach : function () {
-				this.oLogMock.verify();
 				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 			}
 		});

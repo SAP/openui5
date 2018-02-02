@@ -12,7 +12,7 @@ sap.ui.require([
 	/*eslint no-warning-comments: 0 */
 	"use strict";
 
-	var sModuleName = "sap.ui.model.odata.v4.ODataBinding";
+	var sClassName = "sap.ui.model.odata.v4.ODataBinding";
 
 	/**
 	 * Constructs a test object.
@@ -29,13 +29,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataBinding", {
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-		},
-
-		afterEach : function () {
-			this.oLogMock.verify();
 		}
 	});
 
@@ -128,14 +124,6 @@ sap.ui.require([
 		assert.throws(function () { //TODO implement
 			oBinding.isInitial();
 		}, new Error("Unsupported operation: isInitial"));
-
-		assert.throws(function () { //TODO implement
-			oBinding.resume();
-		}, new Error("Unsupported operation: resume"));
-
-		assert.throws(function () { //TODO implement
-			oBinding.suspend();
-		}, new Error("Unsupported operation: suspend"));
 	});
 
 	//*********************************************************************************************
@@ -194,6 +182,27 @@ sap.ui.require([
 		assert.throws(function () {
 			oBinding.refresh("$invalid");
 		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refresh: does nothing for suspended binding", function (assert) {
+		var oBinding = new ODataBinding({
+				oModel : {
+					checkGroupId : function () {}
+				},
+				refreshInternal : function () {},
+				bSuspended : true
+			}),
+			oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("isRefreshable").withExactArgs().returns(true);
+		oBindingMock.expects("hasPendingChanges").returns(false);
+		this.mock(oBinding.oModel).expects("checkGroupId");
+		oBindingMock.expects("isSuspended").withExactArgs().returns(true);
+		oBindingMock.expects("refreshInternal").never();
+
+		// code under test
+		oBinding.refresh("groupId");
 	});
 
 	//*********************************************************************************************
@@ -274,7 +283,7 @@ sap.ui.require([
 
 		this.mock(oBinding).expects("withCache").returns(SyncPromise.reject(oError));
 		this.oLogMock.expects("error").withExactArgs("Error in hasPendingChangesForPath", oError,
-			sModuleName);
+			sClassName);
 
 		// code under test
 		assert.strictEqual(oBinding.hasPendingChangesForPath("foo"), false);
@@ -422,7 +431,7 @@ sap.ui.require([
 
 		this.mock(oBinding).expects("withCache").returns(SyncPromise.reject(oError));
 		this.oLogMock.expects("error").withExactArgs("Error in resetChangesForPath", oError,
-			sModuleName);
+			sClassName);
 
 		// code under test
 		assert.throws(function () {
@@ -438,7 +447,7 @@ sap.ui.require([
 
 		this.mock(oBinding).expects("withCache").returns(oPromise);
 		this.oLogMock.expects("error").withExactArgs("Error in resetChangesForPath", oError,
-			sModuleName);
+			sClassName);
 
 		// code under test
 		oBinding.resetChangesForPath("foo");
@@ -1202,7 +1211,7 @@ sap.ui.require([
 		oPromise = oBinding.oCachePromise;
 
 		this.mock(oBinding.oModel).expects("reportError")
-			.withExactArgs("Failed to create cache for binding MyBinding", sModuleName,
+			.withExactArgs("Failed to create cache for binding MyBinding", sClassName,
 				sinon.match.instanceOf(Error));
 
 		// create new cache for this binding while other cache creation is pending
@@ -1243,7 +1252,7 @@ sap.ui.require([
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
 			.returns(SyncPromise.reject(oError));
 		this.mock(oBinding.oModel).expects("reportError")
-			.withExactArgs("Failed to create cache for binding MyBinding", sModuleName,
+			.withExactArgs("Failed to create cache for binding MyBinding", sClassName,
 				sinon.match.same(oError));
 
 		// code under test
@@ -1300,17 +1309,19 @@ sap.ui.require([
 						: SyncPromise.resolve(oCache)
 				}),
 				oCallbackResult = {},
-				fnCallback = sinon.stub().returns(oCallbackResult),
+				oProcessor = {
+					fnCallback : function () {}
+				},
 				oPromise;
 
 			this.mock(oBinding).expects("getRelativePath").withExactArgs("foo").returns("~");
+			this.mock(oProcessor).expects("fnCallback")
+				.withExactArgs(sinon.match.same(oCache), "~", sinon.match.same(oBinding))
+				.returns(oCallbackResult);
 
 			// code under test
-			oPromise = oBinding.withCache(fnCallback, "foo").then(function (oResult) {
+			oPromise = oBinding.withCache(oProcessor.fnCallback, "foo").then(function (oResult) {
 				assert.strictEqual(oResult, oCallbackResult);
-
-				sinon.assert.calledWithExactly(fnCallback, sinon.match.same(oCache), "~",
-					sinon.match.same(oBinding));
 			});
 			if (!bAsync) {
 				assert.strictEqual(oPromise.isFulfilled(), true);
@@ -1330,17 +1341,19 @@ sap.ui.require([
 				oContext : oContext
 			}),
 			oCallbackResult = {},
-			fnCallback = sinon.stub().returns(oCallbackResult);
+			oProcessor = {
+				fnCallback : function () {}
+			};
 
 		this.mock(oBinding).expects("getRelativePath").withExactArgs("").returns("");
 		this.mock(oContext).expects("withCache").never();
+		this.mock(oProcessor).expects("fnCallback")
+			.withExactArgs(sinon.match.same(oCache), "", sinon.match.same(oBinding))
+			.returns(oCallbackResult);
 
 		// code under test
-		return oBinding.withCache(fnCallback).then(function (oResult) {
+		return oBinding.withCache(oProcessor.fnCallback).then(function (oResult) {
 			assert.strictEqual(oResult, oCallbackResult);
-
-			sinon.assert.calledWithExactly(fnCallback, sinon.match.same(oCache), "",
-				sinon.match.same(oBinding));
 		});
 	});
 
@@ -1454,5 +1467,79 @@ sap.ui.require([
 				assert.strictEqual(oResult, undefined);
 			});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isSuspended: absolute binding", function (assert) {
+		var bSuspended = {/*use object for comparison in strictEqual*/},
+			oBinding = new ODataBinding({
+				oContext : {/* sap.ui.model.odata.v4.Context */getBinding : function () {} },
+				sPath : "/Employees",
+				bRelative : false,
+				bSuspended : bSuspended
+			});
+
+		this.mock(oBinding.oContext).expects("getBinding").never();
+
+		// code under test
+		assert.strictEqual(oBinding.isSuspended(), bSuspended);
+
+		oBinding.bSuspended = true; // simulate oBinding.suspend()
+
+		// code under test
+		assert.strictEqual(oBinding.isSuspended(), true);
+
+		oBinding.bSuspended = false; // simulate oBinding.resume()
+
+		// code under test
+		assert.strictEqual(oBinding.isSuspended(), false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isSuspended: quasi-absolute binding", function (assert) {
+		var bSuspended = {/*use object for comparison in strictEqual*/},
+			oBinding = new ODataBinding({
+				oContext : {/*base context, has no method getBinding*/},
+				sPath : "SO_2_SCHEDULE",
+				bRelative : true,
+				bSuspended : bSuspended
+			});
+
+		// code under test
+		assert.strictEqual(oBinding.isSuspended(), bSuspended);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isSuspended: unresolved relative binding", function (assert) {
+		var oBinding = new ODataBinding({
+				oContext : undefined,
+				sPath : "SO_2_SCHEDULE",
+				bRelative : true,
+				bSuspended : false // sap.ui.model.Binding constructor sets bSuspended to false
+			});
+
+		// code under test
+		assert.strictEqual(oBinding.isSuspended(), false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isSuspended: resolved relative binding", function (assert) {
+		var oParentBinding = {
+				isSuspended : function () {}
+			},
+			oBinding = new ODataBinding({
+				oContext : {/* sap.ui.model.odata.v4.Context */getBinding : function () {
+					return oParentBinding;
+				}},
+				sPath : "~path~",
+				bRelative : true,
+				bSuspended : false
+			}),
+			bSuspended = {/*use object for comparison in strictEqual*/};
+
+		this.mock(oParentBinding).expects("isSuspended").returns(bSuspended);
+
+		// code under test
+		assert.strictEqual(oBinding.isSuspended(), bSuspended);
 	});
 });

@@ -79,7 +79,7 @@ sap.ui.define([
 		onSourceCode : function (oEvent) {
 			var oView = this.getView(),
 				sSource,
-				bVisible = oView.byId("toggleSourceCode").getPressed();
+				bVisible = this.byId("toggleSourceCode").getPressed();
 
 			oView.getModel("ui").setProperty("/codeVisible", bVisible);
 			if (bVisible) {

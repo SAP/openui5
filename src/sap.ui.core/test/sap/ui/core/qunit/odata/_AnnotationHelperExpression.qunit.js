@@ -20,15 +20,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata._AnnotationHelperExpression", {
 		beforeEach : function () {
-			this.oSandbox = sinon.sandbox.create();
-			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-		},
-
-		afterEach : function () {
-			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
-			this.oSandbox.verifyAndRestore();
 		}
 	});
 
@@ -255,7 +249,7 @@ sap.ui.require([
 			if (oFixture.constraints) {
 				oExpectedResult.constraints = oFixture.constraints;
 			}
-			this.stub(Basics, "followPath", function (oInterface, vRawValue) {
+			this.mock(Basics).expects("followPath").callsFake(function (oInterface, vRawValue) {
 				assert.strictEqual(oInterface.getModel(), oMetaModel);
 				assert.strictEqual(oInterface.getPath(), oPathValue.path);
 				assert.deepEqual(vRawValue, {"Path" : oPathValue.value});
@@ -286,7 +280,7 @@ sap.ui.require([
 				},
 				oResult;
 
-			this.stub(Basics, "followPath").returns(oTarget);
+			this.mock(Basics).expects("followPath").returns(oTarget);
 			this.oLogMock.expects("warning").withExactArgs(
 				"Could not find property 'unsupported' starting from '" + oPathValue.path + "'",
 				null, "sap.ui.model.odata.AnnotationHelper");

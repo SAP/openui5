@@ -11,7 +11,8 @@ sap.ui.require([
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var sEdmx = '<edmx:Edmx Version="1.0" xmlns="http://schemas.microsoft.com/ado/2008/09/edm"'
+	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
+		sEdmx = '<edmx:Edmx Version="1.0" xmlns="http://schemas.microsoft.com/ado/2008/09/edm"'
 			+ ' xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"'
 			+ ' xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"'
 			+ ' xmlns:sap="http://www.sap.com/Protocols/SAPData">',
@@ -20,7 +21,6 @@ sap.ui.require([
 			"/GWSAMPLE_BASIC/annotations" : {source : "GWSAMPLE_BASIC.annotations.xml"},
 			"/GWSAMPLE_BASIC/metadata_v4.json" : {source : "GWSAMPLE_BASIC.metadata_v4.json"}
 		},
-		sModuleName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
 		sXmlnsEdm4 = "http://docs.oasis-open.org/odata/ns/edm",
 		sXmlnsEdmx4 = "http://docs.oasis-open.org/odata/ns/edmx";
 
@@ -105,15 +105,10 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._V2MetadataConverter", {
 		beforeEach : function () {
-			this.oSandbox = sinon.sandbox.create();
-			TestUtils.useFakeServer(this.oSandbox, "sap/ui/core/qunit/model", mFixture);
-			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit/model", mFixture);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-		},
-
-		afterEach : function () {
-			this.oSandbox.verifyAndRestore();
 		}
 	});
 
@@ -545,7 +540,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[undefined, "GET", "POST"].forEach(function (sMethod) {
+	["GET", "POST"].forEach(function (sMethod) {
 		QUnit.test("convert: FunctionImport, Method=" + sMethod, function (assert) {
 			var sWhat = sMethod === "POST" ? "Action" : "Function",
 				sMethodAttribute = sMethod ? ' m:HttpMethod="' + sMethod + '"' : "",
@@ -602,7 +597,8 @@ sap.ui.require([
 		testConversion(assert, '\
 				<Schema Namespace="foo" Alias="f">\
 					<EntityContainer Name="Container">\
-						<FunctionImport Name="Baz" ReturnType="Edm.String" EntitySet="Bar"/>\
+						<FunctionImport m:HttpMethod="GET" Name="Baz" ReturnType="Edm.String"\
+							EntitySet="Bar"/>\
 					</EntityContainer>\
 				</Schema>',
 			{
@@ -628,27 +624,96 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Note: sap:label at <Parameter> which represents "this" is lost, of course!
 	QUnit.test("convert: FunctionImport w/ sap:action-for", function (assert) {
-		this.oLogMock.expects("warning")
-			.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'Baz',"
-				+ " removing this FunctionImport", undefined, sModuleName);
-
 		testConversion(assert, '\
 				<Schema Namespace="foo" Alias="f">\
 					<EntityContainer Name="Container">\
-						<FunctionImport Name="Bar"/>\
-						<FunctionImport Name="Baz" sap:action-for="EntityType">\
-							<Parameter Name="p1" Type="String"/>\
+						<FunctionImport m:HttpMethod="GET" Name="Bar"/>\
+						<FunctionImport m:HttpMethod="GET" Name="SalesOrderLineItemFunction"\
+							ReturnType="Edm.String"\
+							sap:action-for="f.SalesOrderLineItem" sap:label="S.O.L.I.F.">\
+							<Parameter Name="ItemPosition" Type="Edm.String" Nullable="false"\
+								sap:label="Item Pos."/>\
+							<Parameter Name="SalesOrderID" Type="Edm.String" Nullable="false"\
+								sap:label="Sales Order ID"/>\
+						</FunctionImport>\
+						<FunctionImport m:HttpMethod="POST" Name="SalesOrderLineItemAction"\
+							ReturnType="Edm.String" sap:action-for="f.SalesOrderLineItem"\
+							sap:label="S.O.L.I.A.">\
+							<Parameter Name="SalesOrderID" Type="Edm.String" Nullable="false"\
+								sap:label="Sales Order ID"/>\
+							<Parameter Name="NoteLanguage" Type="Edm.String" Nullable="false"\
+								sap:label="Note Language"/>\
+							<Parameter Name="ItemPosition" Type="Edm.String" Nullable="false"\
+								sap:label="Item Pos."/>\
 						</FunctionImport>\
 					</EntityContainer>\
+					<EntityType Name="SalesOrderLineItem">\
+						<Key>\
+							<PropertyRef Name="SalesOrderID"/>\
+							<PropertyRef Name="ItemPosition"/>\
+						</Key>\
+						<Property Name="SalesOrderID" Type="Edm.String" Nullable="false"/>\
+						<Property Name="ItemPosition" Type="Edm.String" Nullable="false"/>\
+					</EntityType>\
 				</Schema>',
 			{
-				"$EntityContainer" : "foo.Container",
-				"foo." : {
-					"$kind" : "Schema"
+				"$EntityContainer": "foo.Container",
+				"foo.": {
+					// Note: no "$Annotations"!
+					"$kind": "Schema"
 				},
 				"foo.Bar" : [{
 					"$kind" : "Function"
+				}],
+				"foo.SalesOrderLineItem": {
+					"$Key": [
+						"SalesOrderID",
+						"ItemPosition"
+					],
+					"$kind": "EntityType",
+					"ItemPosition": {
+						"$Nullable": false,
+						"$Type": "Edm.String",
+						"$kind": "Property"
+					},
+					"SalesOrderID": {
+						"$Nullable": false,
+						"$Type": "Edm.String",
+						"$kind": "Property"
+					}
+				},
+				"foo.SalesOrderLineItemAction" : [{
+					"$kind" : "Action",
+					"$IsBound" : true,
+					"$Parameter" : [{
+						"$Name" : null,
+						"$Nullable" : false,
+						"$Type" : "foo.SalesOrderLineItem"
+					}, {
+						"$Name" : "NoteLanguage",
+						"$Nullable" : false,
+						"$Type" : "Edm.String",
+						"@com.sap.vocabularies.Common.v1.Label" : "Note Language"
+					}],
+					"$ReturnType" : {
+						"$Type" : "Edm.String"
+					},
+					"@com.sap.vocabularies.Common.v1.Label" : "S.O.L.I.A."
+				}],
+				"foo.SalesOrderLineItemFunction" : [{
+					"$kind" : "Function",
+					"$IsBound" : true,
+					"$Parameter" : [{
+						"$Name" : null,
+						"$Nullable" : false,
+						"$Type" : "foo.SalesOrderLineItem"
+					}],
+					"$ReturnType" : {
+						"$Type" : "Edm.String"
+					},
+					"@com.sap.vocabularies.Common.v1.Label" : "S.O.L.I.F."
 				}],
 				"foo.Container" : {
 					"$kind" : "EntityContainer",
@@ -660,6 +725,33 @@ sap.ui.require([
 			});
 	});
 
+	//*********************************************************************************************
+	[undefined, "DELETE", "MERGE", "PATCH", "PUT"].forEach(function (sMethod) {
+		QUnit.test("convert: FunctionImport w/ m:HttpMethod = " + sMethod, function (assert) {
+			var sMethodAttribute = sMethod ? ' m:HttpMethod="' + sMethod + '"' : "";
+
+			this.oLogMock.expects("warning")
+				.withExactArgs("Unsupported HttpMethod at FunctionImport 'Baz',"
+					+ " removing this FunctionImport", undefined, sClassName);
+
+			testConversion(assert, '\
+					<Schema Namespace="foo" Alias="f">\
+						<EntityContainer Name="Container">\
+							<FunctionImport' + sMethodAttribute + ' Name="Baz">\
+							</FunctionImport>\
+						</EntityContainer>\
+					</Schema>',
+				{
+					"$EntityContainer" : "foo.Container",
+					"foo." : {
+						"$kind" : "Schema"
+					},
+					"foo.Container" : {
+						"$kind" : "EntityContainer"
+					}
+				});
+		});
+	});
 
 	//*********************************************************************************************
 	QUnit.test("try to read some random XML as V2", function (assert) {
@@ -703,17 +795,11 @@ sap.ui.require([
 		var oLogMock = this.oLogMock,
 			sUrl = "/GWSAMPLE_BASIC/$metadata";
 
-		["Confirm", "Cancel", "InvoiceCreated", "GoodsIssueCreated"].forEach(function (sName) {
-			oLogMock.expects("warning")
-				.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'SalesOrder_" + sName
-						+ "', removing this FunctionImport", undefined,
-					sModuleName);
-		});
 		["filterable", "sortable"].forEach(function (sAnnotation) {
 			oLogMock.expects("warning")
 				.withExactArgs("Unsupported SAP annotation at a complex type in '" + sUrl + "'",
 					"sap:" + sAnnotation + " at property 'GWSAMPLE_BASIC.CT_String/String'",
-					sModuleName);
+					sClassName);
 		});
 
 		return Promise.all([
@@ -791,7 +877,7 @@ sap.ui.require([
 			},
 			'@com.sap.vocabularies.UI.v1.Hidden' : true
 		}
-	}, { // combination of v2 annotations
+	}, { // combination of V2 annotations
 		annotationsV2 : 'sap:text="PathExpression" sap:label="Value"',
 		expectedAnnotationsV4 : {
 			'@com.sap.vocabularies.Common.v1.Label' : 'Value',
@@ -1079,7 +1165,7 @@ sap.ui.require([
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		this.oLogMock.expects("warning")
-			.withExactArgs("Unsupported semantic type: foo", undefined, sModuleName);
+			.withExactArgs("Unsupported semantic type: foo", undefined, sClassName);
 
 		testAnnotationConversion(assert, '\
 				<EntityType Name="Foo">\
@@ -1105,7 +1191,7 @@ sap.ui.require([
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
 
 		this.oLogMock.expects("warning")
-			.withExactArgs("Unsupported semantic type: foo", undefined, sModuleName);
+			.withExactArgs("Unsupported semantic type: foo", undefined, sClassName);
 
 		testAnnotationConversion(assert, '\
 				<EntityType Name="Foo">\
@@ -1403,7 +1489,7 @@ sap.ui.require([
 			if (oFixture.message) {
 				this.oLogMock.expects("warning")
 					.withExactArgs("Inconsistent metadata in '/foo/bar/$metadata'",
-						oFixture.message, sModuleName);
+						oFixture.message, sClassName);
 			}
 			testConversion(assert, sXML, oExpectedResult);
 		});
@@ -1654,7 +1740,8 @@ sap.ui.require([
 		testConversion(assert, '\
 				<Schema Namespace="foo" Alias="f">\
 					<EntityContainer Name="Container">\
-						<FunctionImport Name="FunctionImport" sap:label="LabelFunctionImport">\
+						<FunctionImport m:HttpMethod="GET" Name="FunctionImport"\
+								sap:label="LabelFunctionImport">\
 							<Parameter Name="Parameter" Type="Edm.String"\
 									sap:label="LabelParameter">\
 							</Parameter>\
@@ -1775,7 +1862,7 @@ sap.ui.require([
 						<EntitySet Name="Suppliers" EntityType="GWSAMPLE_BASIC.BusinessPartner"\
 							sap:searchable="true"/>\
 <!-- loop over EntityContainer\'s children does not fail for non-EntitySets -->\
-						<FunctionImport Name="Foo" ReturnType="Edm.String"/>\
+						<FunctionImport m:HttpMethod="GET" Name="Foo" ReturnType="Edm.String"/>\
 					</EntityContainer>\
 <!-- EntitySets in ALL EntityContainers of a Schema are handled -->\
 					<EntityContainer Name="YetAnotherContainer">\
@@ -1944,31 +2031,31 @@ sap.ui.require([
 
 		this.oLogMock.expects("warning")
 			.withExactArgs("Unsupported SAP annotation at a complex type in '/foo/bar/$metadata'",
-				"sap:filterable at property 'GWSAMPLE_BASIC.0001.Address/Street'", sModuleName);
+				"sap:filterable at property 'GWSAMPLE_BASIC.0001.Address/Street'", sClassName);
 		this.oLogMock.expects("warning")
 			.withExactArgs("Unsupported SAP annotation at a complex type in '/foo/bar/$metadata'",
 				"sap:filter-restriction at property 'GWSAMPLE_BASIC.0001.Address/Street'",
-				sModuleName);
+				sClassName);
 		this.oLogMock.expects("warning")
 			.withExactArgs("Unsupported SAP annotation at a complex type in '/foo/bar/$metadata'",
 				"sap:required-in-filter at property 'GWSAMPLE_BASIC.0001.Address/Street'",
-				sModuleName);
+				sClassName);
 		this.oLogMock.expects("warning")
 			.withExactArgs("Unsupported SAP annotation at a complex type in '/foo/bar/$metadata'",
-				"sap:sortable at property 'GWSAMPLE_BASIC.0001.Address/Street'", sModuleName);
+				"sap:sortable at property 'GWSAMPLE_BASIC.0001.Address/Street'", sClassName);
 		this.oLogMock.expects("warning")
 			.withExactArgs("Inconsistent metadata in '/foo/bar/$metadata'",
 				"Use either 'sap:creatable' or 'sap:creatable-path' at navigation property"
-				+ " 'GWSAMPLE_BASIC.0001.BusinessPartner/ConflictA'", sModuleName);
+				+ " 'GWSAMPLE_BASIC.0001.BusinessPartner/ConflictA'", sClassName);
 		this.oLogMock.expects("warning")
 			.withExactArgs("Inconsistent metadata in '/foo/bar/$metadata'",
 				"Use either 'sap:creatable' or 'sap:creatable-path' at navigation property"
-				+ " 'GWSAMPLE_BASIC.0001.BusinessPartner/ConflictB'", sModuleName);
+				+ " 'GWSAMPLE_BASIC.0001.BusinessPartner/ConflictB'", sClassName);
 		this.oLogMock.expects("warning")
 			.withExactArgs("Inconsistent metadata in '/foo/bar/$metadata'",
 				'Unsupported sap:filter-restriction="unsupported" at property'
 				+ " 'GWSAMPLE_BASIC.0001.BusinessPartner/FilterRestrictionUnsupported'",
-				sModuleName);
+				sClassName);
 		testConversion(assert, sXML, oExpectedResult, /*bSubset*/true);
 	});
 	//TODO schema GWSAMPLE_BASIC.0000. with "forward reference" to EntityType processed later
@@ -2128,17 +2215,17 @@ sap.ui.require([
 		this.oLogMock.expects("warning").withExactArgs(
 			"Unsupported sap:semantics at sap:unit='InvalidUnit';"
 			+ " expected 'currency-code' or 'unit-of-measure'",
-			"GWSAMPLE_BASIC.0001.Product/Width", sModuleName);
+			"GWSAMPLE_BASIC.0001.Product/Width", sClassName);
 		this.oLogMock.expects("warning").withExactArgs(
 			"Path 'MissingUnit/Foo' for sap:unit cannot be resolved",
-			"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit1" , sModuleName);
+			"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit1" , sClassName);
 		this.oLogMock.expects("warning").withExactArgs(
 			"Path 'Parts/MissingUnit/Foo' for sap:unit cannot be resolved",
-			"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit0" , sModuleName);
+			"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit0" , sClassName);
 		this.oLogMock.expects("warning").withExactArgs(
 			"Unsupported annotation 'sap:semantics'",
 			sinon.match(/<Property.*sap:semantics="invalid".*\/>/),
-			sModuleName);
+			sClassName);
 
 		testConversion(assert, sXML, oExpectedResult, /*bSubset*/true);
 	});
@@ -2149,7 +2236,7 @@ sap.ui.require([
 
 		function warn(rElement, sName, sValue) {
 			oLogMock.expects("warning").withExactArgs("Unsupported annotation 'sap:" + sName + "'",
-				sinon.match(rElement), sModuleName);
+				sinon.match(rElement), sClassName);
 		}
 
 		warn(/<Schema.*sap:bar="baz".*>/, "bar");
@@ -2162,13 +2249,16 @@ sap.ui.require([
 		warn(/<EntityContainer.*sap:foo="fuz".*>/, "foo", "fuz");
 		warn(/<EntitySet.*sap:bar="baz".*\/>/, "bar", "baz");
 		warn(/<FunctionImport.*sap:applicable-path="foo".*\/>/, "applicable-path", "foo");
-		oLogMock.expects("warning").withExactArgs("Unsupported 'sap:action-for' at FunctionImport"
-			+ " 'BoundFunction', removing this FunctionImport", undefined, sModuleName);
+		oLogMock.expects("warning").withExactArgs("Unsupported HttpMethod at FunctionImport"
+			+ " 'BoundFunctionNoGET', removing this FunctionImport", undefined, sClassName);
 
 		testConversion(assert, '\
 			<Schema Namespace="foo" sap:bar="baz">\
 				<ComplexType Name="MyComplexType" sap:bar="baz"/>\
 				<EntityType Name="MyEntityType" sap:content-version="1" sap:bar="baz">\
+					<Key>\
+						<PropertyRef Name="MyProperty"/>\
+					</Key>\
 					<Property Name="MyProperty" Type="Edm.String" sap:bar="baz"/>\
 					<NavigationProperty Name="ToSomewhere" Relationship="foo.Assoc" \
 						ToRole="A" sap:bar="baz"/>\
@@ -2180,9 +2270,12 @@ sap.ui.require([
 				<EntityContainer Name="Container" sap:bar="baz" sap:foo="fuz">\
 					<EntitySet Name="MyEntitySet" EntityType="foo.MyEntityType" \
 						sap:content-version="1" sap:bar="baz"/>\
-					<FunctionImport Name="MyFunction" sap:applicable-path="foo"/>\
-					<FunctionImport Name="BoundFunction" sap:action-for="MyEntitySet"\
-						sap:applicable-path="bar"/>\
+					<FunctionImport Name="BoundFunctionNoGET"\
+						sap:action-for="foo.MyEntityType" sap:applicable-path="bar"/>\
+					<FunctionImport m:HttpMethod="GET" Name="MyFunction"\
+						sap:applicable-path="foo"/>\
+					<FunctionImport m:HttpMethod="GET" Name="BoundFunction"\
+						sap:action-for="foo.MyEntityType" sap:applicable-path="bar"/>\
 					<AssociationSet Name="MyAssociationSet" Association="foo.Assoc"\
 							sap:creatable="false" sap:deletable="false" sap:updatable="false">\
 						<End EntitySet="MyEntitySet" Role="A"/>\

@@ -9,19 +9,16 @@ sap.ui.require([
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException"
 ], function (jQuery, FormatException, ODataType, Raw, ParseException, ValidateException) {
-	/*global QUnit, sinon */
+	/*global QUnit */
 	/*eslint max-nested-callbacks: 0*/
 	"use strict";
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Raw", {
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-		},
-		afterEach : function () {
-			this.oLogMock.verify();
 		}
 	});
 
