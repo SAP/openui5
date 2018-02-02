@@ -5,23 +5,14 @@
 // Provides helper sap.ui.table.TableUtils.
 sap.ui.define([
 	"jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/ResizeHandler", "sap/ui/core/library", "sap/ui/model/ChangeReason",
-	"./TableGrouping", "./TableColumnUtils", "./TableMenuUtils", "./library"
-], function(jQuery, Control, ResizeHandler, coreLibrary, ChangeReason, TableGrouping, TableColumnUtils, TableMenuUtils, library) {
+	"./TableGrouping", "./TableColumnUtils", "./TableMenuUtils", "./TableBindingUtils", "./library"
+], function(jQuery, Control, ResizeHandler, coreLibrary, ChangeReason, TableGrouping, TableColumnUtils, TableMenuUtils, TableBindingUtils, library) {
 	"use strict";
 
 	// Shortcuts
 	var SelectionBehavior = library.SelectionBehavior;
 	var SelectionMode = library.SelectionMode;
 	var MessageType = coreLibrary.MessageType;
-
-	/**
-	 * The border width of a row in pixels.
-	 *
-	 * @type {int}
-	 * @static
-	 * @constant
-	 */
-	var ROW_BORDER_WIDTH = 1;
 
 	/**
 	 * Table cell type.
@@ -53,6 +44,92 @@ sap.ui.define([
 	CELLTYPE.ANY = CELLTYPE.ANYCONTENTCELL | CELLTYPE.ANYCOLUMNHEADER;
 
 	/**
+	 * The horizontal frame size of a row in pixels. This is the height of a row excluding the content height.
+	 *
+	 * @type {int}
+	 * @static
+	 * @constant
+	 */
+	var ROW_HORIZONTAL_FRAME_SIZE = 1; /* 1px border */
+
+	/**
+	 * The default row content heights in pixels for the different content densities.
+	 *
+	 * @type {sap.ui.table.TableUtils.DefaultRowContentHeight}
+	 * @static
+	 * @constant
+	 * @typedef {Object} sap.ui.table.TableUtils.DefaultRowContentHeight
+	 * @property {int} sapUiSizeCondensed - The default content height of a row in pixels in condensed content density.
+	 * @property {int} sapUiSizeCompact - The default content height of a row in pixels in compact content density.
+	 * @property {int} sapUiSizeCozy - The default content height of a row in pixels in cozy content density.
+	 * @property {int} undefined - The default content height of a row in pixels in case no content density information is available.
+	 */
+	var DEFAULT_ROW_CONTENT_HEIGHT = {
+		sapUiSizeCozy: 48,
+		sapUiSizeCompact: 32,
+		sapUiSizeCondensed: 24,
+		undefined: 32
+	};
+
+	/**
+	 * The default row heights in pixels for the different content densities.
+	 *
+	 * @type {sap.ui.table.TableUtils.DefaultRowHeight}
+	 * @static
+	 * @constant
+	 * @typedef {Object} sap.ui.table.TableUtils.DefaultRowHeight
+	 * @property {int} sapUiSizeCondensed - The default height of a row in pixels in condensed content density.
+	 * @property {int} sapUiSizeCompact - The default height of a row in pixels in compact content density.
+	 * @property {int} sapUiSizeCozy - The default height of a row in pixels in cozy content density.
+	 * @property {int} undefined - The default height of a row in pixels in case no content density information is available.
+	 */
+	var DEFAULT_ROW_HEIGHT = {
+		sapUiSizeCozy: DEFAULT_ROW_CONTENT_HEIGHT.sapUiSizeCozy + ROW_HORIZONTAL_FRAME_SIZE,
+		sapUiSizeCompact: DEFAULT_ROW_CONTENT_HEIGHT.sapUiSizeCompact + ROW_HORIZONTAL_FRAME_SIZE,
+		sapUiSizeCondensed: DEFAULT_ROW_CONTENT_HEIGHT.sapUiSizeCondensed + ROW_HORIZONTAL_FRAME_SIZE,
+		undefined: DEFAULT_ROW_CONTENT_HEIGHT.undefined + ROW_HORIZONTAL_FRAME_SIZE
+	};
+
+	/**
+	 * Reason for updates of the rows. Inherits from {@link sap.ui.model.ChangeReason}.
+	 *
+	 * @type {sap.ui.table.TableUtils.ROWS_UPDATE_REASON}
+	 * @static
+	 * @constant
+	 * @typedef {Object} sap.ui.table.TableUtils.ROWS_UPDATE_REASON
+	 * @property {string} Sort - {@link sap.ui.model.ChangeReason.Sort}
+	 * @property {string} Filter - {@link sap.ui.model.ChangeReason.Filter}
+	 * @property {string} Change - {@link sap.ui.model.ChangeReason.Change}
+	 * @property {string} Context - {@link sap.ui.model.ChangeReason.Context}
+	 * @property {string} Refresh - {@link sap.ui.model.ChangeReason.Refresh}
+	 * @property {string} Expand - {@link sap.ui.model.ChangeReason.Expand}
+	 * @property {string} Collapse - {@link sap.ui.model.ChangeReason.Collapse}
+	 * @property {string} Remove - {@link sap.ui.model.ChangeReason.Remove}
+	 * @property {string} Add - {@link sap.ui.model.ChangeReason.Add}
+	 * @property {string} Binding - {@link sap.ui.model.ChangeReason.Binding}
+	 * @property {string} Render - The table has been rendered.
+	 * @property {string} VerticalScroll - The table has been scrolled vertically.
+	 * @property {string} FirstVisibleRowChange - The first visible row has been changed by API call.
+	 * @property {string} Unbind - The row binding has been removed.
+	 * @property {string} Animation - An animation has been performed.
+	 * @property {string} Resize - The table has been resized.
+	 * @property {string} Zoom - The browsers zoom level has changed.
+	 * @property {string} Unknown - The reason for the update is unknown.
+	 */
+	var ROWS_UPDATE_REASON = {
+		Render: "Render",
+		VerticalScroll: "VerticalScroll",
+		FirstVisibleRowChange: "FirstVisibleRowChange",
+		Unbind: "Unbind",
+		Animation: "Animation",
+		Resize: "Resize",
+		Unknown: "Unknown"
+	};
+	for (var sProperty in ChangeReason) {
+		ROWS_UPDATE_REASON[sProperty] = ChangeReason[sProperty];
+	}
+
+	/**
 	 * Static collection of utility functions related to the sap.ui.table.Table, ...
 	 *
 	 * @author SAP SE
@@ -62,77 +139,16 @@ sap.ui.define([
 	 * @private
 	 */
 	var TableUtils = {
+		// Make other utils available.
+		Grouping: TableGrouping,
+		Column: TableColumnUtils,
+		Menu: TableMenuUtils,
+		Binding: TableBindingUtils,
 
-		Grouping: TableGrouping, //Make grouping utils available here
-		Column: TableColumnUtils, //Make column utils available here
-		Menu: TableMenuUtils, //Make menu utils available here
-
-		/**
-		 * @type {sap.ui.table.TableUtils.CellType}
-		 */
 		CELLTYPE: CELLTYPE,
-
-		/**
-		 * The default row heights in pixels for the different content densities.
-		 *
-		 * @type {DefaultRowHeight}
-		 * @static
-		 * @constant
-		 * @typedef {Object} DefaultRowHeight
-		 * @property {int} sapUiSizeCondensed - The default height of a row in pixels in condensed content density.
-		 * @property {int} sapUiSizeCompact - The default height of a row in pixels in compact content density.
-		 * @property {int} sapUiSizeCozy - The default height of a row in pixels in cozy content density.
-		 * @property {int} undefined - The default height of a row in pixels in case no content density information is available.
-		 */
-		DEFAULT_ROW_HEIGHT: {
-			sapUiSizeCondensed : 24 + ROW_BORDER_WIDTH,
-			sapUiSizeCompact : 32 + ROW_BORDER_WIDTH,
-			sapUiSizeCozy : 48 + ROW_BORDER_WIDTH,
-			undefined : 32 + ROW_BORDER_WIDTH
-		},
-
-		/**
-		 * Reason for updates of the rows. Inherits from {@link sap.ui.model.ChangeReason}.
-		 *
-		 * @type {RowsUpdateReason}
-		 * @static
-		 * @constant
-		 * @typedef {Object} RowsUpdateReason
-		 * @property {string} Sort - {@link sap.ui.model.ChangeReason.Sort}
-		 * @property {string} Filter - {@link sap.ui.model.ChangeReason.Filter}
-		 * @property {string} Change - {@link sap.ui.model.ChangeReason.Change}
-		 * @property {string} Context - {@link sap.ui.model.ChangeReason.Context}
-		 * @property {string} Refresh - {@link sap.ui.model.ChangeReason.Refresh}
-		 * @property {string} Expand - {@link sap.ui.model.ChangeReason.Expand}
-		 * @property {string} Collapse - {@link sap.ui.model.ChangeReason.Collapse}
-		 * @property {string} Remove - {@link sap.ui.model.ChangeReason.Remove}
-		 * @property {string} Add - {@link sap.ui.model.ChangeReason.Add}
-		 * @property {string} Binding - {@link sap.ui.model.ChangeReason.Binding}
-		 * @property {string} Render - The table has been rendered.
-		 * @property {string} VerticalScroll - The table has been scrolled vertically.
-		 * @property {string} FirstVisibleRowChange - The first visible row has been changed by API call.
-		 * @property {string} Unbind - The row binding has been removed.
-		 * @property {string} Animation - An animation has been performed.
-		 * @property {string} Resize - The table has been resized.
-		 * @property {string} Unknown - The reason for the update is unknown.
-		 */
-		RowsUpdateReason: (function() {
-			var mUpdateRowsReason = {};
-
-			for (var sProperty in ChangeReason) {
-				mUpdateRowsReason[sProperty] = ChangeReason[sProperty];
-			}
-
-			mUpdateRowsReason.Render = "Render";
-			mUpdateRowsReason.VerticalScroll = "VerticalScroll";
-			mUpdateRowsReason.FirstVisibleRowChange = "FirstVisibleRowChange";
-			mUpdateRowsReason.Unbind = "Unbind";
-			mUpdateRowsReason.Animation = "Animation";
-			mUpdateRowsReason.Resize = "Resize";
-			mUpdateRowsReason.Unknown = "Unknown";
-
-			return mUpdateRowsReason;
-		})(),
+		ROW_HORIZONTAL_FRAME_SIZE: ROW_HORIZONTAL_FRAME_SIZE,
+		DEFAULT_ROW_HEIGHT: DEFAULT_ROW_HEIGHT,
+		RowsUpdateReason: ROWS_UPDATE_REASON,
 
 		/**
 		 * Returns whether the table has a row header or not
@@ -1111,12 +1127,13 @@ sap.ui.define([
 
 			return iFirstFixedButtomIndex;
 		}
-
 	};
 
-	TableGrouping.TableUtils = TableUtils; // Avoid cyclic dependency
-	TableColumnUtils.TableUtils = TableUtils; // Avoid cyclic dependency
-	TableMenuUtils.TableUtils = TableUtils; // Avoid cyclic dependency
+	// Avoid cyclic dependency.
+	TableGrouping.TableUtils = TableUtils;
+	TableColumnUtils.TableUtils = TableUtils;
+	TableMenuUtils.TableUtils = TableUtils;
+	TableBindingUtils.TableUtils = TableUtils;
 
 	return TableUtils;
 

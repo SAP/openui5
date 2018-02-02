@@ -36,7 +36,22 @@ sap.ui.define([
 				/**
 				 * Defines if the parameter is default
 				 */
-				defaultFlag: {type : "boolean", defaultValue: false}
+				defaultFlag: {type : "boolean", defaultValue: false},
+				/**
+				 * Defines if the parameter is deprecated
+				 */
+				deprecated: {type : "boolean", defaultValue: false},
+				/**
+				 * Defines if the parameter is a hyperlink
+				 */
+				href: {type : "sap.ui.core.URI"}
+			},
+			events : {
+
+				/**
+				 * Event is fired when the user triggers the link control.
+				 */
+				press : {}
 			}
 		},
 
@@ -51,10 +66,18 @@ sap.ui.define([
 		},
 
 		renderer: function (oRm, oControl) {
-			oRm.write("<div");
+			var sHref = oControl.getHref();
+
+			if (sHref) {
+				oRm.write("<a");
+				oRm.writeAttributeEscaped("href", sHref);
+				oRm.addClass("sapMLnk");
+			} else {
+				oRm.write("<div");
+			}
+			oRm.addClass("depth-" + oControl.getDepth());
 			oRm.writeControlData(oControl);
 			oRm.addClass("sapUiParamText");
-			oRm.addClass("depth-" + oControl.getDepth());
 			oRm.writeClasses();
 			oRm.write(">");
 
@@ -71,9 +94,43 @@ sap.ui.define([
 				oRm.write("(default)");
 				oRm.write("</span>");
 			}
-			oRm.write("</div>");
+			if (oControl.getDeprecated()) {
+
+				oRm.write("<div");
+				oRm.addClass("deprecated");
+				oRm.writeClasses();
+				oRm.write(">");
+
+				oRm.writeIcon('sap-icon://message-error');
+
+				oRm.write("<span");
+				oRm.addClass("deprecatedText");
+				oRm.writeClasses();
+				oRm.write(">");
+				oRm.write("Deprecated");
+				oRm.write("</span>");
+
+				oRm.write("</div>");
+			}
+			oRm.write(sHref ? "</a>" : "</div>");
 		}
 	});
+
+	/**
+	 * Handler for the <code>press</code> event.
+	 *
+	 * @param {jQuery.Event} oEvent The <code>press</code> event object
+	 * @private
+	 */
+	ParamText.prototype._handlePress = function(oEvent) {
+		this.firePress({/* no parameters */});
+	};
+
+	if (Device.support.touch) {
+		ParamText.prototype.ontap = ParamText.prototype._handlePress;
+	} else {
+		ParamText.prototype.onclick = ParamText.prototype._handlePress;
+	}
 
 	return ParamText;
 });

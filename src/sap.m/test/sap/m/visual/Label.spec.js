@@ -79,13 +79,6 @@ describe("sap.m.Label", function() {
 		expect(takeScreenshot(lbl11)).toLookAs("11_align_Right");
 	});
 
-	// label no text
-	it("should visualize label with no text", function () {
-		var wrapperDiv = element(by.id('NoText'));
-		wrapperDiv.click();
-		expect(takeScreenshot(wrapperDiv)).toLookAs("12_no_text");
-	});
-
 	// width
 	it("should visualize label with fixed width", function () {
 		var lbl13 = element(by.id('lbl13'));

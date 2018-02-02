@@ -97,6 +97,9 @@ sap.ui.define([
 			} else if (mAggregations.hasOwnProperty(aPath[0])) {
 				var oAggregation = mAggregations[aPath[0]], sControlName = oMetadata.getName(), sNamespace = sControlName.slice(0, sControlName.lastIndexOf("."));
 				var oAggregationModel, oContent = oElement.getElementsByTagNameNS(sNamespace, aPath[0])[0];
+				if (!oContent) {
+					return null;
+				}
 
 				if (oAggregation.multiple) {
 					// return a list of context
@@ -222,6 +225,8 @@ sap.ui.define([
 		// extend the contexts from metadataContexts
 		for (var j = 0; j < oMetadataContexts.parts.length; j++) {
 			addSingleContext(mContexts, oVisitor, oMetadataContexts.parts[j], oMetadataContexts, sDefaultMetaModel);
+			// Make sure every previously defined context can be used in the next binding
+			oVisitor = oVisitor["with"](mContexts, false);
 		}
 
 		var oMdCModel = new JSONModel(oMetadataContexts);

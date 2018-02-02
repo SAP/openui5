@@ -60,6 +60,55 @@ sap.ui.define([
 				{lastName: "Summer", name: "Paige", money: 5.67, currency: "EUR"}
 			];
 
+			var sUrl = "sap/ui/core/samples/UnitTable.meters.json";
+			var pLoadResource = jQuery.sap.loadResource(sUrl,{
+				dataType: "json",
+				async : true
+			});
+			var that = this;
+			pLoadResource.then(function(oResult) {
+				//data transformation
+				var aMeters = [];
+				var aMonths = [];
+
+				var oMonths = {};
+
+				Object.keys(oResult).forEach(function(sKey) {
+					var oResultObj = oResult[sKey];
+					var sMeterName = oResultObj.name;
+					var oObj = {
+						decimals: oResultObj.decimals,
+						unit: oResultObj.unit,
+						name: sMeterName
+					};
+					oResultObj.data.forEach(function(oData) {
+						var sMonthKey = oData.name.toLowerCase();
+						oObj[sMonthKey] =  oData.value;
+
+
+						oMonths[oData.name] = oMonths[oData.name] || {};
+						oMonths[oData.name][sMeterName] = {
+							value: oData.value,
+							decimals: oResultObj.decimals,
+							unit: oResultObj.unit
+						};
+
+					});
+
+					aMeters.push(oObj);
+				});
+
+				Object.keys(oMonths).forEach(function(sMonth) {
+					var oObj = oMonths[sMonth];
+					oObj.name = sMonth;
+					aMonths.push(oObj);
+				});
+
+
+				that.getView().setModel(new JSONModel({data:aMeters,size:aMeters.length}), "meters");
+				that.getView().setModel(new JSONModel({data:aMonths,size:aMonths.length}), "months");
+			});
+
 			for (var i = 0; i < aItems.length; i++) {
 				aItems[i].speedValue = Math.random() * 1000;
 				aItems[i].speedUnit = "speed-meter-per-second";
@@ -69,6 +118,9 @@ sap.ui.define([
 
 				aItems[i].volumeValue = Math.random() * 1000;
 				aItems[i].volumeUnit = "volume-cup";
+
+				aItems[i].customValue = Math.floor(Math.random() * 10);
+				aItems[i].customUnit = "cats";
 			}
 
 			this.getView().setModel(new JSONModel(aItems));
@@ -79,7 +131,17 @@ sap.ui.define([
 		},
 
 		setupFormatters: function (oLocale) {
-			this.oUnitFormatterCLDR = NumberFormat.getUnitInstance({unitCodeType: "CLDR"}, oLocale);
+			this.oUnitFormatter = NumberFormat.getUnitInstance({}, oLocale);
+			this.oCustomUnitFormatter = NumberFormat.getUnitInstance({
+				customUnits: {
+					"cats": {
+						"displayName": "Kitties",
+						"unitPattern-count-zero": "no cats :(",
+						"unitPattern-count-one": "{0} cat",
+						"unitPattern-count-other": "{0} cats"
+					}
+				}
+			}, oLocale);
 			this.oCurrencyFormatter = NumberFormat.getCurrencyInstance({}, oLocale);
 			this.oNumberFormatter = NumberFormat.getFloatInstance({minFractionDigits: 2, maxFractionDigits: 2}, oLocale);
 		},
@@ -96,17 +158,21 @@ sap.ui.define([
 			return sap.ui.core.LocaleData.getInstance(oLocale);
 		},
 
-		formatUnitCLDR: function (v, u) {
-			return this.oUnitFormatterCLDR.format(v, u);
+		formatUnit: function (v, u) {
+			return this.oUnitFormatter.format(v, u);
+		},
+
+		formatCustomUnit: function (v, u) {
+			return this.oCustomUnitFormatter.format(v, u);
 		},
 
 		formatDiskvalue: function (v) {
 			return this.oNumberFormatter.format(v);
 		},
 
-		formatDisplayNameCLDR: function (sISOCode) {
+		formatDisplayName: function (sUnit) {
 			var oLocaleData = this.getLocaleData(this.getView().getModel("loc").getProperty("/currentLocale"));
-			return oLocaleData.getUnitDisplayNameByCLDRCode(sISOCode);
+			return oLocaleData.getUnitDisplayName(sUnit);
 		},
 
 		formatCurrency: function (v, u) {

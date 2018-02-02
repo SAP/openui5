@@ -126,7 +126,7 @@ sap.ui.define([
 						|| jQuery(oTarget).closest(".sapUiRtaToolbar").length > 0;
 
 					var bRelevantNode = jQuery.contains(document, oTarget)
-						&& oTarget.id !== "sap-ui-static"
+						&& oTarget.id !== sap.ui.getCore().getStaticAreaRef().getAttribute('id')
 						&& jQuery(oTarget).closest("#sap-ui-preserve").length === 0;
 
 					if (bRelevantNode && !bIsFromRTA) {
@@ -144,7 +144,7 @@ sap.ui.define([
 
 							// define closest element to notify it's overlay about the dom mutation
 							var oOverlay = OverlayUtil.getClosestOverlayForNode(oTarget);
-							var sElementId = oOverlay ? oOverlay.getElementInstance().getId() : undefined;
+							var sElementId = oOverlay ? oOverlay.getElement().getId() : undefined;
 							if (sElementId) {
 								aElementIds.push(sElementId);
 							}
@@ -192,10 +192,13 @@ sap.ui.define([
 	 */
 	MutationObserver.prototype._fireDomChangeOnScroll = function(oEvent) {
 		var oTarget = oEvent.target;
-		if (!OverlayUtil.isInOverlayContainer(oTarget) &&
-			!OverlayUtil.getClosestOverlayForNode(oTarget) &&
-			oTarget !== document) {
-
+		if (
+			!OverlayUtil.isInOverlayContainer(oTarget)
+			&& !OverlayUtil.getClosestOverlayForNode(oTarget)
+			// The line below is required to avoid double scrollbars on the browser
+			// when the document is scrolled to negative values (relevant for Mac)
+			&& oTarget !== document
+		) {
 			this.fireDomChanged({
 				type : "scroll"
 			});

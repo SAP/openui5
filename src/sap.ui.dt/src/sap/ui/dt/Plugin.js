@@ -217,7 +217,7 @@ function(ManagedObject) {
 	 */
 	Plugin.prototype.getAction = function(oOverlay){
 		return oOverlay.getDesignTimeMetadata() ?
-			oOverlay.getDesignTimeMetadata().getAction(this.getActionName(), oOverlay.getElementInstance())
+			oOverlay.getDesignTimeMetadata().getAction(this.getActionName(), oOverlay.getElement())
 			: null;
 	};
 
@@ -227,7 +227,16 @@ function(ManagedObject) {
 	 * @return {Boolean} Returns true if there is no multiple selection active
 	 */
 	Plugin.prototype.isMultiSelectionInactive = function() {
-		return this.getDesignTime().getSelection().length < 2;
+		return this.getNumberOfSelectedOverlays() < 2;
+	};
+
+	/**
+	 * Asks the DesignTime for the number of currently selected overlays.
+	 *
+	 * @return {integer} Returns the number of selected overlays as integer
+	 */
+	Plugin.prototype.getNumberOfSelectedOverlays = function() {
+		return this.getDesignTime().getSelection().length;
 	};
 
 	/**
@@ -241,7 +250,7 @@ function(ManagedObject) {
 		var vName = mAction.name;
 		if (vName){
 			if (typeof vName === "function") {
-				return vName.call(null, oOverlay.getElementInstance());
+				return vName.call(null, oOverlay.getElement());
 			} else {
 				return oOverlay.getDesignTimeMetadata() ? oOverlay.getDesignTimeMetadata().getLibraryText(vName) : "";
 			}

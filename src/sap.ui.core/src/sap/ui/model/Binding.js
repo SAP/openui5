@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * and provides getters for accessing properties or lists.
 	 *
 	 * @param {sap.ui.model.Model} oModel the model
-	 * @param {String} sPath the path
+	 * @param {string} sPath the path
 	 * @param {sap.ui.model.Context} oContext the context object
 	 * @param {object} [mParameters]
 	 * @abstract
@@ -128,7 +128,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	// Getter
 	/**
 	 * Getter for path
-	 * @return {String} the binding path
+	 * @return {string} the binding path
 	 */
 	Binding.prototype.getPath = function() {
 		return this.sPath;

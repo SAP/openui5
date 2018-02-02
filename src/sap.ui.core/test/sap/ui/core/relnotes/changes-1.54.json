@@ -523,6 +523,48 @@
         "type": "FIX",
         "text": " sap.m.Carousel: Tab navigation is now correct",
         "references": []
+      },
+      {
+        "id": "c69c4a649628df464a568beca3aee4c492ac15b3",
+        "type": "FEATURE",
+        "text": " NumberFormat: UOM custom units",
+        "references": []
+      },
+      {
+        "id": "d7aa6f6cc3219611d1f469d92011316703cb7672",
+        "type": "FIX",
+        "text": " JSONModel: loadData() error handler",
+        "references": []
+      },
+      {
+        "id": "bcc7a7003b2fa1c052285da8fe6e39ec6da7be20",
+        "type": "FIX",
+        "text": " MessageManager.registerObject documentation",
+        "references": []
+      },
+      {
+        "id": "cbaac70f5be0ddfc6af24e814f67bcd6072adf41",
+        "type": "FIX",
+        "text": " ODataMessageParser: Handle invalid returnTypes",
+        "references": []
+      },
+      {
+        "id": "68135dccb29e93c2b7c313dbf43e692f017da27d",
+        "type": "FIX",
+        "text": " model.ODataContextBinding: use preliminary context",
+        "references": []
+      },
+      {
+        "id": "5abc860bc0d8f75fa0d93c10b17584b30208b690",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: avoid Error: Cannot read property \u0027getEntityType\u0027 of null",
+        "references": []
+      },
+      {
+        "id": "68003f17881e40f9dbefdeaad337e5ae42df86d5",
+        "type": "FIX",
+        "text": " typo for available",
+        "references": []
       }
     ]
   }

@@ -174,6 +174,16 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 		}
 	};
 
+	/**
+	 * Returns the <code>ObjectPageSectionBase</code> internal title if present,
+	 * otherwise - the public title.
+	 * @private
+	 * @returns {String} the title
+	 */
+	ObjectPageSectionBase.prototype._getTitle = function () {
+		return this._getInternalTitle() || this.getTitle();
+	};
+
 	ObjectPageSectionBase.prototype._getInternalTitle = function () {
 		return this._sInternalTitle;
 	};

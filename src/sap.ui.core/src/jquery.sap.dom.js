@@ -1103,7 +1103,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 *
 	 * @param {HTMLElement} oOldDom existing element to be patched
 	 * @param {HTMLElement} oNewDom is the new node to patch old dom
-	 * @return {Boolean} true when patch is applied correctly or false when nodes are replaced.
+	 * @return {boolean} true when patch is applied correctly or false when nodes are replaced.
 	 * @author SAP SE
 	 * @since 1.30.0
 	 * @private
@@ -1195,8 +1195,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 *
 	 * @param {HTMLElement} oOldDom existing element to be patched
 	 * @param {HTMLElement|String} vNewDom is the new node to patch old dom
-	 * @param {Boolean} bCleanData wheter jQuery data should be removed or not
-	 * @return {Boolean} true when patch is applied correctly or false when nodes are replaced.
+	 * @param {boolean} bCleanData wheter jQuery data should be removed or not
+	 * @return {boolean} true when patch is applied correctly or false when nodes are replaced.
 	 * @author SAP SE
 	 * @since 1.30.0
 	 * @private

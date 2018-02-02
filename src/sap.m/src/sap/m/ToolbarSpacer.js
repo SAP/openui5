@@ -3,11 +3,9 @@
  */
 
 // Provides control sap.m.ToolbarSpacer.
-sap.ui.define(['./library', 'sap/ui/core/Control'],
-	function(library, Control) {
+sap.ui.define(['./library', 'sap/ui/core/Control', "./ToolbarSpacerRenderer"],
+	function(library, Control /*, ToolbarSpacerRenderer*/) {
 	"use strict";
-
-
 
 	/**
 	 * Constructor for a new <code>ToolbarSpacer</code>.
@@ -44,12 +42,6 @@ sap.ui.define(['./library', 'sap/ui/core/Control'],
 			width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : ''}
 		}
 	}});
-
-	/**
-	 * Flexible Spacer Class Name
-	 * @protected
-	 */
-	ToolbarSpacer.flexClass = "sapMTBSpacerFlex";
 
 	return ToolbarSpacer;
 

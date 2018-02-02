@@ -164,17 +164,6 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.equal(oInstance.getText('variantName'), 'myVariantName');
 	});
 
-	QUnit.test("Change.isChangeRelevantForAppVariant", function(assert) {
-		var oInstance = new Change(this.oChangeDef);
-		assert.equal(oInstance.isChangeRelevantForAppVariant(), false);
-	});
-
-	QUnit.test("Change.setChangeRelevantForAppVariant", function(assert) {
-		var oInstance = new Change(this.oChangeDef);
-		oInstance.setChangeRelevantForAppVariant(true);
-		assert.equal(oInstance.isChangeRelevantForAppVariant(), true);
-	});
-
 	QUnit.test("Change.setText", function(assert) {
 		var oInstance = new Change(this.oChangeDef);
 		oInstance.setText('variantName', 'newText');
@@ -196,17 +185,10 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.equal(oInstance._isReadOnlyDueToLayer(), false);
 	});
 
-	QUnit.test("Change.markForDeletion if a change is for the current app", function(assert) {
+	QUnit.test("Change.markForDeletion", function(assert) {
 		var oInstance = new Change(this.oChangeDef);
 		oInstance.markForDeletion();
 		assert.equal(oInstance.getPendingAction(), "DELETE");
-	});
-
-	QUnit.test("Change.markForDeletion if a change booked for app variant", function(assert) {
-		var oInstance = new Change(this.oChangeDef);
-		oInstance.setChangeRelevantForAppVariant(true);
-		oInstance.markForDeletion();
-		assert.equal(oInstance.getPendingAction(), "NONE");
 	});
 
 	QUnit.test("Change.set/get-Request", function(assert) {
@@ -233,7 +215,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.ok(!oInstance.isUserDependent());
 	});
 
-	QUnit.test("Change.getPendingChanges when a change is for the current app", function(assert) {
+	QUnit.test("Change.getPendingChanges", function(assert) {
 		var oInstance = new Change(this.oChangeDef);
 		assert.equal(oInstance.getPendingAction(), Change.states.NEW);
 		oInstance.setState(Change.states.PERSISTED);
@@ -243,19 +225,6 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 
 		oInstance.markForDeletion();
 		assert.equal(oInstance.getPendingAction(), Change.states.DELETED);
-	});
-
-	QUnit.test("Change.getPendingChanges when a change is booked for an app variant", function(assert) {
-		var oInstance = new Change(this.oChangeDef);
-		assert.equal(oInstance.getPendingAction(), Change.states.NEW);
-		oInstance.setState(Change.states.PERSISTED);
-
-		oInstance.setContent({});
-		assert.equal(oInstance.getPendingAction(), Change.states.DIRTY);
-
-		oInstance.setChangeRelevantForAppVariant(true);
-		oInstance.markForDeletion();
-		assert.equal(oInstance.getPendingAction(), Change.states.PERSISTED);
 	});
 
 	QUnit.test("Change.getDefinition", function(assert) {

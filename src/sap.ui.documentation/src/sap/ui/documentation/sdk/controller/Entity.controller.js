@@ -152,7 +152,8 @@ sap.ui.define([
 				}
 
 				// set data model
-				var oData;
+				var oData,
+					oView = this.getView();
 				if (this._sId !== sNewId) {
 
 					// retrieve entity docu from server
@@ -167,11 +168,11 @@ sap.ui.define([
 						oData = this._getViewData(sNewId, oDoc, oEntity, oControlsData);
 
 						this.getAPIReferenceCheckPromise(oData.name).then(function (bHasAPIReference) {
-							oData.bHasAPIReference = bHasAPIReference;
+							oView.byId("apiRefLink").setVisible(bHasAPIReference);
 						});
 
 						// set view model
-						this.getView().getModel().setData(oData, false /* no merge with previous data */);
+						oView.getModel().setData(oData, false /* no merge with previous data */);
 
 						// done, we can now switch the id
 						this._sId = sNewId;

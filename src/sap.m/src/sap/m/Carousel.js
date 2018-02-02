@@ -3,8 +3,27 @@
  */
 
 // Provides control sap.m.Carousel.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/ResizeHandler', 'sap/ui/core/library', 'sap/ui/thirdparty/mobify-carousel', 'sap/ui/core/IconPool', 'jquery.sap.keycodes'],
-	function(jQuery, library, Control,  Device, ResizeHandler, coreLibrary /*, mobifycarousel, IconPool (indirect dependency, kept for compatibility with tests, to be fixed in ImageHelper) */) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/Device',
+	'sap/ui/core/ResizeHandler',
+	'sap/ui/core/library',
+	"./CarouselRenderer",
+	'sap/ui/thirdparty/mobify-carousel',
+	'sap/ui/core/IconPool',
+	'jquery.sap.keycodes'
+],
+function(
+	jQuery,
+	library,
+	Control,
+	Device,
+	ResizeHandler,
+	coreLibrary
+	/*,CarouselRenderer, mobifycarousel, IconPool (indirect dependency, kept for compatibility with tests, to be fixed in ImageHelper) */
+) {
 	"use strict";
 
 	//shortcut for sap.ui.core.BusyIndicatorSize

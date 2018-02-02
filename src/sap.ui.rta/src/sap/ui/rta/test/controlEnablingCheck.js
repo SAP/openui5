@@ -8,7 +8,6 @@ sap.ui.define(["sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/dt/DesignTime",
-	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/fl/ChangePersistenceFactory",
@@ -26,7 +25,6 @@ function(
 	XMLView,
 	CommandFactory,
 	DesignTime,
-	ElementUtil,
 	OverlayRegistry,
 	ElementDesignTimeMetadata,
 	ChangePersistenceFactory,
@@ -152,10 +150,7 @@ function(
 
 		function buildCommand(assert){
 			this.oControl = this.oView.byId(mOptions.action.controlId);
-			return ElementUtil.loadDesignTimeMetadata(this.oControl)
-
-			.then(function(oDesignTimeMetadata) {
-
+			return this.oControl.getMetadata().loadDesignTime(this.oControl).then(function(oDesignTimeMetadata) {
 				var mParameter;
 				if (mOptions.action.parameter) {
 					if (typeof mOptions.action.parameter === "function") {
@@ -189,7 +184,7 @@ function(
 							this.oControl = oRelevantContainer;
 							oElementDesignTimeMetadata = oElementOverlay.getParentAggregationOverlay().getDesignTimeMetadata();
 						} else if (mOptions.action.name === "addODataProperty") {
-							var aAddODataPropertyActions = oElementDesignTimeMetadata.getAggregationAction("addODataProperty", this.oControl);
+							var aAddODataPropertyActions = oElementDesignTimeMetadata.getActionDataFromAggregations("addODataProperty", this.oControl);
 							assert.equal(aAddODataPropertyActions.length, 1, "there should be only one aggregation with the possibility to do addODataProperty action");
 							var oAggregationOverlay = this.oControlOverlay.getAggregationOverlay(aAddODataPropertyActions[0].aggregation);
 							oElementDesignTimeMetadata = oAggregationOverlay.getDesignTimeMetadata();

@@ -2,18 +2,19 @@
  * ${copyright}
  */
 sap.ui.require([
+	"sap/ui/table/TableUtils",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/model/odata/ODataModel",
+	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/qunit/analytics/o4aMetadata",
 	"sap/ui/core/qunit/analytics/TBA_ServiceDocument",
 	"sap/ui/core/qunit/analytics/ATBA_Batch_Contexts"
-], function (qutils, o4aFakeService) {
+], function (TableUtils, qutils, ODataModel, ODataModelV2, o4aFakeService) {
 	/*global QUnit,sinon*/
 	"use strict";
 
 	// ************** Preparation Code **************
 
-	jQuery.sap.require("sap.ui.model.odata.ODataModel");
-	jQuery.sap.require("sap.ui.model.odata.v2.ODataModel");
 	jQuery.sap.require("sap.ui.model.analytics.ODataModelAdapter");
 	jQuery.sap.require("sap.ui.model.analytics.AnalyticalTreeBindingAdapter");
 
@@ -127,7 +128,7 @@ sap.ui.require([
 
 	QUnit.module("Properties & Functions", {
 		beforeEach: function () {
-			this.oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, {useBatch: true});
+			this.oModel = new ODataModelV2(sServiceURI, {useBatch: true});
 			this.oTable = createTable.call(this);
 			sap.ui.getCore().applyChanges();
 		},
@@ -285,6 +286,70 @@ sap.ui.require([
 		assert.ok(!!oTable.getBindingInfo("rows"), "BindingInfo available");
 	});
 
+	QUnit.test("BindRows - Update columns", function(assert) {
+		var oBindingInfo = {path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results"};
+		var done = assert.async();
+
+		function test(mTestSettings) {
+			return new Promise(function(resolve) {
+				var oTable = new sap.ui.table.AnalyticalTable({
+					columns: [new sap.ui.table.AnalyticalColumn()]
+				});
+				var oUpdateColumnsSpy = sinon.spy(oTable, "_updateColumns");
+				oTable.setModel(mTestSettings.model);
+				if (mTestSettings.bindingInfo != null) {
+					oTable.bindRows(mTestSettings.bindingInfo);
+				}
+
+				TableUtils.Binding.metadataLoaded(oTable).then(function() {
+					mTestSettings.metadataLoaded(oUpdateColumnsSpy);
+					resolve();
+				}).catch(function() {
+					mTestSettings.metadataLoaded(oUpdateColumnsSpy);
+					resolve();
+				});
+			});
+		}
+
+		test({
+			bindingInfo: oBindingInfo,
+			metadataLoaded: function(oUpdateColumnsSpy) {
+				assert.ok(oUpdateColumnsSpy.notCalled, "No Model -> Columns not updated");
+			}
+		}).then(function() {
+			return test({
+				model: new ODataModelV2(sServiceURI),
+				metadataLoaded: function(oUpdateColumnsSpy) {
+					assert.ok(oUpdateColumnsSpy.notCalled, "No BindingInfo -> Columns not updated");
+				}
+			});
+		}).then(function() {
+			return test({
+				bindingInfo: oBindingInfo,
+				model: new ODataModelV2(sServiceURI),
+				metadataLoaded: function(oUpdateColumnsSpy) {
+					assert.ok(oUpdateColumnsSpy.calledOnce, "V2 model -> Columns updated");
+				}
+			});
+		}).then(function() {
+			return test({
+				bindingInfo: oBindingInfo,
+				model: new ODataModel(sServiceURI, {loadMetadataAsync: false}),
+				metadataLoaded: function(oUpdateColumnsSpy) {
+					assert.ok(oUpdateColumnsSpy.calledOnce, "V1 model; Load metadata synchronously -> Columns updated");
+				}
+			});
+		}).then(function() {
+			return test({
+				bindingInfo: oBindingInfo,
+				model: new ODataModel(sServiceURI, {loadMetadataAsync: true}),
+				metadataLoaded: function(oUpdateColumnsSpy) {
+					assert.ok(oUpdateColumnsSpy.calledOnce, "V1 model; Load metadata asynchronously -> Columns updated");
+				}
+			});
+		}).then(done);
+	});
+
 	QUnit.test("Binding events", function(assert) {
 		var oChangeSpy = this.spy();
 		var oDataRequestedSpy = this.spy();
@@ -316,7 +381,7 @@ sap.ui.require([
 
 	QUnit.module("GroupHeaderMenu", {
 		beforeEach: function () {
-			this.oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, {useBatch: true});
+			this.oModel = new ODataModelV2(sServiceURI, {useBatch: true});
 			this.oTable = createTable.call(this);
 			sap.ui.getCore().applyChanges();
 		},
@@ -330,10 +395,9 @@ sap.ui.require([
 
 		function doTest(oTable) {
 			/*eslint-disable new-cap */
-
 			var oEvent = jQuery.Event({type: "contextmenu"});
 			/*eslint-enable new-cap */
-			oEvent.target = oTable.getDomRef("rows-row0-col3");
+			oEvent.target = oTable.getDomRef("rows-row0-col4");
 			oTable._onContextMenu(oEvent);
 			assert.ok(oTable._getGroupHeaderMenu().bOpen, "Menu is open");
 			done();
@@ -374,7 +438,7 @@ sap.ui.require([
 
 	QUnit.module("AnalyticalTable with ODataModel v2", {
 		beforeEach: function () {
-			this.oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, {useBatch: true});
+			this.oModel = new ODataModelV2(sServiceURI, {useBatch: true});
 		},
 		afterEach: function () {
 			this.oTable.destroy();
@@ -611,7 +675,7 @@ sap.ui.require([
 
 	QUnit.module("AnalyticalColumn", {
 		beforeEach: function () {
-			this.oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, {useBatch: true});
+			this.oModel = new ODataModelV2(sServiceURI, {useBatch: true});
 		},
 		afterEach: function () {
 			this.oTable.destroy();

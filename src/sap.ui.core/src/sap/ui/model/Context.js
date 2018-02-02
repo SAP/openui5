@@ -19,7 +19,7 @@ sap.ui.define(['sap/ui/base/Object'],
 	 * or by using createBindingContext.
 	 *
 	 * @param {sap.ui.model.Model} oModel the model
-	 * @param {String} sPath the binding path
+	 * @param {string} sPath the binding path
 	 * @abstract
 	 * @public
 	 * @alias sap.ui.model.Context
@@ -59,8 +59,8 @@ sap.ui.define(['sap/ui/base/Object'],
 	/**
 	 * Getter for path of the context itself or a subpath
 	 * @public
-	 * @param {String} sPath the binding path
-	 * @return {String} the binding path
+	 * @param {string} [sPath] the binding path (optional)
+	 * @return {string} the binding path
 	 */
 	Context.prototype.getPath = function(sPath) {
 		return this.sPath + (sPath ? "/" + sPath : "");
@@ -69,7 +69,7 @@ sap.ui.define(['sap/ui/base/Object'],
 	/**
 	 * Gets the property with the given relative binding path
 	 * @public
-	 * @param {String} sPath the binding path
+	 * @param {string} sPath the binding path
 	 * @return {any} the property value
 	 */
 	Context.prototype.getProperty = function(sPath) {
@@ -79,7 +79,7 @@ sap.ui.define(['sap/ui/base/Object'],
 	/**
 	 * Gets the (model dependent) object the context points to or the object with the given relative binding path
 	 * @public
-	 * @param {String} [sPath] the binding path
+	 * @param {string} [sPath] the binding path
 	 * @param {object} [mParameters] additional model specific parameters (optional)
 	 * @return {object} the context object
 	 */

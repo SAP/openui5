@@ -57,7 +57,7 @@ jQuery.sap.require("sap.ui.layout.form.GridElementData");
 				});
 
 				oDesignTime = new sap.ui.dt.DesignTime({
-					plugins : [oTabHandlingPlugin, oSelectionPlugin],
+					plugins : [oTabHandlingPlugin, oSelectionPlugin, oRemove],
 					rootElements : [oView]
 				});
 

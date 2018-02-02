@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Test Page for sap.ui.dt.MetadataPropagationUtil</title>
+
+	<style>
+		#content {
+			position: absolute;
+			left: 400px;
+			top : 10px;
+		}
+	</style>
+
+	<!-- inline styles for animation / transition test -->
+	<style>
+		@keyframes example {
+			0%   {width: auto;}
+			100% {width: 0px;}
+		}
+
+		.sapUiDtTestAnimate {
+			animation-name: example;
+			animation-duration: 0.5s;
+			width: 0px;
+		}
+	</style>
+
+	<script src="../shared-config.js"></script>
+	<script>
+		// window['sap-ui-config']['noConflict'] = true;
+		window['sap-ui-config'].libs = 'sap.ui.dt, sap.m, sap.ui.layout';
+		window['sap-ui-config'].resourceroots = {
+			'dt.view': 'testdata/designtime/',
+			'qunit': './'
+		};
+		document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
+	</script>
+	<script>
+		jQuery.sap.require('sap.ui.qunit.qunit-2-css');
+		jQuery.sap.require('sap.ui.thirdparty.qunit-2');
+		jQuery.sap.require('sap.ui.qunit.qunit-junit');
+		// jQuery.sap.require('sap.ui.qunit.QUnitUtils');
+		jQuery.sap.require('sap.ui.qunit.qunit-coverage');
+
+		// code coverage report only for listed namespaces
+		window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/rta,sap/ui/dt]');
+
+		jQuery.sap.includeScript('./MetadataPropagationUtil.qunit.js');
+	</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit page for sap.ui.dt.MetadataPropagationUtil</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<div id="content"></div>
+<ol id="qunit-tests"></ol>
+</body>
+</html>

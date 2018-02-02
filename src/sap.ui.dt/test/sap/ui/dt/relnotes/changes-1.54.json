@@ -91,6 +91,12 @@
         "type": "FIX",
         "text": " Stabilize test case by rounding numbers",
         "references": []
+      },
+      {
+        "id": "d05dc051b7c2b87ea17cf72330c07312a05c1dce",
+        "type": "FEATURE",
+        "text": " Adding new group \"DIALOG\" to designtime metadata tests",
+        "references": []
       }
     ]
   }

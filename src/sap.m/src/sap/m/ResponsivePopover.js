@@ -111,6 +111,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 			/**
 			 * Determines if a close button should be inserted into the dialog's header dynamically to close the dialog. This property only takes effect on phone.
+			 * <b>Note:</b> The close button could be placed only in a sap.m.Bar if a sap.m.Toolbar is passed as a header - the property will not take effect.
 			 */
 			showCloseButton : {type : "boolean", group : "Misc", defaultValue : true},
 
@@ -493,7 +494,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	ResponsivePopover.prototype._insertCloseButton = function(oHeader){
 		var oCloseButton = this._getCloseButton(),
 			iIndex;
-		if (oHeader) {
+		if (oHeader && oHeader.addContentRight) {
 			iIndex = oHeader.getAggregation("contentRight", []).length;
 			oHeader.insertAggregation("contentRight", oCloseButton, iIndex);
 		}

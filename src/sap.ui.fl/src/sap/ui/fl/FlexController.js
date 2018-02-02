@@ -437,18 +437,8 @@ sap.ui.define([
 	 * @returns {Promise} resolving with an array of responses or rejecting with the first error
 	 * @public
 	 */
-	FlexController.prototype.saveAll = function () {
-		return this._oChangePersistence.saveDirtyChanges();
-	};
-
-	/**
-	 * Saves all changes of a persistence instance for a new app or app variant.
-	 * @param {string} sReferenceForChange - the ID of the new app variant
-	 * @returns {Promise} Returns a resolved promise with an array of responses or rejecting with the first error
-	 * @public
-	 */
-	FlexController.prototype.saveAs = function(sReferenceForChange) {
-		return this._oChangePersistence.saveAsDirtyChanges(sReferenceForChange);
+	FlexController.prototype.saveAll = function (bSkipUpdateCache) {
+		return this._oChangePersistence.saveDirtyChanges(bSkipUpdateCache);
 	};
 
 	/**

@@ -6,12 +6,14 @@
 sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/rta/Utils',
-	'sap/ui/fl/Utils'
+	'sap/ui/fl/Utils',
+	'sap/ui/dt/OverlayRegistry'
 ],
 function(
 	Plugin,
 	Utils,
-	FlexUtils
+	FlexUtils,
+	OverlayRegistry
 ){
 	"use strict";
 
@@ -166,7 +168,7 @@ function(
 	};
 
 	Selection.prototype._selectOverlay = function (oEvent) {
-		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		var bMultiSelection = oEvent.metaKey || oEvent.ctrlKey;
 		var oTargetClasses = oEvent.target.className;
 
@@ -197,9 +199,9 @@ function(
 		if (sap.ui.Device.browser.name == "ie"){
 			// when the EasyAdd Button is clicked, we don't want to focus/stopPropagation.
 			// but when the OverlayScrollContainer is the target, we want it to behave like a click on an overlay
-			var oTarget = sap.ui.getCore().byId(oEvent.target.id);
+			var oTarget = OverlayRegistry.getOverlay(oEvent.target.id);
 			var bTargetIsScrollContainer = oEvent.target.className === "sapUiDtOverlayScrollContainer";
-			var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+			var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 			if ((bTargetIsScrollContainer || oTarget instanceof sap.ui.dt.Overlay) && oOverlay instanceof sap.ui.dt.Overlay) {
 				if (oOverlay.getSelectable()){
 					oOverlay.focus();
@@ -283,9 +285,9 @@ function(
 	}
 
 	function _isOfSameType(aSelections, oSelectedOverlay){
-		var sSelectedOverlayElementName = oSelectedOverlay.getElementInstance().getMetadata().getName();
+		var sSelectedOverlayElementName = oSelectedOverlay.getElement().getMetadata().getName();
 		return !aSelections.some(function(oSelection){
-			var sCurrentSelectionElementName = oSelection.getElementInstance().getMetadata().getName();
+			var sCurrentSelectionElementName = oSelection.getElement().getMetadata().getName();
 			return (sCurrentSelectionElementName !== sSelectedOverlayElementName);
 		});
 	}

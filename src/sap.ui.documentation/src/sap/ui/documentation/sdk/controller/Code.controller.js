@@ -112,8 +112,7 @@ sap.ui.define([
 				this.entityId = oSample.entityId;
 
 				this.getAPIReferenceCheckPromise(oSample.entityId).then(function (bHasAPIReference) {
-					// set API Reference button visibility
-					this._oData.bHasAPIReference = bHasAPIReference;
+					this.getView().byId("apiRefButton").setVisible(bHasAPIReference);
 				}.bind(this));
 
 				// set model data

@@ -79,7 +79,7 @@ function(
 	var fnFindOverlay = function(oElement, oDesignTime) {
 		var aOverlays = oDesignTime.getElementOverlays();
 		var bResult = aOverlays.some(function (oOverlay) {
-			return oOverlay.getElementInstance() === oElement;
+			return oOverlay.getElement() === oElement;
 		});
 		return bResult;
 	};
@@ -98,7 +98,7 @@ function(
 		},
 		afterEach : function() {
 			FakeLrepLocalStorage.deleteChanges();
-			this.oRta.exit();
+			this.oRta.destroy();
 			sandbox.restore();
 		}
 	});
@@ -115,6 +115,7 @@ function(
 	});
 	QUnit.module("Given RTA instance is initialized", {
 		beforeEach : function(assert) {
+			var fnDone = assert.async();
 			sandbox = sinon.sandbox.create();
 			FakeLrepLocalStorage.deleteChanges();
 			//mock RTA instance
@@ -129,6 +130,7 @@ function(
 			this.oRta._oDesignTime = new DesignTime({
 				rootElements : [oComp.getAggregation("rootControl")]
 			});
+			this.oRta._oDesignTime.attachEventOnce("synced", fnDone);
 			this.oOriginalInstanceManager = jQuery.extend( true, {}, InstanceManager);
 			//spy functions
 			this.fnOverrideFunctionsSpy = sandbox.spy(this.oRta.getPopupManager(), "_overrideInstanceFunctions");
@@ -167,7 +169,7 @@ function(
 		},
 		afterEach : function() {
 			if (this.oRta) {
-				this.oRta.exit();
+				this.oRta.destroy();
 			}
 			if (this.oDialog) {
 				this.oDialog.destroy();
@@ -304,7 +306,7 @@ function(
 			this.oNonRtaDialog.attachAfterOpen(function() {
 				assert.strictEqual(this.fnAddRootElementSpy.callCount, 1, "then 'addRootElement' is called once since RTA is set");
 				assert.ok(this.fnAddRootElementSpy.calledWith(this.oDialog), "then 'addRootElement' called with the same app component dialog");
-				assert.strictEqual(this.oRta._oDesignTime.getRootElements()[1], this.oDialog.getId(), "then the opened dialog was added as the second root element");
+				assert.strictEqual(this.oRta._oDesignTime.getRootElements()[1].getId(), this.oDialog.getId(), "then the opened dialog was added as the second root element");
 				assert.strictEqual(this.oRta._oDesignTime.getRootElements().length, 2, "then main app element and same app component dialog present, but external dialogs not included");
 				done();
 			}.bind(this));
@@ -328,14 +330,26 @@ function(
 		this.oPopover.attachAfterOpen(function() {
 			var oPopup = this.oPopover.oPopup;
 			var vPopupElement = oPopup._$().get(0);
+
 			this.oRta.getPopupManager().fnOriginalPopupOnAfterRendering = oPopup.onAfterRendering;
 			this.oPopover.oPopup.onAfterRendering = null;
-			vPopupElement.addEventListener("blur", function() {
-				assert.strictEqual(typeof this.oPopover.oPopup.onAfterRendering, "function", "then onAfterRendering is set back");
-				done();
-			}.bind(this), true);
+
 			this.oRta.getPopupManager()._removePopupPatch(this.oPopover);
 			assert.strictEqual(this.fnAddPopupListeners.callCount, 2, "then popup event listeners attached back, called twice, once while open() and once while re-attaching");
+
+			var fnCheckOnAfterRendering = function () {
+				assert.strictEqual(typeof this.oPopover.oPopup.onAfterRendering, "function", "then onAfterRendering is set back");
+				done();
+			}.bind(this);
+
+			//TODO find a better way to test without checking for document focus. Else case is triggered when the test window is in an inactive state*/
+			if (document.hasFocus()) {
+				vPopupElement.addEventListener("blur", function () {
+					fnCheckOnAfterRendering();
+				}, true);
+			} else {
+				fnCheckOnAfterRendering();
+			}
 			jQuery.sap.focus(oPopup.oContent);
 			jQuery.sap.delayedCall(0, this, function() {
 				vPopupElement.blur();
@@ -485,7 +499,7 @@ function(
 		},
 		afterEach : function() {
 			sandbox.restore();
-			this.oRta.exit();
+			this.oRta.destroy();
 			FakeLrepLocalStorage.deleteChanges();
 			if (this.oDialog) {
 				this.oDialog.destroy();
@@ -502,7 +516,9 @@ function(
 		var fnOpenDone = assert.async();
 		this.oDialog.attachAfterOpen(function() {
 			assert.strictEqual(this.fnCreateDialogSpy.callCount, 1, "then '_createPopupOverlays' called once");
-			assert.notEqual(this.oRta._oDesignTime.getRootElements().indexOf(this.oDialog.getId()), -1, "then the opened dialog was added as a root element");
+			assert.notEqual(this.oRta._oDesignTime.getRootElements().map(function(oRootElement){
+				return oRootElement.getId();
+			}).indexOf(this.oDialog.getId()), -1, "then the opened dialog was added as a root element");
 			assert.ok(this.fnCreateDialogSpy.calledOn(this.oRta.getPopupManager()), "then '_createPopupOverlays' with the opened dialog");
 			this.oRta._oDesignTime.attachEventOnce("synced", function() {
 				assert.ok(fnFindOverlay(this.oDialog, this.oRta._oDesignTime), "then overlay exists for root dialog element");
@@ -572,18 +588,24 @@ function(
 			if (this.oButton) {
 				this.oButton.destroy();
 			}
-			sandbox.restore();
 		}
 	});
 	QUnit.test("when dialog with same app component is already open", function(assert) {
+		var fnDone = assert.async();
 		var oRta = new RuntimeAuthoring({
 			rootControl : oComp.getAggregation("rootControl")
 		});
 		var fnAfterRTA = function() {
-			assert.notEqual(oRta._oDesignTime.getRootElements().indexOf(this.oDialog.getId()), -1, "then the opened dialog was added as a root element");
-			assert.ok(fnFindOverlay(this.oDialog, oRta._oDesignTime), "then overlay exists for root dialog element");
-			oRta.exit();
+			assert.notEqual(oRta._oDesignTime.getRootElements().map(function(oRootElement){
+				return oRootElement.getId();
+			}).indexOf(this.oDialog.getId()), -1, "then the opened dialog was added as a root element");
+			oRta._oDesignTime.attachEventOnce("synced", function (oEvent) {
+				assert.ok(fnFindOverlay(this.oDialog, oRta._oDesignTime), "then overlay exists for root dialog element");
+				oRta.destroy();
+				fnDone();
+			}, this);
 		}.bind(this);
+
 		return Promise.all([
 			new Promise(function (fnResolve) {
 				oRta.attachStart(fnResolve);
@@ -623,7 +645,7 @@ function(
 		afterEach: function(assert) {
 			FakeLrepLocalStorage.deleteChanges();
 			if (this.oRta) {
-				this.oRta.exit();
+				this.oRta.destroy();
 			}
 			if (this.oDialog) {
 				this.oDialog.destroy();
@@ -661,7 +683,7 @@ function(
 		afterEach: function (assert) {
 			FakeLrepLocalStorage.deleteChanges();
 			if (this.oRta) {
-				this.oRta.exit();
+				this.oRta.destroy();
 			}
 			this.oCompContInside.destroy();
 			this.oNonRtaDialog.destroy();

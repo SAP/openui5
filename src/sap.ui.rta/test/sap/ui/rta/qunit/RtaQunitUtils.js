@@ -14,7 +14,7 @@ sap.ui.define([
 
 	RtaQunitUtils.renderTestModuleAt = function(sNamespace, sDomId){
 		var oComp = sap.ui.getCore().createComponent({
-			name : "sap.ui.rta.test",
+			name : "sap.ui.rta.qunitrta",
 			id : "Comp1",
 			settings : {
 				componentData : {
@@ -35,7 +35,7 @@ sap.ui.define([
 		FakeLrepConnectorLocalStorage.enableFakeConnector();
 
 		var oComp = sap.ui.getCore().createComponent({
-			name : "sap.ui.rta.test",
+			name : "sap.ui.rta.qunitrta",
 			id : "Comp1",
 			settings : {
 				componentData : {

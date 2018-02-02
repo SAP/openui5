@@ -270,6 +270,12 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 
 		// Create the binding.
 		Table.prototype._bindAggregation.call(this, sName, oBindingInfo);
+
+		if (sName === "rows") {
+			TableUtils.Binding.metadataLoaded(this).then(function() {
+				this._updateColumns(true);
+			}.bind(this));
+		}
 	};
 
 	/**

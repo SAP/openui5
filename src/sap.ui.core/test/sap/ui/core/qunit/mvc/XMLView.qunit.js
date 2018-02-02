@@ -597,7 +597,7 @@ sap.ui.define([
 	/*
 	 * @param {boolean} bSync view loading mode
 	 * @param {string} sType preprocessor type
-	 * @param {integer} [iCount] number of preprocessors, if not set the legacy version is tested
+	 * @param {int} [iCount] number of preprocessors, if not set the legacy version is tested
 	 * @return {undefined|Promise} view promise in async mode
 	 */
 	function testPreprocessor(assert, bSync, sType, iCount) {

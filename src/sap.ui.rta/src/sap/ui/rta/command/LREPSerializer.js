@@ -9,7 +9,8 @@ sap.ui.define([
 	'sap/ui/rta/command/AppDescriptorCommand',
 	'sap/ui/fl/FlexControllerFactory',
 	'sap/ui/fl/Utils',
-	'sap/ui/rta/ControlTreeModifier'
+	'sap/ui/rta/ControlTreeModifier',
+	'sap/ui/fl/registry/Settings'
 ], function(
 	ManagedObject,
 	CommandStack,
@@ -18,7 +19,8 @@ sap.ui.define([
 	AppDescriptorCommand,
 	FlexControllerFactory,
 	FlexUtils,
-	RtaControlTreeModifier
+	RtaControlTreeModifier,
+	Settings
 ) {
 	"use strict";
 	/**
@@ -148,17 +150,75 @@ sap.ui.define([
 		return this._lastPromise;
 	};
 
+	LREPSerializer.prototype._moveChangeToAppVariant = function(sReferenceAppIdForChanges, oFlexController) {
+		return Settings.getInstance().then(function(oSettings) {
+			var oPropertyBag = {
+				reference: sReferenceAppIdForChanges
+			};
+			var sNamespace = FlexUtils.createNamespace(oPropertyBag, "changes");
+
+			var aCommands = this.getCommandStack().getAllExecutedCommands();
+			aCommands.forEach(function(oCommand) {
+				// for revertable changes which don't belong to LREP (variantSwitch) or runtime only changes
+				if ((oCommand instanceof FlexCommand || oCommand instanceof AppDescriptorCommand)
+					|| !oCommand.getRuntimeOnly()) {
+					var oChange = oCommand.getPreparedChange();
+					if (oSettings.isAtoEnabled()) {
+						oChange.setRequest("ATO_NOTIFICATION");
+					}
+
+					oChange.setNamespace(sNamespace);
+					oChange.setComponent(sReferenceAppIdForChanges);
+				}
+			});
+
+			return oFlexController.saveAll(true);
+		}.bind(this));
+	};
+
+	LREPSerializer.prototype._triggerUndoChanges = function() {
+		var oCommandStack = this.getCommandStack();
+		var aPromises = [];
+
+		var aCommands = oCommandStack.getAllExecutedCommands();
+		aCommands.forEach(function(oCommand) {
+			aPromises.push(oCommand.undo.bind(oCommand));
+		});
+
+		// The last command has to be undone first, therefore reversing is required
+		aPromises = aPromises.reverse();
+
+		return FlexUtils.execPromiseQueueSequentially(aPromises, false, true);
+	};
+
+	LREPSerializer.prototype._removeCommands = function(oFlexController) {
+		var oCommandStack = this.getCommandStack();
+		var aCommands = oCommandStack.getAllExecutedCommands();
+
+		aCommands.forEach(function(oCommand) {
+			if (oCommand instanceof FlexCommand){
+				var oChange = oCommand.getPreparedChange();
+				var oAppComponent = oCommand.getAppComponent();
+				var oControl = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
+				oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
+			}
+		});
+
+		// Once the changes are undoed, all commands shall be removed
+		oCommandStack.removeAllCommands();
+	};
+
 	/**
 	 *
 	 * @param {string} sReferenceAppIdForChanges
-	 * @returns {promise} returns a promise with true or false
+	 * @returns {Promise} returns a promise with true or false
 	 * @description Shall be used to persist the unsaved changes (in the current RTA session) for new app variant;
 	 * Once the unsaved changes has been saved for the app variant, the cache (See Cache#update) will not be updated for the current app
 	 * and the dirty changes will be spliced;
 	 * At this point command stack is not aware if the changes have been booked for the new app variant.
-	 * Therefore if there shall be some UI changes present in command stack, we undo all the changes till the beginning.
-	 * Undo operation calls ChangePersistence#deleteChange and for this change we mark the change's state to 'PERSISTED'.(See ChangePersistence#deleteChange -> Change#markForDeletion)
-	 * In the last when user presses 'Save and Exit', this change will be automatically ignored because the state was already set to 'PERSISTED'.
+	 * Therefore if there shall be some UI changes present in command stack, we undo all the changes till the beginning. Before undoing we detach the 'commandExecuted' event
+	 * Since we detached the commandExecuted event, therefore LRepSerializer would not talk with FlexController and ChangePersistence.
+	 * In the last when user presses 'Save and Exit', there will be no change registered for the current app.
 	 */
 	LREPSerializer.prototype.saveAsCommands = function(sReferenceAppIdForChanges) {
 		if (!sReferenceAppIdForChanges) {
@@ -179,16 +239,19 @@ sap.ui.define([
 
 		var oFlexController = FlexControllerFactory.createForControl(oRootControl);
 
-		return oFlexController.saveAs(sReferenceAppIdForChanges).then(function() {
-			while (this.getCommandStack().canUndo()) {
-				this.getCommandStack().undo();
-			}
-
-			// Once the changes are undoed, all commands shall be removed
-			this.getCommandStack().removeAllCommands();
-
-			return Promise.resolve(true);
-		}.bind(this));
+		var oCommandStack = this.getCommandStack();
+		return this._moveChangeToAppVariant(sReferenceAppIdForChanges, oFlexController)
+			.then(function() {
+				// Detach the event 'commandExecuted' here to stop the communication of LREPSerializer with Flex
+				oCommandStack.detachCommandExecuted(this.handleCommandExecuted.bind(this));
+				return this._triggerUndoChanges();
+			}.bind(this))
+			.then(function() {
+				this._removeCommands(oFlexController);
+				// Attach the event 'commandExecuted' here to start the communication of LREPSerializer with Flex
+				oCommandStack.attachCommandExecuted(this.handleCommandExecuted.bind(this));
+				return true;
+			}.bind(this));
 	};
 
 	return LREPSerializer;

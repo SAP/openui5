@@ -152,9 +152,7 @@ sap.ui.require([
 			var oRootControl = new sap.ui.core.Control();
 			var oStack = new Stack();
 
-			return RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack).then(function(bResult) {
-				assert.equal(bResult, true, "then the 'i' button is visible");
-			});
+			assert.equal(RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack), true, "then the 'i' button is visible");
 		});
 
 		QUnit.test("when isPlatFormEnabled() is called for non FLP apps on S/4 Hana platform", function(assert) {
@@ -174,9 +172,7 @@ sap.ui.require([
 			var oRootControl = new sap.ui.core.Control();
 			var oStack = new Stack();
 
-			return RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack).then(function(bResult) {
-				assert.equal(bResult, false, "then the 'i' button is not visible");
-			});
+			assert.equal(RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack), false, "then the 'i' button is not visible");
 		});
 
 		QUnit.test("when isPlatFormEnabled() is called for scaffolding apps", function(assert) {
@@ -195,9 +191,7 @@ sap.ui.require([
 			var oRootControl = new sap.ui.core.Control();
 			var oStack = new Stack();
 
-			return RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack).then(function(bResult) {
-				assert.equal(bResult, false, "then the 'i' button is not visible");
-			});
+			assert.equal(RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack), false, "then the 'i' button is not visible");
 		});
 
 		QUnit.test("when isPlatFormEnabled() is called for non FLP apps on S/4 Hana platform with feature flag 'sap-ui-xx-rta-save-as' equal to false", function(assert) {
@@ -241,9 +235,7 @@ sap.ui.require([
 			var oRootControl = new sap.ui.core.Control();
 			var oStack = new Stack();
 
-			return RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack).then(function(bResult) {
-				assert.equal(bResult, false, "then the 'i' button is not visible");
-			});
+			assert.equal(RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack), false, "then the 'i' button is not visible");
 		});
 
 		QUnit.test("when isPlatFormEnabled() is called for an FLP app which has no crossNavigation in 'sap.app' property of a descriptor", function(assert) {
@@ -284,9 +276,7 @@ sap.ui.require([
 			var oRootControl = new sap.ui.core.Control();
 			var oStack = new Stack();
 
-			return RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack).then(function(bResult) {
-				assert.equal(bResult, true, "then the 'i' button is visible");
-			});
+			assert.equal(RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack), true, "then the 'i' button is visible");
 		});
 
 		QUnit.test("when isPlatFormEnabled() is called for FLP app which has no 'sap.app' property of a descriptor", function(assert) {
@@ -321,9 +311,7 @@ sap.ui.require([
 			var oRootControl = new sap.ui.core.Control();
 			var oStack = new Stack();
 
-			return RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack).then(function(bResult) {
-				assert.equal(bResult, false, "then the 'i' button is not visible");
-			});
+			assert.equal(RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack), false, "then the 'i' button is not visible");
 		});
 
 		QUnit.test("when isPlatFormEnabled() is called with no isPlatFormEnabled support (NON S/4 Hana Cloud systems)", function(assert) {
@@ -342,9 +330,7 @@ sap.ui.require([
 			var oRootControl = new sap.ui.core.Control();
 			var oStack = new Stack();
 
-			return RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack).then(function(bResult) {
-				assert.equal(bResult, false, "then the 'i' button is not visible");
-			});
+			assert.equal(RtaAppVariantFeature.isPlatFormEnabled(oRootControl, "CUSTOMER", oStack), false, "then the 'i' button is not visible");
 		});
 	});
 

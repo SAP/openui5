@@ -262,8 +262,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 * </pre>
 	 *
 	 * @param {object} [mParams] Parameters used to initialize the property list
-	 * @param {string} [mParams.url] The URL to the .properties file which should be loaded.
-	 * @param {boolean} [mParams.async=false] Whether the .properties file which should be loaded asynchronously
+	 * @param {string} [mParams.url] The URL to the .properties file which should be loaded
+	 * @param {boolean} [mParams.async=false] Whether the .properties file should be loaded asynchronously or not
 	 * @param {object} [mParams.headers] A map of additional header key/value pairs to send along with
 	 *    the request (see <code>headers</code> option of <code>jQuery.ajax</code>)
 	 * @param {object} [mParams.returnNullIfMissing=false] Whether <code>null</code> should be returned

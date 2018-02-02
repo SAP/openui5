@@ -565,7 +565,7 @@
 		assert.equal(oFormat.format(-999999), "-1", "-999999 formatted");
 	});
 
-	QUnit.test("integet long style under locale zh_CN", function(assert) {
+	QUnit.test("integer long style under locale zh_CN", function(assert) {
 		// The pattern for 1000-other in locale zh_CN is defined as "0" without any scale which means a number with 4 digits
 		// shouldn't be formatted using the short style.
 		// But when a formatted string without any scale is parsed under locale zh_CN, this pattern is always selected which
@@ -1139,6 +1139,8 @@
 		assert.equal(oFormat.format([-123456.789, null]).toString(), "-123,456.79", "-123456.789 null");
 	});
 
+	QUnit.module("Unit Format");
+
 	QUnit.test("Unit format with invalid unit definition coordinate", function(assert) {
 		var oLocale = new sap.ui.core.Locale("en");
 		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({}, oLocale);
@@ -1154,6 +1156,178 @@
 		//defaults to english locale as defined in M_DEFAULT_DATA in LocaleData.js
 		assert.equal(oFormat.format(12, "duration-hour").toString(), "12 hr", "20 hours");
 		assert.equal(oFormat.format(13, "volume-liter").toString(), "13 L", "13 liter");
+	});
+
+	QUnit.test("Unit format custom pattern", function(assert) {
+		var oLocale = new sap.ui.core.Locale("en");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({
+			customUnits: {
+				"olf": {
+					"displayName": "olf",
+					"unitPattern-count-one": "{0} olf",
+					"unitPattern-count-other": "{0} olfers"
+				},
+				"IND": {
+					"displayName": "olf",
+					"unitPattern-count-one": "{0} olf",
+					"unitPattern-count-other": "{0} olfs"
+				},
+				"electric-inductance": {
+					"displayName": "H",
+					"unitPattern-count-one": "{0} H",
+					"unitPattern-count-other": "{0} H"
+				}
+			}
+		}, oLocale);
+
+		// test exclusiveness
+		assert.equal(oFormat.format(20, "area-hectare").toString(), "", "20 ha");
+
+		// test "other" units
+		assert.equal(oFormat.format(20, "olf").toString(), "20 olfers", "20 olfers");
+		assert.equal(oFormat.format(20, "IND").toString(), "20 olfs", "20 olfs");
+		assert.equal(oFormat.format(20, "electric-inductance").toString(), "20 H", "20 H");
+
+		// test "one" unit
+		assert.equal(oFormat.format(1, "olf").toString(), "1 olf", "1 olf");
+		assert.equal(oFormat.format(1, "IND").toString(), "1 olf", "1 olf");
+		assert.equal(oFormat.format(1, "electric-inductance").toString(), "1 H", "1 H");
+
+	});
+
+	QUnit.test("Unit parse custom pattern", function(assert) {
+		var oLocale = new sap.ui.core.Locale("en");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({
+			customUnits: {
+				"olf": {
+					"displayName": "olf",
+					"unitPattern-count-one": "{0} olf",
+					"unitPattern-count-other": "{0} olfers"
+				},
+				"IND": {
+					"displayName": "olf",
+					"unitPattern-count-one": "{0} olf",
+					"unitPattern-count-other": "{0} olfs"
+				},
+				"electric-inductance": {
+					"displayName": "H",
+					"unitPattern-count-one": "{0} H",
+					"unitPattern-count-other": "{0} H"
+				}
+			}
+		}, oLocale);
+
+		// test exclusiveness
+		assert.equal(oFormat.parse("20 ha"), null, "20 ha");
+
+		// test "other" units
+		assert.deepEqual(oFormat.parse("20 olfers"), [20, "olf"], "20 olfers");
+		assert.deepEqual(oFormat.parse("20 olfs"), [20, "IND"], "20 olfs");
+		assert.deepEqual(oFormat.parse("20 H"), [20, "electric-inductance"], "20 H");
+
+		// test "one" unit - ambiguous for olf and IND
+		assert.deepEqual(oFormat.parse("1 olf"), [1, undefined], "1 olf");
+		assert.deepEqual(oFormat.parse("1 olf"), [1, undefined], "1 olf");
+		assert.deepEqual(oFormat.parse("1 H"), [1, "electric-inductance"], "1 H");
+
+	});
+
+	QUnit.module("Unit Format using configuration", {
+		beforeEach: function(assert) {
+
+			//ensure custom unit mappings and custom units are reset
+			this.oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+			this.oFormatSettings.setUnitMappings();
+			this.oFormatSettings.setCustomUnits();
+
+			assert.equal(this.oFormatSettings.getCustomUnits(), undefined, "units must be undefined");
+			assert.equal(this.oFormatSettings.getUnitMappings(), undefined, "unit mappings must be undefined");
+		}, afterEach: function(assert) {
+			//ensure custom unit mappings and custom units are reset
+			this.oFormatSettings.setUnitMappings();
+			this.oFormatSettings.setCustomUnits();
+
+			assert.equal(this.oFormatSettings.getCustomUnits(), undefined, "units must be undefined");
+			assert.equal(this.oFormatSettings.getUnitMappings(), undefined, "unit mappings must be undefined");
+		}
+	});
+
+
+	QUnit.test("Unit format custom pattern in config", function(assert) {
+		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+		var oConfigObject = {
+			"electric-inductance": {
+				"unitPattern-count-one": "{0} H",
+				"unitPattern-count-other": "{0} H"
+			},
+			"length-millimeter": {
+				"unitPattern-count-other": "{0} mymm"
+			}
+		};
+		oFormatSettings.setCustomUnits(oConfigObject);
+
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({});
+
+		// test custom unit in config
+		assert.equal(oFormat.format(20, "area-hectare").toString(), "20 ha", "20 ha");
+		assert.equal(oFormat.format(20, "electric-inductance").toString(), "20 H", "20 H");
+		assert.equal(oFormat.format(1, "electric-inductance").toString(), "1 H", "1 H");
+
+
+		//custom mappings should not affect parsing
+		oFormatSettings.setUnitMappings({
+			"henry": "electric-inductance",
+			"IND": "electric-inductance",
+			"MTR": "length-meter",
+			"MET": "length-meter",
+			"length-kilometer": "electric-inductance",
+			"DET": "MET",
+			"one": "two",
+			"two": "one"
+		});
+
+		// test existing units
+		assert.equal(oFormat.format(20, "area-hectare").toString(), "20 ha", "20 ha");
+
+		//test overwritten units from custom units
+		assert.equal(oFormat.format(20, "length-millimeter").toString(), "20 mymm", "20 mymm");
+
+		// test defined custom units
+		assert.equal(oFormat.format(20, "electric-inductance").toString(), "20 H", "20 H");
+		assert.equal(oFormat.format(1, "electric-inductance").toString(), "1 H", "1 H");
+
+
+		//test mappings
+		assert.equal(oFormat.format(20, "length-kilometer").toString(), "20 H", "20 H");
+		assert.equal(oFormat.format(20, "henry").toString(), "20 H", "20 H");
+		assert.equal(oFormat.format(20, "IND").toString(), "20 H", "20 H");
+		assert.equal(oFormat.format(20, "MTR").toString(), "20 m", "20 m");
+		assert.equal(oFormat.format(20, "MET").toString(), "20 m", "20 m");
+		assert.equal(oFormat.format(20, "DET").toString(), "", "mapping of mapping");
+		assert.equal(oFormat.format(20, "one").toString(), "", "recursive mapping");
+		assert.equal(oFormat.format(20, "two").toString(), "", "recursive mapping");
+
+		oFormatSettings.setCustomUnits(undefined);
+		oFormatSettings.setUnitMappings(undefined);
+	});
+
+	QUnit.test("Unit parse custom pattern in config", function(assert) {
+		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+		var oConfigObject = {
+			"electric-inductance": {
+				"displayName": "H",
+				"unitPattern-count-one": "{0} H",
+				"unitPattern-count-other": "{0} H"
+			}
+		};
+		oFormatSettings.setCustomUnits(oConfigObject);
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({});
+
+		assert.deepEqual(oFormat.parse("20 ha"), [20, "area-hectare"],  "20 ha");
+		assert.deepEqual(oFormat.parse("20 H"), [20, "electric-inductance"],  "20 H");
+		assert.deepEqual(oFormat.parse("1 H"), [1, "electric-inductance"],  "1 H");
+
+		oFormatSettings.setCustomUnits(undefined);
 	});
 
 
@@ -1538,6 +1712,8 @@
 	});
 
 
+	QUnit.module("Currency Format");
+
 	QUnit.test("Currency format with sMeasure and showMeasure as symbol", function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
 			currencyCode: false
@@ -1905,6 +2081,8 @@
 		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 	});
 
+	QUnit.module("Float Format");
+
 	QUnit.test("float precision", function(assert) {
 		var oLocale = new sap.ui.core.Locale("de-DE");
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({precision: 0}, oLocale);
@@ -2135,13 +2313,15 @@
 		// other test similar to integer -> skip
 	});
 
+	QUnit.module("General");
+
 	QUnit.test("origin info", function(assert) {
 		sap.ui.getCore().getConfiguration().originInfo = true;
 		var oOriginNumber = sap.ui.core.format.NumberFormat.getIntegerInstance(),
 			sValue = oOriginNumber.format(123),
 			oInfo = sValue.originInfo;
-		assert.equal(oInfo.source, "Common Locale Data Repository", "Origin Info: source")
-		assert.equal(oInfo.locale, "en-US", "Origin Info: locale")
+		assert.equal(oInfo.source, "Common Locale Data Repository", "Origin Info: source");
+		assert.equal(oInfo.locale, "en-US", "Origin Info: locale");
 	});
 
 	QUnit.test("Private method NumberFormat._shiftDecimalPoint", function(assert) {

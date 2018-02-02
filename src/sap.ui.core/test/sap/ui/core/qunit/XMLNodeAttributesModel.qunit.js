@@ -57,6 +57,9 @@ sap.ui.require([
 		assert.ok(oButtonNode, "There is a button node");
 
 		var oButtonModel = new XMLNodeAttributesModel(oButtonNode, this.oVisitorStub, "button");
+		var oNode = oButtonModel.getObject();
+		assert.ok(oNode,"Calling getObject() returns a node");
+		assert.deepEqual(oNode, oButtonNode, "Calling getObject() returns the node itsself");
 		assert.strictEqual(oButtonModel.getProperty("/text"), "Button", "The text is correct");
 		assert.strictEqual(oButtonModel.getProperty("/text/@binding"), undefined, "The text is no binding");
 		assert.strictEqual(oButtonModel.getProperty("/text/@bindingStr"), "", "The text is no binding");

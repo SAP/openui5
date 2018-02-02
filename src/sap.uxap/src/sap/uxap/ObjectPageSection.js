@@ -4,15 +4,26 @@
 
 // Provides control sap.uxap.ObjectPageSection.
 sap.ui.define([
-	"sap/ui/core/InvisibleText",
-	"./ObjectPageSectionBase",
-	"sap/ui/Device",
-	"sap/m/Button",
-	"sap/ui/core/StashedControlSupport",
-	"./ObjectPageSubSection",
-	"./library",
-	"sap/m/library"
-], function (InvisibleText, ObjectPageSectionBase, Device, Button, StashedControlSupport, ObjectPageSubSection, library, mobileLibrary) {
+    "sap/ui/core/InvisibleText",
+    "./ObjectPageSectionBase",
+    "sap/ui/Device",
+    "sap/m/Button",
+    "sap/ui/core/StashedControlSupport",
+    "./ObjectPageSubSection",
+    "./library",
+    "sap/m/library",
+    "./ObjectPageSectionRenderer"
+], function(
+    InvisibleText,
+	ObjectPageSectionBase,
+	Device,
+	Button,
+	StashedControlSupport,
+	ObjectPageSubSection,
+	library,
+	mobileLibrary,
+	ObjectPageSectionRenderer
+) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -175,8 +186,17 @@ sap.ui.define([
 	 */
 	ObjectPageSection.prototype._getAriaLabelledBy = function () {
 		return new InvisibleText({
-			text: this._getInternalTitle() || this.getTitle()
+			text: this._getTitle()
 		}).toStatic();
+	};
+
+	/**
+	 * Determines if the <code>ObjectPageSection</code> title is visible.
+	 * @private
+	 * @returns {Boolean}
+	 */
+	ObjectPageSection.prototype._isTitleVisible = function () {
+		return this.getShowTitle() && this._getInternalTitleVisible();
 	};
 
 	/**

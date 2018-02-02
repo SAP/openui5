@@ -43,8 +43,6 @@ sap.ui.define([
 			this._bUserDependent = (oFile.layer === "USER");
 			this._vRevertData = null;
 			this.setState(Change.states.NEW);
-
-			this._bRelevantForAppVariant = false;
 		},
 		metadata : {
 			properties : {
@@ -223,28 +221,6 @@ sap.ui.define([
 	 */
 	Change.prototype.setNamespace = function (sNamespace) {
 		this._oDefinition.namespace = sNamespace;
-	};
-
-	/**
-	 * Returns a boolean value which tells if the change is relevant for an app variant
-	 *
-	 * @returns {boolean} Value of the property '_bRelevantForAppVariant'
-	 *
-	 * @public
-	 */
-	Change.prototype.isChangeRelevantForAppVariant = function () {
-		return this._bRelevantForAppVariant;
-	};
-
-	/**
-	 * Sets the property '_bRelevantForAppVariant' to true if the change is relevant for an app variant.
-	 *
-	 * @param {boolean} bValue
-	 *
-	 * @public
-	 */
-	Change.prototype.setChangeRelevantForAppVariant = function (bValue) {
-		this._bRelevantForAppVariant = bValue;
 	};
 
 	/**
@@ -449,18 +425,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Marks the current change to be deleted persistently if the change is not taken over by an app variant
-	 * Marks the current change to be already persisted if the change is relevant for an app variant
+	 * Marks the current change to be deleted persistently
 	 *
 	 * @public
 	 */
 	Change.prototype.markForDeletion = function () {
-		if (this.isChangeRelevantForAppVariant()) {
-			// TODO: This is a temporary solution and will be removed ASAP
-			this.setState(Change.states.PERSISTED);
-		} else {
-			this.setState(Change.states.DELETED);
-		}
+		this.setState(Change.states.DELETED);
 	};
 
 	/**

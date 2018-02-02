@@ -320,7 +320,7 @@ sap.ui.define([
 		/**
 		 * Converts layer name into index
 		 * @param {string} sLayer - layer name
-		 * @returns {Integer} index of the layer
+		 * @returns {int} index of the layer
 		 * @function
 		 * @name sap.ui.fl.Utils.getLayerIndex
 		 */
@@ -331,7 +331,7 @@ sap.ui.define([
 		/**
 		 * Determines whether a layer is higher than the max layer.
 		 *
-		 * @param {String} sLayer - Layer name to be evaluated
+		 * @param {string} sLayer - Layer name to be evaluated
 		 * @returns {boolean} <code>true</code> if input layer is higher than max layer, otherwise <code>false</code>
 		 * @public
 		 * @function
@@ -343,6 +343,7 @@ sap.ui.define([
 
 		/**
 		 * Compares current layer with a provided layer
+		 * -1: Lower layer, 0: Same layer, 1: Layer above
 		 *
 		 * @param {String} sLayer - Layer name to be evaluated
 		 * @returns {boolean} <code>true</code> if input layer is higher than current layer
@@ -352,7 +353,8 @@ sap.ui.define([
 		 */
 		isLayerAboveCurrentLayer: function(sLayer) {
 			var sCurrentLayer = Utils.getCurrentLayer(false);
-			if (this.getLayerIndex(sCurrentLayer) > this.getLayerIndex(sLayer)) {
+			// If sLayer is undefined, it is assumed it be on the lowest layer
+			if ((this.getLayerIndex(sCurrentLayer) > this.getLayerIndex(sLayer)) || !sLayer) {
 				return -1;
 			} else if (this.getLayerIndex(sCurrentLayer) === this.getLayerIndex(sLayer)) {
 				return 0;
@@ -693,7 +695,7 @@ sap.ui.define([
 		 * Returns whether the hot fix mode is active (url parameter hotfix=true)
 		 *
 		 * @public
-		 * @returns {bool} is hotfix mode active, or not
+		 * @returns {boolean} is hotfix mode active, or not
 		 */
 		isHotfixMode: function () {
 			var oUriParams, aIsHotfixMode, sIsHotfixMode;

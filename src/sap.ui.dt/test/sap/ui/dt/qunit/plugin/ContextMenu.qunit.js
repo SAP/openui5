@@ -51,7 +51,7 @@ sap.ui.require([
 				text : "enabled for button 1",
 				handler : sinon.spy(),
 				enabled : function(oOverlay){
-					var oElement = oOverlay.getElementInstance();
+					var oElement = oOverlay.getElement();
 					return oElement === that.oButton1;
 				}
 			};
@@ -60,11 +60,11 @@ sap.ui.require([
 				text : "disabled for button 1",
 				handler : sinon.spy(),
 				available : function(oOverlay){
-					var oElement = oOverlay.getElementInstance();
+					var oElement = oOverlay.getElement();
 					return oElement === that.oButton1 || oElement === that.oButton2;
 				},
 				enabled : function(oOverlay){
-					var oElement = oOverlay.getElementInstance();
+					var oElement = oOverlay.getElement();
 					return oElement !== that.oButton1;
 				}
 			};
@@ -73,7 +73,7 @@ sap.ui.require([
 				text : "only shown for button 2",
 				handler : sinon.spy(),
 				available : function(oOverlay){
-					var oElement = oOverlay.getElementInstance();
+					var oElement = oOverlay.getElement();
 					return oElement === that.oButton2;
 				}
 			};
@@ -94,7 +94,7 @@ sap.ui.require([
 			this.oMenuEntries.dynamicTextItem = {
 				id : "CTX_DYNAMIC_TEXT",
 				text : function(oOverlay) {
-					var oElement = oOverlay.getElementInstance();
+					var oElement = oOverlay.getElement();
 					return oElement.getId();
 				},
 				handler : sinon.spy()
@@ -233,7 +233,7 @@ sap.ui.require([
 		sap.ui.test.qunit.triggerMouseEvent(oContextMenu.getItems()[0].getDomRef(), "click");
 
 		assert.equal(this.oMenuEntries.available.handler.callCount, 1, "then the corresponding handler function is called");
-		assert.equal(this.oMenuEntries.available.handler.getCall(0).args[0][0].getElementInstance(), this.oButton2, "then the correct element is passed to handler");
+		assert.equal(this.oMenuEntries.available.handler.getCall(0).args[0][0].getElement(), this.oButton2, "then the correct element is passed to handler");
 
 		assert.equal(this.oMenuEntries.disabledBtn1.handler.callCount, 0, "then other handler functions are not called");
 	});

@@ -32,6 +32,16 @@ sap.ui.define([
 					oTable.setPopinLayout(sap.m.PopinLayout.Block);
 					break;
 			}
+		},
+
+		onToggleStickyColHdr: function(oEvent) {
+			var oTable = this.byId("idProductsTable");
+			if (oEvent.getParameter("pressed")) {
+				// The API used below is experimental.
+				oTable.setSticky(sap.m.Sticky.ColumnHeaders);
+			} else {
+				oTable.setSticky("None");
+			}
 		}
 	});
 

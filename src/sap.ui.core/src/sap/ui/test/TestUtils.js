@@ -555,7 +555,7 @@ sap.ui.define([
 		/**
 		 * Returns the realOData query parameter so that it can be forwarded to an embedded test
 		 *
-		 * @returns {String}
+		 * @returns {string}
 		 *  the realOData query parameter or "" if none was given
 		 */
 		getRealOData : function () {

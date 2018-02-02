@@ -66,6 +66,7 @@ sap.ui.define([
 
 		this._aMenuItems = [];
 		this._aGroupedItems = [];
+		this._aSubMenus = [];
 		this._aPluginsWithBusyFunction = [];
 
 		this._oMousePosition = {
@@ -148,8 +149,11 @@ sap.ui.define([
 	 * @param {boolean} bIsSubMenu whether the new MiniMenu is a SubMenu opened by a button inside another MiniMenu
 	 */
 	MiniMenu.prototype.open = function (oEvent, oOverlay, bContextMenu, bIsSubMenu) {
+
+		this._bContextMenu = !!bContextMenu;
+
 		this._aPluginsWithBusyFunction = [];
-		this.setContextElement(oOverlay.getElementInstance());
+		this.setContextElement(oOverlay.getElement());
 
 		var aPlugins = this.getDesignTime().getPlugins();
 		aPlugins.forEach(function (oPlugin) {
@@ -167,23 +171,27 @@ sap.ui.define([
 			return !mMenuItemEntry.fromPlugin;
 		});
 
-		this._aGroupedItems = [];
-
 		if (!bIsSubMenu) {
+
+			this._aGroupedItems = [];
+
+			this._aSubMenus = [];
 
 			aPlugins.forEach(function (oPlugin) {
 				var aPluginMenuItems = oPlugin.getMenuItems(oOverlay) || [];
 				aPluginMenuItems.forEach(function (mMenuItem) {
 					if (mMenuItem.group != undefined && !bContextMenu) {
 						this._addMenuItemToGroup(mMenuItem);
+					} else if (mMenuItem.submenu != undefined) {
+						this._addSubMenu(mMenuItem, oEvent, oOverlay);
 					} else {
 						this.addMenuItem(mMenuItem, true);
 					}
 				}.bind(this));
 			}.bind(this));
-		}
 
-		this._addItemGroupsToMenu(oEvent, oOverlay);
+			this._addItemGroupsToMenu(oEvent, oOverlay);
+		}
 
 		var aMenuItems = this._aMenuItems.map(function (mMenuItemEntry) {
 			return mMenuItemEntry.menuItem;
@@ -481,7 +489,7 @@ sap.ui.define([
 	 * @private
 	 */
 	MiniMenu.prototype._shouldMiniMenuOpen = function (oEvent, bOverwriteOpenValue, onHover) {
-		if (!this._checkForPluginLock() && (!this.isMenuOpeningLocked() || this._bTouched)) {
+		if ((!this.isMenuOpeningLocked() || this._bTouched)) {
 			if (!onHover) {
 				this._oCurrentOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
 			}
@@ -556,7 +564,7 @@ sap.ui.define([
 	 */
 	MiniMenu.prototype.resetFocus = function () {
 		if (!this._bFocusLocked && this._oCurrentOverlay && document.activeElement) { //IE sometimes doesn't get an active element and throws an error when trying to set focus
-			if (!Device.os.ios && !this._checkForPluginLock()) {
+			if (!Device.os.ios) {
 				this._oCurrentOverlay.focus();
 			}
 		}
@@ -596,33 +604,68 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds single items in a array of groups
+	 * Adds single items to an array of groups
 	 * @param {object} mMenuItem The menu item to add to a group
 	 */
 	MiniMenu.prototype._addMenuItemToGroup = function (mMenuItem) {
-		if (this._aGroupedItems.length === 0) {
+
+		var bGroupExists = this._aGroupedItems.some(function (_oGroupedItem) {
+
+			if (_oGroupedItem.sGroupName === mMenuItem.group) {
+				_oGroupedItem.aGroupedItems.push(mMenuItem);
+				return true;
+			}
+		});
+
+		if (!bGroupExists) {
 			this._aGroupedItems.push({
 				sGroupName: mMenuItem.group,
 				aGroupedItems: [mMenuItem]
 			});
-		} else {
-			for (var i = 0; i < this._aGroupedItems.length; i++) {
-				var aGroupedItemEntry = this._aGroupedItems[i];
-
-				if (aGroupedItemEntry.sGroupName === mMenuItem.group) {
-					aGroupedItemEntry.aGroupedItems.push(mMenuItem);
-					aGroupedItemEntry = null;
-					return;
-				} else if (i == this._aGroupedItems.length - 1) {
-					this._aGroupedItems.push({
-						sGroupName: mMenuItem.group,
-						aGroupedItems: [mMenuItem]
-					});
-					aGroupedItemEntry = null;
-					return;
-				}
-			}
 		}
+	};
+
+	/**
+	 * Adds a submenu to the list of submenus
+	 * @param {object} mMenuItem The menu item to add to a group
+	 * @param {sap.ui.base.Event} oEvent A event which was called on the Overlay
+	 * @param {sap.ui.dt.Overlay} oOverlay The Overlay on which the MiniMenu was opened
+	 */
+	MiniMenu.prototype._addSubMenu = function (mMenuItem, oEvent, oOverlay) {
+
+		mMenuItem.submenu.forEach(function (oSubMenuItem) {
+			oSubMenuItem.handler = mMenuItem.handler;
+		});
+
+		mMenuItem.handler = function (sMenuItemId, oEvent, oOverlay, aOverlays, mPropertiesBag) {
+			this._aSubMenus.some(function (_oMenuItem) {
+				if (_oMenuItem.sSubMenuId === sMenuItemId) {
+					_oMenuItem.aSubMenuItems.forEach(function (oSubMenuItem) {
+						this.addMenuItem(oSubMenuItem, true, true);
+					}.bind(this));
+					return true;
+				}
+			}.bind(this));
+
+			if (!this._bContextMenu) {
+				oEvent.clientX = null;
+				oEvent.clientY = null;
+			}
+
+			this.oMiniMenu.close();
+			setTimeout(function () {
+				this.open(oEvent, oOverlay, true, true);
+			}.bind(this), 0);
+			this.lockMenuOpening();
+
+		}.bind(this, mMenuItem.id, oEvent, oOverlay);
+
+		this._aSubMenus.push({
+			sSubMenuId: mMenuItem.id,
+			aSubMenuItems: mMenuItem.submenu
+		});
+
+		this.addMenuItem(mMenuItem, true);
 	};
 
 	/**
@@ -633,18 +676,14 @@ sap.ui.define([
 	MiniMenu.prototype._addItemGroupsToMenu = function (oEvent, oOverlay) {
 		this._aGroupedItems.forEach(function (oGroupedItem, iIndex) {
 
-			//If there would would only be a single button in a group we don't need a group
+			//If there is only one button that belongs to a group we don't need that group
 			if (oGroupedItem.aGroupedItems.length === 1) {
 				this.addMenuItem(oGroupedItem.aGroupedItems[0], true, false);
 			} else {
 
 				var fHandlerForGroupedButton = function (iIndex, oEvent, oOverlay) {
 
-					var mGroupedItemsToShow = this._aGroupedItems.map(function (oGroupedItems) {
-						return oGroupedItems.aGroupedItems;
-					});
-
-					mGroupedItemsToShow[iIndex].forEach(function (mMenuItem) {
+					this._aGroupedItems[iIndex].aGroupedItems.forEach(function (mMenuItem) {
 						this.addMenuItem(mMenuItem, true, true);
 					}.bind(this));
 
@@ -658,17 +697,14 @@ sap.ui.define([
 					this.lockMenuOpening();
 				};
 
-				this._aMenuItems.push({
-					menuItem: {
+				this.addMenuItem({
 						id: oGroupedItem.sGroupName + "-groupButton",
 						enabled: true,
 						text: oGroupedItem.sGroupName,
 						icon: oGroupedItem.aGroupedItems[0].icon,
 						rank: oGroupedItem.aGroupedItems[0].rank,
 						handler: fHandlerForGroupedButton.bind(this, iIndex, oEvent, oOverlay)
-					},
-					fromPlugin: true
-				});
+				}, true);
 			}
 		}.bind(this));
 	};

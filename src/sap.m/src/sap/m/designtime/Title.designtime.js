@@ -12,6 +12,12 @@ sap.ui.define([],
 				singular: "TITLE_NAME",
 				plural: "TITLE_NAME_PLURAL"
 			},
+			palette: {
+				group: "DISPLAY",
+				icons: {
+					svg: "sap/m/designtime/Title.icon.svg"
+				}
+			},
 			actions: {
 				remove: {
 					changeType: "hideControl"

@@ -122,9 +122,12 @@ function(
 	QUnit.test("when calling command factory for setTitle and undo", function(assert) {
 		var done = assert.async();
 
-		var oOverlay = new ElementOverlay();
-		sinon.stub(OverlayRegistry, "getOverlay").returns(oOverlay);
-		sinon.stub(oOverlay, "getVariantManagement").returns("idMain1--variantManagementOrdersTable");
+		var oDummyOverlay = {
+			getVariantManagement : function(){
+				return "idMain1--variantManagementOrdersTable";
+			}
+		};
+		sinon.stub(OverlayRegistry, "getOverlay").returns(oDummyOverlay);
 
 		var oDesignTimeMetadata = new ElementDesignTimeMetadata({ data : {} });
 		var mFlexSettings = {layer: "CUSTOMER"};

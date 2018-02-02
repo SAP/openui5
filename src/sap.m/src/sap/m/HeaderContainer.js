@@ -280,7 +280,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				oToCell = this._getParentCell(oNext);
 			}
 
-          if ( ( oFromCell && oToCell && oFromCell.id !== oToCell.id ) || ( oNext && oNext.id === this.getId() + "-after" ) || ( oNext && oNext.id === this.getId() + "-scrl-prev-button" ) ) { // attempt to jump out of HeaderContainer
+          if ( ( oFromCell && oToCell && oFromCell.id !== oToCell.id ) || ( oNext && oNext.id === this.getId() + "-after" ) || ( oNext && oNext.id === this.getId() + "-scrl-prev-button" ) || ( oNext && oNext.id === this.getId() + "-scrl-next-button" ) ) { // attempt to jump out of HeaderContainer
 				var oLastInnerTab = oFocusables.last().get(0);
 				if (oLastInnerTab) {
 					this._bIgnoreFocusIn = true;

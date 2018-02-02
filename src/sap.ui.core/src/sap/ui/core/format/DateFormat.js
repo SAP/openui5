@@ -1023,13 +1023,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 			name: "dayNumberOfWeek",
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iDay = bUTC ? oDate.getUTCDay() : oDate.getDay();
-				var iFirstDayOfWeek = oFormat.oLocaleData.getFirstDayOfWeek();
-				var iDayNumberOfWeek = iDay - (iFirstDayOfWeek - 1);
-
-				if (iDayNumberOfWeek <= 0) {
-					iDayNumberOfWeek += 7;
-				}
-				return iDayNumberOfWeek;
+				return oFormat._adaptDayOfWeek(iDay);
 			},
 			parse: function(sValue, oPart, oFormat, oConfig) {
 				var sPart = oParseHelper.findNumbers(sValue, oPart.digits);
@@ -2002,7 +1996,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 	/**
 	 * Format a date relative to the current date.
 	 *
-	 * @param {Date} oDate the value to format
+	 * @param {Date} oJSDate the value to format
 	 * @param {boolean} bUTC whether to use UTC
 	 * @return {string} the formatted output value or null if relative formatting not possible
 	 * @private
@@ -2011,7 +2005,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 
 		var oToday = new Date(),
 			sScale = this.oFormatOptions.relativeScale || "day",
-			iToday, iDate, iDiff, sPattern, iDiffSeconds;
+			iDiff, sPattern, iDiffSeconds;
 
 		iDiffSeconds = (oJSDate.getTime() - oToday.getTime()) / 1000;
 		if (this.oFormatOptions.relativeScale == "auto") {
@@ -2024,16 +2018,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 
 		// For dates normalize to UTC to avoid issues with summer-/wintertime
 		if (sScale == "year" || sScale == "month" || sScale == "day") {
-			iToday = Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate());
+			oToday = new Date(Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate()));
 			if (bUTC) {
-				iDate = Date.UTC(oJSDate.getUTCFullYear(), oJSDate.getUTCMonth(), oJSDate.getUTCDate());
+				oJSDate = new Date(Date.UTC(oJSDate.getUTCFullYear(), oJSDate.getUTCMonth(), oJSDate.getUTCDate()));
 			} else {
-				iDate = Date.UTC(oJSDate.getFullYear(), oJSDate.getMonth(), oJSDate.getDate());
+				oJSDate = new Date(Date.UTC(oJSDate.getFullYear(), oJSDate.getMonth(), oJSDate.getDate()));
 			}
-			iDiffSeconds = (iDate - iToday) / 1000;
 		}
 
-		iDiff = this._getDifference(sScale, iDiffSeconds);
+		iDiff = this._getDifference(sScale, [oToday, oJSDate]);
 
 		if (this.oFormatOptions.relativeScale != "auto" && (iDiff < aRange[0] || iDiff > aRange[1])) {
 			//Relative parsing only in range +/- x days
@@ -2086,15 +2079,80 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 		return sScale;
 	};
 
-	DateFormat.prototype._getDifference = function(sScale, iDiffSeconds) {
-		var iScaleSeconds = this._mScales[sScale],
-			iDiff = iDiffSeconds / iScaleSeconds;
-		if (iDiffSeconds > 0) {
-			iDiff = Math.floor(iDiff);
-		} else {
-			iDiff = Math.ceil(iDiff);
+	function cutDateFields(oDate, iStartIndex) {
+		var aFields = [
+			"FullYear",
+			"Month",
+			"Date",
+			"Hours",
+			"Minutes",
+			"Seconds",
+			"Milliseconds"
+		], sMethodName;
+
+		for (var i = iStartIndex; i < aFields.length; i++) {
+			sMethodName = "set" + aFields[iStartIndex];
+			oDate[sMethodName].apply(oDate, [0]);
 		}
-		return iDiff;
+	}
+
+	var mRelativeDiffs = {
+		year: function(oFromDate, oToDate) {
+			return oToDate.getFullYear() - oFromDate.getFullYear();
+		},
+		month: function(oFromDate, oToDate) {
+			return oToDate.getMonth() - oFromDate.getMonth() + (this.year(oFromDate, oToDate) * 12);
+		},
+		week: function(oFromDate, oToDate, oFormat) {
+			var iFromDay = oFormat._adaptDayOfWeek(oFromDate.getDay());
+			var iToDay = oFormat._adaptDayOfWeek(oToDate.getDay());
+
+			cutDateFields(oFromDate, 3);
+			cutDateFields(oToDate, 3);
+
+			return (oToDate.getTime() - oFromDate.getTime() - (iToDay - iFromDay) * oFormat._mScales.day * 1000) / (oFormat._mScales.week * 1000);
+		},
+		day: function(oFromDate, oToDate, oFormat) {
+			cutDateFields(oFromDate, 3);
+			cutDateFields(oToDate, 3);
+
+			return (oToDate.getTime() - oFromDate.getTime()) / (oFormat._mScales.day * 1000);
+		},
+		hour: function(oFromDate, oToDate, oFormat) {
+			cutDateFields(oFromDate, 4);
+			cutDateFields(oToDate, 4);
+
+			return (oToDate.getTime() - oFromDate.getTime()) / (oFormat._mScales.hour * 1000);
+		},
+		minute: function(oFromDate, oToDate, oFormat) {
+			cutDateFields(oFromDate, 5);
+			cutDateFields(oToDate, 5);
+
+			return (oToDate.getTime() - oFromDate.getTime()) / (oFormat._mScales.minute * 1000);
+		},
+		second: function(oFromDate, oToDate, oFormat) {
+			cutDateFields(oFromDate, 6);
+			cutDateFields(oToDate, 6);
+
+			return (oToDate.getTime() - oFromDate.getTime()) / (oFormat._mScales.second * 1000);
+		}
+	};
+
+	DateFormat.prototype._adaptDayOfWeek = function(iDayOfWeek) {
+		var iFirstDayOfWeek = this.oLocaleData.getFirstDayOfWeek();
+		var iDayNumberOfWeek = iDayOfWeek - (iFirstDayOfWeek - 1);
+
+		if (iDayNumberOfWeek <= 0) {
+			iDayNumberOfWeek += 7;
+		}
+		return iDayNumberOfWeek;
+	};
+
+	DateFormat.prototype._getDifference = function(sScale, aDates) {
+		var oFromDate = aDates[0];
+		var oToDate = aDates[1];
+
+		return Math.round(mRelativeDiffs[sScale](oFromDate, oToDate, this));
 	};
 
 

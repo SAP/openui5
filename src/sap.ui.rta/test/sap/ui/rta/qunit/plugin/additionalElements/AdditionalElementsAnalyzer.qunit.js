@@ -23,7 +23,7 @@ function(
 	var mAddODataPropertyAction;
 	oView.getController().isDataReady().then(function () {
 		oGroup = oView.byId("GroupEntityType01");
-		return ElementUtil.loadDesignTimeMetadata(oGroup).then(function(oDesignTime) {
+		return oGroup.getMetadata().loadDesignTime().then(function(oDesignTime) {
 			mAddODataPropertyAction = oDesignTime.aggregations.formElements.actions.addODataProperty;
 			QUnit.start();
 		});

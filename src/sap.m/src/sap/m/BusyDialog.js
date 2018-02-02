@@ -121,7 +121,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/D
 							cancelPressed: {type: "boolean"}
 						}
 					}
-				}
+				},
+				designtime: "sap/m/designtime/BusyDialog.designtime"
 			},
 
 			// requires a dummy render function to avoid loading of separate

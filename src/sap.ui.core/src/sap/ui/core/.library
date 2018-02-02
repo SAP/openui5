@@ -19,7 +19,9 @@
     <!-- excludes for the all-in-one file -->
     <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
       <module-infos>
+        <!--
         <raw-module name="jquery.sap.global.js" depends="sap/ui/Device.js,sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/jqueryui/jquery-ui-position.js,sap/ui/thirdparty/URI.js,sap/ui/thirdparty/es6-promise.js" />
+        -->
         <raw-module name="sap/ui/core/support/trace/EppLib.js" />
         <raw-module name="sap/ui/core/support/trace/E2eTraceLib.js" depends="sap/ui/core/support/trace/EppLib.js" />
         <raw-module name="sap/ui/Device.js" />
@@ -29,6 +31,7 @@
         <raw-module name="sap/ui/thirdparty/d3.js" />
         <raw-module name="sap/ui/thirdparty/datajs.js" />
         <raw-module name="sap/ui/thirdparty/es6-promise.js" />
+        <raw-module name="sap/ui/thirdparty/es6-string-methods.js" />
         <raw-module name="sap/ui/thirdparty/flexie.js" />
         <raw-module name="sap/ui/thirdparty/handlebars.js" />
         <raw-module name="sap/ui/thirdparty/hasher.js" depends="sap/ui/thirdparty/signals.js" />
@@ -103,6 +106,8 @@
         <raw-module name="sap/ui/thirdparty/URITemplate.js" depends="sap/ui/thirdparty/URI.js"/>
         <raw-module name="sap/ui/thirdparty/vkbeautify.js" />
         <raw-module name="sap/ui/thirdparty/zyngascroll.js" />
+        <raw-module name="ui5loader.js" depends="sap/ui/thirdparty/es6-promise.js,sap/ui/thirdparty/es6-string-methods.js" />
+        <raw-module name="ui5loader-autoconfig.js" depends="ui5loader.js" />
         <module-cycle modules="sap/ui/core/Core.js,sap/ui/core/Component.js" />
       </module-infos>
       <all-in-one>
@@ -315,6 +320,21 @@
         </lib>
         <lib name="es6-promise" displayName="es6-promise" homepage="https://github.com/jakearchibald/es6-promise/">
         	<license url="https://raw.githubusercontent.com/jakearchibald/es6-promise/master/LICENSE" type="MIT License" file="../thirdparty/licenses/es6-promise-MIT-LICENSE.txt" />
+        </lib>
+        <lib name="es6-string-method-startsWith" displayName="String.prototype Polyfill (startsWith)" homepage="https://github.com/mathiasbynens/String.prototype.startsWith">
+            <license url="https://github.com/mathiasbynens/String.prototype.startsWith/blob/master/LICENSE-MIT.txt" type="MIT License" file="../thirdparty/licenses/es6-string-methods-basic-MIT-LICENSE.txt" />
+        </lib>
+        <lib name="es6-string-methods-endsWith" displayName="String.prototype Polyfill (endsWith)" homepage="https://github.com/mathiasbynens/String.prototype.endsWith">
+            <license url="https://github.com/mathiasbynens/String.prototype.endsWith/blob/master/LICENSE-MIT.txt" type="MIT License" file="../thirdparty/licenses/es6-string-methods-basic-MIT-LICENSE.txt" />
+        </lib>
+        <lib name="es6-string-methods-includes" displayName="String.prototype Polyfill (includes)" homepage="https://github.com/mathiasbynens/String.prototype.includes">
+            <license url="https://github.com/mathiasbynens/String.prototype.includes/blob/master/LICENSE-MIT.txt" type="MIT License" file="../thirdparty/licenses/es6-string-methods-basic-MIT-LICENSE.txt" />
+        </lib>
+        <lib name="es6-string-methods-repeat" displayName="String.prototype Polyfill (repeat)" homepage="https://github.com/mathiasbynens/String.prototype.repeat">
+            <license url="https://github.com/mathiasbynens/String.prototype.repeat/blob/master/LICENSE-MIT.txt" type="MIT License" file="../thirdparty/licenses/es6-string-methods-basic-MIT-LICENSE.txt" />
+        </lib>
+        <lib name="es6-string-methods-pad" displayName="String.prototype Polyfills (padStart/padEnd)" homepage="https://github.com/uxitten/polyfill">
+            <license url="https://github.com/uxitten/polyfill/blob/master/License.md" type="MIT License" file="../thirdparty/licenses/es6-string-methods-pad-MIT-LICENSE.txt" />
         </lib>
         <lib name="klayjs" displayName="KLayJS" homepage="https://github.com/OpenKieler/klayjs">
             <license url="https://github.com/OpenKieler/klayjs/blob/master/LICENSE" type="Eclipse Public License" file="../thirdparty/licenses/klayjs-ECLIPSE-LICENSE.txt" />

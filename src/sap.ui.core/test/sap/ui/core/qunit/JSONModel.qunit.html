@@ -407,6 +407,23 @@
 		assert.equal(testModel.getProperty("/baz")[1], 97);
 	});
 
+	QUnit.test("test JSONModel loadData: sync - error",function(assert) {
+		var testModel = new sap.ui.model.json.JSONModel();
+		testModel.attachRequestCompleted(function(e) {
+			var mParams = e.getParameters();
+			assert.ok(mParams.errorobject.statusText);
+			assert.equal(mParams.errorobject.statusCode, 404);
+		});
+
+		testModel.attachRequestFailed(function(e) {
+			var mParams = e.getParameters();
+			assert.ok(mParams.statusText);
+			assert.equal(mParams.statusCode, 404);
+		});
+
+		testModel.loadData("nothingThere.json", null, false);
+	});
+
 	QUnit.test("test JSONModel loadData",function(assert){
 		var done = assert.async();
 		var testModel = new sap.ui.model.json.JSONModel();

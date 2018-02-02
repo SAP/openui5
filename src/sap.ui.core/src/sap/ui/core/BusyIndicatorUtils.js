@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global'], //require of sap/ui/core/library not possib
 	 * Returns the HTML content for the busy indicator
 	 * styling + animation: LocalBusyIndicator.less
 	 *
-	 * @param {String} sSize either "Large" or "Medium". Other sizes will be mapped to "Medium"
+	 * @param {string} sSize either "Large" or "Medium". Other sizes will be mapped to "Medium"
 	 * @returns {DOM.element} the element for the busy indicator
 	 */
 	BusyIndicatorUtils.getElement = function(sSize) {

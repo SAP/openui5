@@ -4,8 +4,9 @@
 	xmlns="sap.m"
 	xmlns:uxap="sap.uxap"
 	xmlns:vm="sap.ui.fl.variants"
-	xmlns:layout="sap.ui.layout"
+	xmlns:l="sap.ui.layout"
 	xmlns:form="sap.ui.layout.form"
+	xmlns:html="http://www.w3.org/1999/xhtml"
 	controllerName="sap.ui.rta.test.variantManagement.controller.Main">
 	<!--The view is is bound to EntityType01 in the controller -->
 	<Page title="{i18n>appTitleMain}" id="page" enableScrolling="false">
@@ -35,7 +36,7 @@
 
 				</uxap:headerTitle>
 				<uxap:sections>
-					<uxap:ObjectPageSection id="ObjectPageSectionWithForm" title="Objectpage section with form">
+					<uxap:ObjectPageSection id="ObjectPageSectionWithForm" title="{SectionTitle1}">
 						<uxap:ObjectPageSubSection>
 							<form:SimpleForm class="sapUiSmallMargin"
 											 title="Simple Form bound to EntityType02" id="MainForm"
@@ -70,7 +71,7 @@
 						</uxap:ObjectPageSubSection>
 					</uxap:ObjectPageSection>
 
-					<uxap:ObjectPageSection id="ObjectPageSectionForNavigation" title="Object Page Section NavProperty" class="sapUiNoMargin">
+					<uxap:ObjectPageSection id="ObjectPageSectionForNavigation" title="{SectionTitle2}" class="sapUiNoMargin">
 						<uxap:ObjectPageSubSection>
 							<form:SimpleForm class="sapUiNoMargin"
 											 title="Simple Form bound to EntityTypeNav using navigation" id="NavPropertyForm"
@@ -102,6 +103,25 @@
 									<Text id="NavProperty.Text4" text="{Property02}" />
 								</form:content>
 							</form:SimpleForm>
+						</uxap:ObjectPageSubSection>
+					</uxap:ObjectPageSection>
+
+					<uxap:ObjectPageSection id="ObjectPageSectionWithVM" title="{SectionTitle3}" class="sapUiNoMargin">
+						<uxap:ObjectPageSubSection id="ObjectPageSubSectionWithVM">
+							<l:Grid
+									class="sapUiNoMargin"
+									hSpacing="0"
+									defaultSpan="L12 M12 S12">
+								<Bar>
+									<contentRight>
+										<vm:VariantManagement id="variantManagementContained" for="ObjectPageSubSectionWithVM" updateVariantInURL="true"></vm:VariantManagement>
+									</contentRight>
+								</Bar>
+								<html:div style="height:auto;min-height:4em;min-width:100%;background-color:#A9EAFF;line-height:2em;display:inline-grid">
+									<Title id = "TitleForVM1" text="{to_EntityType01Nav/NavTitle01}"></Title>
+									<Title id = "TitleForVM2" text="{to_EntityType01Nav/NavTitle02}"></Title>
+								</html:div>
+							</l:Grid>
 						</uxap:ObjectPageSubSection>
 					</uxap:ObjectPageSection>
 

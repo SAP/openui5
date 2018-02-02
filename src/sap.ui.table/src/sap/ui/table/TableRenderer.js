@@ -561,7 +561,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 		rm.writeClasses();
 		if (oTable.getRowHeight() > 0) {
-			rm.addStyle("height", oTable.getRowHeight() + "px");
+			rm.addStyle("height", oTable._getDefaultRowHeight() + "px");
 		}
 
 		rm.writeAttribute("tabindex", "-1");
@@ -985,9 +985,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 		rm.writeClasses();
 		rm.writeAttribute("data-sap-ui-rowindex", iRowIndex);
-		var iTableRowHeight = oTable.getRowHeight();
-		if (iTableRowHeight > 0) {
-			rm.addStyle("height", iTableRowHeight + "px");
+		if (oTable.getRowHeight() > 0) {
+			rm.addStyle("height", oTable._getDefaultRowHeight + "px");
 		}
 		rm.writeStyles();
 

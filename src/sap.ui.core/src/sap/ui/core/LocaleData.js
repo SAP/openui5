@@ -32,6 +32,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 			return this._getDeep(this.mData, arguments);
 		},
 
+		/**
+		 * Retrieves merged object if overlay data is available
+		 * @private
+		 * @return {object} merged object
+		 */
+		_getMerged: function() {
+			return this._get.apply(this, arguments);
+		},
+
 		_getDeep: function(oObject, aPropertyNames) {
 			var oResult = oObject;
 			for (var i = 0; i < aPropertyNames.length; i++) {
@@ -946,15 +955,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		},
 
 		/**
-		 * Retrieves the localized display name of a unit for the given CLDR code, e.g. "duration-hour".
-		 * @param {string} sCLDRCode The CLDR pattern key, e.g. "duration-hour"
-		 * @return {string} The localized display name for the requested unit
+		 * Retrieves the localized display name of a unit by sUnit, e.g. "duration-hour".
+		 * @param {string} sUnit the unit key, e.g. "duration-hour"
+		 * @return {string} The localized display name for the requested unit, e.g. <code>"Hour"</code>. Return empty string <code>""</code> if not found
 		 * @public
 		 * @since 1.54
 		 */
-		getUnitDisplayNameByCLDRCode: function(sCLDRCode) {
-			var cldrData = this.getUnitFormat(sCLDRCode);
-			return (cldrData && cldrData["displayName"]) || sCLDRCode;
+		getUnitDisplayName: function(sUnit) {
+			var mUnitFormat = this.getUnitFormat(sUnit);
+			return (mUnitFormat && mUnitFormat["displayName"]) || "";
 		},
 
 
@@ -1055,7 +1064,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 
 			sKey = sScale + "-" + sStyle;
 
-			sPattern = this._get("dateFields", sKey, "relative-type-" + iDiff);
+			if (iDiff === 0 || iDiff === -2 || iDiff === 2) {
+				sPattern = this._get("dateFields", sKey, "relative-type-" + iDiff);
+			}
 
 			if (!sPattern) {
 				oTypes = this._get("dateFields", sKey, "relativeTime-type-" + (bFuture ? "future" : "past"));
@@ -1277,8 +1288,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		/**
 		 * Returns a map containing patterns for formatting lists
 		 *
-		 *@param {string='standard'} sType The type of the list pattern. It can be 'standard' or 'or'.
-		 *@param {string='wide'} sStyle The style of the list pattern. It can be 'wide' or 'short'.
+		 *@param {string} [sType='standard'] The type of the list pattern. It can be 'standard' or 'or'.
+		 *@param {string} [sStyle='wide'] The style of the list pattern. It can be 'wide' or 'short'.
 		* @return {object} Map with list patterns
 		 */
 		getListFormat: function (sType, sStyle) {
@@ -1292,25 +1303,63 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		},
 
 		/**
-		 * Retrieves the unit format pattern for a specific CLDR code
-		 * @param {string} sCLDRCode CLDR code, e.g. "duration-hour"
-		 * @return {object} The unit format configuration for the given type
+		 * Retrieves the unit format pattern for a specific unit name considering the unit mappings.
+		 * @param {string} sUnit unit name, e.g. "duration-hour" or "my"
+		 * @return {object} The unit format configuration for the given unit name
 		 * @public
 		 * @since 1.54
+		 * @see sap.ui.core.LocaleData#getUnitFromMapping
 		 */
-		getUnitFormat: function (sCLDRCode) {
-			return this.getUnitFormats()[sCLDRCode];
+		getResolvedUnitFormat: function (sUnit) {
+			sUnit = this.getUnitFromMapping(sUnit) || sUnit;
+			return this.getUnitFormat(sUnit);
 		},
 
 		/**
-		 * Retrieves the unit format patterns for all CLDR codes
+		 * Retrieves the unit format pattern for a specific unit name.
+		 *
+		 * Note: Does not take unit mapping into consideration.
+		 * @param {string} sUnit unit name, e.g. "duration-hour"
+		 * @return {object} The unit format configuration for the given unit name
+		 * @public
+		 * @since 1.54
+		 */
+		getUnitFormat: function (sUnit) {
+			return this._get("units", "short", sUnit);
+		},
+
+		/**
+		 * Retrieves all unit format patterns merged.
+		 *
+		 * Note: Does not take unit mapping into consideration.
 		 * @return {object} The unit format patterns
 		 * @public
 		 * @since 1.54
 		 */
 		getUnitFormats: function() {
-			return this._get("units", "short");
+			return this._getMerged("units", "short");
 		},
+
+		/**
+		 * Looks up the unit from defined unit mapping.
+		 * E.g. for defined unit mapping
+		 * <code>
+		 * {
+		 *  "my": "my-custom-unit",
+		 *  "cm": "length-centimeter"
+		 * }
+		 * </code>
+		 *
+		 * Call:
+		 * <code>getUnitFromMapping("my")</code> would result in <code>"my-custom-unit"</code>
+		 * @return {string} unit from the mapping
+		 * @public
+		 * @since 1.54
+		 */
+		getUnitFromMapping: function (sMapping) {
+			return this._get("unitMappings", sMapping);
+		},
+
 
 		/**
 		 * Returns array of eras.
@@ -1355,7 +1404,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		 * Returns the defined pattern for representing the calendar week number.
 		 *
 		 * @param {string} sStyle the style of the pattern. It can only be either "wide" or "narrow".
-		 * @param {number} iWeekNumber the week number
+		 * @param {int} iWeekNumber the week number
 		 * @return {string} the week number string
 		 *
 		 * @public
@@ -3159,6 +3208,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 			LocaleData.apply(this, arguments);
 			this.mCustomData = sap.ui.getCore().getConfiguration().getFormatSettings().getCustomLocaleData();
 		},
+
+		/**
+		 * Retrieves the value for the given arguments by checking first <code>mCustomData</code> and if not
+		 * found <code>mData</code>
+		 * @returns {*} value
+		 * @private
+		 */
 		_get: function() {
 			var aArguments = Array.prototype.slice.call(arguments),
 				sCalendar, sKey;
@@ -3169,8 +3225,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 					aArguments = aArguments.slice(1);
 				}
 			}
+
 			sKey = aArguments.join("-");
-			return this.mCustomData[sKey] || this._getDeep(this.mData, arguments);
+			// first try customdata with special formatted key
+			// afterwards try customdata lookup
+			// afterwards try mData lookup
+			return this.mCustomData[sKey] || this._getDeep(this.mCustomData, arguments) || this._getDeep(this.mData, arguments);
+		},
+
+		/**
+		 * Retrieves merged object from <code>mData</code> extended with <code>mCustomData</code>.
+		 * This function merges the content of <code>mData</code> and <code>mCustomData</code> instead of returning one or the other like <code>_get()</code> does.
+		 *
+		 * Note: Properties defined in <code>mCustomData</code> overwrite the ones from <code>mData</code>.
+		 * @private
+		 * @return {object} merged object
+		 */
+		_getMerged: function () {
+			var mData = this._getDeep(this.mData, arguments);
+			var mCustomData = this._getDeep(this.mCustomData, arguments);
+
+			return jQuery.extend({}, mData, mCustomData);
 		}
 	});
 

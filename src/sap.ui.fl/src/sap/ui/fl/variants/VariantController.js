@@ -58,15 +58,17 @@ sap.ui.define([
 	};
 
 	VariantController.prototype._setChangeFileContent = function (oChangeFileContent, oComponent) {
-		if (oChangeFileContent && oChangeFileContent.changes && oChangeFileContent.changes.variantSection) {
+		var oCacheEntry = Cache.getEntry(this.getComponentName(), this.getAppVersion());
+		if (Object.keys(this._mVariantManagement).length === 0) {
 			this._mVariantManagement = {};
+		}
+		if (oChangeFileContent && oChangeFileContent.changes && oChangeFileContent.changes.variantSection) {
 			Object.keys(oChangeFileContent.changes.variantSection).forEach(function (sVariantManagementReference) {
 				this._mVariantManagement[sVariantManagementReference] = {};
 				var oVariantManagementReference = oChangeFileContent.changes.variantSection[sVariantManagementReference];
-				var aVariants = oVariantManagementReference.variants.concat().sort(this.compareVariants);
+				var aVariants = oVariantManagementReference.variants.concat();
 				var sVariantFromUrl;
 				var aURLVariants = Utils.getTechnicalURLParameterValues(oComponent, "sap-ui-fl-control-variant-id");
-				var oCacheEntry;
 
 				var iIndex = -1;
 				aVariants.forEach(function (oVariant, index) {
@@ -80,6 +82,8 @@ sap.ui.define([
 						oVariant.content.content.visible = true;
 					}
 
+					this._applyChangesOnVariant(oVariant);
+
 					// Only the first valid reference for that variant management id passed in the parameters is used to load the changes
 					aURLVariants.some(function(sURLVariant) {
 						if (oVariant.content.fileName === sURLVariant) {
@@ -88,9 +92,10 @@ sap.ui.define([
 						}
 					});
 
-				});
+				}.bind(this));
 				if (iIndex > -1) {
 					var oStandardVariant = aVariants.splice(iIndex, 1)[0];
+					aVariants.sort(this.compareVariants);
 					aVariants.splice(0, 0, oStandardVariant);
 				}
 				this._mVariantManagement[sVariantManagementReference].variants = aVariants;
@@ -103,9 +108,9 @@ sap.ui.define([
 
 				//to set default variant from setDefault variantManagement changes
 				this._applyChangesOnVariantManagement(this._mVariantManagement[sVariantManagementReference]);
-				oCacheEntry = Cache.getEntry(this.getComponentName(), this.getAppVersion());
-				oCacheEntry.file.changes.variantSection = this._mVariantManagement;
 			}.bind(this));
+			// Reference cache entry with map - to keep in sync
+			oCacheEntry.file.changes.variantSection = this._mVariantManagement;
 		}
 	};
 
@@ -415,7 +420,6 @@ sap.ui.define([
 				delete this._mVariantManagement[sKey].initialVariant;
 			}
 			this.getVariants(sKey).forEach(function(oVariant, index) {
-				this._applyChangesOnVariant(oVariant);
 				oVariantData[sKey].variants[index] = {
 					key : oVariant.content.fileName,
 					title : oVariant.content.content.title,
@@ -424,7 +428,7 @@ sap.ui.define([
 					favorite : oVariant.content.content.favorite,
 					visible : oVariant.content.content.visible
 				};
-			}.bind(this));
+			});
 		}.bind(this));
 
 		return oVariantData;

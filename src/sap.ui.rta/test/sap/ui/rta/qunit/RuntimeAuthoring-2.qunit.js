@@ -5,17 +5,10 @@ sap.ui.require([
 	// Controls
 	'sap/m/Button',
 	'sap/m/MessageBox',
-	'sap/ui/comp/smartform/Group',
-	'sap/ui/comp/smartform/GroupElement',
-	'sap/ui/comp/smartform/SmartForm',
 	// internal
-	'sap/ui/Device',
 	'sap/ui/dt/plugin/ContextMenu',
-	'sap/ui/dt/DesignTimeMetadata',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/fl/registry/Settings',
-	'sap/ui/fl/registry/ChangeRegistry',
-	'sap/ui/fl/LrepConnector',
 	'sap/ui/fl/Change',
 	'sap/ui/fl/Utils',
 	'sap/ui/rta/Utils',
@@ -29,7 +22,6 @@ sap.ui.require([
 	'sap/ui/rta/plugin/Rename',
 	'sap/ui/rta/plugin/ControlVariant',
 	'sap/ui/base/Event',
-	'sap/ui/base/EventProvider',
 	'sap/ui/rta/command/BaseCommand',
 	'sap/ui/rta/qunit/RtaQunitUtils',
 	// should be last
@@ -39,16 +31,9 @@ sap.ui.require([
 ], function(
 	Button,
 	MessageBox,
-	Group,
-	GroupElement,
-	SmartForm,
-	Device,
 	ContextMenu,
-	DesignTimeMetadata,
 	OverlayRegistry,
 	Settings,
-	ChangeRegistry,
-	LrepConnector,
 	Change,
 	Utils,
 	RtaUtils,
@@ -62,10 +47,10 @@ sap.ui.require([
 	RenamePlugin,
 	ControlVariantPlugin,
 	Event,
-	EventProvider,
 	RTABaseCommand,
 	RtaQunitUtils,
-	sinon) {
+	sinon
+) {
 	"use strict";
 
 	QUnit.start();
@@ -98,7 +83,7 @@ sap.ui.require([
 		}.bind(this));
 	});
 
-	QUnit.module("Given that RuntimeAuthoring is started with different plugin sets...", {
+	QUnit.module("Given that RuntimeAuthoring is created and started with non-default plugin sets only...", {
 		beforeEach : function(assert) {
 			var done = assert.async();
 			FakeLrepLocalStorage.deleteChanges();
@@ -136,11 +121,10 @@ sap.ui.require([
 		}
 	});
 
-	QUnit.test("when RTA gets initialized with custom plugins only", function(assert) {
+	QUnit.test("when we check the plugins on RTA", function(assert) {
 		var done = assert.async();
 
-		assert.ok(this.oRta, " then RuntimeAuthoring is created");
-		assert.equal(this.oRta.getPlugins()['contextMenu'], this.oContextMenuPlugin, " and the custom ContextMenuPlugin is set");
+		assert.equal(this.oRta.getPlugins()['contextMenu'], this.oContextMenuPlugin, " then the custom ContextMenuPlugin is set");
 		assert.equal(this.oRta.getPlugins()['rename'], undefined, " and the default plugins are not loaded");
 		assert.equal(this.fnDestroy.callCount, 1, " and _destroyDefaultPlugins have been called 1 time after oRta.start()");
 
@@ -151,7 +135,7 @@ sap.ui.require([
 		}.bind(this));
 	});
 
-	QUnit.module("Given that RuntimeAuthoring is started with different plugin sets...", {
+	QUnit.module("Given that RuntimeAuthoring is created and started with default plugin sets...", {
 		beforeEach : function(assert) {
 			var done = assert.async();
 			FakeLrepLocalStorage.deleteChanges();
@@ -176,7 +160,7 @@ sap.ui.require([
 		}
 	});
 
-	QUnit.test("when RTA gets initialized without custom plugins and default plugins get used", function(assert) {
+	QUnit.test("when we check the plugins on RTA", function(assert) {
 		var done = assert.async();
 
 		assert.ok(this.oRta.getPlugins()['contextMenu'], " then the default ContextMenuPlugin is set");
@@ -207,7 +191,7 @@ sap.ui.require([
 		}.bind(this));
 	});
 
-	QUnit.module("Given that RuntimeAuthoring is started with different plugin sets...", {
+	QUnit.module("Given that RuntimeAuthoring is started with one different (non-default) plugin (using setPlugins method)...", {
 		beforeEach : function(assert) {
 			var done = assert.async();
 			FakeLrepLocalStorage.deleteChanges();
@@ -246,7 +230,7 @@ sap.ui.require([
 		}
 	});
 
-	QUnit.test("when RTA gets initialized without custom plugins but set plugins with setPlugins method", function (assert) {
+	QUnit.test("when we check the plugins on RTA", function (assert) {
 		var done = assert.async();
 
 		this.oRta.attachStop(function(oEvent) {
@@ -672,31 +656,21 @@ sap.ui.require([
 
 	QUnit.module("Given that RuntimeAuthoring is called and a Variant Management control is initialized", {
 		beforeEach : function(assert) {
-			var done = assert.async();
+			var fnDone = assert.async();
 			FakeLrepLocalStorage.deleteChanges();
 
-			var oCommandFactory = new CommandFactory();
+			this.oCommandFactory = new CommandFactory();
 
 			this.oCommandStack = new Stack();
 			this.oControlVariantPlugin = new ControlVariantPlugin({
 				id : "nonDefaultControlVariant",
-				commandFactory : oCommandFactory
+				commandFactory : this.oCommandFactory
 			});
 
 			this.oVariantManagementControl = new VariantManagement("variantManagementControl");
 
 			sap.ui.getCore().byId("Comp1---idMain1--layout0").addContent(this.oVariantManagementControl);
 			sap.ui.getCore().applyChanges();
-
-			var oVariantManagementDesignTimeMetadata = {
-				"sap.ui.fl.variants.VariantManagement": {
-					actions : {}
-				}
-			};
-
-			var oDuplicateCommand = oCommandFactory.getCommandFor(this.oVariantManagementControl, "duplicate", {
-				sourceVariantReference: "dummyCurrentVariant"
-			}, oVariantManagementDesignTimeMetadata, "dummyCurrentVariantReference");
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
@@ -710,31 +684,11 @@ sap.ui.require([
 				}
 			});
 
-			var iCallCount = 0;
-			var fnAfterRenderingDelegate = {
-				"onAfterRendering" : function() {
-					setTimeout(function() {
-						iCallCount === 1 ? done() : iCallCount++;
-					});
-				}
-			};
-
 			this.oRta.attachStart(function() {
-				var oVariantManagementOverlay = OverlayRegistry.getOverlay(this.oVariantManagementControl);
-				this.oControlVariantPlugin.setVariantManagementControlOverlay(oVariantManagementOverlay);
-
-				this.fnSetTitleOnCreatedVariantSpy = sandbox.spy(this.oRta, "_setTitleOnCreatedVariant");
-				this.fnOverlayOnAfterRenderingSpy = sandbox.spy(oVariantManagementOverlay, "onAfterRendering");
-				this.fnControlVariantStartEdit = sandbox.spy(this.oControlVariantPlugin, "startEdit");
-
-				this.oControlVariantPlugin.fireElementModified({
-					"command" : oDuplicateCommand,
-					"action" : "setTitle"
-				});
-
-				oVariantManagementOverlay.addEventDelegate(fnAfterRenderingDelegate);
+				this.oVariantManagementOverlay = OverlayRegistry.getOverlay(this.oVariantManagementControl);
+				this.oControlVariantPlugin.setVariantManagementControlOverlay(this.oVariantManagementOverlay);
+				fnDone();
 			}.bind(this));
-			sandbox.stub(this.oCommandStack, "pushAndExecute").returns(Promise.resolve());
 
 			this.oRta.start();
 		},
@@ -747,10 +701,36 @@ sap.ui.require([
 		}
 	});
 
-	QUnit.test("when 'fireElementModified' is called on ControlVariantDuplicate command", function(assert) {
-		assert.ok(this.fnSetTitleOnCreatedVariantSpy.calledOnce, "then 'Rta._setTitleOnCreatedVariant' is called once");
-		assert.ok(this.fnOverlayOnAfterRenderingSpy.calledTwice, "then VariantManagement overlay 'onAfterRendering' is called twice");
-		assert.ok(this.fnControlVariantStartEdit.calledOnce, "then rename is triggered after duplication");
+	QUnit.test("when '_handleElementModified' is called for an event that sets title on a variant", function(assert) {
+		var fnDone = assert.async();
+
+		sandbox.stub(this.oControlVariantPlugin, "startEdit", function(){
+			assert.ok(true, "then rename is triggered");
+			fnDone();
+		});
+
+		var oDummyCommand = new RTABaseCommand();
+
+		var oEvent = {
+			getParameter : function(sParameter){
+				if (sParameter === "action"){
+					return "setTitle";
+				} else if (sParameter === "command"){
+					return oDummyCommand;
+				}
+			}
+		};
+
+		sandbox.stub(this.oCommandStack, "pushAndExecute", function(){
+			assert.ok(true, "then the command is executed");
+			//Simulate command execution (in real application the geometry will always be changed with delay)
+			setTimeout(function(){
+				this.oVariantManagementOverlay.fireGeometryChanged();
+			}.bind(this));
+			return Promise.resolve();
+		}.bind(this));
+
+		this.oRta._handleElementModified(oEvent);
 	});
 
 	QUnit.done(function( details ) {

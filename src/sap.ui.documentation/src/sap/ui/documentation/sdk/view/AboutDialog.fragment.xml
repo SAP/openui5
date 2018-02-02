@@ -27,7 +27,8 @@
 						<Text text="Licensed under the Apache License, Version 2.0 – see"/>
 						<Link text="LICENSE.txt" href="LICENSE.txt" target="_blank" class="aboutLink"/>
 					</HBox>
-					<Text text="UI5 Version {versionData>/fullVersion}" class="sapMTitleStyleH4 sapUiSmallMarginBottom"/>
+					<Text text="{versionData>/versionName} Version {versionData>/fullVersion}" class="sapMTitleStyleH4 sapUiSmallMarginBottom"/>
+					<Text text="Open UI5 Version {versionData>/openUi5Version}" class="sapMTitleStyleH5 sapUiSmallMarginBottom" visible="{=!${versionData>/isOpenUI5}}"/>
 					<Text text="This software includes the following library versions"/>
 					<HBox class="sapUiTinyMarginBottom" allowWrapping="true">
 						<Text text="(a full change log for all libraries can be found"/>
@@ -58,7 +59,7 @@
 								<f:formElements>
 									<f:FormElement label="Version">
 										<f:fields>
-											<Text text="{versionData>/version}" class="sapUiSmallMarginBottom"/>
+											<Text text="{appView>version}" class="sapUiSmallMarginBottom"/>
 										</f:fields>
 									</f:FormElement>
 									<f:FormElement label="Description">

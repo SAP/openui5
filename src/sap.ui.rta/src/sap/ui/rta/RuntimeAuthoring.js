@@ -9,9 +9,7 @@ sap.ui.define([
 		"sap/ui/rta/toolbar/Fiori",
 		"sap/ui/rta/toolbar/Standalone",
 		"sap/ui/rta/toolbar/Personalization",
-		"sap/ui/dt/ElementUtil",
 		"sap/ui/dt/DesignTime",
-		"sap/ui/dt/OverlayRegistry",
 		"sap/ui/dt/Overlay",
 		"sap/ui/rta/command/Stack",
 		"sap/ui/rta/command/CommandFactory",
@@ -35,7 +33,6 @@ sap.ui.define([
 		"sap/ui/dt/plugin/TabHandling",
 		"sap/ui/fl/FlexControllerFactory",
 		"sap/ui/rta/Utils",
-		"sap/ui/fl/transport/Transports",
 		"sap/ui/fl/transport/TransportSelection",
 		"sap/ui/fl/Utils",
 		"sap/ui/fl/registry/Settings",
@@ -55,9 +52,7 @@ sap.ui.define([
 		FioriToolbar,
 		StandaloneToolbar,
 		PersonalizationToolbar,
-		ElementUtil,
 		DesignTime,
-		OverlayRegistry,
 		Overlay,
 		CommandStack,
 		CommandFactory,
@@ -81,7 +76,6 @@ sap.ui.define([
 		TabHandlingPlugin,
 		FlexControllerFactory,
 		Utils,
-		Transports,
 		TransportSelection,
 		FlexUtils,
 		FlexSettings,
@@ -475,7 +469,8 @@ sap.ui.define([
 			return this._handlePersonalizationChangesOnStart()
 			.then(function(bReloadTriggered){
 				if (bReloadTriggered) {
-					return Promise.reject(false);
+					// FLP Plugin reacts on this error string and doesn't the error on the UI
+					return Promise.reject("Reload triggered");
 				}
 
 				// Take default plugins if no plugins handed over
@@ -582,16 +577,15 @@ sap.ui.define([
 	/**
 	 * Checks the Publish button and app variant support (i.e. Save As and Overview of App Variants) availability
 	 * @private
-	 * @returns {[bPublishAvaiable, bAppVariantSupportAvailable]} Returns an array of boolean values
-	 * @description The publish button shall not be available if the system is productive and if a merge error occured during merging changes into the view on startup
+	 * @returns {boolean[]} Returns an array of boolean values [bPublishAvailable, bAppVariantSupportAvailable]
+	 * @description The publish button shall not be available if the system is productive and if a merge error occurred during merging changes into the view on startup
 	 * The app variant support shall not be available if the system is productive and if the platform is not enabled (See Feature.js) to show the app variant tooling
 	 * isProductiveSystem should only return true if it is a test or development system with the provision of custom catalog extensions
 	 */
 	RuntimeAuthoring.prototype._getPublishAndAppVariantSupportVisibility = function() {
 		return FlexSettings.getInstance().then(function(oSettings) {
-			return RtaAppVariantFeature.isPlatFormEnabled(this._oRootControl, this.getLayer(), this._oSerializer).then(function(bIsAppVariantSupported) {
-				return [!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured(), !oSettings.isProductiveSystem() && bIsAppVariantSupported];
-			});
+			var bIsAppVariantSupported = RtaAppVariantFeature.isPlatFormEnabled(this._oRootControl, this.getLayer(), this._oSerializer);
+			return [!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured(), !oSettings.isProductiveSystem() && bIsAppVariantSupported];
 		}.bind(this))
 		.catch(function(oError) {
 			return false;
@@ -599,6 +593,7 @@ sap.ui.define([
 	};
 
 	var fnShowTechnicalError = function(vError) {
+		BusyIndicator.hide();
 		var sErrorMessage = vError.stack || vError.message || vError.status || vError;
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		jQuery.sap.log.error("Failed to transfer runtime adaptation changes to layered repository", sErrorMessage);
@@ -718,7 +713,7 @@ sap.ui.define([
 	};
 
 	RuntimeAuthoring.prototype.transport = function() {
-		this._onTransport();
+		return this._onTransport();
 	};
 
 	// ---- backward compatibility API
@@ -742,7 +737,7 @@ sap.ui.define([
 	RuntimeAuthoring.prototype._onKeyDown = function(oEvent) {
 		// if for example the addField Dialog/transport/reset Popup is open, we don't want the user to be able to undo/redo
 		var bMacintosh = Device.os.macintosh;
-		var bFocusInsideOverlayContainer = Overlay.getOverlayContainer().contains(document.activeElement);
+		var bFocusInsideOverlayContainer = Overlay.getOverlayContainer().get(0).contains(document.activeElement);
 		var bFocusInsideRtaToolbar = this.getShowToolbars() && this.getToolbar().getDomRef().contains(document.activeElement);
 		var bFocusOnBody = document.body === document.activeElement;
 		var bFocusInsideRenameField = jQuery(document.activeElement).parents('.sapUiRtaEditableField').length > 0;
@@ -818,8 +813,6 @@ sap.ui.define([
 				fnConstructor = StandaloneToolbar;
 			}
 
-			var bExtendedOverview = bIsAppVariantSupported ? RtaAppVariantFeature.isOverviewExtended() : false;
-
 			if (this.getLayer() === "USER") {
 				this.addDependent(new fnConstructor({
 					textResources: this._getTextResources(),
@@ -832,8 +825,6 @@ sap.ui.define([
 					modeSwitcher: this.getMode(),
 					publishVisible: bPublishAvailable,
 					textResources: this._getTextResources(),
-					appVariantFeatureForDeveloperSupported: bIsAppVariantSupported && bExtendedOverview,
-					appVariantFeatureForKeyUserSupported: bIsAppVariantSupported && !bExtendedOverview,
 					//events
 					exit: this.stop.bind(this, false, false),
 					transport: this._onTransport.bind(this),
@@ -845,6 +836,32 @@ sap.ui.define([
 					appVariantOverview: this._onGetAppVariantOverview.bind(this),
 					saveAs: RtaAppVariantFeature.onSaveAsFromRtaToolbar.bind(null, true, true)
 				}), 'toolbar');
+			}
+
+			var bExtendedOverview;
+
+			if (bIsAppVariantSupported) {
+				// Sets the visibility of 'Save As' button in RTA toolbar
+				this.getToolbar().getControl('saveAs').setVisible(bIsAppVariantSupported);
+				// Flag which represents either the key user view or SAP developer view
+				bExtendedOverview = RtaAppVariantFeature.isOverviewExtended();
+
+				if (bExtendedOverview) {
+					// Sets the visibility of 'i' menu button (App Variant Overview: SAP developer view) in RTA toolbar
+					this.getToolbar().getControl('appVariantOverview').setVisible(bIsAppVariantSupported);
+				} else {
+					// Sets the visibility of 'i' button (App Variant Overview: Key user view) in RTA toolbar
+					this.getToolbar().getControl('manageApps').setVisible(bIsAppVariantSupported);
+				}
+
+				RtaAppVariantFeature.isManifestSupported().then(function(bResult) {
+					if (bExtendedOverview) {
+						this.getToolbar().getControl('appVariantOverview').setEnabled(bResult);
+					} else {
+						this.getToolbar().getControl('manageApps').setEnabled(bResult);
+					}
+					this.getToolbar().getControl('saveAs').setEnabled(bResult);
+				}.bind(this));
 			}
 
 			this._checkChangesExist().then(function(bResult){
@@ -874,7 +891,6 @@ sap.ui.define([
 		});
 
 		if (this._oDesignTime) {
-			jQuery(Overlay.getOverlayContainer()).removeClass("sapUiRta");
 			this._oDesignTime.destroy();
 			this._oDesignTime = null;
 
@@ -908,44 +924,19 @@ sap.ui.define([
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._onTransport = function() {
-		var fnHandleAllErrors = function (oError) {
-			BusyIndicator.hide();
-			if (oError.message !== 'createAndApply failed') {
-				FlexUtils.log.error("transport error" + oError);
-				return Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_TRANSPORT_ERROR", "MSG_TRANSPORT_ERROR", oError);
-			}
-		};
-
+		var oTransportSelection = new TransportSelection();
 		this._handleStopCutPaste();
 
-		return this._openSelection()
-			.then(this._checkTransportInfo)
-			.then(function(oTransportInfo) {
-				if (oTransportInfo) {
-					return this._serializeToLrep().then(function () {
-						return this._getFlexController().getComponentChanges({currentLayer: this.getLayer(), includeCtrlVariants: true}).then(function (aAllLocalChanges) {
-							if (aAllLocalChanges.length > 0) {
-								BusyIndicator.show(0);
-								return this._transportAllLocalChanges(oTransportInfo)
-										['catch'](fnHandleAllErrors);
-							}
-						}.bind(this));
-					}.bind(this))['catch'](fnShowTechnicalError);
-				}
-			}.bind(this)
-		);
-	};
-
-	RuntimeAuthoring.prototype._checkTransportInfo = function(oTransportInfo) {
-		if (oTransportInfo && oTransportInfo.transport && oTransportInfo.packageName !== "$TMP") {
-			return oTransportInfo;
-		} else {
-			return false;
-		}
-	};
-
-	RuntimeAuthoring.prototype._openSelection = function () {
-	   return new TransportSelection().openTransportSelection(null, this._oRootControl, Utils.getRtaStyleClassName());
+		BusyIndicator.show(500);
+		return this._serializeToLrep().then(function () {
+			BusyIndicator.hide();
+			return oTransportSelection.transportAllUIChanges(this._oRootControl, Utils.getRtaStyleClassName(), this.getLayer())
+				.then(function(sError) {
+					if (sError !== "Error") {
+						this._showMessageToast("MSG_TRANSPORT_SUCCESS");
+					}
+				}.bind(this));
+		}.bind(this))['catch'](fnShowTechnicalError);
 	};
 
 	/**
@@ -1076,46 +1067,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Prepare all changes and assign them to an existing transport.
-	 *
-	 * @private
-	 * @param {Object} mTransportInfo - Map containing the package name and the transport
-	 * @param {string} mTransportInfo.packageName - Name of the package
- 	 * @param {string} mTransportInfo.transport - ID of the transport
-	 * @returns {Promise} Returns a Promise which resolves without parameters
-	 */
-	RuntimeAuthoring.prototype._transportAllLocalChanges = function(mTransportInfo) {
-		return this._getFlexController().getComponentChanges({currentLayer: this.getLayer(), includeCtrlVariants: true}).then(function(aAllLocalChanges) {
-
-			// Pass list of changes to be transported with transport request to backend
-			var oTransports = new Transports();
-			var aTransportData = oTransports._convertToChangeTransportData(aAllLocalChanges);
-			var oTransportParams = {};
-			//packageName is '' in CUSTOMER layer (no package input field in transport dialog)
-			oTransportParams.package = mTransportInfo.packageName;
-			oTransportParams.transportId = mTransportInfo.transport;
-			oTransportParams.changeIds = aTransportData;
-
-			return oTransports.makeChangesTransportable(oTransportParams).then(function() {
-
-				// remove the $TMP package from all changes; has been done on the server as well,
-				// but is not reflected in the client cache until the application is reloaded
-				aAllLocalChanges.forEach(function(oChange) {
-
-					if (oChange.getPackage() === '$TMP') {
-						var oDefinition = oChange.getDefinition();
-						oDefinition.packageName = mTransportInfo.packageName;
-						oChange.setResponse(oDefinition);
-					}
-				});
-			}).then(function() {
-				BusyIndicator.hide();
-				this._showMessageToast("MSG_TRANSPORT_SUCCESS");
-			}.bind(this));
-		}.bind(this));
-	};
-
-	/**
 	 * Checks whether the two parent information maps are equal.
 	 *
 	 * @param {Object}
@@ -1145,24 +1096,16 @@ sap.ui.define([
 	 * @param {string} sNewControlID The id of the newly created container
 	 */
 	RuntimeAuthoring.prototype._setRenameOnCreatedContainer = function(vAction, sNewControlID) {
-		var oNewContainerOverlay = this.getPlugins()["createContainer"].getCreatedContainerOverlay(vAction, sNewControlID);
-		if (oNewContainerOverlay) {
-			oNewContainerOverlay.setSelected(true);
-
-			if (this.getPlugins()["rename"]) {
-				var oDelegate = {
-					"onAfterRendering" : function() {
-						// TODO : remove timeout
-						setTimeout(function() {
-							this.getPlugins()["rename"].startEdit(oNewContainerOverlay);
-						}.bind(this), 0);
-						oNewContainerOverlay.removeEventDelegate(oDelegate);
-					}.bind(this)
-				};
-
-				oNewContainerOverlay.addEventDelegate(oDelegate);
+		var sNewContainerID = this.getPlugins()["createContainer"].getCreatedContainerId(vAction, sNewControlID);
+		this._oDesignTime.attachEvent("elementOverlayCreated", function(oEvent){
+			var oNewOverlay = oEvent.getParameter("elementOverlay");
+			if (oNewOverlay.getElement().getId() === sNewContainerID) {
+				oNewOverlay.attachEventOnce("geometryChanged", function(oEvent){
+					oNewOverlay.setSelected(true);
+					this.getPlugins()["rename"].startEdit(oNewOverlay);
+				}.bind(this));
 			}
-		}
+		}.bind(this));
 	};
 
 	/**
@@ -1171,20 +1114,13 @@ sap.ui.define([
 	RuntimeAuthoring.prototype._setTitleOnCreatedVariant = function() {
 		var oVariantManagementControlOverlay = this.getPlugins()["controlVariant"].getVariantManagementControlOverlay();
 		if (oVariantManagementControlOverlay) {
-
-			var oDelegate = {
-				"onAfterRendering" : function() {
-					// TODO : remove timeout
-					setTimeout(function() {
-						this.getPlugins()["controlVariant"].startEdit(oVariantManagementControlOverlay);
-					}.bind(this), 0);
-					oVariantManagementControlOverlay.removeEventDelegate(oDelegate);
-				}.bind(this)
-			};
-
-			oVariantManagementControlOverlay.addEventDelegate(oDelegate);
-			//Important to trigger re-rendering
-			oVariantManagementControlOverlay.invalidate();
+			oVariantManagementControlOverlay.attachEventOnce("geometryChanged", function(oEvent){
+				var oOverlay = oEvent.getSource();
+				if (oOverlay.getGeometry() && oOverlay.getGeometry().visible){
+					oOverlay.setSelected(true);
+					this.getPlugins()["controlVariant"].startEdit(oOverlay);
+				}
+			}, this);
 		}
 	};
 
@@ -1192,7 +1128,7 @@ sap.ui.define([
 	 * Function to handle modification of an element
 	 *
 	 * @param {sap.ui.base.Event} oEvent Event object
-	 * @returns {promise} Returns promise that resolves after command was executed sucessfully
+	 * @returns {Promise} Returns promise that resolves after command was executed sucessfully
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._handleElementModified = function(oEvent) {
@@ -1207,7 +1143,7 @@ sap.ui.define([
 				if (vAction && sNewControlID){
 					this._setRenameOnCreatedContainer(vAction, sNewControlID);
 				} else if (vAction === "setTitle"){
-					this._setTitleOnCreatedVariant(vAction);
+					this._setTitleOnCreatedVariant();
 				}
 			}.bind(this))
 

@@ -105,14 +105,17 @@ function(
 			this.oVariantManagement = new VariantManagement("variantMgmtId1");
 			this.oVariantManagement.setModel(oModel, "$FlexVariants");
 
-			this.oOverlay = new ElementOverlay();
-			sandbox.stub(OverlayRegistry, "getOverlay").returns(this.oOverlay);
-			sandbox.stub(this.oOverlay, "getVariantManagement").returns("idMain1--variantManagementOrdersTable");
+			var oDummyOverlay = {
+				getVariantManagement : function(){
+					return "idMain1--variantManagementOrdersTable";
+				}
+			};
+
+			sandbox.stub(OverlayRegistry, "getOverlay").returns(oDummyOverlay);
 		},
 		afterEach : function(assert) {
 			sandbox.restore();
 			this.oVariantManagement.destroy();
-			this.oOverlay.destroy();
 		}
 	});
 

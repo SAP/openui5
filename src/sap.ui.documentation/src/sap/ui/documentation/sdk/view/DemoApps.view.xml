@@ -86,14 +86,15 @@
 					visible="{/bFooterVisible}">
 					<l:BlockLayoutRow>
 						<l:BlockLayoutCell
-								class="demokitInitialPagesColorPatternFContrast">
+								class="demokitInitialPagesColorPatternFContrast sapUiDocumentationFooter">
 							<HBox
 									justifyContent="SpaceBetween"
 									alignItems="Center">
 								<Image
 										src="./resources/sap/ui/documentation/sdk/images/logo_sap.png"
 										densityAware="false"
-										height="2.5rem">
+										width="4.25rem"
+										height="2rem">
 								</Image>
 								<HBox
 										width="100%"

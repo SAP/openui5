@@ -116,11 +116,11 @@ sap.ui.define([
 	 *   <ul>
 	 *   <li><code>{/Customers/Name}</code> a single part with an absolute path to the property <i>Name</i> of the <i>Customers</i> entity set in the default model</li>
 	 *   <li><code>{path: 'Customers/Name', model:'json'}</code> a single part with an absolute path to the property <i>Name</i> of the <i>Customers</i> entity set in a named model</li>
-	 *   <li><code>{parts: [{path: 'Customers/Name'},{path: 'editable', model: 'viewModel'}]}</code> a combination of to single binding contexts, one context from the default model and one from the viewModel</li>
+	 *   <li><code>{parts: [{path: 'Customers/Name'},{path: 'editable', model: 'viewModel'}]}</code> a combination of single binding contexts, one context from the default model and one from the viewModel</li>
 	 *   </ul></li>
 	 * </ul>
 	 *
-	 * @param {string} [sId] id for the new managed object; generated automatically if no non-empty id is given
+	 * @param {string} [sId] ID for the new managed object; generated automatically if no non-empty ID is given
 	 *      <b>Note:</b> this can be omitted, no matter whether <code>mSettings</code> will be given or not!
 	 * @param {object} [mSettings] Optional map/JSON-object with initial property values, aggregated objects etc. for the new object
 	 * @param {object} [oScope] Scope object for resolving string based type and formatter references in bindings.
@@ -135,7 +135,7 @@ sap.ui.define([
 	 *
 	 * <h3>Properties</h3>
 	 * Managed properties represent the state of a ManagedObject. They can store a single value of a simple data type
-	 * (like 'string' or 'int'). They have a <i>name</i> (e.g. 'size') and methods to get the current value (<code>getSize</code>)
+	 * (like 'string' or 'int'). They have a <i>name</i> (e.g. 'size') and methods to get the current value (<code>getSize</code>),
 	 * or to set a new value (<code>setSize</code>). When a property is modified, the ManagedObject is marked as invalidated.
 	 * A managed property can be bound against a property in a {@link sap.ui.model.Model} by using the {@link #bindProperty} method.
 	 * Updates to the model property will be automatically reflected in the managed property and - if TwoWay databinding is active,
@@ -163,7 +163,7 @@ sap.ui.define([
 	 * a single aggregated object (<code>addItem</code>, <code>insertItem</code>, <code>removeItem</code>) or to remove or destroy
 	 * all objects from an aggregation (<code>removeAllItems</code>, <code>destroyItems</code>).
 	 *
-	 * Details about the declaration of a managed aggregation, the metadata that describes it and the set of methods that are automatically
+	 * Details about the declaration of a managed aggregation, the metadata that describes the aggregation, and the set of methods that are automatically
 	 * generated to access it, can be found in the documentation of the {@link sap.ui.base.ManagedObject.extend extend} method.
 	 *
 	 * Aggregations of cardinality 0..n can be bound to a collection in a model by using {@link #bindAggregation} (and unbound again
@@ -197,9 +197,9 @@ sap.ui.define([
 	 * Associations can't be bound to the model.
 	 *
 	 * When a ManagedObject is cloned, the result for an association depends on the relationship between the associated target
-	 * object and the root of the clone operation: if the associated object is part of the to-be-cloned object tree (reachable
+	 * object and the root of the clone operation. If the associated object is part of the to-be-cloned object tree (reachable
 	 * via aggregations from the root of the clone operation), then the cloned association will reference the clone of the
-	 * associated object. Otherwise it will reference the same object as in the original tree.
+	 * associated object. Otherwise the association will reference the same object as in the original tree.
 	 * When a ManagedObject is destroyed, other objects that are only associated, are not affected by the destroy operation.
 	 *
 	 *
@@ -209,15 +209,15 @@ sap.ui.define([
 	 * listener as well as a method to fire the event. (e.g. <code>attachChange</code>, <code>detachChange</code>, <code>fireChange</code>
 	 * for an event named 'change').
 	 *
-	 * Details about the declaration of a managed events, the metadata that describes it and the set of methods that are automatically
+	 * Details about the declaration of managed events, the metadata that describes the event, and the set of methods that are automatically
 	 * generated to access it, can be found in the documentation of the {@link sap.ui.base.ManagedObject.extend extend} method.
 	 *
 	 * When a ManagedObject is cloned, all listeners registered for any event in the clone source are also registered to the
-	 * clone. Later changes are not reflected in any direction (neither from source to clone nor vice versa).
+	 * clone. Later changes are not reflected in any direction (neither from source to clone, nor vice versa).
 	 *
 	 *
 	 * <a name="lowlevelapi"><h3>Low Level APIs:</h3></a>
-	 * The prototype of ManagedObject provides several generic, low level APIs to manage properties, aggregations, associations
+	 * The prototype of ManagedObject provides several generic, low level APIs to manage properties, aggregations, associations,
 	 * and events. These generic methods are solely intended for implementing higher level, non-generic methods that manage
 	 * a single managed property etc. (e.g. a function <code>setSize(value)</code> that sets a new value for property 'size').
 	 * {@link sap.ui.base.ManagedObject.extend} creates default implementations of those higher level APIs for all managed aspects.
@@ -2303,8 +2303,10 @@ sap.ui.define([
 
 
 	/**
-	 * This triggers rerendering of itself and its children.<br/> As <code>sap.ui.base.ManagedObject</code> "bubbles up" the
-	 * invalidate, changes to child-<code>Elements</code> will also result in rerendering of the whole sub tree.
+	 * This triggers rerendering of itself and its children.
+	 *
+	 * As <code>sap.ui.base.ManagedObject</code> "bubbles up" the invalidate, changes to
+	 * child-<code>Elements</code> will also result in rerendering of the whole sub tree.
 	 * @protected
 	 */
 	ManagedObject.prototype.invalidate = function() {
@@ -3439,8 +3441,8 @@ sap.ui.define([
 	 * @param {boolean} [oBindingInfo.suspended] Whether the binding should be suspended
 	 * @param {boolean} [oBindingInfo.templateShareable=true] option to enable that the template will be shared which means that it won't be destroyed or cloned automatically
 	 * @param {function} oBindingInfo.factory the factory function
-	 * @param {number} oBindingInfo.startIndex the first entry of the list to be created
-	 * @param {number} oBindingInfo.length the amount of entries to be created (may exceed the size limit of the model)
+	 * @param {int} oBindingInfo.startIndex the first entry of the list to be created
+	 * @param {int} oBindingInfo.length the amount of entries to be created (may exceed the size limit of the model)
 	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [oBindingInfo.sorter] the initial sort order (optional)
 	 * @param {sap.ui.model.Filter[]} [oBindingInfo.filters] the predefined filters for this aggregation (optional)
 	 * @param {string|function} oBindingInfo.key the name of the key property or a function getting the context as only parameter to calculate a key for entries. This can be used to improve update behaviour in models, where a key is not already available.

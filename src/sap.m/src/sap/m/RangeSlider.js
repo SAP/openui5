@@ -180,25 +180,12 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./SliderTooltip", "./SliderUtil
         RangeSlider.prototype.onAfterRendering = function () {
             Slider.prototype.onAfterRendering.apply(this, arguments);
 
-            var aRange = this.getRange(),
-                fMin = this.getMin(),
-                fMax = this.getMax(),
-                bRangeExceedsBoundaries = aRange.reduce(function (bResult, fValue) {
-                    return bResult || fValue < fMin || fValue > fMax;
-                });
+            var aRange = this.getRange();
 
             this._mHandleTooltip.start.handle = this.getDomRef("handle1");
             this._mHandleTooltip.end.handle = this.getDomRef("handle2");
 
             this._recalculateStyles();
-
-            // No error in Min,Max,Step properties.
-            // We need to validate the passed parameters
-            // min and max parameters are superior to range
-            if (bRangeExceedsBoundaries) {
-                jQuery.sap.log.warning("Warning: " + "Property wrong range: [" + aRange + "] not in the range: ["
-                    + fMin + "," + fMax + "]", this);
-            }
 
             // Setting the handles to the Start and the End points of the provided or the default range
             this._updateHandle(this._mHandleTooltip.start.handle, aRange[0]);
@@ -600,8 +587,12 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./SliderTooltip", "./SliderUtil
             }
 
             if (fValue < fMin) {
+                jQuery.sap.log.warning("Warning: " + "Min value (" + fValue + ") not in the range: ["
+                    + fMin + "," + fMax + "]", this);
                 fValue = fMin;
             } else if (fValue > fMax) {
+                jQuery.sap.log.warning("Warning: " + "Max value (" + fValue + ") not in the range: ["
+                    + fMin + "," + fMax + "]", this);
                 fValue = fMax;
             }
 

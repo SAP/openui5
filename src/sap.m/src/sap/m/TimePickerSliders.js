@@ -300,7 +300,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 		/**
 		 * Sets the width of the <code>TimepickerSliders</code> container.
 		 * @param {sap.ui.core.CSSSize} sWidth The width of the <code>TimepickerSliders</code< as CSS size
-		 * @returns {sap.m.TimepickerSliders} Pointer to the control instance to allow method chaining
+		 * @returns {sap.m.TimePickerSliders} Pointer to the control instance to allow method chaining
 		 * @public
 		 */
 		TimePickerSliders.prototype.setWidth = function (sWidth) {
@@ -314,7 +314,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 		/**
 		 * Sets the height of the <code>TimepickerSliders</code> container.
 		 * @param {sap.ui.core.CSSSize} sHeight The height of the <code>TimepickerSliders</code> as CSS size
-		 * @returns {sap.m.TimepickerSliders} Pointer to the control instance to allow method chaining
+		 * @returns {sap.m.TimePickerSliders} Pointer to the control instance to allow method chaining
 		 * @public
 		 */
 		TimePickerSliders.prototype.setHeight = function (sHeight) {
@@ -328,7 +328,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 		/**
 		 * Sets the value of the <code>TimepickerSliders</code> container.
 		 * @param {string} sValue The value of the <code>TimepickerSliders</code>
-		 * @returns {sap.m.TimepickerSliders} Pointer to the control instance to allow method chaining
+		 * @returns {sap.m.TimePickerSliders} Pointer to the control instance to allow method chaining
 		 * @public
 		 */
 		TimePickerSliders.prototype.setValue = function (sValue) {
@@ -406,7 +406,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 		/**
 		 * Collapses all the slider controls.
 		 *
-		 * @returns {sap.m.TimepickerSliders} Pointer to the control instance to allow method chaining
+		 * @returns {sap.m.TimePickerSliders} Pointer to the control instance to allow method chaining
 		 * @public
 		 *
 		 */
@@ -428,7 +428,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 		/**
 		 * Opens first slider.
 		 *
-		 * @returns {sap.m.TimepickerSliders} Pointer to the control instance to allow method chaining
+		 * @returns {sap.m.TimePickerSliders} Pointer to the control instance to allow method chaining
 		 *
 		 * @public
 		 */
@@ -460,7 +460,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Control'
 
 			oDate = oDate || new Date();
 
-			if (oDate && !(oDate instanceof Date)) {
+			// Cross frame check for a date should be performed here otherwise setDateValue would fail in OPA tests
+			// because Date object in the test is different than the Date object in the application (due to the iframe).
+			// We can use jQuery.type or this method:
+			// function isValidDate (date) {
+			//	return date && Object.prototype.toString.call(date) === "[object Date]" && !isNaN(date);
+			//}
+			if (oDate && jQuery.type(oDate) !== "date") {
 				throw new Error("Date must be a JavaScript date object; " + this);
 			}
 

@@ -2583,6 +2583,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	};
 
 	/**
+	 * Defines which area of the control remains fixed at the top of the page during vertical scrolling as long as the control is in the viewport.
+	 * @enum {string}
+	 * @public
+	 * @since 1.54
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.Sticky = {
+
+		/**
+		 * No area remains in a fixed position.
+		 * @public
+		 */
+		None: "None",
+
+		/**
+		 * Only column headers remain in a fixed position.
+		 * If no column headers are available, this option behaves the same as <code>None</code>.
+		 * @public
+		 */
+		ColumnHeaders: "ColumnHeaders"
+	};
+
+	/**
 	 * Possible values for the visualization of float values in the RatingIndicator control.
 	 *
 	 * @enum {string}
@@ -2995,6 +3018,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * @since 1.22
 		 */
 		Solid : "Solid"
+
+	};
+
+	/**
+	 * Types of visual styles for the {@link sap.m.Toolbar}.
+	 *
+	 * <b>Note:</b> Keep in mind that the styles are theme-dependent and can differ based on the currently used theme.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.54
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.ToolbarStyle = {
+
+		/**
+		 * Default visual style dependent on the used theme.
+		 * @public
+		 */
+		Standard : "Standard",
+
+		/**
+		 * Simplified visual style dependent on the used theme.
+		 * @public
+		 */
+		Clear : "Clear"
 
 	};
 

@@ -127,15 +127,6 @@ function(
 		assert.equal(ElementUtil.getClosestElementOfType(this.oHorizontalLayoutChild, "sap.ui.layout.HorizontalLayout"), this.oHorizontalLayoutChild, 'closest element to vertical of type vertical layout -> same element');
 	});
 
-	QUnit.test("when the DesingTime Metadata are loaded", function(assert) {
-		var done = assert.async();
-		ElementUtil.loadDesignTimeMetadata(this.oVerticalLayout).then(function(mDesignTimeMetadata) {
-			assert.equal(!!mDesignTimeMetadata, true, 'then the static method "loadDesignTimeMetadata" returns the metadata...');
-			assert.equal(!!mDesignTimeMetadata.aggregations.content, true, "... with the right values");
-			done();
-		});
-	});
-
 	QUnit.test("when it is rendered and the DOM reference is available", function(assert) {
 		var oDomRef = this.oVerticalLayout.getDomRef();
 		var oDomRefTest = ElementUtil.getDomRef(this.oVerticalLayout);

@@ -351,7 +351,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './ComboBoxTextField', './Com
 		if (!oPicker || !oPicker.getFocusDomRef() || !oFocusDomRef || !jQuery.contains(oPicker.getFocusDomRef(), oFocusDomRef)) {
 
 			this.setValue(null);
-			this.fireChangeEvent("", { value: sOldValue });
+
+			// fire change event only if the value of the MCB is not empty
+			if (sOldValue) {
+				this.fireChangeEvent("", { value: sOldValue });
+			}
 
 			// If focus is outside of the MultiComboBox
 			if (!(oControl instanceof sap.m.Token)) {

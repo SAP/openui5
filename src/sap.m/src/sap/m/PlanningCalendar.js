@@ -384,7 +384,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 				row : {type : "sap.m.PlanningCalendarRow"}
 			}
 		}
-	}});
+	},
+		constructor: function(vId, mSettings) {
+			Control.prototype.constructor.apply(this, arguments);
+
+			if (typeof vId !== "string"){
+				mSettings = vId;
+			}
+
+			if (mSettings && typeof mSettings.customAppointmentsSorterCallback === "function") {
+				this._fnCustomSortedAppointments = mSettings.customAppointmentsSorterCallback;
+			}
+		}
+	});
 
 	//List of private properties controlling different intervals
 	var INTERVAL_CTR_REFERENCES = ["_oTimeInterval", "_oDateInterval", "_oMonthInterval", "_oWeekInterval", "_oOneMonthInterval"],
@@ -534,6 +546,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 		this.setStartDate(new Date());
 
 		this._resizeProxy = jQuery.proxy(_handleResize, this);
+		this._fnCustomSortedAppointments = undefined; //transfers a custom appointments sorter function to the CalendarRow
 
 	};
 
@@ -1267,6 +1280,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 
 		_setSelectionMode.call(this);
 
+		//when there's a new row added, be sure that if there's a custom sorter, it'll be set to the corresponding row
+		if (this._fnCustomSortedAppointments){
+			oCalendarRow._setCustomAppointmentsSorterCallback(this._fnCustomSortedAppointments);
+		}
+
 		return this;
 
 	};
@@ -1292,6 +1310,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 		oCalendarRow.attachEvent("startDateChange", this._handleStartDateChange, this);
 		oCalendarRow.attachEvent("leaveRow", _handleLeaveRow, this);
 		oCalendarRow.attachEvent("intervalSelect", _handleIntervalSelect, this);
+
+		//when there's a new row inserted, be sure that if there's a custom sorter, it'll be set to the corresponding row
+		if (this._fnCustomSortedAppointments){
+			oCalendarRow._setCustomAppointmentsSorterCallback(this._fnCustomSortedAppointments);
+		}
 
 		_updateSelectAllCheckBox.call(this);
 
@@ -1326,6 +1349,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 		oCalendarRow.detachEvent("leaveRow", _handleLeaveRow, this);
 		oCalendarRow.detachEvent("intervalSelect", _handleIntervalSelect, this);
 
+		//the reference to the sorter function must be cleared, as it is invalid in other context
+		if (this._fnCustomSortedAppointments){
+			oCalendarRow._fnCustomSortedAppointments = undefined;
+		}
+
 		_updateSelectAllCheckBox.call(this);
 
 		_setSelectionMode.call(this);
@@ -1350,6 +1378,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 			oCalendarRow.detachEvent("startDateChange", this._handleStartDateChange, this);
 			oCalendarRow.detachEvent("leaveRow", _handleLeaveRow, this);
 			oCalendarRow.detachEvent("intervalSelect", _handleIntervalSelect, this);
+
+			//the reference to the sorter function must be cleared, as it is invalid in other context
+			if (this._fnCustomSortedAppointments){
+				oCalendarRow._fnCustomSortedAppointments = undefined;
+			}
 		}
 
 		_updateSelectAllCheckBox.call(this);
@@ -2316,6 +2349,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 	};
 
 	/**
+	 * Setter for custom sorting of appointments. If not used, the appointments will be sorted according to their duration vertically.
+	 * For example, the start time and order to the X axis won't change.
+	 * @param {appointmentsSorterCallback} fnSorter
+	 * @since 1.54
+	 * @returns {sap.m.PlanningCalendar} <code>this</code> for chaining
+	 */
+	PlanningCalendar.prototype.setCustomAppointmentsSorterCallback = function(fnSorter) {
+		/**
+		 * This callback is displayed as part of the Requester class.
+		 * @callback appointmentsSorterCallback
+		 * @param {sap.ui.unified.CalendarAppointment} appointment1
+		 * @param {sap.ui.unified.CalendarAppointment} appointment2
+		 */
+		if (typeof fnSorter === "function") {
+			this.getRows().forEach(function(oRow){
+				var oCalendarRow = oRow.getCalendarRow();
+				oCalendarRow._setCustomAppointmentsSorterCallback(fnSorter);
+			});
+
+			this._fnCustomSortedAppointments = fnSorter;
+		}
+		return this;
+	};
+
+	/**
+	 * Getter for custom appointments sorter (if any).
+	 * @since 1.54
+	 * @returns {appointmentsSorterCallback}
+	 */
+	PlanningCalendar.prototype.getCustomAppointmentsSorterCallback = function() {
+		return this._fnCustomSortedAppointments;
+	};
+
+	/**
 	 * Removes all previously selected appointments on all rows whenever a new appointment is pressed
 	 * @private
 	 */
@@ -2626,5 +2693,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 	function _isThereAnIntervalInstance() {
 		return this._oTimeInterval || this._oDateInterval || this._oMonthInterval || this._oWeekInterval || this._oOneMonthInterval;
 	}
+
 	return PlanningCalendar;
 });

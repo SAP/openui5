@@ -27,6 +27,8 @@
 	box-sizing: border-box;
 	// IE will read a clientHeight of 0px, if the clientWidth is 0, although the table has a height
 	min-width: 1rem;
+	// Define stacking context to avoid conflicts with other controls
+	z-index: 0;
 }
 
 .sapUiTableFtr {

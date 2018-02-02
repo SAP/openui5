@@ -115,6 +115,24 @@
         "type": "FEATURE",
         "text": " sap.m.PlanningCalendar: Enable drag and drop of appointments",
         "references": []
+      },
+      {
+        "id": "25864f4e75b002419c7e041fef47e4ecdb42419d",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Currency: New stringValue property added",
+        "references": []
+      },
+      {
+        "id": "41af74fb7e304637640ca43df3530eb8888578c2",
+        "type": "FIX",
+        "text": " sap.m: instanceof Date in public methods corrected",
+        "references": []
+      },
+      {
+        "id": "8d8b71068a027a37d9c7d0fc59c4889a04025fe0",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Years in Compact mode are now visible and selectable",
+        "references": []
       }
     ]
   }

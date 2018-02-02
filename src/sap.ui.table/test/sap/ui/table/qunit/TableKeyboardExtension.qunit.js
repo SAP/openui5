@@ -350,6 +350,9 @@ sap.ui.require([
 	QUnit.module("Destruction", {
 		beforeEach: function() {
 			createTables();
+		},
+		afterEach: function() {
+			destroyTables();
 		}
 	});
 

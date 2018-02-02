@@ -1627,6 +1627,130 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
+		 * Sets custom units which can be used to do Unit Formatting.
+		 *
+		 * The custom unit object consists of:
+		 * * a custom unit key which can then be referenced to use this unit.
+		 * * <code>displayName</code> which represents the name of the unit.
+		 * * <code>unitPattern-count-&lt;pluralName&gt;</code> which represents the plural category of the locale for the given value.
+		 * The plural category is defined within the locale, e.g. in the 'en' locale:
+		 * <code>unitPattern-count-one</code> for <code>1</code>,
+		 * <code>unitPattern-count-zero</code> for <code>0</code>,
+		 * <code>unitPattern-count-other</code> for all the res
+		 * To retrieve all plural categories defined for a locale use <code>sap.ui.core.LocaleData.prototype.getPluralCategories</code>.
+		 *
+		 * A Sample custom unit definition could look like this:
+		 * <code>
+		 * {
+		 *  "BAG": {
+		 *      "displayName": "Bag",
+		 *		"unitPattern-count-one": "{0} bag",
+		 *		"unitPattern-count-other": "{0} bags"
+		 *  }
+		 * }
+	     * </code>
+		 * In the above snippet:
+		 * * <code>"BAG"</code> represent the unit key which is used to reference it.
+		 * * <code>"unitPattern-count-one"</code> represent the unit pattern for the form "one", e.g. the number <code>1</code> in the 'en' locale.
+		 * * <code>"unitPattern-count-other"</code> represent the unit pattern for all other numbers which do not
+		 *   match the plural forms of the previous patterns.
+		 * * In the patterns <code>{0}</code> is replaced by the number
+		 *
+		 * E.g. In locale 'en' value <code>1</code> would result in <code>1 Bag</code>, while <code>2</code> would result in <code>2 Bags</code>
+		 * @param mUnits {object} custom unit object which replaces the current custom unit definition. Call with <code>null</code> to delete custom units.
+		 * @return {sap.ui.core.Configuration.FormatSettings}
+		 */
+		setCustomUnits: function (mUnits) {
+			// add custom units, or remove the existing ones if none are given
+			var mUnitsshort = null;
+			if (mUnits) {
+				mUnitsshort = {
+					"short": mUnits
+				};
+			}
+			this._set("units", mUnitsshort);
+			return this;
+		},
+
+		/**
+		 * Retrieves the custom units.
+		 * These custom units are set by {@link sap.ui.core.Configuration#setCustomUnits} and {@link sap.ui.core.Configuration#addCustomUnits}
+		 * @return {object} custom units object
+		 * @see sap.ui.core.Configuration#setCustomUnits
+		 * @see sap.ui.core.Configuration#addCustomUnits
+		 */
+		getCustomUnits: function () {
+			return this.mSettings["units"] ? this.mSettings["units"]["short"] : undefined;
+		},
+
+		/**
+		 * Adds custom units.
+		 * Similar to {@link sap.ui.core.Configuration#setCustomUnits} but instead of setting the custom units, it will add additional ones.
+		 * @param mUnits {object} custom unit object which replaces the current custom unit definition. Call with <code>null</code> to delete custom units.
+		 * @return {sap.ui.core.Configuration.FormatSettings}
+		 * @see sap.ui.core.Configuration#setCustomUnits
+		 */
+		addCustomUnits: function (mUnits) {
+			// add custom units, or remove the existing ones if none are given
+			var mExistingUnits = this.getCustomUnits();
+			if (mExistingUnits){
+				mUnits = jQuery.extend({}, mExistingUnits, mUnits);
+			}
+			this.setCustomUnits(mUnits);
+			return this;
+		},
+
+		/**
+		 * Sets custom unit mappings.
+		 * Unit mappings contain key value pairs (both strings)
+		 * * {string} key: a new entry which maps to an existing unit key
+		 * * {string} value: an existing unit key
+		 *
+		 * Example:
+		 * <code>
+		 * {
+		 *  "my": "my-custom-unit",
+		 *  "cm": "length-centimeter"
+		 * }
+		 * </code>
+		 * Note: It is possible to create multiple entries per unit key.
+		 * @param mUnitMappings {object} unit mappings
+		 * @return {sap.ui.core.Configuration.FormatSettings}. Call with <code>null</code> to delete unit mappings.
+		 */
+		setUnitMappings: function (mUnitMappings) {
+			this._set("unitMappings", mUnitMappings);
+			return this;
+		},
+
+		/**
+		 * Adds unit mappings.
+		 * Similar to {@link sap.ui.core.Configuration#setUnitMappings} but instead of setting the unit mappings, it will add additional ones.
+		 * @param mUnitMappings {object} unit mappings
+		 * @return {sap.ui.core.Configuration.FormatSettings}
+		 * @see sap.ui.core.Configuration#setUnitMappings
+		 */
+		addUnitMappings: function (mUnitMappings) {
+			// add custom units, or remove the existing ones if none are given
+			var mExistingUnits = this.getUnitMappings();
+			if (mExistingUnits){
+				mUnitMappings = jQuery.extend({}, mExistingUnits, mUnitMappings);
+			}
+			this.setUnitMappings(mUnitMappings);
+			return this;
+		},
+
+		/**
+		 * Retrieves the unit mappings.
+		 * These unit mappings are set by {@link sap.ui.core.Configuration#setUnitMappings} and {@link sap.ui.core.Configuration#addUnitMappings}
+		 * @returns {object} unit mapping object
+		 * @see sap.ui.core.Configuration#setUnitMappings
+		 * @see sap.ui.core.Configuration#addUnitMappings
+		 */
+		getUnitMappings: function () {
+			return this.mSettings["unitMappings"];
+		},
+
+		/**
 		 * Returns the currently set date pattern or undefined if no pattern has been defined.
 		 * @public
 		 */
@@ -1742,7 +1866,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage}
 		 * for details and restrictions.
 		 *
-		 * @param {number} iValue must be an integer value between 0 and 6
+		 * @param {int} iValue must be an integer value between 0 and 6
 		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
 		 * @public
 		 */

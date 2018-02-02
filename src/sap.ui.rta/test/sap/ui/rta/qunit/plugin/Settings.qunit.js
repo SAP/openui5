@@ -71,8 +71,6 @@ function(
 
 	QUnit.module("Given a designTime and settings plugin are instantiated", {
 		beforeEach : function(assert) {
-			var done = assert.async();
-
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.registerControlsForChanges({
 				"sap.m.Button" : {
@@ -92,50 +90,48 @@ function(
 				content : [this.oButton]
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-
-			this.oDesignTime = new DesignTime({
-				rootElements : [this.oVerticalLayout],
-				plugins : [this.oSettingsPlugin]
-			});
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-				done();
-			});
-
 		},
 		afterEach : function(assert) {
 			sandbox.restore();
 			this.oVerticalLayout.destroy();
-			this.oDesignTime.destroy();
 		}
 	});
 
 	QUnit.test("when an overlay has no settings action designTime metadata", function(assert) {
+		var fnDone = assert.async();
 
-		var oButtonOverlay = new ElementOverlay({
-			element : this.oButton,
-			designTimeMetadata : new ElementDesignTimeMetadata({
-				libraryName : "sap.m",
-				data : {
+		this.oDesignTime = new DesignTime({
+			rootElements : [this.oVerticalLayout],
+			plugins : [this.oSettingsPlugin],
+			designTimeMetadata : {
+				"sap.m.Button" : {
 					actions : {}
 				}
-			})
+			}
 		});
-		this.oSettingsPlugin.deregisterElementOverlay(oButtonOverlay);
-		this.oSettingsPlugin.registerElementOverlay(oButtonOverlay);
 
-		assert.strictEqual(this.oSettingsPlugin.isAvailable(oButtonOverlay), false, "... then isAvailable is called, then it returns false");
-		assert.strictEqual(this.oSettingsPlugin.isEnabled(oButtonOverlay), false, "... then isEnabled is called, then it returns false");
-		assert.strictEqual(this.oSettingsPlugin._isEditable(oButtonOverlay), false, "then the overlay is not editable");
+		this.oDesignTime.attachEventOnce("synced", function() {
+			var oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+			this.oSettingsPlugin.deregisterElementOverlay(oButtonOverlay);
+			this.oSettingsPlugin.registerElementOverlay(oButtonOverlay);
+
+			assert.strictEqual(this.oSettingsPlugin.isAvailable(oButtonOverlay), false, "... then isAvailable is called, then it returns false");
+			assert.strictEqual(this.oSettingsPlugin.isEnabled(oButtonOverlay), false, "... then isEnabled is called, then it returns false");
+			assert.strictEqual(this.oSettingsPlugin._isEditable(oButtonOverlay), false, "then the overlay is not editable");
+
+			this.oDesignTime.destroy();
+			fnDone();
+		}.bind(this));
 	});
 
 	QUnit.test("when an overlay has settings action designTime metadata, but has no isEnabled property defined", function(assert) {
+		var fnDone = assert.async();
 
-		var oButtonOverlay = new ElementOverlay({
-			element : this.oButton,
-			designTimeMetadata : new ElementDesignTimeMetadata({
-				libraryName : "sap.m",
-				data : {
+		this.oDesignTime = new DesignTime({
+			rootElements : [this.oVerticalLayout],
+			plugins : [this.oSettingsPlugin],
+			designTimeMetadata : {
+				"sap.m.Button" : {
 					actions : {
 						settings : function() {
 							return {
@@ -144,22 +140,31 @@ function(
 						}
 					}
 				}
-			})
+			}
 		});
-		this.oSettingsPlugin.deregisterElementOverlay(oButtonOverlay);
-		this.oSettingsPlugin.registerElementOverlay(oButtonOverlay);
 
-		assert.strictEqual(this.oSettingsPlugin.isAvailable(oButtonOverlay), true, "... then isAvailable is called, then it returns true");
-		assert.strictEqual(this.oSettingsPlugin.isEnabled(oButtonOverlay), true, "... then isEnabled is called, then it returns true");
-		assert.strictEqual(this.oSettingsPlugin._isEditable(oButtonOverlay), true, "then the overlay is editable");
+		this.oDesignTime.attachEventOnce("synced", function() {
+			var oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+			this.oSettingsPlugin.deregisterElementOverlay(oButtonOverlay);
+			this.oSettingsPlugin.registerElementOverlay(oButtonOverlay);
+
+			assert.strictEqual(this.oSettingsPlugin.isAvailable(oButtonOverlay), true, "... then isAvailable is called, then it returns true");
+			assert.strictEqual(this.oSettingsPlugin.isEnabled(oButtonOverlay), true, "... then isEnabled is called, then it returns true");
+			assert.strictEqual(this.oSettingsPlugin._isEditable(oButtonOverlay), true, "then the overlay is editable");
+
+			this.oDesignTime.destroy();
+			fnDone();
+		}.bind(this));
 	});
 
 	QUnit.test("when an overlay has settings action designTime metadata, and isEnabled property is boolean", function(assert) {
-		var oButtonOverlay = new ElementOverlay({
-			element : this.oButton,
-			designTimeMetadata : new ElementDesignTimeMetadata({
-				libraryName : "sap.m",
-				data : {
+		var fnDone = assert.async();
+
+		this.oDesignTime = new DesignTime({
+			rootElements : [this.oVerticalLayout],
+			plugins : [this.oSettingsPlugin],
+			designTimeMetadata : {
+				"sap.m.Button" : {
 					actions : {
 						settings : function() {
 							return {
@@ -169,22 +174,31 @@ function(
 						}
 					}
 				}
-			})
+			}
 		});
-		this.oSettingsPlugin.deregisterElementOverlay(oButtonOverlay);
-		this.oSettingsPlugin.registerElementOverlay(oButtonOverlay);
 
-		assert.strictEqual(this.oSettingsPlugin.isAvailable(oButtonOverlay), true, "... then isAvailable is called, then it returns true");
-		assert.strictEqual(this.oSettingsPlugin.isEnabled(oButtonOverlay), false, "... then isEnabled is called, then it returns correct value");
-		assert.strictEqual(this.oSettingsPlugin._isEditable(oButtonOverlay), true, "then the overlay is editable");
+		this.oDesignTime.attachEventOnce("synced", function() {
+			var oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+			this.oSettingsPlugin.deregisterElementOverlay(oButtonOverlay);
+			this.oSettingsPlugin.registerElementOverlay(oButtonOverlay);
+
+			assert.strictEqual(this.oSettingsPlugin.isAvailable(oButtonOverlay), true, "... then isAvailable is called, then it returns true");
+			assert.strictEqual(this.oSettingsPlugin.isEnabled(oButtonOverlay), false, "... then isEnabled is called, then it returns correct value");
+			assert.strictEqual(this.oSettingsPlugin._isEditable(oButtonOverlay), true, "then the overlay is editable");
+
+			this.oDesignTime.destroy();
+			fnDone();
+		}.bind(this));
 	});
 
 	QUnit.test("when an overlay has settings action designTime metadata, and isEnabled is function", function(assert) {
-		var oButtonOverlay = new ElementOverlay({
-			element : this.oButton,
-			designTimeMetadata : new ElementDesignTimeMetadata({
-				libraryName : "sap.m",
-				data : {
+		var fnDone = assert.async();
+
+		this.oDesignTime = new DesignTime({
+			rootElements : [this.oVerticalLayout],
+			plugins : [this.oSettingsPlugin],
+			designTimeMetadata : {
+				"sap.m.Button" : {
 					actions : {
 						settings : function() {
 							return {
@@ -195,14 +209,21 @@ function(
 						}
 					}
 				}
-			})
+			}
 		});
-		this.oSettingsPlugin.deregisterElementOverlay(oButtonOverlay);
-		this.oSettingsPlugin.registerElementOverlay(oButtonOverlay);
 
-		assert.strictEqual(this.oSettingsPlugin.isAvailable(oButtonOverlay), false, "... then isAvailable is called, then it returns false");
-		assert.strictEqual(this.oSettingsPlugin.isEnabled(oButtonOverlay), false, "... then isEnabled is called, then it returns correct value from function call");
-		assert.strictEqual(this.oSettingsPlugin._isEditable(oButtonOverlay), false, "then the overlay is not editable because the handler is missing");
+		this.oDesignTime.attachEventOnce("synced", function() {
+			var oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+			this.oSettingsPlugin.deregisterElementOverlay(oButtonOverlay);
+			this.oSettingsPlugin.registerElementOverlay(oButtonOverlay);
+
+			assert.strictEqual(this.oSettingsPlugin.isAvailable(oButtonOverlay), false, "... then isAvailable is called, then it returns false");
+			assert.strictEqual(this.oSettingsPlugin.isEnabled(oButtonOverlay), false, "... then isEnabled is called, then it returns correct value from function call");
+			assert.strictEqual(this.oSettingsPlugin._isEditable(oButtonOverlay), false, "then the overlay is not editable because the handler is missing");
+
+			this.oDesignTime.destroy();
+			fnDone();
+		}.bind(this));
 	});
 
 	QUnit.test("when the handle settings function is called and the handler returns a change object,", function(assert) {

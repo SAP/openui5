@@ -22,14 +22,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Control'
 	 * @class
 	 * Row in the {@link sap.m.PlanningCalendar}.
 	 *
-	 * This element holds the data of one row in the @link sap.m.PlanningCalendar}. Once the header information (e.g. person information)
+	 * This element holds the data of one row in the {@link sap.m.PlanningCalendar}. Once the header information (for example, person information)
 	 * is assigned, the appointments are assigned.
 	 * @extends sap.ui.core.Element
 	 * @version ${version}
 	 *
 	 * @constructor
 	 * @public
-	 * @since 1.34.0
+	 * @since 1.34
 	 * @alias sap.m.PlanningCalendarRow
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -86,7 +86,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Control'
 			key : {type : "string", group : "Data", defaultValue : null},
 
 			/**
-			 * Determines whether the appointments in the row should be draggable.
+			 * Determines whether the appointments in the row are draggable.
+			 *
+			 * The drag and drop interaction is visualized by a placeholder highlighting the area where the
+			 * appointment can be dropped by the user.
+			 *
+			 * Specifics based on the intervals (hours, days or months) displayed in the <code>PlanningCalendar</code> views:
+			 *
+			 * Hours:<br>
+			 * For views where the displayed intervals are hours, the placeholder snaps on every interval
+			 * of 30 minutes. After the appointment is dropped, the appointmentDrop event is fired, containing
+			 * the new start and end JavaScript date objects.<br>
+			 * For example, an appointment with start date "Nov 13 2017 12:17:00" and end date "Nov 13 2017 12:45:30"
+			 * lasts for 27 minutes and 30 seconds. After dragging and dropping to a new time, the possible new
+			 * start date has time that is either "hh:00:00" or "hh:30:00" because of the placeholder that can
+			 * snap on every 30 minutes. The new end date is calculated to be 27 minutes and 30 seconds later
+			 * and would be either "hh:27:30" or "hh:57:30".
+			 *
+			 * Days:<br>
+			 * For views where intervals are days, the placeholder highlights the whole day and after the
+			 * appointment is dropped the appointmentDrop event is fired. The event contains the new start and
+			 * end JavaScript date objects with changed date but the original time (hh:mm:ss) is preserved.
+			 *
+			 * Months:<br>
+			 * For views where intervals are months, the placeholder highlights the whole month and after the
+			 * appointment is dropped the appointmentDrop event is fired. The event contains the new start and
+			 * end JavaScript date objects with changed month but the original date and time is preserved.
+			 *
+			 * <b>Notes:</b>
+			 * <ul>
+			 * <li>In "One month" view, the appointments are not draggable on small screen (as there they are
+			 * displayed as a list below the dates). Group appointments are also not draggable</li>
+			 * <li>Appointments can be dragged only within their original PlanningCalendarRow</li>
+			 * </ul>
+			 *
 			 * @since 1.54
 			 */
 			enableAppointmentsDragAndDrop : {type : "boolean", group : "Misc", defaultValue : false}

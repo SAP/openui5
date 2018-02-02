@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global',
 			 * If the control type is omitted, nothing is returned.
 			 *
 			 * @param {Function} [fnConstructorType] the control type, e.g: sap.m.CheckBox
-			 * @param {String} [sControlType] optional control type name, e.g: "sap.m.CheckBox"
+			 * @param {string} [sControlType] optional control type name, e.g: "sap.m.CheckBox"
 			 * @returns {Array} an array of the found controls (can be empty)
 			 * @public
 			 */

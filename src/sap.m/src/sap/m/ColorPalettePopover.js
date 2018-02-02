@@ -37,14 +37,15 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', './Button', './Responsive
 
 					/**
 					 * The color, which the app developer will receive when end-user chooses the "Default color" button.
-					 * @see event <code>colorSelect</code>
+					 * See event {@link sap.m.ColorPalettePopover#colorSelect}.
 					 */
 					defaultColor: {type: "sap.ui.core.CSSColor", group: "Appearance", defaultValue: null},
 
 					/**
 					 * Defines the List of colors displayed in the palette. Minimum is 2 colors, maximum is 15 colors.
 					 */
-					colors: {type: "sap.ui.core.CSSColor[]", group: "Appearance",
+					colors: {
+						type: "sap.ui.core.CSSColor[]", group: "Appearance",
 						defaultValue: [
 							"gold",
 							"darkorange",
@@ -80,14 +81,16 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', './Button', './Responsive
 					 * Fired when the user selects a color.
 					 */
 					colorSelect: {
-						/**
-						 * The color that is returned when user chooses the "Default color" button.
-						 */
-						"value": {type: "sap.ui.core.CSSColor"},
-						/**
-						 * Denotes if the color has been chosen by selecting the "Default Color" button (true or false).
-						 */
-						"defaultAction": {type: "boolean"}
+						parameters: {
+							/**
+							 * The color that is returned when user chooses the "Default color" button.
+							 */
+							"value": {type: "sap.ui.core.CSSColor"},
+							/**
+							 * Denotes if the color has been chosen by selecting the "Default Color" button (true or false).
+							 */
+							"defaultAction": {type: "boolean"}
+						}
 					}
 				}
 			},
@@ -214,12 +217,14 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', './Button', './Responsive
 			});
 
 			// if the end-user navigated out of the palette without selecting a color
-			oColorPalette.attachEvent("_colorNotSelected", function () {
+			oColorPalette.attachEvent("_colorNotSelected", function (oEvent) {
+				this._handleNextOrPreviousUponPaletteClose(oEvent);
 				oPopover.close();
-			});
+			}.bind(this));
 
 			// when color is selected in the ColorPalette, we close the popover and notify the app. developer
 			oColorPalette.attachEvent("colorSelect", function (oEvent) {
+				this._handleNextOrPreviousUponPaletteClose(oEvent);
 				oPopover.close();
 				this.fireColorSelect({
 					"value": oEvent.getParameter("value"),
@@ -230,7 +235,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', './Button', './Responsive
 
 			// aria requirements for the popover implemented as delegate
 			oDelegate = {
-				onAfterRendering: function(){
+				onAfterRendering: function () {
 					var $Popover = this.$(); //this is bound to the popover, see below
 					$Popover.attr("aria-modal", "true");
 					$Popover.attr("aria-label", this.getTitle());
@@ -257,6 +262,25 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', './Button', './Responsive
 			oColorPalette._setShowMoreColorsButton(this.getShowMoreColorsButton());
 
 			return oColorPalette;
+		};
+
+		/**
+		 * Should be called once the ColorPalette is closed to determine if the TAB/SHIFT+TAB should be prevented or not.
+		 *
+		 * @param oEvent
+		 * @private
+		 */
+		ColorPalettePopover.prototype._handleNextOrPreviousUponPaletteClose = function (oEvent) {
+			var oOriginalEvent = oEvent.getParameter("_originalEvent");
+
+			if (!oOriginalEvent) {
+				return;
+			}
+
+			if (oOriginalEvent.type === "saptabnext" || oOriginalEvent.type === "saptabprevious") {
+				oOriginalEvent.stopPropagation();
+				oOriginalEvent.preventDefault();
+			}
 		};
 
 		//proxy properties to the ColorPalette's content

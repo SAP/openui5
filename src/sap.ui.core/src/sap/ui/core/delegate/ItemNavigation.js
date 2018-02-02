@@ -228,7 +228,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'jquery.sap.key
 	 * Check whether given event has disabled modifier or not
 	 *
 	 * @param {jQuery.Event} oEvent jQuery event
-	 * @return {Boolean} Flag if disabled modifiers are set
+	 * @return {boolean} Flag if disabled modifiers are set
 	 * @public
 	 */
 	ItemNavigation.prototype.hasDisabledModifier = function(oEvent) {

@@ -5,12 +5,10 @@
 // Provides class sap.ui.rta.plugin.Combine.
 sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
-	'sap/ui/dt/Selection',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/rta/Utils'
 ], function(
 	Plugin,
-	Selection,
 	OverlayRegistry,
 	Utils
 ) {
@@ -107,7 +105,7 @@ sap.ui.define([
 		}
 
 		var aSelectedControls = aSelectedOverlays.map(function (oSelectedOverlay) {
-			return oSelectedOverlay.getElementInstance();
+			return oSelectedOverlay.getElement();
 		});
 
 		// check that each selected element has an enabled action
@@ -143,7 +141,7 @@ sap.ui.define([
 		var aSelectedOverlays = this.getDesignTime().getSelection();
 
 		for (var i = 0; i < aSelectedOverlays.length; i++) {
-			var oSelectedElement = aSelectedOverlays[i].getElementInstance();
+			var oSelectedElement = aSelectedOverlays[i].getElement();
 			aToCombineElements.push(oSelectedElement);
 		}
 

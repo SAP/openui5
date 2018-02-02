@@ -22,7 +22,7 @@
 					<Title text="{/title}"/>
 				</contentMiddle>
 				<contentRight>
-					<Button text="API Reference" type="Emphasized" press="onAPIRefPress" visible="{/bHasAPIReference}"/>
+					<Button id="apiRefButton" text="API Reference" type="Emphasized" press="onAPIRefPress" visible="false"/>
 					<Button
 							id="prevSample"
 							icon="sap-icon://navigation-up-arrow"

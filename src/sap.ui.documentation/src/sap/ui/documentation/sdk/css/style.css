@@ -61,6 +61,16 @@ pre.sapUiDocumentationAPICode,
 	background-color: #fff;
 }
 
+html:not(.sapUiMedia-StdExt-Phone) .sapUiDocumentationFooter {
+	height: 4rem;
+}
+
+.sapUiBlockLayoutSizeL:not(.sapUiBlockLayoutKeepFontSize) .sapUiDocumentationFooter > .sapUiBlockCellContent,
+.sapUiBlockLayoutSizeXL:not(.sapUiBlockLayoutKeepFontSize) .sapUiDocumentationFooter > .sapUiBlockCellContent {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+}
+
 /************************************************* Custom control styles *********************************************/
 
 /* Search */
@@ -588,6 +598,7 @@ code {
 
 .sapUiJSD {
 	font-size: 0.875rem;
+	display: inline;
 }
 
 .sapUiJSD pre {
@@ -1656,8 +1667,8 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
 	box-sizing: border-box;
 }
 
-.sapUiTheme-sap_belize .apiDetailPage .sapMPanel.borrowedMethodsPanel .sapMPanelContent,
-.sapUiTheme-sap_belize_plus .apiDetailPage .sapMPanel.borrowedMethodsPanel .sapMPanelContent {
+.sapUiTheme-sap_belize .apiDetailPage .sapMPanel.borrowedListPanel .sapMPanelContent,
+.sapUiTheme-sap_belize_plus .apiDetailPage .sapMPanel.borrowedListPanel .sapMPanelContent {
 	padding: 0;
 }
 
@@ -1729,9 +1740,23 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
 	white-space: nowrap;
 }
 
+.sapUiParamText.sapMLnk.depth-0 {
+	font-weight: normal;
+}
+
 .sapUiParamText .parameterDefault {
 	font-weight: normal;
 	padding-left: 0.3rem;
+}
+
+.sapUiParamText .deprecated {
+	font-weight: normal;
+	color: #bb0000;
+}
+
+.sapUiParamText .deprecated .deprecatedText {
+	vertical-align: top;
+	padding-left: 0.5rem;
 }
 
 html.sapUiMedia-Std-Phone .sapUiParamText,

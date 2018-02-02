@@ -863,7 +863,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	/**
 	 * Suppress interactions on all DOM elements in the busy section
 	 *
-	 * @param {Boolean} bBusy New busy state
+	 * @param {boolean} bBusy New busy state
 	 * @private
 	 */
 	function fnHandleInteraction(bBusy) {

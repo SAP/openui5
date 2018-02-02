@@ -219,7 +219,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 	/**
 	 * Gets or loads all contexts for a specified node id (dependent on mode)
 	 *
-	 * @param {String} sNodeId the absolute path to be loaded
+	 * @param {string} sNodeId the absolute path to be loaded
 	 * @param {int} iStartIndex
 	 * @param {int} iLength
 	 * @param {int} iThreshold

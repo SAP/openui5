@@ -8,6 +8,10 @@ sap.ui.define([],
 		"use strict";
 
 		return {
+			name: {
+				singular: "CAROUSEL_NAME",
+				plural: "CAROUSEL_NAME_PLURAL"
+			},
 			palette: {
 				group: "DISPLAY",
 				icons: {

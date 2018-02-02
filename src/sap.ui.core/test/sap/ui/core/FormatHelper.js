@@ -97,6 +97,12 @@ function formatObject(oObject, bFormatted, iDepth, sResult) {
 				sResult += "," + (bFormatted ? "\n" : "");
 			}
 			if (bFormatted) sResult += indent(iDepth + 1);
+
+			//ensure keys which contain non-word characters [A-Za-z0-9_] are double quoted
+			if (!/^\w+$/.test(sName)) {
+				sName = "\"" + sName + "\"";
+			}
+
 			sResult += sName + ":" + (bFormatted ? " " : "");
 			if (typeof oValue === "object") {
 				sResult += formatObject(oValue, bFormatted, iDepth + 1);

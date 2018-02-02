@@ -4,6 +4,7 @@ QUnit.config.autostart = false;
 
 sap.ui.require([
 	'sap/ui/dt/DesignTime',
+	'sap/ui/dt/OverlayRegistry',
 	'sap/uxap/ObjectPageLayout',
 	'sap/uxap/ObjectPageSection',
 	'sap/uxap/ObjectPageSubSection',
@@ -13,6 +14,7 @@ sap.ui.require([
 ],
 function(
 	DesignTime,
+	OverlayRegistry,
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
@@ -50,17 +52,14 @@ function(
 			});
 			this.oVBox = new VBox({
 				items : [this.oLayout]
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements : [this.oVBox]
 			});
 
-			this.oDesignTime.attachEventOnce("synced", function() {
-				sap.ui.getCore().applyChanges();
-				fnDone();
-			});
+			this.oDesignTime.attachEventOnce("synced", fnDone);
 		},
 
 		afterEach: function() {
@@ -72,21 +71,20 @@ function(
 	QUnit.test("invisible section", function(assert) {
 		var fnDone = assert.async();
 
-		this.oDesignTime.attachEventOnce("synced", function() {
-			sap.ui.getCore().applyChanges();
+		OverlayRegistry.getOverlay(this.oSection).attachEventOnce("geometryChanged", function() {
+			var oSectionOverlay = OverlayRegistry.getOverlay(this.oSection);
+			var oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 
-			var oSectionOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oSection);
-			var oButtonOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton);
-
-			assert.deepEqual(Math.ceil(oSectionOverlay.$().offset().top), Math.ceil(oSectionOverlay.$().offset().top), "top position of the Section overlay is correct");
-			assert.deepEqual(Math.ceil(oSectionOverlay.$().offset().left), Math.ceil(oSectionOverlay.$().offset().left), "left position of the Section overlay is correct");
+			assert.deepEqual(Math.ceil(oSectionOverlay.$().offset().top), Math.ceil(this.oSection.$().offset().top), "top position of the Section overlay is correct");
+			assert.deepEqual(Math.ceil(oSectionOverlay.$().offset().left), Math.ceil(this.oSection.$().offset().left), "left position of the Section overlay is correct");
 			assert.deepEqual(Math.ceil(oButtonOverlay.$().offset().top), Math.ceil(this.oButton.$().offset().top), "top position of the Button overlay is correct");
 			assert.deepEqual(Math.ceil(oButtonOverlay.$().offset().left), Math.ceil(this.oButton.$().offset().left), "left position of the Button overlay is correct");
 
 			fnDone();
 		}, this);
 
-		this.oSection.setVisible(true); // starts test
+		this.oSection.setVisible(true);
+		sap.ui.getCore().applyChanges();
 	});
 
 });

@@ -85,7 +85,7 @@ sap.ui.define([
 
 	Rename.prototype.startEdit = function (oOverlay) {
 		this._bPreventMenu = true;
-		var oElement = oOverlay.getElementInstance(),
+		var oElement = oOverlay.getElement(),
 			oDesignTimeMetadata = oOverlay.getDesignTimeMetadata(),
 			vDomRef = oDesignTimeMetadata.getAction("rename", oElement).domRef;
 		RenameHandler.startEdit.call(this, oOverlay, vDomRef, "plugin.Rename.startEdit");
@@ -131,7 +131,7 @@ sap.ui.define([
 
 		if (bIsEnabled && typeof oAction.isEnabled !== "undefined") {
 			if (typeof oAction.isEnabled === "function") {
-				bIsEnabled = oAction.isEnabled(oOverlay.getElementInstance());
+				bIsEnabled = oAction.isEnabled(oOverlay.getElement());
 			} else {
 				bIsEnabled = oAction.isEnabled;
 			}
@@ -139,7 +139,7 @@ sap.ui.define([
 
 		if (bIsEnabled) {
 			var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
-			if (!oDesignTimeMetadata.getAssociatedDomRef(oOverlay.getElementInstance(), oAction.domRef)) {
+			if (!oDesignTimeMetadata.getAssociatedDomRef(oOverlay.getElement(), oAction.domRef)) {
 				bIsEnabled = false;
 			}
 		}
@@ -163,7 +163,7 @@ sap.ui.define([
 	 */
 	Rename.prototype._isEditable = function(oOverlay) {
 		var bEditable = false;
-		var oElement = oOverlay.getElementInstance();
+		var oElement = oOverlay.getElement();
 
 		var oRenameAction = this.getAction(oOverlay);
 		if (oRenameAction && oRenameAction.changeType) {
@@ -199,7 +199,7 @@ sap.ui.define([
 			this._$oEditableControlDomRef.text(sText);
 			try {
 				var oRenameCommand;
-				var oRenamedElement = this._oEditedOverlay.getElementInstance();
+				var oRenamedElement = this._oEditedOverlay.getElement();
 				var oDesignTimeMetadata = this._oEditedOverlay.getDesignTimeMetadata();
 				var oRenameAction = this.getAction(this._oEditedOverlay);
 				var sVariantManagementReference = this.getVariantManagementReference(this._oEditedOverlay, oRenameAction);

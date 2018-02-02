@@ -31,10 +31,8 @@
 			border: none;
 			position: static; // used to show the left and right border of the outline when focused
 			background-color: inherit;
-			.sapMResponsivePopover & {
-				&.sapMBtnText {
-					padding: 0 0 0 1rem;
-				}
+			&.sapMBtnText {
+				padding: 0 0 0 1rem;
 			}
 		}
 		// Define paddings, margins and border at root level
@@ -98,14 +96,11 @@
 						pointer-events: none;
 					}
 				}
-				.sap-desktop .sapContrast & {
+				.sap-desktop .sapContrast &,
+				.sap-desktop .sapContrastPlus & {
 					outline: none;
 					outline-offset: 0;
 				}
-				//html.sap-desktop .sapContrast .sapMBtn:focus > .sapMFocusable,
-				//html.sap-desktop .sapContrast.sapMBtn:focus > .sapMFocusable {
-				//	outline: 1px dotted #ffffff;
-				//}
 			}
 			.sap-desktop & {
 				&:after {
@@ -209,10 +204,10 @@ html:not(.sap-phone) {
 				content: "";
 				box-sizing: border-box;
 				position: absolute;
-				left: 2px;
-				top: 2px;
-				right: 2px;
-				bottom: 2px;
+				left: 1px;
+				top: 1px;
+				right: 1px;
+				bottom: 1px;
 				border: 1px solid @sapUiContentFocusColor;
 				pointer-events: none;
 			}
@@ -220,10 +215,10 @@ html:not(.sap-phone) {
 				content: "";
 				position: absolute;
 				box-sizing: border-box;
-				left: 2px;
-				top: 2px;
-				right: 2px;
-				bottom: 2px;
+				left: 1px;
+				top: 1px;
+				right: 1px;
+				bottom: 1px;
 				border: 1px dotted @sapUiContentContrastFocusColor;
 				pointer-events: none;
 			}

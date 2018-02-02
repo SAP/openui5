@@ -182,17 +182,9 @@
 			assert.ok(oMeasurement, "Measurement for rendering all UIAreas found");
 			oMeasurement = jQuery.sap.measure.getMeasurement("target1---rerender");
 			assert.ok(oMeasurement, "Measurement for rendering UIArea found");
-			oMeasurement = jQuery.sap.measure.getMeasurement(URI("../../../../../resources/sap/ui/commons/Button.js").absoluteTo(document.location.origin + document.location.pathname).href());
-			if (!oMeasurement){
-				// check if debug sources are used
-				oMeasurement = jQuery.sap.measure.getMeasurement(URI("../../../../../resources/sap/ui/commons/Button-dbg.js").absoluteTo(document.location.origin + document.location.pathname).href());
-			}
+			oMeasurement = jQuery.sap.measure.getMeasurement("sap/ui/commons/Button.js");
 			assert.ok(oMeasurement, "Measurement for request for Button.js found");
-			oMeasurement = jQuery.sap.measure.getMeasurement(URI("../../../../../resources/sap/ui/commons/ButtonRenderer.js").absoluteTo(document.location.origin + document.location.pathname).href());
-			if (!oMeasurement){
-				// check if debug sources are used
-				oMeasurement = jQuery.sap.measure.getMeasurement(URI("../../../../../resources/sap/ui/commons/ButtonRenderer-dbg.js").absoluteTo(document.location.origin + document.location.pathname).href());
-			}
+			oMeasurement = jQuery.sap.measure.getMeasurement("sap/ui/commons/ButtonRenderer.js");
 			assert.ok(oMeasurement, "Measurement for request for ButtonRenderer.js found");
 
 		});

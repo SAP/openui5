@@ -354,7 +354,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					value: { type: "string" }
 				}
 			}
-		}
+		},
+		designtime: "sap/m/designtime/Input.designtime"
 	}});
 
 
@@ -2491,7 +2492,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			newText = '';
 
 		if (!Input._wordStartsWithValue(text, value)) {
-			return text;
+			return jQuery.sap.encodeHTML(text);
 		}
 
 		var index = lowerText.indexOf(value);
@@ -2502,12 +2503,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		}
 
 		if (index > -1) {
-			newText += text.substring(0, index);
+			newText += jQuery.sap.encodeHTML(text.substring(0, index));
 			subString = text.substring(index, index + count);
-			newText += '<span class="sapMInputHighlight">' + subString + '</span>';
-			newText += text.substring(index + count);
+			newText += '<span class="sapMInputHighlight">' + jQuery.sap.encodeHTML(subString) + '</span>';
+			newText += jQuery.sap.encodeHTML(text.substring(index + count));
 		} else {
-			newText = text;
+			newText = jQuery.sap.encodeHTML(text);
 		}
 
 		return newText;

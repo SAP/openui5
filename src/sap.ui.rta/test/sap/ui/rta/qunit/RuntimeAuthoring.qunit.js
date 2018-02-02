@@ -14,6 +14,7 @@ sap.ui.require([
 	'sap/ui/dt/plugin/ContextMenu',
 	'sap/ui/dt/DesignTimeMetadata',
 	'sap/ui/dt/OverlayRegistry',
+	'sap/ui/dt/Overlay',
 	'sap/ui/fl/registry/Settings',
 	'sap/ui/fl/registry/ChangeRegistry',
 	'sap/ui/fl/LrepConnector',
@@ -32,6 +33,7 @@ sap.ui.require([
 	'sap/ui/base/EventProvider',
 	'sap/ui/rta/command/BaseCommand',
 	'sap/ui/rta/qunit/RtaQunitUtils',
+	'sap/ui/rta/appVariant/Feature',
 	// should be last
 	'sap/ui/thirdparty/sinon',
 	'sap/ui/thirdparty/sinon-ie',
@@ -47,6 +49,7 @@ sap.ui.require([
 	ContextMenu,
 	DesignTimeMetadata,
 	OverlayRegistry,
+	Overlay,
 	Settings,
 	ChangeRegistry,
 	LrepConnector,
@@ -65,6 +68,7 @@ sap.ui.require([
 	EventProvider,
 	RTABaseCommand,
 	RtaQunitUtils,
+	RtaAppVariantFeature,
 	sinon) {
 	"use strict";
 
@@ -202,82 +206,6 @@ sap.ui.require([
 		}.bind(this));
 	});
 
-	QUnit.test("when transporting local changes", function(assert) {
-		var oMockTransportInfo = {
-					packageName : "PackageName",
-					transport : "transportId"
-				},
-				oMockTransportedChange = {
-					packageName : "aPackage",
-					fileType : "change",
-					id : "changeId1",
-					namespace : "namespace",
-					getDefinition : function(){
-						return {
-							packageName : this.packageName,
-							fileType : this.fileType
-						};
-					},
-					getId : function(){
-						return this.id;
-					},
-					getNamespace : function(){
-						return this.namespace;
-					},
-					setResponse : function(oDefinition){
-						this.packageName = oDefinition.packageName;
-					},
-					getPackage : function(){
-						return this.packageName;
-					}
-				},
-				oMockNewChange = {
-					packageName : "$TMP",
-					fileType : "change",
-					id : "changeId2",
-					namespace : "namespace",
-					getDefinition : function(){
-						return {
-							packageName : this.packageName,
-							fileType : this.fileType
-						};
-					},
-					getId : function(){
-						return this.id;
-					},
-					getNamespace : function(){
-						return this.namespace;
-					},
-					setResponse : function(oDefinition){
-						this.packageName = oDefinition.packageName;
-					},
-					getPackage : function(){
-						return this.packageName;
-					}
-				},
-				aMockLocalChanges = [oMockTransportedChange, oMockNewChange],
-				oMockFlexController = {
-					getComponentChanges : function(){
-						return Promise.resolve(aMockLocalChanges);
-					}
-				},
-				oMockLrepConnector = {
-					send : function(){
-						return Promise.resolve();
-					}
-				};
-		sandbox.stub(LrepConnector, "createConnector").returns(oMockLrepConnector);
-		sandbox.stub(Utils, "getClient").returns('');
-		sandbox.stub(this.oRta, "_getFlexController").returns(oMockFlexController);
-		var stubMessageToast = sandbox.stub(this.oRta, "_showMessageToast").returns();
-
-		return this.oRta._transportAllLocalChanges(oMockTransportInfo).then(function(){
-			assert.equal(aMockLocalChanges[0].packageName, "aPackage", "then the transported local change is not updated");
-			assert.equal(aMockLocalChanges[1].packageName, oMockTransportInfo.packageName, "but the new local change is updated");
-			assert.ok(stubMessageToast.calledOnce, "and success message called");
-		});
-	});
-
 	QUnit.module("Given a USER layer change", {
 		beforeEach : function(assert) {
 			FakeLrepLocalStorage.deleteChanges();
@@ -318,7 +246,57 @@ sap.ui.require([
 			assert.equal(this.oRta.getToolbar().getControl('restore').getEnabled(), false, "then the Restore Button is disabled");
 			assert.equal(this.oRta.getToolbar().getControl('manageApps').getVisible(), false, "then the 'AppVariant Overview' Icon Button is not visible");
 			assert.equal(this.oRta.getToolbar().getControl('appVariantOverview').getVisible(), false, "then the 'AppVariant Overview' Menu Button is not visible");
+			assert.equal(this.oRta.getToolbar().getControl('manageApps').getEnabled(), false, "then the 'AppVariant Overview' Icon Button is not enabled");
+			assert.equal(this.oRta.getToolbar().getControl('appVariantOverview').getEnabled(), false, "then the 'AppVariant Overview' Menu Button is not enabled");
 		}.bind(this));
+	});
+
+	QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the manifest of an app is not supported", function(assert) {
+		var oFlexController = this.oRta._getFlexController();
+		sandbox.stub(oFlexController, "getComponentChanges").returns(Promise.resolve([]));
+
+		sandbox.stub(this.oRta, '_getPublishAndAppVariantSupportVisibility').returns(Promise.resolve([true, true]));
+		return this.oRta.start().then(function () {
+			assert.equal(this.oRta.getToolbar().getControl('manageApps').getVisible(), true, "then the 'AppVariant Overview' Icon Button is visible");
+			assert.equal(this.oRta.getToolbar().getControl('manageApps').getEnabled(), false, "then the 'AppVariant Overview' Icon Button is not enabled");
+			assert.equal(this.oRta.getToolbar().getControl('appVariantOverview').getVisible(), false, "then the 'AppVariant Overview' Menu Button is not visible");
+			assert.equal(this.oRta.getToolbar().getControl('appVariantOverview').getEnabled(), false, "then the 'AppVariant Overview' Menu Button is not enabled");
+			assert.equal(this.oRta.getToolbar().getControl('saveAs').getVisible(), true, "then the 'Save As' Button is visible");
+			assert.equal(this.oRta.getToolbar().getControl('manageApps').getEnabled(), false, "then the 'Save As' Button is not enabled");
+		}.bind(this));
+	});
+
+	QUnit.test("when RTA is started in the customer layer, app variant feature is available for an (SAP developer) but the manifest of an app is not supported", function(assert) {
+		var oFlexController = this.oRta._getFlexController();
+		sandbox.stub(oFlexController, "getComponentChanges").returns(Promise.resolve([]));
+
+		sandbox.stub(this.oRta, '_getPublishAndAppVariantSupportVisibility').returns(Promise.resolve([true, true]));
+		sandbox.stub(RtaAppVariantFeature, "isOverviewExtended").returns(true);
+		return this.oRta.start().then(function () {
+			assert.equal(this.oRta.getToolbar().getControl('manageApps').getVisible(), false, "then the 'AppVariant Overview' Icon Button is not visible");
+			assert.equal(this.oRta.getToolbar().getControl('manageApps').getEnabled(), false, "then the 'AppVariant Overview' Icon Button is not enabled");
+			assert.equal(this.oRta.getToolbar().getControl('appVariantOverview').getVisible(), true, "then the 'AppVariant Overview' Menu Button is visible");
+			assert.equal(this.oRta.getToolbar().getControl('appVariantOverview').getEnabled(), false, "then the 'AppVariant Overview' Menu Button is not enabled");
+			assert.equal(this.oRta.getToolbar().getControl('saveAs').getVisible(), true, "then the 'Save As' Button is visible");
+			assert.equal(this.oRta.getToolbar().getControl('manageApps').getEnabled(), false, "then the 'Save As' Button is not enabled");
+		}.bind(this));
+	});
+
+	QUnit.test("when _onGetAppVariantOverview is called", function(assert) {
+		var oMenuButton = {
+			getId : function() {
+				return 'keyUser';
+			}
+		};
+
+		var oEmptyEvent = new sap.ui.base.Event("emptyEventId", oMenuButton, {
+			item : oMenuButton
+		});
+
+		var fnAppVariantFeatureSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").returns(Promise.resolve(true));
+		return this.oRta._onGetAppVariantOverview(oEmptyEvent).then(function() {
+			assert.ok(fnAppVariantFeatureSpy.calledOnce, "then the onGetOverview() method is called once and the key user view will be shown");
+		});
 	});
 
 	QUnit.test("when RTA is started in the user layer", function(assert) {
@@ -368,7 +346,7 @@ sap.ui.require([
 			this.fnRedoSpy = sandbox.stub().returns(Promise.resolve());
 
 			this.oToolbarDomRef = jQuery('<input/>').appendTo('#qunit-fixture').get(0);
-			this.oOverlayContainerDom = jQuery('<button/>').appendTo('#qunit-fixture').get(0);
+			this.oOverlayContainer = jQuery('<button/>').appendTo('#qunit-fixture');
 			this.oAnyOtherDomRef = jQuery('<button/>').appendTo('#qunit-fixture').get(0);
 
 			this.oUndoEvent = new Event("dummyEvent", new EventProvider());
@@ -385,7 +363,7 @@ sap.ui.require([
 			this.oRedoEvent.altKey = false;
 			this.oRedoEvent.stopPropagation = function() {};
 
-			sandbox.stub(sap.ui.dt.Overlay, "getOverlayContainer").returns(this.oOverlayContainerDom);
+			sandbox.stub(Overlay, "getOverlayContainer").returns(this.oOverlayContainer);
 
 			this.mContext = {
 				getToolbar: function () {
@@ -410,7 +388,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("with focus on an overlay", function(assert) {
-		this.oOverlayContainerDom.focus();
+		this.oOverlayContainer.get(0).focus();
 		RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
 		assert.equal(this.fnUndoSpy.callCount, 1, "then _onUndo was called once");
 
@@ -456,7 +434,7 @@ sap.ui.require([
 		this.oUndoEvent.ctrlKey = false;
 		this.oUndoEvent.metaKey = true;
 
-		this.oOverlayContainerDom.focus();
+		this.oOverlayContainer.get(0).focus();
 		RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
 		assert.equal(this.fnUndoSpy.callCount, 1, "then _onUndo was called once");
 
@@ -550,8 +528,8 @@ sap.ui.require([
 		afterEach : function(assert) {
 			sandbox.restore();
 			this.oRemoveCommand1.destroy();
-			this.oRta.destroy();
 			this.oCommandStack.destroy();
+			this.oRta.destroy();
 			FakeLrepLocalStorage.deleteChanges();
 		}
 	});
@@ -614,29 +592,18 @@ sap.ui.require([
 	QUnit.test("when _handleElementModified is called if a create container command was executed", function(assert){
 		var done = assert.async();
 
-		// An existing Form is used for the test so we don't need to create a new overlay from scratch
+		// An existing Form is used for the test
 		var oForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm");
-		var oDummyOverlay = OverlayRegistry.getOverlay(oForm.getId());
-		var oDummyCommand = new RTABaseCommand();
-		sandbox.stub(this.oRta.getPlugins()["createContainer"], "getCreatedContainerOverlay").returns(oDummyOverlay);
-		sandbox.stub(this.oRta, "getCommandStack").returns({
-			pushAndExecute : function(oCommand){
-				return Promise.resolve();
-			}
-		});
+		var oFormOverlay = OverlayRegistry.getOverlay(oForm.getId());
+
+		this.oRta.getPlugins()["createContainer"].handleCreate(false, oFormOverlay);
 
 		sandbox.stub(this.oRta.getPlugins()["rename"], "startEdit", function(oNewContainerOverlay){
-			assert.equal(oNewContainerOverlay.getId(), oDummyOverlay.getId(), "then the new container starts the edit for rename");
+			assert.ok(oNewContainerOverlay.isSelected(), "then the new container is selected");
+			assert.ok(true, "then the new container starts the edit for rename");
+			this.oCommandStack.undo();
 			done();
-		});
-
-		var oEvent = new Event("dummyEvent", oForm, {
-			command : oDummyCommand,
-			action : "dummyDesignTimeAction",
-			newControlId : oForm.getId()
-		});
-
-		this.oRta._handleElementModified(oEvent);
+		}.bind(this));
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is available together with a CommandStack with changes...", {
@@ -738,7 +705,7 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.test("when calling '_deleteChanges successfully', ", function(assert){
+	QUnit.test("when calling '_deleteChanges' successfully, ", function(assert){
 		var fnDone = assert.async();
 
 		var fnShowBusyIndicatorSpy = sandbox.spy(BusyIndicator, "show");
@@ -903,6 +870,56 @@ sap.ui.require([
 		assert.equal(mDesignTimeMetadata2.some.deep, null, "Scope can delete keys");
 	});
 
+	QUnit.module("Given that RuntimeAuthoring is created but not started", {
+		beforeEach : function(assert) {
+			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
+			this.oRta = new RuntimeAuthoring({
+				rootControl : this.oRootControl,
+				showToolbars : false,
+				flexSettings: {
+					layer: "CUSTOMER"
+				}
+			});
+			sandbox.stub(BusyIndicator, "show");
+		},
+		afterEach : function(assert) {
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("When transport function is called and transportAllUIChanges returns Promise.resolve()", function(assert) {
+			sandbox.stub(this.oRta, "_serializeToLrep").returns(Promise.resolve());
+			var oTransportStub = sandbox.stub(TransportSelection.prototype, "transportAllUIChanges").returns(Promise.resolve());
+			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
+			return this.oRta.transport().then(function() {
+				assert.equal(oMessageToastStub.callCount, 1, "then the messageToast was shown");
+				assert.equal(oTransportStub.firstCall.args[1], RtaUtils.getRtaStyleClassName(), "the styleClass was passed correctly");
+				assert.equal(oTransportStub.firstCall.args[2], "CUSTOMER", "the layer was passed correctly");
+			});
+		});
+
+		QUnit.test("When transport function is called and transportAllUIChanges returns Promise.reject()", function(assert) {
+			sandbox.stub(this.oRta, "_serializeToLrep").returns(Promise.resolve());
+			sandbox.stub(TransportSelection.prototype, "transportAllUIChanges").returns(Promise.reject(new Error("Error")));
+			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
+			var oShowErrorStub = sandbox.stub(jQuery.sap.log, "error");
+			var oErrorBoxStub = sandbox.stub(MessageBox, "error");
+			return this.oRta.transport().then(function() {
+				assert.equal(oMessageToastStub.callCount, 0, "then the messageToast was not shown");
+				assert.equal(oShowErrorStub.callCount, 1, "then the error was logged");
+				assert.equal(oErrorBoxStub.callCount, 1, "and a MessageBox.error was shown");
+			});
+		});
+
+		QUnit.test("When transport function is called and transportAllUIChanges returns Promise.resolve() with 'Error' as parameter", function(assert) {
+			sandbox.stub(this.oRta, "_serializeToLrep").returns(Promise.resolve());
+			sandbox.stub(TransportSelection.prototype, "transportAllUIChanges").returns(Promise.resolve('Error'));
+			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
+			return this.oRta.transport().then(function() {
+				assert.equal(oMessageToastStub.callCount, 0, "then the messageToast was not shown");
+			});
+		});
+	});
 
 	QUnit.done(function( details ) {
 		oComp.destroy();

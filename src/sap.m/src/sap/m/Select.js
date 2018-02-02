@@ -1314,9 +1314,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 				return;
 			}
 
-			// mark the event for components that needs to know if the event was handled
-			oEvent.setMarked();
-
 			if (this.isOpen()) {
 				this.close();
 			}

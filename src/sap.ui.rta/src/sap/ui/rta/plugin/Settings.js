@@ -82,7 +82,7 @@ sap.ui.define([
 
 		if (typeof oAction.isEnabled !== "undefined") {
 			if (typeof oAction.isEnabled === "function") {
-				return oAction.isEnabled(oOverlay.getElementInstance());
+				return oAction.isEnabled(oOverlay.getElement());
 			} else {
 				return oAction.isEnabled;
 			}
@@ -116,7 +116,7 @@ sap.ui.define([
 	Settings.prototype.handler = function(aSelectedOverlays, mPropertyBag) {
 		mPropertyBag = mPropertyBag || {};
 		var oSettingsCommand, oAppDescriptorCommand, oCompositeCommand;
-		var oElement = aSelectedOverlays[0].getElementInstance();
+		var oElement = aSelectedOverlays[0].getElement();
 		var fnHandler = mPropertyBag.fnHandler;
 
 		if (!fnHandler){
@@ -214,7 +214,7 @@ sap.ui.define([
 						aMenuItems.push({
 							id : sPluginId + iActionCounter,
 							text : sActionText,
-							enabled : oSettingsAction.isEnabled && oSettingsAction.isEnabled.bind(this, oOverlay.getElementInstance()),
+							enabled : oSettingsAction.isEnabled && oSettingsAction.isEnabled.bind(this, oOverlay.getElement()),
 							handler : function(fnHandler, aOverlays, mPropertyBag){
 								mPropertyBag = mPropertyBag || {};
 								mPropertyBag.fnHandler = fnHandler;

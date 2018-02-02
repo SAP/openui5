@@ -64,7 +64,7 @@ sap.ui.define([
 	 */
 	Remove.prototype._isEditable = function(oOverlay) {
 		var bEditable = false;
-		var oElement = oOverlay.getElementInstance();
+		var oElement = oOverlay.getElement();
 
 		var oRemoveAction = this.getAction(oOverlay);
 		if (oRemoveAction && oRemoveAction.changeType) {
@@ -97,7 +97,7 @@ sap.ui.define([
 
 		if (typeof oAction.isEnabled !== "undefined") {
 			if (typeof oAction.isEnabled === "function") {
-				bIsEnabled = oAction.isEnabled(oOverlay.getElementInstance());
+				bIsEnabled = oAction.isEnabled(oOverlay.getElement());
 			} else {
 				bIsEnabled = oAction.isEnabled;
 			}
@@ -110,11 +110,13 @@ sap.ui.define([
 	/**
 	 * Checks if Overlay control has a valid parent and if it is
 	 * not the last visible control in the aggregation
+	 *
 	 * @param  {sap.ui.dt.Overlay} oOverlay Overlay for the control
 	 * @return {boolean} Returns true if the control can be removed
+	 * @private
 	 */
 	Remove.prototype._canBeRemovedFromAggregation = function(oOverlay){
-		var oElement = oOverlay.getElementInstance();
+		var oElement = oOverlay.getElement();
 		var oParent = oElement.getParent();
 		if (!oParent){
 			return false;
@@ -126,22 +128,25 @@ sap.ui.define([
 		if (aElements.length === 1){
 			return false;
 		}
+
+		// Fallback to 1 if no overlay is selected
+		var iNumberOfSelectedOverlays = this.getNumberOfSelectedOverlays() || 1;
 		var aInvisibleElements = aElements.filter(function(oElement){
 			var oElementOverlay = OverlayRegistry.getOverlay(oElement);
 			return !(oElementOverlay && oElementOverlay.getElementVisibility());
 		});
-		return !(aInvisibleElements.length === (aElements.length - 1));
+		return !(aInvisibleElements.length === (aElements.length - iNumberOfSelectedOverlays));
 	};
 
 	/**
 	 * @param  {sap.ui.dt.Overlay} oOverlay overlay object
-	 * @return {String}          confirmation text
+	 * @return {String} Returns the confirmation text
 	 * @private
 	 */
 	Remove.prototype._getConfirmationText = function(oOverlay) {
 		var oAction = this.getAction(oOverlay);
 		if (oAction && oAction.getConfirmationText) {
-			return oAction.getConfirmationText(oOverlay.getElementInstance());
+			return oAction.getConfirmationText(oOverlay.getElement());
 		}
 	};
 
@@ -221,7 +226,7 @@ sap.ui.define([
 		aSelectedOverlays
 			.forEach(function(oOverlay) {
 				var oCommand;
-				var oRemovedElement = oOverlay.getElementInstance();
+				var oRemovedElement = oOverlay.getElement();
 				var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
 				var oRemoveAction = this.getAction(oOverlay);
 				var sVariantManagementReference = this.getVariantManagementReference(oOverlay, oRemoveAction);
@@ -272,7 +277,7 @@ sap.ui.define([
 					);
 				}
 				oNextOverlaySelection = aCandidates.filter(function (oSibling) {
-					return oSibling.getElementInstance().getVisible();
+					return oSibling.getElement().getVisible();
 				}).shift();
 			}
 		}

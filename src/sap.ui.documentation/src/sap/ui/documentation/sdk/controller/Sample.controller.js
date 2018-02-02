@@ -128,10 +128,9 @@ sap.ui.define([
 				// scroll to top of page
 				oPage.scrollTo(0);
 
-
 				this.getAPIReferenceCheckPromise(oSample.entityId).then(function (bHasAPIReference) {
-					oModelData.bHasAPIReference = bHasAPIReference;
-				});
+					this.getView().byId("apiRefButton").setVisible(bHasAPIReference);
+				}.bind(this));
 
 				this._viewModel.setData(oModelData);
 
@@ -278,7 +277,7 @@ sap.ui.define([
 			},
 
 			onNavBack : function (oEvt) {
-				this.getRouter().myNavBack("home", {});
+				this.getRouter().navTo("entity", { id : this.entityId }, true);
 			},
 
 			onNavToCode : function (evt) {

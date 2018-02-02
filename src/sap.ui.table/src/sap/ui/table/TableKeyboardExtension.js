@@ -49,8 +49,7 @@ sap.ui.define([
 
 			if (oIN != null
 				&& !oTable._getKeyboardExtension()._isItemNavigationSuspended()
-				&& !oEvent.isMarked("sapUiTableSkipItemNavigation")
-				&& !TableUtils.isBusyIndicatorVisible(oTable)) {
+				&& !oEvent.isMarked("sapUiTableSkipItemNavigation")) {
 
 				oIN["on" + oEvent.type](oEvent);
 			}
@@ -111,11 +110,6 @@ sap.ui.define([
 		 */
 		_initItemNavigation: function(oExtension) {
 			var oTable = oExtension.getTable();
-
-			if (TableUtils.isBusyIndicatorVisible(oTable)) {
-				return;
-			}
-
 			var $Table = oTable.$();
 			var iColumnCount = TableUtils.getVisibleColumnCount(oTable);
 			var iTotalColumnCount = iColumnCount;

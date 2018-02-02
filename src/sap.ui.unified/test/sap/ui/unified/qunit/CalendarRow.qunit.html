@@ -34,11 +34,13 @@
 			jQuery.sap.require("sap.ui.unified.CalendarLegend");
 			jQuery.sap.require("sap.ui.unified.CalendarRowRenderer");
 			jQuery.sap.require("sap.ui.unified.CalendarLegendItem");
+			jQuery.sap.require("sap.ui.core.InvisibleText");
 
 			var CalendarLegend = sap.ui.unified.CalendarLegend,
 				CalendarLegendItem = sap.ui.unified.CalendarLegendItem,
 				CalendarDayType = sap.ui.unified.CalendarDayType,
-				CalendarRowRenderer = sap.ui.unified.CalendarRowRenderer;
+				CalendarRowRenderer = sap.ui.unified.CalendarRowRenderer,
+				InvisibleText = sap.ui.core.InvisibleText;
 
 			var oFormatYyyyMMddHHmm = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMddHHmm", calendarType: sap.ui.core.CalendarType.Gregorian});
 
@@ -884,7 +886,7 @@
 			});
 
 			QUnit.test("click on appointment", function(assert) {
-				var sSelectedTextId = sap.ui.unified.CalendarRow._oStaticSelectedText.getId();
+				var sSelectedTextId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
 				var sAriaLabel1, sAriaLabel2, sAriaLabel3;
 				// initialize Row1
 				initializeRow1();
@@ -1127,6 +1129,20 @@
 				//assert
 				assert.ok(oApp.$().is(":visible"), "The first appointment is visible");
 				assert.equal(oRow2._getVisibleAppointments().length, 1, "The number of visible appointments is as expected");
+			});
+
+			QUnit.test("_setCustomAppointmentsSorterCallback", function (assert) {
+				//arrange and act
+				var fnCustom = this.spy();
+				oRow1._setCustomAppointmentsSorterCallback(fnCustom);
+				oRow1.placeAt('uiArea3');
+				sap.ui.getCore().applyChanges();
+
+				//assert
+				assert.equal(oRow1._fnCustomSortedAppointments, fnCustom,
+						"_setCustomAppointmentsSorterCallback sets a function to the _fnCustomSortedAppointments");
+				assert.ok(fnCustom.callCount > 0,
+						"_setCustomAppointmentsSorterCallback calls the custom sort function");
 			});
 
 		QUnit.module("RTL", {

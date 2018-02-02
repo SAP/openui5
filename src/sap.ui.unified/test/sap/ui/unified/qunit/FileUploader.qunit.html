@@ -296,6 +296,11 @@
 			oSpy,
 			FUEl;
 
+		// override onclick handler to prevent file dialog opening, causing the test execution to stop
+		oFileUploader.onclick = function (oEvent) {
+			oEvent.preventDefault();
+		};
+
 		oFileUploader.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 

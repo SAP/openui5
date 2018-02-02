@@ -74,9 +74,8 @@ sap.ui.define([
 	TabHandling.prototype.removeTabIndex = function() {
 		var oDesignTime = this.getDesignTime();
 		var aRootElements = oDesignTime.getRootElements();
-		aRootElements.forEach(function(sRootElement) {
-			var oRootDom = sap.ui.getCore().byId(sRootElement).getDomRef();
-			jQuery(oRootDom).find(":focusable:not([tabIndex=-1], #overlay-container *)").each(function(iIndex, oNode) {
+		aRootElements.forEach(function(oRootElement) {
+			oRootElement.$().find(":focusable:not([tabIndex=-1], #overlay-container *)").each(function(iIndex, oNode) {
 				oNode.setAttribute("data-sap-ui-dt-tabindex", oNode.tabIndex);
 				oNode.setAttribute("tabIndex", -1);
 			});

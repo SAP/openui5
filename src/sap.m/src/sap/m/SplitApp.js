@@ -92,7 +92,8 @@ sap.ui.define(['jquery.sap.global', './SplitContainer', './library', 'sap/ui/Dev
 					landscape : {type : "boolean"}
 				}
 			}
-		}
+		},
+		designtime: "sap/m/designtime/SplitApp.designtime"
 	}});
 
 

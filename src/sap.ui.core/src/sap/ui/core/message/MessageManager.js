@@ -327,6 +327,7 @@ sap.ui.define([
 
 	/**
 	 * Deregister MessageProcessor
+	 *
 	 * @param {sap.ui.core.message.MessageProcessor} oProcessor The MessageProcessor
 	 * @public
 	 */
@@ -337,11 +338,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Register ManagedObject: Validation and Parse errors are handled by the MessageManager for this object
+	 * When using the databinding type system, the validation/parsing of a new property value could fail.
+	 * In this case, a validationError/parseError event is fired. These events bubble up to the core.
+	 * For registered ManagedObjects, the MessageManager attaches to these events and creates a
+	 * <code>sap.ui.core.message.Message</code> (bHandleValidation=true) for each of these errors
+	 * and cancels the event bubbling.
 	 *
 	 * @param {sap.ui.base.ManagedObject} oObject The sap.ui.base.ManagedObject
-	 * @param {boolean} bHandleValidation Handle validation for this object. If set to true validation/parse events creates Messages and cancel event.
-	 * 					If set to false only the event will be canceled, but no messages will be created
+	 * @param {boolean} bHandleValidation Handle validationError/parseError events for this object. If set to true,
+	 * the MessageManager creates a Message for each validation/parse error. The event bubbling is canceled in every case.
 	 * @public
 	 */
 	MessageManager.prototype.registerObject = function(oObject, bHandleValidation) {
@@ -366,7 +371,6 @@ sap.ui.define([
 			jQuery.sap.log.error(this + " : " + oObject.toString() + " is not an instance of sap.ui.base.ManagedObject");
 			return;
 		}
-		//oObject.getMetadata().getStereoType() + getId()
 		oObject.detachValidationSuccess(this._handleSuccess);
 		oObject.detachValidationError(this._handleError);
 		oObject.detachParseError(this._handleError);

@@ -9,6 +9,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 	/*global Promise */
 
+	// TODO: dependency to sap/ui/core/library not possible due to cyclic dependency
+	var ViewType = {
+		JSON: "JSON",
+		XML: "XML",
+		HTML: "HTML",
+		JS: "JS",
+		Template: "Template"
+	};
+
 	/**
 	 * Utility function which adds SAP-specific parameters to a URI instance
 	 *
@@ -1062,7 +1071,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 *
 	 * @param {string} sMessage The error message.
 	 * @param {string} sFile File where the error occurred
-	 * @param {number} iLine Line number of the error
+	 * @param {int} iLine Line number of the error
 	 * @public
 	 * @since 1.15.1
 	 * @name sap.ui.core.Component.prototype.onWindowError
@@ -1953,7 +1962,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * Load a Component without instantiating it.
 	 *
 	 * Provides support for loading Components asynchronously by setting
-	 * <code>oConfig.async</code> to true. In that case, the method returns a Javascript 6
+	 * <code>oConfig.async</code> to true. In that case, the method returns a JavaScript 6
 	 * Promise that will be fulfilled with the component class after loading.
 	 *
 	 * Using <code>async = true</code> doesn't necessarily mean that no more synchronous loading
@@ -2521,6 +2530,95 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 						return prepareControllerClass(oClass);
 					});
 				});
+			}).then(function(oControllerClass) {
+				if (!oManifest) {
+					return oControllerClass;
+				}
+
+				// Load all modules derived from "/sap.ui5" manifest entries asynchronously (if underlaying loader supports it)
+				// Note: this does not load modules declared / derived from parent manifests (e.g. extension scenario)
+				var aModuleNames = [];
+
+				// lookup rootView class
+				var sRootViewType;
+				var oRootView = oManifest.getEntry("/sap.ui5/rootView");
+				if (typeof oRootView === "string") {
+					// String as rootView defaults to ViewType XML
+					// See: UIComponent#createContent and UIComponentMetadata#_convertLegacyMetadata
+					sRootViewType = "XML";
+				} else if (oRootView && typeof oRootView === "object" && oRootView.type) {
+					sRootViewType = oRootView.type;
+				}
+				if (sRootViewType && ViewType[sRootViewType]) {
+					var sViewClass = "sap/ui/core/mvc/" + ViewType[sRootViewType] + "View";
+					aModuleNames.push(sViewClass);
+				}
+
+				// lookup router class
+				var oRouting = oManifest.getEntry("/sap.ui5/routing");
+				if (oRouting && oRouting.routes) {
+					var sRouterClass = oManifest.getEntry("/sap.ui5/routing/config/routerClass") || "sap.ui.core.routing.Router";
+					var sRouterClassModule = jQuery.sap.getResourceName(sRouterClass, "");
+					aModuleNames.push(sRouterClassModule);
+				}
+
+				// lookup model classes
+				var mManifestModels = jQuery.extend(true, {}, oManifest.getEntry("/sap.ui5/models"));
+				var mManifestDataSources = jQuery.extend(true, {}, oManifest.getEntry("/sap.app/dataSources"));
+				var mAllModelConfigurations = Component._createManifestModelConfigurations({
+					models: mManifestModels,
+					dataSources: mManifestDataSources,
+					manifest: oManifest,
+					cacheTokens: hints.cacheTokens
+				});
+				for (var mModelName in mAllModelConfigurations) {
+					if (!mAllModelConfigurations.hasOwnProperty(mModelName)) {
+						continue;
+					}
+					var oModelConfig = mAllModelConfigurations[mModelName];
+					if (!oModelConfig.type) {
+						continue;
+					}
+					var sModuleName = jQuery.sap.getResourceName(oModelConfig.type, "");
+					if (aModuleNames.indexOf(sModuleName) === -1) {
+						aModuleNames.push(sModuleName);
+					}
+				}
+
+				if (aModuleNames.length > 0) {
+					return Promise.all(aModuleNames.map(function(sModuleName) {
+						// All modules are required separately to have a better error logging.
+						// This "preloading" is done for optimization to enable async loading
+						// in case the underlaying loader supports it. If loading fails, the component
+						// should still be created which might fail once the required module is actually used / loaded
+						return new Promise(function(resolve, reject) {
+							var bResolved = false;
+							function logErrorAndResolve(err) {
+								if (bResolved) {
+									return;
+								}
+								jQuery.sap.log.warning("Can not preload module \"" + sModuleName + "\". " +
+									"This will most probably cause an error once the module is used later on.",
+									oManifest.getComponentName(), "sap.ui.core.Component");
+								jQuery.sap.log.warning(err);
+
+								bResolved = true;
+								resolve();
+							}
+							try {
+								sap.ui.require([sModuleName], resolve, logErrorAndResolve);
+							} catch (err) {
+								// TODO: try-catch can be removed once the underlaying loader supports
+								// the "errback" function
+								logErrorAndResolve(err);
+							}
+						});
+					})).then(function() {
+						return oControllerClass;
+					});
+				} else {
+					return oControllerClass;
+				}
 			}).then(function(oControllerClass) {
 				var waitFor = mOptions.waitFor;
 				if (waitFor) {

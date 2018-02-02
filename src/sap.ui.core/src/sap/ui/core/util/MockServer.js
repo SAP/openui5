@@ -58,8 +58,8 @@ sap.ui
 						/**
 						 * Getter for property <code>rootUri</code>. Has to be relative and requires a trailing '/'. It also needs to match the URI set in OData/JSON models or simple XHR calls in order for the mock server to intercept them.
 						 *
-						 * Default value is empty/<code>undefined</code>
-						 *
+						 * Default value is empty/<code>undefined</code>.
+						 * Must end with a a trailing slash ("/").
 						 * @return {string} the value of property <code>rootUri</code>
 						 * @public
 						 * @name sap.ui.core.util.MockServer#getRootUri
@@ -329,7 +329,6 @@ sap.ui
 			MockServer.prototype.setEntitySetData = function(sEntitySetName, aData) {
 				if (this._oMockdata && this._oMockdata.hasOwnProperty(sEntitySetName)) {
 					this._oMockdata[sEntitySetName] = aData;
-					this._enhanceWithMetadata(this._mEntitySets[sEntitySetName], aData);
 				} else {
 					jQuery.sap.log.error("Unrecognized EntitySet name: " + sEntitySetName);
 				}

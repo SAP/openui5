@@ -4,17 +4,30 @@
 
 // Provides control sap.uxap.BreadCrumbs.
 sap.ui.define([
-	"sap/m/Link",
-	"sap/m/Select",
-	"sap/ui/core/Control",
-	"sap/ui/core/ResizeHandler",
-	"sap/ui/core/delegate/ItemNavigation",
-	"sap/ui/core/Item",
-	"sap/ui/core/Icon",
-	"sap/ui/Device",
-	"./library",
-	"sap/ui/core/InvisibleText"
-], function (Link, Select, Control, ResizeHandler, ItemNavigation, Item, Icon, Device, library, InvisibleText) {
+    "sap/m/Link",
+    "sap/m/Select",
+    "sap/ui/core/Control",
+    "sap/ui/core/ResizeHandler",
+    "sap/ui/core/delegate/ItemNavigation",
+    "sap/ui/core/Item",
+    "sap/ui/core/Icon",
+    "sap/ui/Device",
+    "./library",
+    "sap/ui/core/InvisibleText",
+    "./BreadCrumbsRenderer"
+], function(
+    Link,
+	Select,
+	Control,
+	ResizeHandler,
+	ItemNavigation,
+	Item,
+	Icon,
+	Device,
+	library,
+	InvisibleText,
+	BreadCrumbsRenderer
+) {
 	"use strict";
 
 	/**

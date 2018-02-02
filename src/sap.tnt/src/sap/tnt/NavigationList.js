@@ -3,8 +3,24 @@
  */
 
 // Provides control sap.tnt.NavigationList
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Popover', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/InvisibleText'],
-	function(jQuery, library, Control, Popover, ItemNavigation, InvisibleText) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/Control',
+    'sap/m/Popover',
+    'sap/ui/core/delegate/ItemNavigation',
+    'sap/ui/core/InvisibleText',
+    "./NavigationListRenderer"
+],
+	function(
+	    jQuery,
+		library,
+		Control,
+		Popover,
+		ItemNavigation,
+		InvisibleText,
+		NavigationListRenderer
+	) {
 		"use strict";
 
 		/**

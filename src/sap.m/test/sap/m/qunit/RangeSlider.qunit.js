@@ -268,23 +268,35 @@
 	});
 
 	QUnit.test("Invalid range starting value of -20 (where min is 0)", function (assert) {
+		var oWarningSpy = this.spy(jQuery.sap.log, "warning");
 		this.rangeSlider.setRange([-20, 50]);
 		sap.ui.getCore().applyChanges();
 
 		var aRange = this.rangeSlider.getRange();
 
 		assert.strictEqual(aRange[0], this.rangeSlider.getMin(), "The starting value of the range should be set to 0");
+		assert.ok(oWarningSpy.callCount === 1, "A warning is logged.");
+		assert.ok(oWarningSpy.calledWith("Warning: Min value (-20) not in the range: [0,100]"), "A correct warning is logged");
 		assert.strictEqual(aRange[1], 50, "The end value of the range should be set to 50");
+
+		// cleanup
+		oWarningSpy.restore();
 	});
 
 	QUnit.test("Invalid range ending value of 150 (where max is 100)", function (assert) {
+		var oWarningSpy = this.spy(jQuery.sap.log, "warning");
 		this.rangeSlider.setRange([20, 150]);
 		sap.ui.getCore().applyChanges();
 
 		var aRange = this.rangeSlider.getRange();
 
 		assert.strictEqual(aRange[0], 20, "The starting value of the range should be set to 20");
+		assert.ok(oWarningSpy.callCount === 1, "A warning is logged.");
+		assert.ok(oWarningSpy.calledWith("Warning: Max value (150) not in the range: [0,100]"), "A correct warning is logged");
 		assert.strictEqual(aRange[1], this.rangeSlider.getMax(), "The end value of the range should be set to 100");
+
+		// cleanup
+		oWarningSpy.restore();
 	});
 
 	QUnit.test("getClosestHandleDomRef() with coordinates for left handle", function (assert) {

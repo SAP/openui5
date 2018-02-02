@@ -87,31 +87,20 @@
 		assert.strictEqual(this.oElementDesignTimeMetadata.getAggregation("testAssociation").aggregationLike, true, "getAggregation returns correct data for aggregation-like association");
 	});
 
-	QUnit.test("when asked for aggregation dt metadata", function(assert){
-		var oAggregationDesignTimeMetadata = this.oElementDesignTimeMetadata.createAggregationDesignTimeMetadata("testAggregation");
+	QUnit.test("when creating aggregation dt metadata", function(assert){
+		var oAggregationDesignTimeMetadata = this.oElementDesignTimeMetadata.createAggregationDesignTimeMetadata({testData: "TestData"});
 		assert.equal(oAggregationDesignTimeMetadata.getMetadata().getName(), "sap.ui.dt.AggregationDesignTimeMetadata", "then aggregation designtime metadata class is created");
 		assert.equal(oAggregationDesignTimeMetadata.getLibraryName(), "fake.lib", "then the elements libraryName is passed to the AggregationDesignTimeMetadata");
 	});
 
-	//TODO: Remove when DTMetadata propagation is finalized
-	QUnit.test("when getAggregationAction is called", function(assert) {
-		assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationAction("action1"), [
+	QUnit.test("when getActionDataFromAggregations is called", function(assert) {
+		assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action1"), [
 			{changeType : "firstChangeType", aggregation : "testAggregation"},
 			{changeType : "firstChangeType-aggregation2", aggregation : "testAggregation2"}
 		], "for string action, the correct object is returned");
-		assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationAction("action2"), [{changeType : "secondChangeType", aggregation : "testAggregation"}], "for object action, the correct object is returned");
-		assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationAction("action3", {name:"thirdChangeType"}), [{changeType : "thirdChangeType", aggregation : "testAggregation"}], "for function action, the correct object is returned");
-	});
-
-	//TODO: Remove when DTMetadata propagation is finalized
-	QUnit.test("when getAggregationAction is called", function(assert) {
-		assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationAction("action1"), [
-			{changeType : "firstChangeType", aggregation : "testAggregation"},
-			{changeType : "firstChangeType-aggregation2", aggregation : "testAggregation2"}
-		], "for string action, the correct object is returned");
-		assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationAction("action2"), [{changeType : "secondChangeType", aggregation : "testAggregation"}], "for object action, the correct object is returned");
-		assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationAction("action3", {name:"thirdChangeType"}), [{changeType : "thirdChangeType", aggregation : "testAggregation"}], "for function action, the correct object is returned");
-		assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationAction("action4", {name:"fourthChangeType"}, ["foo", "bar"]), [{changeType : "fourthChangeTypefoobar", aggregation : "testAggregation"}], "for function action with parameters , the correct object is returned");
+		assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action2"), [{changeType : "secondChangeType", aggregation : "testAggregation"}], "for object action, the correct object is returned");
+		assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action3", {name:"thirdChangeType"}), [{changeType : "thirdChangeType", aggregation : "testAggregation"}], "for function action, the correct object is returned");
+		assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action4", {name:"fourthChangeType"}, ["foo", "bar"]), [{changeType : "fourthChangeTypefoobar", aggregation : "testAggregation"}], "for function action with parameters , the correct object is returned");
 	});
 
 	QUnit.test("when getAggregationText is called", function(assert) {

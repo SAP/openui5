@@ -49,6 +49,18 @@
         "type": "FIX",
         "text": " f.DynamicPage: Ensure only own scroll handlers are detached",
         "references": []
+      },
+      {
+        "id": "1508874cb1fe7fcf246635f49ed5745e2f694000",
+        "type": "FIX",
+        "text": " sap.f.Avatar: DetailBox opens when avatar used with list binding",
+        "references": []
+      },
+      {
+        "id": "58e64e9d466c69d51ff49bdc9c48e2d70dae6433",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Expand header button tabbing order fixed",
+        "references": []
       }
     ]
   }

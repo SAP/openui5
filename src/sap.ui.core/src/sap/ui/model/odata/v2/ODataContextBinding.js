@@ -15,12 +15,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Contex
 	 * The ContextBinding is a specific binding for a setting context for the model
 	 *
 	 * @param {sap.ui.model.Model} oModel
-	 * @param {String} sPath
-	 * @param {Object} oContext
-	 * @param {map} [mParameters] a map which contains additional parameters for the binding.
-	 * @param {string} [mParameters.expand] for the OData <code>$expand</code> query option parameter which should be included in the request
-	 * @param {string} [mParameters.select] for the OData <code>$select</code> query option parameter which should be included in the request
-	 * @param {map} [mParameters.custom] an optional map of custom query parameters. Custom parameters must not start with <code>$</code>.
+	 * @param {string} sPath
+	 * @param {sap.ui.model.Context} oContext
+	 * @param {map} [mParameters] A map which contains additional parameters for the binding.
+	 * @param {string} [mParameters.expand] For the OData <code>$expand</code> query option parameter which should be included in the request
+	 * @param {string} [mParameters.select] For the OData <code>$select</code> query option parameter which should be included in the request
+	 * @param {map} [mParameters.custom] An optional map of custom query parameters. Custom parameters must not start with <code>$</code>.
 	 * @abstract
 	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataContextBinding
@@ -83,7 +83,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Contex
 		var oContext = this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
 			var oData;
 
-			if (that.bCreatePreliminaryContext) {
+			if (that.bCreatePreliminaryContext && oContext.isPreliminary()) {
 				that.oElementContext.setPreliminary(false);
 				that.oModel._updateContext(that.oElementContext, oContext.getPath());
 				that._fireChange({ reason: ChangeReason.Context }, false, true);

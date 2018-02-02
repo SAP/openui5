@@ -134,6 +134,8 @@ objectPageHeader Title
 		vertical-align: top;
 		> * {
 			margin-left: 0.5rem;
+		}
+		> *:not(.sapMSegB) {
 			padding: 0;
 		}
 		> *:first-child {
@@ -279,11 +281,24 @@ html[dir=rtl] .sapUxAPObjectPageHeaderPlaceholder.sapUxAPObjectPageHeaderObjectI
 }
 
 .sapUxAPObjectPageHeaderTitleArrow .sapMBtn {
-	margin-top: -0.525rem;
+	margin-top: -0.325rem;
+	margin-left: 0.125rem;
+	height: 2rem;
+	.sapMBtnInner {
+		height: 1.625rem;
+		min-width: 2rem;
+	}
+	.sapMBtnIcon {
+		line-height: 1.5rem;
+		width: 1rem;
+	}
 }
 
 .sapUiSizeCompact .sapUxAPObjectPageHeaderTitleArrow .sapMBtn {
-	margin-top: -0.1rem;
+	margin-top: -0.25rem;
+	.sapMBtnIcon {
+		font-size: 1.375rem;
+	}
 }
 
 .sapUxAPObjectPageHeaderTitleFollowArrow > .sapUxAPObjectPageHeaderIdentifierTitle {

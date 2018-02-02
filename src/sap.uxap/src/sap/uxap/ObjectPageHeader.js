@@ -4,22 +4,38 @@
 
 // Provides control sap.uxap.ObjectPageHeader.
 sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/core/Control",
-	"sap/ui/core/IconPool",
-	"sap/ui/core/CustomData",
-	"sap/ui/Device",
-	"sap/m/Breadcrumbs",
-	"./ObjectPageHeaderActionButton",
-	"sap/ui/core/ResizeHandler",
-	"sap/m/Button",
-	"sap/m/ActionSheet",
-	"./ObjectImageHelper",
-	"./ObjectPageHeaderContent",
-	"./library",
-	"sap/m/library"
-], function (jQuery, Control, IconPool, CustomData, Device, Breadcrumbs, ObjectPageHeaderActionButton,
-			 ResizeHandler, Button, ActionSheet, ObjectImageHelper, ObjectPageHeaderContent, library, mobileLibrary) {
+    "jquery.sap.global",
+    "sap/ui/core/Control",
+    "sap/ui/core/IconPool",
+    "sap/ui/core/CustomData",
+    "sap/ui/Device",
+    "sap/m/Breadcrumbs",
+    "./ObjectPageHeaderActionButton",
+    "sap/ui/core/ResizeHandler",
+    "sap/m/Button",
+    "sap/m/ActionSheet",
+    "./ObjectImageHelper",
+    "./ObjectPageHeaderContent",
+    "./library",
+    "sap/m/library",
+    "./ObjectPageHeaderRenderer"
+], function(
+    jQuery,
+	Control,
+	IconPool,
+	CustomData,
+	Device,
+	Breadcrumbs,
+	ObjectPageHeaderActionButton,
+	ResizeHandler,
+	Button,
+	ActionSheet,
+	ObjectImageHelper,
+	ObjectPageHeaderContent,
+	library,
+	mobileLibrary,
+	ObjectPageHeaderRenderer
+) {
 	"use strict";
 
 	// shortcut for sap.uxap.Importance
@@ -366,10 +382,10 @@ sap.ui.define([
 			return this._getButton(oParent, "sap-icon://private", "lock", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_LOCK_MARK_VALUE"));
 		},
 		"_titleArrowIconCont": function (oParent) {
-			return this._getButton(oParent, "sap-icon://arrow-down", "titleArrow-cont", oParent.oLibraryResourceBundleOP.getText("OP_SELECT_ARROW_TOOLTIP"));
+			return this._getButton(oParent, "sap-icon://slim-arrow-down", "titleArrow-cont", oParent.oLibraryResourceBundleOP.getText("OP_SELECT_ARROW_TOOLTIP"));
 		},
 		"_titleArrowIcon": function (oParent) {
-			return this._getButton(oParent, "sap-icon://arrow-down", "titleArrow", oParent.oLibraryResourceBundleOP.getText("OP_SELECT_ARROW_TOOLTIP"));
+			return this._getButton(oParent, "sap-icon://slim-arrow-down", "titleArrow", oParent.oLibraryResourceBundleOP.getText("OP_SELECT_ARROW_TOOLTIP"));
 		},
 		"_favIcon": function (oParent) {
 			return this._getIcon(oParent, "favorite", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_FAVORITE_MARK_VALUE"));

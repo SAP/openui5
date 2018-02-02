@@ -1089,9 +1089,10 @@ function runODataMessagesTests() {
 	var fnTestFunctionImportWithInvalidTarget = function(assert) {
 		var done = assert.async();
 
-		assert.expect(20);
+		assert.expect(26);
 		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/northwind/", { tokenHandling: false, useBatch: false });
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		var oMessage;
 
 		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
 
@@ -1150,8 +1151,33 @@ function runODataMessagesTests() {
 
 											assert.ok(aMessageTagets.indexOf("/Products(1)/ProductName") === -1, "Message targetting '/Products(1)/ProductName' has been removed.");
 
-											oModel.destroy();
-											done();
+
+											oModel.callFunction("/functionWithInvalidReturnType", {
+												method: "POST",
+												success: function() {
+													var aMessages = oMessageModel.getProperty("/");
+													oMessage = aMessages.filter(function(oMessage) { return oMessage.getTarget() === ""; })[0];
+
+													assert.strictEqual(aMessages.length, 4, "Four messages are set after FunctionImport is called again");
+													assert.strictEqual(typeof oMessage, "object", "Message with empty target was created.");
+													assert.strictEqual(oMessage.message, "This is FunctionImport specific message with an invalid return type.");
+
+													oModel.callFunction("/functionWithInvalidEntitySet", {
+														method: "POST",
+														success: function() {
+															var aMessages = oMessageModel.getProperty("/");
+															oMessage = aMessages.filter(function(oMessage) { return oMessage.getTarget() === ""; })[0];
+
+															assert.strictEqual(aMessages.length, 4, "Four messages are set after FunctionImport is called again");
+															assert.strictEqual(typeof oMessage, "object", "Message with empty target was created.");
+															assert.strictEqual(oMessage.message, "This is FunctionImport specific message with an invalid entityset.");
+
+															oModel.destroy();
+															done();
+														}
+													});
+												}
+											});
 										}
 									});
 								}
@@ -1265,7 +1291,7 @@ function runODataMessagesTests() {
 			return new Promise(function(resolve) {
 				oModel.read(sPath, { success: resolve });
 			});
-		}
+		};
 
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 

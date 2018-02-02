@@ -25,6 +25,10 @@
 	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 <script
 	src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 
@@ -513,6 +517,222 @@
 		raises(function(){currencyType.validateValue("EUR10.0000001")}, checkValidateException, "validate test");
 
 	});
+
+
+	// unit type tests
+	QUnit.module("unit type");
+
+	QUnit.test("unit formatValue", function(assert) {
+		var unitType = new sap.ui.model.type.Unit();
+		assert.equal(unitType.formatValue([22, "duration-hour"], "string"), "22 hr", "format test");
+		assert.equal(unitType.formatValue([22, "speed-mile-per-hour"], "string"), "22 mph", "format test");
+		assert.equal(unitType.formatValue([-6622.333, "duration-hour"], "string"), "-6,622.333 hr", "format test");
+		assert.equal(unitType.formatValue([1.0, "duration-hour"], "string"), "1 hr", "format test");
+		assert.equal(unitType.formatValue([1.0000, "duration-hour"], "string"), "1 hr", "format test");
+		assert.equal(unitType.formatValue([1.0000, "electric-ohm"], "string"), "1 Ω", "format test");
+
+		assert.equal(unitType.formatValue(null, "string"), null, "format test");
+		assert.equal(unitType.formatValue([null, "duration-hour"], "string"), null, "format test");
+		assert.equal(unitType.formatValue([1, null], "string"), "", "format test");
+
+		raises(function(){unitType.formatValue(22.0, "int")}, sap.ui.model.FormatException, "format test");
+		raises(function(){unitType.formatValue(22.0, "float")}, sap.ui.model.FormatException, "format test");
+		raises(function(){unitType.formatValue(22.0, "untype")}, sap.ui.model.FormatException, "format test");
+	});
+
+	QUnit.test("unit parseValue", function(assert) {
+		var unitType = new sap.ui.model.type.Unit();
+
+		assert.deepEqual(unitType.parseValue("3333.555 Ω", "string"), [3333.555, "electric-ohm"], "parse test");
+		assert.deepEqual(unitType.parseValue("3.555 hr", "string"), [3.555, "duration-hour"], "parse test");
+		assert.deepEqual(unitType.parseValue("-3.555 mph", "string"), [-3.555, "speed-mile-per-hour"], "parse test");
+
+		raises(function(){unitType.parseValue("3333", "string")}, sap.ui.model.ParseException, "parse test");
+		raises(function(){unitType.parseValue(true, "untype")}, sap.ui.model.ParseException, "parse test");
+		raises(function(){unitType.parseValue(true, "boolean")}, sap.ui.model.ParseException, "parse test");
+		raises(function(){unitType.parseValue("test", "string")}, sap.ui.model.ParseException, "parse test");
+	});
+
+	QUnit.test("unit validateValue - minimum and maximum value constraints", function(assert) {
+		var unitType = new sap.ui.model.type.Unit(null, {
+			minimum: 3,
+			maximum: 10
+		});
+
+		//values are within range therefore no error should be thrown
+		try {
+			assert.equal(unitType.validateValue([3.0, "duration-hour"]), undefined, "validate test");
+			assert.equal(unitType.validateValue([3.01, "electric-ohm"]), undefined, "validate test");
+			assert.equal(unitType.validateValue([10, "speed-mile-per-hour"]), undefined, "validate test");
+		} catch (e) {
+			assert.ok(false, "one of the validation tests failed please check");
+		}
+
+		//values are out of range
+		raises(function(){unitType.validateValue([2.99999, "electric-ohm"])}, sap.ui.model.ValidateException, "validate test");
+		raises(function(){unitType.validateValue([10.0000001, "duration-hour"])}, sap.ui.model.ValidateException, "validate test");
+
+	});
+
+	QUnit.test("unit type - formatValue with showMeasure false", function(assert) {
+
+		var unitType = new sap.ui.model.type.Unit({
+			showMeasure: false
+		});
+
+		assert.equal(unitType.formatValue([22, "electric-ohm"], "string"), "22", "format test");
+		assert.equal(unitType.formatValue([-6622.333, "electric-ohm"], "string"), "-6,622.333", "format test");
+		assert.equal(unitType.formatValue([-6622.339, "duration-hour"], "string"), "-6,622.339", "format test");
+		assert.equal(unitType.formatValue([1.0, "electric-ohm"], "string"), "1", "format test");
+		assert.equal(unitType.formatValue([1.0000, "speed-mile-per-hour"], "string"), "1", "format test");
+		assert.equal(unitType.formatValue([1.009, "duration-hour"], "string"), "1.009", "format test");
+		assert.equal(unitType.formatValue([1.00001, "electric-ohm"], "string"), "1", "format test");
+
+	});
+
+	QUnit.test("unit type - formatValue with maxFractionDigits 2", function(assert) {
+
+		unitType = new sap.ui.model.type.Unit({
+			maxFractionDigits: 2
+		});
+
+		assert.equal(unitType.formatValue([22, "electric-ohm"], "string"), "22 Ω", "format test");
+		assert.equal(unitType.formatValue([-6622.333, "electric-ohm"], "string"), "-6,622.33 Ω", "format test");
+		assert.equal(unitType.formatValue([-6622.339, "duration-hour"], "string"), "-6,622.34 hr", "format test");
+		assert.equal(unitType.formatValue([1.0, "electric-ohm"], "string"), "1 Ω", "format test");
+		assert.equal(unitType.formatValue([1.0000, "speed-mile-per-hour"], "string"), "1 mph", "format test");
+		assert.equal(unitType.formatValue([1.009, "duration-hour"], "string"), "1.01 hr", "format test");
+		assert.equal(unitType.formatValue([1.00001, "electric-ohm"], "string"), "1 Ω", "format test");
+
+	});
+
+	QUnit.test("unit formatOptions.source", function(assert) {
+		var unitType = new sap.ui.model.type.Unit({
+			source:{}
+		});
+
+		assert.equal(unitType.parseValue("3333 hr", "string"), "3333 hr", "parse test");
+		assert.equal(unitType.parseValue("3333.555 Ω", "string"), "3333.555 Ω", "parse test");
+		assert.equal(unitType.parseValue("3.555 Ω", "string"), "3.555 Ω", "parse test");
+		assert.equal(unitType.parseValue("-3.555 mph", "string"), "-3.555 mph", "parse test");
+
+		assert.equal(unitType.formatValue("22 hr", "string"), "22 hr", "format test");
+		assert.equal(unitType.formatValue("-6622.333 Ω", "string"), "-6,622.333 Ω", "format test");
+		assert.equal(unitType.formatValue("-6622.339 mph", "string"), "-6,622.339 mph", "format test");
+
+	});
+
+	QUnit.test("unit formatOptions.source and validateValue", function(assert) {
+
+		//source format option is used to parse the value before formatting it,
+		//specifying an empty object is the same as not specifying source options
+		var unitType = new sap.ui.model.type.Unit({
+			source:{}
+		}, {
+			minimum: 3,
+			maximum: 10,
+			decimals: 10
+		});
+		try{
+			assert.equal(unitType.validateValue("3.00 hr"), undefined, "validate test");
+			assert.equal(unitType.validateValue("3.01 Ω"), undefined, "validate test");
+			assert.equal(unitType.validateValue("10 mph"), undefined, "validate test");
+			assert.equal(unitType.validateValue("3.0000000001 mph"), undefined, "validate test 10 digits");
+		}catch (e){
+			assert.ok(!e, "one of the validation tests failed please check");
+		}
+		raises(function(){unitType.validateValue("2.99999 Ω")}, sap.ui.model.ValidateException, "smaller than min");
+		raises(function(){unitType.validateValue("10.0000001 hr")}, sap.ui.model.ValidateException, "bigger than max");
+		raises(function(){unitType.validateValue("3.00000000000001 hr")}, sap.ui.model.ValidateException, "more digits than decimals (14)");
+		raises(function(){unitType.validateValue("3.00000000001 hr")}, sap.ui.model.ValidateException, "more digits than decimals (11)");
+
+	});
+
+
+	QUnit.test("unit dynamic values", function(assert) {
+
+		var MeterType = sap.ui.model.type.Unit.extend("sap.ui.core.test.MeterType", {
+			constructor: function(oFormatOptions, oConstraints){
+				sap.ui.model.type.Unit.apply(this, [oFormatOptions, oConstraints, ["decimals"]]);
+			},
+
+			//check dynamic decimals
+			validateValue: function(vValue) {
+				//call super validateValue
+				sap.ui.model.type.Unit.prototype.validateValue.apply(this, arguments);
+
+				var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
+					aValues = vValue,
+					iValue;
+				if (this.oInputFormat) {
+					aValues = this.oInputFormat.parse(vValue);
+				}
+				iValue = aValues[0];
+
+				//check decimals
+				if (this.oOutputFormat) {
+					var iDecimals = this.oOutputFormat.oFormatOptions.decimals;
+
+					var tempValue = sap.ui.core.format.NumberFormat._shiftDecimalPoint(iValue, iDecimals);
+					if (Math.floor(tempValue) !== tempValue) {
+						throw new sap.ui.model.ValidateException(oBundle.getText("Unit.Decimals", [iDecimals]), ["decimals"]);
+					}
+				}
+			}
+
+		});
+
+		var oMeterType = new MeterType();
+		var oMeterTypeInstanceSpy = this.spy(oMeterType, "_createInstance");
+		//4 digits
+		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 4], "string"), "123.1231 m", "format 4 digits meters expected");
+		assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse 4 digits meters expected");
+		oMeterType.validateValue([123.1231, "length-meter"]);
+		assert.equal(1, oMeterTypeInstanceSpy.callCount, "1 instance because 1 decimal option is provided (4)");
+
+
+		// 5 digits
+		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 5], "string"), "123.12312 m", "format 5 digits meters expected");
+		assert.deepEqual(oMeterType.parseValue("123.12312 m", "string"), [123.12312, "length-meter"], "parse 5 digits meters expected");
+		oMeterType.validateValue([123.12312, "length-meter"]);
+
+
+		assert.equal(oMeterType.formatValue([123.1, "length-meter", 5], "string"), "123.10000 m", "small number format 5 digits meters expected");
+		assert.deepEqual(oMeterType.parseValue("123.10000 m", "string"), [123.1, "length-meter"], "small number parse 5 digits meters expected");
+		oMeterType.validateValue([123.1, "length-meter"]);
+
+		assert.deepEqual(oMeterType.parseValue("123.100000000001 m", "string"), [123.100000000001, "length-meter"], " number with too many digits parse 5 digits meters expected");
+		assert.equal(2, oMeterTypeInstanceSpy.callCount, "2 instances because 2 different decimal options are provided");
+
+
+		// 6 digits
+		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 6], "string"), "123.123123 m", "format 6 digits meters expected");
+		assert.deepEqual(oMeterType.parseValue("123.123123 m", "string"), [123.123123, "length-meter"], "parse 6 digits meters expected");
+		oMeterType.validateValue([123.123123, "length-meter"]);
+
+
+		assert.equal(oMeterType.formatValue([123.1, "length-meter", 6], "string"), "123.100000 m", "small number format 6 digits meters expected");
+		assert.deepEqual(oMeterType.parseValue("123.100000 m", "string"), [123.1, "length-meter"], "small number parse 6 digits meters expected");
+		oMeterType.validateValue([123.1, "length-meter"]);
+
+		assert.deepEqual(oMeterType.parseValue("123.100000000001 m", "string"), [123.100000000001, "length-meter"], " number with too many digits parse 5 digits meters expected");
+		assert.equal(3, oMeterTypeInstanceSpy.callCount, "3 instances because 3 different decimal options are provided");
+
+
+		try {
+
+			oMeterType.validateValue([123.100000000001, "length-meter"]);
+			assert.ok(false, "validation should fail as too many digits");
+		} catch (e) {
+			assert.ok(e);
+			assert.equal(e.name, "ValidateException");
+			assert.equal(e.message, "Enter an amount with less decimals than 6");
+
+		}
+
+	});
+
+
 
 	// date type tests
 		QUnit.module("date type");

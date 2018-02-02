@@ -1,8 +1,8 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>Test Page for sap.ui.dt.DesignTime and ComponentContainer</title>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+		<meta charset="utf-8">
 
 		<style>
 			#content {
@@ -16,210 +16,32 @@
 			}
 		</style>
 
+		<title>Test Page for sap.ui.dt.DesignTime and ComponentContainer</title>
 		<script src="../shared-config.js"></script>
-		<script id="sap-ui-bootstrap"
-				data-sap-ui-noConflict="true"
-				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
-				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
-				src="../../../../../resources/sap-ui-core.js">
-		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script>
+			window['sap-ui-config'].resourceroots = {
+				"dt.view": "testdata/designtime/"
+			};
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
+		</script>
+		<script>
+			jQuery.sap.require("sap.ui.qunit.qunit-2-css");
+			jQuery.sap.require('sap.ui.thirdparty.qunit-2');
+			jQuery.sap.require('sap.ui.qunit.qunit-junit');
+			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
 
-			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			// code coverage report only for sap.ui.rta/sap.ui.dt/sap.ui.fl namespace (change if necessary)
+			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/rta,sap/ui/dt,sap/ui/fl]');
 
-			jQuery.sap.require("sap.ui.dt.DesignTime");
-			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
-			jQuery.sap.require("sap.ui.dt.ElementUtil");
+			sap.ui.getCore().loadLibrary('sap.m');
+			sap.ui.getCore().loadLibrary('sap.ui.layout');
 
-			var OverlayRegistry = sap.ui.dt.OverlayRegistry;
-
-			var CustomComponent = sap.ui.core.UIComponent.extend("sap.ui.dt.test.Component", {
-
-				/**
-				 * Initialize the application
-				 *
-				 * @returns {sap.ui.core.Control} the content
-				 */
-				createContent : function() {
-
-					return new sap.ui.layout.VerticalLayout({
-						content : [
-							new sap.m.Button({text : "Text"})
-						]
-					});
-
-				}
-
-			});
-
-			QUnit.module("Given the ComponentContainer is created..", {
-				beforeEach : function(assert) {
-					var done = assert.async();
-
-					this.oComponent = new CustomComponent();
-
-					this.oComponentContainer = new sap.ui.core.ComponentContainer("CompCont1", {
-						component: this.oComponent
-					});
-
-					this.oLayout = new sap.ui.layout.VerticalLayout({content : [this.oComponentContainer]}).placeAt("content");
-
-					this.oDesignTime = new sap.ui.dt.DesignTime({
-						rootElements : [this.oLayout]
-					});
-
-					this.oDesignTime.attachEventOnce("synced", function() {
-						sap.ui.getCore().applyChanges();
-						done();
-					});
-				},
-				afterEach : function() {
-					this.oLayout.destroy();
-					this.oComponent.destroy();
-					this.oDesignTime.destroy();
-				}
-			});
-
-			QUnit.test("When the component container is rendered...", function(assert) {
-				var oInnerLayout = this.oComponent.getRootControl();
-				var oInnerLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oInnerLayout);
-
-				var oOuterLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oLayout);
-
-				assert.ok(oInnerLayoutOverlay, "an overlay for the root control of the UIComponent is created");
-				assert.strictEqual(sap.ui.dt.ElementUtil.hasAncestor(oInnerLayoutOverlay, oOuterLayoutOverlay), true, "the component root control overlay is child of the root layout overlay");
-			});
-
-			QUnit.test("When asking for the component container overlays...", function(assert) {
-				var oComponentOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oComponent);
-				var oComponentContainerOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oComponentContainer);
-
-				assert.ok(oComponentOverlay, "an overlay for the UIComponent is created");
-				assert.equal(oComponentOverlay.getElement(), this.oComponent.getId(), "the UIComponent overlay points to the UI Component");
-				assert.ok(oComponentContainerOverlay, "an overlay for the ComponentContainer is created");
-				assert.equal(oComponentContainerOverlay.getElement(), this.oComponentContainer.getId(), "the ComponentContainer  overlay points to the ComponentContainer");
-			});
-
-			QUnit.test("When asking for the component container association....", function(assert) {
-				var sComponentId = sap.ui.dt.ElementUtil.getAssociation(this.oComponentContainer, "component");
-				var oComponent = sap.ui.dt.ElementUtil.getAssociationInstances(this.oComponentContainer, "component");
-				assert.equal(sComponentId, this.oComponent.getId(), "the UIComponent returned is the same as expected");
-				assert.equal(oComponent.getId(), this.oComponent.getId(), "the UIComponent returned is the same as expected");
-			});
-
-			QUnit.module("Given the ComponentContainer with late components is created..", {
-				beforeEach : function(assert) {
-					var done = assert.async();
-
-					this.oComponentContainer = new sap.ui.core.ComponentContainer("CompCont1");
-
-					this.oLayout = new sap.ui.layout.VerticalLayout({content : [this.oComponentContainer, new sap.m.Button({text: "I give the layout a size"})]}).placeAt("content");
-
-					this.oDesignTime = new sap.ui.dt.DesignTime({
-						rootElements : [this.oLayout]
-					});
-
-					this.oDesignTime.attachEventOnce("synced", function() {
-						sap.ui.getCore().applyChanges();
-						this.oOuterLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oLayout);
-						done();
-					}.bind(this));
-				},
-				afterEach : function() {
-					this.oLayout.destroy();
-					this.oComponent.destroy();
-					this.oDesignTime.destroy();
-				}
-			});
-
-			QUnit.test("When the component is added later...", function(assert) {
-				var done = assert.async();
-
-				this.oDesignTime.attachEventOnce("synced", function() {
-					oComponentOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oComponent);
-					oInnerLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oInnerLayout);
-					assert.ok(oComponentOverlay, "an overlay for the UIComponent is created");
-					assert.ok(oInnerLayoutOverlay, "an overlay for the root control of the UIComponent is created");
-					assert.strictEqual(sap.ui.dt.ElementUtil.hasAncestor(oInnerLayoutOverlay, this.oOuterLayoutOverlay), true, "the component root control overlay is child of the root layout overlay");
-					done();
-				}.bind(this));
-
-				//add the component later
-				this.oComponent = new CustomComponent();
-				var oInnerLayout = this.oComponent.getRootControl();
-
-				var oComponentOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oComponent);
-				var oInnerLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oInnerLayout);
-				assert.ok(!oComponentOverlay, "an overlay for the UIComponent is not yet created");
-				assert.ok(!oInnerLayoutOverlay, "an overlay for the root control of the UIComponent is not yet created");
-
-				this.oComponentContainer.setComponent(this.oComponent);
-			});
-
-			QUnit.module("Given the ComponentContainer with component with late root control is created..", {
-				beforeEach : function(assert) {
-					var done = assert.async();
-
-					var LateComponent = sap.ui.core.UIComponent.extend("sap.ui.dt.test.LateComponent", {
-						createContent :function(){
-							return null; //do it like fiori elements and add it later
-						}
-					});
-					this.oComponent = new LateComponent();
-
-					this.oComponentContainer = new sap.ui.core.ComponentContainer("CompCont1",{
-						component: this.oComponent
-					});
-
-					this.oLayout = new sap.ui.layout.VerticalLayout({content : [this.oComponentContainer, new sap.m.Button({text: "I give the layout a size"})]}).placeAt("content");
-
-					this.oDesignTime = new sap.ui.dt.DesignTime({
-						rootElements : [this.oLayout]
-					});
-
-					this.oDesignTime.attachEventOnce("synced", function() {
-						sap.ui.getCore().applyChanges();
-						this.oOuterLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oLayout);
-						done();
-					}.bind(this));
-				},
-				afterEach : function() {
-					this.oLayout.destroy();
-					this.oComponent.destroy();
-					this.oDesignTime.destroy();
-				}
-			});
-
-			QUnit.test("When the root control is added later...", function(assert) {
-				var done = assert.async();
-
-				var oNewRootControl = new sap.m.Button({id: "newRootControl", text:"New root control"});
-
-				this.oDesignTime.attachEventOnce("synced", function() {
-					var oComponentOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oComponent);
-					assert.ok(oComponentOverlay, "an overlay for the UIComponent is created");
-					oNewRootControlOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oNewRootControl);
-					assert.ok(oNewRootControlOverlay, "an overlay for the new root control of the UIComponent is created");
-					assert.strictEqual(sap.ui.dt.ElementUtil.hasAncestor(oNewRootControlOverlay, this.oOuterLayoutOverlay), true, "the component root control overlay is child of the root layout overlay");
-					done();
-				}.bind(this));
-
-				//add the root control later
-				this.oComponent.setAggregation("rootControl", oNewRootControl);
-			});
-
+			//Replace with your qunit path
+			jQuery.sap.includeScript('./ComponentContainerInDesignTime.qunit.js');
 		</script>
 	</head>
 	<body>
-		<h1 id="qunit-header">QUnit Page for sap.ui.dt.DesignTime and ComponentContainer</h1>
-		<h2 id="qunit-banner"></h2>
-	 	<h2 id="qunit-userAgent"></h2>
-		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>
-		<div id="content"></div>
+		<div id="qunit"></div>
+		<div id='content'></div>
 	</body>
 </html>

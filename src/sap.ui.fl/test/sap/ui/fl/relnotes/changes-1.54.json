@@ -85,6 +85,12 @@
         "type": "FIX",
         "text": " Move variant title property to content of content of variant",
         "references": []
+      },
+      {
+        "id": "5946582fe6b2d90bc1ad828e0c8ba40a6a1139ea",
+        "type": "FIX",
+        "text": " Fix bug in sorting of variants after reload",
+        "references": []
       }
     ]
   }

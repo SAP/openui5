@@ -371,22 +371,6 @@ sap.ui.require([
 		assert.ok(fnSetTechnicalURLParameterValuesStub.calledOnce, "then 'setTechnicalURLParameterValues' not called");
 	});
 
-	QUnit.test("when calling 'clearVariantInURLForControl'", function(assert) {
-		var aUrlTechnicalParameters = ["fakevariant", "variant0"];
-		var oDummyControl = {
-			getId : function() {}
-		};
-		var fnGetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "getTechnicalURLParameterValues").returns(aUrlTechnicalParameters);
-		var fnSetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "setTechnicalURLParameterValues");
-		sandbox.stub(this.oModel, "_getLocalId").returns("variantMgmtId1");
-		sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variant0").returns(true);
-		sandbox.stub(Utils, "getUshellContainer").returns(true);
-		this.oModel.clearVariantInURLForControl(oDummyControl);
-		assert.ok(fnGetTechnicalURLParameterValuesStub.calledWithExactly(this.oModel.oComponent, 'sap-ui-fl-control-variant-id'), "then 'sap-ui-fl-control-variant-id' parameter values are requested");
-		assert.ok(fnSetTechnicalURLParameterValuesStub.calledWithExactly('sap-ui-fl-control-variant-id', [aUrlTechnicalParameters[0]]), "then 'sap-ui-fl-control-variant-id' parameter value for the provided variant management control was cleared");
-	});
-
-
 	QUnit.test("when calling '_removeDirtyChanges'", function(assert) {
 		sandbox.stub(Utils, "getAppComponentForControl").returns(this.oComponent);
 		sandbox.stub(this.oFlexController._oChangePersistence, "getDirtyChanges").returns(
@@ -521,6 +505,40 @@ sap.ui.require([
 		assert.equal(oDuplicateVariant.content.variantReference, oSourceVariant.content.fileName, "then the duplicate variant has reference to the source variant from VENDOR layer");
 	});
 
+	QUnit.test("when calling '_duplicateVariant' from CUSTOMER layer with reference to a variant with no layer", function(assert) {
+		var oSourceVariant = {
+			"content": {
+				"fileName":"variant0",
+				"fileType":"ctrl_variant",
+				"variantManagementReference":"variantMgmtId1",
+				"variantReference":"variant0",
+				"content":{
+					"title":"variant A"
+				},
+				"selector":{},
+				"namespace":"Dummy.Component"
+			},
+			"controlChanges": [],
+			"variantChanges": {}
+		};
+
+		var mPropertyBag = {
+			newVariantReference: "newVariant",
+			sourceVariantReference: "variant0",
+			layer: "CUSTOMER"
+		};
+
+		sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
+
+		var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
+		var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
+		oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
+		oSourceVariantCopy.content.fileName = "newVariant";
+		oSourceVariantCopy.content.layer = "CUSTOMER";
+
+		assert.deepEqual(oDuplicateVariant, oSourceVariantCopy, "then the duplicate variant returned with customized properties");
+	});
+
 	QUnit.test("when calling '_duplicateVariant' from CUSTOMER layer with reference to a variant on the same layer", function(assert) {
 		var oChangeContent0 = {"fileName":"change0", "variantReference":"variant0", "layer": "CUSTOMER", "support": {}};
 		var oChangeContent1 = {"fileName":"change1", "variantReference":"variant0", "layer": "CUSTOMER", "support": {}};
@@ -566,6 +584,50 @@ sap.ui.require([
 		assert.equal(oDuplicateVariant.content.variantReference, oSourceVariant.content.variantReference, "then the duplicate variant references to the reference of the source variant");
 		assert.equal(oDuplicateVariant.controlChanges[0].support.sourceChangeFileName , oChangeContent0.fileName, "then first duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
 		assert.equal(oDuplicateVariant.controlChanges[1].support.sourceChangeFileName , oChangeContent1.fileName, "then second duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
+	});
+
+	QUnit.test("when calling '_ensureStandardVariantExists'", function(assert) {
+		var oVariantControllerContent = {
+			"variants": [{
+			"content": {
+				"fileName": "mockVariantManagement",
+				"fileType": "ctrl_variant",
+				"variantManagementReference": "mockVariantManagement",
+				"variantReference": "",
+				"content": {
+					"title": "Standard",
+					"favorite": true,
+					"visible": true
+				}
+			},
+			"controlChanges": [],
+			"variantChanges": {}
+		}
+		],
+			"defaultVariant": "mockVariantManagement",
+			"variantManagementChanges": {}
+		};
+
+		var oVariantModelResponse = {
+			"currentVariant": "mockVariantManagement",
+			"originalCurrentVariant": "mockVariantManagement",
+			"defaultVariant": "mockVariantManagement",
+			"originalDefaultVariant": "mockVariantManagement",
+			"variants": [{
+				"key": "mockVariantManagement",
+				"title": "Standard",
+				"originalTitle": "Standard",
+				"favorite": true,
+				"originalFavorite": true,
+				"visible": true
+			}]
+		};
+
+		this.oModel.setData({});
+		this.oModel._ensureStandardVariantExists("mockVariantManagement");
+
+		assert.deepEqual(this.oModel.oData["mockVariantManagement"], oVariantModelResponse, "then standard variant entry created for variant model");
+		assert.deepEqual(this.oModel.oVariantController._mVariantManagement["mockVariantManagement"], oVariantControllerContent, "then standard variant entry created for variant controller");
 	});
 
 	QUnit.test("when calling '_copyVariant'", function(assert) {
@@ -707,7 +769,7 @@ sap.ui.require([
 		assert.ok(this.oModel.fnManageClick, "the function 'this.fnManageClick' is available afterwards");
 	});
 
-	QUnit.test("when calling 'handleSave' with parameter from SaveAs button and default box checked", function(assert) {
+	QUnit.test("when calling '_handleSave' with parameter from SaveAs button and default box checked", function(assert) {
 		var done = assert.async();
 
 		var oVariantManagement = new VariantManagement("variantMgmtId1");
@@ -744,7 +806,7 @@ sap.ui.require([
 		var fnSetVariantPropertiesStub = sandbox.stub(this.oModel, "_setVariantProperties");
 		var fnSaveAllStub = sandbox.stub(this.oFlexController, "saveAll");
 
-		return this.oModel.handleSave(oEvent).then(function() {
+		return this.oModel._handleSave(oEvent).then(function() {
 			assert.ok(fnCopyVariantStub.calledOnce, "CopyVariant is called");
 			assert.ok(fnRemoveDirtyChangesStub.calledOnce, "RemoveDirtyChanges is called");
 			assert.ok(fnSetVariantPropertiesStub.calledOnce, "SetVariantProperties is called");
@@ -755,7 +817,7 @@ sap.ui.require([
 		}.bind(this));
 	});
 
-	QUnit.test("when calling 'handleSave' with parameter from SaveAs button and default box unchecked", function(assert) {
+	QUnit.test("when calling '_handleSave' with parameter from SaveAs button and default box unchecked", function(assert) {
 		var done = assert.async();
 
 		var oVariantManagement = new VariantManagement("variantMgmtId1");
@@ -792,7 +854,7 @@ sap.ui.require([
 		var fnSetVariantPropertiesStub = sandbox.stub(this.oModel, "_setVariantProperties");
 		var fnSaveAllStub = sandbox.stub(this.oFlexController, "saveAll");
 
-		return this.oModel.handleSave(oEvent).then(function() {
+		return this.oModel._handleSave(oEvent).then(function() {
 			assert.ok(fnCopyVariantStub.calledOnce, "CopyVariant is called");
 			assert.ok(fnRemoveDirtyChangesStub.calledOnce, "RemoveDirtyChanges is called");
 			assert.equal(fnSetVariantPropertiesStub.callCount, 0, "SetVariantProperties is not called");
@@ -803,7 +865,7 @@ sap.ui.require([
 		}.bind(this));
 	});
 
-	QUnit.test("when calling 'handleSave' with parameter from Save button", function(assert) {
+	QUnit.test("when calling '_handleSave' with parameter from Save button", function(assert) {
 		var done = assert.async();
 
 		var oVariantManagement = new VariantManagement("variantMgmtId1");
@@ -829,7 +891,7 @@ sap.ui.require([
 		var fnSetVariantPropertiesStub = sandbox.stub(this.oModel, "_setVariantProperties");
 		var fnSaveAllStub = sandbox.stub(this.oFlexController, "saveAll");
 
-		return this.oModel.handleSave(oEvent).then(function() {
+		return this.oModel._handleSave(oEvent).then(function() {
 			assert.equal(fnCopyVariantStub.callCount, 0, "CopyVariant is not called");
 			assert.equal(fnRemoveDirtyChangesStub.callCount, 0, "RemoveDirtyChanges is not called");
 			assert.equal(fnSetVariantPropertiesStub.callCount, 0, "SetVariantProperties is not called");

@@ -11,19 +11,11 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
 		"sap/uxap/ObjectPageSubSection",
 		"sap/ui/documentation/sdk/controller/util/APIInfo",
-		"sap/ui/layout/VerticalLayout",
-		"sap/m/Table",
-		"sap/m/Column",
-		"sap/m/Label",
-		"sap/m/ColumnListItem",
-		"sap/m/Link",
-		"sap/m/ObjectStatus",
-		"sap/ui/core/HTML",
-		"sap/m/Title",
-		"sap/m/Panel"
-	], function (jQuery, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, ObjectPageSubSection, APIInfo,
-				 VerticalLayout, Table, Column, Label, ColumnListItem, Link, ObjectStatus, HTML, Title, Panel) {
+		"sap/ui/core/library"
+	], function (jQuery, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, ObjectPageSubSection, APIInfo, CoreLibrary) {
 		"use strict";
+
+		var ViewType = CoreLibrary.mvc.ViewType;
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.ApiDetail", {
 
@@ -35,102 +27,15 @@ sap.ui.define([
 			/* =========================================================== */
 
 			onInit: function () {
-				this._objectPage = this.byId("apiDetailObjectPage");
 				this.getRouter().getRoute("apiId").attachPatternMatched(this._onTopicMatched, this);
-
-				this._oModel = new JSONModel();
 
 				// BPC: 1780339157 - There are cases where we have more than 100 method entries so we need to increase
 				// the default model size limit.
+				this._oModel = new JSONModel();
 				this._oModel.setSizeLimit(10000);
 
-				this.setModel(this._oModel);
-
-				this._objectPage.attachEvent("_sectionChange", function (oEvent) {
-					var sSection = oEvent.getParameter("section"),
-						sSubSection = oEvent.getParameter("subSection");
-
-					if (this._oNavigatingTo) {
-						if (this._oNavigatingTo === sSubSection) {
-							// Destination is reached
-							this._oNavigatingTo = null;
-						}
-
-						return;
-					}
-
-					this._modifyURL(sSection, sSubSection, false);
-				}, this);
-
-				this._objectPage.attachEvent("navigate", function (oEvent) {
-					var sSection = oEvent.getParameter("section"),
-						sSubSection = oEvent.getParameter("subSection");
-
-					this._oNavigatingTo = sSubSection;
-					this._modifyURL(sSection, sSubSection, true);
-				}, this);
+				this._oContainerPage = this.getView().byId("apiDetailPageContainer");
 			},
-
-			onAfterRendering: function () {
-				this.getView().attachBrowserEvent("click", this.onJSDocLinkClick, this);
-			},
-
-			onExit: function () {
-				this.getView().detachBrowserEvent("click", this.onJSDocLinkClick, this);
-			},
-
-			onToggleFullScreen: function (oEvent) {
-				ToggleFullScreenHandler.updateMode(oEvent, this.getView(), this);
-			},
-
-			onJSDocLinkClick: function (oEvent) {
-				var oClassList = oEvent.target.classList,
-					bJSDocLink = oClassList.contains("jsdoclink"),
-					sLinkTarget = oEvent.target.getAttribute("data-sap-ui-target"),
-					sEntityType;
-
-				// Not a JSDocLink - we do nothing
-				if (!bJSDocLink) {
-					return;
-				}
-
-				if (oClassList.contains("scrollToMethod")) {
-					sEntityType = "methods";
-				} else if (oClassList.contains("scrollToEvent")) {
-					sEntityType = "events";
-				} else {
-					// We do not scroll
-					return;
-				}
-
-				this._scrollToEntity(sEntityType, sLinkTarget);
-				this._navigateRouter(sEntityType, sLinkTarget, true);
-			},
-
-			/* =========================================================== */
-			/* begin: internal methods									   */
-			/* =========================================================== */
-
-			/* jQuery.find and setBusy Override BEGIN */
-			_oldJQueryFind: jQuery.fn.find,
-			_overrideJQueryFind: function () {
-				var oldFind = jQuery.fn.find;
-				jQuery.fn.find = function (selector, context, ret, extra) {
-					if (selector === ":sapTabbable") {
-						return oldFind.call(this, "", context, ret, extra);
-					}
-					return oldFind.call(this, selector, context, ret, extra);
-				};
-			},
-			_restoreJQueryFind: function () {
-				jQuery.fn.find = this._oldJQueryFind;
-			},
-			_setBusy: function (bBusy) {
-				this._overrideJQueryFind();
-				this._objectPage.setBusy(bBusy);
-				this._restoreJQueryFind();
-			},
-			/* jQuery.find and setBusy Override END */
 
 			/**
 			 * Binds the view to the object path and expands the aggregated line items.
@@ -139,492 +44,175 @@ sap.ui.define([
 			 * @private
 			 */
 			_onTopicMatched: function (oEvent) {
-				var oComponent = this.getOwnerComponent();
+				if (this._oView) {
+					this._oView.destroy();
+					// If we had a view that means this is a navigation so we need to init the busy state
+					this._oContainerPage.setBusy(true);
+				}
 
-				this._setBusy(true);
+				var oComponent = this.getOwnerComponent();
 
 				this._sTopicid = oEvent.getParameter("arguments").id;
 				this._sEntityType = oEvent.getParameter("arguments").entityType;
 				this._sEntityId = oEvent.getParameter("arguments").entityId;
 
-				// Handle summary tables life cycle
-				this._oEventsSummary && this._destroySummaryTable(this._oEventsSummary);
-				this._oMethodsSummary && this._destroySummaryTable(this._oMethodsSummary);
-				this._oAnnotationSummary && this._destroySummaryTable(this._oAnnotationSummary);
-
-				oComponent.loadVersionInfo().then(oComponent.fetchAPIIndex.bind(oComponent))
-					.then(function (oData) {
-						var oEntityData,
-							bFound = false,
-							iLen,
-							i;
-
-						// Cache api-index data
-						this._aApiIndex = oData;
-
-						// Find entity in api-index
-						for (i = 0, iLen = oData.length; i < iLen; i++) {
-							if (oData[i].name === this._sTopicid || oData[i].name.indexOf(this._sTopicid) === 0) {
-								oEntityData = oData[i];
-								this._oEntityData = oEntityData;
-								bFound = true;
-								break;
-							}
-						}
-
-						if (bFound) {
-							// Load API.json only for selected lib
-							return APIInfo.getLibraryElementsJSONPromise(oEntityData.lib).then(function (oData) {
-								this._aLibsData = oData; // Cache received data
-								return Promise.resolve(); // We have found the symbol and loaded the corresponding api.json
-							}.bind(this));
-						}
-
-						// If we are here - the object does not exist so we reject the promise.
-						return Promise.reject(this.NOT_FOUND);
-					}.bind(this))
-					.then(function () {
-						var aLibsData = this._aLibsData,
-							oControlData,
-							iLen,
-							i;
-
-						// Find entity in loaded libs data
-						for (i = 0, iLen = aLibsData.length; i < iLen; i++) {
-							if (aLibsData[i].name === this._sTopicid) {
-								oControlData = aLibsData[i];
-								break;
-							}
-						}
-
-						// Cache allowed members
-						this._aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
-
-						this.buildBorrowedModel(oControlData)
-							.then(function (oData) {
-								if (oControlData) {
-									oControlData.borrowed = oData;
-								}
-							})
-							.then(function () {
-
-								this._bindData(this._sTopicid);
-
-								this._oEntityData.appComponent = this._oControlData.component || this.NOT_AVAILABLE;
-								this._oEntityData.hasSample = this._oControlData.hasSample;
-								this._oEntityData.sample = this._oControlData.hasSample ? this._sTopicid : this.NOT_AVAILABLE;
-
-								this._buildHeaderLayout(this._oControlData, this._oEntityData);
-
-								if (oControlData) {
-									oControlData.hasMethods && this._createMethodsSummary();
-									oControlData.hasEvents && this._createEventsSummary();
-									oControlData.hasAnnotations && this._createAnnotationsSummary();
-								}
-
-								if (this._sEntityType) {
-									this._scrollToEntity(this._sEntityType, this._sEntityId);
-								} else {
-									this._scrollContentToTop();
-								}
-
-								jQuery.sap.delayedCall(0, this, function () {
-									this._prettify();
-									this._setBusy(false);
-
-									// Init scrolling right after busy indicator is cleared and prettify is ready
-									jQuery.sap.delayedCall(0, this, function () {
-										if (this._sEntityType) {
-											this._scrollToEntity(this._sEntityType, this._sEntityId);
-										}
-									});
-								});
-
-								this.searchResultsButtonVisibilitySwitch(this.byId("apiDetailBackToSearch"));
-							}.bind(this));
-					}.bind(this))
+				// API Reference lifecycle
+				oComponent.loadVersionInfo()
+					.then(oComponent.fetchAPIIndex.bind(oComponent))
+					.then(this._processApiIndexAndLoadApiJson.bind(this))
+					.then(this._findEntityInApiJsonData.bind(this))
+					.then(this._buildBorrowedModel.bind(this))
+					.then(this._createModelAndSubView.bind(this))
+					.then(this._initSubView.bind(this))
 					.catch(function (sReason) {
-						// If the object does not exist in the available libs we redirect to the not found page and
+						// If the symbol does not exist in the available libs we redirect to the not found page
 						if (sReason === this.NOT_FOUND) {
-							this._setBusy(false);
+							this._oContainerPage.setBusy(false);
 							this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
 						}
 					}.bind(this));
-
 			},
 
 			/**
-			 * Summary tables have a complex life cycle and they have to be removed from the list and destroyed before
-			 * the new binding context is applied as they are a different type of item than others in the list
-			 * and can't be reused.
-			 *
-			 * @param {object} oSummaryTableReference Reference to the summary table
+			 * Init the Sub View and controller
+			 * @param {sap.ui.view} oView the pre-processed sub view
 			 * @private
 			 */
-			_destroySummaryTable: function (oSummaryTableReference) {
-				var oParent = oSummaryTableReference.getParent();
+			_initSubView: function (oView) {
+				var oController = oView.getController();
 
-				oParent && oParent.removeAggregation("subSection", oSummaryTableReference, true);
-				oSummaryTableReference.destroy();
-			},
+				// Add the sub view to the current one
+				this._oContainerPage.addContent(oView);
+				this._oContainerPage.setBusy(false);
 
-			_navigateRouter: function(sEntityType, sEntityId, bShouldStoreToHistory) {
-				this.getRouter().stop();
-				this.getRouter().navTo("apiId", {
-					id: this._sTopicid,
-					entityType: sEntityType,
-					entityId: sEntityId
-				}, !bShouldStoreToHistory);
-				this.getRouter().initialize(true);
-			},
-
-			_modifyURL: function(sSection, sSubSection, bShouldStoreToHistory) {
-				sSection = sSection.getTitle().toLowerCase();
-				sSubSection = (sSubSection && sSubSection.getTitle() !== 'Overview') ? sSubSection.getTitle() : '';
-
-				if (sSection === 'properties') {
-					sSection = 'controlProperties';
-				}
-				if (sSection === 'fields') {
-					sSection = 'properties';
-				}
-
-				this._navigateRouter(sSection, sSubSection, bShouldStoreToHistory);
-			},
-
-			_prettify: function () {
-				// Google Prettify requires this class
-				jQuery('.sapUxAPObjectPageContainer pre', this._objectPage.$()).addClass('prettyprint');
-				window.prettyPrint();
-			},
-
-			_createMethodsSummary: function () {
-				var oSection = this.byId("methods"),
-					aSubSections = oSection.getSubSections(),
-					oControlData = this._oControlData,
-					bBorrowedOnly = oControlData.hasMethods && !oControlData.hasOwnMethods;
-
-				if (aSubSections.length > 0 && (aSubSections[0].getTitle() === "Summary" || aSubSections[0].getTitle() === "Methods" || bBorrowedOnly)) {
-					aSubSections[0].setTitle(bBorrowedOnly ? "Methods" : "Summary");
-					return;
-				}
-
-				this._oMethodsSummary = new ObjectPageSubSection({
-					title: bBorrowedOnly ? "Methods" : "Summary",
-					blocks: [
-						// Creating this segment here is better than having a fragment we have to fetch on every navigation
-						new VerticalLayout({
-							width: "100%",
-							content: [
-								new Table({
-									fixedLayout: false,
-									columns: [
-										new Column({
-											vAlign: "Top",
-											width: "25%",
-											header: new Label({text: "Method"})
-										}),
-										new Column({
-											vAlign: "Top",
-											width: "75%",
-											minScreenWidth: "Desktop",
-											demandPopin: true,
-											popinDisplay: "WithoutHeader",
-											header: new Label({text: "Description"})
-										})
-									],
-									items: {
-										path: "/methods",
-										templateShareable: false,
-										template: new ColumnListItem({
-											visible: "{= !!${path: 'name'} }",
-											cells: [
-												new VerticalLayout({
-													content: [
-														new Link({
-															text: "{name}",
-															href: "#/api/{/name}/methods/{name}",
-															press: this.scrollToMethod.bind(this),
-															wrapping: false
-														}),
-														new ObjectStatus({
-															icon: "sap-icon://message-error",
-															state: "Error",
-															text: "Deprecated",
-															visible: "{= ${deprecated} !== undefined }"
-														})
-													]
-												}),
-												new HTML({content: "{description}"})
-											]
-										})
-									}
-								}),
-								new Title({
-									visible: "{= ${/borrowed/methods/}.length > 0 }",
-									text: "Borrowed from:"
-								}).addStyleClass("sapUiSmallMarginTop").addStyleClass("sapUiDocumentationBorrowedTitle"),
-								new VerticalLayout({
-									visible: "{= ${/borrowed/methods/}.length > 0 }",
-									width: "100%",
-									content: {
-										path: "/borrowed/methods/",
-										templateShareable: false,
-										template: new Panel({
-											expandable: true,
-											expanded: true,
-											headerText: "{name}",
-											width: "100%",
-											content: {
-												path: "methods",
-												templateShareable: false,
-												template: new Link({
-													text: "{name}",
-													href: "{link}"
-												}).addStyleClass("sapUiTinyMargin")
-											}
-										}).addStyleClass("borrowedMethodsPanel")
-									}
-								})
-							]
-						})
-					]
+				// Init the sub view and controller with the needed references.The view's are nested and work in a
+				// mimic way so they need to share some references.
+				oController.initiate({
+					sTopicId: this._sTopicid,
+					oModel: this._oModel,
+					aApiIndex: this._aApiIndex,
+					aAllowedMembers: this._aAllowedMembers,
+					oEntityData: this._oEntityData,
+					sEntityType: this._sEntityType,
+					sEntityId: this._sEntityId,
+					oOwnerComponent: this.getOwnerComponent(),
+					oContainerView: this.getView(),
+					oContainerController: this
 				});
-
-				oSection.insertSubSection(this._oMethodsSummary, 0);
-
 			},
 
-			_createEventsSummary: function () {
-				var oSection = this.byId("events"),
-					aSubSections = oSection.getSubSections(),
-					oControlData = this._oControlData,
-					bBorrowedOnly = oControlData.hasEvents && !oControlData.hasOwnEvents;
+			/**
+			 * Create the JSON model and the Sub View. The model will be used in both lifecycle phases of the sub view
+			 * by the preprocessor and by the view initiation afterwards.
+			 * @param {object} oBorrowedData the data extracted by the borrowed methods promise
+			 * @return {promise} sap.ui.view.loaded promise
+			 * @private
+			 */
+			_createModelAndSubView: function (oBorrowedData) {
+				// Attach resolved borrowed data
+				this._oControlData.borrowed = oBorrowedData;
 
-				if (aSubSections.length > 0 && (aSubSections[0].getTitle() === "Summary" || aSubSections[0].getTitle() === "Events" || bBorrowedOnly)) {
-					aSubSections[0].setTitle(bBorrowedOnly ? "Events" : "Summary");
+				// Pre-process data and create model
+				this._bindData(this._sTopicid);
 
-					return;
-				}
-
-				this._oEventsSummary = new ObjectPageSubSection({
-					title: bBorrowedOnly ? "Events" : "Summary",
-					blocks: [
-						// Creating this segment here is better than having a fragment we have to fetch on every navigation
-						new VerticalLayout({
-							width: "100%",
-							content: [
-								new Table({
-									fixedLayout: false,
-									visible: "{/hasOwnEvents}",
-									columns: [
-										new Column({
-											vAlign: "Top",
-											header: new Label({text: "Event"})
-										}),
-										new Column({
-											vAlign: "Top",
-											minScreenWidth: "Tablet",
-											demandPopin: true,
-											popinDisplay: "WithoutHeader",
-											header: new Label({text: "Description"})
-										})
-									],
-									items: {
-										path: "/events",
-										templateShareable: false,
-										template: new ColumnListItem({
-											visible: "{= !!${path: 'name'} }",
-											cells: [
-												new VerticalLayout({
-													content: [
-														new Link({
-															text: "{name}",
-															href: "#/api/{/name}/events/{name}",
-															press: this.scrollToEvent.bind(this),
-															wrapping: false
-														}),
-														new ObjectStatus({
-															icon: "sap-icon://message-error",
-															state: "Error",
-															text: "Deprecated",
-															visible: "{= ${deprecated} !== undefined }"
-														})
-													]
-												}),
-												new HTML({content: "{description}"})
-											]
-										})
-									}
-								}),
-								new Title({
-									visible: "{= ${/borrowed/events/}.length > 0 }",
-									text: "Borrowed from:"
-								}).addStyleClass("sapUiSmallMarginTop").addStyleClass("sapUiDocumentationBorrowedTitle"),
-								new VerticalLayout({
-									visible: "{= ${/borrowed/events/}.length > 0 }",
-									width: "100%",
-									content: {
-										path: "/borrowed/events/",
-										templateShareable: false,
-										template: new Panel({
-											expandable: true,
-											expanded: true,
-											headerText: "{name}",
-											width: "100%",
-											content: {
-												path: "events",
-												templateShareable: false,
-												template: new Link({
-													text: "{name}",
-													href: "{link}"
-												}).addStyleClass("sapUiTinyMargin")
-											}
-										})
-									}
-								})
-							]
-						})
-					]
-				});
-
-				oSection.insertSubSection(this._oEventsSummary, 0);
-
-			},
-
-			_createAnnotationsSummary: function () {
-				var oSection = this.byId("annotations");
-
-				var aSubSections = oSection.getSubSections();
-				if (aSubSections.length > 0 && aSubSections[0].getTitle() === "Summary") {
-					return;
-				}
-
-				this._oAnnotationSummary = new ObjectPageSubSection({
-					title: "Summary",
-					blocks: [
-						new Table({
-							fixedLayout: false,
-							columns: [
-								new Column({
-									vAlign: "Top",
-									width: "25%",
-									header: new Label({text: "Annotation"})
-								}),
-								new Column({
-									vAlign: "Top",
-									width: "75%",
-									minScreenWidth: "Desktop",
-									demandPopin: true,
-									popinDisplay: "WithoutHeader",
-									header: new Label({text: "Description"})
-								})
-							],
-							items: {
-								path: "/ui5-metadata/annotations",
-								templateShareable: false,
-								template: new ColumnListItem({
-									visible: "{= !!${annotation} }",
-									cells: [
-										new Link({
-											text: "{= ${annotation} !== 'undefined' ? ${annotation} : '(' + ${namespace} + ')' }",
-											press: this.scrollToAnnotation.bind(this),
-											wrapping: false
-										}),
-										new HTML({content: "{description}"})
-									]
-								})
+				// Create the sub-view and controller
+				this._oView = sap.ui.view({
+					height: "100%",
+					viewName: "sap.ui.documentation.sdk.view.SubApiDetail",
+					type: ViewType.XML,
+					async: true,
+					preprocessors: {
+						xml: {
+							models: {
+								data: this._oModel
 							}
-						})
-					]
+						}
+					}
 				});
 
-				oSection.insertSubSection(this._oAnnotationSummary, 0);
-
+				// Return view loaded promise
+				return this._oView.loaded();
 			},
 
-			scrollToMethod: function (oEvent) {
-				this._scrollToEntity("methods", oEvent.getSource().getText());
+			/**
+			 * Handles the extracted Symbol data and init`s the Borrowed methods loading
+			 * @param {object} oControlData current symbol data loaded from api.json
+			 * @returns {Promise} borrowed entities promise
+			 * @private
+			 */
+			_buildBorrowedModel: function (oControlData) {
+				// Cache allowed members and ControlData
+				this._aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
+				this._oControlData = oControlData;
+
+				// Collect borrowed data
+				return this.buildBorrowedModel(oControlData);
 			},
 
-			scrollToEvent: function (oEvent) {
-				this._scrollToEntity("events", oEvent.getSource().getText());
-			},
-
-			scrollToAnnotation: function (oEvent) {
-				this._scrollToEntity("annotations", oEvent.getSource().getText());
-			},
-
-			_scrollToEntity: function (sSectionId, sSubSectionTitle) {
-
-				var aFilteredSubSections,
-					aSubSections,
-					oSection;
-
-				if (!sSectionId) {
-					return;
-				}
-
-				// LowerCase every input from URL
-				sSectionId = sSectionId.toLowerCase();
-
-				oSection = this.byId(sSectionId);
-				if (!oSection) {
-					return;
-				}
-
-				// If we have a target sub-section we will scroll to it else we will scroll directly to the section
-				if (sSubSectionTitle) {
-					// Let's ignore case when searching for the section especially like in this case
-					// where sSubSectionTitle comes from the URL
-					sSubSectionTitle = sSubSectionTitle.toLowerCase();
-
-					aSubSections = oSection.getSubSections();
-					aFilteredSubSections = aSubSections.filter(function (oSubSection) {
-						return oSubSection.getTitle().toLowerCase() === sSubSectionTitle;
-					});
-
-					if (aFilteredSubSections.length) {
-
-						// Disable router as we are going to scroll only - this is only to prevent routing when a link
-						// pointing to a sub-section from the same entity with a href is clicked
-						this.getRouter().stop();
-						jQuery.sap.delayedCall(0, this, function () {
-							// Re-enable rooter after current operation
-							this.getRouter().initialize(true);
-						});
-
-						// We scroll to the first sub-section found
-						this._objectPage.scrollToSection(aFilteredSubSections[0].getId(), 250);
-					}
-				} else {
-					// We scroll to section
-					this._objectPage.scrollToSection(oSection.getId(), 250);
-				}
-
-			},
-
-			_scrollContentToTop: function () {
-				if (this._objectPage && this._objectPage.$().length > 0) {
-					this._objectPage.getScrollDelegate().scrollTo(0, 0);
-				}
-			},
-
-			_bindData: function (sTopicId) {
-				var aLibsData = this._aLibsData,
-					oControlData,
-					oModel,
-					oUi5Metadata,
-					iLen,
+			/**
+			 * Extract current symbol data from api.json file for the current library
+			 * @param {array} aLibsData data from api.json file for the current library
+			 * @returns {object} current symbol data
+			 * @private
+			 */
+			_findEntityInApiJsonData: function (aLibsData) {
+				var iLen,
 					i;
 
 				// Find entity in loaded libs data
 				for (i = 0, iLen = aLibsData.length; i < iLen; i++) {
 					if (aLibsData[i].name === this._sTopicid) {
-						oControlData = aLibsData[i];
+						return aLibsData[i];
+					}
+				}
+
+				// If we are here - the object does not exist so we reject the promise.
+				return Promise.reject(this.NOT_FOUND);
+			},
+
+			/**
+			 * Process data from api-index file and if symbol is found load the corresponding api.json file for the
+			 * symbol library. If the symbol is not resolved this method returns a rejected promise which triggers
+			 * navigation to not found page.
+			 * @param {array} aData data from api-index file
+			 * @return {promise} resolved or rejected promise
+			 * @private
+			 */
+			_processApiIndexAndLoadApiJson: function (aData) {
+				var oEntityData,
+					bFound = false,
+					iLen,
+					i;
+
+				// Cache api-index data
+				this._aApiIndex = aData;
+
+				// Find entity in api-index
+				for (i = 0, iLen = aData.length; i < iLen; i++) {
+					if (aData[i].name === this._sTopicid || aData[i].name.indexOf(this._sTopicid) === 0) {
+						oEntityData = aData[i];
+						this._oEntityData = oEntityData;
+						bFound = true;
 						break;
 					}
 				}
+
+				if (bFound) {
+					// Load API.json only for selected lib
+					return APIInfo.getLibraryElementsJSONPromise(oEntityData.lib).then(function (aData) {
+						this._aLibsData = aData; // Cache received data
+						return Promise.resolve(aData); // We have found the symbol and loaded the corresponding api.json
+					}.bind(this));
+				}
+
+				// If we are here - the object does not exist so we reject the promise.
+				return Promise.reject(this.NOT_FOUND);
+			},
+
+			_bindData: function (sTopicId) {
+				var oControlData = this._oControlData,
+					oModel,
+					oUi5Metadata;
 
 				oUi5Metadata = oControlData['ui5-metadata'];
 
@@ -704,234 +292,10 @@ sap.ui.define([
 
 				// Main model data
 				this._oModel.setData(oControlData);
-				this._oControlData = oControlData;
 
 				if (this.extHookbindData) {
 					this.extHookbindData(sTopicId, oModel);
 				}
-			},
-
-			_getHeaderLayoutUtil: function () {
-				if (!this._oHeaderLayoutUtil) {
-					var _getObjectAttributeBlock = function (sTitle, sText) {
-							return new sap.m.ObjectAttribute({
-								title: sTitle,
-								text: sText
-							}).addStyleClass("sapUiTinyMarginBottom");
-						},
-						_getLink = function (oConfig) {
-							return new sap.m.Link(oConfig || {});
-						},
-						_getText = function (oConfig) {
-							return new sap.m.Text(oConfig || {});
-						},
-						_getLabel = function (oConfig) {
-							return new sap.m.Label(oConfig || {});
-						},
-						_getHBox = function (oConfig, bAddCommonStyles) {
-							var oHBox = new sap.m.HBox(oConfig || {});
-
-							if (bAddCommonStyles) {
-								oHBox.addStyleClass("sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom");
-							}
-
-							return oHBox;
-						};
-
-					this._oHeaderLayoutUtil = {
-
-						_getControlSampleBlock: function (oControlData, oEntityData) {
-							return _getHBox({
-								items: [
-									_getLabel({design: "Bold", text: "Control Sample:"}),
-									_getLink({
-										emphasized: true,
-										text: oEntityData.sample,
-										visible: !!oEntityData.hasSample,
-										href: "#/entity/" + oControlData.name
-									}),
-									_getText({text: oEntityData.sample, visible: !oEntityData.hasSample})
-								]
-							}, true);
-						},
-						_getDocumentationBlock: function (oControlData, oEntityData) {
-							return _getHBox({
-								items: [
-									_getLabel({design: "Bold", text: "Documentation:"}),
-									_getLink({
-										emphasized: true,
-										text: oControlData.docuLinkText,
-										href: "#/topic/" + oControlData.docuLink
-									})
-								]
-							}, true);
-						},
-						_getExtendsBlock: function (oControlData, oEntityData) {
-							return _getHBox({
-								items: [
-									_getLabel({text: "Extends:"}),
-									_getLink({
-										text: oControlData.extendsText,
-										href: "#/api/" + oControlData.extendsText,
-										visible: oControlData.isDerived
-									}),
-									_getText({text: oControlData.extendsText, visible: !oControlData.isDerived})
-								]
-							}, true);
-						},
-						_getSubclassesBlock: function (oControlData, oEntityData) {
-							var aSubClasses = oEntityData.extendedBy || oEntityData.implementedBy,
-								oSubClassesLink;
-
-							this._aSubClasses = aSubClasses;
-
-							if (aSubClasses.length === 1) {
-								oSubClassesLink = _getLink({text: aSubClasses[0], href: "#/api/" + aSubClasses[0]});
-							} else {
-								oSubClassesLink = _getLink({
-									text: oControlData.isClass ? "View subclasses" : "View implementations",
-									press: this._openSubclassesImplementationsPopover.bind(this)
-								});
-							}
-
-							return _getHBox({
-								items: [
-									_getLabel({text: oControlData.isClass ? "Known direct subclasses:" : "Known direct implementations:"}),
-									oSubClassesLink
-								]
-							}, true);
-						},
-						_getImplementsBlock: function (oControlData, oEntityData) {
-							var aItems = [_getLabel({text: "Implements:"})];
-
-							oControlData.implementsParsed.forEach(function (oElement) {
-								aItems.push(_getLink({text: oElement.name, href: "#/api/" + oElement.href}));
-							});
-
-							return _getHBox({
-								items: aItems,
-								wrap: sap.m.FlexWrap.Wrap
-							}, true).addStyleClass("sapUiDocumentationCommaList");
-						},
-						_getModuleBlock: function (oControlData, oEntityData) {
-							return _getObjectAttributeBlock("Module", oControlData.module);
-						},
-						_getLibraryBlock: function (oControlData, oEntityData) {
-							return _getObjectAttributeBlock("Library", oEntityData.lib);
-						},
-						_getVisibilityBlock: function (oControlData, oEntityData) {
-							return _getObjectAttributeBlock("Visibility", oControlData.visibility);
-						},
-						_getAvailableSinceBlock: function (oControlData, oEntityData) {
-							return _getObjectAttributeBlock("Available since", oControlData.sinceText);
-						},
-						_getApplicationComponentBlock: function (oControlData, oEntityData) {
-							return _getObjectAttributeBlock("Application Component", oEntityData.appComponent);
-						}
-					};
-				}
-
-				return this._oHeaderLayoutUtil;
-			},
-
-			/**
-			 * Opens the Popover, which displays the entity subclasses, if the entity is a class.
-			 * Or, it displays the direct implementations, if the entity is interface.
-			 */
-			_openSubclassesImplementationsPopover: function (oEvent) {
-				var aPopoverContent = this._aSubClasses.map(function (oElement) {
-					return new sap.m.Link({
-						text: oElement,
-						href: "#/api/" + oElement
-					}).addStyleClass("sapUiTinyMarginBottom sapUiTinyMarginEnd");
-				}), oPopover = this._getSubClassesAndImplementationsPopover(aPopoverContent);
-
-				oPopover.openBy(oEvent.getSource());
-			},
-
-			_getSubClassesAndImplementationsPopover: function (aContent) {
-				var oPopover = this._getPopover();
-
-				if (oPopover.getContent().length > 0) {
-					oPopover.destroyContent(); // destroy the old content, before adding the new one
-				}
-
-				(aContent || []).forEach(oPopover.addContent, oPopover);
-
-				return oPopover;
-			},
-
-			_getPopover: function () {
-				if (!this._oPopover) {
-					this._oPopover = new sap.m.Popover({
-						placement: "Bottom",
-						showHeader: false
-					}).addStyleClass("sapUiDocumentationSubclassesPopover");
-				}
-
-				return this._oPopover;
-			},
-
-			/**
-			 * Builds the header layout structure.
-			 * The header displays the entity data in 3 columns
-			 * and each column can consist of 3 key-value pairs at most.
-			 * @param {object} oControlData main control data object source
-			 * @param {object} oEntityData additional data object source
-			 */
-			_buildHeaderLayout: function (oControlData, oEntityData) {
-				var aHeaderControls = [[], [], []],
-					oHeaderLayoutUtil = this._getHeaderLayoutUtil(),
-					aSubClasses = oEntityData.extendedBy || oEntityData.implementedBy || [],
-					aHeaderBlocksInfo = [
-						{creator: "_getControlSampleBlock", exists: oControlData.isClass},
-						{creator: "_getDocumentationBlock", exists: oControlData.docuLink !== undefined},
-						{creator: "_getExtendsBlock", exists: oControlData.isClass},
-						{creator: "_getSubclassesBlock", exists: aSubClasses.length > 0},
-						{creator: "_getImplementsBlock", exists: oControlData.hasImplementsData},
-						{creator: "_getModuleBlock", exists: true},
-						{creator: "_getLibraryBlock", exists: oControlData.kind === "namespace" && oEntityData.lib},
-						{creator: "_getVisibilityBlock", exists: oControlData.visibility},
-						{creator: "_getAvailableSinceBlock", exists: true},
-						{creator: "_getApplicationComponentBlock", exists: true}
-					],
-					fnFillHeaderControlsStructure = function () {
-						var iControlsAdded = 0,
-							iIndexToAdd,
-							fnGetIndexToAdd = function (iControlsAdded) {
-								// determines the column(1st, 2nd or 3rd), the next entity data key-value should be added to.
-								if (iControlsAdded <= 3) {
-									return 0;
-								} else if (iControlsAdded <= 6) {
-									return 1;
-								}
-								return 2;
-							};
-
-						aHeaderBlocksInfo.forEach(function (oHeaderBlockInfo) {
-							var oControlBlock;
-							if (oHeaderBlockInfo.exists) {
-								oControlBlock = oHeaderLayoutUtil[oHeaderBlockInfo.creator].call(this, oControlData, oEntityData);
-								iIndexToAdd = fnGetIndexToAdd(++iControlsAdded);
-								aHeaderControls[iIndexToAdd].push(oControlBlock);
-							}
-						}, this);
-					}.bind(this);
-
-				// Creates the entity key-value controls
-				// based on the existing entity key-value data,
-				fnFillHeaderControlsStructure();
-
-				// Wraps each column in a <code>sap.ui.layout.VerticalLayout</code>.
-				aHeaderControls.forEach(function (aHeaderColumn, iIndex) {
-					var oVL = this.byId("headerColumn" + iIndex);
-					oVL.removeAllContent();
-
-					if (aHeaderColumn.length > 0) {
-						oVL.setVisible(true);
-						aHeaderColumn.forEach(oVL.addContent, oVL);
-					}
-				}, this);
 			},
 
 			buildBorrowedModel: function (oControlData) {
@@ -1081,14 +445,6 @@ sap.ui.define([
 					}
 				}
 				return aNewElements;
-			},
-
-			onAnnotationsLinkPress: function (oEvent) {
-				this._scrollToEntity("annotations", "Summary");
-			},
-
-			backToSearch: function () {
-				this.onNavBack();
 			}
 		});
 

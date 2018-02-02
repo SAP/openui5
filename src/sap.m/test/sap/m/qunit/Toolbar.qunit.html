@@ -141,6 +141,26 @@
 		oTB.destroy();
 	});
 
+	QUnit.test("test style property", function (assert) {
+		var oTB = createToolbar({
+			Toolbar: {},
+			Label: {text: "text"}
+		});
+
+		assert.equal(oTB.getStyle(), sap.m.ToolbarStyle.Standard, "The initial ToolbarStyle property value is correct");
+		assert.ok(oTB.$().hasClass("sapMTBStandard"), "Initially, toolbar has correct style class");
+
+		//act
+		oTB.setStyle(sap.m.ToolbarStyle.Clear);
+		sap.ui.getCore().applyChanges();
+
+		//check
+		assert.ok(!oTB.$().hasClass("sapMTBStandard"), "toolbar has correct style class");
+		assert.ok(oTB.$().hasClass("sapMTBClear"), "toolbar has correct style class");
+
+		oTB.destroy();
+	});
+
 	QUnit.test("test that Toolbar Separator is rendered", function(assert) {
 		var oToolbarSeparator = new sap.m.ToolbarSeparator();
 		var oTB = createToolbar({
@@ -407,7 +427,7 @@
 	QUnit.test("should behave correct according to latest flex box support", function(assert) {
 		// stub for latest flex support
 		var spy = this.spy(sap.m.Toolbar.prototype, "_registerContentResize");
-		this.stub(sap.m.Toolbar, "hasNewFlexBoxSupport", true);
+		this.stub(sap.m.ToolbarRenderer, "hasNewFlexBoxSupport", true);
 		var oTB = createToolbar({
 			Toolbar : {},
 			Label : {text: "text"}
@@ -422,7 +442,7 @@
 	QUnit.test("should behave correct according to old flex box support", function(assert) {
 		// stub for latest old flex support
 		var spy = this.spy(sap.m.Toolbar.prototype, "_registerContentResize");
-		this.stub(sap.m.Toolbar, "hasNewFlexBoxSupport", false);
+		this.stub(sap.m.ToolbarRenderer, "hasNewFlexBoxSupport", false);
 		var oTB = createToolbar({
 			Toolbar : {},
 			Label : {text: "text"}

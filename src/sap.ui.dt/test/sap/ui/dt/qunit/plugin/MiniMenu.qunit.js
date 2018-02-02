@@ -47,7 +47,7 @@ sap.ui.require([
 				text: "enabled for button 1",
 				handler: sinon.spy(),
 				enabled: function (oOverlay) {
-					var oElement = oOverlay.getElementInstance();
+					var oElement = oOverlay.getElement();
 					return oElement === that.oButton1;
 				}
 			};
@@ -56,11 +56,11 @@ sap.ui.require([
 				text: "disabled for button 1",
 				handler: sinon.spy(),
 				available: function (oOverlay) {
-					var oElement = oOverlay.getElementInstance();
+					var oElement = oOverlay.getElement();
 					return oElement === that.oButton1 || oElement === that.oButton2;
 				},
 				enabled: function (oOverlay) {
-					var oElement = oOverlay.getElementInstance();
+					var oElement = oOverlay.getElement();
 					return oElement !== that.oButton1;
 				}
 			};
@@ -70,7 +70,7 @@ sap.ui.require([
 				rank: 1,
 				handler: sinon.spy(),
 				available: function (oOverlay) {
-					var oElement = oOverlay.getElementInstance();
+					var oElement = oOverlay.getElement();
 					return oElement === that.oButton2;
 				}
 			};
@@ -92,7 +92,7 @@ sap.ui.require([
 			this.oMenuEntries.dynamicTextItem = {
 				id: "CTX_DYNAMIC_TEXT",
 				text: function (oOverlay) {
-					var oElement = oOverlay.getElementInstance();
+					var oElement = oOverlay.getElement();
 					return oElement.getId();
 				},
 				handler: sinon.spy()
@@ -186,7 +186,7 @@ sap.ui.require([
 			text: "enabled for button 1",
 			handler: sinon.spy(),
 			enabled: function (oOverlay) {
-				var oElement = oOverlay.getElementInstance();
+				var oElement = oOverlay.getElement();
 				return oElement === that.oButton1;
 			},
 			group: "Test1"
@@ -201,7 +201,7 @@ sap.ui.require([
 			text: "enabled for button 1",
 			handler: sinon.spy(),
 			enabled: function (oOverlay) {
-				var oElement = oOverlay.getElementInstance();
+				var oElement = oOverlay.getElement();
 				return oElement === that.oButton1;
 			},
 			group: "Test1"
@@ -209,14 +209,14 @@ sap.ui.require([
 
 		this.oMiniMenuPlugin._addMenuItemToGroup(oTestButton2);
 
-		assert.strictEqual(this.oMiniMenuPlugin._aGroupedItems.length, 1, "should add a Button to grouped Items without creating a new grouped Button");
+		assert.strictEqual(this.oMiniMenuPlugin._aGroupedItems.length, 1, "should add a Button to grouped Items without creating a new group");
 
 		var oTestButton3 = {
 			id: "CTX_ENABLED_BUTTON1",
 			text: "enabled for button 1",
 			handler: sinon.spy(),
 			enabled: function (oOverlay) {
-				var oElement = oOverlay.getElementInstance();
+				var oElement = oOverlay.getElement();
 				return oElement === that.oButton1;
 			},
 			group: "Test2"
@@ -224,7 +224,115 @@ sap.ui.require([
 
 		this.oMiniMenuPlugin._addMenuItemToGroup(oTestButton3);
 
-		assert.strictEqual(this.oMiniMenuPlugin._aGroupedItems.length, 2, "should add a Button to grouped Items with creating a new grouped button");
+		assert.strictEqual(this.oMiniMenuPlugin._aGroupedItems.length, 2, "should add a Button to grouped Items and creating a new group");
+	});
+
+	QUnit.test("Adding a Submenu", function (assert) {
+
+		var fnHandler = function () {
+			return undefined;
+		};
+
+		var sId = "I_AM_A_SUBMENU";
+		var sSubId1 = "I_am_a_sub_menu_item";
+		var sSubId2 = "I_am_another_sub_menu_item";
+
+		var oTestItem = {
+			id: sId,
+			test: "submenu",
+			handler: fnHandler,
+			enabled: true,
+			submenu: [
+				{
+					id: sSubId1,
+					text: "text",
+					icon: "sap-icon://fridge",
+					enabled: true
+				},
+				{
+					id: sSubId2,
+					text: "more_text",
+					icon: "sap-icon://dishwasher",
+					enabled: true
+				}
+			]
+		};
+
+		this.oMiniMenuPlugin._addSubMenu(oTestItem);
+
+		assert.strictEqual(this.oMiniMenuPlugin._aSubMenus.length, 1, "there should be one submenu");
+		assert.strictEqual(this.oMiniMenuPlugin._aSubMenus[0].sSubMenuId, sId, "should add the submenu");
+		assert.strictEqual(this.oMiniMenuPlugin._aSubMenus[0].aSubMenuItems[0].id, sSubId1, "should add the submenu items");
+		assert.strictEqual(this.oMiniMenuPlugin._aSubMenus[0].aSubMenuItems[1].id, sSubId2, "should add all the submenu items");
+	});
+
+	QUnit.test("Adding multiple Submenus", function (assert) {
+
+		var fnHandler = function () {
+			return undefined;
+		};
+
+		var sId0 = "I_AM_A_SUBMENU";
+		var sSubId0 = "I_am_in_sub_menu_0";
+		var sSubId1 = "I_am_also_in_sub_menu_0";
+
+		var sId1 = "I_AM_ANOTHER_SUBMENU";
+		var sSubId2 = "I_am_in_sub_menu_1";
+		var sSubId3 = "I_am_also_in_sub_menu_1";
+
+		var oTestItem0 = {
+			id: sId0,
+			test: "submenu",
+			handler: fnHandler,
+			enabled: true,
+			submenu: [
+				{
+					id: sSubId0,
+					text: "text",
+					icon: "sap-icon://fridge",
+					enabled: true
+				},
+				{
+					id: sSubId1,
+					text: "more_text",
+					icon: "sap-icon://dishwasher",
+					enabled: true
+				}
+			]
+		};
+
+		var oTestItem1 = {
+			id: sId1,
+			test: "submenu",
+			handler: fnHandler,
+			enabled: true,
+			submenu: [
+				{
+					id: sSubId2,
+					text: "even_more_text",
+					icon: "sap-icon://washing-machine",
+					enabled: true
+				},
+				{
+					id: sSubId3,
+					text: "hmm_text",
+					icon: "sap-icon://sap-ui5",
+					enabled: true
+				}
+			]
+		};
+
+		this.oMiniMenuPlugin._addSubMenu(oTestItem0);
+		this.oMiniMenuPlugin._addSubMenu(oTestItem1);
+
+		assert.strictEqual(this.oMiniMenuPlugin._aSubMenus.length, 2, "there should be two submenu");
+		assert.strictEqual(this.oMiniMenuPlugin._aSubMenus[0].sSubMenuId, sId0, "should add submenu 0");
+		assert.strictEqual(this.oMiniMenuPlugin._aSubMenus[0].aSubMenuItems[0].id, sSubId0, "should add submenu item 0 to sub menu 0");
+		assert.strictEqual(this.oMiniMenuPlugin._aSubMenus[0].aSubMenuItems[1].id, sSubId1, "should add submenu item 1 to sub menu 0");
+
+		assert.strictEqual(this.oMiniMenuPlugin._aSubMenus[1].sSubMenuId, sId1, "should add submenu 1");
+		assert.strictEqual(this.oMiniMenuPlugin._aSubMenus[1].aSubMenuItems[0].id, sSubId2, "should add submenu item 2 to sub menu 1");
+		assert.strictEqual(this.oMiniMenuPlugin._aSubMenus[1].aSubMenuItems[1].id, sSubId3, "should add submenu item 3 to sub menu 1");
 	});
 
 	QUnit.test("Calling _addItemGroupsToMenu", function (assert) {
@@ -236,7 +344,7 @@ sap.ui.require([
 			text: "enabled for button 1",
 			handler: sinon.spy(),
 			enabled: function (oOverlay) {
-				var oElement = oOverlay.getElementInstance();
+				var oElement = oOverlay.getElement();
 				return oElement === that.oButton1;
 			},
 			group: "Test1"
@@ -249,7 +357,7 @@ sap.ui.require([
 			text: "enabled for button 3",
 			handler: sinon.spy(),
 			enabled: function (oOverlay) {
-				var oElement = oOverlay.getElementInstance();
+				var oElement = oOverlay.getElement();
 				return oElement === that.oButton1;
 			},
 			group: "Test2",

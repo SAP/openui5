@@ -43,8 +43,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 	 * @param {int} [oFormatOptions.groupingSize] defines the grouping size in digits, the default is three
 	 * @param {int} [oFormatOptions.groupingBaseSize] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the used decimal separator
-	 * @param {string} [oFormatOptions.unitCodeType] defines the unit code type (e.g. "CLDR" or "CUSTOM")
-	 * @param {array} [oFormatOptions.allowedUnits] defines the allowed unit types for formatting and parsing, e.g. ["size-meter", "volume-liter", ...]
+	 * @param {string} [oFormatOptions.customUnits] defines a set of custom units, e.g. {"my-unit": {
+				"displayName": "mine",
+				"unitPattern-count-one": "{0} mine",
+				"unitPattern-count-other": "{0} mine",
+				"perUnitPattern": "{0}/mine"
+			}}
+	 * @param {array} [oFormatOptions.allowedUnits] defines the allowed units for formatting and parsing, e.g. ["size-meter", "volume-liter", ...]
 	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
 	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
 	 * @param {boolean} [oFormatOptions.parseAsString] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
@@ -275,7 +280,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 		type: mNumberType.UNIT,
 		showMeasure: true,
 		style: "standard",
-		unitCodeType: "CLDR",
+		customUnits: undefined,
 		allowedUnits: undefined,
 		parseAsString: false,
 		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO,
@@ -838,7 +843,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 				return "";
 			}
 
-			var mUnitPatterns = this.oLocaleData.getUnitFormat(sMeasure);
+			var mUnitPatterns, sLookupMeasure;
+			if (oOptions.customUnits && typeof oOptions.customUnits === "object") {
+				//custom units are exclusive (no fallback to LocaleData)
+				mUnitPatterns = oOptions.customUnits[sMeasure];
+			} else {
+				//check if there is a unit mapping for the given unit
+				sLookupMeasure = this.oLocaleData.getUnitFromMapping(sMeasure) || sMeasure;
+				mUnitPatterns = this.oLocaleData.getUnitFormat(sLookupMeasure);
+			}
 
 			if (mUnitPatterns) {
 				sPattern = mUnitPatterns["unitPattern-count-" + sPluralCategory];
@@ -852,7 +865,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 				}
 				sResult = sPattern.replace("{0}", sResult);
 			} else {
-				jQuery.sap.assert(mUnitPatterns, "The measure '" + sMeasure + "' is an unknown " + oOptions.unitCodeType + " code");
+				jQuery.sap.assert(mUnitPatterns, "Unit '" + sMeasure + "' is unknown");
 				return "";
 			}
 		}
@@ -972,17 +985,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 		var aUnitCode;
 		if (oOptions.type === mNumberType.UNIT) {
 
-			var mUnitFormatPatterns = this.oLocaleData.getUnitFormats();
-			// filter allowed unit types
+			var mUnitPatterns;
+			if (oOptions.customUnits && typeof oOptions.customUnits === "object") {
+				//custom units are exclusive (no fallback to LocaleData)
+				mUnitPatterns = oOptions.customUnits;
+			} else {
+				mUnitPatterns = this.oLocaleData.getUnitFormats();
+			}
+			jQuery.sap.assert(mUnitPatterns, "Unit patterns cannot be loaded");
+
+			// filter using allowedUnits option
 			if (oOptions.allowedUnits) {
 				var mFilteredUnits = {};
 				for (var i = 0; i < oOptions.allowedUnits.length; i++) {
 					var sUnitType = oOptions.allowedUnits[i];
-					mFilteredUnits[sUnitType] = mUnitFormatPatterns[sUnitType];
+					mFilteredUnits[sUnitType] = mUnitPatterns[sUnitType];
 				}
-				mUnitFormatPatterns = mFilteredUnits;
+				mUnitPatterns = mFilteredUnits;
 			}
-			var oPatternAndResult = parseNumberAndUnit(mUnitFormatPatterns, sValue);
+
+			var oPatternAndResult = parseNumberAndUnit(mUnitPatterns, sValue);
 
 			aUnitCode = oPatternAndResult.cldrCode;
 			if (aUnitCode.length === 1) {

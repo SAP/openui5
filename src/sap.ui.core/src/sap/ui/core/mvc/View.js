@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.core.mvc.View.
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Control', 'sap/ui/core/mvc/Controller', 'sap/ui/core/library'],
-	function(jQuery, ManagedObject, Control, Controller, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/base/ManagedObject',
+    'sap/ui/core/Control',
+    'sap/ui/core/mvc/Controller',
+    'sap/ui/core/library',
+    "./ViewRenderer"
+],
+	function(jQuery, ManagedObject, Control, Controller, library, ViewRenderer) {
 	"use strict";
 
 
@@ -20,12 +27,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	/**
 	 * Constructor for a new View.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class A base class for Views.
 	 *
-	 * Introduces the relationship to a Controller, some basic visual appearance settings like width and height
+	 * Introduces the relationship to a Controller, some basic visual appearance settings like width and height,
 	 * and provides lifecycle events.
 	 *
 	 * @extends sap.ui.core.Control
@@ -189,27 +196,55 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * @param {object} oPreprocessor Preprocessor config object
 	 * @private
 	 */
-	function resolvePreprocessor(oPreprocessor) {
+	function initPreprocessor(oPreprocessor, bAsync) {
+		var oPreprocessorImpl;
+
 		if (typeof oPreprocessor.preprocessor === "string") {
+			var sPreprocessorName = oPreprocessor.preprocessor.replace(/\./g, "/");
 			// module string given, resolve and retrieve object
-			jQuery.sap.require(oPreprocessor.preprocessor);
-			oPreprocessor.preprocessor = jQuery.sap.getObject(oPreprocessor.preprocessor);
+			if (bAsync) {
+				 return new Promise(function(resolve, reject) {
+					sap.ui.require([sPreprocessorName], function(oPreprocessorImpl) {
+						resolve(oPreprocessorImpl);
+					});
+				});
+			} else {
+				return sap.ui.requireSync(sPreprocessorName);
+			}
 		} else if (typeof oPreprocessor.preprocessor === "function" && !oPreprocessor.preprocessor.process) {
-			oPreprocessor.preprocessor = {
+			oPreprocessorImpl = {
 				process: oPreprocessor.preprocessor
 			};
+		} else {
+			oPreprocessorImpl = oPreprocessor.preprocessor;
+		}
+
+		if (bAsync) {
+			return Promise.resolve(oPreprocessorImpl);
+		} else {
+			return oPreprocessorImpl;
 		}
 	}
 
 	/**
 	 * enqueue preprocessors per type in the correct order (onDemand -> global -> local)
 	 *
-	 * @param {object[]} aLocalPreprocessors Locally passed preprocessor config objects
-	 * @param {object[]} aGlobalPreprocessors Globally registered preprocessor config objects
+	 * @param {string} sViewType Type of the view
+	 * @param {string} sType type of the preprocessor for the specified viewType.
 	 * @private
 	 */
-	function getPreprocessorQueue(aLocalPreprocessors, aGlobalPreprocessors) {
-		var i, l, oOnDemandPreprocessor, aPreprocessors = [];
+	function getPreprocessorQueue(sViewType, sType) {
+		var aLocalPreprocessors = this.mPreprocessors[sType] || [],
+			aGlobalPreprocessors = [],
+			i, l, oOnDemandPreprocessor, aPreprocessors = [];
+
+		//clone static preprocessor settings
+		if (View._mPreprocessors[sViewType] && View._mPreprocessors[sViewType][sType]) {
+			aGlobalPreprocessors = View._mPreprocessors[sViewType][sType].map(function(oProcessor) {
+				return jQuery.extend({}, oProcessor);
+			});
+		}
+
 		for (i = 0, l = aGlobalPreprocessors.length; i < l; i++) {
 			if (aGlobalPreprocessors[i]._onDemand) {
 				// special treatment as the on-demand preprocessor needs its local activation
@@ -238,8 +273,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * @private
 	 */
 	function initPreprocessorQueues(oView, mSettings) {
-		var oViewClass = oView.getMetadata().getClass(),
-			mGlobalPreprocessors = View._mPreprocessors[oViewClass._sType] || {};
+		var oViewClass = oView.getMetadata().getClass();
+
+		function resolvePreprocessors(oPreprocessor) {
+			oPreprocessor.preprocessor = initPreprocessor(oPreprocessor, mSettings.async);
+		}
+
 		// shallow copy to avoid issues when manipulating the internal object structure
 		oView.mPreprocessors = jQuery.extend({}, mSettings.preprocessors);
 		for (var _sType in oViewClass.PreprocessorType) {
@@ -251,8 +290,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 				oView.mPreprocessors[sType] = [];
 			}
 			oView.mPreprocessors[sType].forEach(alignPreprocessorStructure);
-			oView.mPreprocessors[sType] = getPreprocessorQueue(oView.mPreprocessors[sType], mGlobalPreprocessors[sType] || []);
-			oView.mPreprocessors[sType].forEach(resolvePreprocessor);
+			oView.mPreprocessors[sType] = getPreprocessorQueue.call(oView, oViewClass._sType, sType);
+			oView.mPreprocessors[sType].forEach(resolvePreprocessors);
 		}
 	}
 
@@ -260,6 +299,72 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		oView.oAsyncState = {};
 		oView.oAsyncState.promise = null;
 	}
+
+	/**
+	 * Creates and connects the controller if the controller is not given in the
+	 * mSettings
+	 *
+	 * @param {sap.ui.core.mvc.XMLView} oThis the instance of the view that should be processed
+	 * @param {object} [mSettings] Settings
+	 * @returns {Promise|undefined} A promise for asynchronous or undefined for synchronous controllers
+	 * @throws {Error}
+	 * @private
+	 */
+	var createAndConnectController = function(oThis, mSettings) {
+
+		if (!sap.ui.getCore().getConfiguration().getControllerCodeDeactivated()) {
+			// only set when used internally
+			var oController = mSettings.controller,
+				sName = oController && typeof oController.getMetadata === "function" && oController.getMetadata().getName(),
+				bAsync = mSettings.async;
+
+			if (!oController && oThis.getControllerName) {
+				// get optional default controller name
+				var defaultController = oThis.getControllerName();
+				if (defaultController) {
+					// check for controller replacement
+					var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
+					var sControllerReplacement = CustomizingConfiguration && CustomizingConfiguration.getControllerReplacement(defaultController, ManagedObject._sOwnerId);
+					if (sControllerReplacement) {
+						defaultController = typeof sControllerReplacement === "string" ? sControllerReplacement : sControllerReplacement.controllerName;
+					}
+					// create controller
+					oController = sap.ui.controller(defaultController, true /* oControllerImpl = true: do not extend controller inside factory; happens below (potentially async)! */, bAsync);
+				}
+			} else if (oController) {
+				// we need to extend the controller if an instance is passed
+				var sOwnerId = ManagedObject._sOwnerId;
+				if (bAsync) {
+					oController = Controller.extendByCustomizing(oController, sName, bAsync)
+						.then(function(oController) {
+							return Controller.extendByProvider(oController, sName, sOwnerId, bAsync);
+						});
+				} else {
+					oController = Controller.extendByCustomizing(oController, sName, bAsync);
+					oController = Controller.extendByProvider(oController, sName, sOwnerId, bAsync);
+				}
+			}
+
+			if ( oController ) {
+				var connectToView = function(oController) {
+					oThis.oController = oController;
+					oController.oView = oThis;
+				};
+
+				if (bAsync) {
+					if (!oThis.oAsyncState) {
+						throw new Error("The view " + oThis.sViewName + " runs in sync mode and therefore cannot use async controller extensions!");
+					}
+					return oController.then(connectToView);
+				} else {
+					connectToView(oController);
+				}
+			}
+
+		} else {
+			oThis.oController = {};
+		}
+	};
 
 	/**
 	* Initialize the View and connect (create if no instance is given) the Controller
@@ -363,7 +468,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 						return fnAttachControllerToViewEvents(that);
 					})
 					.then(function() {
-						return that.runPreprocessor("controls", that);
+						return that.runPreprocessor("controls", that, false);
 					})
 					.then(function() {
 						return fnPropagateOwner(that.fireAfterInit.bind(that), true);
@@ -374,20 +479,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 					});
 			} else {
 				this.initViewSettings(mSettings);
-				// connect controller to view after controller and control tree are fully initialized
-				var pCreateAndConnectController = createAndConnectController(that, mSettings);
-				if (pCreateAndConnectController instanceof Promise) {
-					pCreateAndConnectController
-					.then(function() {
-						return fnPropagateOwner(fnFireOnControllerConnected);
-					})
-					.then(function() {
-						fnAttachControllerToViewEvents(that);
-					});
-				} else {
-					fnFireOnControllerConnected();
-					fnAttachControllerToViewEvents(that);
-				}
+				createAndConnectController(this, mSettings);
+				fnFireOnControllerConnected();
+				fnAttachControllerToViewEvents(this);
+
 				this.runPreprocessor("controls", this, true);
 				this.fireAfterInit();
 			}
@@ -454,61 +549,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 */
 	View.prototype.isPrefixedId = function(sId) {
 		return !!(sId && sId.indexOf(this.getId() + "--") === 0);
-	};
-
-	/**
-	 * Creates and connects the controller if the controller is not given in the
-	 * mSettings
-	 *
-	 * @param {sap.ui.core.mvc.XMLView} oThis the instance of the view that should be processed
-	 * @param {object} [mSettings] Settings
-	 * @returns {Promise|undefined} A promise for asynchronous or undefined for synchronous controllers
-	 * @private
-	 */
-	var createAndConnectController = function(oThis, mSettings) {
-
-		if (!sap.ui.getCore().getConfiguration().getControllerCodeDeactivated()) {
-			// only set when used internally
-			var oController = mSettings.controller,
-			    sName = oController && typeof oController.getMetadata === "function" && oController.getMetadata().getName();
-
-			if (!oController && oThis.getControllerName) {
-				// get optional default controller name
-				var defaultController = oThis.getControllerName();
-				if (defaultController) {
-					// check for controller replacement
-					var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
-					var sControllerReplacement = CustomizingConfiguration && CustomizingConfiguration.getControllerReplacement(defaultController, ManagedObject._sOwnerId);
-					if (sControllerReplacement) {
-						defaultController = typeof sControllerReplacement === "string" ? sControllerReplacement : sControllerReplacement.controllerName;
-					}
-					// create controller
-					oController = sap.ui.controller(defaultController, true /* oControllerImpl = true: do not extend controller inside factory; happens below (potentially async)! */);
-					sName = defaultController;
-				}
-			}
-
-			if ( oController ) {
-				oController = Controller.extendIfRequired(oController, sName, !!oThis.oAsyncState);
-
-				var connectToView = function(oController) {
-					oThis.oController = oController;
-					oController.oView = oThis;
-				};
-
-				if (oController instanceof Promise) {
-					if (!oThis.oAsyncState) {
-						throw new Error("The view " + oThis.sViewName + " runs in sync mode and therefore cannot use async controller extensions!");
-					}
-					return oController.then(connectToView);
-				} else {
-					connectToView(oController);
-				}
-			}
-
-		} else {
-			oThis.oController = {};
-		}
 	};
 
 	/**
@@ -604,6 +644,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	};
 
 	/**
+	 * Returns the preprocessors for a view instance.
+	 *
+	 * @returns {map} mPreprocessors A map containing the view preprocessors
+	 *
+	 * @private
+	 */
+	View.prototype.getPreprocessors = function() {
+		return this.mPreprocessors;
+	};
+
+	/**
 	 * Returns the info object which is also passed to the preprocessors
 	 * @see sap.ui.core.mvc.View.Preprocessor.process
 	 *
@@ -651,29 +702,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 
 		// in async case we need a promise chain
 		if (!bSync) {
-			fnAppendPreprocessor = function (fnProcess, oViewInfo, mSettings) {
+			fnAppendPreprocessor = function (oViewInfo, oPreprocessor) {
 				// the Promise's success handler with bound oViewInfo and mSettings
-				return function (vProcessedSource) {
-					return fnProcess(vProcessedSource, oViewInfo, mSettings);
+				return function(vSource) {
+					return oPreprocessor.preprocessor
+						.then(function(oPreprocessorImpl) {
+							return oPreprocessorImpl.process(vSource, oViewInfo, oPreprocessor._settings);
+						});
 				};
 			};
 			pChain = Promise.resolve(vSource);
 		}
 
 		for (var i = 0, l = aPreprocessors.length; i < l; i++) {
-			fnProcess = aPreprocessors[i].preprocessor.process;
 			if (bSync && aPreprocessors[i]._syncSupport === true) {
+				fnProcess = aPreprocessors[i].preprocessor.process;
 				// run preprocessor directly in sync mode
 				vSource = fnProcess(vSource, oViewInfo, aPreprocessors[i]._settings);
 			} else if (!bSync) {
 				// append future preprocessor run to promise chain
-				pChain = pChain.then(fnAppendPreprocessor(fnProcess, oViewInfo, aPreprocessors[i]._settings));
+				pChain = pChain.then(fnAppendPreprocessor(oViewInfo, aPreprocessors[i]));
 			} else {
 				jQuery.sap.log.debug("Async \"" + sType + "\"-preprocessor was skipped in sync view execution for " +
 					this.getMetadata().getClass()._sType + "View", this.getId());
 			}
 		}
-
 		return bSync ? vSource : pChain;
 	};
 
@@ -871,26 +924,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		if (!oView.type) {
 			throw new Error("No view type specified.");
 		} else if (oView.type === ViewType.JS) {
-			var JSView = sap.ui.requireSync('sap/ui/core/mvc/JSView');
-			view = new JSView(oView);
+			view = createView('sap/ui/core/mvc/JSView', oView);
 		} else if (oView.type === ViewType.JSON) {
-			var JSONView = sap.ui.requireSync('sap/ui/core/mvc/JSONView');
-			view = new JSONView(oView);
+			view = createView('sap/ui/core/mvc/JSONView', oView);
 		} else if (oView.type === ViewType.XML) {
-			var XMLView = sap.ui.requireSync('sap/ui/core/mvc/XMLView');
-			view = new XMLView(oView);
+			view = createView('sap/ui/core/mvc/XMLView', oView);
 		} else if (oView.type === ViewType.HTML) {
-			var HTMLView = sap.ui.requireSync('sap/ui/core/mvc/HTMLView');
-			view = new HTMLView(oView);
+			view = createView('sap/ui/core/mvc/HTMLView', oView);
 		} else if (oView.type === ViewType.Template) {
-			var TemplateView = sap.ui.requireSync('sap/ui/core/mvc/TemplateView');
-			view = new TemplateView(oView);
+			view = createView('sap/ui/core/mvc/TemplateView', oView);
 		} else { // unknown view type
 			throw new Error("Unknown view type " + oView.type + " specified.");
 		}
 
 		return view;
 	};
+
+	function createView(sViewClass, oViewSettings) {
+		var ViewClass = sap.ui.require(sViewClass);
+		if (!ViewClass) {
+			ViewClass = sap.ui.requireSync(sViewClass);
+			if (oViewSettings.async) {
+				//not supported
+				jQuery.sap.log.warning("sap.ui.view was called without requiring the according view class.");
+			}
+		}
+		return new ViewClass(oViewSettings);
+	}
 
 	/**
 	* Creates a Promise representing the state of the view initialization.

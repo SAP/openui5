@@ -660,6 +660,23 @@
 
 			sut1.destroy();
 		});
+
+		QUnit.test("Sticky Column Headers", function(assert) {
+			var sut = createSUT("idStickyColHdr", true);
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(sut.$().find("th").hasClass("sapMTableTH"), ".sapMTableTH added to 'th' elements");
+
+			assert.equal(sut.getSticky(), "None", "Default value set correctly");
+			assert.equal(sut.$().find(".sapMListTblStickyColHdr").length, 0, "Sticky column header style class not rendered");
+			sut.setSticky("ColumnHeaders");
+			sap.ui.getCore().applyChanges();
+			assert.equal(sut.getSticky(), "ColumnHeaders", "Property set to ColumnHeaders correctly");
+			assert.equal(sut.$().find(".sapMListTblStickyColHdr").length, 1, "Sticky column header style class not rendered");
+
+			sut.destroy();
+		});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

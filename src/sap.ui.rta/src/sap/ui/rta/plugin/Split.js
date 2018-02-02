@@ -5,13 +5,11 @@
 // Provides class sap.ui.rta.plugin.Split.
 sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
-	'sap/ui/dt/Selection',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/rta/Utils',
 	'sap/ui/fl/Utils'
 ], function(
 	Plugin,
-	Selection,
 	OverlayRegistry,
 	Utils,
 	FlexUtils
@@ -76,7 +74,7 @@ sap.ui.define([
 		}
 
 		var vSplitAction = this.getAction(oOverlay);
-		var oElement = aSelectedOverlays[0].getElementInstance();
+		var oElement = aSelectedOverlays[0].getElement();
 		if (vSplitAction && vSplitAction.getControlsCount(oElement) <= 1) {
 			return false;
 		}
@@ -103,7 +101,7 @@ sap.ui.define([
 		var bActionIsEnabled = true;
 		if (typeof oAction.isEnabled !== "undefined") {
 			if (typeof oAction.isEnabled === "function") {
-				 bActionIsEnabled = oAction.isEnabled(oOverlay.getElementInstance());
+				 bActionIsEnabled = oAction.isEnabled(oOverlay.getElement());
 			} else {
 				bActionIsEnabled = oAction.isEnabled;
 			}

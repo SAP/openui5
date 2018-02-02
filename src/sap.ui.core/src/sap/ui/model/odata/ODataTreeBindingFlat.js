@@ -444,9 +444,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	 * Loads the server-index nodes within the range [iSkip, iSkip + iTop + iThreshold) and merges the nodes into
 	 * the inner structure.
 	 *
-	 * @param {number} iSkip The start index of the loading
-	 * @param {number} iTop The number of nodes to be loaded
-	 * @param {number} iThreshold The size of the buffer
+	 * @param {int} iSkip The start index of the loading
+	 * @param {int} iTop The number of nodes to be loaded
+	 * @param {int} iThreshold The size of the buffer
 	 */
 	ODataTreeBindingFlat.prototype._loadData = function (iSkip, iTop, iThreshold) {
 		var that = this;
@@ -473,8 +473,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	/**
 	 * Reloads the server-index nodes within the range [iSkip, iSkip + iTop) and merges them into the inner structure.
 	 *
-	 * @param {number} iSkip The start index of the loading
-	 * @param {number} iTop The number of nodes to be loaded
+	 * @param {int} iSkip The start index of the loading
+	 * @param {int} iTop The number of nodes to be loaded
 	 * @return {Promise} The promise resolves if the reload finishes successfully, otherwise it's rejected. The promise
 	 * 						resolves with an object which has the calculated iSkip, iTop and the loaded content under
 	 * 						property oData. It rejects with the error object which is returned from the server.
@@ -491,7 +491,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	 * Merges the nodes in parameter oData into the inner structure
 	 *
 	 * @param {object} oData The content which contains the nodes from the backend
-	 * @param {number} iSkip The start index for the merging into inner structure
+	 * @param {int} iSkip The start index for the merging into inner structure
 	 */
 	ODataTreeBindingFlat.prototype._addServerIndexNodes = function (oData, iSkip) {
 		var oEntry, sKey, iIndex, i,
@@ -567,9 +567,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	/**
 	 * Loads the server-index nodes based on the given range and the initial expand level.
 	 *
-	 * @param {number} iSkip The start index of the loading
-	 * @param {number} iTop The number of nodes to be loaded
-	 * @param {number} iThreshold The size of the buffer
+	 * @param {int} iSkip The start index of the loading
+	 * @param {int} iTop The number of nodes to be loaded
+	 * @param {int} iThreshold The size of the buffer
 	 * @return {Promise} The promise resolves if the reload finishes successfully, otherwise it's rejected. The promise
 	 * 						resolves with an object which has the calculated iSkip, iTop and the loaded content under
 	 * 						property oData. It rejects with the error object which is returned from the server.
@@ -696,8 +696,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	 * new nodes into the <code>children</code> array under the parent node.
 	 *
 	 * @param {object} oParentNode The parent node under which the children are loaded
-	 * @param {number} iSkip The start index of the loading
-	 * @param {number} iTop The number of nodes which will be loaded
+	 * @param {int} iSkip The start index of the loading
+	 * @param {int} iTop The number of nodes which will be loaded
 	 */
 	ODataTreeBindingFlat.prototype._loadChildren = function(oParentNode, iSkip, iTop) {
 		var that = this;
@@ -729,8 +729,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	 * After the child nodes are loaded, the parent node is expanded again.
 	 *
 	 * @param {object} oParentNode The parent node under which the children are reloaded
-	 * @param {number} iSkip The start index of the loading
-	 * @param {number} iTop The number of nodes to be loaded
+	 * @param {int} iSkip The start index of the loading
+	 * @param {int} iTop The number of nodes to be loaded
 	 * @return {Promise} The promise resolves if the reload finishes successfully, otherwise it's rejected. The promise
 	 * 						resolves with an object which has the calculated iSkip, iTop and the loaded content under
 	 * 						property oData. It rejects with the error object which is returned from the server.
@@ -763,7 +763,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	 *
 	 * @param {object} oData The content which contains the nodes from the backed
 	 * @param {object} oParentNode The parent node where the child nodes are saved
-	 * @param {number} iSkip The start index for the merging into inner structure
+	 * @param {int} iSkip The start index for the merging into inner structure
 	 */
 	ODataTreeBindingFlat.prototype._addChildNodes = function(oData, oParentNode, iSkip) {
 
@@ -836,8 +836,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	 * Loads the child nodes based on the given range and <code>oParentNode</code>
 	 *
 	 * @param {object} oParentNode The node under which the children are loaded
-	 * @param {number} iSkip The start index of the loading
-	 * @param {number} iTop The number of nodes to be loaded
+	 * @param {int} iSkip The start index of the loading
+	 * @param {int} iTop The number of nodes to be loaded
 	 * @param {boolean} bInlineCount Whether the inline count should be requested from the backend
 	 * @return {Promise} The promise resolves if the reload finishes successfully, otherwise it's rejected. The promise
 	 * 						resolves with an object which has the calculated iSkip, iTop and the loaded content under

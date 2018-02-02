@@ -135,16 +135,6 @@ sap.ui.define([
 		};
 	};
 
-	VariantModel.prototype.clearVariantInURLForControl = function (oVariantManagementControl) {
-		var oAppComponent = Utils.getAppComponentForControl(this.oComponent) || Utils.getAppComponentForControl(oVariantManagementControl);
-		var sVariantManagementReference = this._getLocalId(oVariantManagementControl.getId(), oAppComponent);
-		var mVariantParametersInURL = this._getVariantIndexInURL(sVariantManagementReference);
-		if (mVariantParametersInURL.index > -1) {
-			mVariantParametersInURL.parameters.splice(mVariantParametersInURL.index, 1);
-			Utils.setTechnicalURLParameterValues("sap-ui-fl-control-variant-id", mVariantParametersInURL.parameters);
-		}
-	};
-
 	/**
 	 * Returns the current variant for a given variant management control
 	 * @param {String} sVariantManagementReference The variant management Ref
@@ -256,8 +246,6 @@ sap.ui.define([
 				} else if (iCurrentLayerComp === -1)  {
 					oDuplicateVariant.content[sKey] = sSourceVariantReference;
 				}
-			} else if (sKey === "layer") {
-				oDuplicateVariant.content[sKey] = mPropertyBag.layer;
 			} else if (sKey === "content") {
 				oDuplicateVariant.content[sKey] = JSON.parse(JSON.stringify(oSourceVariant.content[sKey]));
 				var sTitle = this.getVariantTitle(sSourceVariantReference);
@@ -266,6 +254,7 @@ sap.ui.define([
 				oDuplicateVariant.content[sKey] = oSourceVariant.content[sKey];
 			}
 		}.bind(this));
+		oDuplicateVariant.content["layer"] = mPropertyBag.layer;
 
 		var aVariantChanges = oDuplicateVariant.controlChanges.slice();
 
@@ -508,9 +497,7 @@ sap.ui.define([
 				originalDefaultVariant: sVariantManagementReference,
 				variants: [
 					{
-						//author: "SAP",
 						key: sVariantManagementReference,
-						layer: "VENDOR",
 						title: this._oResourceBundle.getText("STANDARD_VARIANT_TITLE"),
 						originalTitle: this._oResourceBundle.getText("STANDARD_VARIANT_ORIGINAL_TITLE"),
 						favorite: true,
@@ -532,7 +519,6 @@ sap.ui.define([
 							content: {
 								fileName: sVariantManagementReference,
 								fileType: "ctrl_variant",
-								layer: "VENDOR",
 								variantManagementReference: sVariantManagementReference,
 								variantReference: "",
 								content: {
@@ -617,7 +603,7 @@ sap.ui.define([
 		};
 	};
 
-	VariantModel.prototype.handleCurrentVariantChange = function(oEvent) {
+	VariantModel.prototype._handleCurrentVariantChange = function(oEvent) {
 		var oPropertyBinding = oEvent.getSource();
 		var sVariantManagementReference = oPropertyBinding.getContext().getPath().replace(/^\//, '');
 
@@ -626,7 +612,7 @@ sap.ui.define([
 		}
 	};
 
-	VariantModel.prototype.handleSave = function(oEvent) {
+	VariantModel.prototype._handleSave = function(oEvent) {
 		var oVariantManagementControl = oEvent.getSource();
 		var bSetDefault = oEvent.getParameter("def");
 		var oAppComponent = Utils.getAppComponentForControl(this.oComponent) || Utils.getAppComponentForControl(oVariantManagementControl);
@@ -688,11 +674,11 @@ sap.ui.define([
 			//control property updateVariantInURL set initially
 			this.oData[sVariantManagementReference].updateVariantInURL = oVariantManagementControl.getUpdateVariantInURL();
 			//attach binding change event on VariantManagement control title
-			oVariantManagementControl.getTitle().getBinding("text").attachChange(this.handleCurrentVariantChange, this);
+			oVariantManagementControl.getTitle().getBinding("text").attachChange(this._handleCurrentVariantChange, this);
 
 			this._setModelPropertiesForControl(sVariantManagementReference, false, oVariantManagementControl);
 
-			oVariantManagementControl.attachSave(this.handleSave, this);
+			oVariantManagementControl.attachSave(this._handleSave, this);
 		}
 	};
 

@@ -34,6 +34,8 @@ sap.ui.define(['./ListItemBase', './library', 'sap/ui/core/IconPool', 'sap/m/Obj
 		 *
 		 * @class
 		 * ObjectListItem is a display control that provides summary information about an object as a list item. The ObjectListItem title is the key identifier of the object. Additional text and icons can be used to further distinguish it from other objects. Attributes and statuses can be used to provide additional meaning about the object to the user.
+		 *
+		 * <b>Note:</b> The control must only be used in the context of a list.
 		 * @extends sap.m.ListItemBase
 		 * @version ${version}
 		 *

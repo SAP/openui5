@@ -24,30 +24,34 @@ sap.ui.define([
 		_routePatternMatched: function(oEvent) {
 			var sId = oEvent.getParameter("arguments").productId,
 				oView = this.getView(),
-				sPath = "/Products('" + sId + "')";
-
-			var oModel = oView.getModel();
-			var oData = oModel.getData(sPath);
-			oView.bindElement({
-				path: sPath,
-				events: {
-					dataRequested: function () {
-						oView.setBusy(true);
-					},
-					dataReceived: function () {
-						oView.setBusy(false);
+				oModel = oView.getModel();
+			// the binding should be done after insuring that the metadata is loaded successfully
+			oModel.metadataLoaded().then(function () {
+				var sPath = "/" + this.getModel().createKey("Products", {
+						ProductId: sId
+					});
+				oView.bindElement({
+					path : sPath,
+					events: {
+						dataRequested: function () {
+							oView.setBusy(true);
+						},
+						dataReceived: function () {
+							oView.setBusy(false);
+						}
 					}
+				});
+				var oData = oModel.getData(sPath);
+				//if there is no data the model has to request new data
+				if (!oData) {
+					oView.setBusyIndicatorDelay(0);
+					oView.getElementBinding().attachEventOnce("dataReceived", function() {
+						// reset to default
+						oView.setBusyIndicatorDelay(null);
+						this._checkIfProductAvailable(sPath);
+					}.bind(this));
 				}
-			});
-			//if there is no data the model has to request new data
-			if (!oData) {
-				oView.setBusyIndicatorDelay(0);
-				oView.getElementBinding().attachEventOnce("dataReceived", function() {
-					// reset to default
-					oView.setBusyIndicatorDelay(null);
-					this._checkIfProductAvailable(sPath, sId);
-				}.bind(this));
-			}
+			}.bind(this));
 		},
 
 		fnUpdateProduct: function(productId) {

@@ -3,7 +3,7 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>QUnit page for testing End 2 End changes will reach LREP</title>
-
+		<script src="../shared-config.js"></script>
 		<style>
 		html, body, #qunit-tests {
 			height: 100%;
@@ -23,17 +23,16 @@
 		}
 		</style>
 
-		<script src="../shared-config.js"></script>
 		<script>
-			document.write('\
-				<script \
-					id="sap-ui-bootstrap" \
-					data-sap-ui-resourceroots=\'{"sap.ui.rta.test": "../internal/testdata/rta/", "sap.ui.rta.qunit": "../qunit"}\'\
-					data-sap-ui-libs="sap.ui.rta, sap.m, sap.ui.layout, sap.ui.dt" \
-					src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js" \
-				><' + '/script>'
-			);
+			window['sap-ui-config'].libs = 'sap.ui.rta, sap.m, sap.ui.layout, sap.ui.dt';
+			window['sap-ui-config'].resourceroots = {
+				"sap.ui.rta.test": "../internal/testdata/rta/",
+				"sap.ui.rta.qunit": "../qunit",
+				"sap.ui.rta.qunitrta": "../internal/testdata/qunit_rta/"
+			};
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
 		</script>
+
 		<script>
 			jQuery.sap.includeStyleSheet(jQuery.sap.getModulePath('sap.ui.thirdparty.qunit') + '.css');
 			jQuery.sap.require('sap.ui.thirdparty.qunit');

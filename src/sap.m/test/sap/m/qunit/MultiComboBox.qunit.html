@@ -4684,11 +4684,29 @@
 			oStub = this.stub(oMultiComboBox, "fireChangeEvent"),
 			oFakeEvent = {};
 
+		// act
 		oMultiComboBox.onsapfocusleave(oFakeEvent);
 
+		// assert
 		assert.ok(oStub.called, "change should be called");
 		assert.ok(oStub.calledWith("", { value: "A" }), "change should be called with empty values");
 
+		// cleanup
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.test("Change event should not be called if the old value does not differ from the current one", function (assert) {
+		var oMultiComboBox = new sap.m.MultiComboBox().placeAt("MultiComboBox-content"),
+			oStub = this.stub(oMultiComboBox, "fireChangeEvent"),
+			oFakeEvent = {};
+
+		// act
+		oMultiComboBox.onsapfocusleave(oFakeEvent);
+
+		// assert
+		assert.notOk(oStub.called, "change should be called");
+
+		// cleanup
 		oMultiComboBox.destroy();
 	});
 

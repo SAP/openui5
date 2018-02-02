@@ -2047,9 +2047,9 @@ if ( eventCaptureSupported ) {
 				// SAP MODIFICATION: terminate the firing of 'tap' event if 'mouseup' event occurs
 				// out of the 'mousedown' target
 				function checkAndClearTapHandlers( event ) {
-					// if the mouseup event occurs out of the DOM element where the mousedown is
-					// registered, unbind all of the listeners
-					if ( event.target !== thisObject && !$.contains(thisObject, event.target) ) {
+					// if the mouseup event occurs out of the origin target of the mousedown event,
+					// unbind all of the listeners
+					if ( event.target !== origTarget && !$.contains(origTarget, event.target) ) {
 						clearTapHandlers();
 					}
 				}

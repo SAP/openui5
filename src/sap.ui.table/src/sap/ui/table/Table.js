@@ -3,16 +3,55 @@
  */
 
 // Provides control sap.ui.table.Table.
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
-		'sap/ui/core/Control', 'sap/ui/core/Element', 'sap/ui/core/IconPool',
-		'sap/ui/model/ChangeReason', 'sap/ui/model/Filter', 'sap/ui/model/SelectionModel', 'sap/ui/model/Sorter', 'sap/ui/model/BindingMode',
-		'./Column', './Row', './library', './TableUtils', './TableExtension', './TableAccExtension', './TableKeyboardExtension',
-		'./TablePointerExtension', './TableScrollExtension', './TableDragAndDropExtension', 'jquery.sap.dom', 'jquery.sap.trace', 'jquery.sap.events'],
-	function(jQuery, Device,
-		Control, Element, IconPool,
-		ChangeReason, Filter, SelectionModel, Sorter, BindingMode,
-		Column, Row, library, TableUtils, TableExtension, TableAccExtension, TableKeyboardExtension,
-		TablePointerExtension, TableScrollExtension, TableDragAndDropExtension /*, jQuerySapPlugin,jQuerySAPTrace */) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/Device',
+    'sap/ui/core/Control',
+    'sap/ui/core/Element',
+    'sap/ui/core/IconPool',
+    'sap/ui/model/ChangeReason',
+    'sap/ui/model/Filter',
+    'sap/ui/model/SelectionModel',
+    'sap/ui/model/Sorter',
+    'sap/ui/model/BindingMode',
+    './Column',
+    './Row',
+    './library',
+    './TableUtils',
+    './TableExtension',
+    './TableAccExtension',
+    './TableKeyboardExtension',
+    './TablePointerExtension',
+    './TableScrollExtension',
+    './TableDragAndDropExtension',
+    "./TableRenderer",
+    'jquery.sap.dom',
+    'jquery.sap.trace',
+    'jquery.sap.events'
+],
+	function(
+	    jQuery,
+		Device,
+		Control,
+		Element,
+		IconPool,
+		ChangeReason,
+		Filter,
+		SelectionModel,
+		Sorter,
+		BindingMode,
+		Column,
+		Row,
+		library,
+		TableUtils,
+		TableExtension,
+		TableAccExtension,
+		TableKeyboardExtension,
+		TablePointerExtension,
+		TableScrollExtension,
+		TableDragAndDropExtension /*, jQuerySapPlugin,jQuerySAPTrace */,
+		TableRenderer
+	) {
 	"use strict";
 
 
@@ -70,7 +109,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : 'auto'},
 
 			/**
-			 * Height of a row of the Table in pixel.
+			 * The height of the row content in pixel. The actual row height is also influenced by other factors, such as the border width.
+			 * If no value is set, a default height is applied based on the content density configuration.
 			 */
 			rowHeight : {type : "int", group : "Appearance", defaultValue : null},
 
@@ -801,6 +841,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// Toolbar has its own F6 stop.
 		// this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 
+		this._nDevicePixelRatio = window.devicePixelRatio;
+
 		this._bInvalid = true;
 	};
 
@@ -984,7 +1026,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._resetRowHeights = function() {
-		var iRowHeight = this.getRowHeight();
+		var iRowHeight = this._getDefaultRowHeight();
 
 		var sRowHeight = "";
 		if (iRowHeight) {
@@ -1901,6 +1943,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		return this;
 	};
 
+	Table.prototype.setMinAutoRowCount = function(iMinAutoRowCount) {
+		if (parseInt(iMinAutoRowCount, 10) < 1) {
+			jQuery.sap.log.error("The minAutoRowCount property must be greater than 0. The value has been set to 1.", this);
+			iMinAutoRowCount = 1;
+		}
+		this.setProperty("minAutoRowCount", iMinAutoRowCount);
+	};
+
 	Table.prototype.setRowHeight = function(iRowHeight) {
 		this.setProperty("rowHeight", iRowHeight);
 		this._iTableRowContentHeight = undefined;
@@ -2281,13 +2331,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			jQuery(document.body).on("webkitTransitionEnd transitionend",
 				function(oEvent) {
 					if (jQuery(oEvent.target).has($this).length > 0) {
-						this._iDefaultRowHeight = undefined;
 						this._updateTableSizes(TableUtils.RowsUpdateReason.Animation);
 					}
 				}.bind(this)
 			);
 		}
 
+		Device.resize.attachHandler(this._onWindowResize, this);
 		TableExtension.attachEvents(this);
 	};
 
@@ -2299,6 +2349,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		jQuery(document.body).off('webkitTransitionEnd transitionend');
 
 		TableUtils.deregisterResizeHandler(this);
+		Device.resize.detachHandler(this._onWindowResize, this);
 		TableExtension.detachEvents(this);
 	};
 
@@ -2613,6 +2664,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		this._updateTableSizes(TableUtils.RowsUpdateReason.Resize);
+	};
+
+	Table.prototype._onWindowResize = function() {
+		if (this._bInvalid || !this.getDomRef()) {
+			return;
+		}
+
+		if (Device.browser.chrome && window.devicePixelRatio !== this._nDevicePixelRatio) {
+			this._nDevicePixelRatio = window.devicePixelRatio;
+			this._updateTableSizes(TableUtils.RowsUpdateReason.Zoom);
+		}
 	};
 
 	Table.prototype._handleRowCountModeAuto = function(iTableAvailableSpace, sReason) {
@@ -3539,10 +3601,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._getDefaultRowHeight = function() {
-		var iRowHeight = this.getRowHeight();
+		var iRowContentHeight = this.getRowHeight();
 
-		if (iRowHeight > 0) {
-			return iRowHeight;
+		if (iRowContentHeight > 0) {
+			return iRowContentHeight + TableUtils.ROW_HORIZONTAL_FRAME_SIZE;
 		} else {
 			var sContentDensity = TableUtils.getContentDensity(this);
 			return TableUtils.DEFAULT_ROW_HEIGHT[sContentDensity];
@@ -3603,11 +3665,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._determineMinAutoRowCount = function() {
-		var iVisibleRowCount = this.getVisibleRowCount();
-		var iMinAutoRowCount = this.getMinAutoRowCount();
-		var iMinRowCount = iMinAutoRowCount || iVisibleRowCount || 5;
+		var iMinRowCount = this.getMinAutoRowCount();
 		if (this.getVisibleRowCountMode() == VisibleRowCountMode.Interactive && !this.bOutput) {
-			iMinRowCount = iVisibleRowCount || iMinAutoRowCount || 5;
+			iMinRowCount = this.getVisibleRowCount() || iMinRowCount;
 		}
 		return iMinRowCount;
 	};

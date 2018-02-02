@@ -4,12 +4,13 @@
 
 // Provides control sap.f.Avatar.
 sap.ui.define([
-	"jquery.sap.global",
-	"./library",
-	"sap/ui/core/Control",
-	"sap/ui/core/IconPool",
-	"jquery.sap.keycodes"
-], function (jQuery, library, Control, IconPool) {
+    "jquery.sap.global",
+    "./library",
+    "sap/ui/core/Control",
+    "sap/ui/core/IconPool",
+    "./AvatarRenderer",
+    "jquery.sap.keycodes"
+], function(jQuery, library, Control, IconPool, AvatarRenderer) {
 	"use strict";
 
 	// shortcut for sap.f.AvatarType
@@ -190,6 +191,28 @@ sap.ui.define([
 		}
 
 		return this.setAggregation("detailBox", oLightBox);
+	};
+
+	/**
+	 * @override
+	 */
+	Avatar.prototype.clone = function () {
+		var oClone = Control.prototype.clone.apply(this, arguments),
+			oCloneDetailBox = oClone.getDetailBox();
+
+		// Handle press event if DetailBox is available
+		if (oCloneDetailBox) {
+
+			// Detach the old event
+			oClone.detachPress(this._fnLightBoxOpen, this.getDetailBox());
+
+			// Attach new event with the cloned detail box
+			oClone._fnLightBoxOpen = oCloneDetailBox.open;
+			oClone.attachPress(oClone._fnLightBoxOpen, oCloneDetailBox);
+
+		}
+
+		return oClone;
 	};
 
 	Avatar.prototype.attachPress = function() {

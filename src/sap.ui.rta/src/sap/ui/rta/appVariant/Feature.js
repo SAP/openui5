@@ -142,8 +142,20 @@ sap.ui.define([
 				}
 			}
 		},
+		isManifestSupported: function() {
+			var oDescriptor = fnGetDescriptor();
+			return AppVariantUtils.getManifirstSupport(oDescriptor["sap.app"].id).then(function(oResult) {
+				return oResult.response;
+			}).catch(function(oError) {
+				var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_APP_VARIANT_FEATURE_FAILED", oError);
+				oErrorInfo.overviewDialog = true;
+				return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
+			});
+		},
 		/**
-		 * @param {object, string, object} oRootControl sCurrentLayer oLrepSerializer
+		 * @param {object} oRootControl
+		 * @param {string} sCurrentLayer
+		 * @param {object} oLrepSerializer
 		 * @returns {boolean} returns a boolean value
 		 * @description App variant functionality is only supported in S/4 Hana Cloud Platform & S/4 Hana (On Premise)
 		 * with 'sap-ui-xx-rta-save-as=true' (toggle feature switch) as a part of url;
@@ -160,33 +172,26 @@ sap.ui.define([
 			var oDescriptor = fnGetDescriptor();
 
 			if (oDescriptor["sap.app"] && oDescriptor["sap.app"].id) {
-				return AppVariantUtils.getManifirstSupport(oDescriptor["sap.app"].id).then(function(oResult) {
-					if (RtaUtils.getUshellContainer() && !AppVariantUtils.isStandAloneApp() && sCurrentLayer === "CUSTOMER" && oResult.response) {
-						var oUriParams = jQuery.sap.getUriParameters();
-						var aUriLayer = oUriParams.mParams["sap-ui-xx-rta-save-as"];
+				if (RtaUtils.getUshellContainer() && !AppVariantUtils.isStandAloneApp() && sCurrentLayer === "CUSTOMER") {
+					var oUriParams = jQuery.sap.getUriParameters();
+					var aUriLayer = oUriParams.mParams["sap-ui-xx-rta-save-as"];
 
-						if (aUriLayer && aUriLayer.length) {
-							var oInboundInfo;
-							if (oDescriptor["sap.app"].crossNavigation && oDescriptor["sap.app"].crossNavigation.inbounds) {
-								oInboundInfo = AppVariantUtils.getInboundInfo(oDescriptor["sap.app"].crossNavigation.inbounds);
-							} else {
-								oInboundInfo = AppVariantUtils.getInboundInfo();
-							}
+					if (aUriLayer && aUriLayer.length) {
+						var oInboundInfo;
+						if (oDescriptor["sap.app"].crossNavigation && oDescriptor["sap.app"].crossNavigation.inbounds) {
+							oInboundInfo = AppVariantUtils.getInboundInfo(oDescriptor["sap.app"].crossNavigation.inbounds);
+						} else {
+							oInboundInfo = AppVariantUtils.getInboundInfo();
+						}
 
-							if (oInboundInfo) {
-								return aUriLayer[0] === 'true';
-							}
+						if (oInboundInfo) {
+							return aUriLayer[0] === 'true';
 						}
 					}
-					return false;
-				}).catch(function(oError) {
-					var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_APP_VARIANT_FEATURE_FAILED", oError);
-					oErrorInfo.overviewDialog = true;
-					return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
-				});
+				}
 			}
 
-			return Promise.resolve(false);
+			return false;
 		},
 		// When 'Save As' triggered from RTA toolbar, we set both flags bSaveAsTriggeredFromRtaToolbar and bCopyUnsavedChanges equal to true
 		onSaveAsFromRtaToolbar : function(bSaveAsTriggeredFromRtaToolbar, bCopyUnsavedChanges) {

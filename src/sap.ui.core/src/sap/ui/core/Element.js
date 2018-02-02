@@ -349,8 +349,10 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 
 
 	/**
-	 * This triggers immediate rerendering of its parent and thus of itself and its children.<br/> As <code>sap.ui.core.Element</code> "bubbles up" the
-	 * rerender, changes to child-<code>Elements</code> will also result in immediate rerendering of the whole sub tree.
+	 * This triggers immediate rerendering of its parent and thus of itself and its children.
+	 *
+	 * As <code>sap.ui.core.Element</code> "bubbles up" the rerender, changes to
+	 * child-<code>Elements</code> will also result in immediate rerendering of the whole sub tree.
 	 * @protected
 	 */
 	Element.prototype.rerender = function() {
@@ -887,21 +889,36 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 */
 	Element.prototype.findElements = ManagedObject.prototype.findAggregatedObjects;
 
+
+	function fireLayoutDataChange(oElement) {
+		var oLayout = oElement.getParent();
+		if (oLayout) {
+			var oEvent = jQuery.Event("LayoutDataChange");
+			oEvent.srcControl = oElement;
+			oLayout._handleEvent(oEvent);
+		}
+	}
+
 	/**
 	 * Sets the {@link sap.ui.core.LayoutData} defining the layout constraints
 	 * for this control when it is used inside a layout.
 	 *
-	 * @param {sap.ui.core.LayoutData} oLayoutData
+	 * @param {sap.ui.core.LayoutData} oLayoutData which should be set
+	 * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Element.prototype.setLayoutData = function(oLayoutData) {
 		this.setAggregation("layoutData", oLayoutData, true); // No invalidate because layout data changes does not affect the control / element itself
-		var oLayout = this.getParent();
-		if (oLayout) {
-			var oEvent = jQuery.Event("LayoutDataChange");
-			oEvent.srcControl = this;
-			oLayout._handleEvent(oEvent);
-		}
+		fireLayoutDataChange(this);
+		return this;
+	};
+
+	/*
+	 * The LayoutDataChange event needs to be propagated on destruction of the aggregation.
+	 */
+	Element.prototype.destroyLayoutData = function() {
+		this.destroyAggregation("layoutData", true);
+		fireLayoutDataChange(this);
 		return this;
 	};
 
@@ -1069,7 +1086,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	Element.prototype._onContextualSettingsChanged = function () {
 		var iWidth = this._getMediaContainerWidth(),
 			bShouldUseContextualWidth = iWidth !== undefined,
-			bProviderChanged = bShouldUseContextualWidth ^ !!this._bUsingContextualWidth,// true, false or false, true (convert to bool in case of default undefined)
+			bProviderChanged = bShouldUseContextualWidth ^ !!this._bUsingContextualWidth,// true, false or false, true (convert to boolean in case of default undefined)
 			aListeners = this._aContextualWidthListeners || [];
 
 		if (bProviderChanged) {

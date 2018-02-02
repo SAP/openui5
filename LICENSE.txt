@@ -491,6 +491,48 @@ License: BSD 3-clause "New" or "Revised" License
 <ORGANIZATION> = Christian Johansen
 <YEAR> = 2010-2017
 
+Component: String startsWith Method 0.2.0
+Licensor: Mathias Bynens
+Website: https://github.com/mathiasbynens/String.prototype.startsWith
+License: MIT License
+<year> = unspecified
+<copyright holders> = Mathias Bynens <https://mathiasbynens.be/>
+
+Component: String endsWith Method 0.2.0
+Licensor: Mathias Bynens
+Website: https://github.com/mathiasbynens/String.prototype.endsWith
+License: MIT License
+<year> = unspecified
+<copyright holders> = Mathias Bynens <https://mathiasbynens.be/>
+
+Component: String includes Method 1.0.0
+Licensor: Mathias Bynens
+Website: https://github.com/mathiasbynens/String.prototype.includes
+License: MIT License
+<year> = unspecified
+<copyright holders> = Mathias Bynens <https://mathiasbynens.be/>
+
+Component: String repeat Method 0.2.0
+Licensor: Mathias Bynens
+Website: https://github.com/mathiasbynens/String.prototype.repeat
+License: MIT License
+<year> = unspecified
+<copyright holders> = Mathias Bynens <https://mathiasbynens.be/>
+
+Component: String padStart Method 1.0.1
+Licensor: Behnam Mohammadi (بهنام محمدی)
+Website: https://github.com/uxitten/polyfill
+License: MIT License
+<year> = 2017
+<copyright holders> = Behnam Mohammadi (بهنام محمدی)
+
+Component: String padEnd Method 1.0.1
+Licensor: Behnam Mohammadi (بهنام محمدی)
+Website: https://github.com/uxitten/polyfill
+License: MIT License
+<year> = 2017
+<copyright holders> = Behnam Mohammadi (بهنام محمدی)
+
 Component: SwipeView 1.0
 Licensor: Matteo Spinelli
 Website: http://github.com/cubiq/SwipeView/
