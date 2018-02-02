@@ -2,8 +2,6 @@
  * ${copyright}
  */
 
-/* global ActiveXObject:false */
-
 // Provides control sap.m.PDFViewer.
 sap.ui.define([
 		"jquery.sap.global",
@@ -11,20 +9,12 @@ sap.ui.define([
 		"sap/ui/core/Control",
 		"sap/ui/Device",
 		"sap/m/PDFViewerRenderManager",
-		"sap/m/MessageBox"
+		"sap/m/MessageBox",
+		"sap/m/PDFViewerRenderer"
 	],
-	function (jQuery, library, Control, Device, PDFViewerRenderManager, MessageBox) {
+	function (jQuery, library, Control, Device, PDFViewerRenderManager, MessageBox, PDFViewerRenderer) {
 		"use strict";
 
-		var aAllowedMimeTypes = Object.freeze([
-			"application/pdf",
-			"application/x-google-chrome-pdf"
-		]);
-
-		function isSupportedMimeType(sMimeType) {
-			var iFoundIndex = aAllowedMimeTypes.indexOf(sMimeType);
-			return iFoundIndex > -1;
-		}
 
 		/**
 		 * Definition of PDFViewer control
@@ -135,39 +125,6 @@ sap.ui.define([
 				}
 			});
 
-		/**
-		 * @returns {boolean}
-		 * @private
-		 */
-		PDFViewer._isPdfPluginEnabled = function () {
-			var bIsEnabled = true;
-			if (Device.browser.firefox) {
-				// https://bugzilla.mozilla.org/show_bug.cgi?id=1293406
-				// mimeType is missing for firefox even though it is enabled
-				return bIsEnabled;
-			}
-
-			if (Device.browser.internet_explorer) {
-				// hacky code how to recognize that pdf plugin is installed and enabled
-				try {
-					/* eslint-disable no-new */
-					new ActiveXObject("AcroPDF.PDF");
-					/* eslint-enable no-new */
-				} catch (e) {
-					bIsEnabled = false;
-				}
-
-				return bIsEnabled;
-			}
-
-			var aMimeTypes = navigator.mimeTypes;
-			bIsEnabled = aAllowedMimeTypes.some(function (sAllowedMimeType) {
-				var oMimeTypeItem = aMimeTypes.namedItem(sAllowedMimeType);
-				return oMimeTypeItem !== null;
-			});
-
-			return bIsEnabled;
-		};
 
 		/**
 		 * Lifecycle method
@@ -358,8 +315,7 @@ sap.ui.define([
 						return;
 					}
 				}
-
-				if (bContinue && isSupportedMimeType(sCurrentContentType)) {
+				if (bContinue && PDFViewerRenderer._isSupportedMimeType(sCurrentContentType)) {
 					this._fireLoadedEvent();
 				} else {
 					this._fireErrorEvent();
@@ -425,7 +381,7 @@ sap.ui.define([
 				return;
 			}
 
-			if (!isSupportedMimeType(sCurrentContentType)) {
+			if (!PDFViewerRenderer._isSupportedMimeType(sCurrentContentType)) {
 				this._fireErrorEvent();
 			}
 		};
@@ -469,7 +425,7 @@ sap.ui.define([
 		 * @private
 		 */
 		PDFViewer.prototype._shouldRenderPdfContent = function () {
-			return PDFViewer._isPdfPluginEnabled() && this._bRenderPdfContent && this.getSource() !== null;
+			return PDFViewerRenderer._isPdfPluginEnabled() && this._bRenderPdfContent && this.getSource() !== null;
 		};
 
 		/**
