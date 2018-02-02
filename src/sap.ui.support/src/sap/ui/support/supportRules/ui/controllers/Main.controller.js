@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	"sap/ui/support/supportRules/ui/controllers/BaseController",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/support/supportRules/WindowCommunicationBus",
 	"sap/ui/support/supportRules/ui/models/SharedModel",
@@ -12,10 +12,10 @@ sap.ui.define([
 	"sap/ui/support/supportRules/Storage",
 	"sap/ui/thirdparty/URI",
 	"sap/m/library"
-], function (Controller, JSONModel, CommunicationBus, SharedModel, channelNames, constants, storage, URI, mLibrary) {
+], function (BaseController, JSONModel, CommunicationBus, SharedModel, channelNames, constants, storage, URI, mLibrary) {
 	"use strict";
 
-	return Controller.extend("sap.ui.support.supportRules.ui.controllers.Main", {
+	return BaseController.extend("sap.ui.support.supportRules.ui.controllers.Main", {
 		onInit: function () {
 			this.model = SharedModel;
 			this.getView().setModel(this.model);
@@ -113,22 +113,6 @@ sap.ui.define([
 			CommunicationBus.publish(channelNames.RESIZE_FRAME, {bigger: false});
 		},
 
-		onPersistedSettingSelect: function() {
-			if (this.model.getProperty("/persistingSettings")) {
-				storage.createPersistenceCookie(constants.COOKIE_NAME, true);
-
-				this.model.getProperty("/libraries").forEach(function (lib) {
-					if (lib.title == constants.TEMP_RULESETS_NAME) {
-							storage.setRules(lib.rules);
-						}
-				});
-				this.persistExecutionScope();
-
-			} else {
-				storage.deletePersistenceCookie(constants.COOKIE_NAME);
-				this.deletePersistedData();
-			}
-		},
 		onSettings: function (oEvent) {
 			CommunicationBus.publish(channelNames.ENSURE_FRAME_OPENED);
 
@@ -227,23 +211,6 @@ sap.ui.define([
 			this.updateShowButton();
 
 			CommunicationBus.publish(channelNames.TOGGLE_FRAME_HIDDEN, this.hidden);
-		},
-
-		persistExecutionScope: function() {
-			var setting = {
-				analyzeContext: this.model.getProperty("/analyzeContext"),
-				subtreeExecutionContextId: this.model.getProperty("/subtreeExecutionContextId")
-			},
-			scopeComponent = this.model.getProperty("/executionScopeComponents");
-
-			storage.setSelectedScopeComponents(scopeComponent);
-			storage.setSelectedContext(setting);
-		},
-
-		deletePersistedData: function() {
-			storage.deletePersistenceCookie(constants.COOKIE_NAME);
-			this.model.setProperty("/persistingSettings", false);
-			storage.removeAllData();
 		},
 
 		_clearProcessIndicator: function() {
