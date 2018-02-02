@@ -69,7 +69,9 @@ function(
 			// We expect only one element to be returned with a correct navigation property
 			assert.equal(aAdditionalElements.length, 2, "then there are 1 additional Elements available");
 			assert.equal(aAdditionalElements[0].label, oGroupElement1.getLabelText(), "the element with correct navigation binding should be in the list");
+			assert.equal(aAdditionalElements[0].tooltip, oGroupElement1.getLabelText(), "the label is used as tooltip for elements with navigation binding");
 			assert.equal(aAdditionalElements[1].label, oGroupElement3.getLabelText(), "the element with absolute binding should be in the list");
+			assert.equal(aAdditionalElements[1].tooltip, oGroupElement3.getLabelText(), "the label is used as tooltip for elements with absolute binding");
 		});
 	});
 
@@ -142,7 +144,7 @@ function(
 			assert.deepEqual(aAdditionalElements[0], {
 				selected : false,
 				label : "Entity1-Property06-Unbound",
-				tooltip : "Unbound Property",
+				tooltip : "Unbound Property6",
 				type : "odata",
 				entityType : "EntityType01",
 				name : "Property06",
@@ -154,7 +156,7 @@ function(
 			assert.deepEqual(aAdditionalElements[1], {
 				selected : false,
 				label : "Entity1-Property07-ignored-unbound",
-				tooltip : "Unbound Property",
+				tooltip : "Unbound Property7",
 				type : "odata",
 				entityType : "EntityType01",
 				name : "Property07",
@@ -195,7 +197,7 @@ function(
 			assert.deepEqual(aAdditionalElements[0], {
 				selected : false,
 				label : "Entity1-Property06-Unbound",
-				tooltip : "Unbound Property",
+				tooltip : "Unbound Property6",
 				type : "odata",
 				entityType : "EntityType01",
 				name : "Property06",
@@ -221,7 +223,7 @@ function(
 			assert.deepEqual(aAdditionalElements[0], {
 				selected : false,
 				label : "Entity1-Property06-Unbound",
-				tooltip : "Unbound Property",
+				tooltip : "Unbound Property6",
 				type : "odata",
 				entityType : "EntityType01",
 				name : "Property06",
@@ -233,7 +235,7 @@ function(
 			assert.deepEqual(aAdditionalElements[1], {
 				selected : false,
 				label : "Entity1-Property07-ignored-unbound",
-				tooltip : "Unbound Property",
+				tooltip : "Unbound Property7",
 				type : "odata",
 				entityType : "EntityType01",
 				name : "Property07",
@@ -356,8 +358,10 @@ function(
 			assert.equal(aAdditionalElements[0].label, "Renamed Label", "element with custom label renamed");
 			assert.equal(aAdditionalElements[0].originalLabel, "EntityType02_Property03", "element contains original label from oData and not custom label");
 			assert.equal(aAdditionalElements[0].type, "invisible", "element made invisible");
+			assert.equal(aAdditionalElements[0].tooltip, "Entity2-EntityType02_Property03-QuickInfo (from annotation)", "quickinfo annotation is used as tooltip also for hidden elements, if available");
 			assert.equal(aAdditionalElements[1].originalLabel, "", "element contains original label blank as it was not renamed");
 			assert.equal(aAdditionalElements[1].type, "invisible", "element made invisible");
+			assert.equal(aAdditionalElements[1].tooltip, "ComplexProperty 01-QuickInfo", "sap:quickinfo is used as tooltip");
 		});
 	});
 
