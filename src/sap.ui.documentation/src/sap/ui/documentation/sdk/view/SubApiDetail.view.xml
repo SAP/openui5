@@ -167,8 +167,7 @@
 											<template:if test="{= !!${data>/constructor/parameters} }">
 												<m:Table items="{ path: '/constructor/parameters'}"
 														showSeparators="Inner"
-														fixedLayout="true"
-														visible="{= !!${/constructor/parameters} }">
+														fixedLayout="true">
 													<m:columns>
 														<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
 														<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
@@ -571,7 +570,6 @@
 					<template:if test="{data>/hasSpecialSettings}">
 						<ObjectPageSection id="specialsettings"
 										   title="Special Settings"
-										   visible="{/hasSpecialSettings}"
 										   titleUppercase="false">
 							<subSections>
 								<custom:ObjectPageSubSection>
