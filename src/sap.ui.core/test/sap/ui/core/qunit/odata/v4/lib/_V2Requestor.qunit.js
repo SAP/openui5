@@ -1151,6 +1151,10 @@ sap.ui.require([
 		iCallCount : 2,
 		mHeaders : {},
 		bVersionOptional : false
+	}, {
+		iCallCount : 1,
+		mHeaders : { "DataServiceVersion" : "1.0" },
+		bVersionOptional : true
 	}].forEach(function (oFixture, i) {
 		QUnit.test("doCheckVersionHeader, success cases - " + i, function (assert) {
 			var oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0"),
@@ -1189,8 +1193,8 @@ sap.ui.require([
 			assert.throws(function () {
 				// code under test
 				oRequestor.doCheckVersionHeader(fnGetHeader, "Foo('42')/Bar");
-			}, new Error("Expected 'DataServiceVersion' header with value '2.0' but received "
-				+ oFixture.sError));
+			}, new Error("Expected 'DataServiceVersion' header with value '1.0' or '2.0' but "
+				+ "received " + oFixture.sError));
 
 			assert.strictEqual(fnGetHeader.calledWithExactly("DataServiceVersion"), true);
 			if (oFixture.iCallCount === 2) {
