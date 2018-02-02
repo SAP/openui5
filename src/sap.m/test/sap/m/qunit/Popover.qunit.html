@@ -1448,6 +1448,10 @@
 
 		QUnit.module("Internal methods");
 
+		QUnit.test("_getAnimationDuration", function (assert) {
+			assert.strictEqual(sap.m.Popover.prototype._getAnimationDuration(), 300, "Default Duration should be 300");
+		});
+
 		QUnit.test("_applyPosition should be called with two parameters from check docking", function (assert){
 			var oPopover = new sap.m.Popover(),
 					oSpy = sinon.spy(oPopover.oPopup, "_applyPosition");
