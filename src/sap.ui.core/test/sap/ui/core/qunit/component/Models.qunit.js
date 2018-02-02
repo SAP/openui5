@@ -976,7 +976,6 @@ sap.ui.define([
 
 				mCacheTokens.dataSources["/path/to/odata/service"] = "1234567890";
 
-				debugger;
 				UIComponent.prototype._initComponentModels.call(this, mModels, mDataSources, mCacheTokens);
 
 			};
