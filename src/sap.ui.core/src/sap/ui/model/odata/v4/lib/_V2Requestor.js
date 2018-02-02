@@ -388,8 +388,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks whether the "DataServiceVersion" header is not set or has the value "2.0" otherwise
-	 * an error is thrown.
+	 * Checks whether the "DataServiceVersion" header is not set or has the value "1.0" or "2.0"
+	 * otherwise an error is thrown.
 	 *
 	 * @param {function} fnGetHeader
 	 *   A callback function to get a header attribute for a given header name with case-insensitive
@@ -399,7 +399,8 @@ sap.ui.define([
 	 * @param {boolean} [bVersionOptional=false]
 	 *   Indicates whether the OData service version is optional, which is the case for all OData V2
 	 *   responses. So this parameter is ignored.
-	 * @throws {Error} If the "DataServiceVersion" header is neither "2.0" nor not set at all
+	 * @throws {Error} If the "DataServiceVersion" header is neither "1.0" nor "2.0" nor not set at
+	 *   all
 	 */
 	_V2Requestor.prototype.doCheckVersionHeader = function (fnGetHeader, sResourcePath,
 			bVersionOptional) {
@@ -407,15 +408,17 @@ sap.ui.define([
 			vODataVersion = !sDataServiceVersion && fnGetHeader("OData-Version");
 
 		if (vODataVersion) {
-			throw new Error("Expected 'DataServiceVersion' header with value '2.0' but received"
-				+ " 'OData-Version' header with value '" + vODataVersion + "' in response for "
-				+ this.sServiceUrl + sResourcePath);
+			throw new Error("Expected 'DataServiceVersion' header with value '1.0' or '2.0' but "
+				+ "received 'OData-Version' header with value '" + vODataVersion
+				+ "' in response for " + this.sServiceUrl + sResourcePath);
 		}
-		if (sDataServiceVersion === "2.0" || !sDataServiceVersion) {
+		if (sDataServiceVersion === "1.0" || sDataServiceVersion === "2.0"
+				|| !sDataServiceVersion) {
 			return;
 		}
-		throw new Error("Expected 'DataServiceVersion' header with value '2.0' but received value '"
-			+ sDataServiceVersion + "' in response for " + this.sServiceUrl + sResourcePath);
+		throw new Error("Expected 'DataServiceVersion' header with value '1.0' or '2.0' but "
+			+ "received value '" + sDataServiceVersion + "' in response for " + this.sServiceUrl
+			+ sResourcePath);
 	};
 
 	/**
@@ -628,6 +631,72 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the resource path relative to the service URL and adds query options in case of
+	 * a bound operation (V2: "sap:action-for"). Operation parameters are moved to query options,
+	 * undeclared parameters are removed.
+	 *
+	 * @param {string} sPath
+	 *   The absolute binding path to the bound operation or operation import, e.g.
+	 *   "/Entity('0815')/bound.Operation(...)" or "/OperationImport(...)"
+	 * @param {object} oOperationMetadata
+	 *   The operation's metadata
+	 * @param {object} mParameters
+	 *   A copy of the map of key-values pairs representing the operation's actual parameters
+	 * @param {object} mQueryOptions
+	 *   A copy of the map of key-value pairs representing the query string, the value in this pair
+	 *   has to be a string or an array of strings
+	 * @param {function|object} [vEntity]
+	 *   The existing entity data (or a function which may be called to access it) in case of a
+	 *   bound operation (V2: "sap:action-for")
+	 * @returns {string}
+	 *   The new path without leading slash and ellipsis
+	 * @throws {Error}
+	 *   If a collection-valued operation parameter is encountered
+	 *
+	 * @private
+	 */
+	_V2Requestor.prototype.getPathAndAddQueryOptions = function (sPath, oOperationMetadata,
+		mParameters, mQueryOptions, vEntity) {
+		var sName,
+			oTypeMetadata,
+			that = this;
+
+		sPath = sPath.slice(1, -5);
+
+		if (oOperationMetadata.$IsBound) {
+			sPath = sPath.slice(sPath.lastIndexOf(".") + 1);
+			if (typeof vEntity === "function") {
+				vEntity = vEntity();
+			}
+			// Note: $metadata is already available because oOperationMetadata has been read!
+			oTypeMetadata = this.getTypeForName(oOperationMetadata.$Parameter[0].$Type);
+			oTypeMetadata.$Key.forEach(function (sName) {
+				mQueryOptions[sName]
+					= that.formatPropertyAsLiteral(vEntity[sName], oTypeMetadata[sName]);
+			});
+		}
+
+		if (oOperationMetadata.$Parameter) {
+			oOperationMetadata.$Parameter.forEach(function (oParameter) {
+				sName = oParameter.$Name;
+				if (sName in mParameters) {
+					if (oParameter.$IsCollection) {
+						throw new Error("Unsupported collection-valued parameter: " + sName);
+					}
+					mQueryOptions[sName]
+						= that.formatPropertyAsLiteral(mParameters[sName], oParameter);
+					delete mParameters[sName];
+				}
+			});
+		}
+		for (sName in mParameters) {
+			delete mParameters[sName];
+		}
+
+		return sPath;
+	};
+
+	/**
 	 * Returns the type with the given qualified name.
 	 *
 	 * @param {string} sName The qualified type name
@@ -643,6 +712,31 @@ sap.ui.define([
 				this.oModelInterface.fnFetchMetadata("/" + sName).getResult();
 		}
 		return oType;
+	};
+
+	/**
+	 * Tells whether an empty object in the request body is optional for (parameterless) actions.
+	 * For OData V2, this is true in the sense that the request body should be empty and parameters
+	 * are all part of the resource path.
+	 *
+	 * @returns {boolean} <code>true</code>
+	 *
+	 * @private
+	 */
+	_V2Requestor.prototype.isActionBodyOptional = function () {
+		return true;
+	};
+
+	/**
+	 * Tells whether change sets are optional. For OData V2, this is false, i.e. even single change
+	 * requests must be wrapped within a change set.
+	 *
+	 * @returns {boolean} <code>false</code>
+	 *
+	 * @private
+	 */
+	_V2Requestor.prototype.isChangeSetOptional = function () {
+		return false;
 	};
 
 	/**

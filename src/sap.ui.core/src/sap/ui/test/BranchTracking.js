@@ -256,15 +256,50 @@
 		}
 	}
 
+	/**
+	 * Listens on QUnit and delivers a function that returns the tested modules.
+	 *
+	 * @returns {function} A function that delivers the tested modules or <code>undefined</code> if
+	 *   all modules have been tested
+	 */
+	function listenOnQUnit() {
+		var mModules = {},
+			aTestedModules = [],
+			iTotalModules;
+
+		QUnit.begin(function (oDetails) {
+			iTotalModules = oDetails.modules.length;
+			oDetails.modules.forEach(function (oModule) {
+				mModules[oModule.name] = oModule;
+			});
+		});
+
+		QUnit.moduleStart(function (oModule) {
+			// Why, oh why, is the module name different here?
+			aTestedModules = aTestedModules.concat(
+				Object.keys(mModules).filter(function (sModuleName) {
+					return mModules[sModuleName].tests === oModule.tests;
+				})
+			);
+		});
+
+		return function () {
+			return aTestedModules.length < iTotalModules ? aTestedModules : undefined;
+		};
+	}
+
 	if (window.blanket) {
 		window._$blanket = {}; // maps a file's name to its statistics array
 		blanket.$b = branchTracking;
 		blanket.$l = lineTracking;
 		blanket.instrument = instrument; // self-made "plug-in" ;-)
 
+		var fnGetTestedModules = listenOnQUnit();
+
 		// Note: instrument() MUST have been replaced before!
 		sap.ui.require(["sap/ui/test/BlanketReporter"], function (BlanketReporter) {
-			blanket.options("reporter", BlanketReporter.bind(null, getScriptTag()));
+			blanket.options("reporter",
+				BlanketReporter.bind(null, getScriptTag(), fnGetTestedModules));
 		});
 	}
 
@@ -354,25 +389,43 @@
 
 		mHooks = mHooks || {};
 		fnAfterEach = mHooks.afterEach || function () {};
-		mHooks.afterEach = function (assert) {
-			fnAfterEach.apply(this, arguments);
-			checkUncaught(assert.ok.bind(assert, false));
-		};
 		fnBeforeEach = mHooks.beforeEach || function () {};
+
+		mHooks.afterEach = function (assert) {
+			var fnCheckUncaught = checkUncaught.bind(null, assert.ok.bind(assert, false));
+
+			function error(oError) {
+				fnCheckUncaught();
+				throw oError;
+			}
+
+			function success(vResult) {
+				if (vResult && typeof vResult.then === "function") {
+					return vResult.then(success, error);
+				}
+				fnCheckUncaught();
+				return vResult;
+			}
+
+			try {
+				return success(fnAfterEach.apply(this, arguments));
+			} catch (oError) {
+				error(oError);
+			}
+		};
+
 		mHooks.beforeEach = function () {
 			checkUncaught(); // cleans up what happened before
-			fnBeforeEach.apply(this, arguments);
+			return fnBeforeEach.apply(this, arguments);
 		};
 
 		fnModule(sTitle, mHooks);
 	}
 
-	if (QUnit && QUnit.module !== module && jQuery && jQuery.sap
-			// Note: we rely on jQuery.sap.log as well!
-			&& jQuery.sap.getUriParameters().get("uncaughtInSyncPromise")) {
+	if (QUnit && QUnit.module !== module) {
 		fnModule = QUnit.module.bind(QUnit);
 		QUnit.module = module;
-		sap.ui.require(["sap/ui/base/SyncPromise"], function (SyncPromise) {
+		sap.ui.require(["sap/ui/base/SyncPromise", "jquery.sap.global"], function (SyncPromise) {
 			bDebug = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG, sClassName);
 			SyncPromise.listener = listener;
 		});

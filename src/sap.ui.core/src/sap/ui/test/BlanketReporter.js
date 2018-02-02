@@ -64,9 +64,8 @@ sap.ui.define([
 		filterThreshold : function (bFilter) {
 			var oBinding,
 				oFilter = null,
-				oView = this.getView(),
-				iThreshold = oView.getModel().getProperty("/threshold"),
-				oTable = oView.byId("Files");
+				oTable = this.byId("Files"),
+				iThreshold = this.getView().getModel().getProperty("/threshold");
 
 			if (bFilter) {
 				oFilter = new Filter({
@@ -92,12 +91,11 @@ sap.ui.define([
 		onRowSelection : function (/*oEvent*/) { // Note: do not use event because of "Show Hits"
 			var oContext,
 				sFile,
+				oHtml = this.byId("blanket-source"),
 				iLinesOfContext,
+				oModel = this.getView().getModel(),
 				aStatistics,
-				oView = this.getView(),
-				oHtml = oView.byId("blanket-source"),
-				oModel = oView.getModel(),
-				oTable = oView.byId("Files"),
+				oTable = this.byId("Files"),
 				iSelectedRow = oTable.getSelectedIndex() - oTable.getFirstVisibleRow();
 
 			if (iSelectedRow >= 0) {
@@ -317,11 +315,11 @@ sap.ui.define([
 	 *   Lines of context to show
 	 * @param {number} iThreshold
 	 *   Threshold for KPIs as a percentage
-	 * @param {string} [sSelectedFile]
-	 *   The selected file from "modules" in the query string
+	 * @param {string[]} [aTestedFiles]
+	 *   The tested files (derived from the module names) or undefined if all tests were run
 	 * @returns {JSONModel} The JSON model
 	 */
-	function createModel(oCoverageData, iLinesOfContext, iThreshold, sSelectedFile) {
+	function createModel(oCoverageData, iLinesOfContext, iThreshold, aTestedFiles) {
 		var oTotal = {
 				files : [],
 				lines : {
@@ -384,8 +382,10 @@ sap.ui.define([
 			oTotal.branches.missed += oFileSummary.branches.missed;
 		}
 
-		if (sSelectedFile && (sSelectedFile in oCoverageData.files)) {
-			summarize(sSelectedFile);
+		if (aTestedFiles) {
+			aTestedFiles.filter(function (sFile) {
+				return sFile in oCoverageData.files;
+			}).forEach(summarize);
 			oTotal.filterThreshold = false;
 		} else {
 			Object.keys(oCoverageData.files).sort().forEach(summarize);
@@ -427,20 +427,20 @@ sap.ui.define([
 		document.head.appendChild(oStyle);
 	}
 
-	function selectedFile() {
-		var sModule = jQuery.sap.getUriParameters().get("module");
-		return sModule && jQuery.sap.getResourceName(sModule);
+	function convertToFile(sModule) {
+		return jQuery.sap.getResourceName(sModule);
 	}
 
-	return function (oScript, oCoverageData) {
-		var iLinesOfContext, iThreshold;
+	return function (oScript, fnGetTestedModules, oCoverageData) {
+		var iLinesOfContext, aTestedModules, iThreshold;
 
 		// Sometimes, when refreshing, this function is called twice. Ignore the 2nd call.
 		if (!document.getElementById("blanket-view")) {
 			iLinesOfContext = getAttributeAsInteger(oScript, "data-lines-of-context", 3);
 			iThreshold = Math.min(getAttributeAsInteger(oScript, "data-threshold", 0), 100);
+			aTestedModules = fnGetTestedModules();
 			placeView(createView(createModel(oCoverageData, iLinesOfContext, iThreshold,
-				selectedFile())));
+				aTestedModules && aTestedModules.map(convertToFile))));
 		}
 	};
 }, /* bExport= */ false);

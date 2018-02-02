@@ -17,7 +17,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.analytics.odata4analytics", {
 		afterEach : function (assert) {
-			this.oModel.getODataModel().destroy();
+			if (this.oModel) {
+				this.oModel.getODataModel().destroy();
+			}
 			// this would ruin AnalyticalTable.qunit.js in testsuite4analytics
 //			XMLHttpRequest.restore();
 			this.oLogMock.verify();

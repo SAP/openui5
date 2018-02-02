@@ -63,10 +63,10 @@ sap.ui.define([
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#refresh as #refresh
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#resetChanges as #resetChanges
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#resume as #resume
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#suspend as #suspend
 	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#changeParameters as #changeParameters
 	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#initialize as #initialize
+	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#resume as #resume
+	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#suspend as #suspend
 	 */
 	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
 			constructor : function (oModel, sPath, oContext, vSorters, vFilters, mParameters) {
@@ -304,7 +304,9 @@ sap.ui.define([
 	 * @param {object} [oInitialData={}]
 	 *   The initial data for the created entity
 	 * @returns {sap.ui.model.odata.v4.Context}
-	 *   The context object for the created entity
+	 *   The context object for the created entity; its method
+	 *   {@link sap.ui.model.odata.v4.Context#created} returns a promise that is resolved when the
+	 *   creation is finished
 	 * @throws {Error}
 	 *   If a relative binding is not yet resolved or if the binding already contains an entity
 	 *   created via this function
@@ -340,9 +342,19 @@ sap.ui.define([
 				oContext.destroy();
 				delete that.aContexts[-1];
 				that._fireChange({reason : ChangeReason.Remove});
-			}).then(function () {
-				that.iMaxLength += 1;
-			});
+			}
+		).then(function () {
+			var sGroupId;
+
+			that.iMaxLength += 1;
+			if (that.isRefreshable()) {
+				sGroupId = that.getGroupId();
+				return that.refreshSingle(oContext,
+					that.oModel.isDirectGroup(sGroupId) || that.oModel.isAutoGroup(sGroupId)
+						? sGroupId
+						: "$auto");
+			}
+		});
 		oContext = Context.create(this.oModel, this, sResolvedPath + "/-1", -1, oCreatePromise);
 
 		this.aContexts[-1] = oContext;
@@ -1290,6 +1302,9 @@ sap.ui.define([
 	 *   The context object for the entity to be refreshed
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise which resolves with <code>undefined</code> when the entity is updated in the
+	 *   cache.
 	 * @throws {Error}
 	 *   For invalid group IDs, if the binding is not refreshable or has pending changes.
 	 *
@@ -1308,8 +1323,9 @@ sap.ui.define([
 			throw new Error("Cannot refresh entity due to pending changes: " + oContext);
 		}
 
-		this.oCachePromise.then(function (oCache) {
-			var bDataRequested = false;
+		return this.oCachePromise.then(function (oCache) {
+			var bDataRequested = false,
+				oPromise;
 
 			function fireDataReceived (oData) {
 				if (bDataRequested) {
@@ -1318,7 +1334,7 @@ sap.ui.define([
 			}
 
 			sGroupId = sGroupId || that.getGroupId();
-			oCache.refreshSingle(sGroupId, oContext.iIndex, function () {
+			oPromise = oCache.refreshSingle(sGroupId, oContext.iIndex, function () {
 					bDataRequested = true;
 					that.fireDataRequested();
 				}
@@ -1339,6 +1355,8 @@ sap.ui.define([
 				// with bCheckUpdate = false because it is done after data is received
 				oDependentBinding.refreshInternal(sGroupId, false);
 			});
+
+			return oPromise;
 		});
 	};
 

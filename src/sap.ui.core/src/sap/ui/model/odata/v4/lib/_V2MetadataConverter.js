@@ -9,7 +9,7 @@ sap.ui.define([
 ], function (jQuery, _Helper, _MetadataConverter) {
 	"use strict";
 
-	var sModuleName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
+	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
 
 		// namespaces
 		sEdmxNamespace = "http://schemas.microsoft.com/ado/2007/06/edmx",
@@ -371,6 +371,7 @@ sap.ui.define([
 		this.associations = {}; // maps qualified name -> association
 		this.associationSet = null; // the current associationSet
 		this.associationSets = []; // list of associationSets
+		this.aBoundOperations = []; // list of bound operations
 		this.constraintRole = null; // the current Principal/Dependent
 		// maps annotatable path to a map of converted V2 annotations for current Schema
 		this.convertedV2Annotations = {};
@@ -453,7 +454,7 @@ sap.ui.define([
 						"Use either 'sap:" + sConflictingV2Annotation + "' or 'sap:"
 							+ sConflictingV2Annotation + "-path'"
 							+ " at entity set '" + oAnnotatable.sPath + "'",
-						sModuleName);
+						sClassName);
 				} else {
 					oAnnotatable.convert(sName, {
 						$Path : sValue
@@ -601,7 +602,7 @@ sap.ui.define([
 								aResult.push(oV2toV4ComplexSemantic.v4EnumType + "/" + sTargetType);
 							} else {
 								jQuery.sap.log.warning("Unsupported semantic type: " + sType,
-									undefined, sModuleName);
+									undefined, sClassName);
 							}
 						});
 						if (aResult.length > 0) {
@@ -629,6 +630,7 @@ sap.ui.define([
 
 		this.setDefaultEntityContainer();
 		this.updateNavigationPropertiesAndCreateBindings();
+		this.processBoundOperations();
 		this.processUnitConversion();
 	};
 
@@ -918,7 +920,8 @@ sap.ui.define([
 	 * @param {Element} oElement The element
 	 */
 	V2MetadataConverter.prototype.processFunctionImport = function (oElement) {
-		var sHttpMethod = oElement.getAttributeNS(sMicrosoftNamespace, "HttpMethod"),
+		var sAnnotationActionFor,
+			sHttpMethod = oElement.getAttributeNS(sMicrosoftNamespace, "HttpMethod"),
 			sKind = sHttpMethod === "POST" ? "Action" : "Function",
 			oFunction = {
 				$kind : sKind
@@ -939,14 +942,29 @@ sap.ui.define([
 			oFunction.$ReturnType = oReturnType = {};
 			this.processTypedCollection(sReturnType, oReturnType);
 		}
-		if (this.consumeSapAnnotation("action-for")) {
-			jQuery.sap.log.warning("Unsupported 'sap:action-for' at FunctionImport '" + sName
-				+ "', removing this FunctionImport", undefined, sModuleName);
+		if (sHttpMethod !== "GET" && sHttpMethod !== "POST") {
+			jQuery.sap.log.warning("Unsupported HttpMethod at FunctionImport '" + sName
+				+ "', removing this FunctionImport", undefined, sClassName);
+			this.consumeSapAnnotation("action-for");
 			this.consumeSapAnnotation("applicable-path");
 		} else {
-			// add Function and FunctionImport to the result
-			this.entityContainer[sName] = oFunctionImport;
+			// add Function to the result
 			this.result[sQualifiedName] = [oFunction];
+
+			sAnnotationActionFor = this.consumeSapAnnotation("action-for");
+			if (sAnnotationActionFor) {
+				oFunction.$IsBound = true;
+				oFunction.$Parameter = [{
+					"$Name" : null,
+					"$Nullable" : false,
+					"$Type" : this.resolveAlias(sAnnotationActionFor)
+				}];
+				this.aBoundOperations.push(oFunction);
+				this.consumeSapAnnotation("applicable-path");
+			} else {
+				// add FunctionImport to the result
+				this.entityContainer[sName] = oFunctionImport;
+			}
 		}
 		// Remember the current function (even if it has not been added to the result), so that
 		// processParameter adds to this. This avoids that parameters belonging to a removed
@@ -1133,7 +1151,7 @@ sap.ui.define([
 			if (sCreatablePath) {
 				jQuery.sap.log.warning("Inconsistent metadata in '" + this.url + "'",
 					"Use either 'sap:creatable' or 'sap:creatable-path' at navigation property '"
-					+ this.oAnnotatable.sPath + "'", sModuleName);
+					+ this.oAnnotatable.sPath + "'", sClassName);
 			} else if (sCreatable === "true") {
 				oNavigationPropertyPath = null;
 			}
@@ -1196,7 +1214,7 @@ sap.ui.define([
 			} else {
 				jQuery.sap.log.warning("Unsupported SAP annotation at a complex type in '"
 					+ that.url + "'", "sap:" + sAnnotation + " at property '"
-					+ oAnnotatable.sPath + "'", sModuleName);
+					+ oAnnotatable.sPath + "'", sClassName);
 			}
 		}
 
@@ -1233,7 +1251,7 @@ sap.ui.define([
 				default:
 					jQuery.sap.log.warning("Inconsistent metadata in '" + this.url + "'",
 						"Unsupported sap:filter-restriction=\"" + sFilterRestriction
-						+ "\" at property '" + oAnnotatable.sPath + "'", sModuleName);
+						+ "\" at property '" + oAnnotatable.sPath + "'", sClassName);
 			}
 			if (sEnumMember) {
 				if (this.type.$kind === "EntityType") {
@@ -1251,7 +1269,7 @@ sap.ui.define([
 				} else {
 					jQuery.sap.log.warning("Unsupported SAP annotation at a complex type in '"
 						+ this.url + "'", "sap:filter-restriction at property '"
-						+ oAnnotatable.sPath + "'", sModuleName);
+						+ oAnnotatable.sPath + "'", sClassName);
 				}
 			}
 		}
@@ -1263,6 +1281,26 @@ sap.ui.define([
 			pushPropertyPath("@Org.OData.Capabilities.V1.SortRestrictions",
 				"NonSortableProperties", "sortable");
 		}
+	};
+
+	/**
+	 * Post-processing of all bound operations: key properties are removed from parameters.
+	 */
+	V2MetadataConverter.prototype.processBoundOperations = function () {
+		var that = this;
+
+		this.aBoundOperations.forEach(function (oOperation) {
+			var oEntityType = that.result[oOperation.$Parameter[0].$Type];
+
+			oEntityType.$Key.forEach(function (sKeyName) {
+				oOperation.$Parameter.some(function (oParameter, i) {
+					if (oParameter.$Name === sKeyName) {
+						oOperation.$Parameter.splice(i, 1);
+						return true;
+					}
+				});
+			});
+		});
 	};
 
 	/**
@@ -1292,7 +1330,7 @@ sap.ui.define([
 				oUnitProperty = oType[aUnitPathSegments[i]];
 				if (!oUnitProperty) {
 					jQuery.sap.log.warning("Path '" + sUnitPath
-						+ "' for sap:unit cannot be resolved", sPropertyPath, sModuleName);
+						+ "' for sap:unit cannot be resolved", sPropertyPath, sClassName);
 					return;
 				}
 				if (i < n - 1) {
@@ -1304,7 +1342,7 @@ sap.ui.define([
 			if (!sUnitSemantics) {
 				jQuery.sap.log.warning("Unsupported sap:semantics at sap:unit='" + sUnitPath
 					+ "'; expected 'currency-code' or 'unit-of-measure'", sPropertyPath,
-					sModuleName);
+					sClassName);
 				return;
 			}
 
@@ -1456,7 +1494,7 @@ sap.ui.define([
 	V2MetadataConverter.prototype.warnUnsupportedSapAnnotations = function (oElement) {
 		Object.keys(this.mSapAnnotations).forEach(function (sName) {
 			jQuery.sap.log.warning("Unsupported annotation 'sap:" + sName + "'",
-				serializeSingleElement(oElement), sModuleName);
+				serializeSingleElement(oElement), sClassName);
 		});
 	};
 

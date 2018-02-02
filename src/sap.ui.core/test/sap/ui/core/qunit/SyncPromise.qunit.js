@@ -57,16 +57,18 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.base.SyncPromise", {
-		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
-			this.oLogMock.expects("warning").never();
-			this.oLogMock.expects("error").never();
+		before : function () {
 			// save optional listener
 			this.listener = SyncPromise.listener;
 		},
 
-		afterEach : function () {
-			this.oLogMock.verify();
+		beforeEach : function () {
+			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock.expects("warning").never();
+			this.oLogMock.expects("error").never();
+		},
+
+		after : function () {
 			// restore optional listener
 			SyncPromise.listener = this.listener;
 		}
@@ -768,6 +770,34 @@ sap.ui.require([
 
 		// code under test
 		SyncPromise.resolve().then(function () {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("caught: a posteriori", function (assert) {
+		var oSyncPromise;
+
+		SyncPromise.listener = function () {};
+		oSyncPromise = SyncPromise.reject();
+		this.mock(SyncPromise).expects("listener").withExactArgs(oSyncPromise, true);
+
+		// code under test
+		oSyncPromise.caught();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("caught: a priori", function (assert) {
+		var fnReject,
+			oSyncPromise = new SyncPromise(function (resolve, reject) {
+				fnReject = reject;
+			});
+
+		SyncPromise.listener = function () {};
+		this.mock(SyncPromise).expects("listener").never();
+
+		// code under test
+		oSyncPromise.caught();
+
+		fnReject();
 	});
 
 	//*********************************************************************************************

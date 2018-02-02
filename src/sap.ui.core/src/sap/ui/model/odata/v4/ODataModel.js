@@ -85,7 +85,7 @@ sap.ui.define([
 	 *   Note: The root $metadata document and annotation files are just requested but not yet
 	 *   converted from XML to JSON unless really needed.
 	 *   Supported since 1.53.0
-	 *   <b>BEWARE:</b> Default value will change to <code>true</code> for 1.55.0!
+	 *   <b>BEWARE:</b> The default value may change to <code>true</code> in later releases.
 	 * @param {string} [mParameters.groupId="$auto"]
 	 *   Controls the model's use of batch requests: '$auto' bundles requests from the model in a
 	 *   batch request which is sent automatically before rendering; '$direct' sends requests
@@ -235,8 +235,7 @@ sap.ui.define([
 						_MetadataRequestor.create(mHeaders, sODataVersion, this.mUriParameters),
 						this.sServiceUrl + "$metadata", mParameters.annotationURI, this,
 						mParameters.supportReferences);
-					this.oRequestor = _Requestor.create(this.sServiceUrl, mHeaders,
-						this.mUriParameters, {
+					this.oRequestor = _Requestor.create(this.sServiceUrl, {
 							fnFetchEntityContainer :
 								this.oMetaModel.fetchEntityContainer.bind(this.oMetaModel),
 							fnFetchMetadata : function (sPath) {
@@ -250,7 +249,7 @@ sap.ui.define([
 										that._submitBatch.bind(that, sGroupId));
 								}
 							}
-						}, sODataVersion);
+						}, mHeaders, this.mUriParameters, sODataVersion);
 					if (mParameters.earlyRequests) {
 						this.oMetaModel.fetchEntityContainer(true);
 						this.initializeSecurityToken();
@@ -715,15 +714,23 @@ sap.ui.define([
 	 * a '/'; a trailing '/' is allowed here, see
 	 * {@link sap.ui.model.odata.v4.ODataMetaModel#requestObject} for the effect it has.
 	 *
+	 * A binding path may also point to an operation advertisement which is addressed with
+	 * '#<namespace>.<operation>' and is part of the data payload, not the metadata. The metadata
+	 * of an operation can be addressed via '##' as described above.
+	 *
 	 * Examples:
 	 * <ul>
-	 * <li><code>/Products('42')/Name#@com.sap.vocabularies.Common.v1.Label</code>
+	 * <li><code>/Products('42')/Name##@com.sap.vocabularies.Common.v1.Label</code>
 	 *   points to the "Label" annotation of the "Name" property of the entity set "Products".
-	 * <li><code>/#Products/Name@com.sap.vocabularies.Common.v1.Label</code> has no data path part
+	 * <li><code>/##Products/Name@com.sap.vocabularies.Common.v1.Label</code> has no data path part
 	 *   and thus starts at the metadata root. It also points to the "Label" annotation of the
 	 *   "Name" property of the entity set "Products".
-	 * <li><code>/Products#/</code>
+	 * <li><code>/Products##/</code>
 	 *   points to the entity type (note the trailing '/') of the entity set "Products".
+	 * <li><code>/EMPLOYEES('1')/##com.sap.Action</code>
+	 *   points to the metadata of an action bound to the entity set "EMPLOYEES".
+	 * <li><code>/EMPLOYEES('1')/#com.sap.Action</code>
+	 *   does not point to metadata, but to the action advertisement.
 	 * </ul>
 	 *
 	 * @param {string} sPath
@@ -747,6 +754,19 @@ sap.ui.define([
 			sResolvedPath,
 			iSeparator;
 
+		/**
+		 * Checks if the given meta path contains a dot in its first segment.
+		 *
+		 * @param {string} sMetaPath The meta path
+		 * @returns {boolean} Whether the given meta path contains a dot in its first segment
+		 */
+		function startsWithQualifiedName(sMetaPath) {
+			var iDotPos = sMetaPath.indexOf("."),
+				iSlashPos = sMetaPath.indexOf("/");
+
+			return iDotPos > 0 && (iSlashPos < 0 || iDotPos < iSlashPos);
+		}
+
 		if (arguments.length > 2) {
 			throw new Error("Only the parameters sPath and oContext are supported");
 		}
@@ -766,6 +786,9 @@ sap.ui.define([
 			sMetaPath = sResolvedPath.slice(iSeparator + 1);
 			if (sMetaPath[0] === "#") {
 				sMetaPath = sMetaPath.slice(1);
+			} else if (sDataPath.length > 1 && sMetaPath[0] !== "@"
+					&& startsWithQualifiedName(sMetaPath)) { // action advertisement
+				return new BaseContext(this, sResolvedPath);
 			}
 			if (sMetaPath[0] === "/") {
 				sMetaPath = "." + sMetaPath;

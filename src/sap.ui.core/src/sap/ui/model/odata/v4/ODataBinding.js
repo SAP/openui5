@@ -8,7 +8,7 @@ sap.ui.define([
 ], function (SyncPromise, _Helper) {
 	"use strict";
 
-	var sModuleName = "sap.ui.model.odata.v4.ODataBinding";
+	var sClassName = "sap.ui.model.odata.v4.ODataBinding";
 
 	/**
 	 * A mixin for all OData V4 bindings.
@@ -89,7 +89,7 @@ sap.ui.define([
 		oCachePromise["catch"](function (oError) {
 			//Note: this may also happen if the promise to read data for the canonical path's
 			// key predicate is rejected with a canceled error
-			that.oModel.reportError("Failed to create cache for binding " + that, sModuleName,
+			that.oModel.reportError("Failed to create cache for binding " + that, sClassName,
 				oError);
 		});
 		this.oCachePromise = oCachePromise;
@@ -280,7 +280,7 @@ sap.ui.define([
 		var oPromise = this.withCache(function (oCache, sCachePath) {
 				return oCache.hasPendingChangesForPath(sCachePath);
 			}, sPath).catch(function (oError) {
-				jQuery.sap.log.error("Error in hasPendingChangesForPath", oError, sModuleName);
+				jQuery.sap.log.error("Error in hasPendingChangesForPath", oError, sClassName);
 				return false;
 			});
 
@@ -349,7 +349,8 @@ sap.ui.define([
 
 	/**
 	 * Refreshes the binding. Prompts the model to retrieve data from the server using the given
-	 * group ID and notifies the control that new data is available.
+	 * group ID and notifies the control that new data is available. The method does nothing for a
+	 * suspended binding.
 	 *
 	 * Refresh is supported for bindings which are not relative to a
 	 * {@link sap.ui.model.odata.v4.Context}.
@@ -376,6 +377,8 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
+	 * @see sap.ui.model.odata.v4.ODataContextBinding#suspend
+	 * @see sap.ui.model.odata.v4.ODataListBinding#suspend
 	 * @see #hasPendingChanges
 	 * @see #resetChanges
 	 * @since 1.37.0
@@ -389,6 +392,9 @@ sap.ui.define([
 			throw new Error("Cannot refresh due to pending changes");
 		}
 		this.oModel.checkGroupId(sGroupId);
+		if (this.bSuspended) {
+			return;
+		}
 
 		// The actual refresh is specific to the binding and is implemented in each binding class.
 		this.refreshInternal(sGroupId, true);
@@ -445,7 +451,7 @@ sap.ui.define([
 			}, sPath);
 
 		oPromise.catch(function (oError) {
-			jQuery.sap.log.error("Error in resetChangesForPath", oError, sModuleName);
+			jQuery.sap.log.error("Error in resetChangesForPath", oError, sClassName);
 		});
 		if (oPromise.isRejected()) {
 			throw oPromise.getResult();
@@ -490,34 +496,6 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.resetInvalidDataState = function () {
-	};
-
-	/**
-	 * Method not supported
-	 *
-	 * @throws {Error}
-	 *
-	 * @public
-	 * @see sap.ui.model.Binding#resume
-	 * @since 1.37.0
-	 */
-	// @override sap.ui.model.Binding#resume
-	ODataBinding.prototype.resume = function () {
-		throw new Error("Unsupported operation: resume");
-	};
-
-	/**
-	 * Method not supported
-	 *
-	 * @throws {Error}
-	 *
-	 * @public
-	 * @see sap.ui.model.Binding#suspend
-	 * @since 1.37.0
-	 */
-	// @override sap.ui.model.Binding#suspend
-	ODataBinding.prototype.suspend = function () {
-		throw new Error("Unsupported operation: suspend");
 	};
 
 	/**

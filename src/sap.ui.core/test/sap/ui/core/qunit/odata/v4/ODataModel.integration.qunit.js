@@ -23,7 +23,9 @@ sap.ui.require([
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
+		sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+		sFlight = "/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/",
 		sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/";
 
 	/**
@@ -124,13 +126,14 @@ sap.ui.require([
 			// (see PropertyBinding#_toExternalValue). Ensure that this result is predictable.
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 
-			this.oSandbox = sinon.sandbox.create();
 			// These metadata files are _always_ faked, the query option "realOData" is ignored
-			TestUtils.useFakeServer(this.oSandbox, "/sap/ui/core/qunit", {
+			TestUtils.useFakeServer(this._oSandbox, "/sap/ui/core/qunit", {
 				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata"
 					: {source : "model/GWSAMPLE_BASIC.metadata.xml"},
 				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
 					: {source : "model/GWSAMPLE_BASIC.annotations.xml"},
+				"/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/$metadata"
+					: {source : "model/RMTSAMPLEFLIGHT.metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"
 					: {source : "odata/v4/data/metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
@@ -140,7 +143,7 @@ sap.ui.require([
 				"/special/cases/$metadata"
 					: {source : "odata/v4/data/metadata_special_cases.xml"}
 			});
-			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 
@@ -160,7 +163,6 @@ sap.ui.require([
 		},
 
 		afterEach : function () {
-			this.oSandbox.verifyAndRestore();
 			if (this.oView) {
 				// avoid calls to formatters by UI5 localization changes in later tests
 				this.oView.destroy();
@@ -170,6 +172,60 @@ sap.ui.require([
 			}
 			// reset the language
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+		},
+
+		/**
+		 * Adds a Text control with its text property bound to the given property path to the given
+		 * form in the view created by {@link #createView}.
+		 * Sets a formatter so that {@link #expectChange} can be used to expect change events on the
+		 * text property.
+		 *
+		 * @param {object} oForm The form control
+		 * @param {string} sPropertyPath The property path to bind the text property
+		 * @param {object} assert The QUnit assert object
+		 * @returns {string} The ID of the text control which can be used for {@link #expectChange}
+		 */
+		addToForm : function (oForm, sPropertyPath, assert) {
+			var sId = "id" + sPropertyPath.replace("/", "_"),
+				oText = new Text({
+					id : this.oView.createId(sId),
+					text : "{" + sPropertyPath + "}"
+				});
+
+			// attach formatter to check value for dynamically created control
+			this.setFormatter(assert, oText, sId);
+
+			oForm.addItem(oText);
+			return sId;
+		},
+
+		/**
+		 * Adds a cell with a text control with its text property bound to the given property path
+		 * to the template control of the given table in the view created by {@link #createView}.
+		 * Recreates the list binding as only then changes to the aggregation's template control are
+		 * applied.
+		 * Sets a formatter so that {@link #expectChange} can be used to expect change events on the
+		 * text property.
+		 *
+		 * @param {object} oTable The table control
+		 * @param {string} sPropertyPath The property path to bind the text property
+		 * @param {object} assert The QUnit assert object
+		 * @returns {string} The ID of the text control which can be used for {@link #expectChange}
+		 */
+		addToTable : function (oTable, sPropertyPath, assert) {
+			var sId = "id" + sPropertyPath.replace("/", "_"),
+				oText = new Text({
+					id : this.oView.createId(sId),
+					text : "{" + sPropertyPath + "}"
+				});
+
+			// attach formatter to check value for dynamically created control
+			this.setFormatterInList(assert, oText, sId);
+			oTable.getBindingInfo("items").template.addCell(oText);
+			// It is not possible to modify the aggregation's template on an existing binding.
+			// Hence, we have to re-create.
+			oTable.bindItems(jQuery.extend({}, oTable.getBindingInfo("items"), {suspended : true}));
+			return sId;
 		},
 
 		/**
@@ -278,6 +334,37 @@ sap.ui.require([
 		},
 
 		/**
+		 * Creates a V4 OData model for V2 service <code>RMTSAMPLEFLIGHT</code>.
+		 *
+		 * @param {object} mModelParameters Map of parameters for model construction to enhance and
+		 *   potentially overwrite the parameters groupId, operationMode, serviceUrl,
+		 *   synchronizationMode which are set by default
+		 * @returns {ODataModel} The model
+		 */
+		createModelForV2FlightService : function (mModelParameters) {
+			var oLogMock = this.oLogMock;
+
+			// The following warnings are logged when the RMTSAMPLEFLIGHT metamodel is loaded
+			["semantics", "creatable", "creatable", "semantics", "semantics", "value-list",
+				"value-list", "label", "label", "value-list", "value-list", "value-list",
+				"value-list", "value-list", "value-list", "value-list", "label", "label",
+				"supported-formats", "addressable", "value-list"
+			].forEach(function (sAnnotation) {
+				oLogMock.expects("warning")
+					.withExactArgs("Unsupported annotation 'sap:" + sAnnotation + "'",
+						sinon.match.string, sClassName);
+			});
+			["UpdateAgencyPhoneNo"].forEach(function (sName) {
+				oLogMock.expects("warning")
+					.withExactArgs("Unsupported HttpMethod at FunctionImport '" + sName
+						+ "', removing this FunctionImport", undefined, sClassName);
+			});
+
+			mModelParameters = jQuery.extend({}, {odataVersion : "2.0"}, mModelParameters);
+			return createModel(sFlight, mModelParameters);
+		},
+
+		/**
 		 * Creates a V4 OData model for V2 service <code>GWSAMPLE_BASIC</code>.
 		 *
 		 * @param {object} mModelParameters Map of parameters for model construction to enhance and
@@ -289,18 +376,12 @@ sap.ui.require([
 			var oLogMock = this.oLogMock;
 
 			// The following warnings are logged when the GWSAMPLE_BASIC metamodel is loaded
-			["Confirm", "Cancel", "InvoiceCreated", "GoodsIssueCreated"].forEach(function (sName) {
-				oLogMock.expects("warning")
-					.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'SalesOrder_"
-						+ sName + "', removing this FunctionImport", undefined,
-						"sap.ui.model.odata.v4.lib._V2MetadataConverter");
-			});
 			["filterable", "sortable"].forEach(function (sAnnotation) {
 				oLogMock.expects("warning")
 					.withExactArgs("Unsupported SAP annotation at a complex type in"
 						+ " '/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata'",
 						"sap:" + sAnnotation + " at property 'GWSAMPLE_BASIC.CT_String/String'",
-						"sap.ui.model.odata.v4.lib._V2MetadataConverter");
+						sClassName);
 			});
 
 			mModelParameters = jQuery.extend({}, {odataVersion : "2.0"}, mModelParameters);
@@ -372,6 +453,7 @@ sap.ui.require([
 					oResponse = oExpectedRequest.response;
 					delete oExpectedRequest.response;
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
+					oResponse = that.oModel.oRequestor.doConvertResponse(oResponse);
 				}
 
 				if (!that.aRequests.length) { // waiting may be over after promise has been handled
@@ -411,9 +493,10 @@ sap.ui.require([
 
 			this.oModel = oModel || createTeaBusiModel();
 			if (this.oModel.submitBatch) {
+				// stubs used to replace unwanted functionality in _Requestor
 				//TODO basically, we should rather stub the requestor's jQuery.ajax() call only
 				for (sName in mRequestorStubs) {
-					sinon.stub(this.oModel.oRequestor, sName, mRequestorStubs[sName]);
+					this.stub(this.oModel.oRequestor, sName).callsFake(mRequestorStubs[sName]);
 				}
 				this.oModel.oRequestor.restore = function () {
 					for (sName in mRequestorStubs) {
@@ -462,17 +545,17 @@ sap.ui.require([
 		 * the change. If you do not expect a value initially, leave out the vValue parameter.
 		 *
 		 * Examples:
-		 * this.expectChange("foo", "bar"); // expect value "bar" for the control with id "foo"
-		 * this.expectChange("foo"); // listen to changes for the control with id "foo", but do not
+		 * this.expectChange("foo", "bar"); // expect value "bar" for the control with ID "foo"
+		 * this.expectChange("foo"); // listen to changes for the control with ID "foo", but do not
 		 *                           // expect a change (in createView)
-		 * this.expectChange("foo", false); // listen to changes for the control with id "foo", but
+		 * this.expectChange("foo", false); // listen to changes for the control with ID "foo", but
 		 *                                 // do not expect a change (in createView). To be used if
 		 *                                 // the control is a template within a table.
 		 * this.expectChange("foo", ["a", "b"]); // expect values for two rows of the control with
-		 *                                       // id "foo"
-		 * this.expectChange("foo", "c", 2); // expect value "c" for control with id "foo" in row 2
+		 *                                       // ID "foo"
+		 * this.expectChange("foo", "c", 2); // expect value "c" for control with ID "foo" in row 2
 		 * this.expectChange("foo", "d", "/MyEntitySet/ID");
-		 *                                 // expect value "d" for control with id "foo" in a
+		 *                                 // expect value "d" for control with ID "foo" in a
 		 *                                 // metamodel table on "/MyEntitySet/ID"
 		 * this.expectChange("foo", "bar").expectChange("foo", "baz"); // expect 2 changes for "foo"
 		 *
@@ -540,6 +623,31 @@ sap.ui.require([
 		},
 
 		/**
+		 * Removes the control with the given ID from the given form in the view created by
+		 * {@link #createView}.
+		 *
+		 * @param {object} oForm The form control
+		 * @param {string} sControlId The ID of the control to remove
+		 */
+		removeFromForm : function (oForm, sControlId) {
+			oForm.removeItem(this.oView.createId(sControlId));
+		},
+
+		/**
+		 * Removes the control with the given ID from the given form in the view created by
+		 * {@link #createView}.
+		 * Recreates the list binding as only then changes to the aggregation's template control are
+		 * applied.
+		 *
+		 * @param {object} oTable The table control
+		 * @param {string} sControlId The ID of the control to remove
+		 */
+		removeFromTable : function (oTable, sControlId) {
+			oTable.getBindingInfo("items").template.removeCell(this.oView.byId(sControlId));
+			oTable.bindItems(jQuery.extend({}, oTable.getBindingInfo("items"), {suspended : true}));
+		},
+
+		/**
 		 * Sets the formatter function which calls {@link #checkValue} for the given control.
 		 * Note that you may only use controls that have a 'text' property.
 		 *
@@ -575,7 +683,7 @@ sap.ui.require([
 				fnOriginalFormatter = oBindingInfo.formatter,
 				that = this;
 
-			oControl.getBindingInfo("text").formatter = function (sValue) {
+			oBindingInfo.formatter = function (sValue) {
 				var sExpectedValue = fnOriginalFormatter
 						? fnOriginalFormatter.apply(this, arguments)
 						: sValue;
@@ -632,19 +740,38 @@ sap.ui.require([
 		}
 	});
 
-	/*
+	/**
+	 *
 	 * Creates a test with the given title and executes viewStart with the given parameters.
+	 *
+	 * @param {string} sTitle The title of the test case
+	 * @param {string} sView The XML snippet of the view
+	 * @param {object} mResponseByRequest A map containing the request as key
+	 *   and response as value
+	 * @param {object|object[]} mValueByControl A map or an array of maps containing control id as
+	 *   key and the expected control values as value
+	 * @param {sap.ui.model.odata.v4.ODataModel} [oModel] The model; it is attached to the view
+	 *   and to the test instance.
+	 *   If no model is given, the <code>TEA_BUSI</code> model is created and used.
 	 */
 	function testViewStart(sTitle, sView, mResponseByRequest, mValueByControl, oModel) {
 
 		QUnit.test(sTitle, function (assert) {
-			var sControlId, sRequest;
+			var sControlId, sRequest, that = this;
+
+			function expectChanges(mValueByControl) {
+				for (sControlId in mValueByControl) {
+					that.expectChange(sControlId, mValueByControl[sControlId]);
+				}
+			}
 
 			for (sRequest in mResponseByRequest) {
 				this.expectRequest(sRequest, mResponseByRequest[sRequest]);
 			}
-			for (sControlId in mValueByControl) {
-				this.expectChange(sControlId, mValueByControl[sControlId]);
+			if (Array.isArray(mValueByControl)) {
+				mValueByControl.forEach(expectChanges);
+			} else {
+				expectChanges(mValueByControl);
 			}
 			return this.createView(assert, sView, oModel);
 		});
@@ -868,7 +995,7 @@ sap.ui.require([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-// TODO Why is formatter on property binding in form called twice for the below?
+//TODO Why is formatter on property binding in form called twice for the below?
 			that.expectChange("id", "1")
 				.expectChange("id", "1");
 
@@ -1475,7 +1602,7 @@ sap.ui.require([
 					"CompanyName" : "Bar"
 				})
 				.expectChange("note", "foo", 1)
-				.expectChange("note", "baz", 0) // TODO unexpected change
+				.expectChange("note", "baz", 0) //TODO unexpected change
 				.expectChange("note", "baz", 0);
 
 			oTable.getBinding("items").create({Note : "bar"});
@@ -1501,9 +1628,8 @@ sap.ui.require([
 			})
 			.expectChange("name", "Frederic Fall")
 			.expectChange("city", "Walldorf")
-// TODO unexpected changes
-			.expectChange("name", "Frederic Fall")
-			.expectChange("city", "Walldorf");
+			.expectChange("name", "Frederic Fall") //TODO unexpected change
+			.expectChange("city", "Walldorf"); //TODO unexpected change
 
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
 	});
@@ -1522,8 +1648,7 @@ sap.ui.require([
 		this.expectRequest("EMPLOYEES('2')?$select=AGE,ID,Name", {
 				"Name" : "Jonathan Smith"
 			})
-// TODO unexpected change
-			.expectChange("name", "Jonathan Smith")
+			.expectChange("name", "Jonathan Smith") //TODO unexpected change
 			.expectChange("name", "Jonathan Smith");
 
 		return this.createView(
@@ -1739,9 +1864,8 @@ sap.ui.require([
 				})
 			.expectChange("name", "SAP NetWeaver Gateway Content")
 			.expectChange("TEAM_ID", "TEAM_03")
-// TODO unexpected changes
-			.expectChange("name", "SAP NetWeaver Gateway Content")
-			.expectChange("TEAM_ID", "TEAM_03");
+			.expectChange("name", "SAP NetWeaver Gateway Content") //TODO unexpected change
+			.expectChange("TEAM_ID", "TEAM_03"); //TODO unexpected change
 
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
 	});
@@ -1777,8 +1901,7 @@ sap.ui.require([
 					}
 				})
 			.expectChange("name", "SAP NetWeaver Gateway Content")
-// TODO unexpected changes
-			.expectChange("name", "SAP NetWeaver Gateway Content");
+			.expectChange("name", "SAP NetWeaver Gateway Content"); //TODO unexpected change
 
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
 	});
@@ -1866,7 +1989,7 @@ sap.ui.require([
 			}).then(function () {
 				that.expectChange("id", "2", 0)
 					.expectChange("text", "Frederic Fall", 0)
-					// TODO why do we get events twice?
+					//TODO why do we get events twice?
 					.expectChange("id", "2", 0)
 					.expectChange("text", "Frederic Fall", 0);
 
@@ -1940,12 +2063,12 @@ sap.ui.require([
 
 		this.expectChange("name");
 		return this.createView(assert, sView, oModel).then(function () {
-// TODO the query options for the function import are not enhanced
+//TODO the query options for the function import are not enhanced
 //			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=ID,Name", {
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
 					"Name" : "Jonathan Smith"
 				})
-				.expectChange("name", null) // TODO unexpected change
+				.expectChange("name", null) //TODO unexpected change
 				.expectChange("name", "Jonathan Smith");
 
 			that.oView.byId("function").getObjectBinding()
@@ -2035,9 +2158,8 @@ sap.ui.require([
 				})
 			.expectChange("name", "SAP NetWeaver Gateway Content")
 			.expectChange("age", "32")
-// TODO unexpected changes
-			.expectChange("name", "SAP NetWeaver Gateway Content")
-			.expectChange("age", "32");
+			.expectChange("name", "SAP NetWeaver Gateway Content") //TODO unexpected change
+			.expectChange("age", "32"); //TODO unexpected change
 
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
 	});
@@ -2127,7 +2249,7 @@ sap.ui.require([
 				}
 			)
 			.expectChange("name", "Team 2")
-			.expectChange("name", "Team 2") // TODO unexpected change
+			.expectChange("name", "Team 2") //TODO unexpected change
 			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
 			.then(function () {
@@ -2654,7 +2776,7 @@ sap.ui.require([
 			})
 			.expectChange("url",
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/ProductPicture('42')")
-			.expectChange("url", // TODO unexpected change
+			.expectChange("url", //TODO unexpected change
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/ProductPicture('42')");
 		return this.createView(assert, sView, oModel);
 	});
@@ -2676,7 +2798,7 @@ sap.ui.require([
 				"Quantity" : "10.000",
 				"QuantityUnit" : "EA"
 			})
-			.expectChange("quantity", "10.000") // TODO duplicate change event
+			.expectChange("quantity", "10.000") //TODO duplicate change event
 			.expectChange("quantity", "10.000")
 			.expectChange("quantityUnit", "EA")
 			.expectChange("quantityUnit", "EA");
@@ -2752,7 +2874,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	// Scenario: test conversion of $select and $expand for V2 Adapter
-	// Usage of service: sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
+	// Usage of service: /sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
 	QUnit.test("V2 Adapter: select in expand", function (assert) {
 		var sView = '\
 <FlexBox id="form" binding="{path :\'/SalesOrderSet(\\\'0500000001\\\')\', \
@@ -2772,18 +2894,35 @@ sap.ui.require([
 				annotationURI : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
 			});
 
-		this.expectRequest("SalesOrderSet('0500000001')?$expand=ToLineItems" +
-				"&$select=ToLineItems/ItemPosition,SalesOrderID",
-			{
-				"SalesOrderID" : "0500000001",
-				"ToLineItems" : [
-					{"ItemPosition" : "0000000010"},
-					{"ItemPosition" : "0000000020"},
-					{"ItemPosition" : "0000000030"}
-				]
+		this.expectRequest("SalesOrderSet('0500000001')?$expand=ToLineItems"
+			+ "&$select=ToLineItems/ItemPosition,SalesOrderID", {
+				"d" : {
+					"__metadata" : {
+						"type" : "GWSAMPLE_BASIC.SalesOrder"
+					},
+					"SalesOrderID" : "0500000001",
+					"ToLineItems" : {
+						"results" : [{
+							"__metadata":{
+								"type":"GWSAMPLE_BASIC.SalesOrderLineItem"
+							},
+							"ItemPosition" : "0000000010"
+						}, {
+							"__metadata":{
+								"type":"GWSAMPLE_BASIC.SalesOrderLineItem"
+							},
+							"ItemPosition" : "0000000020"
+						}, {
+							"__metadata":{
+								"type":"GWSAMPLE_BASIC.SalesOrderLineItem"
+							},
+							"ItemPosition" : "0000000030"
+						}]
+					}
+				}
 			})
 			.expectChange("id", "0500000001")
-			.expectChange("id", "0500000001") // TODO duplicate change event
+			.expectChange("id", "0500000001") //TODO duplicate change event
 			.expectChange("item", ["0000000010", "0000000020", "0000000030"]);
 
 		// code under test
@@ -2797,7 +2936,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	// Scenario: test conversion of $orderby for V2 Adapter
-	// Usage of service: sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
+	// Usage of service: /sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
 	QUnit.test("V2 Adapter: $orderby", function (assert) {
 		var sView = '\
 <Table id="table" items="{path :\'/SalesOrderSet\',\
@@ -2813,14 +2952,26 @@ sap.ui.require([
 				annotationURI : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
 			});
 
-		this.expectRequest("SalesOrderSet?$orderby=SalesOrderID&$select=SalesOrderID" +
-				"&$skip=0&$top=100",
-			{
-				"value" : [
-					{"SalesOrderID" : "0500000001"},
-					{"SalesOrderID" : "0500000002"},
-					{"SalesOrderID" : "0500000003"}
-				]
+		this.expectRequest("SalesOrderSet?$orderby=SalesOrderID&$select=SalesOrderID"
+			+ "&$skip=0&$top=100", {
+				"d" : {
+					"results" : [{
+						"__metadata" : {
+							"type" : "GWSAMPLE_BASIC.SalesOrder"
+						},
+						"SalesOrderID" : "0500000001"
+					}, {
+						"__metadata" : {
+							"type" : "GWSAMPLE_BASIC.SalesOrder"
+						},
+						"SalesOrderID" : "0500000002"
+					}, {
+						"__metadata" : {
+							"type" : "GWSAMPLE_BASIC.SalesOrder"
+						},
+						"SalesOrderID" : "0500000003"
+					}]
+				}
 			})
 			.expectChange("id", ["0500000001", "0500000002", "0500000003"]);
 
@@ -2849,7 +3000,7 @@ sap.ui.require([
 		request : "Note%20eq%20null%20or%20not%20(datetime'2017-05-23T00:00:00'%20ge%20CreatedAt)"
 	}].forEach(function (oFixture) {
 		// Scenario: test conversion of $filter for V2 Adapter
-		// Usage of service: sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
+		// Usage of service: /sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
 		QUnit.test("V2 Adapter: $filter=" + oFixture.binding, function (assert) {
 			var sView = '\
 <Table id="table" items="{path :\'/SalesOrderSet\',\
@@ -2863,12 +3014,25 @@ sap.ui.require([
 </Table>';
 
 			this.expectRequest("SalesOrderSet?$filter=" + oFixture.request + "&$select=SalesOrderID"
-					+ "&$skip=0&$top=100",
-				{"value" : [
-						{"SalesOrderID" : "0500000001"},
-						{"SalesOrderID" : "0500000002"},
-						{"SalesOrderID" : "0500000003"}
-					]
+				+ "&$skip=0&$top=100", {
+					"d" : {
+						"results" : [{
+							"__metadata" : {
+								"type" : "GWSAMPLE_BASIC.SalesOrder"
+							},
+							"SalesOrderID" : "0500000001"
+						}, {
+							"__metadata" : {
+								"type" : "GWSAMPLE_BASIC.SalesOrder"
+							},
+							"SalesOrderID" : "0500000002"
+						}, {
+							"__metadata" : {
+								"type" : "GWSAMPLE_BASIC.SalesOrder"
+							},
+							"SalesOrderID" : "0500000003"
+						}]
+					}
 				})
 				.expectChange("id", ["0500000001", "0500000002", "0500000003"]);
 
@@ -2968,7 +3132,7 @@ sap.ui.require([
 		})
 			// Note: sap.m.Text#text turns value into string!
 			.expectChange("text", oText.validateProperty("text", 42))
-			.expectChange("text", oText.validateProperty("text", 42)); // TODO unexpected change
+			.expectChange("text", oText.validateProperty("text", 42)); //TODO unexpected change
 
 		return this.createView(assert, sView, oModel);
 	});
@@ -2993,7 +3157,7 @@ sap.ui.require([
 		})
 		// Note: sap.m.Text#text turns value into string!
 			.expectChange("text", oText.validateProperty("text", 42))
-			.expectChange("text", oText.validateProperty("text", 42)); // TODO unexpected change
+			.expectChange("text", oText.validateProperty("text", 42)); //TODO unexpected change
 
 		return this.createView(assert, sView, oModel);
 	});
@@ -3145,7 +3309,7 @@ sap.ui.require([
 				{
 					"STATUS" : "42"
 				})
-				.expectChange("status", null) // TODO unexpected change
+				.expectChange("status", null) //TODO unexpected change
 				.expectChange("status", "42");
 
 			that.oView.byId("function").getObjectBinding().execute();
@@ -3172,7 +3336,7 @@ sap.ui.require([
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
 					"Name" : "Jonathan Smith"
 				})
-				.expectChange("name", null) // TODO unexpected change
+				.expectChange("name", null) //TODO unexpected change
 				.expectChange("name", "Jonathan Smith");
 			oFunctionBinding.setParameter("EmployeeID", "1").execute();
 
@@ -3227,7 +3391,7 @@ sap.ui.require([
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=Name", {
 					"Name" : "Jonathan Smith"
 				})
-				.expectChange("name", null) // TODO unexpected change
+				.expectChange("name", null) //TODO unexpected change
 				.expectChange("name", "Jonathan Smith");
 			oFunctionBinding.setParameter("EmployeeID", "1").execute();
 
@@ -3284,7 +3448,7 @@ sap.ui.require([
 					"ID" : "1"
 				}
 			})
-			.expectChange("id", "1") // TODO unexpected change
+			.expectChange("id", "1") //TODO unexpected change
 			.expectChange("id", "1");
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -3313,7 +3477,7 @@ sap.ui.require([
 	</ColumnListItem>\
 </Table>';
 
-		this.oSandbox.stub(ODataListBinding.prototype, "getContexts",
+		this.mock(ODataListBinding.prototype).expects("getContexts").atLeast(1).callsFake(
 			function (iStart, iLength, iMaximumPrefetchSize) {
 				// this is how the call by sap.chart.Chart should look like --> GET w/o $top!
 				return fnGetContexts.call(this, iStart, iLength, Infinity);
@@ -3473,5 +3637,400 @@ sap.ui.require([
 			{"value" : [{"Name" : "Frederic Fall"}, {"Name" : "Jonathan Smith"}]}},
 		{"text" : ["Hello, Frederic Fall", "Hello, Jonathan Smith"]}
 	);
+
+	//*********************************************************************************************
+	// Scenario: Enable auto-$expand/$select mode for an ODataContextBinding with relative
+	// ODataPropertyBindings to a advertised action
+	testViewStart("Auto-$expand/$select: relative ODPB to advertised action",'\
+<FlexBox binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'AGE\'}}">\
+	<Text id="name" text="{Name}" />\
+	<Text id="adAction1"\
+		text="{= %{#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsOccupied}\
+			? \'set to occupied\' : \'\'}" />\
+	<Text id="adAction2"\
+		text="{= %{#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable}\
+			? \'set to available\' : \'\'}" />\
+</FlexBox>', {
+			"EMPLOYEES('2')?$select=AGE,ID,Name,com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable,com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsOccupied" : {
+				"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable": {},
+				"AGE": 32,
+				"Name": "Frederic Fall"
+			}
+		}, [{
+			"adAction1" : "",
+			"adAction2" : "set to available",
+			"name" : "Frederic Fall"
+		}, {
+			"adAction2" : "set to available",
+			"name" : "Frederic Fall"
+		}], createTeaBusiModel({autoExpandSelect : true})
+	);
+
+	//*********************************************************************************************
+	// Scenario: <FunctionImport m:HttpMethod="GET"> in V2 Adapter
+	// Usage of service: /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
+	QUnit.test("V2 Adapter: FunctionImport", function (assert) {
+		var oModel = this.createModelForV2FlightService(),
+			that = this;
+
+		// code under test
+		return this.createView(assert, '', oModel).then(function () {
+			var oContextBinding = oModel.bindContext("/GetAvailableFlights(...)");
+
+			that.expectRequest("GetAvailableFlights?fromdate=datetime'2017-08-10T00:00:00'"
+				+ "&todate=datetime'2017-08-10T23:59:59'"
+				+ "&cityfrom='new%20york'&cityto='SAN%20FRANCISCO'", {
+				"d" : {
+					"results" : [{
+						"__metadata" : {
+							"type":"RMTSAMPLEFLIGHT.Flight"
+						},
+						"carrid" : "AA",
+						"connid" : "0017",
+						"fldate" : "\/Date(1502323200000)\/"
+					}, {
+						"__metadata" : {
+							"type":"RMTSAMPLEFLIGHT.Flight"
+						},
+						"carrid" : "DL",
+						"connid" : "1699",
+						"fldate" : "\/Date(1502323200000)\/"
+					}, {
+						"__metadata" : {
+							"type":"RMTSAMPLEFLIGHT.Flight"
+						},
+						"carrid" : "UA",
+						"connid" : "3517",
+						"fldate" : "\/Date(1502323200000)\/"
+					}]
+				}
+			});
+
+			oContextBinding
+				.setParameter("fromdate", "2017-08-10T00:00:00Z")
+				.setParameter("todate", "2017-08-10T23:59:59Z")
+				.setParameter("cityfrom", "new york")
+				.setParameter("cityto", "SAN FRANCISCO")
+				.execute();
+
+			return that.waitForChanges(assert).then(function () {
+				var oListBinding = oModel.bindList("value", oContextBinding.getBoundContext()),
+					aContexts = oListBinding.getContexts(0, Infinity);
+
+				aContexts.forEach(function (oContext, i) {
+					// Note: This just illustrates the status quo. It is not meant to say this must
+					// be kept stable.
+					assert.strictEqual(oContext.getPath(), "/GetAvailableFlights(...)/value/" + i);
+					//TODO Precision="0" vs. ".000"?!
+					assert.strictEqual(oContext.getProperty("fldate"), "2017-08-10T00:00:00.000Z");
+				});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Initially suspended context binding is resumed or not.
+	[true, false].forEach(function (bResume) {
+		var sTitle = "suspend/resume: suspended context binding, resume=" + bResume;
+
+		QUnit.test(sTitle, function (assert) {
+			var oModel = createTeaBusiModel({autoExpandSelect : true}),
+				sView = '\
+<FlexBox id="form" binding="{path : \'/Equipments(Category=\\\'Electronics\\\',ID=1)\', \
+		suspended : true}">\
+	<Text id="text" text="{Category}" />\
+</FlexBox>',
+				that = this;
+
+			this.expectChange("text"); // expect no change initially
+			return this.createView(assert, sView, oModel).then(function () {
+				if (bResume) {
+					that.expectRequest("Equipments(Category='Electronics',ID=1)"
+							+ "?$select=Category,ID", {
+							"Category" : "Electronics",
+							"ID" : 1
+						})
+						.expectChange("text", "Electronics");
+					that.oView.byId("form").getObjectBinding().resume();
+				}
+				return that.waitForChanges(assert);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: FlexBox with initially suspended context binding is changed by adding and removing
+	//   a form field. After resume, one request reflecting the changes is sent and the added field
+	//   is updated.
+	QUnit.test("suspend/resume: changes for suspended context binding", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{path : \'/Equipments(Category=\\\'Electronics\\\',ID=1)\', \
+		suspended : true}">\
+	<Text id="idCategory" text="{Category}" />\
+	<Text id="idEmployeeId" text="{EmployeeId}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("idCategory"); // expect no change initially
+		return this.createView(assert, sView, oModel).then(function () {
+			var oForm = that.oView.byId("form"),
+				sId;
+
+			sId = that.addToForm(oForm, "Name", assert);
+			that.removeFromForm(oForm, "idEmployeeId");
+			that.expectRequest("Equipments(Category='Electronics',ID=1)?$select=Category,ID,Name", {
+					"Category" : "Electronics",
+					"ID" : 1,
+					"Name" : "Office PC"
+				})
+				.expectChange("idCategory", "Electronics")
+				.expectChange(sId, "Office PC");
+
+			oForm.getObjectBinding().resume();
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Table with suspended list binding is changed by adding and removing a column. After
+	//   resume, a request reflecting the changes is sent.
+	QUnit.test("suspend/resume: changes for suspended list binding", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{path : \'/Equipments\', suspended : true, templateShareable : true}">\
+	<items>\
+		<ColumnListItem>\
+			<Text id="idCategory" text="{Category}" />\
+			<Text id="idEmployeeId" text="{EmployeeId}" />\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			that = this;
+
+		this.expectChange("idCategory", [])
+			.expectChange("idEmployeeId", []);
+		return this.createView(assert, sView, oModel).then(function () {
+			var sId0,
+				sId1,
+				oTable = that.oView.byId("table");
+
+			sId0 = that.addToTable(oTable, "Name", assert);
+			sId1 = that.addToTable(oTable, "EQUIPMENT_2_EMPLOYEE/Name", assert);
+			that.removeFromTable(oTable, "idEmployeeId");
+
+			that.expectRequest("Equipments?$select=Category,ID,Name"
+					+ "&$expand=EQUIPMENT_2_EMPLOYEE($select=ID,Name)&$skip=0&$top=100", {
+					value : [{
+						"Category" : "Electronics",
+						"ID" : 1,
+						"Name" : "Office PC",
+						"EQUIPMENT_2_EMPLOYEE" : {
+							"ID" : "2",
+							"Name" : "Frederic Fall"
+						}
+					}, {
+						"Category" : "Vehicle",
+						"ID" : 2,
+						"Name" : "VW Golf 2.0",
+						"EQUIPMENT_2_EMPLOYEE" : {
+							"ID" : "3",
+							"Name" : "Jonathan Smith"
+						}
+				}]})
+				.expectChange("idCategory", ["Electronics", "Vehicle"])
+				.expectChange(sId0, ["Office PC", "VW Golf 2.0"])
+				.expectChange(sId1, ["Frederic Fall", "Jonathan Smith"]);
+
+			oTable.getBinding("items").resume();
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: <FunctionImport m:HttpMethod="GET" sap:action-for="..."> in V2 Adapter
+	// Usage of service: /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
+	//TODO $metadata of <FunctionImport> is broken, key properties and parameters do not match!
+	// --> server expects GetFlightDetails?airlineid='AA'&connectionid='0017'&fldate=datetime'...'
+	QUnit.test("V2 Adapter: bound function", function (assert) {
+		var oModel = this.createModelForV2FlightService(),
+			//TODO key predicate MUST use V4 literal form! fldate=\'2017-08-10T00:00:00Z\'
+			sView = '\
+<FlexBox binding="{/FlightCollection(carrid=\'AA\'&amp;connid=\'0017\'&amp;fldate=datetime\'2017-08-10T00:00:00\')}">\
+	<Text id="carrid" text="{carrid}" />\
+	<FlexBox id="function" binding="{RMTSAMPLEFLIGHT.GetFlightDetails(...)}">\
+		<Text id="distance" text="{distance}" />\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("FlightCollection(carrid='AA'&connid='0017'"
+			+ "&fldate=datetime'2017-08-10T00:00:00')", {
+				"d" : {
+					"__metadata" : {
+						"type":"RMTSAMPLEFLIGHT.Flight"
+					},
+					"carrid" : "AA",
+					"connid" : "0017",
+					"fldate" : "\/Date(1502323200000)\/"
+				}
+			})
+			.expectChange("carrid", "AA")
+			.expectChange("carrid", "AA") //TODO unexpected change
+			.expectChange("distance", null); //TODO unexpected change
+
+		// code under test
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("GetFlightDetails?carrid='AA'&connid='0017'"
+				+ "&fldate=datetime'2017-08-10T00:00:00'", {
+					"d" : {
+//TODO why does the server send this?
+//						"GetFlightDetails" : {
+							"__metadata" : {
+								"type" : "RMTSAMPLEFLIGHT.FlightDetails"
+							},
+							"countryFrom" : "US",
+							"cityFrom" : "new york",
+							"airportFrom" : "JFK",
+							"countryTo" : "US",
+							"cityTo" : "SAN FRANCISCO",
+							"airportTo" : "SFO",
+							"flightTime" : 361,
+							"departureTime" : "PT11H00M00S",
+							"arrivalTime" : "PT14H01M00S",
+							"distance" : "2572.0000",
+							"distanceUnit" : "SMI",
+							"flightType" : "",
+							"period" : 0
+						}
+//					}
+				})
+				.expectChange("distance", "2,572.0000");
+			if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING,
+					"sap.ui.model.odata.v4.ODataMetaModel")) {
+				//TODO Cache#fetchTypes determines a V4 meta path from sResourcePath, which is V2
+				that.oLogMock.expects("warning").withExactArgs("Unknown child GetFlightDetails of"
+					+ " RMTSAMPLEFLIGHT.RMTSAMPLEFLIGHT_Entities", "/GetFlightDetails/",
+					"sap.ui.model.odata.v4.ODataMetaModel");
+			}
+
+			that.oView.byId("function").getObjectBinding().execute();
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: <FunctionImport m:HttpMethod="POST"> in V2 Adapter
+	// Usage of service: /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
+	QUnit.test("V2 Adapter: ActionImport", function (assert) {
+		var oModel = this.createModelForV2FlightService(),
+			that = this;
+
+		// code under test
+		return this.createView(assert, '', oModel).then(function () {
+			var oContextBinding = oModel.bindContext("/__FAKE__ActionImport(...)"),
+				oPromise;
+
+			that.expectRequest({
+					groupId : "$direct",
+					headers : {"If-Match" : undefined},
+					method : "POST",
+					url : "__FAKE__ActionImport?carrid='AA'"
+						+ "&guid=guid'0050568D-393C-1ED4-9D97-E65F0F3FCC23'"
+						+ "&fldate=datetime'2017-08-10T00:00:00'&flightTime=42"
+				}, {
+					"d" : {
+						"__metadata" : {
+							"type" : "RMTSAMPLEFLIGHT.Flight"
+						},
+						"carrid" : "AA",
+						"connid" : "0017",
+						"fldate" : "\/Date(1502323200000)\/",
+						"PRICE" : "2222.00",
+						"SEATSMAX" : 320
+					}
+				});
+
+			oPromise = oContextBinding
+				.setParameter("carrid", "AA")
+				.setParameter("guid", "0050568D-393C-1ED4-9D97-E65F0F3FCC23")
+				.setParameter("fldate", "2017-08-10T00:00:00Z")
+				.setParameter("flightTime", 42)
+				.execute();
+
+			return Promise.all([oPromise, that.waitForChanges(assert)]).then(function () {
+				var oContext = oContextBinding.getBoundContext();
+
+				assert.strictEqual(oContext.getProperty("carrid"), "AA");
+				assert.strictEqual(oContext.getProperty("connid"), "0017");
+				//TODO Precision="0"
+				assert.strictEqual(oContext.getProperty("fldate"), "2017-08-10T00:00:00.000Z");
+				assert.strictEqual(oContext.getProperty("SEATSMAX"), 320);
+
+				// Note: this is async due to type retrieval
+				return oContext.requestProperty("PRICE", true).then(function (sValue) {
+					assert.strictEqual(sValue, "2,222.00");
+				});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: <FunctionImport m:HttpMethod="POST" sap:action-for="..."> in V2 Adapter
+	// Usage of service: /sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
+	QUnit.test("V2 Adapter: bound action", function (assert) {
+		var oModel = this.createModelForV2SalesOrderService(),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'0815\')}">\
+	<Text id="id0" text="{SalesOrderID}" />\
+	<FlexBox id="action" binding="{GWSAMPLE_BASIC.SalesOrder_Confirm(...)}">\
+		<Text id="id1" text="{SalesOrderID}" />\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderSet('0815')", {
+				"d" : {
+					"__metadata" : {
+						"type" : "GWSAMPLE_BASIC.SalesOrder"
+					},
+					"SalesOrderID" : "0815"
+				}
+			})
+			.expectChange("id0", "0815")
+			.expectChange("id1", null); //TODO unexpected change
+
+		// code under test
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContextBinding = that.oView.byId("action").getObjectBinding(),
+				oPromise;
+
+			that.expectRequest({
+					groupId : "$direct",
+					headers : {"If-Match" : undefined},
+					method : "POST",
+					url : "SalesOrder_Confirm?SalesOrderID='0815'"
+				}, {
+					"d" : {
+						"__metadata" : {
+							"type" : "GWSAMPLE_BASIC.SalesOrder"
+						},
+						"SalesOrderID" : "08/15",
+						"CreatedAt" : "\/Date(1502323200000)\/"
+					}
+				})
+				.expectChange("id0", "0815") //TODO unexpected change
+				.expectChange("id1", "08/15");
+
+			oPromise = oContextBinding.execute();
+
+			return Promise.all([oPromise, that.waitForChanges(assert)]).then(function () {
+				assert.strictEqual(
+					oContextBinding.getBoundContext().getProperty("CreatedAt"),
+					"2017-08-10T00:00:00.000Z"); //TODO Precision="7"
+			});
+		});
+	});
 });
+
 //TODO test delete

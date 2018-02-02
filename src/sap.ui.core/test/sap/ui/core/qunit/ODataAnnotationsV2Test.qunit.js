@@ -1,35 +1,4 @@
-/**
- * Test-Function to be used in place of deepEquals which only tests for the existence of the given
- * values, not the absence of others.
- *
- * @param {object} oValue - The value to be tested
- * @param {object} oExpected - The value that is tested against, containing the structure expected inside oValue
- * @param {string} sMessage - Message prefix for every sub-test. The property names of the structure will be prepended to this string
- * @returns {void}
- */
-function deepContains(oValue, oExpected, sMessage) {
-	for (var sKey in oExpected) {
-
-		if (Array.isArray(oExpected[sKey]) === Array.isArray(oValue[sKey])) {
-			assert.equal(typeof oValue[sKey], typeof oExpected[sKey], sMessage + "/" + sKey + " have same type");
-		} else {
-			assert.ok(false, sMessage + "/" + sKey + " - one is an array, the other is not");
-		}
-
-
-		if (Array.isArray(oExpected[sKey]) && Array.isArray(oValue[sKey])) {
-			assert.equal(oValue[sKey].length, oExpected[sKey].length, sMessage + "/" + sKey + " length matches");
-		}
-
-		if (oExpected[sKey] !== null && typeof oExpected[sKey] === "object" && typeof oValue[sKey] === "object") {
-			// Go deeper
-			deepContains(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey);
-		} else {
-			// Compare directly
-			assert.equal(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey + " match");
-		}
-	}
-}
+/*global QUnit */
 
 
 
@@ -337,7 +306,7 @@ function runODataAnnotationsV2Tests() {
 
 	QUnit.module("Standard Tests for All Annotation Cases")
 
-	var fnTestLoading = function(mService) {
+	var fnTestLoading = function(mService, assert) {
 		var done = assert.async();
 
 		var oMetadata = new sap.ui.model.odata.ODataMetadata(mService.service + "$metadata", { asnc: true });
@@ -401,7 +370,7 @@ function runODataAnnotationsV2Tests() {
 	}
 
 
-	var fnTestEventsAllSome = function(mService, bSkipMetadata) {
+	var fnTestEventsAllSome = function(mService, bSkipMetadata, assert) {
 		var done = assert.async();
 
 		var oMetadata = new sap.ui.model.odata.ODataMetadata(mService.service + "$metadata", { asnc: true });
@@ -507,7 +476,7 @@ function runODataAnnotationsV2Tests() {
 
 
 
-	var fnTestEvents = function(mService, bSkipMetadata) {
+	var fnTestEvents = function(mService, bSkipMetadata, assert) {
 		var done = assert.async();
 
 		var oMetadata = new sap.ui.model.odata.ODataMetadata(mService.service + "$metadata", { asnc: true });
@@ -608,7 +577,7 @@ function runODataAnnotationsV2Tests() {
 
 	QUnit.module("v2.ODataModel Integration Test")
 
-	var fnTestModelLoading = function(mService) {
+	var fnTestModelLoading = function(mService, assert) {
 		var done = assert.async();
 
 		// sap.ui.model.odata.v2.ODataModel.mServiceData = {};
@@ -666,7 +635,7 @@ function runODataAnnotationsV2Tests() {
 
 
 
-	var fnTestModelMetadataLoading = function(mService) {
+	var fnTestModelMetadataLoading = function(mService, assert) {
 		var done = assert.async();
 
 		// sap.ui.model.odata.v2.ODataModel.mServiceData = {};
@@ -711,7 +680,7 @@ function runODataAnnotationsV2Tests() {
 
 	QUnit.module("Misc Test to increase test coverage");
 
-	var fnTestMisc1 = function() {
+	var fnTestMisc1 = function(assert) {
 		var done = assert.async();
 
 		var mService = mAdditionalTestsServices["LastModified Header"];
@@ -851,7 +820,7 @@ function runODataAnnotationsV2Tests() {
 	QUnit.module("Annotation Test Cases for Bugfixes and Specification Changes");
 
 
-	var fnTestLastModified = function() {
+	var fnTestLastModified = function(assert) {
 		var done = assert.async();
 
 		assert.expect(4);

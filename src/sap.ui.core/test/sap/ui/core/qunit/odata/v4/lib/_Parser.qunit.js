@@ -7,7 +7,7 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/TestUtils"
 ], function (jQuery, _Parser, _Requestor, TestUtils) {
-	/*global QUnit, sinon */
+	/*global QUnit */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
 
@@ -29,13 +29,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Parser", {
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-		},
-
-		afterEach : function () {
-			this.oLogMock.verify();
 		}
 	});
 

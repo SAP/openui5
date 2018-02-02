@@ -46,13 +46,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataParentBinding", {
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-		},
-
-		afterEach : function () {
-			this.oLogMock.verify();
 		}
 	});
 
@@ -1048,7 +1044,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		SyncPromise.reject.bind(SyncPromise, {}),
+		SyncPromise.reject.bind(SyncPromise, {}), // "Failed to create cache..."
 		SyncPromise.resolve.bind(SyncPromise, { // cache sent read request
 			bSentReadRequest : true,
 			setQueryOptions : function () {}
@@ -1065,7 +1061,12 @@ sap.ui.require([
 					oCachePromise : oCachePromise,
 					aChildCanUseCachePromises : [],
 					doFetchQueryOptions : function () {},
-					oModel : {getMetaModel : function () {return oMetaModel;}}
+					oModel : {
+						getMetaModel : function () {
+							return oMetaModel;
+						},
+						reportError : function () {}
+					}
 				}),
 				oBindingMock = this.mock(oBinding),
 				mChildLocalQueryOptions = {},
@@ -1091,6 +1092,11 @@ sap.ui.require([
 					.returns(false);
 				if (oCachePromise.isFulfilled()) {
 					this.mock(oCachePromise.getResult()).expects("setQueryOptions").never();
+				} else {
+					this.mock(oBinding.oModel).expects("reportError")
+						.withExactArgs("Failed to update cache for binding " + oBinding,
+							"sap.ui.model.odata.v4.ODataParentBinding",
+							sinon.match.same(oCachePromise.getResult()));
 				}
 
 				// code under test
@@ -1100,9 +1106,10 @@ sap.ui.require([
 				return oPromise.then(function (bUseCache) {
 					assert.strictEqual(bUseCache, false);
 					assert.strictEqual(oBinding.aChildCanUseCachePromises[0], oPromise);
-					assert.strictEqual(oBinding.oCachePromise.getResult(),
-						oCachePromise.getResult());
-					oCachePromise.catch(function () {}); // avoid "Uncaught (in promise)"
+					if (oCachePromise.isFulfilled()) {
+						assert.strictEqual(oBinding.oCachePromise.getResult(),
+							oCachePromise.getResult());
+					}
 				});
 			}
 		);
@@ -1278,6 +1285,53 @@ sap.ui.require([
 				assert.strictEqual(bUseCache, false);
 				assert.deepEqual(oBinding.mAggregatedQueryOptions, mOriginalAggregatedQueryOptions);
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchIfChildCanUseCache, advertised action", function (assert) {
+		var oMetaModel = {
+				fetchObject : function () {},
+				getMetaPath : function () {}
+			},
+			oModel = {
+				getMetaModel : function () {return oMetaModel;}
+			},
+			oBinding = new ODataParentBinding({
+				mAggregatedQueryOptions : {$expand : { "foo" : {$select : ["bar"]}}},
+				// cache will be created, waiting for child bindings
+				oCachePromise : SyncPromise.resolve(Promise.resolve()),
+				aChildCanUseCachePromises : [],
+				doFetchQueryOptions : function () {
+					return SyncPromise.resolve({});
+				},
+				oModel : oModel,
+				bRelative : false
+			}),
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('2')"),
+			oMetaModelMock = this.mock(oMetaModel),
+			sPath = "/#foo.bar.AcFoo",
+			oPromise;
+
+		oMetaModelMock.expects("getMetaPath")
+			.withExactArgs("/EMPLOYEES('2')")
+			.returns("/EMPLOYEES");
+		oMetaModelMock.expects("getMetaPath")
+			.withExactArgs(sPath)
+			.returns(sPath);
+		oMetaModelMock.expects("fetchObject")
+			.withExactArgs("/EMPLOYEES/")
+			.returns(SyncPromise.resolve());
+		this.mock(oBinding).expects("selectKeyProperties")
+			.withExactArgs(sinon.match.object, "/EMPLOYEES");
+
+		// code under test
+		oPromise = oBinding.fetchIfChildCanUseCache(oContext, sPath.slice(1));
+
+		return oPromise.then(function (bUseCache) {
+			assert.strictEqual(bUseCache, true);
+			assert.deepEqual(oBinding.mAggregatedQueryOptions,
+				{$expand : {"foo" : {$select : ["bar"]}}, $select : ["foo.bar.AcFoo"]});
 		});
 	});
 
@@ -1861,4 +1915,141 @@ sap.ui.require([
 			assert.deepEqual(oBinding.mAggregatedQueryOptions, oFixture.result);
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("suspend: absolute binding", function (assert) {
+		var oBinding = new ODataParentBinding({sPath : "/Employees"});
+
+		// code under test
+		oBinding.suspend();
+
+		assert.strictEqual(oBinding.bSuspended, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("suspend: quasi-absolute binding", function (assert) {
+		var oBinding = new ODataParentBinding({
+				oContext : {/* sap.ui.model.Context */},
+				sPath : "SO_2_SCHEDULE",
+				bRelative : true
+			});
+
+		// code under test
+		oBinding.suspend();
+
+		assert.strictEqual(oBinding.bSuspended, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("suspend: error on operation binding", function (assert) {
+		assert.throws(function () {
+			// code under test
+			new ODataParentBinding({
+				sPath : "/operation",
+				oOperation : {},
+				toString : function () { return "~"; }
+			}).suspend();
+		}, new Error("Cannot suspend an operation binding: ~"));
+	});
+
+	//*********************************************************************************************
+	[
+		undefined, // unresolved
+		{/* sap.ui.model.odata.v4.Context */fetchValue : function () {}} // resolved
+	].forEach(function (oContext, i) {
+		QUnit.test("suspend: error on relative binding, " + i, function (assert) {
+			assert.throws(function () {
+				// code under test
+				new ODataParentBinding({
+					oContext : oContext,
+					sPath : "SO_2_SCHEDULE",
+					bRelative : true,
+					toString : function () { return "~"; }
+				}).suspend();
+			}, new Error("Cannot suspend a relative binding: ~"));
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("initialize: no change event for suspended binding", function (assert) {
+		var oBinding = new ODataParentBinding({
+				_fireChange : function () {},
+				sPath : "/Employees",
+				bRelative : false
+			});
+
+		oBinding.suspend();
+		this.mock(oBinding).expects("_fireChange").never();
+
+		// code under test
+		oBinding.initialize();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resume: absolute binding", function (assert) {
+		var oBinding = new ODataParentBinding({
+				_fireChange : function () {},
+				sPath : "/Employees",
+				bRelative : false
+			});
+
+		oBinding.suspend();
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
+
+		// code under test
+		oBinding.resume();
+
+		assert.strictEqual(oBinding.bSuspended, false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resume: quasi-absolute binding", function (assert) {
+		var oBinding = new ODataParentBinding({
+				_fireChange : function () {},
+				oContext : {/* sap.ui.model.Context */},
+				sPath : "SO_2_SCHEDULE",
+				bRelative : true
+			});
+
+		oBinding.suspend();
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
+
+		// code under test
+		oBinding.resume();
+
+		assert.strictEqual(oBinding.bSuspended, false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resume: error on operation binding", function (assert) {
+		assert.throws(function () {
+			// code under test
+			new ODataParentBinding({
+				sPath : "/operation",
+				oOperation : {},
+				toString : function () { return "~"; }
+			}).resume();
+		}, new Error("Cannot resume an operation binding: ~"));
+	});
+
+	//*********************************************************************************************
+	[
+		undefined, // unresolved
+		{/* sap.ui.model.odata.v4.Context */fetchValue : function () {}} // resolved
+	].forEach(function (oContext, i) {
+		QUnit.test("resume: error on relative binding, " + i, function (assert) {
+			assert.throws(function () {
+				// code under test
+				new ODataParentBinding({
+					oContext : oContext,
+					sPath : "SO_2_SCHEDULE",
+					bRelative : true,
+					toString : function () { return "~"; }
+				}).resume();
+			}, new Error("Cannot resume a relative binding: ~"));
+		});
+	});
+	//TODO ODCB#fetchValue rejects with canceled Error for suspended binding
+	//TODO error handling for write APIs, refresh
+	//TODO Relative bindings inherit the suspended state from its parent binding
 });

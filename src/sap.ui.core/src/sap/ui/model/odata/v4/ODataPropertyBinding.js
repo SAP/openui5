@@ -53,8 +53,6 @@ sap.ui.define([
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#refresh as #refresh
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#resetChanges as #resetChanges
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#resume as #resume
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#suspend as #suspend
 	 */
 	var ODataPropertyBinding
 		= PropertyBinding.extend("sap.ui.model.odata.v4.ODataPropertyBinding", {
@@ -247,7 +245,9 @@ sap.ui.define([
 			return that.oContext.fetchValue(that.sPath, that, sGroupId);
 		});
 		aPromises.push(oReadPromise.then(function (vValue) {
-			if (vValue && typeof vValue === "object") {
+			if (vValue && typeof vValue === "object"
+					&& (that.sInternalType !== "any"
+						|| that.sPath[that.sPath.lastIndexOf("/") + 1] !== "#")) {
 				jQuery.sap.log.error("Accessed value is not primitive", sResolvedPath, sClassName);
 				vValue = undefined;
 			}
@@ -499,6 +499,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 *
+	 * @public
+	 * @see sap.ui.model.Binding#resume
+	 * @since 1.37.0
+	 */
+	// @override sap.ui.model.Binding#resume
+	ODataPropertyBinding.prototype.resume = function () {
+		throw new Error("Unsupported operation: resume");
+	};
+
+	/**
 	 * Sets the (base) context if the binding path is relative. Triggers (@link #fetchCache) to
 	 * create a cache and {@link #checkUpdate} to check for the current value if the
 	 * context has changed. In case of absolute bindings nothing is done.
@@ -611,6 +625,20 @@ sap.ui.define([
 				}
 			});
 		}
+	};
+
+	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 *
+	 * @public
+	 * @see sap.ui.model.Binding#suspend
+	 * @since 1.37.0
+	 */
+	// @override sap.ui.model.Binding#suspend
+	ODataPropertyBinding.prototype.suspend = function () {
+		throw new Error("Unsupported operation: suspend");
 	};
 
 	/**

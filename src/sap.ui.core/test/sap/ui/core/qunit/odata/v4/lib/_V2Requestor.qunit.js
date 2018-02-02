@@ -16,13 +16,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._V2Requestor", {
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-		},
-
-		afterEach : function () {
-			this.oLogMock.verify();
 		}
 	});
 
@@ -709,7 +705,7 @@ sap.ui.require([
 	QUnit.test("doConvertSystemQueryOptions: $filter", function (assert) {
 		var sFilter = "foo eq 'bar'",
 			oRequestor = {},
-			fnResultHandlerSpy = sinon.spy();
+			fnResultHandlerSpy = this.spy();
 
 		asV2Requestor(oRequestor);
 
@@ -1155,6 +1151,10 @@ sap.ui.require([
 		iCallCount : 2,
 		mHeaders : {},
 		bVersionOptional : false
+	}, {
+		iCallCount : 1,
+		mHeaders : { "DataServiceVersion" : "1.0" },
+		bVersionOptional : true
 	}].forEach(function (oFixture, i) {
 		QUnit.test("doCheckVersionHeader, success cases - " + i, function (assert) {
 			var oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0"),
@@ -1193,8 +1193,8 @@ sap.ui.require([
 			assert.throws(function () {
 				// code under test
 				oRequestor.doCheckVersionHeader(fnGetHeader, "Foo('42')/Bar");
-			}, new Error("Expected 'DataServiceVersion' header with value '2.0' but received "
-				+ oFixture.sError));
+			}, new Error("Expected 'DataServiceVersion' header with value '1.0' or '2.0' but "
+				+ "received " + oFixture.sError));
 
 			assert.strictEqual(fnGetHeader.calledWithExactly("DataServiceVersion"), true);
 			if (oFixture.iCallCount === 2) {
@@ -1202,5 +1202,131 @@ sap.ui.require([
 			}
 			assert.strictEqual(fnGetHeader.callCount, oFixture.iCallCount);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getPathAndAddQueryOptions: OperationImport", function (assert) {
+		var oModelInterface = {
+				fnFetchMetadata : null // do not call!
+			},
+			oOperationMetadata = {
+				"$Parameter" : [{
+					"$Name" : "Foo",
+					"$Type" : "Edm.Int16"
+				}, {
+					"$Name" : "ID",
+					"$Type" : "Edm.String"
+				}]
+			},
+			mParameters = {"ID" : "1", "Foo" : 42, "n/a" : NaN},
+			mQueryOptions = {},
+			oRequestor = _Requestor.create("/", oModelInterface, undefined, undefined, "2.0"),
+			oRequestorMock = this.mock(oRequestor);
+
+		oRequestorMock.expects("formatPropertyAsLiteral")
+			.withExactArgs(42, oOperationMetadata.$Parameter[0]).returns("42");
+		oRequestorMock.expects("formatPropertyAsLiteral")
+			.withExactArgs("1", oOperationMetadata.$Parameter[1]).returns("'1'");
+
+		assert.strictEqual(
+			// code under test
+			oRequestor.getPathAndAddQueryOptions("/OperationImport(...)", oOperationMetadata,
+				mParameters, mQueryOptions),
+			"OperationImport");
+		assert.deepEqual(mQueryOptions, {"ID" : "'1'", "Foo" : "42"});
+		assert.deepEqual(mParameters, {});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bAction) {
+		var sTitle = "getPathAndAddQueryOptions: bound " + (bAction ? "action" : "function");
+
+		QUnit.test(sTitle, function (assert) {
+			var oEntity = {"Foo" : 42, "ID" : "1"},
+				oModelInterface = {
+					fnFetchMetadata : function () {}
+				},
+				oOperationMetadata = {
+					"$IsBound" : true,
+					"$Parameter" : [{ // "$Name" : null, "$Nullable" : false,
+						"$Type" : "com.sap.ui5.OData.EdmTypes"
+					}, {
+						"$Name" : "Bar" //, "$Type" : "Edm.Boolean"
+					}]
+				},
+				mParameters = {"Bar" : true},
+				mQueryOptions = {},
+				oRequestor = _Requestor.create("/", oModelInterface, undefined, undefined, "2.0"),
+				oRequestorMock = this.mock(oRequestor),
+				oTypeMetadata = { // "$kind" : "EntityType",
+					"$Key" : ["ID", "Foo"],
+					"Foo" : {
+						"$kind" : "Property",
+						"$Type" : "Edm.Int16"
+					},
+					"ID" : {
+						"$kind" : "Property",
+						"$Type" : "Edm.String"
+					}
+				};
+
+			this.mock(oModelInterface).expects("fnFetchMetadata")
+				.withExactArgs("/com.sap.ui5.OData.EdmTypes")
+				.returns(SyncPromise.resolve(oTypeMetadata));
+			oRequestorMock.expects("formatPropertyAsLiteral").withExactArgs("1", oTypeMetadata.ID)
+				.returns("'1'");
+			oRequestorMock.expects("formatPropertyAsLiteral").withExactArgs(42, oTypeMetadata.Foo)
+				.returns("42");
+			oRequestorMock.expects("formatPropertyAsLiteral")
+				.withExactArgs(true, oOperationMetadata.$Parameter[1]).returns("true");
+
+			assert.strictEqual(
+				// code under test
+				oRequestor.getPathAndAddQueryOptions(
+					"/EdmTypesCollection('1')/com.sap.ui5.OData.ResetEdmTypes(...)",
+					oOperationMetadata, mParameters, mQueryOptions,
+					bAction ? oEntity : function () { return oEntity; }),
+				"ResetEdmTypes");
+			assert.deepEqual(mQueryOptions, {"Bar" : "true", "Foo" : "42", "ID" : "'1'"});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getPathAndAddQueryOptions: Operation w/o parameters", function (assert) {
+		var oOperationMetadata = {},
+			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+
+		this.mock(oRequestor).expects("formatPropertyAsLiteral").never();
+
+		assert.strictEqual(
+			// code under test
+			oRequestor.getPathAndAddQueryOptions("/some.Operation(...)", oOperationMetadata),
+			"some.Operation");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getPathAndAddQueryOptions: collection parameter", function (assert) {
+		var oOperationMetadata = {$Parameter : [{$Name : "foo", $IsCollection : true}]},
+			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+
+		assert.throws(function () {
+			// code under test
+			oRequestor.getPathAndAddQueryOptions("/ActionImport(...)", oOperationMetadata,
+				{"foo" : [42]});
+		}, new Error("Unsupported collection-valued parameter: foo"));
+	});
+
+	//*****************************************************************************************
+	QUnit.test("isChangeSetOptional", function (assert) {
+		var oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+
+		assert.strictEqual(oRequestor.isChangeSetOptional(), false);
+	});
+
+	//*****************************************************************************************
+	QUnit.test("isActionBodyOptional", function (assert) {
+		var oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+
+		assert.strictEqual(oRequestor.isActionBodyOptional(), true);
 	});
 });
