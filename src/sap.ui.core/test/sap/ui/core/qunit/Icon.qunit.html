@@ -15,6 +15,9 @@
 		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 		<script>
 			jQuery.sap.require("sap.ui.core.Icon");
@@ -422,6 +425,7 @@
 					}
 				}
 			});
+
 			QUnit.test("useIconTooltip = true (default) / without tooltip", function (assert) {
 				var oIconInfo = sap.ui.core.IconPool.getIconInfo("add");
 
@@ -434,6 +438,7 @@
 				assert.equal(this.oIcon.$().attr("aria-label"), undefined, "aria-label should be undefined");
 				assert.equal(this.oIcon.$().attr("aria-labelledby"), undefined, "aria-labelledby should be undefined");
 			});
+
 			QUnit.test("useIconTooltip = true (default) / with tooltip", function (assert) {
 				var sTooltip = "this is a tooltip";
 				this.createIcon({
@@ -444,6 +449,7 @@
 				assert.equal(this.oIcon.$().attr("aria-label"), undefined, "aria-label should be undefined");
 				assert.equal(this.oIcon.$().attr("aria-labelledby"), undefined, "aria-labelledby should be undefined");
 			});
+
 			QUnit.test("useIconTooltip = false / without tooltip", function (assert) {
 				this.createIcon({
 					src: sap.ui.core.IconPool.getIconURI("add"),
@@ -453,6 +459,7 @@
 				assert.equal(this.oIcon.$().attr("aria-label"), undefined, "aria-label should be undefined");
 				assert.equal(this.oIcon.$().attr("aria-labelledby"), undefined, "aria-labelledby should be undefined");
 			});
+
 			QUnit.test("useIconTooltip = false / with tooltip", function (assert) {
 				var sTooltip = "this is a tooltip";
 				this.createIcon({
@@ -465,10 +472,87 @@
 				assert.equal(this.oIcon.$().attr("aria-labelledby"), undefined, "aria-labelledby should be undefined");
 			});
 
+			QUnit.module("Loading of additional icon fonts", {
+				createIcon: function(mSettings, fnCallback) {
+					this.oIcon = new sap.ui.core.Icon(mSettings).placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach: function() {
+					if (this.oIcon) {
+						this.oIcon.destroy();
+						this.oIcon = null;
+					}
+				}
+			});
+
+			QUnit.test("Render icon without loading the corresponding font", function (assert) {
+				var IconPool = sap.ui.core.IconPool,
+					oErrorSpy = sinon.spy(jQuery.sap.log, "error");
+
+				this.createIcon({src: "sap-icon://tnt/technicalsystem"});
+				assert.strictEqual(oErrorSpy.callCount, 1, "Rendering of an icon without loading the corresponding font throws an error");
+
+				oErrorSpy.restore();
+			});
+
+			QUnit.test("Refresh icon content after font was loaded lazily", function (assert) {
+				var IconPool = sap.ui.core.IconPool;
+				var done = assert.async();
+
+				// load additional icon font
+				IconPool.registerFont({
+					collectionName: "tnt",
+					fontFamily: "SAP-icons-TNT",
+					fontURI: jQuery.sap.getModulePath("sap.tnt.themes.base.fonts"),
+					lazy: true
+				});
+
+				var oLoadFontMetadataSpy = sinon.spy(IconPool, "_loadFontMetadata");
+
+				// instantiate icon
+				this.createIcon({src: "sap-icon://tnt/technicalsystem"});
+				assert.strictEqual(this.oIcon.$().attr("data-sap-ui-icon-content"), undefined, "The icon content attribute is not set yet while the font is loading");
+				assert.ok(oLoadFontMetadataSpy.called, "The loading of metadata for new font is triggered");
+
+				return sap.ui.core.IconPool.getIconInfo("sap-icon://tnt/technicalsystem", "async").then(function() {
+					sap.ui.getCore().applyChanges();
+
+					assert.strictEqual(this.oIcon.$().attr("data-sap-ui-icon-content"), String.fromCharCode(0xe000), "Icon content has been set properly after the font is loaded");
+					assert.strictEqual(this.oIcon.$().css("font-family"), "SAP-icons-TNT", "Icon font family has been set properly after the font is loaded");
+
+					oLoadFontMetadataSpy.restore();
+					done();
+				}.bind(this));
+			});
+
+			QUnit.test("Render a non-existent icon", function (assert) {
+				var IconPool = sap.ui.core.IconPool,
+					oErrorSpy = sinon.spy(jQuery.sap.log, "warning");
+
+				this.createIcon({src: "sap-icon://tnt/doesnotexist"});
+				assert.ok(oErrorSpy.called, "Rendering of an icon without loading the corresponding font throws warning");
+
+				oErrorSpy.restore();
+			});
+
+			QUnit.test("The same icon is displayed immediately after font was loaded lazily", function (assert) {
+				this.createIcon({src: "sap-icon://tnt/technicalsystem"});
+
+				assert.strictEqual(this.oIcon.$().attr("data-sap-ui-icon-content"), String.fromCharCode(0xe000), "The icon content attribute is not set yet while the font is loading");
+				assert.strictEqual(this.oIcon.$().css("font-family"), "SAP-icons-TNT", "Icon font family has been set properly after the font is loaded");
+			});
+
+			QUnit.test("A different icon is displayed immediately after font was loaded lazily", function (assert) {
+				this.createIcon({src: "sap-icon://tnt/python"});
+
+				assert.strictEqual(this.oIcon.$().attr("data-sap-ui-icon-content"), String.fromCharCode(0xe00f), "The icon content attribute is not set yet while the font is loading");
+				assert.strictEqual(this.oIcon.$().css("font-family"), "SAP-icons-TNT", "Icon font family has been set properly after the font is loaded");
+			});
+
 		</script>
 	</head>
 	<body>
-		<h1 id="qunit-header">QUnit Page for HTML Control</h1>
+		<h1 id="qunit-header">QUnit Page for Icon Control</h1>
 		<h2 id="qunit-banner"></h2>
 		<h2 id="qunit-userAgent"></h2>
 		<ol id="qunit-tests"></ol>
