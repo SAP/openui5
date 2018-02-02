@@ -1453,6 +1453,54 @@
 			"$Type" : "Edm.String"
 		}
 	},
+	"GWSAMPLE_BASIC.SalesOrder_Cancel": [{
+		"$IsBound": true,
+		"$Parameter": [{
+			"$Name": null,
+			"$Nullable": false,
+			"$Type": "GWSAMPLE_BASIC.SalesOrder"
+		}],
+		"$ReturnType": {
+			"$Type": "GWSAMPLE_BASIC.SalesOrder"
+		},
+		"$kind": "Action"
+	}],
+	"GWSAMPLE_BASIC.SalesOrder_Confirm": [{
+		"$IsBound": true,
+		"$Parameter": [{
+			"$Name": null,
+			"$Nullable": false,
+			"$Type": "GWSAMPLE_BASIC.SalesOrder"
+		}],
+		"$ReturnType": {
+			"$Type": "GWSAMPLE_BASIC.SalesOrder"
+		},
+		"$kind": "Action"
+	}],
+	"GWSAMPLE_BASIC.SalesOrder_GoodsIssueCreated": [{
+		"$IsBound": true,
+		"$Parameter": [{
+			"$Name": null,
+			"$Nullable": false,
+			"$Type": "GWSAMPLE_BASIC.SalesOrder"
+		}],
+		"$ReturnType": {
+			"$Type": "GWSAMPLE_BASIC.SalesOrder"
+		},
+		"$kind": "Action"
+	}],
+	"GWSAMPLE_BASIC.SalesOrder_InvoiceCreated": [{
+		"$IsBound": true,
+		"$Parameter": [{
+			"$Name": null,
+			"$Nullable": false,
+			"$Type": "GWSAMPLE_BASIC.SalesOrder"
+		}],
+		"$ReturnType": {
+			"$Type": "GWSAMPLE_BASIC.SalesOrder"
+		},
+		"$kind": "Action"
+	}],
 	"GWSAMPLE_BASIC.VH_AddressType" : {
 		"$kind" : "EntityType",
 		"$Key" : ["AddressType"],

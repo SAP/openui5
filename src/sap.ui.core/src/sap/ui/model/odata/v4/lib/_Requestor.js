@@ -550,6 +550,48 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the resource path relative to the service URL, including function arguments.
+	 *
+	 * @param {string} sPath
+	 *   The absolute binding path to the bound operation or operation import, e.g.
+	 *   "/Entity('0815')/bound.Operation(...)" or "/OperationImport(...)"
+	 * @param {object} oOperationMetadata
+	 *   The operation's metadata
+	 * @param {object} mParameters
+	 *   A copy of the map of key-values pairs representing the operation's actual parameters
+	 * @returns {string}
+	 *   The new path without leading slash and ellipsis
+	 * @throws {Error}
+	 *   If a collection-valued operation parameter is encountered
+	 *
+	 * @private
+	 */
+	Requestor.prototype.getPathAndAddQueryOptions = function (sPath, oOperationMetadata,
+		mParameters) {
+		var aArguments = [],
+			that = this;
+
+		sPath = sPath.slice(1, -5);
+		if (oOperationMetadata.$kind === "Function") {
+			if (oOperationMetadata.$Parameter) {
+				oOperationMetadata.$Parameter.forEach(function (oParameter) {
+					var sName = oParameter.$Name;
+
+					if (sName in mParameters) {
+						if (oParameter.$IsCollection) {
+							throw new Error("Unsupported collection-valued parameter: " + sName);
+						}
+						aArguments.push(encodeURIComponent(sName) + "=" + encodeURIComponent(
+							that.formatPropertyAsLiteral(mParameters[sName], oParameter)));
+					}
+				});
+			}
+			sPath += "(" + aArguments.join(",") + ")";
+		}
+		return sPath;
+	};
+
+	/**
 	 * Returns this requestor's service URL.
 	 *
 	 * @returns {string}
@@ -576,6 +618,29 @@ sap.ui.define([
 			}
 		}
 		return Object.keys(this.mRunningChangeRequests).length > 0;
+	};
+
+	/**
+	 * Tells whether an empty object in the request body is optional for parameterless actions.
+	 * For OData V4, this is false, but for 4.01 it will become true.
+	 *
+	 * @returns {boolean} <code>false</code>
+	 *
+	 * @private
+	 */
+	Requestor.prototype.isActionBodyOptional = function () {
+		return false;
+	};
+
+	/**
+	 * Tells whether change sets are optional. For OData V4, this is true.
+	 *
+	 * @returns {boolean} <code>true</code>
+	 *
+	 * @private
+	 */
+	Requestor.prototype.isChangeSetOptional = function () {
+		return true;
 	};
 
 	/**
@@ -995,7 +1060,7 @@ sap.ui.define([
 
 		if (aChangeSet.length === 0) {
 			aRequests.splice(0, 1); // delete empty change set
-		} else if (aChangeSet.length === 1) {
+		} else if (aChangeSet.length === 1 && this.isChangeSetOptional()) {
 			aRequests[0] = aChangeSet[0]; // unwrap change set
 		} else {
 			aRequests[0] = aChangeSet;
@@ -1095,25 +1160,8 @@ sap.ui.define([
 		 * @param {string} sServiceUrl
 		 *   URL of the service document to request the CSRF token from; also used to resolve
 		 *   relative resource paths (see {@link #request})
-		 * @param {object} mHeaders
-		 *   Map of default headers; may be overridden with request-specific headers; certain
-		 *   OData V4 headers are predefined, but may be overridden by the default or
-		 *   request-specific headers:
-		 *   <pre>{
-		 *     "Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
-		 *     "OData-MaxVersion" : "4.0",
-		 *     "OData-Version" : "4.0"
-		 *   }</pre>
-		 *   The map of the default headers must not contain "X-CSRF-Token" header. The created
-		 *   <code>_Requestor</code> always sets the "Content-Type" header value to
-		 *   "application/json;charset=UTF-8;IEEE754Compatible=true" for OData V4 or
-		 *   "application/json;charset=UTF-8" for OData V2.
-		 * @param {object} mQueryParams
-		 *   A map of query parameters as described in
-		 *   {@link sap.ui.model.odata.v4.lib._Helper.buildQuery}; used only to request the CSRF
-		 *   token
 		 * @param {object} oModelInterface
-		 *   A interface allowing to call back to the owning model
+		 *   An interface allowing to call back to the owning model
 		 * @param {function} oModelInterface.fnFetchEntityContainer
 		 *   A promise which is resolved with the $metadata "JSON" object as soon as the entity
 		 *   container is fully available, or rejected with an error.
@@ -1127,12 +1175,29 @@ sap.ui.define([
 		 * @param {function (string)} [oModelInterface.fnOnCreateGroup]
 		 *   A callback function that is called with the group name as parameter when the first
 		 *   request is added to a group
+		 * @param {object} [mHeaders={}]
+		 *   Map of default headers; may be overridden with request-specific headers; certain
+		 *   OData V4 headers are predefined, but may be overridden by the default or
+		 *   request-specific headers:
+		 *   <pre>{
+		 *     "Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
+		 *     "OData-MaxVersion" : "4.0",
+		 *     "OData-Version" : "4.0"
+		 *   }</pre>
+		 *   The map of the default headers must not contain "X-CSRF-Token" header. The created
+		 *   <code>_Requestor</code> always sets the "Content-Type" header value to
+		 *   "application/json;charset=UTF-8;IEEE754Compatible=true" for OData V4 or
+		 *   "application/json;charset=UTF-8" for OData V2.
+		 * @param {object} [mQueryParams={}]
+		 *   A map of query parameters as described in
+		 *   {@link sap.ui.model.odata.v4.lib._Helper.buildQuery}; used only to request the CSRF
+		 *   token
 		 * @param {string} [sODataVersion="4.0"]
 		 *   The version of the OData service. Supported values are "2.0" and "4.0".
 		 * @returns {object}
 		 *   A new <code>_Requestor</code> instance
 		 */
-		create : function (sServiceUrl, mHeaders, mQueryParams, oModelInterface, sODataVersion) {
+		create : function (sServiceUrl, oModelInterface, mHeaders, mQueryParams, sODataVersion) {
 			var oRequestor = new Requestor(sServiceUrl, mHeaders, mQueryParams, oModelInterface);
 
 			if (sODataVersion === "2.0") {

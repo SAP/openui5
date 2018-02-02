@@ -90,18 +90,12 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataModel", {
 		beforeEach : function () {
-			this.oSandbox = sinon.sandbox.create();
-			TestUtils.setupODataV4Server(this.oSandbox, mFixture, undefined, sServiceUrl);
-			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			TestUtils.setupODataV4Server(this._oSandbox, mFixture, undefined, sServiceUrl);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-			this.oSandbox.mock(sap.ui.getCore().getConfiguration()).expects("getLanguageTag")
-				.atLeast(0).returns("ab-CD");
-		},
-
-		afterEach : function () {
-			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
-			this.oSandbox.verifyAndRestore();
+			this.mock(sap.ui.getCore().getConfiguration()).expects("getLanguageTag").atLeast(0)
+				.returns("ab-CD");
 		}
 	});
 
@@ -194,7 +188,7 @@ sap.ui.require([
 			var oModel;
 
 			this.mock(_Requestor).expects("create")
-				.withExactArgs(getServiceUrl(), {"Accept-Language" : "ab-CD"}, sinon.match.object,
+				.withExactArgs(getServiceUrl(), sinon.match.object, {"Accept-Language" : "ab-CD"},
 					sinon.match.object, sODataVersion)
 				.returns({});
 
@@ -398,8 +392,8 @@ sap.ui.require([
 			fnSubmitAuto = function () {};
 
 		oExpectedCreate
-			.withExactArgs(getServiceUrl(), {"Accept-Language" : "ab-CD"}, {"sap-client" : "123"},
-				sinon.match.object, "4.0")
+			.withExactArgs(getServiceUrl(), sinon.match.object, {"Accept-Language" : "ab-CD"},
+				{"sap-client" : "123"}, "4.0")
 			.returns(oRequestor);
 		oExpectedBind0 = this.mock(ODataMetaModel.prototype.fetchEntityContainer).expects("bind")
 			.returns(fnFetchEntityContainer);
@@ -421,7 +415,7 @@ sap.ui.require([
 			.withExactArgs(fnSubmitAuto);
 
 		// code under test - call fnOnCreateGroup
-		oModelInterface = oExpectedCreate.firstCall.args[3];
+		oModelInterface = oExpectedCreate.firstCall.args[1];
 		oModelInterface.fnOnCreateGroup("$auto");
 		oModelInterface.fnOnCreateGroup("foo");
 
@@ -597,7 +591,7 @@ sap.ui.require([
 
 		oModelMock.expects("checkDeferredGroupId").withExactArgs("groupId");
 		oModelMock.expects("_submitBatch").never(); // not yet
-		this.stub(sap.ui.getCore(), "addPrerenderingTask", function (fnCallback) {
+		this.mock(sap.ui.getCore()).expects("addPrerenderingTask").callsFake(function (fnCallback) {
 			setTimeout(function () {
 				// make sure that _submitBatch is called within fnCallback
 				oModelMock.expects("_submitBatch").withExactArgs("groupId")
@@ -783,6 +777,17 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("reportError on canceled error, no debug log", function (assert) {
+		var oError = {canceled : "noDebugLog"};
+
+		this.oLogMock.expects("debug").never();
+		this.mock(sap.ui.getCore().getMessageManager()).expects("addMessages").never();
+
+		// code under test
+		createModel().reportError("Failure", "class", oError);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("destroy", function (assert) {
 		var oModel = createModel(),
 			oModelPrototypeMock = this.mock(Model.prototype);
@@ -870,32 +875,53 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createBindingContext - absolute path, no context", function (assert) {
-		var oBindingContext,
-			oModel = createModel();
+	[
+		"/foo",
+		"/EMPLOYEES('4711')/#com.sap.foo.bar.AcFoo",
+		"/EMPLOYEES('4711')/#com.sap.foo.bar.AcFoo/Title"
+	].forEach(function(sPath) {
+		QUnit.test("createBindingContext - absolute path, no context " + sPath, function (assert) {
+			var oBindingContext,
+				oModel = createModel();
 
-		// code under test
-		oBindingContext = oModel.createBindingContext("/foo");
+			// code under test
+			oBindingContext = oModel.createBindingContext(sPath);
 
-		assert.deepEqual(oBindingContext, new BaseContext(oModel, "/foo"));
-		assert.ok(oBindingContext instanceof BaseContext);
+			assert.deepEqual(oBindingContext, new BaseContext(oModel, sPath));
+			assert.ok(oBindingContext instanceof BaseContext);
+		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createBindingContext - relative path and context", function (assert) {
-		var oBindingContext,
-		oModel = createModel(),
-		oModelMock = this.mock(oModel),
-		oContext = new BaseContext(oModel, "/foo");
+	[{
+		entityPath : "/foo",
+		propertyPath : "bar"
+	}, {
+		entityPath : "/foo",
+		propertyPath : "foo_2_bar/#com.sap.foo.bar.AcBar"
+	}, {
+		entityPath : "/foo",
+		propertyPath : "#com.sap.foo.bar.AcBar/Title"
+	}].forEach(function(oFixture) {
+		var sResolvedPath = oFixture.entityPath + "/" + oFixture.propertyPath,
+			sTitle = "createBindingContext - relative path and context " + sResolvedPath;
 
-		oModelMock.expects("resolve").withExactArgs("bar", sinon.match.same(oContext))
-			.returns("/foo/bar");
+		QUnit.test(sTitle, function (assert) {
+			var oBindingContext,
+				oModel = createModel(),
+				oModelMock = this.mock(oModel),
+				oContext = new BaseContext(oModel, oFixture.entityPath);
 
-		// code under test
-		oBindingContext = oModel.createBindingContext("bar", oContext);
+			oModelMock.expects("resolve")
+				.withExactArgs(oFixture.propertyPath, sinon.match.same(oContext))
+				.returns(sResolvedPath);
 
-		assert.deepEqual(oBindingContext, new BaseContext(oModel, "/foo/bar"));
-		assert.ok(oBindingContext instanceof BaseContext);
+			// code under test
+			oBindingContext = oModel.createBindingContext(oFixture.propertyPath, oContext);
+
+			assert.deepEqual(oBindingContext, new BaseContext(oModel, sResolvedPath));
+			assert.ok(oBindingContext instanceof BaseContext);
+		});
 	});
 
 	//*********************************************************************************************
@@ -907,8 +933,16 @@ sap.ui.require([
 			dataPath : "/BusinessPartnerList('42')",
 			metaPath : "@com.sap.vocabularies.UI.v1.LineItem"
 		}, {
+			dataPath : "/BusinessPartnerList('42')/",
+			metaPath : "/com.sap.foo.bar.AcFoo",
+			relativeMetaPath : "./com.sap.foo.bar.AcFoo"
+		}, {
+			dataPath : "/BusinessPartnerList('42')/",
+			doubleHash : true, // single hash goes to data and is tested above
+			metaPath : "com.sap.foo.bar.AcFoo"
+		}, {
 			dataPath : "/",
-			metaPath : "BusinessPartnerList/@com.sap.vocabularies.UI.v1.LineItem"
+			metaPath : "com.sap.foo.bar.AcFoo"
 		}, {
 			dataPath : "/",
 			metaPath : "BusinessPartnerList/@com.sap.vocabularies.UI.v1.LineItem"
@@ -917,14 +951,18 @@ sap.ui.require([
 			metaPath : "/",
 			relativeMetaPath : "./" // meta path is always treated as a relative path
 		}, {
+			dataPath: "/BusinessPartnerList",
+			metaPath: "Name"
+		}, {
 			dataPath : "/BusinessPartnerList",
 			metaPath : "/Name",
 			relativeMetaPath : "./Name" // meta path is always treated as a relative path
 		}].forEach(function (oFixture) {
-			var sPath = (oFixture.dataPath
-					+ (bDoubleHash ? "##" : "#")
-					+ oFixture.metaPath);
+			var sPath = oFixture.dataPath + (bDoubleHash ? "##" : "#") + oFixture.metaPath;
 
+			if ("doubleHash" in oFixture && oFixture.doubleHash !== bDoubleHash) {
+				return;
+			}
 			QUnit.test("createBindingContext - go to metadata " + sPath, function (assert) {
 				var oContext = {},
 					oModel = createModel(),

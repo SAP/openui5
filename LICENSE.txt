@@ -483,6 +483,14 @@ License: BSD 3-clause "New" or "Revised" License
 <ORGANIZATION> = Christian Johansen
 <YEAR> = 2010-2014
 
+Component: Sinon.JS 4.1.3
+Licensor: Christian Johansen
+Website: http://github.com/cjohansen/Sinon.JS/
+License: BSD 3-clause "New" or "Revised" License
+<OWNER> = Christian Johansen
+<ORGANIZATION> = Christian Johansen
+<YEAR> = 2010-2017
+
 Component: String startsWith Method 0.2.0
 Licensor: Mathias Bynens
 Website: https://github.com/mathiasbynens/String.prototype.startsWith

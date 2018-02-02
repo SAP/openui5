@@ -12,7 +12,14 @@ sap.ui.require([
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
+	var oModelInterface = {
+			fnFetchMetadata : function () {
+				throw new Error("Do not call me!");
+			},
+			fnGetGroupProperty : defaultGetGroupProperty,
+			fnOnCreateGroup : function () {}
+		},
+		sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
 		sSampleServiceUrl
 			= "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/";
 
@@ -81,18 +88,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Requestor", {
 		beforeEach : function () {
-			this.oSandbox = sinon.sandbox.create();
-			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 
 			// workaround: Chrome extension "UI5 Inspector" calls this method which loads the
 			// resource "sap-ui-version.json" and thus interferes with mocks for jQuery.ajax
-			this.oSandbox.stub(sap.ui, "getVersionInfo");
-		},
-
-		afterEach : function () {
-			this.oSandbox.verifyAndRestore();
+			this.mock(sap.ui).expects("getVersionInfo").atLeast(0);
 		}
 	});
 
@@ -103,8 +105,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getServiceUrl", function (assert) {
-		var oRequestor = _Requestor.create(sServiceUrl, undefined, {"foo" : "must be ignored"},
-				undefined, undefined, defaultGetGroupProperty);
+		var oRequestor = _Requestor.create(sServiceUrl, oModelInterface,
+				{"foo" : "must be ignored"});
 
 		// code under test
 		assert.strictEqual(oRequestor.getServiceUrl(), sServiceUrl);
@@ -119,10 +121,7 @@ sap.ui.require([
 		groupId : "unknown", submitMode : "API"
 	}].forEach(function (oFixture) {
 		QUnit.test("getGroupSubmitMode, success" + oFixture.groupId, function (assert) {
-			var oModelInterface = {
-					fnGetGroupProperty : defaultGetGroupProperty
-				},
-				oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, oModelInterface);
+			var oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
 
 			this.mock(oModelInterface).expects("fnGetGroupProperty")
 				.withExactArgs(oFixture.groupId, "submit")
@@ -169,7 +168,6 @@ sap.ui.require([
 		QUnit.test(sTest, function (assert) {
 			var sBuildQueryResult = "foo",
 				mHeaders = {},
-				oModelInterface = {},
 				mQueryParams = {},
 				oRequestor;
 
@@ -178,7 +176,7 @@ sap.ui.require([
 				.returns(sBuildQueryResult);
 
 			// code under test
-			oRequestor = _Requestor.create(sServiceUrl, mHeaders, mQueryParams, oModelInterface,
+			oRequestor = _Requestor.create(sServiceUrl, oModelInterface, mHeaders, mQueryParams,
 				oFixture.sODataVersion);
 
 			assert.strictEqual(oRequestor.getServiceUrl(), sServiceUrl, "parameter sServiceUrl");
@@ -231,13 +229,11 @@ sap.ui.require([
 		var oChangedPayload = {"foo" : 42},
 			oPayload = {},
 			oPromise,
-			oRequestor = _Requestor.create(sServiceUrl, undefined, {
+			oRequestor = _Requestor.create(sServiceUrl, oModelInterface, undefined, {
 				"foo" : "URL params are ignored for normal requests"
-			}, {
-				fnGetGroupProperty : defaultGetGroupProperty
 			}),
 			oResult = {},
-			fnSubmit = sinon.spy();
+			fnSubmit = this.spy();
 
 		this.mock(_Requestor).expects("cleanPayload")
 			.withExactArgs(sinon.match.same(oPayload)).returns(oChangedPayload);
@@ -264,9 +260,7 @@ sap.ui.require([
 		QUnit.test("request: wait for CSRF token if method is not GET, " + i, function (assert) {
 			var oPayload = {},
 				oPromise,
-				oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, {
-					fnGetGroupProperty : defaultGetGroupProperty
-				}),
+				oRequestor = _Requestor.create(sServiceUrl, oModelInterface),
 				oResult = {},
 				oSecurityTokenPromise = new Promise(function (fnResolve, fnReject) {
 					setTimeout(function () {
@@ -320,9 +314,8 @@ sap.ui.require([
 
 		QUnit.test(sTitle, function (assert) {
 			var oConvertedResponse = {},
-				oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, {
-						fnGetGroupProperty : defaultGetGroupProperty
-					}, oFixture.sODataVersion),
+				oRequestor = _Requestor.create(sServiceUrl, oModelInterface, undefined, undefined,
+					oFixture.sODataVersion),
 				oRequestorMock = this.mock(oRequestor),
 				oResponsePayload = {};
 
@@ -349,9 +342,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("request: fail to convert payload, $direct", function (assert) {
 		var oError = {},
-			oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			}, "2.0"),
+			oRequestor = _Requestor.create(sServiceUrl, oModelInterface, undefined, undefined,
+				"2.0"),
 			oResponsePayload = {};
 
 		this.mock(jQuery).expects("ajax")
@@ -373,9 +365,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("request: fail, unsupported OData service version, $direct", function (assert) {
 		var oError = {},
-			oRequestor = _Requestor.create("/", undefined, undefined, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			}),
+			oRequestor = _Requestor.create("/", oModelInterface),
 			oRequestorMock = this.mock(oRequestor);
 
 		this.mock(jQuery).expects("ajax")
@@ -398,9 +388,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("request: fail, unsupported OData service version, $batch", function (assert) {
 		var oError = {},
-			oRequestor = _Requestor.create("/", undefined, undefined, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			}),
+			oRequestor = _Requestor.create("/", oModelInterface),
 			oRequestorMock = this.mock(oRequestor);
 
 		this.mock(jQuery).expects("ajax")
@@ -425,9 +413,7 @@ sap.ui.require([
 	QUnit.test("submitBatch: fail, unsupported OData service version", function (assert) {
 		var oError = {},
 			oGetProductsPromise,
-			oRequestor = _Requestor.create("/Service/", undefined, undefined, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			}),
+			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oRequestorMock = this.mock(oRequestor),
 			mResponse = {
 				headers : {
@@ -470,9 +456,8 @@ sap.ui.require([
 				+ oFixture.sODataVersion;
 
 		QUnit.test(sTitle, function (assert) {
-			var oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, {
-					fnGetGroupProperty : defaultGetGroupProperty
-				}, oFixture.sODataVersion),
+			var oRequestor = _Requestor.create(sServiceUrl, oModelInterface, undefined, undefined,
+					oFixture.sODataVersion),
 				oAjaxResponse = {},
 				oDeserializeBatchResponse = {},
 				mResponseHeaders = {"Content-Type" : "application/json"};
@@ -542,9 +527,8 @@ sap.ui.require([
 					$submit : undefined
 				}],
 				oGetProductsPromise,
-				oRequestor = _Requestor.create("/Service/", undefined, undefined, {
-					fnGetGroupProperty : defaultGetGroupProperty
-				}, oFixture.sODataVersion),
+				oRequestor = _Requestor.create("/Service/", oModelInterface, undefined, undefined,
+					oFixture.sODataVersion),
 				oRequestorMock = this.mock(oRequestor);
 
 			oRequestorMock.expects("doConvertResponse")
@@ -570,9 +554,8 @@ sap.ui.require([
 	QUnit.test("submitBatch: fail to convert payload", function (assert) {
 		var oError = {},
 			oGetProductsPromise,
-			oRequestor = _Requestor.create("/Service/", undefined, undefined, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			}, "2.0"),
+			oRequestor = _Requestor.create("/Service/", oModelInterface, undefined, undefined,
+				"2.0"),
 			oRequestorMock = this.mock(oRequestor),
 			oResponse = {d : {foo : "bar"}};
 
@@ -622,9 +605,7 @@ sap.ui.require([
 			var mDefaultHeaders = clone(mHeaders.defaultHeaders),
 				oPromise,
 				mRequestHeaders = clone(mHeaders.requestHeaders),
-				oRequestor = _Requestor.create(sServiceUrl, mDefaultHeaders, undefined, {
-					fnGetGroupProperty : defaultGetGroupProperty
-				}),
+				oRequestor = _Requestor.create(sServiceUrl, oModelInterface, mDefaultHeaders),
 				oResult = {},
 				// add predefined request headers for OData V4
 				mResultHeaders = jQuery.extend({}, {
@@ -662,25 +643,22 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("request(), fnOnCreateGroup", function (assert) {
-		var fnOnCreateGroup = sinon.spy(),
-			oRequestor = _Requestor.create("/", {}, {}, {
-				fnGetGroupProperty : defaultGetGroupProperty,
-				fnOnCreateGroup : fnOnCreateGroup
-			});
+		var oRequestor = _Requestor.create("/", oModelInterface);
 
+		this.mock(oModelInterface).expects("fnOnCreateGroup").withExactArgs("groupId");
+
+		// code under test
 		oRequestor.request("GET", "SalesOrders", "groupId");
 		oRequestor.request("GET", "SalesOrders", "groupId");
-
-		sinon.assert.calledOnce(fnOnCreateGroup);
-		sinon.assert.calledWithExactly(fnOnCreateGroup, "groupId");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("request(), fnGetGroupProperty", function (assert) {
 		var oModelInterface = {
-				fnGetGroupProperty : function () {}
+				fnGetGroupProperty : defaultGetGroupProperty,
+				fnOnCreateGroup : null // optional
 			},
-			oRequestor = _Requestor.create("/", {}, {}, oModelInterface);
+			oRequestor = _Requestor.create("/", oModelInterface);
 
 		this.mock(oModelInterface).expects("fnGetGroupProperty")
 			.withExactArgs("groupId", "submit")
@@ -692,9 +670,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("request(), store CSRF token from server", function (assert) {
-		var oRequestor = _Requestor.create("/", undefined, undefined, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			});
+		var oRequestor = _Requestor.create("/", oModelInterface);
 
 		this.mock(jQuery).expects("ajax")
 			.withExactArgs("/", sinon.match({headers : {"X-CSRF-Token" : "Fetch"}}))
@@ -710,9 +686,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("request(), keep old CSRF token in case none is sent", function (assert) {
-		var oRequestor = _Requestor.create("/", {"X-CSRF-Token" : "abc123"}, undefined, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			});
+		var oRequestor = _Requestor.create("/", oModelInterface, {"X-CSRF-Token" : "abc123"});
 
 		this.mock(jQuery).expects("ajax")
 			.withExactArgs("/", sinon.match({headers : {"X-CSRF-Token" : "abc123"}}))
@@ -726,9 +700,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("request(), keep fetching CSRF token in case none is sent", function (assert) {
 		var oMock = this.mock(jQuery),
-			oRequestor = _Requestor.create("/", undefined, undefined, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			});
+			oRequestor = _Requestor.create("/", oModelInterface);
 
 		oMock.expects("ajax")
 			.withExactArgs("/", sinon.match({headers : {"X-CSRF-Token" : "Fetch"}}))
@@ -748,9 +720,8 @@ sap.ui.require([
 		QUnit.test("refreshSecurityToken: success = " + bSuccess, function (assert) {
 			var oError = {},
 				oPromise,
-				oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"}, {
-					fnGetGroupProperty : defaultGetGroupProperty
-				}),
+				oRequestor = _Requestor.create("/Service/", oModelInterface, undefined,
+					{"sap-client" : "123"}),
 				oTokenRequiredResponse = {};
 
 			this.mock(_Helper).expects("createError")
@@ -758,27 +729,28 @@ sap.ui.require([
 				.withExactArgs(sinon.match.same(oTokenRequiredResponse))
 				.returns(oError);
 
-			this.stub(jQuery, "ajax", function (sUrl, oSettings) {
-				var jqXHR;
+			this.mock(jQuery).expects("ajax").twice()
+				.withExactArgs("/Service/?sap-client=123", sinon.match({
+					headers : {"X-CSRF-Token" : "Fetch"},
+					method : "HEAD"
+				}))
+				.callsFake(function () {
+					var jqXHR;
 
-				assert.strictEqual(sUrl, "/Service/?sap-client=123");
-				assert.strictEqual(oSettings.headers["X-CSRF-Token"], "Fetch");
-				assert.strictEqual(oSettings.method, "HEAD");
+					if (bSuccess) {
+						jqXHR = createMock(assert, undefined, "nocontent", {
+							"OData-Version" : "4.0",
+							"X-CSRF-Token" : "abc123"
+						});
+					} else {
+						jqXHR = new jQuery.Deferred();
+						setTimeout(function () {
+							jqXHR.reject(oTokenRequiredResponse);
+						}, 0);
+					}
 
-				if (bSuccess) {
-					jqXHR = createMock(assert, undefined, "nocontent", {
-						"OData-Version" : "4.0",
-						"X-CSRF-Token" : "abc123"
-					});
-				} else {
-					jqXHR = new jQuery.Deferred();
-					setTimeout(function () {
-						jqXHR.reject(oTokenRequiredResponse);
-					}, 0);
-				}
-
-				return jqXHR;
-			});
+					return jqXHR;
+				});
 			assert.strictEqual("X-CSRF-Token" in oRequestor.mHeaders, false);
 
 			// code under test
@@ -786,8 +758,6 @@ sap.ui.require([
 
 			assert.strictEqual(oRequestor.refreshSecurityToken(undefined), oPromise,
 				"promise reused");
-			assert.strictEqual(jQuery.ajax.callCount, 1,
-				"only one HEAD request underway at any time");
 			assert.strictEqual(oRequestor.oSecurityTokenPromise, oPromise,
 				"promise stored at requestor instance so that request method can use it");
 
@@ -803,14 +773,11 @@ sap.ui.require([
 				return oRequestor.refreshSecurityToken("some_old_token").then(function () {
 					var oNewPromise;
 
-					assert.strictEqual(jQuery.ajax.callCount, 1, "no new HEAD request");
-
 					// code under test
 					oNewPromise = oRequestor.refreshSecurityToken(
 						oRequestor.mHeaders["X-CSRF-Token"]);
 
 					assert.notStrictEqual(oNewPromise, oPromise, "new promise");
-					assert.strictEqual(jQuery.ajax.callCount, 2, "new HEAD request");
 					// avoid "Uncaught (in promise)"
 					return oNewPromise.catch(function () {
 						assert.ok(!bSuccess, "certain failure");
@@ -840,13 +807,13 @@ sap.ui.require([
 	}].forEach(function (o) {
 		QUnit.test("request: " + o.sTitle, function (assert) {
 			var oError = {},
+				oExpectation,
 				oReadFailure = {},
-				oRequestor = _Requestor.create("/Service/", {"X-CSRF-Token" : "Fetch"}, undefined, {
-					fnGetGroupProperty : defaultGetGroupProperty
-				}),
+				oRequestor = _Requestor.create("/Service/", oModelInterface,
+					{"X-CSRF-Token" : "Fetch"}),
 				oRequestPayload = {},
 				oResponsePayload = {},
-				fnSubmit = sinon.spy(),
+				fnSubmit = this.spy(),
 				bSuccess = o.bRequestSucceeds !== false && !o.bReadFails && !o.bDoNotDeliverToken,
 				oTokenRequiredResponse = {
 					getResponseHeader : function (sName) {
@@ -866,32 +833,34 @@ sap.ui.require([
 			// with <code>bRequestSucceeds === true</code>, "request" always succeeds,
 			// else "request" first fails due to missing CSRF token which can be fetched via
 			// "ODataModel#refreshSecurityToken".
-			this.stub(jQuery, "ajax", function (sUrl0, oSettings) {
-				var jqXHR;
+			this.mock(jQuery).expects("ajax").atLeast(1)
+				.withExactArgs("/Service/foo", sinon.match({
+					data : JSON.stringify(oRequestPayload),
+					headers : {"foo" : "bar"},
+					method : "FOO"
+				}))
+				.callsFake(function (sUrl, oSettings) {
+					var jqXHR;
 
-				assert.strictEqual(sUrl0, "/Service/foo");
-				assert.strictEqual(oSettings.data, JSON.stringify(oRequestPayload));
-				assert.strictEqual(oSettings.method, "FOO");
-				assert.strictEqual(oSettings.headers.foo, "bar");
+					if (o.bRequestSucceeds === true
+						|| o.bRequestSucceeds === undefined
+						&& oSettings.headers["X-CSRF-Token"] === "abc123") {
+						jqXHR = createMock(assert, oResponsePayload, "OK");
+					} else {
+						jqXHR = new jQuery.Deferred();
+						setTimeout(function () {
+							jqXHR.reject(oTokenRequiredResponse);
+						}, 0);
+					}
 
-				if (o.bRequestSucceeds === true
-					|| o.bRequestSucceeds === undefined
-					&& oSettings.headers["X-CSRF-Token"] === "abc123") {
-					jqXHR = createMock(assert, oResponsePayload, "OK");
-				} else {
-					jqXHR = new jQuery.Deferred();
-					setTimeout(function () {
-						jqXHR.reject(oTokenRequiredResponse);
-					}, 0);
-				}
+					return jqXHR;
+				});
 
-				return jqXHR;
-			});
-
+			oExpectation = this.mock(oRequestor).expects("refreshSecurityToken");
 			if (o.bRequestSucceeds !== undefined) {
-				this.mock(oRequestor).expects("refreshSecurityToken").never();
+				oExpectation.never();
 			} else {
-				this.stub(oRequestor, "refreshSecurityToken", function (sOldSecurityToken) {
+				oExpectation.callsFake(function (sOldSecurityToken) {
 					assert.strictEqual(sOldSecurityToken, "Fetch");
 					return new Promise(function (fnResolve, fnReject) {
 						setTimeout(function () {
@@ -932,7 +901,8 @@ sap.ui.require([
 				}
 			},
 			oCleanedPayload = {},
-			oRequestor = _Requestor.create("/Service/", {"_foo" : "_bar"}, {"sap-client" : "111"}),
+			oRequestor = _Requestor.create("/Service/", oModelInterface, {"_foo" : "_bar"},
+				{"sap-client" : "111"}),
 			oRequestPayload = {},
 			sResponseContentType = "multipart/mixed; boundary=foo",
 			oResponsePayload = {},
@@ -958,40 +928,41 @@ sap.ui.require([
 
 		// "request" first fails due to missing CSRF token which can be fetched via
 		// "ODataModel#refreshSecurityToken".
-		this.stub(jQuery, "ajax", function (sUrl0, oSettings) {
-			var jqXHR;
+		this.mock(jQuery).expects("ajax").twice()
+			.withExactArgs("/Service/$batch?sap-client=111", sinon.match({
+				data : oBatchRequest.body,
+				method : "FOO"
+			}))
+			.callsFake(function (sUrl, oSettings) {
+				var jqXHR;
 
-			assert.strictEqual(sUrl0, "/Service/$batch?sap-client=111");
-			assert.strictEqual(oSettings.data, oBatchRequest.body);
-			assert.strictEqual(oSettings.method, "FOO");
+				if (oSettings.headers["X-CSRF-Token"] === "abc123") {
+					jqXHR = createMock(assert, oResponsePayload, "OK", {
+							"Content-Type" : sResponseContentType,
+							"OData-Version" : "4.0"
+						});
+				} else {
+					jqXHR = new jQuery.Deferred();
+					setTimeout(function () {
+						jqXHR.reject(oTokenRequiredResponse);
+					}, 0);
+				}
 
-			if (oSettings.headers["X-CSRF-Token"] === "abc123") {
-				jqXHR = createMock(assert, oResponsePayload, "OK", {
-						"Content-Type" : sResponseContentType,
-						"OData-Version" : "4.0"
-					});
-			} else {
-				jqXHR = new jQuery.Deferred();
-				setTimeout(function () {
-					jqXHR.reject(oTokenRequiredResponse);
-				}, 0);
-			}
+				delete oSettings.headers["X-CSRF-Token"];
+				assert.deepEqual(oSettings.headers, {
+					"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
+					"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
+					"MIME-Version" : "1.0",
+					"OData-MaxVersion" : "4.0",
+					"OData-Version" : "4.0",
+					"_foo" : "_bar",
+					"foo" : "bar"
+				});
 
-			delete oSettings.headers["X-CSRF-Token"];
-			assert.deepEqual(oSettings.headers, {
-				"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
-				"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
-				"MIME-Version" : "1.0",
-				"OData-MaxVersion" : "4.0",
-				"OData-Version" : "4.0",
-				"_foo" : "_bar",
-				"foo" : "bar"
+				return jqXHR;
 			});
 
-			return jqXHR;
-		});
-
-		this.stub(oRequestor, "refreshSecurityToken", function () {
+		this.mock(oRequestor).expects("refreshSecurityToken").callsFake(function () {
 			return new Promise(function (fnResolve, fnReject) {
 				setTimeout(function () {
 					oRequestor.mHeaders["X-CSRF-Token"] = "abc123";
@@ -1019,10 +990,9 @@ sap.ui.require([
 				"X-CSRF-Token" : "abc123"
 			}),
 			iHeadRequestCount = 0,
-			oRequestor = _Requestor.create("/Service/", undefined, undefined, {fnGetGroupProperty :
-				defaultGetGroupProperty});
+			oRequestor = _Requestor.create("/Service/", oModelInterface);
 
-		this.stub(jQuery, "ajax", function (sUrl0, oSettings) {
+		this.mock(jQuery).expects("ajax").atLeast(1).callsFake(function (sUrl0, oSettings) {
 			var jqXHR,
 				oTokenRequiredResponse = {
 					getResponseHeader : function (sName) {
@@ -1128,9 +1098,8 @@ sap.ui.require([
 				],
 				{responseText : JSON.stringify(aResults[0])}
 			],
-			oRequestor = _Requestor.create("/Service/", {"Accept-Language" : "ab-CD"}, undefined, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			});
+			oRequestor = _Requestor.create("/Service/", oModelInterface,
+				{"Accept-Language" : "ab-CD"});
 
 		aPromises.push(oRequestor.request("GET", "Products", "group1", {
 			Foo : "bar",
@@ -1176,9 +1145,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("submitBatch(...): single GET", function (assert) {
-		var oRequestor = _Requestor.create("/", undefined, undefined, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			});
+		var oRequestor = _Requestor.create("/", oModelInterface);
 
 		oRequestor.request("GET", "Products", "groupId");
 		this.mock(oRequestor).expects("request")
@@ -1196,13 +1163,11 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("submitBatch(...): merge PATCH requests", function (assert) {
 		var aPromises = [],
-			oRequestor = _Requestor.create("/", undefined, undefined, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			}),
-			fnSubmit0 = sinon.spy(),
-			fnSubmit1 = sinon.spy(),
-			fnSubmit2 = sinon.spy(),
-			fnSubmit3 = sinon.spy();
+			oRequestor = _Requestor.create("/", oModelInterface),
+			fnSubmit0 = this.spy(),
+			fnSubmit1 = this.spy(),
+			fnSubmit2 = this.spy(),
+			fnSubmit3 = this.spy();
 
 		aPromises.push(oRequestor
 			.request("PATCH", "Products('0')", "groupId", {}, {Name : null}));
@@ -1311,9 +1276,7 @@ sap.ui.require([
 	QUnit.test("submitBatch(...): $batch failure", function (assert) {
 		var oBatchError = new Error("$batch request failed"),
 			aPromises = [],
-			oRequestor = _Requestor.create(undefined, undefined, undefined, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			});
+			oRequestor = _Requestor.create("/", oModelInterface);
 
 		function unexpectedSuccess() {
 			assert.ok(false, "unexpected success");
@@ -1362,9 +1325,7 @@ sap.ui.require([
 				statusText : "Not found"
 			}],
 			aPromises = [],
-			oRequestor = _Requestor.create(undefined, undefined, undefined, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			});
+			oRequestor = _Requestor.create("/", oModelInterface);
 
 		function unexpected () {
 			assert.ok(false);
@@ -1419,9 +1380,7 @@ sap.ui.require([
 				statusText : "Bad Request"
 			}],
 			aPromises = [],
-			oRequestor = _Requestor.create(undefined, undefined, undefined, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			});
+			oRequestor = _Requestor.create("/", oModelInterface);
 
 		function assertError(oResultError, sMessage) {
 			assert.ok(oResultError instanceof Error);
@@ -1461,9 +1420,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("request(...): batch group id", function (assert) {
-		var oRequestor = _Requestor.create(undefined, undefined, undefined, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			});
+		var oRequestor = _Requestor.create("/", oModelInterface);
 
 		oRequestor.request("PATCH", "EntitySet1", "group", {"foo" : "bar"}, {"a" : "b"});
 		oRequestor.request("PATCH", "EntitySet2", "group", {"bar" : "baz"}, {"c" : "d"});
@@ -1511,7 +1468,8 @@ sap.ui.require([
 			},
 			aBatchRequests = [{}],
 			aExpectedResponses = [],
-			oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"}),
+			oRequestor = _Requestor.create("/Service/", oModelInterface, undefined,
+				{"sap-client" : "123"}),
 			oResult = "abc",
 			sResponseContentType = "multipart/mixed; boundary=foo",
 			oJqXHRMock = createMock(assert, oResult, "OK", {
@@ -1553,9 +1511,7 @@ sap.ui.require([
 			oJQueryMock = this.mock(jQuery),
 			aPromises = [],
 			sServiceUrl = "/Service/",
-			oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			});
+			oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
 
 		// expects a jQuery.ajax for a batch request and returns a mock for it to be resolved later
 		function expectBatch() {
@@ -1627,16 +1583,15 @@ sap.ui.require([
 
 	//*****************************************************************************************
 	QUnit.test("cancelChanges: various requests", function (assert) {
-		var fnCancel1 = sinon.spy(),
-			fnCancel2 = sinon.spy(),
-			fnCancel3 = sinon.spy(),
-			fnCancelPost = sinon.spy(),
+		var fnCancel1 = this.spy(),
+			fnCancel2 = this.spy(),
+			fnCancel3 = this.spy(),
+			fnCancelPost = this.spy(),
 			iCount = 1,
 			oPostData = {},
 			oPromise,
-			oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"}, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			});
+			oRequestor = _Requestor.create("/Service/", oModelInterface, undefined,
+				{"sap-client" : "123"});
 
 		function unexpected () {
 			assert.ok(false);
@@ -1673,7 +1628,7 @@ sap.ui.require([
 		// code under test
 		assert.strictEqual(oRequestor.hasPendingChanges(), true);
 
-		sinon.spy(oRequestor, "cancelChangesByFilter");
+		this.spy(oRequestor, "cancelChangesByFilter");
 
 		// code under test
 		oRequestor.cancelChanges("groupId");
@@ -1710,9 +1665,8 @@ sap.ui.require([
 	QUnit.test("cancelChanges: only PATCH", function (assert) {
 		var fnCancel = function () {},
 			oPromise,
-			oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"}, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			});
+			oRequestor = _Requestor.create("/Service/", oModelInterface, undefined,
+				{"sap-client" : "123"});
 
 		function unexpected () {
 			assert.ok(false);
@@ -1745,18 +1699,14 @@ sap.ui.require([
 
 	//*****************************************************************************************
 	QUnit.test("cancelChanges: unused group", function (assert) {
-		_Requestor.create("/Service/", undefined, undefined, {
-			fnGetGroupProperty : defaultGetGroupProperty
-		}).cancelChanges("unusedGroupId");
+		_Requestor.create("/Service/", oModelInterface).cancelChanges("unusedGroupId");
 	});
 
 	//*****************************************************************************************
 	QUnit.test("removePatch", function (assert) {
-		var fnCancel = sinon.spy(),
+		var fnCancel = this.spy(),
 			oPromise,
-			oRequestor = _Requestor.create("/Service/",  undefined, undefined, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			}),
+			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oTestPromise;
 
 		oPromise = oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"},
@@ -1778,12 +1728,10 @@ sap.ui.require([
 
 	//*****************************************************************************************
 	QUnit.test("removePatch: various requests", function (assert) {
-		var fnCancel = sinon.spy(),
+		var fnCancel = this.spy(),
 			oPromise,
 			aPromises,
-			oRequestor = _Requestor.create("/Service/", undefined, undefined, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			});
+			oRequestor = _Requestor.create("/Service/", oModelInterface);
 
 		function unexpected () {
 			assert.ok(false);
@@ -1832,9 +1780,7 @@ sap.ui.require([
 	//*****************************************************************************************
 	QUnit.test("removePatch after submitBatch", function (assert) {
 		var oPromise,
-			oRequestor = _Requestor.create("/Service/", undefined, undefined, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			});
+			oRequestor = _Requestor.create("/Service/", oModelInterface);
 
 		oPromise = oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "bar"});
 
@@ -1852,14 +1798,12 @@ sap.ui.require([
 	//*****************************************************************************************
 	QUnit.test("removePost", function (assert) {
 		var oBody = {},
-			fnCancel1 = sinon.spy(),
-			fnCancel2 = sinon.spy(),
-			oRequestor = _Requestor.create("/Service/", undefined, undefined, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			}),
+			fnCancel1 = this.spy(),
+			fnCancel2 = this.spy(),
+			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oTestPromise;
 
-		sinon.spy(oRequestor, "cancelChangesByFilter");
+		this.spy(oRequestor, "cancelChangesByFilter");
 		oTestPromise = Promise.all([
 			oRequestor.request("POST", "Products", "groupId", {}, oBody, undefined, fnCancel1)
 				.then(function () {
@@ -1896,10 +1840,8 @@ sap.ui.require([
 	//*****************************************************************************************
 	QUnit.test("removePost with only one POST", function (assert) {
 		var oBody = {},
-			fnCancel = sinon.spy(),
-			oRequestor = _Requestor.create("/Service/", undefined, undefined, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			}),
+			fnCancel = this.spy(),
+			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oTestPromise;
 
 		oTestPromise = oRequestor.request("POST", "Products", "groupId", {}, oBody,
@@ -1923,9 +1865,7 @@ sap.ui.require([
 	//*****************************************************************************************
 	QUnit.test("removePost after submitBatch", function (assert) {
 		var oPayload = {},
-			oRequestor = _Requestor.create("/Service/", undefined, undefined, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			});
+			oRequestor = _Requestor.create("/Service/", oModelInterface);
 
 		oRequestor.request("POST", "Products", "groupId", {}, oPayload);
 
@@ -1941,10 +1881,37 @@ sap.ui.require([
 	});
 
 	//*****************************************************************************************
+	QUnit.test("isChangeSetOptional", function (assert) {
+		var oRequestor = _Requestor.create("/");
+
+		assert.strictEqual(oRequestor.isChangeSetOptional(), true);
+	});
+
+	//*****************************************************************************************
+	QUnit.test("submitBatch: unwrap single change", function (assert) {
+		var oRequestor = _Requestor.create("/Service/", oModelInterface),
+			oRequestorMock = this.mock(oRequestor);
+
+		oRequestor.request("POST", "Products", "groupId", {}, {Name : "bar"});
+		oRequestorMock.expects("isChangeSetOptional").withExactArgs().returns(true);
+		oRequestorMock.expects("request")
+			.withExactArgs("POST", "$batch", undefined, {"Accept" : "multipart/mixed"}, [
+				sinon.match({
+					method : "POST",
+					url : "Products",
+					body : {Name : "bar"}
+				})
+			]).returns(Promise.resolve([{}]));
+
+		// code under test
+		return oRequestor.submitBatch("groupId");
+	});
+
+	//*****************************************************************************************
 	QUnit.test("relocate", function (assert) {
 		var oBody1 = {},
 			oBody2 = {},
-			fnCancel = sinon.spy(),
+			fnCancel = this.spy(),
 			oExpectedHeader = {
 				"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 				"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
@@ -1954,11 +1921,9 @@ sap.ui.require([
 			oCreatePromise1,
 			oCreatePromise2,
 			oError = new Error("Post failed"),
-			oRequestor = _Requestor.create("/Service/", undefined, undefined, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			}),
+			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oRequestorMock = this.mock(oRequestor),
-			fnSubmit = sinon.spy();
+			fnSubmit = this.spy();
 
 		oCreatePromise1 = oRequestor.request("POST", "Employees", "$parked.$auto", oHeaders, oBody1,
 			fnSubmit, fnCancel);
@@ -2419,30 +2384,26 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("fetchTypeForPath", function (assert) {
 		var oPromise = {},
-			fnFetchMetadata = sinon.stub().returns(oPromise),
-			oRequestor = _Requestor.create("/", undefined, undefined, {
-				fnFetchMetadata : fnFetchMetadata
-			});
+			oRequestor = _Requestor.create("/", oModelInterface);
+
+		this.mock(oModelInterface).expects("fnFetchMetadata")
+			.withExactArgs("/EMPLOYEES('1')/EMPLOYEE_2_TEAM/").returns(oPromise);
 
 		// code under test
 		assert.strictEqual(oRequestor.fetchTypeForPath("EMPLOYEES('1')/EMPLOYEE_2_TEAM"), oPromise);
-
-		sinon.assert.calledWithExactly(fnFetchMetadata, "/EMPLOYEES('1')/EMPLOYEE_2_TEAM/");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("fetchTypeForPath, bAsName=true", function (assert) {
 		var oPromise = {},
-			fnFetchMetadata = sinon.stub().returns(oPromise),
-			oRequestor = _Requestor.create("/", undefined, undefined, {
-				fnFetchMetadata : fnFetchMetadata
-			});
+			oRequestor = _Requestor.create("/", oModelInterface);
+
+		this.mock(oModelInterface).expects("fnFetchMetadata")
+			.withExactArgs("/EMPLOYEES('1')/EMPLOYEE_2_TEAM/$Type").returns(oPromise);
 
 		// code under test
 		assert.strictEqual(oRequestor.fetchTypeForPath("EMPLOYEES('1')/EMPLOYEE_2_TEAM", true),
 			oPromise);
-
-		sinon.assert.calledWithExactly(fnFetchMetadata, "/EMPLOYEES('1')/EMPLOYEE_2_TEAM/$Type");
 	});
 
 	//*********************************************************************************************
@@ -2507,9 +2468,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		QUnit.test("request(...)/submitBatch (realOData) success", function (assert) {
-			var oRequestor = _Requestor.create(TestUtils.proxy(sServiceUrl), undefined, undefined, {
-					fnGetGroupProperty : defaultGetGroupProperty
-				}),
+			var oRequestor = _Requestor.create(TestUtils.proxy(sServiceUrl), oModelInterface),
 				sResourcePath = "TEAMS('TEAM_01')";
 
 			function assertResult(oPayload) {
@@ -2537,9 +2496,7 @@ sap.ui.require([
 
 		//*****************************************************************************************
 		QUnit.test("request(...)/submitBatch (realOData) fail", function (assert) {
-			var oRequestor = _Requestor.create(TestUtils.proxy(sServiceUrl), undefined, undefined, {
-				fnGetGroupProperty : defaultGetGroupProperty
-			});
+			var oRequestor = _Requestor.create(TestUtils.proxy(sServiceUrl), oModelInterface);
 
 			oRequestor.request("GET", "TEAMS('TEAM_01')", "group").then(function (oResult) {
 				delete oResult["@odata.metadataEtag"];
@@ -2573,10 +2530,7 @@ sap.ui.require([
 		//*****************************************************************************************
 		QUnit.test("request(ProductList)/submitBatch (realOData) patch", function (assert) {
 			var oBody = {Name : "modified by QUnit test"},
-				oRequestor = _Requestor.create(TestUtils.proxy(sSampleServiceUrl), undefined,
-					undefined, {
-						fnGetGroupProperty : defaultGetGroupProperty
-					}),
+				oRequestor = _Requestor.create(TestUtils.proxy(sSampleServiceUrl), oModelInterface),
 				sResourcePath = "ProductList('HT-1001')";
 
 			return Promise.all([
@@ -2591,10 +2545,7 @@ sap.ui.require([
 		//*****************************************************************************************
 		QUnit.test("submitBatch (real OData): error in change set", function (assert) {
 			var oCommonError,
-				oRequestor = _Requestor.create(TestUtils.proxy(sSampleServiceUrl), undefined,
-					undefined, {
-						fnGetGroupProperty : defaultGetGroupProperty
-					});
+				oRequestor = _Requestor.create(TestUtils.proxy(sSampleServiceUrl), oModelInterface);
 
 			function onError(oError) {
 				if (oCommonError) {
@@ -2622,6 +2573,92 @@ sap.ui.require([
 			]);
 		});
 	}
+
+	//*********************************************************************************************
+	QUnit.test("getPathAndAddQueryOptions: Action", function (assert) {
+		var oOperationMetadata = {$kind : "Action"},
+			oRequestor = _Requestor.create("/");
+
+		// code under test
+		assert.strictEqual(
+			oRequestor.getPathAndAddQueryOptions("/OperationImport(...)", oOperationMetadata),
+			"OperationImport");
+
+		// code under test
+		assert.strictEqual(
+			oRequestor.getPathAndAddQueryOptions("/Entity('0815')/bound.Operation(...)",
+				oOperationMetadata),
+			"Entity('0815')/bound.Operation");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getPathAndAddQueryOptions: Function", function (assert) {
+		var oOperationMetadata = {
+				$kind : "Function",
+				$Parameter : [{
+					$Name : "føø",
+					$Type : "Edm.String"
+				}, {
+					$Name : "p2",
+					$Type : "Edm.Int16"
+				}, { // unused collection parameter must not lead to an error
+					$Name : "p3",
+					//$Nullable : true,
+					$IsCollection : true
+				}]
+			},
+			oRequestor = _Requestor.create("/"),
+			oRequestorMock = this.mock(oRequestor);
+
+		oRequestorMock.expects("formatPropertyAsLiteral")
+			.withExactArgs("bãr'1", oOperationMetadata.$Parameter[0]).returns("'bãr''1'");
+		oRequestorMock.expects("formatPropertyAsLiteral")
+			.withExactArgs(42,  oOperationMetadata.$Parameter[1]).returns("42");
+
+		assert.strictEqual(
+			// code under test
+			oRequestor.getPathAndAddQueryOptions("/some.Function(...)", oOperationMetadata,
+				{"føø" : "bãr'1", "p2" : 42}),
+			"some.Function(f%C3%B8%C3%B8='b%C3%A3r''1',p2=42)");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getPathAndAddQueryOptions: Function w/o parameters", function (assert) {
+		var oOperationMetadata = {$kind : "Function"},
+			oRequestor = _Requestor.create("/");
+
+		this.mock(oRequestor).expects("formatPropertyAsLiteral").never();
+
+		assert.strictEqual(
+			// code under test
+			oRequestor.getPathAndAddQueryOptions("/some.Function(...)", oOperationMetadata, {}),
+			"some.Function()");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getPathAndAddQueryOptions: Function w/ collection parameter", function (assert) {
+		var oOperationMetadata = {
+				$kind : "Function",
+				$Parameter : [{$Name : "foo", $IsCollection : true}]
+			},
+			oRequestor = _Requestor.create("/");
+
+		this.mock(oRequestor).expects("formatPropertyAsLiteral").never();
+
+		assert.throws(function () {
+			// code under test
+			oRequestor.getPathAndAddQueryOptions("/some.Function(...)", oOperationMetadata,
+				{"foo" : [42]});
+		}, new Error("Unsupported collection-valued parameter: foo"));
+	});
+	//TODO what about actions & collections?
+
+	//*****************************************************************************************
+	QUnit.test("isActionBodyOptional", function (assert) {
+		var oRequestor = _Requestor.create("/");
+
+		assert.strictEqual(oRequestor.isActionBodyOptional(), false);
+	});
 });
 // TODO: continue-on-error? -> flag on model
 // TODO: cancelChanges: what about existing GET requests in deferred queue (delete or not)?

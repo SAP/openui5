@@ -636,9 +636,6 @@ sap.ui.require([
 		mOriginalScopes : clone(aAllScopes),
 
 		afterEach : function (assert) {
-			this.oLogMock.verify();
-			this.oMetaModelMock.verify();
-
 			assert.deepEqual(aAllScopes, this.mOriginalScopes, "metadata unchanged");
 		},
 
@@ -646,19 +643,20 @@ sap.ui.require([
 		 * Allow warnings if told to; always suppress debug messages.
 		 */
 		allowWarnings : function (assert, bWarn) {
-			this.stub(jQuery.sap.log, "isLoggable", function (iLogLevel, sComponent) {
-				assert.strictEqual(sComponent, sODataMetaModel);
-				switch (iLogLevel) {
-					case jQuery.sap.log.Level.DEBUG:
-						return false;
+			this.mock(jQuery.sap.log).expects("isLoggable").atLeast(1)
+				.withExactArgs(sinon.match.number, sODataMetaModel)
+				.callsFake(function (iLogLevel) {
+					switch (iLogLevel) {
+						case jQuery.sap.log.Level.DEBUG:
+							return false;
 
-					case jQuery.sap.log.Level.WARNING:
-						return bWarn;
+						case jQuery.sap.log.Level.WARNING:
+							return bWarn;
 
-					default:
-						return true;
-				}
-			});
+						default:
+							return true;
+					}
+				});
 		},
 
 		beforeEach : function () {
@@ -667,12 +665,12 @@ sap.ui.require([
 				},
 				sUrl = "/a/b/c/d/e/$metadata";
 
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 
 			this.oMetaModel = new ODataMetaModel(oMetadataRequestor, sUrl);
-			this.oMetaModelMock = sinon.mock(this.oMetaModel);
+			this.oMetaModelMock = this.mock(this.oMetaModel);
 		},
 
 		/*
@@ -2327,7 +2325,7 @@ sap.ui.require([
 			assert.ok(oPromise.isRejected());
 			assert.strictEqual(oPromise.getResult().message,
 				oFixture.dataPath + ": " + oFixture.message);
-			oPromise.catch(function () {}); // avoid "Uncaught (in promise)"
+			oPromise.caught(); // avoid "Uncaught (in promise)"
 		});
 	});
 
@@ -2698,7 +2696,7 @@ sap.ui.require([
 		oBinding = this.oMetaModel.bindList(sPath, oContext);
 		oBindingMock = this.mock(oBinding);
 
-		this.stub(oBinding, "update", function () {
+		this.mock(oBinding).expects("update").thrice().callsFake(function () {
 			this.oList = [{/*a context*/}];
 		});
 
@@ -2714,8 +2712,6 @@ sap.ui.require([
 
 		// code under test: Must fire a change event
 		oBinding.checkUpdate(true);
-
-		sinon.assert.calledThrice(oBinding.update);
 	});
 
 	//*********************************************************************************************

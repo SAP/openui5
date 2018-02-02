@@ -361,6 +361,7 @@ sap.ui.define([
 			oCanUseCachePromise,
 			sChildMetaPath,
 			sFullMetaPath,
+			bIsAdvertisement,
 			oMetaModel = this.oModel.getMetaModel(),
 			aPromises,
 			that = this;
@@ -368,9 +369,17 @@ sap.ui.define([
 		/*
 		 * Fetches the property that is reached by the calculated meta path and (if necessary) its
 		 * type.
-		 * @returns {sap.ui.base.SyncPromise} A promise that is resolved with the property
+		 * @returns {sap.ui.base.SyncPromise} A promise that is either resolved with the property
+		 *   or, in case of an action advertisement with the entity. If no property can be reached
+		 *   by the calculated meta path the promise is resolved with undefined.
 		 */
 		function fetchPropertyAndType() {
+			if (bIsAdvertisement) {
+				// Ensure entity type metadata is loaded even for advertisement so that sync access
+				// to key properties is possible
+				return oMetaModel.fetchObject(sFullMetaPath.slice(0,
+					sFullMetaPath.lastIndexOf("/") + 1));
+			}
 			return oMetaModel.fetchObject(sFullMetaPath).then(function (oProperty) {
 				if (oProperty && oProperty.$kind === "NavigationProperty") {
 					// Ensure that the target type of the navigation property is available
@@ -385,8 +394,8 @@ sap.ui.define([
 			});
 		}
 
-		if (this.oOperation || sChildPath === "$count" || sChildPath.slice(-7) === "/$count"
-				|| sChildPath[0] === "@") {
+		if (this.isSuspended() || this.oOperation || sChildPath === "$count"
+				|| sChildPath.slice(-7) === "/$count" || sChildPath[0] === "@") {
 			return SyncPromise.resolve(true);
 		}
 
@@ -400,6 +409,7 @@ sap.ui.define([
 			|| this.oCachePromise.isFulfilled() && this.oCachePromise.getResult().bSentReadRequest;
 		sBaseMetaPath = oMetaModel.getMetaPath(oContext.getPath());
 		sChildMetaPath = oMetaModel.getMetaPath("/" + sChildPath).slice(1);
+		bIsAdvertisement = sChildMetaPath[0] === "#";
 		sFullMetaPath = _Helper.buildPath(sBaseMetaPath, sChildMetaPath);
 		aPromises = [
 			this.doFetchQueryOptions(this.oContext),
@@ -425,12 +435,16 @@ sap.ui.define([
 			if (Object.keys(that.mAggregatedQueryOptions).length === 0) {
 				that.mAggregatedQueryOptions = jQuery.extend(true, {}, mLocalQueryOptions);
 			}
+			if (bIsAdvertisement) {
+				mWrappedChildQueryOptions = {"$select" : [sChildMetaPath.slice(1)]};
+				return that.aggregateQueryOptions(mWrappedChildQueryOptions, bCacheImmutable);
+			}
 			if (sChildMetaPath === ""
 				|| oProperty
 				&& (oProperty.$kind === "Property" || oProperty.$kind === "NavigationProperty")) {
 				mWrappedChildQueryOptions = that.wrapChildQueryOptions(sBaseMetaPath,
 					sChildMetaPath, mChildQueryOptions);
-				if (mWrappedChildQueryOptions){
+				if (mWrappedChildQueryOptions) {
 					return that.aggregateQueryOptions(mWrappedChildQueryOptions, bCacheImmutable);
 				}
 				return false;
@@ -453,6 +467,9 @@ sap.ui.define([
 						that.mAggregatedQueryOptions));
 				}
 				return oCache;
+			})["catch"](function (oError) {
+				that.oModel.reportError("Failed to update cache for binding " + that, sClassName,
+					oError);
 			});
 		return oCanUseCachePromise;
 	};
@@ -502,8 +519,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Initializes the OData list binding. Fires a 'change' event in case the binding has a
-	 * resolved path.
+	 * Initializes the OData list binding: Fires a 'change' event in case the binding has a
+	 * resolved path and it is not suspended.
 	 *
 	 * @protected
 	 * @see sap.ui.model.Binding#initialize
@@ -511,7 +528,7 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.Binding#initialize
 	ODataParentBinding.prototype.initialize = function () {
-		if (!this.bRelative || this.oContext) {
+		if ((!this.bRelative || this.oContext) && !this.isSuspended()) {
 			this._fireChange({reason : ChangeReason.Change});
 		}
 	};
@@ -623,6 +640,42 @@ sap.ui.define([
 	};
 
 	/**
+	 * Resumes this binding. The binding can again fire change events and trigger data service
+	 * requests.
+	 *
+	 * @throws {Error}
+	 *   If this binding is relative to a {@link sap.ui.model.odata.v4.Context} or if it is an
+	 *   operation binding
+	 *
+	 * @public
+	 * @see sap.ui.model.Binding#resume
+	 * @see #suspend
+	 * @since 1.53.0
+	 */
+	// @override sap.ui.model.Binding#resume
+	ODataParentBinding.prototype.resume = function () {
+		var that = this;
+
+		if (this.oOperation) {
+			throw new Error("Cannot resume an operation binding: " + this);
+		}
+		if (this.bRelative && (!this.oContext || this.oContext.fetchValue)) {
+			throw new Error("Cannot resume a relative binding: " + this);
+		}
+
+		if (!this.bSuspended) {
+			return;
+		}
+
+		this.bSuspended = false;
+		// dependent bindings are only removed in a *new task* in ManagedObject#updateBindings
+		// => must only resume in prerendering task
+		sap.ui.getCore().addPrerenderingTask(function () {
+			that.resumeInternal();
+		});
+	};
+
+	/**
 	 * Adds the key properties of the entity reached by the given navigation property path to
 	 * $select of the query options. Expects that the type has already been loaded so that it can
 	 * be accessed synchronously.
@@ -643,6 +696,31 @@ sap.ui.define([
 				return vKey;
 			}));
 		}
+	};
+
+	/**
+	 * Suspends this binding. A suspended binding does not fire change events nor does it trigger
+	 * data service requests. Call {@link #resume} to resume the binding.
+	 *
+	 * @throws {Error}
+	 *   If this binding is relative to a {@link sap.ui.model.odata.v4.Context} or if it is an
+	 *   operation binding
+	 *
+	 * @public
+	 * @see sap.ui.model.Binding#suspend
+	 * @see #resume
+	 * @since 1.53.0
+	 */
+	// @override sap.ui.model.Binding#suspend
+	ODataParentBinding.prototype.suspend = function () {
+		if (this.oOperation) {
+			throw new Error("Cannot suspend an operation binding: " + this);
+		}
+		if (this.bRelative && (!this.oContext || this.oContext.fetchValue)) {
+			throw new Error("Cannot suspend a relative binding: " + this);
+		}
+
+		this.bSuspended = true;
 	};
 
 	/**

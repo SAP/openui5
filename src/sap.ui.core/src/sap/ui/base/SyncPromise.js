@@ -74,8 +74,9 @@ sap.ui.define([
 	}
 
 	/**
-	 * Constructor for a SyncPromise which may wrap a thenable (e.g. native <code>Promise</code>)
-	 * in order to observe settlement and provide synchronous access to the result.
+	 * Constructor for a {@link sap.ui.base.SyncPromise} which may wrap a thenable (e.g. native
+	 * <code>Promise</code>) in order to observe settlement and later provide synchronous access to
+	 * the result.
 	 *
 	 * Implements https://promisesaplus.com except "2.2.4. onFulfilled or onRejected must not be
 	 * called until the execution context stack contains only platform code."
@@ -128,11 +129,11 @@ sap.ui.define([
 					resolve(vResult0.getResult());
 					return;
 				} else if (vResult0.isRejected()) {
-					vResult0._caught(); // might have been uncaught so far
+					vResult0.caught(); // might have been uncaught so far
 					reject(vResult0.getResult());
 					return;
 				} else {
-					vResult0._caught(); // make sure it will never count as uncaught
+					vResult0.caught(); // make sure it will never count as uncaught
 					vResult0 = vResult0.getResult(); // unwrap to access native thenable
 				}
 			}
@@ -162,11 +163,11 @@ sap.ui.define([
 
 		/**
 		 * Marks this {@link sap.ui.base.SyncPromise} as caught and informs the optional
-		 * {@link sap.ui.base.SyncPromise.listener}.
-		 *
-		 * @private
+		 * {@link sap.ui.base.SyncPromise.listener}. Basically, it has the same effect as
+		 * {@link #catch}, but with less overhead. Use it together with {@link #isRejected} and
+		 * {@link #getResult} in cases where the rejection is turned into <code>throw</code>.
 		 */
-		this._caught = function () {
+		this.caught = function () {
 			if (!bCaught) {
 				bCaught = true; // MUST NOT become uncaught later on!
 				if (SyncPromise.listener && this.isRejected()) {
@@ -229,8 +230,8 @@ sap.ui.define([
 	}
 
 	/**
-	 * Returns a {@link sap.ui.base.SyncPromise} and deals with rejected cases only.
-	 * Same as <code>then(undefined, fnOnRejected)</code>.
+	 * Returns a {@link sap.ui.base.SyncPromise} and deals with rejected cases only. Same as
+	 * <code>then(undefined, fnOnRejected)</code>.
 	 *
 	 * @param {function} [fnOnRejected]
 	 *   Callback function if this {@link sap.ui.base.SyncPromise} is rejected
@@ -246,7 +247,10 @@ sap.ui.define([
 
 	/**
 	 * Returns a {@link sap.ui.base.SyncPromise} and calls the given handler as applicable, like
-	 * <code>Promise.prototype.then</code>.
+	 * <code>Promise.prototype.then</code>. This {@link sap.ui.base.SyncPromise} is marked as
+	 * {@link #caught} unless <code>this</code> is returned. Note that a new
+	 * {@link sap.ui.base.SyncPromise} returned from this method may already be rejected, but not
+	 * yet caught.
 	 *
 	 * @param {function} [fnOnFulfilled]
 	 *   Callback function if this {@link sap.ui.base.SyncPromise} is fulfilled
@@ -263,7 +267,7 @@ sap.ui.define([
 			that = this;
 
 		if (bPending || bCallbackIsFunction) {
-			this._caught();
+			this.caught();
 		} // else: returns this
 
 		if (!bPending) {

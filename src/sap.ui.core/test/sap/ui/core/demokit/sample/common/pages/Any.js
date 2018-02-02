@@ -155,7 +155,19 @@ function (Helper, Opa5, Properties) {
 					});
 				}
 			},
-			assertions : {}
+			assertions : {
+				checkMessage : function (rMessage) {
+					return this.waitFor({
+						controlType : "sap.m.Dialog",
+						matchers : new Properties({icon : "sap-icon://message-success"}),
+						success : function (aControls) {
+							var sText = aControls[0].getContent()[0].getText();
+							Opa5.assert.ok(rMessage.test(sText),
+								"Message text '" + sText + "' matches " + rMessage);
+						}
+					})
+				}
+			}
 		}
 	});
 });

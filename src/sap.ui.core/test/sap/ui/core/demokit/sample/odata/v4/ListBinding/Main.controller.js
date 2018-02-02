@@ -237,23 +237,19 @@ sap.ui.define([
 		},
 
 		openChangeTeamBudgetDialog : function (oEvent) {
-			var oView = this.getView(),
-				oUiModel = oView.getModel("ui");
+			var oUiModel = this.getView().getModel("ui");
 
 			// TODO There must be a simpler way to copy values from the model to our parameters
-			oUiModel.setProperty("/TeamID", oView.byId("Team_Id").getBinding("text").getValue());
-			oUiModel.setProperty("/Budget", oView.byId("Budget").getBinding("text").getValue());
-			oView.byId("ChangeTeamBudgetDialog").open();
+			oUiModel.setProperty("/TeamID", this.byId("Team_Id").getBinding("text").getValue());
+			oUiModel.setProperty("/Budget", this.byId("Budget").getBinding("text").getValue());
+			this.byId("ChangeTeamBudgetDialog").open();
 		},
 
 		openChangeManagerOfTeamDialog : function (oEvent) {
-			var oView = this.getView(),
-				oUiModel = oView.getModel("ui");
-
 			// TODO There must be a simpler way to copy values from the model to our parameters
-			oUiModel.setProperty("/ManagerID",
-				oView.byId("ManagerID").getBinding("text").getValue());
-			oView.byId("ChangeManagerOfTeamDialog").open();
+			this.getView().getModel("ui").setProperty("/ManagerID",
+				this.byId("ManagerID").getBinding("text").getValue());
+			this.byId("ChangeManagerOfTeamDialog").open();
 		},
 
 		// *********************************************************************************
@@ -269,8 +265,7 @@ sap.ui.define([
 				sSelectedId,
 				bSortDesc,
 				oTable,
-				oView = this.getView(),
-				oSortModel = oView.getModel('sort');
+				oSortModel = this.getView().getModel('sort');
 
 			oEvent.getSource().getCustomData().forEach(function (oCustomData) {
 				mCustomData[oCustomData.getKey()] = oCustomData.getValue();
@@ -304,7 +299,7 @@ sap.ui.define([
 				this.mSorters[sId].unshift(new Sorter(sProperty, bSortDesc, sId === "Equipments"));
 			}
 
-			oTable = oView.byId(sId);
+			oTable = this.byId(sId);
 			aSelectedContexts = oTable.getSelectedContexts();
 			oBinding = oTable.getBinding("items");
 			// restore selection after sort

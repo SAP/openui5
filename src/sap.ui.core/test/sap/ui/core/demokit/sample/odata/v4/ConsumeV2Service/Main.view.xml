@@ -1,5 +1,6 @@
 <mvc:View
 		class="sapUiSizeCompact"
+		controllerName="sap.ui.core.sample.odata.v4.ConsumeV2Service.Main"
 		xmlns="sap.m"
 		xmlns:core="sap.ui.core"
 		xmlns:form="sap.ui.layout.form"
@@ -9,6 +10,9 @@
 			<form:title>
 				<core:Title text="Single Entity"/>
 			</form:title>
+			<Button binding="{com.sap.ui5.OData.ResetEdmTypes(...)}" icon="sap-icon://sys-cancel"
+				id="resetEntityButton" press="onResetEntity" text="Reset Entity"
+				tooltip="Reset Entity"/>
 			<Label labelFor="binary" text="Binary"/>
 			<Text id="binary" text="{path : 'Binary', type : 'sap.ui.model.odata.type.String'}"/>
 			<Label labelFor="boolean" text="Boolean"/>
@@ -51,10 +55,7 @@
 			<Text id="time" text="{Time}"/>
 		</form:SimpleForm>
 		<Table class="sapUiLargeMarginBottom" headerText="Multiple Entities"
-			   items="{
-					path : '/EdmTypesCollection',
-					templateShareable : false
-				}">
+			items="{path : '/EdmTypesCollection', templateShareable : false}">
 			<columns>
 				<Column>
 					<Text text="ID"/>

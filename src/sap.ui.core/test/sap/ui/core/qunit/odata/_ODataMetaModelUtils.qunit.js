@@ -439,14 +439,13 @@ sap.ui.require([
 			this.iOldLogLevel = jQuery.sap.log.getLevel(sLoggingModule);
 			// do not rely on ERROR vs. DEBUG due to minified sources
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sLoggingModule);
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-
 		},
+
 		afterEach : function () {
 			jQuery.sap.log.setLevel(this.iOldLogLevel, sLoggingModule);
-			this.oLogMock.verify();
 		}
 	});
 	//*********************************************************************************************
@@ -1174,9 +1173,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("addUnitAnnotations", function (assert) {
-		var oAnnotationHelperBasicsMock = sinon.mock(_AnnotationHelperBasics),
+		var oAnnotationHelperBasicsMock = this.mock(_AnnotationHelperBasics),
 			oMetaModel = { getProperty : function () {}},
-			oMetaModelMock = sinon.mock(oMetaModel),
+			oMetaModelMock = this.mock(oMetaModel),
 			sPathToEntity0 = "/dataServices/schema/0/entityType/0",
 			sPathToEntity1 = "/dataServices/schema/1/entityType/0",
 			sTargetEntityPath = "/dataServices/schema/0/entityType/1",
@@ -1318,9 +1317,6 @@ sap.ui.require([
 		assert.deepEqual(
 			aSchemas[1].entityType[0].property[1]["Org.OData.Measures.V1.Unit"],
 			{Path :"AnnotationsWidthUnit"});
-
-		oAnnotationHelperBasicsMock.verify();
-		oMetaModelMock.verify();
 	});
 
 	//*********************************************************************************************
