@@ -246,8 +246,6 @@ sap.ui.define([
 				} else if (iCurrentLayerComp === -1)  {
 					oDuplicateVariant.content[sKey] = sSourceVariantReference;
 				}
-			} else if (sKey === "layer") {
-				oDuplicateVariant.content[sKey] = mPropertyBag.layer;
 			} else if (sKey === "content") {
 				oDuplicateVariant.content[sKey] = JSON.parse(JSON.stringify(oSourceVariant.content[sKey]));
 				var sTitle = this.getVariantTitle(sSourceVariantReference);
@@ -256,6 +254,7 @@ sap.ui.define([
 				oDuplicateVariant.content[sKey] = oSourceVariant.content[sKey];
 			}
 		}.bind(this));
+		oDuplicateVariant.content["layer"] = mPropertyBag.layer;
 
 		var aVariantChanges = oDuplicateVariant.controlChanges.slice();
 
@@ -498,9 +497,7 @@ sap.ui.define([
 				originalDefaultVariant: sVariantManagementReference,
 				variants: [
 					{
-						//author: "SAP",
 						key: sVariantManagementReference,
-						layer: "VENDOR",
 						title: this._oResourceBundle.getText("STANDARD_VARIANT_TITLE"),
 						originalTitle: this._oResourceBundle.getText("STANDARD_VARIANT_ORIGINAL_TITLE"),
 						favorite: true,
@@ -522,7 +519,6 @@ sap.ui.define([
 							content: {
 								fileName: sVariantManagementReference,
 								fileType: "ctrl_variant",
-								layer: "VENDOR",
 								variantManagementReference: sVariantManagementReference,
 								variantReference: "",
 								content: {

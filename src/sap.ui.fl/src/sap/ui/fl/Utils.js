@@ -343,6 +343,7 @@ sap.ui.define([
 
 		/**
 		 * Compares current layer with a provided layer
+		 * -1: Lower layer, 0: Same layer, 1: Layer above
 		 *
 		 * @param {String} sLayer - Layer name to be evaluated
 		 * @returns {boolean} <code>true</code> if input layer is higher than current layer
@@ -352,7 +353,8 @@ sap.ui.define([
 		 */
 		isLayerAboveCurrentLayer: function(sLayer) {
 			var sCurrentLayer = Utils.getCurrentLayer(false);
-			if (this.getLayerIndex(sCurrentLayer) > this.getLayerIndex(sLayer)) {
+			// If sLayer is undefined, it is assumed it be on the lowest layer
+			if ((this.getLayerIndex(sCurrentLayer) > this.getLayerIndex(sLayer)) || !sLayer) {
 				return -1;
 			} else if (this.getLayerIndex(sCurrentLayer) === this.getLayerIndex(sLayer)) {
 				return 0;

@@ -222,6 +222,7 @@ function(
 			}
 		};
 		var getUriParametersStub = sandbox.stub(Utils, "_getUriParameters").returns(oUriParams);
+		assert.equal(Utils.isLayerAboveCurrentLayer(""), -1, "then with VENDOR layer -1 is returned");
 		assert.equal(Utils.isLayerAboveCurrentLayer("VENDOR"), -1, "then with VENDOR layer -1 is returned");
 		assert.equal(Utils.isLayerAboveCurrentLayer("CUSTOMER"), 0, "then with CUSTOMER layer 0 is returned");
 		assert.equal(Utils.isLayerAboveCurrentLayer("USER"), 1, "then with USER layer 1 is returned");
