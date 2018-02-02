@@ -19,11 +19,13 @@
 		<script>
 			jQuery.sap.require("sap.ui.unified.calendar.CalendarDate");
 			jQuery.sap.require("sap.ui.unified.CalendarLegend");
+			jQuery.sap.require("sap.ui.unified.CalendarLegendRenderer");
 			jQuery.sap.require("sap.ui.unified.calendar.Month");
 
 			var Month = sap.ui.unified.calendar.Month,
 				CalendarDayType = sap.ui.unified.CalendarDayType,
 				CalendarLegend = sap.ui.unified.CalendarLegend,
+				CalendarLegendRenderer = sap.ui.unified.CalendarLegendRenderer,
 				CalendarLegendItem = sap.ui.unified.CalendarLegendItem;
 
 			(function () {
@@ -367,7 +369,7 @@
 					this.oSut.placeAt('qunit-fixture');
 					sap.ui.getCore().applyChanges();
 
-					assert.ok(jQuery("#" + this.oSut.getId() + "-20160102").attr("aria-describedby").indexOf(CalendarLegend.typeARIATexts[CalendarDayType.Type02].getId()),
+					assert.ok(jQuery("#" + this.oSut.getId() + "-20160102").attr("aria-describedby").indexOf(CalendarLegendRenderer.typeARIATexts[CalendarDayType.Type02].getId()),
 							"The corresponding CalendarDayType.Type02 text is used as aria-describedby");
 				});
 

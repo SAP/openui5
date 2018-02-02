@@ -32,11 +32,13 @@
 
 			jQuery.sap.require("sap.ui.model.type.Date");
 			jQuery.sap.require("sap.ui.unified.CalendarLegend");
+			jQuery.sap.require("sap.ui.unified.CalendarLegendRenderer");
 			jQuery.sap.require("sap.ui.unified.CalendarRowRenderer");
 			jQuery.sap.require("sap.ui.unified.CalendarLegendItem");
 			jQuery.sap.require("sap.ui.core.InvisibleText");
 
 			var CalendarLegend = sap.ui.unified.CalendarLegend,
+				CalendarLegendRenderer = sap.ui.unified.CalendarLegendRenderer,
 				CalendarLegendItem = sap.ui.unified.CalendarLegendItem,
 				CalendarDayType = sap.ui.unified.CalendarDayType,
 				CalendarRowRenderer = sap.ui.unified.CalendarRowRenderer,
@@ -1276,7 +1278,7 @@
 						sLocalizedEnd = that.sut._oRb.getText("CALENDAR_END_TIME"),
 						sFormattedEndDate = that.sut._oFormatAria.format(oAppointment.getEndDate()),
 						sTooltip = oAppointment.getTooltip() || "";
-						sType = oAppointment.getType() !== CalendarDayType.None ? "; " + CalendarLegend.getTypeAriaText(oAppointment.getType()).getText() : "";
+						sType = oAppointment.getType() !== CalendarDayType.None ? "; " + CalendarLegendRenderer.getTypeAriaText(oAppointment.getType()).getText() : "";
 
 					return sLocalizedStart + ": " + sFormattedStartDate + "; " + sLocalizedEnd + ": " + sFormattedEndDate + "; " + sTooltip + sType;
 				},
@@ -1316,9 +1318,9 @@
 
 				//Assert
 				assert.equal(sResult1, "Day off", "When the given type  matches legend item's type");
-				assert.equal(sResult2, CalendarLegend.typeARIATexts[CalendarDayType.Type03].getText(),
+				assert.equal(sResult2, CalendarLegendRenderer.typeARIATexts[CalendarDayType.Type03].getText(),
 					"When the given type does not match legend item's type");
-				assert.equal(sResult2, CalendarLegend.typeARIATexts[CalendarDayType.Type03].getText(),
+				assert.equal(sResult2, CalendarLegendRenderer.typeARIATexts[CalendarDayType.Type03].getText(),
 					"When the legendItems is not given");
 
 				//Cleanup - nothing to lean

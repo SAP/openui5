@@ -46,6 +46,7 @@
 		jQuery.sap.require("sap.ui.unified.calendar.CalendarDate");
 		jQuery.sap.require("sap.ui.unified.DateTypeRange");
 		jQuery.sap.require("sap.ui.unified.CalendarLegend");
+		jQuery.sap.require("sap.ui.unified.CalendarLegendRenderer");
 		jQuery.sap.require("sap.m.PlanningCalendarLegend");
 		jQuery.sap.require("sap.ui.unified.CalendarAppointment");
 		jQuery.sap.require("sap.ui.unified.CalendarLegendItem");
@@ -53,6 +54,7 @@
 		var CalendarDate = sap.ui.unified.calendar.CalendarDate,
 			DateTypeRange = sap.ui.unified.DateTypeRange,
 			CalendarLegend = sap.ui.unified.CalendarLegend,
+			CalendarLegendRenderer = sap.ui.unified.CalendarLegendRenderer,
 			PlanningCalendarLegend = sap.m.PlanningCalendarLegend,
 			CalendarLegendItem = sap.ui.unified.CalendarLegendItem,
 			CalendarAppointment = sap.ui.unified.CalendarAppointment,
@@ -3335,7 +3337,7 @@
 
 				this.assertAppointmentsWithoutConnectedLegendHaveDefaultAriaLabelledBy = function(aAppointmentsWithoutLegend, sMsgPref) {
 					aAppointmentsWithoutLegend.forEach(function (oApp) {
-						var sBuiltInTypeText = CalendarLegend.typeARIATexts[oApp.getType()].getText(),
+						var sBuiltInTypeText = CalendarLegendRenderer.typeARIATexts[oApp.getType()].getText(),
 							sAriaLabelledByText = oApp.$().find(".sapUiInvisibleText").text();
 
 						assert.ok(sAriaLabelledByText.indexOf(sBuiltInTypeText) >= 0, sMsgPref +
@@ -3382,7 +3384,7 @@
 
 						sAriaDescribedBy = $specialDate.attr("aria-describedby");
 
-						assert.ok(sAriaDescribedBy && sAriaDescribedBy.indexOf(CalendarLegend.typeARIATexts[oSpecialDate.getType()].getId()) >= 0,
+						assert.ok(sAriaDescribedBy && sAriaDescribedBy.indexOf(CalendarLegendRenderer.typeARIATexts[oSpecialDate.getType()].getId()) >= 0,
 							sMsgPref + ": Special date " + sSpecialDate + " of type CalendarDayType." + oSpecialDate.getType() +
 							" should be describedBy built-in text for this type. Current aria-describedby: " + sAriaDescribedBy);
 					});

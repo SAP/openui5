@@ -3,8 +3,8 @@
  */
 
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppointment',
-		'sap/ui/unified/CalendarLegend', 'sap/ui/Device', 'sap/ui/unified/library', 'sap/ui/core/InvisibleText'],
-	function (jQuery, UniversalDate, CalendarAppointment, CalendarLegend, Device, library, InvisibleText) {
+		'sap/ui/unified/CalendarLegendRenderer', 'sap/ui/Device', 'sap/ui/unified/library', 'sap/ui/core/InvisibleText'],
+	function (jQuery, UniversalDate, CalendarAppointment, CalendarLegendRenderer, Device, library, InvisibleText) {
 		"use strict";
 
 
@@ -805,7 +805,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 
 		if (!sTypeLabelText) {
 			//use static invisible labels - "Type 1", "Type 2"
-			oStaticLabel = CalendarLegend.getTypeAriaText(sType);
+			oStaticLabel = CalendarLegendRenderer.getTypeAriaText(sType);
 			if (oStaticLabel) {
 				sTypeLabelText = oStaticLabel.getText();
 			}

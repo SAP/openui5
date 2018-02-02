@@ -304,7 +304,7 @@
 				assert.equal(jQuery("#Cal2--Month0-20110104").attr("title"), "Text", "20110104 has special days tooltip");
 				assert.equal(jQuery("#Cal2--Month0-20110104").attr("aria-label"), "4. Januar 2011; My Type 2", "20110104 aria label");
 
-				sDescribingDomTextId = sap.ui.unified.CalendarLegend.typeARIATexts["Type04"].getId();
+				sDescribingDomTextId = sap.ui.unified.CalendarLegendRenderer.typeARIATexts["Type04"].getId();
 				assert.ok(jQuery("#Cal2--Month0-20110105").attr("aria-describedby").indexOf(sDescribingDomTextId) > -1, "special day is described by a static label");
 
 				assert.ok(jQuery("#Cal2--Month0-20110106").hasClass("sapUiCalItemWeekEnd"),
