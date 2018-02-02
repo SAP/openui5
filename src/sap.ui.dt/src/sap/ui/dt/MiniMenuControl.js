@@ -4,8 +4,26 @@
 // Provides control sap.ui.dt.MiniMenu.
 /* globals sap */
 sap.ui.define([
-	'jquery.sap.global', './library', 'sap/ui/unified/Menu', 'sap/ui/core/Control'
-], function (jQuery, library, Menu, Control) {
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/unified/Menu',
+	'sap/ui/core/Control',
+	'sap/m/Popover',
+	'sap/m/VBox',
+	'sap/m/HBox',
+	'sap/m/Button',
+	'sap/m/FlexItemData'
+], function (
+	jQuery,
+	library,
+	Menu,
+	Control,
+	Popover,
+	VBox,
+	HBox,
+	Button,
+	FlexItemData
+) {
 	"use strict";
 
 	/**
@@ -77,32 +95,32 @@ sap.ui.define([
 
 			var sPopId = this.getId() + "-popover";
 
-			var oPopover = new sap.m.Popover(sPopId, {
+			var oPopover = new Popover(sPopId, {
 				showHeader: false,
 				verticalScrolling: false,
 				horizontalScrolling: false,
-				content: new sap.m.HBox(sPopId + "ContentBox", {
+				content: new HBox(sPopId + "ContentBox", {
 					renderType: "Bare"
 				})
 			});
 
-			oPopover.attachBrowserEvent("keydown", this._changeFocusOnArrowKey, this);
+			oPopover.attachBrowserEvent("keydown", this._changeFocusOnKeyStroke, this);
 			oPopover.oPopup.attachClosed(this._popupClosed, this);
 			this.addDependent(oPopover);
 			oPopover.addStyleClass("sapUiDtMiniMenu");
 
 			var sPopExpId = this.getId() + "-popoverExp";
 
-			var oPopoverExpanded = new sap.m.Popover(sPopExpId, {
+			var oPopoverExpanded = new Popover(sPopExpId, {
 				showHeader: false,
 				verticalScrolling: false,
 				horizontalScrolling: false,
-				content: new sap.m.VBox(sPopExpId + "ContentBox", {
+				content: new VBox(sPopExpId + "ContentBox", {
 					renderType: "Bare"
 				})
 			});
 
-			oPopoverExpanded.attachBrowserEvent("keydown", this._changeFocusOnArrowKey, this);
+			oPopoverExpanded.attachBrowserEvent("keydown", this._changeFocusOnKeyStroke, this);
 			oPopoverExpanded.oPopup.attachClosed(this._popupClosed, this);
 			this.addDependent(oPopoverExpanded);
 			oPopoverExpanded.addStyleClass("sapUiDtMiniMenu");
@@ -142,13 +160,6 @@ sap.ui.define([
 		 * @public
 		 */
 		show: function (oSource, bContextMenu, oContextMenuPosition) {
-
-			this._close = function (oEvent) {
-				if (oEvent.isTrusted) {
-					this.close();
-				}
-			}.bind(this);
-
 			if (this._bUseExpPop === undefined) {
 				this._bUseExpPop = !!bContextMenu;
 			}
@@ -184,10 +195,12 @@ sap.ui.define([
 		 * Is needed to prevent flickering (wait for old MiniMenu to close)
 		 */
 		finalizeOpening: function () {
-
 			if (this._bOpenAsContextMenu && this._oContextMenuPosition.x === null && this._oContextMenuPosition.y === null) {
 				this._bOpenAsContextMenu = false;
 			}
+
+			// fires the open event after popover is opened
+			this.getPopover().attachAfterOpen(this._handleAfterOpen, this);
 
 			this._oTarget = this._placeMiniMenu(this._oTarget, this._bOpenAsContextMenu, this._bUseExpPop);
 
@@ -198,9 +211,6 @@ sap.ui.define([
 			this.getPopover().setVisible(true);
 			this.bOpen = true;
 			this.bOpenNew = false;
-
-			// fires the afterOpen event
-			this.fireOpened();
 		},
 
 		/**
@@ -720,13 +730,13 @@ sap.ui.define([
 			var oButton2;
 
 			if (oSource) {
-				oButton1 = new sap.m.Button({
+				oButton1 = new Button({
 					icon: oButton.icon ? oButton.icon : "sap-icon://incident",
 					tooltip: oButton.getText(oOverlay),
 					type: "Transparent",
 					enabled: oButton.getEnabled(oOverlay),
 					press: handler,
-					layoutData: new sap.m.FlexItemData({})
+					layoutData: new FlexItemData({})
 				});
 
 				oButton1.data({
@@ -734,13 +744,13 @@ sap.ui.define([
 					key: oButton.id
 				});
 
-				oButton2 = new sap.m.Button({
+				oButton2 = new Button({
 					icon: oButton.icon ? oButton.icon : "sap-icon://incident",
 					text: oButton.getText(oOverlay),
 					type: "Transparent",
 					enabled: oButton.getEnabled(oOverlay),
 					press: handler,
-					layoutData: new sap.m.FlexItemData({})
+					layoutData: new FlexItemData({})
 				});
 
 				oButton2.data({
@@ -749,22 +759,22 @@ sap.ui.define([
 				});
 
 			} else {
-				oButton1 = new sap.m.Button({
+				oButton1 = new Button({
 					icon: oButton.icon,
 					tooltip: oButton.getText(oOverlay),
 					type: "Transparent",
 					enabled: oButton.getEnabled(oOverlay),
 					press: oButton.handler,
-					layoutData: new sap.m.FlexItemData({})
+					layoutData: new FlexItemData({})
 				});
 
-				oButton2 = new sap.m.Button({
+				oButton2 = new Button({
 					icon: oButton.icon,
 					text: oButton.getText(oOverlay),
 					type: "Transparent",
 					enabled: oButton.getEnabled(oOverlay),
 					press: oButton.handler,
-					layoutData: new sap.m.FlexItemData({})
+					layoutData: new FlexItemData({})
 				});
 			}
 
@@ -856,15 +866,9 @@ sap.ui.define([
 		setButtons: function (_aButtons, oSource, oOverlay) {
 			this.removeAllButtons();
 
-			if (oOverlay) {
-				_aButtons.forEach(function (oButton) {
-					this.addButton(oButton, oSource, oOverlay);
-				}.bind(this));
-			} else {
-				_aButtons.forEach(function (oButton) {
-					this.addButton(oButton, oSource);
-				}.bind(this));
-			}
+			_aButtons.forEach(function (oButton) {
+				this.addButton(oButton, oSource, oOverlay);
+			}.bind(this));
 		},
 
 		/**
@@ -1019,16 +1023,6 @@ sap.ui.define([
 						this._changeFocusOnButtons(sId);
 						break;
 
-					case "Tab":
-						if (sap.ui.Device.browser.safari) {
-							if (oEvent.shiftKey) {
-								this._changeFocusOnButtons(sId, true);
-							} else {
-								this._changeFocusOnButtons(sId);
-							}
-						}
-						break;
-
 					default:
 						break;
 
@@ -1100,13 +1094,14 @@ sap.ui.define([
 		 * @private
 		 */
 		_onContextMenu: function (oEvent) {
-			if (!this.getPopover().isOpen()) {
-				this.detachBrowserEvent("contextmenu");
-				return;
-			}
 			if (oEvent.preventDefault) {
 				oEvent.preventDefault();
 			}
+		},
+
+		_handleAfterOpen: function () {
+			this.getPopover().detachAfterOpen(this._handleAfterOpen, this);
+			this.fireOpened();
 		},
 
 		renderer: function () {}
