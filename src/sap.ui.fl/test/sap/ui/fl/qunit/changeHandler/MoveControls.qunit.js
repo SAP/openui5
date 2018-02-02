@@ -610,6 +610,35 @@ function(
 			MoveControlsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
 		}, new Error("Missing targetIndex for element with id '" + this.oObjectAttribute.getId()
 				+ "' in movedElements supplied"), "missing target index error captured");
+
+		oChange = new Change({
+			selector : this.mSelectorWithGlobalId,
+			content : {
+				movedElements : [{
+					selector : {
+						id : this.oObjectAttribute.getId() + "foo"
+					},
+					sourceIndex : 0,
+					targetIndex : 1
+				}],
+				source : {
+					selector : {
+						id : this.oObjectHeader.getId(),
+						aggregation : "attributes"
+					}
+				},
+				target :{
+					selector : {
+						id : this.oLayout.getId(),
+						aggregation : "content"
+					}
+				}
+			}
+		});
+
+		assert.throws(function() {
+			MoveControlsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
+		}, new Error("Control to move was not found. Id: '" + this.oObjectAttribute.getId() + "foo" + "'"), "Control with the given ID not found.");
 	});
 
 	QUnit.module("Given a Move Controls Change Handler on xmlControlTree", {
