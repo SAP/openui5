@@ -42,7 +42,8 @@ sap.ui.define([
 	};
 
 	FlexController.appliedChangesCustomDataKey = "sap.ui.fl.appliedChanges";
-	FlexController.failedChangesCustomDataKey = "sap.ui.fl.failedChanges";
+	FlexController.failedChangesCustomDataKeyJs = "sap.ui.fl.failedChanges.js";
+	FlexController.failedChangesCustomDataKeyXml = "sap.ui.fl.failedChanges.xml";
 	FlexController.PENDING = "sap.ui.fl:PendingChange";
 	FlexController.PROCESSING = "sap.ui.fl:ProcessingChange";
 
@@ -374,8 +375,9 @@ sap.ui.define([
 			return false;
 		}
 
-		// has error occured during applying change
-		var aFailedCustomDataEntries = this._getFailedCustomData(oChange, oControl, JsControlTreeModifier).customDataEntries;
+		// check if the change has already failed. Here only changes that failed on JS-modifier are relevant,
+		// because if a change failed on XML, it will try to apply it again on JS.
+		var aFailedCustomDataEntries = this._getFailedCustomDataJs(oChange, oControl, JsControlTreeModifier).customDataEntries;
 		if (aFailedCustomDataEntries.indexOf(oChange.getId()) > -1) {
 			return false;
 		}
@@ -635,24 +637,31 @@ sap.ui.define([
 			}.bind(this))
 
 			.catch(function(ex) {
-				var mFailedChangesCustomData = this._getFailedCustomData(oChange, oControl, oModifier);
-				var oFailedChangeCustomData = mFailedChangesCustomData.customData;
-				mFailedChangesCustomData.customDataEntries.push(oChange.getId());
-				var sValue = mFailedChangesCustomData.customDataEntries.join(",");
-				this._writeFailedChangesCustomData(oFailedChangeCustomData, sValue, mPropertyBag, oControl);
-
+				var bXmlModifier = mPropertyBag.modifier.targets === "xmlTree";
+				var mFailedChangesCustomData;
 				this._setMergeError(true);
 
 				var sLogMessage = "Change ''{0}'' could not be applied. Merge error detected while " +
-					"processing the {1}.";
+				"processing the {1}.";
 
-
-				if (mPropertyBag.modifier.targets === "xmlTree") {
+				if (bXmlModifier) {
+					mFailedChangesCustomData = this._getFailedCustomDataXml(oChange, oControl, oModifier);
 					sLogMessage = jQuery.sap.formatMessage(sLogMessage, [oChange.getId(), "XML tree"]);
 					jQuery.sap.log.warning(sLogMessage, ex.stack || "");
 				} else {
+					mFailedChangesCustomData = this._getFailedCustomDataJs(oChange, oControl, oModifier);
 					sLogMessage = jQuery.sap.formatMessage(sLogMessage, [oChange.getId(), "JS control tree"]);
 					jQuery.sap.log.error(sLogMessage, ex.stack || "");
+				}
+
+				var oFailedChangeCustomData = mFailedChangesCustomData.customData;
+				mFailedChangesCustomData.customDataEntries.push(oChange.getId());
+				var sValue = mFailedChangesCustomData.customDataEntries.join(",");
+
+				if (bXmlModifier) {
+					this._writeFailedChangesCustomDataXml(oFailedChangeCustomData, sValue, mPropertyBag, oControl);
+				} else {
+					this._writeFailedChangesCustomDataJs(oFailedChangeCustomData, sValue, mPropertyBag, oControl);
 				}
 
 				if (oChange.aPromiseFn) {
@@ -722,13 +731,16 @@ sap.ui.define([
 		});
 	};
 
-
 	FlexController.prototype._writeAppliedChangesCustomData = function(oCustomData, sValue, mPropertyBag, oControl) {
 		this._writeCustomData(oCustomData, sValue, mPropertyBag, oControl, FlexController.appliedChangesCustomDataKey);
 	};
 
-	FlexController.prototype._writeFailedChangesCustomData = function(oCustomData, sValue, mPropertyBag, oControl) {
-		this._writeCustomData(oCustomData, sValue, mPropertyBag, oControl, FlexController.failedChangesCustomDataKey);
+	FlexController.prototype._writeFailedChangesCustomDataXml = function(oCustomData, sValue, mPropertyBag, oControl) {
+		this._writeCustomData(oCustomData, sValue, mPropertyBag, oControl, FlexController.failedChangesCustomDataKeyXml);
+	};
+
+	FlexController.prototype._writeFailedChangesCustomDataJs = function(oCustomData, sValue, mPropertyBag, oControl) {
+		this._writeCustomData(oCustomData, sValue, mPropertyBag, oControl, FlexController.failedChangesCustomDataKeyJs);
 	};
 
 	FlexController.prototype._writeCustomData = function(oCustomData, sValue, mPropertyBag, oControl, sCustomDataKey) {
@@ -750,8 +762,12 @@ sap.ui.define([
 		return this._getCustomData(oChange, oControl, oModifier, FlexController.appliedChangesCustomDataKey);
 	};
 
-	FlexController.prototype._getFailedCustomData = function(oChange, oControl, oModifier) {
-		return this._getCustomData(oChange, oControl, oModifier, FlexController.failedChangesCustomDataKey);
+	FlexController.prototype._getFailedCustomDataXml = function(oChange, oControl, oModifier) {
+		return this._getCustomData(oChange, oControl, oModifier, FlexController.failedChangesCustomDataKeyXml);
+	};
+
+	FlexController.prototype._getFailedCustomDataJs = function(oChange, oControl, oModifier) {
+		return this._getCustomData(oChange, oControl, oModifier, FlexController.failedChangesCustomDataKeyJs);
 	};
 
 	FlexController.prototype._getCustomData = function(oChange, oControl, oModifier, sCustomDataKey) {

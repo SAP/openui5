@@ -70,8 +70,12 @@ function(
 			throw new Error("Missing targetIndex for element with id '" + mMovedElement.selector.id
 					+ "' in movedElements supplied");
 		}
+		var oControl = oModifier.bySelector(mMovedElement.selector || mMovedElement.id, oAppComponent, oView);
 
-		return oModifier.bySelector(mMovedElement.selector || mMovedElement.id, oAppComponent, oView);
+		if (!oControl) {
+			throw new Error("Control to move was not found. Id: '" + mMovedElement.selector.id + "'");
+		}
+		return oControl;
 	};
 
 	MoveControls._checkCompleteChangeContentConditions = function(mSpecificChangeInfo) {
@@ -167,10 +171,6 @@ function(
 		var aRevertData = [];
 		oChangeContent.movedElements.forEach(function(mMovedElement, iElementIndex) {
 			var oMovedElement = this._getElementControlOrThrowError(mMovedElement, oModifier, oAppComponent, oView);
-			if (!oMovedElement) {
-				FlexUtils.log.warning("Element to move not found");
-				return;
-			}
 
 			var oSourceParent = oModifier.getParent(oMovedElement);
 			var iInsertIndex = mMovedElement.targetIndex;

@@ -1586,6 +1586,7 @@ function (
 				applyChange: this.oChangeHandlerApplyChangeStub,
 				revertChange: this.oChangeHandlerRevertChangeStub
 			});
+			sandbox.stub(jQuery.sap.log, "error");
 		},
 		afterEach: function (assert) {
 			this.oControl.destroy();
@@ -1632,10 +1633,11 @@ function (
 		})
 
 		.then(function () {
+			var oCustomData = this.oControl.getCustomData();
 			assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
-			assert.ok(this.oControl.getCustomData()[0], "CustomData was set");
-			assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
-			assert.equal(this.oControl.getCustomData()[0].getValue(), this.oChange.getId(), "the change id is the value");
+			assert.ok(oCustomData[0], "CustomData was set");
+			assert.equal(oCustomData[0].getKey(), FlexController.appliedChangesCustomDataKey, "the key of the applied custom data is correct");
+			assert.equal(oCustomData[0].getValue(), this.oChange.getId(), "the change id is the value");
 		}.bind(this));
 	});
 
@@ -1676,7 +1678,7 @@ function (
 		this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl);
 		assert.equal(this.oChangeHandlerApplyChangeStub.callCount, 1, "apply change functionality was called");
 		assert.equal(this.oControl.getCustomData().length, 1, "custom data was set");
-		assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.failedChangesCustomDataKey, "failed custom data was written");
+		assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.failedChangesCustomDataKeyJs, "failed custom data was written");
 		assert.equal(mergeErrorStub.callCount, 1, "set merge error was called");
 	});
 
@@ -1695,7 +1697,7 @@ function (
 
 		.then(function() {
 			assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "apply change functionality was called");
-			assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.failedChangesCustomDataKey, "failed custom data was written");
+			assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.failedChangesCustomDataKeyJs, "failed custom data was written");
 			assert.equal(mergeErrorStub.callCount, 1, "set merge error was called");
 		}.bind(this));
 	});
@@ -2218,7 +2220,7 @@ function (
 	QUnit.test("adds custom data on the first change applied on a control", function (assert) {
 		this.oXmlString =
 			'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
-			'<Label id="' + this.sLabelId  + '" />' +
+				'<Label id="' + this.sLabelId  + '" />' +
 			'</mvc:View>';
 		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
 		this.oControl = this.oView.childNodes[0];
@@ -2231,7 +2233,28 @@ function (
 		var oCustomData = oCustomDataAggregationNode.childNodes[0];
 		assert.equal(oCustomData.getAttribute("key"), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
 		assert.equal(oCustomData.getAttribute("value"), this.oChange.getId(), "the change id is the value");
-	 });
+	});
+
+	QUnit.test("adds failedCustomData if the applying of the change fails", function (assert) {
+		this.oXmlString =
+			'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+				'<Label id="' + this.sLabelId  + '" />' +
+			'</mvc:View>';
+		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
+		this.oControl = this.oView.childNodes[0];
+		this.oChangeHandlerApplyChangeStub.throws();
+		var mergeErrorStub = sandbox.stub(this.oFlexController, "_setMergeError");
+
+		this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView});
+
+		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "apply change functionality was called");
+		var oCustomDataAggregationNode = this.oControl.getElementsByTagName("customData")[0];
+		assert.equal(oCustomDataAggregationNode.childElementCount, 1, "CustomData was set");
+		var oCustomData = oCustomDataAggregationNode.childNodes[0];
+		assert.equal(oCustomData.getAttribute("key"), FlexController.failedChangesCustomDataKeyXml, "the key of the custom data is correct");
+		assert.equal(oCustomData.getAttribute("value"), this.oChange.getId(), "the change id is the value");
+		assert.equal(mergeErrorStub.callCount, 1, "set merge error was called");
+	});
 
 	QUnit.test("reverts add custom data on the first sync change applied on a control", function (assert) {
 		this.oXmlString =
@@ -2280,9 +2303,9 @@ function (
 
 		this.oXmlString =
 			'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
-			'<Label id="' + this.sLabelId + '" >' +
-				'<customData><core:CustomData key="' + FlexController.appliedChangesCustomDataKey + '" value="' + sAlreadyAppliedChangeId + '"/></customData>' +
-				'</Label>' +
+				'<Label id="' + this.sLabelId + '" >' +
+					'<customData><core:CustomData key="' + FlexController.appliedChangesCustomDataKey + '" value="' + sAlreadyAppliedChangeId + '"/></customData>' +
+					'</Label>' +
 			'</mvc:View>';
 		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
 		this.oControl = this.oView.childNodes[0];
@@ -2301,9 +2324,9 @@ function (
 	QUnit.test("does not call the change handler if the change was already applied", function (assert) {
 		this.oXmlString =
 			'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
-			'<Label id="' + this.sLabelId + '" >' +
-			'<customData><core:CustomData key="' + FlexController.appliedChangesCustomDataKey + '" value="' + this.oChange.getId() + '"/></customData>' +
-			'</Label>' +
+				'<Label id="' + this.sLabelId + '" >' +
+					'<customData><core:CustomData key="' + FlexController.appliedChangesCustomDataKey + '" value="' + this.oChange.getId() + '"/></customData>' +
+				'</Label>' +
 			'</mvc:View>';
 		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
 		this.oControl = this.oView.childNodes[0];
@@ -2321,8 +2344,8 @@ function (
 	QUnit.test("does not call the change handler if the change was not applied before", function(assert) {
 		this.oXmlString =
 			'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
-			'<Label id="' + this.sLabelId + '" >' +
-			'</Label>' +
+				'<Label id="' + this.sLabelId + '" >' +
+				'</Label>' +
 			'</mvc:View>';
 		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
 		this.oControl = this.oView.childNodes[0];
@@ -2480,7 +2503,7 @@ function (
 
 			this.oErrorLogStub = sandbox.stub(jQuery.sap.log, "error");
 
-			sandbox.stub(FlexController.prototype, "_getFailedCustomData", function(oChange) {
+			sandbox.stub(FlexController.prototype, "_getFailedCustomDataJs", function(oChange) {
 				if (oChange === this.oChange5) {
 					return {customDataEntries: ["a5"]};
 				}
