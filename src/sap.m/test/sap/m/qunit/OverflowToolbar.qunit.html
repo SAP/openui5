@@ -105,9 +105,9 @@
 
 		function setFlexboxMode(sMode) {
 			if (sMode === "new") {
-				this.stub(sap.m.Toolbar, "hasNewFlexBoxSupport", true);
+				this.stub(sap.m.ToolbarRenderer, "hasNewFlexBoxSupport", true);
 			} else if (sMode === "old") {
-				this.stub(sap.m.Toolbar, "hasNewFlexBoxSupport", false);
+				this.stub(sap.m.ToolbarRenderer, "hasNewFlexBoxSupport", false);
 			}
 		}
 

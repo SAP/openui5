@@ -3,10 +3,29 @@
  */
 
 // Provides control sap.m.Toolbar.
-sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData', './ToolbarSpacer', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/ResizeHandler'],
-	function(jQuery, BarInPageEnabler, ToolbarLayoutData, ToolbarSpacer, library, Control, EnabledPropagator, ResizeHandler) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./BarInPageEnabler',
+	'./ToolbarLayoutData',
+	'./ToolbarSpacer',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/EnabledPropagator',
+	'sap/ui/core/ResizeHandler',
+	"./ToolbarRenderer"
+],
+function(
+	jQuery,
+	BarInPageEnabler,
+	ToolbarLayoutData,
+	ToolbarSpacer,
+	library,
+	Control,
+	EnabledPropagator,
+	ResizeHandler,
+	ToolbarRenderer
+) {
 	"use strict";
-
 
 	var ToolbarDesign = library.ToolbarDesign,
 		ToolbarStyle = library.ToolbarStyle;
@@ -226,12 +245,6 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 		}
 	};
 
-	// determines whether toolbar has new flexbox (shrink) support
-	Toolbar.hasNewFlexBoxSupport = (function() {
-		var oStyle = document.documentElement.style;
-		return (oStyle.flex !== undefined || oStyle.webkitFlexShrink !== undefined);
-	}());
-
 	Toolbar.prototype.init = function() {
 		// define group for F6 handling
 		this.data("sap-ui-fastnavgroup", "true", true);
@@ -331,7 +344,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 
 	// apply the layout calculation according to flexbox support
 	Toolbar.prototype._doLayout = function() {
-		if (Toolbar.hasNewFlexBoxSupport) {
+		if (ToolbarRenderer.hasNewFlexBoxSupport) {
 			return;
 		}
 
