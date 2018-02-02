@@ -1469,9 +1469,12 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 
 		this.oServer.autoRespond = true;
 
+		var oAddChangeSpy = sandbox.spy(Cache, "addChange");
+
 		//Call CUT
-		return this.oChangePersistence.saveAsDirtyChanges("AppVariantId").then(function(){
+		return this.oChangePersistence.saveDirtyChanges(true).then(function(){
 			sinon.assert.calledOnce(this.lrepConnectorMock.create);
+			assert.equal(oAddChangeSpy.callCount, 0, "then addChange was never called for the change related to app variants");
 		}.bind(this));
 	});
 
@@ -1578,7 +1581,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		this.oServer.autoRespond = true;
 
 		//Call CUT
-		return this.oChangePersistence.saveAsDirtyChanges("AppVariantId").then(function(){
+		return this.oChangePersistence.saveDirtyChanges(true).then(function(){
 			assert.ok(oCreateStub.calledOnce, "the create method of the connector is called once");
 			assert.deepEqual(oCreateStub.getCall(0).args[0][0], oChangeContent1, "the first change was processed first");
 			assert.deepEqual(oCreateStub.getCall(0).args[0][1], oChangeContent2, "the second change was processed afterwards");
@@ -1677,7 +1680,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		};
 		this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 
-		var oAddChangeSpy = sinon.spy(Cache, "addChange");
+		var oAddChangeSpy = sandbox.spy(Cache, "addChange");
 		return this.oChangePersistence.saveDirtyChanges().then(function(){
 			assert.equal(oAddChangeSpy.callCount, 1, "then addChange was only called for the change not related to variants");
 		});
@@ -1698,7 +1701,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 
 		//Call CUT
 		return this.oChangePersistence.getChangesForComponent().then(function() {
-			return this.oChangePersistence.saveAsDirtyChanges("AppVariantId");
+			return this.oChangePersistence.saveDirtyChanges(true);
 		}.bind(this))
 			.then(this.oChangePersistence.getChangesForComponent.bind(this.oChangePersistence))
 			.then(function(aChanges) {
@@ -1757,7 +1760,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		//Call CUT
 		return this.oChangePersistence.getChangesForComponent().then(function() {
 			this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
-			return this.oChangePersistence.saveAsDirtyChanges("AppVariantId");
+			return this.oChangePersistence.saveDirtyChanges(true);
 		}.bind(this)).then(function() {
 			var aDirtyChanges = this.oChangePersistence.getDirtyChanges();
 			assert.strictEqual(aDirtyChanges.length, 0);

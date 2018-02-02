@@ -33,6 +33,7 @@ sap.ui.require([
 	'sap/ui/base/EventProvider',
 	'sap/ui/rta/command/BaseCommand',
 	'sap/ui/rta/qunit/RtaQunitUtils',
+	'sap/ui/rta/appVariant/Feature',
 	// should be last
 	'sap/ui/thirdparty/sinon',
 	'sap/ui/thirdparty/sinon-ie',
@@ -67,6 +68,7 @@ sap.ui.require([
 	EventProvider,
 	RTABaseCommand,
 	RtaQunitUtils,
+	RtaAppVariantFeature,
 	sinon) {
 	"use strict";
 
@@ -247,6 +249,54 @@ sap.ui.require([
 			assert.equal(this.oRta.getToolbar().getControl('manageApps').getEnabled(), false, "then the 'AppVariant Overview' Icon Button is not enabled");
 			assert.equal(this.oRta.getToolbar().getControl('appVariantOverview').getEnabled(), false, "then the 'AppVariant Overview' Menu Button is not enabled");
 		}.bind(this));
+	});
+
+	QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the manifest of an app is not supported", function(assert) {
+		var oFlexController = this.oRta._getFlexController();
+		sandbox.stub(oFlexController, "getComponentChanges").returns(Promise.resolve([]));
+
+		sandbox.stub(this.oRta, '_getPublishAndAppVariantSupportVisibility').returns(Promise.resolve([true, true]));
+		return this.oRta.start().then(function () {
+			assert.equal(this.oRta.getToolbar().getControl('manageApps').getVisible(), true, "then the 'AppVariant Overview' Icon Button is visible");
+			assert.equal(this.oRta.getToolbar().getControl('manageApps').getEnabled(), false, "then the 'AppVariant Overview' Icon Button is not enabled");
+			assert.equal(this.oRta.getToolbar().getControl('appVariantOverview').getVisible(), false, "then the 'AppVariant Overview' Menu Button is not visible");
+			assert.equal(this.oRta.getToolbar().getControl('appVariantOverview').getEnabled(), false, "then the 'AppVariant Overview' Menu Button is not enabled");
+			assert.equal(this.oRta.getToolbar().getControl('saveAs').getVisible(), true, "then the 'Save As' Button is visible");
+			assert.equal(this.oRta.getToolbar().getControl('manageApps').getEnabled(), false, "then the 'Save As' Button is not enabled");
+		}.bind(this));
+	});
+
+	QUnit.test("when RTA is started in the customer layer, app variant feature is available for an (SAP developer) but the manifest of an app is not supported", function(assert) {
+		var oFlexController = this.oRta._getFlexController();
+		sandbox.stub(oFlexController, "getComponentChanges").returns(Promise.resolve([]));
+
+		sandbox.stub(this.oRta, '_getPublishAndAppVariantSupportVisibility').returns(Promise.resolve([true, true]));
+		sandbox.stub(RtaAppVariantFeature, "isOverviewExtended").returns(true);
+		return this.oRta.start().then(function () {
+			assert.equal(this.oRta.getToolbar().getControl('manageApps').getVisible(), false, "then the 'AppVariant Overview' Icon Button is not visible");
+			assert.equal(this.oRta.getToolbar().getControl('manageApps').getEnabled(), false, "then the 'AppVariant Overview' Icon Button is not enabled");
+			assert.equal(this.oRta.getToolbar().getControl('appVariantOverview').getVisible(), true, "then the 'AppVariant Overview' Menu Button is visible");
+			assert.equal(this.oRta.getToolbar().getControl('appVariantOverview').getEnabled(), false, "then the 'AppVariant Overview' Menu Button is not enabled");
+			assert.equal(this.oRta.getToolbar().getControl('saveAs').getVisible(), true, "then the 'Save As' Button is visible");
+			assert.equal(this.oRta.getToolbar().getControl('manageApps').getEnabled(), false, "then the 'Save As' Button is not enabled");
+		}.bind(this));
+	});
+
+	QUnit.test("when _onGetAppVariantOverview is called", function(assert) {
+		var oMenuButton = {
+			getId : function() {
+				return 'keyUser';
+			}
+		};
+
+		var oEmptyEvent = new sap.ui.base.Event("emptyEventId", oMenuButton, {
+			item : oMenuButton
+		});
+
+		var fnAppVariantFeatureSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").returns(Promise.resolve(true));
+		return this.oRta._onGetAppVariantOverview(oEmptyEvent).then(function() {
+			assert.ok(fnAppVariantFeatureSpy.calledOnce, "then the onGetOverview() method is called once and the key user view will be shown");
+		});
 	});
 
 	QUnit.test("when RTA is started in the user layer", function(assert) {

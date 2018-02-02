@@ -169,11 +169,6 @@ sap.ui.define([
 			return AppVariantOverviewUtils.getDescriptor(sDescriptorUrl).then(function(oAppVariantDescriptor) {
 				BusyIndicator.hide();
 				return RtaAppVariantFeature.onSaveAsFromOverviewDialog(oAppVariantDescriptor, false);
-			})["catch"](function(oError) {
-				var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_MANAGE_APPS_FAILED", oError);
-				oErrorInfo.overviewDialog = true;
-				BusyIndicator.hide();
-				return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
 			});
 		},
 		copyId: function(oEvent) {
