@@ -3379,7 +3379,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	Core.prototype.getEventBus = function() {
 		if (!this.oEventBus) {
 			var EventBus = sap.ui.requireSync('sap/ui/core/EventBus');
-			this.oEventBus = new EventBus();
+			var oEventBus = this.oEventBus = new EventBus();
+			this._preserveHandler = function(event) {
+				// for compatibility reasons
+				oEventBus.publish("sap.ui", "__preserveContent", {domNode: event.domNode});
+			};
+			RenderManager.attachPreserveContent(this._preserveHandler);
 		}
 		return this.oEventBus;
 	};
@@ -3769,6 +3774,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	Core.prototype.destroy = function() {
+		RenderManager.detachPreserveContent(this._preserveHandler);
 		this.oFocusHandler.destroy();
 		_oEventProvider.destroy();
 		BaseObject.prototype.destroy.call(this);
