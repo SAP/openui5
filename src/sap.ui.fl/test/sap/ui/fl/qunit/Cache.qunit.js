@@ -95,7 +95,10 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			file: {
 				changes: {
 					changes: [],
-					contexts: []
+					contexts: [],
+					settings: {},
+					ui2personalization: {},
+					variantSection: {}
 				}
 			}
 		};
@@ -726,4 +729,360 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			assert.strictEqual(Cache._entries[sTestComponentName]["oldVersion"], oOldEntry, "cache of old version was not changed");
 		});
 	});
+
+	QUnit.module("getPersonalization", {
+		beforeEach: function() {
+			this.oChangeFromBackend = {};
+			this.sComponentName = "testComponent";
+			this.sAppVersion = "1.2.3";
+			this.sContainerKey = "someContainerKey";
+			this.sItemName = "someItemName";
+			this.oLrepConnector = LrepConnector.createConnector();
+		},
+
+		afterEach: function () {
+			Cache._entries = {};
+		}
+	});
+
+	QUnit.test("returns undefined if no personalization is stored for the app", function(assert) {
+		var oEntry = {
+			changes: {
+				changes: [
+				],
+				ui2personalization: {
+
+				}
+			}
+		};
+
+		this.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
+		this.stub(this.oLrepConnector, "loadChanges").returns(Promise.resolve(oEntry));
+
+		return Cache.getPersonalization(this.sComponentName, this.sAppVersion, this.sContainerKey, this.sItemName).then(
+			function(oResponse) {
+				assert.strictEqual(oResponse, undefined);
+			}
+		);
+	});
+
+	QUnit.test("returns undefined if no personalization under the component key is stored for the app", function(assert) {
+		var oEntry = {
+			changes: {
+				changes: [
+				],
+				ui2personalization: {
+					someOtherContainerKey: {}
+				}
+			}
+		};
+
+		this.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
+		this.stub(this.oLrepConnector, "loadChanges").returns(Promise.resolve(oEntry));
+
+		return Cache.getPersonalization(this.sComponentName, this.sAppVersion, this.sContainerKey, this.sItemName).then(
+			function(oResponse) {
+				assert.strictEqual(oResponse, undefined);
+			}
+		);
+	});
+
+	QUnit.test("returns undefined if no personalization under the component key is stored for the app", function(assert) {
+		var oEntry = {
+			changes: {
+				changes: [
+				],
+				ui2personalization: {
+					someOtherContainerKey: {}
+				}
+			}
+		};
+
+		this.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
+		this.stub(this.oLrepConnector, "loadChanges").returns(Promise.resolve(oEntry));
+
+		return Cache.getPersonalization(this.sComponentName, this.sAppVersion, this.sContainerKey, this.sItemName).then(
+			function(oResponse) {
+				assert.strictEqual(oResponse, undefined);
+			}
+		);
+	});
+
+	QUnit.test("returns undefined if no personalization under the item name is stored for the app", function(assert) {
+		var oEntry = {
+			changes: {
+				changes: [
+				],
+				ui2personalization: {
+					someContainerKey: [
+						{itemName: "someOtherItemName"}
+					]
+				}
+			}
+		};
+
+		this.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
+		this.stub(this.oLrepConnector, "loadChanges").returns(Promise.resolve(oEntry));
+
+		return Cache.getPersonalization(this.sComponentName, this.sAppVersion, this.sContainerKey, this.sItemName).then(
+			function(oResponse) {
+				assert.strictEqual(oResponse, undefined);
+			}
+		);
+	});
+
+	QUnit.test("returns an empty list if no personalization is stored under the container key", function(assert) {
+
+		var oEntry = {
+			changes: {
+				changes: [
+				],
+				ui2personalization: {
+					someOtherContainerKey: [{}, {}]
+				}
+			}
+		};
+
+		this.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
+		this.stub(this.oLrepConnector, "loadChanges").returns(Promise.resolve(oEntry));
+
+		return Cache.getPersonalization(this.sComponentName, this.sAppVersion, this.sContainerKey).then(
+			function(oResponse) {
+				assert.strictEqual(oResponse.length, 0);
+			}
+		);
+	});
+
+	QUnit.test("returns the searched personalization item under the container key and item name stored for the app", function(assert) {
+		var sItemName = "itemName";
+		var oExpectedItem = {itemName: sItemName};
+
+		var aEntries = [{itemName: "someOtherItemName"}, oExpectedItem,{itemName: "someCompletlyDifferentItemName"}];
+
+		var oEntry = {
+			changes: {
+				changes: [
+				],
+				ui2personalization: {
+					someContainerKey: aEntries
+				}
+			}
+		};
+
+		this.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
+		this.stub(this.oLrepConnector, "loadChanges").returns(Promise.resolve(oEntry));
+
+		return Cache.getPersonalization(this.sComponentName, this.sAppVersion, this.sContainerKey, sItemName).then(
+			function(oResponse) {
+				assert.strictEqual(oResponse, oExpectedItem);
+			}
+		);
+	});
+
+	QUnit.test("returns all personalization items under the container key stored for the app if no item key is provided", function(assert) {
+		var aEntries = [{},{}];
+
+		var oEntry = {
+			changes: {
+				changes: [
+				],
+				ui2personalization: {
+					someContainerKey: aEntries
+				}
+			}
+		};
+
+		this.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
+		this.stub(this.oLrepConnector, "loadChanges").returns(Promise.resolve(oEntry));
+
+		return Cache.getPersonalization(this.sComponentName, this.sAppVersion, this.sContainerKey).then(
+			function(oResponse) {
+				assert.strictEqual(oResponse, aEntries);
+			}
+		);
+	});
+
+	QUnit.module("setPersonalization", {
+		beforeEach: function() {
+			this.sComponentName = "testComponent";
+			this.sAppVersion = "1.2.3";
+			this.sAppVersion2 = "4.5.6";
+			this.sContainerKey = "someContainerKey";
+			this.sItemName = "someItemName";
+			this.sToken = "someXcsrfToken";
+
+			this.oEntry = Cache.getEntry(this.sComponentName, this.sAppVersion);
+			this.oEntry2 = Cache.getEntry(this.sComponentName, this.sAppVersion2);
+
+			this.server = sinon.fakeServer.create();
+			this.server.respondWith("HEAD", "/sap/bc/lrep/actions/getcsrftoken/",
+				[204, { "x-csrf-token": this.sToken}, ""]);
+		},
+		afterEach: function () {
+			Cache._entries = {};
+			this.server.restore();
+		}
+	});
+
+	QUnit.test("complains about too few parameters (no object passed)", function(assert) {
+		return new Promise(function(resolve, reject) {
+			return Cache.setPersonalization().then(reject, function () {
+				assert.ok(true, "a rejection took place");
+				resolve();
+			});
+		});
+	});
+
+	QUnit.test("complains about too few parameters (no properties)", function(assert) {
+		return new Promise(function(resolve, reject) {
+			return Cache.setPersonalization({}).then(reject, function () {
+				assert.ok(true, "a rejection took place");
+				resolve();
+			});
+		});
+	});
+
+	QUnit.test("complains about too few parameters (no containerKey)", function(assert) {
+		return new Promise(function(resolve, reject) {
+			return Cache.setPersonalization({reference: "lala"}).then(reject, function () {
+				assert.ok(true, "a rejection took place");
+				resolve();
+			});
+		});
+	});
+
+	QUnit.test("complains about too few parameters (no ItemName)", function(assert) {
+		return new Promise(function(resolve, reject) {
+			return Cache.setPersonalization({reference: "lala", containerKey: "blub"}).then(reject, function () {
+				assert.ok(true, "a rejection took place");
+				resolve();
+			});
+		});
+	});
+
+	QUnit.test("complains about too few parameters", function(assert) {
+		return new Promise(function(resolve, reject) {
+			return Cache.setPersonalization({}).then(reject, function () {
+				assert.ok(true, "a rejection took place");
+				resolve();
+			});
+		});
+	});
+
+	QUnit.test("setPersonalization sends a write to the backend", function(assert) {
+		var oPersItem = {
+			reference: this.sComponentName,
+			containerKey: this.sContainerKey,
+			itemName: this.sItemName,
+			content: {}
+		};
+
+		this.server.respondWith("PUT", "/sap/bc/lrep/ui2personalization/", [204, {}, ""]);
+		this.server.autoRespond = true;
+
+		return Cache.setPersonalization(oPersItem).then(
+			function() {
+				assert.equal(this.server.requests.length, 2, " two calls were sent to the backend");
+				assert.equal(this.server.requests[0].method, "HEAD", "a token was requested");
+				assert.equal(this.server.requests[1].requestBody, JSON.stringify(oPersItem), "the persItem was sent");
+				assert.equal(this.oEntry.file.changes.ui2personalization[this.sContainerKey].length, 1, "an entry was written into the container");
+				assert.equal(this.oEntry.file.changes.ui2personalization[this.sContainerKey][0], oPersItem, "the written item is in the container");
+				assert.equal(this.oEntry2.file.changes.ui2personalization[this.sContainerKey].length, 1, "an entry was written into the second container");
+				assert.equal(this.oEntry2.file.changes.ui2personalization[this.sContainerKey][0], oPersItem, "the written item is in the second container");
+			}.bind(this)
+		);
+	});
+
+
+	QUnit.test("setPersonalization rejects and does not update entries if the call failed", function(assert) {
+		var oPersItem = {
+			reference: this.sComponentName,
+			containerKey: this.sContainerKey,
+			itemName: this.sItemName,
+			content: {}
+		};
+
+		this.server.respondWith("PUT", "/sap/bc/lrep/ui2personalization/", [500, {}, ""]);
+		this.server.autoRespond = true;
+
+		return new Promise(function (resolve, reject) {
+			Cache.setPersonalization(oPersItem).then(reject,
+				function() {
+					assert.equal(this.server.requests.length, 2, " two calls were sent to the backend");
+					assert.ok(!this.oEntry.file.changes.ui2personalization[this.sContainerKey], "no entry was written into the container");
+					assert.ok(!this.oEntry2.file.changes.ui2personalization[this.sContainerKey], "no entry was written into the second container");
+					resolve();
+				}.bind(this)
+			);
+		}.bind(this));
+	});
+
+	QUnit.module("deletePersonalization", {
+		beforeEach: function() {
+			this.sComponentName = "testComponent";
+			this.sAppVersion = "1.2.3";
+			this.sAppVersion2 = "4.5.6";
+			this.sContainerKey = "someContainerKey";
+			this.sItemName1 = "someItemName";
+			this.sItemName2 = "someOtherItemName";
+			this.sToken = "someXcsrfToken";
+
+			this.server = sinon.fakeServer.create();
+			this.server.respondWith("GET", "/sap/bc/lrep/flex/data/",
+				[400, {}, ""]); // generic issue to make an autofill
+			this.server = sinon.fakeServer.create();
+			this.server.respondWith("HEAD", "/sap/bc/lrep/actions/getcsrftoken/",
+				[204, { "x-csrf-token": this.sToken}, ""]);
+			this.sExpectedUrl = "/sap/bc/lrep/ui2personalization/?reference=" + this.sComponentName + "&containerkey=" + this.sContainerKey + "&itemname=" + this.sItemName1;
+			this.server.respondWith("DELETE", this.sExpectedUrl,
+				[204, {}, ""]);
+			this.server.autoRespond = true;
+		},
+		afterEach: function () {
+			Cache._entries = {};
+			this.server.restore();
+		}
+	});
+
+	QUnit.test("deletePersonalization resolves if a personalization is successful deleted and the entry is gone from the session in all entries", function(assert) {
+		var aGetPromises = [];
+
+		this.oEntry = undefined;
+		var oPromise1 = Cache.getChangesFillingCache(new LrepConnector(), {name: this.sComponentName, appVersion: this.sAppVersion});
+		aGetPromises.push(oPromise1);
+		this.oEntry2 = undefined;
+		var oPromise2 = Cache.getChangesFillingCache(new LrepConnector(), {name: this.sComponentName, appVersion: this.sAppVersion2});
+		aGetPromises.push(oPromise2);
+
+		this.oItem1 = {
+			reference : this.sComponentName,
+			containerKey : this.sContainerKey,
+			itemName : this.sItemName1
+		};
+		this.oItem2 = {
+			reference : this.sComponentName,
+			containerKey : this.sContainerKey,
+			itemName : this.sItemName2
+		};
+
+		return Promise.all(aGetPromises).then( function (aParams) {
+			this.oEntry = aParams[0];
+			this.oEntry2 = aParams[1];
+		}.bind(this))
+			.then(Cache._addPersonalizationToEntries.bind(Cache, this.oItem1))
+			.then(Cache._addPersonalizationToEntries.bind(Cache, this.oItem2))
+			.then(Cache.deletePersonalization.bind(Cache, this.sComponentName, this.sContainerKey, this.sItemName1))
+			.then( function () {
+				assert.equal(this.server.requests.length, 4, " four calls were sent to the backend (two setup, 1 token, 1 delete)");
+				assert.equal(this.server.requests[2].method, "HEAD", "a token was requested");
+				assert.equal(this.server.requests[3].method, "DELETE", "a delete was requested");
+				assert.equal(this.server.requests[3].url, this.sExpectedUrl, "the delete was sent to the correct url");
+				assert.equal(this.oEntry.changes.ui2personalization[this.sContainerKey].length, 1, "one entry is in first the container");
+				assert.equal(this.oEntry.changes.ui2personalization[this.sContainerKey][0], this.oItem2, "the 'other' item is still in the container");
+				assert.equal(this.oEntry2.changes.ui2personalization[this.sContainerKey].length, 1, "one entry is in the second container");
+				assert.equal(this.oEntry2.changes.ui2personalization[this.sContainerKey][0], this.oItem2, "the 'other' item is still in the container");
+			}.bind(this)
+		);
+	});
+
 }(QUnit, sinon, sap.ui.fl.Cache, sap.ui.fl.LrepConnector, sap.ui.fl.Utils));
