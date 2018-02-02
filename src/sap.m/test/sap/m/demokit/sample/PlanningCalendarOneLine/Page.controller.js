@@ -264,6 +264,10 @@ sap.ui.define([
 				});
 				this.getView().setModel(oModel);
 
+				//make a custom sort by type
+				var oPC = this.byId("PC1");
+				oPC.setCustomAppointmentsSorterCallback(this.fnSortByType);
+
 			},
 
 			handleAppointmentSelect: function (oEvent) {
@@ -306,6 +310,17 @@ sap.ui.define([
 
 				oModel.setData(oData);
 
+			},
+
+			// custom function for appointments sort by type
+			fnSortByType : function(oApp1, oApp2) {
+				if (oApp1.getType() > oApp2.getType()) {
+					return 1;
+				}
+				if (oApp1.getType() < oApp2.getType()) {
+					return -1;
+				}
+				return 0;
 			}
 
 		});

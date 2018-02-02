@@ -1620,6 +1620,148 @@
 			oPC.destroy();
 		});
 
+		QUnit.test("setCustomAppointmentsSorterCallback allows the app dev to custom sort the appointments via the setter", function
+				(assert) {
+			//arrange
+			var oPC = createPlanningCalendar("PC4", new sap.m.SearchField(), new sap.m.Button()),
+				fnCustom = function() {};
+
+			//assert
+			assert.notOk(oPC._fnCustomSortedAppointments, "there is not a custom sort");
+
+			//act
+			oPC.setCustomAppointmentsSorterCallback(fnCustom);
+
+			//assert
+			assert.deepEqual(oPC.getCustomAppointmentsSorterCallback(), oPC._fnCustomSortedAppointments, "there is a custom sort");
+			assert.deepEqual(fnCustom, oPC.getCustomAppointmentsSorterCallback(),
+					"getCustomAppointmentsSorterCallback() returns the given custom function");
+
+			//cleanup
+			oPC.destroy();
+		});
+
+		QUnit.test("setCustomAppointmentsSorterCallback(function) in the constructor", function (assert) {
+			//arrange & act
+			var fnCustom = function() {},
+				oPC = new sap.m.PlanningCalendar({
+				customAppointmentsSorterCallback: fnCustom
+			});
+
+			//assert
+			assert.deepEqual(oPC.getCustomAppointmentsSorterCallback(), oPC._fnCustomSortedAppointments, "when a fn is set to setCustomAppointmentsSorterCallback, the sort is custom");
+			assert.deepEqual(oPC.getCustomAppointmentsSorterCallback(), fnCustom, "getCustomAppointmentsSorterCallback() returns the given custom function");
+
+			//cleanup
+			oPC.destroy();
+		});
+
+		QUnit.test("setCustomAppointmentsSorterCallback(number) in the constructor", function (assert) {
+			//arrange & act
+			var oPC = new sap.m.PlanningCalendar({
+				customAppointmentsSorterCallback: 1
+			});
+
+			//assert
+			assert.deepEqual(oPC.getCustomAppointmentsSorterCallback(), undefined,
+					"when a number is set to setCustomAppointmentsSorterCallback, the sort is the default one");
+
+			//cleanup
+			oPC.destroy();
+		});
+
+		QUnit.test("setCustomAppointmentsSorterCallback(string) in the constructor", function (assert) {
+			//arrange & act
+			var oPC = new sap.m.PlanningCalendar({
+				customAppointmentsSorterCallback: "string is not allowed"
+			});
+
+			//assert
+			assert.deepEqual(oPC.getCustomAppointmentsSorterCallback(), undefined,
+					"when a string is set to setCustomAppointmentsSorterCallback, the sort is the default one");
+
+			//cleanup
+			oPC.destroy();
+		});
+
+		QUnit.test("setCustomAppointmentsSorterCallback(function) through the setter", function (assert) {
+			//arrange & act
+			var fnCustom = function() {},
+				oPC = new sap.m.PlanningCalendar({});
+
+			oPC.setCustomAppointmentsSorterCallback(fnCustom);
+
+			//assert
+			assert.deepEqual(oPC.getCustomAppointmentsSorterCallback(), oPC._fnCustomSortedAppointments, "when a fn is set to setCustomAppointmentsSorterCallback, the sort is custom");
+			assert.deepEqual(oPC.getCustomAppointmentsSorterCallback(), fnCustom, "getCustomAppointmentsSorterCallback() returns the given custom function");
+
+			//cleanup
+			oPC.destroy();
+		});
+
+		QUnit.test("setCustomAppointmentsSorterCallback(number) through the setter", function (assert) {
+			//arrange & act
+			var fnCustom = function() {},
+				oPC = new sap.m.PlanningCalendar({});
+
+			oPC.setCustomAppointmentsSorterCallback(1);
+
+			//assert
+			assert.deepEqual(oPC.getCustomAppointmentsSorterCallback(), undefined,
+					"when a number is set to setCustomAppointmentsSorterCallback, the sort is the default one");
+
+			//cleanup
+			oPC.destroy();
+		});
+
+		QUnit.test("setCustomAppointmentsSorterCallback(string) through the setter", function (assert) {
+			//arrange & act
+			var fnCustom = function() {},
+				oPC = new sap.m.PlanningCalendar({});
+
+			oPC.setCustomAppointmentsSorterCallback("string is not allowed");
+
+			//assert
+			assert.deepEqual(oPC.getCustomAppointmentsSorterCallback(), undefined,
+					"when a string is set to setCustomAppointmentsSorterCallback, the sort is the default one");
+
+			//cleanup
+			oPC.destroy();
+		});
+
+		QUnit.test("when sortAppointmentsCustomSemantic is set to undefined, the sort is the default one", function
+				(assert) {
+			//act
+			var oPC = new sap.m.PlanningCalendar({});
+			oPC.setCustomAppointmentsSorterCallback(undefined);
+
+			//assert
+			assert.equal(oPC._fnCustomSortedAppointments === undefined, true, "there is not a custom sort");
+
+			//cleanup
+			oPC.destroy();
+		});
+
+		QUnit.test("when a function is set to setCustomAppointmentsSorterCallback, it's called", function (assert) {
+			//arrange
+
+			var oPC = createPlanningCalendar("PC5", oSearchField1, oButton1),
+					oSortSpy = this.spy(),
+					iAppointments = _getAppointmentsCount(oPC);
+
+			//act
+			oPC.setCustomAppointmentsSorterCallback(oSortSpy);
+			oPC.placeAt('uiArea3');
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			assert.ok (oSortSpy.callCount > iAppointments, "the custom sort function is called, appointments: " +
+			iAppointments + ", setCustomAppointmentsSorterCallback is called " + oSortSpy.callCount + " times");
+
+			//cleanup
+			oPC.destroy();
+		});
+
 		QUnit.module("NonWorking Special Dates", {
 			beforeEach: function() {
 				this.oPC = createPlanningCalendar("PCNonWorking", new sap.m.SearchField(), new sap.m.Button()),
@@ -3852,6 +3994,17 @@
 			//clean
 			oPCRow.destroy();
 		});
+
+		function _getAppointmentsCount(oPC) {
+			var aRows = oPC.getRows(),
+				iAppointments = 0;
+
+			aRows.forEach(function(oRow){
+				iAppointments += oRow.getAppointments().length;
+			});
+
+			return iAppointments;
+		}
 	</script>
 
 </head>
