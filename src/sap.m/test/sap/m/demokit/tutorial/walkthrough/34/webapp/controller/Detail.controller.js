@@ -13,6 +13,7 @@ sap.ui.define([
 		},
 
 		_onObjectMatched: function (oEvent) {
+			this.byId("rating").reset();
 			this.getView().bindElement({
 				path: "/" + oEvent.getParameter("arguments").invoicePath,
 				model: "invoice"
