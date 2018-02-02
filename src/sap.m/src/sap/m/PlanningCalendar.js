@@ -236,7 +236,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 			 * custom views will be displayed.
 			 * @since 1.50
 			 */
-			builtInViews : {type : "string[]", group : "Appearance", defaultValue : []}
+			builtInViews : {type : "string[]", group : "Appearance", defaultValue : []},
+
+			/**
+			 * Determines whether the header area will remain visible (fixed on top) when the rest of the content is scrolled out of view.
+			 *
+			 * The sticky header behavior is automatically disabled on phones in landscape mode for better visibility of the content.
+			 *
+			 * <b>Note:</b> There is limited browser support, hence the API is in experimental state.
+			 * Browsers that currently support this feature are Chrome (desktop and mobile), Safari (desktop and mobile) and Edge 41.
+			 *
+			 * There are also some known issues with respect to the scrolling behavior and focus handling. A few are given below:
+			 *
+			 * When the PlanningCalendar is placed in certain layout containers, for example the <code>GridLayout</code> control,
+			 * the column headers do not fix at the top of the viewport. Similar behavior is also observed with the <code>ObjectPage</code> control.
+			 *
+			 * This API should not be used in production environment.
+			 *
+			 * @experimental As of 1.54
+			 * @since 1.54
+			 */
+			stickyHeader : {type : "boolean", group : "Appearance", defaultValue : false}
 		},
 		aggregations : {
 
@@ -557,6 +577,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 			this._sResizeListener = undefined;
 		}
 
+		Device.orientation.detachHandler(this._updateStickyHeader, this);
+
 		if (this._sUpdateCurrentTime) {
 			jQuery.sap.clearDelayedCall(this._sUpdateCurrentTime);
 			this._sUpdateCurrentTime = undefined;
@@ -616,6 +638,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 
 		this._updateTodayButtonState();
 
+		Device.orientation.detachHandler(this._updateStickyHeader, this);
+
 		this._bBeforeRendering = undefined;
 
 	};
@@ -661,11 +685,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 	PlanningCalendar.prototype.onAfterRendering = function(oEvent){
 
 		// check if size is right and adopt it if necessary
+		// also it calls _updateStickyHeader function and in case of stickyHeader property set to true
+		// all needed classes will be updated
 		oEvent.size = {width: this.getDomRef().offsetWidth};
 		_handleResize.call(this, oEvent, true);
 
 		if (!this._sResizeListener) {
 			this._sResizeListener = ResizeHandler.register(this, this._resizeProxy);
+		}
+
+		if (Device.system.phone && this.getStickyHeader()) {
+			Device.orientation.attachHandler(this._updateStickyHeader, this);
 		}
 
 		this._updateCurrentTimeVisualization(false); // CalendarRow sets visualization onAfterRendering
@@ -1242,6 +1272,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 
 		return this.setProperty("showDayNamesLine", bShowDayNamesLine, false);
 
+	};
+
+	/**
+	 * Sets the stickyHeader property.
+	 * @override
+	 * @public
+	 * @param {boolean} bStick Whether the header area will remain visible (fixed on top)
+	 * @returns {sap.m.PlanningCalendar} this pointer for chaining
+	 */
+	PlanningCalendar.prototype.setStickyHeader = function(bStick) {
+		if (this.getStickyHeader() === bStick) {
+			return this;
+		}
+
+		this.setProperty("stickyHeader", bStick, true);
+		if (Device.system.phone) {
+			if (bStick) {
+				Device.orientation.attachHandler(this._updateStickyHeader, this);
+			} else {
+				Device.orientation.detachHandler(this._updateStickyHeader, this);
+			}
+		}
+		this._updateStickyHeader();
+
+		return this;
+	};
+
+	PlanningCalendar.prototype._updateStickyHeader = function() {
+		var bStick = this.getStickyHeader(),
+			bMobile1MonthView = this.getViewKey() === PlanningCalendarBuiltInView.OneMonth && this._iSize < 2,
+			bStickyToolbar = bStick && !Device.system.phone && !bMobile1MonthView,
+			bStickyInfoToolbar = bStick && !(Device.system.phone && Device.orientation.landscape) && !bMobile1MonthView;
+
+		if (this._oToolbar) {
+			this._oToolbar.toggleStyleClass("sapMPlanCalStickyHeader", bStickyToolbar);
+		}
+		if (this._oInfoToolbar) {
+			this._oInfoToolbar.toggleStyleClass("sapMPlanCalStickyHeader", bStickyInfoToolbar);
+		}
 	};
 
 	PlanningCalendar.prototype.addRow = function(oRow) {
@@ -2175,6 +2244,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 			// this._oOneMonthInterval._adjustSelectedDate(this.getStartDate());
 		}
 
+		// Call _updateStickyHeader only if the property stickyHeader is set to true
+		// in order to set or remove the sticky class in special cases like 1MonthView or phone landscape
+		// otherwise nothing should be updated
+		if (this.getStickyHeader()) {
+			this._updateStickyHeader();
+		}
 	}
 
 	function _handleAppointmentSelect(oEvent) {
