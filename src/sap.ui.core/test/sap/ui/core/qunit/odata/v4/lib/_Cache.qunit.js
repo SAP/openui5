@@ -3036,7 +3036,7 @@ sap.ui.require([
 
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", sResourcePath + "?~", "group", undefined, undefined,
-				sinon.match.same(fnDataRequested1))
+				sinon.match.same(fnDataRequested1), undefined, "/Employees")
 			.returns(Promise.resolve().then(function () {
 					oCacheMock.expects("checkActive").exactly(3);
 					return {value : oExpectedResult};
