@@ -5,13 +5,9 @@
 // Provides access to Java-like resource bundles in properties file format
 sap.ui.define([
 	'sap/ui/Resources',
-	'jquery.sap.global',
-
-	// load old modules for compatibility
-	'jquery.sap.properties',
-	'jquery.sap.strings'
-], function(Resources, jQuery /* jQuerySap1, jQuerySap2 */) {
-		"use strict";
+	'jquery.sap.global'
+], function(Resources, jQuery) {
+	"use strict";
 
 	/**
 	 * Creates and returns a new instance of {@link jQuery.sap.util.ResourceBundle}
