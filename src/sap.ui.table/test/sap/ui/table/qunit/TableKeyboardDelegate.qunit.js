@@ -6,8 +6,9 @@ sap.ui.require([
 	"sap/ui/table/TableKeyboardDelegate2",
 	"sap/ui/Device",
 	"sap/m/Menu",
-	"sap/m/MenuItem"
-], function(qutils, TableUtils, TableKeyboardDelegate2, Device, MenuM, MenuItemM) {
+	"sap/m/MenuItem",
+	"sap/ui/events/F6Navigation"
+], function(qutils, TableUtils, TableKeyboardDelegate2, Device, MenuM, MenuItemM, F6Navigation) {
 	"use strict";
 
 	// mapping of global function calls
@@ -3514,7 +3515,7 @@ sap.ui.require([
 
 			// Enhance the Navigation Handler to use the test scope only (not the QUnit related DOM)
 			jQuery.sap.handleF6GroupNavigationOriginal = jQuery.sap.handleF6GroupNavigation;
-			jQuery.sap.handleF6GroupNavigation = function(oEvent, oSettings) {
+			jQuery.sap.handleF6GroupNavigation = F6Navigation.handleF6GroupNavigation = function(oEvent, oSettings) {
 				oSettings = oSettings ? oSettings : {};
 				if (!oSettings.scope) {
 					oSettings.scope = jQuery.sap.domById("qunit-fixture");
@@ -3525,7 +3526,7 @@ sap.ui.require([
 		afterEach: function() {
 			teardownTest();
 
-			jQuery.sap.handleF6GroupNavigation = jQuery.sap.handleF6GroupNavigationOriginal;
+			jQuery.sap.handleF6GroupNavigation = F6Navigation.handleF6GroupNavigation = jQuery.sap.handleF6GroupNavigationOriginal;
 			jQuery.sap.handleF6GroupNavigationOriginal = null;
 		}
 	});

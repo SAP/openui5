@@ -26,12 +26,6 @@ sap.ui.require([
 		aAnnotationsMockdata[i].FinStatementHierarchyLevelVal = parseInt(aAnnotationsMockdata[i].FinStatementHierarchyLevelVal, 10);
 	}
 
-	// create a dummy AMD fdefine to check if shim works for datajs
-	window.define = function() {
-		throw Error("define should not be called");
-	};
-	window.define.amd = {vendor: "SAPUI5 QUnit Test"};
-
 	function attachEventHandler(oControl, iSkipCalls, fnHandler, that) {
 		var iCalled = 0;
 		var fnEventHandler = function() {

@@ -5,12 +5,6 @@ sap.ui.require([
 ], function(ClientTreeBindingAdapter) {
 	"use strict";
 
-	// create a dummy AMD fdefine to check if shim works for datajs
-	window.define = function() {
-		throw Error("define should not be called");
-	};
-	window.define.amd = {vendor: "SAPUI5 QUnit Test"};
-
 	var oModel, oBinding;
 
 	function createTreeBindingAdapter(sPath, oContext, aFilters, mParameters) {
