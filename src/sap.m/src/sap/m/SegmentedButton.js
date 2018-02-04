@@ -569,12 +569,14 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 	/**
 	 * Adds item to <code>items</code> aggregation.
 	 * @param {sap.m.SegmentedButtonItem} oItem The item to be added
+	 * @returns {sap.m.SegmentedButton} <code>this</code> pointer for chaining
 	 * @public
 	 * @override
 	 */
 	SegmentedButton.prototype.addItem = function (oItem) {
 		this.addAggregation("items", oItem);
 		this.addButton(oItem.oButton);
+		return this;
 	};
 
 	/**
@@ -602,12 +604,14 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagato
 	 * Inserts item into <code>items</code> aggregation.
 	 * @param {sap.m.SegmentedButtonItem} oItem The item to be inserted
 	 * @param {int} iIndex index the item should be inserted at
+	 * @returns {sap.m.SegmentedButton} <code>this</code> pointer for chaining
 	 * @public
 	 * @override
 	 */
 	SegmentedButton.prototype.insertItem = function (oItem, iIndex) {
 		this.insertAggregation("items", oItem, iIndex);
 		this.insertButton(oItem.oButton, iIndex);
+		return this;
 	};
 
 	/**
