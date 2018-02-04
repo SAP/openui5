@@ -2412,6 +2412,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 	 * Holds the selected appointments. If no appointments are selected, an empty array is returned.
 	 * @returns {sap.ui.unified.CalendarAppointment[]} Array of IDs of selected appointments
 	 * @since 1.54
+	 * @public
 	 */
 	PlanningCalendar.prototype.getSelectedAppointments = function() {
 		var aSelAppointments = [];
