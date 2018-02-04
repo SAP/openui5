@@ -34,6 +34,8 @@
 		QUnit.config.autostart = false;
 		QUnit.config.reorder = true;
 		sap.ui.require([
+			"tests/sap/ui/karma/polyfillsForTests",
+
 			// sap/base/*
 			"tests/sap/base/assert.qunit",
 			"tests/sap/base/log.qunit",
@@ -84,7 +86,6 @@
 			"tests/sap/ui/karma/initjQueryBrowser.qunit",
 			"tests/sap/ui/karma/initjQuerySupport.qunit",
 			"tests/sap/ui/karma/XHRProxy.qunit",
-			// TODO: What about this module? "sap/ui/karma/polyfillsForTests.qunit",
 
 			// sap/ui/karma/bootstrap/*
 			"tests/sap/ui/karma/bootstrap/StoredConfig.qunit",
@@ -105,7 +106,9 @@
 			"tests/sap/ui/xml/serializeXML.qunit",
 			"tests/sap/ui/xml/XMLParser.qunit"
 
-		], function() {
+		], function(applyPolyfills) {
+			applyPolyfills();
+
 			QUnit.start();
 		});
 		</script>

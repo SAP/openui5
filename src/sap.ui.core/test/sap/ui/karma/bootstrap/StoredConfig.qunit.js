@@ -16,13 +16,13 @@ sap.ui.require(['sap/ui/bootstrap/StoredConfig'], function(StoredConfig){
 					return false;
 				}
 			}());
-			this.alert = alert;
-			alert = sinon.spy();
+			this.alert = window.alert;
+			window.alert = sinon.spy();
 			sinon.stub(console, 'warn');
 		},
 		afterEach: function() {
 			StoredConfig.debug(false);
-			alert = this.alert;
+			window.alert = this.alert;
 			console.warn.restore();
 		}
 	});
@@ -38,7 +38,7 @@ sap.ui.require(['sap/ui/bootstrap/StoredConfig'], function(StoredConfig){
 		assert.strictEqual(StoredConfig.debug(0), this.bLocalStorage ? null : undefined, "deactivation - 0");
 
 		if (this.bLocalStorage) {
-			assert.equal(alert.callCount, 5, "alerts");
+			assert.equal(window.alert.callCount, 5, "alerts");
 		} else {
 			assert.equal(console.warn.callCount, 6, "console warnings");
 		}
@@ -51,7 +51,7 @@ sap.ui.require(['sap/ui/bootstrap/StoredConfig'], function(StoredConfig){
 		assert.strictEqual(StoredConfig.setReboot(), this.bLocalStorage ? null : undefined, "deactivation - undefined");
 
 		if (this.bLocalStorage) {
-			assert.equal(alert.callCount, 1, "alerts");
+			assert.equal(window.alert.callCount, 1, "alerts");
 		} else {
 			assert.equal(console.warn.callCount, 3, "console warnings");
 		}
@@ -63,7 +63,7 @@ sap.ui.require(['sap/ui/bootstrap/StoredConfig'], function(StoredConfig){
 		assert.strictEqual(StoredConfig.statistics(false), this.bLocalStorage ? false : undefined, "deactivation - boolean");
 		assert.strictEqual(StoredConfig.statistics(), this.bLocalStorage ? false : undefined, "deactivation - undefined");
 		if (this.bLocalStorage) {
-			assert.equal(alert.callCount, 2, "alerts");
+			assert.equal(window.alert.callCount, 2, "alerts");
 		} else {
 			assert.equal(console.warn.callCount, 3, "console warnings");
 		}
