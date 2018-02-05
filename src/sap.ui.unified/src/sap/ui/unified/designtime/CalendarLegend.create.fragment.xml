@@ -1,0 +1,11 @@
+<core:FragmentDefinition
+	xmlns="sap.ui.unified"
+	xmlns:core="sap.ui.core">
+		<CalendarLegend>
+			<items>
+				<CalendarLegendItem text="Legend Item 1" type="Type01" />
+				<CalendarLegendItem text="Legend Item 2" type="Type02" />
+				<CalendarLegendItem text="Legend Item 3" type="Type03" />
+			</items>
+		</CalendarLegend>
+</core:FragmentDefinition>

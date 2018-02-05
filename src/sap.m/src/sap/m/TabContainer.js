@@ -122,7 +122,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					 * Fired when the <i>Add New Tab</i> button is pressed.
 					 */
 					addNewButtonPress: { }
-				}
+				},
+				designtime: "sap/m/designtime/TabContainer.designtime"
 			},
 			constructor : function (vId, mSettings) {
 				var aStashedItems = [];

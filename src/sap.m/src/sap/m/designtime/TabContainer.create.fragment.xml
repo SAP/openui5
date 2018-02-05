@@ -1,0 +1,10 @@
+<core:FragmentDefinition xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<TabContainer>
+		<items>
+			<TabContainerItem name="Tab Name 1"><content><Text text="Content 1" /></content></TabContainerItem>
+			<TabContainerItem name="Tab Name 2"><content><Text text="Content 2" /></content></TabContainerItem>
+			<TabContainerItem name="Tab Name 3"><content><Text text="Content 3" /></content></TabContainerItem>
+		</items>
+	</TabContainer>
+</core:FragmentDefinition>

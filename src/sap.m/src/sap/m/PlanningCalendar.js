@@ -403,7 +403,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedO
 				 */
 				row : {type : "sap.m.PlanningCalendarRow"}
 			}
-		}
+		},
+		designtime: "sap/m/designtime/PlanningCalendar.designtime"
 	},
 		constructor: function(vId, mSettings) {
 			Control.prototype.constructor.apply(this, arguments);
