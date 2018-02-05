@@ -91,6 +91,12 @@
         "type": "FIX",
         "text": " Fix bug in sorting of variants after reload",
         "references": []
+      },
+      {
+        "id": "fa513022b2647b43e2eed9c88ee13b8a60b70323",
+        "type": "FEATURE",
+        "text": " sap.ui.rta: Refactoring the unsaved changes which are booked",
+        "references": []
       }
     ]
   }

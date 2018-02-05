@@ -1147,6 +1147,84 @@
         "type": "FIX",
         "text": " sap.m: instanceof Date in public methods corrected",
         "references": []
+      },
+      {
+        "id": "c5d50c5a7fa92f0247289a2199714597b6c8d5d8",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Header can now remain visible (fixed on top) on scroll",
+        "references": []
+      },
+      {
+        "id": "83ba855c769fc64916d23fb02891235335a1b774",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Now appointments could be custom sorted",
+        "references": []
+      },
+      {
+        "id": "d85ac223ad77d36ffe40ff30afca307d20d07dda",
+        "type": "FEATURE",
+        "text": " sap.m.Table: new property sticky",
+        "references": []
+      },
+      {
+        "id": "4e0f59534549f6de426a5e8b57973e7dbeb402f2",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.CalendarLegend: standardItems introduced.",
+        "references": []
+      },
+      {
+        "id": "feb68f1995f17e7798f58206569419db6c882e04",
+        "type": "FIX",
+        "text": " sap.m.Checkbox: Display type aligned in responsive grid",
+        "references": []
+      },
+      {
+        "id": "a46db3d767d31cdad56397e56c5c7a3324e3bdfa",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Add minimum height to the control",
+        "references": []
+      },
+      {
+        "id": "2a8e1d2b90ec011d1b30faf838c4668273d60516",
+        "type": "FIX",
+        "text": " sap.m.MessageView: List item padding corrected",
+        "references": []
+      },
+      {
+        "id": "c1abcd86fee6002731484e02bb4c019eb59a0e41",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Texts in message item escaped correctly",
+        "references": []
+      },
+      {
+        "id": "018f8b6cd37336cb4216a8cb8a7592e3882e7387",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Focusing out should fire change event only if the value is not empty",
+        "references": []
+      },
+      {
+        "id": "d2520abe1da7489df63cb36bfd5937851ad2a4bc",
+        "type": "FIX",
+        "text": " sap.m.Panel: Remove unneeded outline",
+        "references": []
+      },
+      {
+        "id": "fa18d3e9891031e97f812b4204d833b4b2277fc7",
+        "type": "FIX",
+        "text": " sap.m.ResponsivePopover: setShowButton should not throw an exception on mobile phone",
+        "references": []
+      },
+      {
+        "id": "64c0eb34a0ced62a2cc79b92ec2980fff3ed3bff",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: apply sapContrastPlus to the TabStrip",
+        "references": []
+      },
+      {
+        "id": "5fe8d99ab4384308fb2fdef50c47053ef2f93716",
+        "type": "FIX",
+        "text": " sap.m.Text: Added the text for one of the sample on the test page",
+        "references": []
       }
     ]
   }

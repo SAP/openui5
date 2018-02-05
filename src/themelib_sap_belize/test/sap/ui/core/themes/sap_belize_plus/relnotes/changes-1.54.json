@@ -127,6 +127,30 @@
         "type": "FEATURE",
         "text": " sap.m.Toolbar: Added \"style\" property",
         "references": []
+      },
+      {
+        "id": "cf137de19a839e809bf656d6fcf51af6355cce88",
+        "type": "FEATURE",
+        "text": " sap.tnt.InfoLabel: control implemented",
+        "references": []
+      },
+      {
+        "id": "5dc083b470b04cc5ac75dda3652f8aab5137f195",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: correct font color when select appointments",
+        "references": []
+      },
+      {
+        "id": "e799159db6a73916fda16412f11039428b06c87d",
+        "type": "FIX",
+        "text": " sap.ui.unified.Currency: align currency labels properly",
+        "references": []
+      },
+      {
+        "id": "6aae96fe4fb2e3153790141326c3cc9f182d3520",
+        "type": "FIX",
+        "text": " uxap.ObjectPageHeader: Title Selection Icon aligned with VD",
+        "references": []
       }
     ]
   }
