@@ -2735,7 +2735,7 @@ sap.ui.require([
 				+ bOptional;
 
 		QUnit.test(sTitle, function (assert) {
-			var oData = {},
+			var oData = {"X-HTTP-Method" : "PUT"},
 				sETag = "ETag",
 				sGroupId = "group",
 				sResourcePath = "LeaveRequest('1')/Submit",
@@ -2743,13 +2743,29 @@ sap.ui.require([
 
 			this.oRequestorMock.expects("isActionBodyOptional").withExactArgs().returns(bOptional);
 			this.oRequestorMock.expects("request")
-				.withExactArgs("POST", sResourcePath, sGroupId, {"If-Match" : sETag},
+				.withExactArgs("PUT", sResourcePath, sGroupId, {"If-Match" : sETag},
 					bOptional ? undefined : sinon.match.same(oData))
 				.resolves();
 
 			// code under test
-			return oCache.post(sGroupId, oData, sETag);
+			return oCache.post(sGroupId, oData, sETag).then(function () {
+					assert.deepEqual(oData, {});
+				});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache: post w/o arguments", function (assert) {
+		var sResourcePath = "LeaveRequest('1')/Submit",
+			oCache = this.createSingle(sResourcePath, undefined, true);
+
+		this.oRequestorMock.expects("isActionBodyOptional").never();
+		this.oRequestorMock.expects("request")
+			.withExactArgs("POST", sResourcePath, undefined, {"If-Match" : undefined}, undefined)
+			.resolves();
+
+		// code under test
+		return oCache.post();
 	});
 
 	//*********************************************************************************************

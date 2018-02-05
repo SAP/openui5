@@ -359,11 +359,6 @@ sap.ui.require([
 					.withExactArgs("Unsupported annotation 'sap:" + sAnnotation + "'",
 						sinon.match.string, sClassName);
 			});
-			["UpdateAgencyPhoneNo"].forEach(function (sName) {
-				oLogMock.expects("warning")
-					.withExactArgs("Unsupported HttpMethod at FunctionImport '" + sName
-						+ "', removing this FunctionImport", undefined, sClassName);
-			});
 
 			mModelParameters = jQuery.extend({}, {odataVersion : "2.0"}, mModelParameters);
 			return createModel(sFlight, mModelParameters);
@@ -3776,7 +3771,7 @@ sap.ui.require([
 			that.expectRequest("GetFlightDetails?carrid='AA'&connid='0017'"
 				+ "&fldate=datetime'2017-08-10T00:00:00'", {
 					"d" : {
-//TODO why does the server send this?
+//TODO support this, pretty much like ComplexType
 //						"GetFlightDetails" : {
 							"__metadata" : {
 								"type" : "RMTSAMPLEFLIGHT.FlightDetails"
@@ -3921,6 +3916,65 @@ sap.ui.require([
 					oContextBinding.getBoundContext().getProperty("CreatedAt"),
 					"2017-08-10T00:00:00.000Z"); //TODO Precision="7"
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: <FunctionImport m:HttpMethod="PUT" sap:action-for="..."> in V2 Adapter
+	// Usage of service: /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
+	//TODO $metadata of <FunctionImport> is broken, key properties and parameters do not match!
+	// --> server expects UpdateAgencyPhoneNo?agency_id='...'
+	QUnit.test("V2 Adapter: bound action w/ PUT", function (assert) {
+		var oModel = this.createModelForV2FlightService(),
+			sView = '\
+<FlexBox binding="{/TravelAgencies(\'00000061\')}">\
+	<Text id="oldPhone" text="{TELEPHONE}" />\
+	<FlexBox id="action" binding="{RMTSAMPLEFLIGHT.UpdateAgencyPhoneNo(...)}">\
+		<Text id="newPhone" text="{TELEPHONE}" />\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("TravelAgencies('00000061')", {
+				"d" : {
+					"__metadata" : {
+						"type" : "RMTSAMPLEFLIGHT.Travelagency"
+					},
+					"agencynum" : "00000061",
+					"NAME" : "Fly High",
+					"TELEPHONE" : "+49 2102 69555"
+				}
+			})
+			.expectChange("oldPhone", "+49 2102 69555")
+			.expectChange("oldPhone", "+49 2102 69555") //TODO unexpected change
+			.expectChange("newPhone", null); //TODO unexpected change
+
+		// code under test
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContextBinding = that.oView.byId("action").getObjectBinding(),
+				oPromise;
+
+			that.expectRequest({
+					groupId : "$direct",
+					headers : {"If-Match" : undefined},
+					method : "PUT",
+					url : "UpdateAgencyPhoneNo?agencynum='00000061'"
+						+ "&telephone='%2B49%20(0)2102%2069555'"
+				}, {
+					"d" : {
+						"__metadata" : {
+							"type" : "RMTSAMPLEFLIGHT.Travelagency"
+						},
+						"agencynum" : "00000061",
+						"NAME" : "Fly High",
+						"TELEPHONE" : "+49 (0)2102 69555"
+					}
+				})
+				.expectChange("newPhone", "+49 (0)2102 69555");
+
+			oPromise = oContextBinding.setParameter("telephone", "+49 (0)2102 69555").execute();
+
+			return Promise.all([oPromise, that.waitForChanges(assert)]);
 		});
 	});
 

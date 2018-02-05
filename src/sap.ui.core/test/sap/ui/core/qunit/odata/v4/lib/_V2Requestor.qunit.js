@@ -1288,20 +1288,38 @@ sap.ui.require([
 					bAction ? oEntity : function () { return oEntity; }),
 				"ResetEdmTypes");
 			assert.deepEqual(mQueryOptions, {"Bar" : "true", "Foo" : "42", "ID" : "'1'"});
+			assert.deepEqual(mParameters, {});
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("getPathAndAddQueryOptions: Operation w/o parameters", function (assert) {
 		var oOperationMetadata = {},
+			mParameters = {foo : "bar"},
 			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
 
 		this.mock(oRequestor).expects("formatPropertyAsLiteral").never();
 
 		assert.strictEqual(
 			// code under test
-			oRequestor.getPathAndAddQueryOptions("/some.Operation(...)", oOperationMetadata),
+			oRequestor.getPathAndAddQueryOptions("/some.Operation(...)", oOperationMetadata,
+				mParameters),
 			"some.Operation");
+		assert.deepEqual(mParameters, {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getPathAndAddQueryOptions: $v2HttpMethod", function (assert) {
+		var oOperationMetadata = {$v2HttpMethod : "PUT"},
+			mParameters = {foo : "bar"},
+			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+
+		assert.strictEqual(
+			// code under test
+			oRequestor.getPathAndAddQueryOptions("/some.Operation(...)", oOperationMetadata,
+				mParameters),
+			"some.Operation");
+		assert.deepEqual(mParameters, {"X-HTTP-Method" : oOperationMetadata.$v2HttpMethod});
 	});
 
 	//*********************************************************************************************

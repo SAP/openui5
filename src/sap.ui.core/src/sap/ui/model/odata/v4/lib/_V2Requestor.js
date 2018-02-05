@@ -633,7 +633,8 @@ sap.ui.define([
 	/**
 	 * Returns the resource path relative to the service URL and adds query options in case of
 	 * a bound operation (V2: "sap:action-for"). Operation parameters are moved to query options,
-	 * undeclared parameters are removed.
+	 * undeclared parameters are removed. In case of a non-POST action, the V2 HTTP method is
+	 * tunneled as a parameter "X-HTTP-Method".
 	 *
 	 * @param {string} sPath
 	 *   The absolute binding path to the bound operation or operation import, e.g.
@@ -691,6 +692,9 @@ sap.ui.define([
 		}
 		for (sName in mParameters) {
 			delete mParameters[sName];
+		}
+		if (oOperationMetadata.$v2HttpMethod) {
+			mParameters["X-HTTP-Method"] = oOperationMetadata.$v2HttpMethod;
 		}
 
 		return sPath;

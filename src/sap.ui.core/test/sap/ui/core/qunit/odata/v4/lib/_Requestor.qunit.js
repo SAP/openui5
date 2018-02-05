@@ -2576,19 +2576,32 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getPathAndAddQueryOptions: Action", function (assert) {
-		var oOperationMetadata = {$kind : "Action"},
+		var oOperationMetadata = {
+				$kind : "Action",
+				"$Parameter" : [{
+					"$Name" : "Foo"
+				}, {
+					"$Name" : "ID"
+				}]
+			},
+			mParameters = {"ID" : "1", "Foo" : 42, "n/a" : NaN},
 			oRequestor = _Requestor.create("/");
 
 		// code under test
 		assert.strictEqual(
-			oRequestor.getPathAndAddQueryOptions("/OperationImport(...)", oOperationMetadata),
+			oRequestor.getPathAndAddQueryOptions("/OperationImport(...)", oOperationMetadata,
+				mParameters),
 			"OperationImport");
+
+		assert.deepEqual(mParameters, {"ID" : "1", "Foo" : 42}, "n/a is removed");
 
 		// code under test
 		assert.strictEqual(
 			oRequestor.getPathAndAddQueryOptions("/Entity('0815')/bound.Operation(...)",
-				oOperationMetadata),
+				{$kind : "Action"}, mParameters),
 			"Entity('0815')/bound.Operation");
+
+		assert.deepEqual(mParameters, {}, "no parameters accepted");
 	});
 
 	//*********************************************************************************************
@@ -2618,7 +2631,7 @@ sap.ui.require([
 		assert.strictEqual(
 			// code under test
 			oRequestor.getPathAndAddQueryOptions("/some.Function(...)", oOperationMetadata,
-				{"føø" : "bãr'1", "p2" : 42}),
+				{"føø" : "bãr'1", "p2" : 42, "n/a" : NaN}),
 			"some.Function(f%C3%B8%C3%B8='b%C3%A3r''1',p2=42)");
 	});
 
