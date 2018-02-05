@@ -430,6 +430,16 @@
 				});
 			});
 
+			QUnit.module("private functions");
+
+			QUnit.test("_getFallbackLocales", function(assert) {
+				var aSupportedLocales = ['en', 'es', 'fr', 'zh_CN', 'zh_TW'];
+				assert.deepEqual(Resources._getFallbackLocales('de-CH'), ['de_CH', 'de', 'en', ''], "fallback chain without knowledge about supported locales");
+				assert.deepEqual(Resources._getFallbackLocales('de-CH', aSupportedLocales), ['en'], "fallback chain with knowledge about supported locales");
+				assert.deepEqual(Resources._getFallbackLocales('zh-HK', aSupportedLocales), ['zh_TW', 'en'], "fallback for zh-HK");
+				assert.deepEqual(Resources._getFallbackLocales('zh_HK', aSupportedLocales), ['zh_TW', 'en'], "fallback for zh_HK");
+			});
+
 		});
 
 		</script>

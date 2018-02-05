@@ -536,5 +536,32 @@ sap.ui.define([
 		return oBundle instanceof Bundle;
 	};
 
+	/**
+	 * Determine sequence of fallback locales, starting from the given locale and
+	 * optionally taking the list of supported locales into account.
+	 *
+	 * Callers can use the result to limit requests to a set of existing locales.
+	 *
+	 * @param {string} sLocale Locale to start the fallback sequence with, should be a BCP47 language tag
+	 * @param {string[]} [aSupportedLocales] List of supported locales (in JDK legacy syntax, e.g. zh_CN, iw)
+	 * @returns {string[]} Sequence of fallback locales in JDK legacy syntax, decreasing priority
+	 *
+	 * @private
+	 * @ui5-restricted sap.fiori, sap.support launchpad
+	 */
+	fnResources._getFallbackLocales = function(sLocale, aSupportedLocales) {
+		var sTempLocale = normalize(sLocale),
+			aLocales = [];
+
+		while ( sTempLocale != null ) {
+			if ( isSupported(sTempLocale, aSupportedLocales) ) {
+				aLocales.push(sTempLocale);
+			}
+			sTempLocale = nextFallbackLocale(sTempLocale);
+		}
+
+		return aLocales;
+	};
+
 	return fnResources;
 });
