@@ -469,8 +469,8 @@ function(
 	};
 
 	/**
-	 * Removes a root element from the DesignTime and destroys overlays for it and it's public descendants
-	 * @param {string|sap.ui.core.Element} vRootElement element or elemet's id
+	 * Removes a root element from the DesignTime and destroys overlays for it and its public descendants
+	 * @param {string|sap.ui.core.Element} vRootElement element or element id
 	 * @return {sap.ui.dt.DesignTime} this
 	 * @protected
 	 */
@@ -673,11 +673,13 @@ function(
 					);
 
 					oElementOverlay.detachEvent('destroyed', this._onElementOverlayDestroyed);
+					oElementOverlay.detachEvent('elementDestroyed', this._onElementDestroyed);
 					oElementOverlay.destroy();
 
 					fnReject(oError);
 				}.bind(this, oElement.getId()),
 				destroyed: this._onElementOverlayDestroyed,
+				elementDestroyed: this._onElementDestroyed.bind(this),
 				scrollSynced: function () {
 					// FIXME: temporal workaround for ObjectPage
 					this.applyStyles();
@@ -802,6 +804,12 @@ function(
 		this.fireElementOverlayDestroyed({
 			overlay: oElementOverlay
 		});
+	};
+
+	DesignTime.prototype._onElementDestroyed = function (oEvent) {
+		var sElementId = oEvent.getParameter("targetId");
+
+		this.removeRootElement(sElementId);
 	};
 
 	/**
