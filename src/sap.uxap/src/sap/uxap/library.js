@@ -88,9 +88,9 @@ sap.ui.define([
 	});
 
 	/**
-	 * @class Used by the BlockBase control to define how many columns should it be assigned by the objectPageSubSection.
+	 * @class Used by the <code>BlockBase</code> control to define how many columns should it be assigned by the <code>objectPageSubSection</code>.
 	 *     The allowed values can be auto (subsection assigned a number of columns based on the parent objectPageLayout subsectionLayout property), 1, 2 or 3
-	 *     (This may not be a valid value for some subSectionLayout, for example asking for 3 columns in a 2 column layout would raise warnings).
+	 *     (This may not be a valid value for some <code>subSectionLayout</code>, for example, asking for 3 columns in a 2 column layout would raise warnings).
 	 *
 	 * @static
 	 * @public
@@ -106,7 +106,7 @@ sap.ui.define([
 	);
 
 	/**
-	 * Used by the BlockBase control to define if it should do automatic adjustment of its nested forms.
+	 * Used by the <code>BlockBase</code> control to define if it should do automatic adjustment of its nested forms.
 	 *
 	 * @author SAP SE
 	 * @enum {string}
@@ -134,7 +134,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Used by the sap.uxap.component.Component how to initialize the ObjectPageLayout sections and subsections.
+	 * Used by the <code>sap.uxap.component.Component</code> how to initialize the <code>ObjectPageLayout</code> sections and subsections.
 	 *
 	 * @author SAP SE
 	 * @enum {string}
@@ -144,20 +144,20 @@ sap.ui.define([
 	sap.uxap.ObjectPageConfigurationMode = {
 
 		/**
-		 * Determines the JSON url
+		 * Determines the JSON URL.
 		 * @public
 		 */
 		JsonURL: "JsonURL",
 
 		/**
-		 * Determines the JSON model
+		 * Determines the JSON model.
 		 * @public
 		 */
 		JsonModel: "JsonModel"
 
 	};
 	/**
-	 * Used by the ObjectPageHeader control to define which design to use.
+	 * Used by the <code>ObjectPageHeader</code> control to define which design to use.
 	 *
 	 * @author SAP SE
 	 * @enum {string}
@@ -167,20 +167,20 @@ sap.ui.define([
 	sap.uxap.ObjectPageHeaderDesign = {
 
 		/**
-		 * Light theme for the ObjectPageHeader.
+		 * Light theme for the <code>ObjectPageHeader</code>.
 		 * @public
 		 */
 		Light: "Light",
 
 		/**
-		 * Dark theme for the ObjectPageHeader.
+		 * Dark theme for the <code>ObjectPageHeader</code>.
 		 * @public
 		 */
 		Dark: "Dark"
 
 	};
 	/**
-	 * Used by the ObjectPageHeader control to define which shape to use for the image.
+	 * Used by the <code>ObjectPageHeader</code> control to define which shape to use for the image.
 	 *
 	 * @author SAP SE
 	 * @enum {string}
@@ -190,20 +190,20 @@ sap.ui.define([
 	sap.uxap.ObjectPageHeaderPictureShape = {
 
 		/**
-		 * Circle shape for the images in the ObjectPageHeader.
+		 * Circle shape for the images in the <code>ObjectPageHeader</code>.
 		 * @public
 		 */
 		Circle: "Circle",
 
 		/**
-		 * Square shape for the images in the ObjectPageHeader.
+		 * Square shape for the images in the <code>ObjectPageHeader</code>.
 		 * @public
 		 */
 		Square: "Square"
 
 	};
 	/**
-	 * Used by the ObjectPagSubSection control to define which layout to apply.
+	 * Used by the <code>ObjectPagSubSection</code> control to define which layout to apply.
 	 *
 	 * @author SAP SE
 	 * @enum {string}
@@ -213,20 +213,20 @@ sap.ui.define([
 	sap.uxap.ObjectPageSubSectionLayout = {
 
 		/**
-		 * TitleOnTop: title and actions on top of the block area.
+		 * Title and actions on top of the block area.
 		 * @public
 		 */
 		TitleOnTop: "TitleOnTop",
 
 		/**
-		 * TitleOnLeft: title and actions on the left, inside the block area.
+		 * Title and actions on the left, inside the block area.
 		 * @public
 		 */
 		TitleOnLeft: "TitleOnLeft"
 
 	};
 	/**
-	 * Used by the ObjectPageLayout control to define which layout to use (either Collapsed or Expanded).
+	 * Used by the <code>ObjectPageLayout</code> control to define which layout to use (either Collapsed or Expanded).
 	 *
 	 * @author SAP SE
 	 * @enum {string}
@@ -236,13 +236,13 @@ sap.ui.define([
 	sap.uxap.ObjectPageSubSectionMode = {
 
 		/**
-		 * Collapsed mode of display of the ObjectPageLayout.
+		 * Collapsed mode of display of the <code>ObjectPageLayout</code>.
 		 * @public
 		 */
 		Collapsed: "Collapsed",
 
 		/**
-		 * Expanded mode of displaying the ObjectPageLayout.
+		 * Expanded mode of displaying the <code>ObjectPageLayout</code>.
 		 * @public
 		 */
 		Expanded: "Expanded"
@@ -250,7 +250,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Used by the ObjectSectionBase control to define the importance of the content contained in it.
+	 * Used by the <code>ObjectSectionBase</code> control to define the importance of the content contained in it.
 	 *
 	 * @author SAP SE
 	 * @enum {string}
@@ -261,19 +261,19 @@ sap.ui.define([
 	sap.uxap.Importance = {
 
 		/**
-		 * Low importance of the content
+		 * Low importance of the content.
 		 * @public
 		 */
 		Low: "Low",
 
 		/**
-		 * Medium importance of the content
+		 * Medium importance of the content.
 		 * @public
 		 */
 		Medium: "Medium",
 
 		/**
-		 * High importance of the content
+		 * High importance of the content.
 		 * @public
 		 */
 		High: "High"
@@ -292,7 +292,7 @@ sap.ui.define([
 	sap.uxap.Utilities = {
 
 		/**
-		 * Returns the reference to the ObjectPageLayout for a given control
+		 * Returns the reference to the <code>ObjectPageLayout</code> for a given control.
 		 * @static
 		 * @param {sap.ui.core.Control} oControl - the control to find ObjectPageLayout for
 		 * @private
