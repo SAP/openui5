@@ -48,7 +48,8 @@ sap.ui.define(['sap/ui/unified/CalendarLegend'],
 				 * The legend items which show color and type information about the calendar appointments.
 				 */
 				appointmentItems: {type: "sap.ui.unified.CalendarLegendItem", multiple: true, singularName: "appointmentItem"}
-			}
+			},
+			designtime: "sap/m/designtime/PlanningCalendarLegend.designtime"
 		}});
 
 		/** Default value for column width. */

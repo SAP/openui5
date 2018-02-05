@@ -96,7 +96,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/format/N
 				 * Displays the currency symbol instead of the ISO currency code.
 				 */
 				useSymbol : {type : "boolean", group : "Appearance", defaultValue : true}
-			}
+			},
+			designtime: "sap/ui/unified/designtime/Currency.designtime"
 		}});
 
 		//Whitespace characters to align values
