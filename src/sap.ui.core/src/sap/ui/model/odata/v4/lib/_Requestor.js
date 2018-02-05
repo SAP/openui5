@@ -558,7 +558,8 @@ sap.ui.define([
 	 * @param {object} oOperationMetadata
 	 *   The operation's metadata
 	 * @param {object} mParameters
-	 *   A copy of the map of key-values pairs representing the operation's actual parameters
+	 *   A copy of the map of key-values pairs representing the operation's actual parameters;
+	 *   invalid keys are removed for actions
 	 * @returns {string}
 	 *   The new path without leading slash and ellipsis
 	 * @throws {Error}
@@ -569,24 +570,35 @@ sap.ui.define([
 	Requestor.prototype.getPathAndAddQueryOptions = function (sPath, oOperationMetadata,
 		mParameters) {
 		var aArguments = [],
+			sName,
+			mName2Parameter = {}, // maps valid names to parameter metadata
+			oParameter,
 			that = this;
 
 		sPath = sPath.slice(1, -5);
+		if (oOperationMetadata.$Parameter) {
+			oOperationMetadata.$Parameter.forEach(function (oParameter) {
+				mName2Parameter[oParameter.$Name] = oParameter;
+			});
+		}
 		if (oOperationMetadata.$kind === "Function") {
-			if (oOperationMetadata.$Parameter) {
-				oOperationMetadata.$Parameter.forEach(function (oParameter) {
-					var sName = oParameter.$Name;
-
-					if (sName in mParameters) {
-						if (oParameter.$IsCollection) {
-							throw new Error("Unsupported collection-valued parameter: " + sName);
-						}
-						aArguments.push(encodeURIComponent(sName) + "=" + encodeURIComponent(
-							that.formatPropertyAsLiteral(mParameters[sName], oParameter)));
+			for (sName in mParameters) {
+				oParameter = mName2Parameter[sName];
+				if (oParameter) {
+					if (oParameter.$IsCollection) {
+						throw new Error("Unsupported collection-valued parameter: " + sName);
 					}
-				});
+					aArguments.push(encodeURIComponent(sName) + "=" + encodeURIComponent(
+						that.formatPropertyAsLiteral(mParameters[sName], oParameter)));
+				}
 			}
 			sPath += "(" + aArguments.join(",") + ")";
+		} else { // Action
+			for (sName in mParameters) {
+				if (!(sName in mName2Parameter)) {
+					delete mParameters[sName]; // remove invalid parameter
+				}
+			}
 		}
 		return sPath;
 	};
