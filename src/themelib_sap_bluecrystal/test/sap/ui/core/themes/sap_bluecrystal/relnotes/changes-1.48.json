@@ -181,5 +181,22 @@
         "references": []
       }
     ]
+  },
+  "1.48.19": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "7ffa8f34c285e2189cc3052818c938e952366f36",
+        "type": "FIX",
+        "text": " sap.m.Dialog: correct header, subheader and footer DOM structure",
+        "references": []
+      },
+      {
+        "id": "95519ae8e3cf0c51209164fabd2b966e71d4575c",
+        "type": "FIX",
+        "text": " sap.m.Popover: correct header, subheader and footer DOM structure",
+        "references": []
+      }
+    ]
   }
 }

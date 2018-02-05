@@ -489,5 +489,16 @@
         "references": []
       }
     ]
+  },
+  "1.48.19": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "7ffa8f34c285e2189cc3052818c938e952366f36",
+        "type": "FIX",
+        "text": " sap.m.Dialog: correct header, subheader and footer DOM structure",
+        "references": []
+      }
+    ]
   }
 }

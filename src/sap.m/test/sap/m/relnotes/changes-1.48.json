@@ -2679,5 +2679,52 @@
         "references": []
       }
     ]
+  },
+  "1.48.19": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "064538124f7c59f151e5d4ab32bdfcd4d0ccf6b7",
+        "type": "FIX",
+        "text": " Control: BusyIndicator animation default",
+        "references": []
+      },
+      {
+        "id": "f0e209f44375e1c6fc3bc93456fb3cbee2aeb455",
+        "type": "FIX",
+        "text": " Control: refactor fnHandleInteraction",
+        "references": []
+      },
+      {
+        "id": "7ffa8f34c285e2189cc3052818c938e952366f36",
+        "type": "FIX",
+        "text": " sap.m.Dialog: correct header, subheader and footer DOM structure",
+        "references": []
+      },
+      {
+        "id": "57d2b84028626100f771a28e4a14b5d23e32e289",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Now when Reject or Accept button is pressed, the icon has correct color",
+        "references": []
+      },
+      {
+        "id": "95519ae8e3cf0c51209164fabd2b966e71d4575c",
+        "type": "FIX",
+        "text": " sap.m.Popover: correct header, subheader and footer DOM structure",
+        "references": []
+      },
+      {
+        "id": "36c770e25e546f4d012ddb73da3db727f42ea974",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: apply sapContrastPlus to the TabStrip",
+        "references": []
+      },
+      {
+        "id": "139ad5712f9067271da6a70fe620e5083c5ccd28",
+        "type": "FIX",
+        "text": " sap.m: instanceof Date in public methods corrected",
+        "references": []
+      }
+    ]
   }
 }
