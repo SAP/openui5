@@ -297,12 +297,11 @@ function (
 	 * @private
 	 */
 	PopupManager.prototype._applyPopupPatch = function(oPopupElement) {
-		var oPopupOverlay = OverlayRegistry.getOverlay(oPopupElement);
-		var oOverlayContainer = Overlay.getOverlayContainer(oPopupOverlay);
+		var oOverlayContainer = Overlay.getOverlayContainer();
 		var oPopup = oPopupElement.oPopup;
 		var aAutoCloseAreas = [
 			oPopup.oContent.getDomRef(),
-			oOverlayContainer
+			oOverlayContainer.get(0)
 		].concat(
 			this.getAutoCloseAreas()
 		);
