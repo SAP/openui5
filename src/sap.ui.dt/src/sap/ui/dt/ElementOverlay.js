@@ -149,6 +149,14 @@ function(
 						oldValue: "any",
 						target: "sap.ui.core.Element"
 					}
+				},
+				/**
+				 * Event fired when the associated Element is destroyed
+				 */
+				elementDestroyed : {
+					parameters: {
+						targetId: "string"
+					}
 				}
 			}
 		},
@@ -697,7 +705,9 @@ function(
 	/**
 	 * @private
 	 */
-	ElementOverlay.prototype._onElementDestroyed = function() {
+	ElementOverlay.prototype._onElementDestroyed = function(oEvent) {
+		var sElementId = oEvent.getSource().getTarget();
+		this.fireElementDestroyed({targetId : sElementId});
 		if (this._bInit) {
 			this.destroy();
 		} else {
