@@ -45,17 +45,22 @@ sap.ui.define([
 	var ObjectPageSubSectionLayout = library.ObjectPageSubSectionLayout;
 
 	/**
-	 * Constructor for a new ObjectPageSubSection.
+	 * Constructor for a new <code>ObjectPageSubSection</code>.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
+	 * Second-level information container of an {@link sap.uxap.ObjectPageLayout}.
 	 *
-	 * An ObjectPageSubSection is the second-level information container of an Object page and may only be used within an Object page section.
-	 * Subsections may display primary information in the so called blocks aggregation (always visible)
-	 * and not-so-important information in the moreBlocks aggregation, whose content is initially hidden, but may be accessed via a See more (...) button.
-	 * Disclaimer: This control is intended to be used only as part of the Object page layout
+	 * An <code>ObjectPageSubSection</code> may only be used within sections in the
+	 * <code>ObjectPageLayout</code>. Subsections are used to display primary information in
+	 * the <code>blocks</code> aggregation (always visible) and not-so-important information in
+	 * the <code>moreBlocks</code> aggregation. The content in the <code>moreBlocks</code>
+	 * aggregation is initially hidden, but may be accessed with a "See more" (...) button.
+	 *
+	 * <b>Note:</b> This control is intended to be used only as part of the <code>ObjectPageLayout</code>.
+	 *
 	 * @extends sap.uxap.ObjectPageSectionBase
 	 *
 	 * @constructor

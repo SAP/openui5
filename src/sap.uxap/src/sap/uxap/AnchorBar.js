@@ -31,13 +31,21 @@ sap.ui.define([
 	var PlacementType = mobileLibrary.PlacementType;
 
 	/**
-	 * Constructor for a new AnchorBar.
+	 * Constructor for a new <code>AnchorBar</code>.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Anchor bar is the navigation bar of an Object page. Its purpose is to provide links to all Sections and Subsections. Takes the form of a Select on phone.
+	 * Displays the titles of the sections and subsections in the {@link sap.uxap.ObjectPageLayout ObjectPageLayout}
+	 * and allows the user to scroll to the respective content.
+	 *
+	 * <h3>Overview</h3>
+	 *
+	 * The <code>AnchorBar</code> is internally generated as a menu in the <code>ObjectPageLayout</code>.
+	 * It displays the sections and subsections and allows the user to directly scroll to the respective
+	 * content by selecting them, while it remains visible at the top of the page (below the page header).
+	 *
 	 * @extends sap.m.Toolbar
 	 *
 	 * @author SAP SE
@@ -45,6 +53,7 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @since 1.26
+	 * @see {@link topic:370b67986497463187336fa130aebbf1 Anchor Bar}
 	 * @alias sap.uxap.AnchorBar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */

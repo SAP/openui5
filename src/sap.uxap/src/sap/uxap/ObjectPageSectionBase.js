@@ -10,13 +10,13 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 	var TitleLevel = coreLibrary.TitleLevel;
 
 	/**
-	 * Constructor for a new ObjectPageSectionBase.
+	 * Constructor for a new <code>ObjectPageSectionBase</code>.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * An abstract container for object page sections and subSections
+	 * An abstract container for sections and subsections in the {@link sap.uxap.ObjectPageLayout}.
 	 * @extends sap.ui.core.Control
 	 * @abstract
 	 *
@@ -42,7 +42,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library"
 				 * Determines the ARIA level of the <code>ObjectPageSectionBase</code> title.
 				 * The ARIA level is used by assisting technologies, such as screen readers, to create a hierarchical site map for faster navigation.
 				 *
-				 * <br><b>Note:</b> Defining a <code>titleLevel</code> will add <code>aria-level</code> attribute from 1 to 6,
+				 * <b>Note:</b> Defining a <code>titleLevel</code> will add <code>aria-level</code> attribute from 1 to 6,
 				 * instead of changing the <code>ObjectPageSectionBase</code> title HTML tag from H1 to H6.
 				 * <br>For example: if <code>titleLevel</code> is <code>TitleLevel.H1</code>,
 				 * it will result as aria-level of 1 added to the <code>ObjectPageSectionBase</code> title.
