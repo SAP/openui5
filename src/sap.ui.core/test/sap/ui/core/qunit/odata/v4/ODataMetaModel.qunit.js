@@ -1836,7 +1836,7 @@ sap.ui.require([
 							SyncPromise.resolve(oConstraints && oConstraints.isDigitSequence));
 				} else if (oProperty.$Type === "Edm.Decimal") { // simulate annotation for decimals
 					this.oMetaModelMock.expects("fetchObject")
-						.withExactArgs("@Org.OData.Validation.V1.Minimum", oMetaContext)
+						.withExactArgs("@Org.OData.Validation.V1.Minimum/$Decimal", oMetaContext)
 						.returns(
 							SyncPromise.resolve(oConstraints && oConstraints.minimum));
 					this.oMetaModelMock.expects("fetchObject")
@@ -1846,7 +1846,7 @@ sap.ui.require([
 						.returns(
 							SyncPromise.resolve(oConstraints && oConstraints.minimumExlusive));
 					this.oMetaModelMock.expects("fetchObject")
-						.withExactArgs("@Org.OData.Validation.V1.Maximum", oMetaContext)
+						.withExactArgs("@Org.OData.Validation.V1.Maximum/$Decimal", oMetaContext)
 						.returns(
 							SyncPromise.resolve(oConstraints && oConstraints.maximum));
 					this.oMetaModelMock.expects("fetchObject")

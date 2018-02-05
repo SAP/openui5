@@ -46,10 +46,10 @@ sap.ui.define([
 			},
 			"Edm.Decimal" : {
 				constraints : {
-					"@Org.OData.Validation.V1.Minimum" : "minimum",
+					"@Org.OData.Validation.V1.Minimum/$Decimal" : "minimum",
 					"@Org.OData.Validation.V1.Minimum@Org.OData.Validation.V1.Exclusive" :
 						"minimumExclusive",
-					"@Org.OData.Validation.V1.Maximum" : "maximum",
+					"@Org.OData.Validation.V1.Maximum/$Decimal" : "maximum",
 					"@Org.OData.Validation.V1.Maximum@Org.OData.Validation.V1.Exclusive" :
 						"maximumExclusive",
 					"$Precision" : "precision",
@@ -1119,7 +1119,7 @@ sap.ui.define([
 		// Note: undefined is more efficient than "" here
 		return this.fetchObject(undefined, oMetaContext).then(function (oProperty) {
 			var mConstraints,
-				sName,
+				sConstraintPath,
 				oType = oProperty["$ui5.type"],
 				oTypeInfo,
 				sTypeName = "sap.ui.model.odata.type.Raw";
@@ -1142,10 +1142,12 @@ sap.ui.define([
 				oTypeInfo = mUi5TypeForEdmType[oProperty.$Type];
 				if (oTypeInfo) {
 					sTypeName = oTypeInfo.type;
-					for (sName in oTypeInfo.constraints) {
-						setConstraint(oTypeInfo.constraints[sName], sName[0] === "@"
-							? that.getObject(sName, oMetaContext)
-							: oProperty[sName]);
+					for (sConstraintPath in oTypeInfo.constraints) {
+						setConstraint(oTypeInfo.constraints[sConstraintPath],
+							sConstraintPath[0] === "@"
+								// external targeting
+								? that.getObject(sConstraintPath, oMetaContext)
+								: oProperty[sConstraintPath]);
 					}
 					if (oProperty.$Nullable === false) {
 						setConstraint("nullable", false);
