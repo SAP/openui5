@@ -47,8 +47,11 @@ sap.ui.define([
 					"Age" : "18"
 				});
 
+			oContext.created().then(function () {
+				oBinding.refresh();
+			});
+
 			this._setUIChanges();
-			// Indicate that the new username is initial
 			this.getView().getModel("appView").setProperty("/usernameEmpty", true);
 
 			// Select and focus the table row that contains the newly created entry
@@ -118,23 +121,36 @@ sap.ui.define([
 		 * Save changes to the source.
 		 */
 		onSave : function () {
-			var oView = this.getView();
+			var oListBinding = this.byId("peopleList").getBinding("items");
 
 			var fnSuccess = function () {
+				var oError;
+
 				this._setBusy(false);
+
+				// If there are still pending changes at this point,
+				// then there was a problem with writing back changes.
+				if (oListBinding.hasPendingChanges()) {
+					// Error; there will be a message in the MessageModel
+					oError = this.getView().getModel("message").getProperty("/0");
+					MessageBox.error(oError.message);
+					sap.ui.getCore().getMessageManager().removeAllMessages();
+				} else {
+					// No error
+					MessageToast.show(this._getText("saveSuccessMessage"));
+				}
 				this._setUIChanges();
-				this.byId("peopleList").getBinding("items").refresh();
-				MessageToast.show(this._getText("saveSuccessMessage"));
 			}.bind(this);
+
 			var fnError = function (oError) {
 				this._setBusy(false);
 				this._setUIChanges();
-				this.byId("peopleList").getBinding("items").refresh();
+				oListBinding.refresh();
 				MessageBox.error(oError.message);
 			}.bind(this);
 
 			this._setBusy(true); // lock UI until submitBatch is resolved
-			oView.getModel().submitBatch("peopleGroup").then(fnSuccess, fnError);
+			this.getView().getModel().submitBatch("peopleGroup").then(fnSuccess, fnError);
 		},
 
 		/**
