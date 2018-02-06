@@ -1,8 +1,9 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/test/Opa',
-	'sap/ui/test/Opa5'
-], function ($, Opa, Opa5) {
+	'sap/ui/test/Opa5',
+	"sap/m/Button"
+], function ($, Opa, Opa5, Button) {
 	"use strict";
 
 	var iExecutionDelay = Opa.config.executionDelay;
@@ -446,5 +447,4 @@ sap.ui.define([
 		// Cleanup
 		oButton.destroy();
 	});
-
 });

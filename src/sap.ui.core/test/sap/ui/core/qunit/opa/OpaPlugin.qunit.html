@@ -668,7 +668,7 @@ sap.ui.require([
 			fnWaitSpy = this.spy(_autoWaiter, "hasToWait");
 
 		// Act
-		this.oPlugin.getFilterdControls({
+		this.oPlugin._getFilteredControls({
 			id: "foo",
 			interactable: true
 		});
@@ -683,7 +683,7 @@ sap.ui.require([
 		var fnWaitSpy = this.spy(_autoWaiter, "hasToWait");
 
 		// Act
-		this.oPlugin.getFilterdControls({
+		this.oPlugin._getFilteredControls({
 			autoWait: true
 		});
 
@@ -697,7 +697,7 @@ sap.ui.require([
 			fnWaitSpy = this.spy(_autoWaiter, "hasToWait");
 
 		// Act
-		var oResult = this.oPlugin.getFilterdControls({
+		var oResult = this.oPlugin._getFilteredControls({
 			autoWait: true,
 			visible: false,
 			id: this.oButton.getId()
