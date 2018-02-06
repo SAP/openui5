@@ -224,6 +224,9 @@ sap.ui.require([
 					"$Type" : "not.Found"
 				}
 			}],
+			"name.space.BrokenOverloads" : [{
+				"$kind" : "Operation"
+			}],
 			"name.space.DerivedPrimitiveFunction" : [{
 				"$kind" : "Function",
 				"$ReturnType" : {
@@ -241,9 +244,40 @@ sap.ui.require([
 				"$Type" : "tea_busi.Worker"
 			},
 			"name.space.OverloadedAction" : [{
-				"$kind" : "Action"
+				"$kind" : "Action",
+				"$IsBound" : true,
+				"$Parameter" : [{
+//					"$Name" : "_it",
+					"$Type" : "tea_busi.EQUIPMENT"
+				}],
+				"$ReturnType" : {
+					"$Type" : "tea_busi.EQUIPMENT"
+				}
 			}, {
-				"$kind" : "Action"
+				"$kind" : "Action",
+				"$IsBound" : true,
+				"$Parameter" : [{
+//					"$Name" : "_it",
+					"$Type" : "tea_busi.TEAM"
+				}],
+				"$ReturnType" : {
+					"$Type" : "tea_busi.TEAM"
+				}
+			}, { // "An unbound action MAY have the same name as a bound action."
+				"$kind" : "Action",
+				"$ReturnType" : {
+					"$Type" : "tea_busi.ComplexType_Salary"
+				}
+			}, {
+				"$kind" : "Action",
+				"$IsBound" : true,
+				"$Parameter" : [{
+//					"$Name" : "_it",
+					"$Type" : "tea_busi.Worker"
+				}],
+				"$ReturnType" : {
+					"$Type" : "tea_busi.Worker"
+				}
 			}],
 			"name.space.OverloadedFunction" : [{
 				"$kind" : "Function",
@@ -342,6 +376,10 @@ sap.ui.require([
 					},
 					"$Type" : "tea_busi.Worker"
 				},
+				"OverloadedAction" : {
+					"$kind" : "ActionImport",
+					"$Action" : "name.space.OverloadedAction"
+				},
 				"TEAMS" : {
 					"$kind" : "EntitySet",
 					"$NavigationPropertyBinding" : {
@@ -356,6 +394,10 @@ sap.ui.require([
 						"TEAM_2_EMPLOYEES" : "EMPLOYEES"
 					},
 					"$Type" : "tea_busi.TEAM"
+				},
+				"VoidAction" : {
+					"$kind" : "ActionImport",
+					"$Action" : "name.space.VoidAction"
 				}
 			},
 			"tea_busi.EQUIPMENT" : {
@@ -456,6 +498,7 @@ sap.ui.require([
 			"$$Term" : "name.space.Term" // replacement for any reference to the term
 		},
 		oContainerData = mScope["tea_busi.DefaultContainer"],
+		aOverloadedAction = mScope["name.space.OverloadedAction"],
 		mSupplierScope = {
 			"$Version" : "4.0",
 			"tea_busi_supplier.v0001." : {
@@ -962,6 +1005,8 @@ sap.ui.require([
 		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/$Type" : "tea_busi.Worker",
 		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/AGE" : oWorkerData.AGE,
 		// operations -----------------------------------------------------------------------------
+		"/OverloadedAction" : oContainerData["OverloadedAction"],
+		"/OverloadedAction/$Action" : "name.space.OverloadedAction",
 		"/ChangeManagerOfTeam/" : oTeamData,
 		//TODO mScope[mScope["..."][0].$ReturnType.$Type] is where the next OData simple identifier
 		//     would live in case of entity/complex type, but we would like to avoid warnings for
@@ -976,7 +1021,21 @@ sap.ui.require([
 			//TODO merge facets of return type and type definition?!
 			: mScope["name.space.DerivedPrimitiveFunction"][0].$ReturnType,
 		"/ChangeManagerOfTeam/value" : oTeamData.value,
-		"/tea_busi.AcChangeManagerOfTeam/value" : oTeamData.value,
+		// action overloads -----------------------------------------------------------------------
+		"/OverloadedAction/@$ui5.overload" : sinon.match.array.deepEquals([aOverloadedAction[2]]),
+		"/name.space.OverloadedAction" : aOverloadedAction,
+		"/T€AMS/NotFound/name.space.OverloadedAction" : aOverloadedAction,
+		"/name.space.OverloadedAction/1" : aOverloadedAction[1],
+		"/OverloadedAction/$Action/1" : aOverloadedAction[1],
+		"/OverloadedAction/AMOUNT" : mScope["tea_busi.ComplexType_Salary"].AMOUNT,
+		"/T€AMS/name.space.OverloadedAction/Team_Id" : oTeamData.Team_Id,
+		"/T€AMS/name.space.OverloadedAction/@$ui5.overload"
+			: sinon.match.array.deepEquals([aOverloadedAction[1]]),
+		"/name.space.OverloadedAction/@$ui5.overload" : sinon.match.array.deepEquals([]),
+		//TODO allow path to continue after @$ui5.overload? support for split segments? etc.
+		// only "Action" and "Function" is expected as $kind, but others are not filtered out!
+		"/name.space.BrokenOverloads"
+			: sinon.match.array.deepEquals(mScope["name.space.BrokenOverloads"]),
 		// annotations ----------------------------------------------------------------------------
 		"/@DefaultContainer"
 			: mScope.$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
@@ -1059,7 +1118,12 @@ sap.ui.require([
 			oSyncPromise = this.oMetaModel.fetchObject(sPath);
 
 			assert.strictEqual(oSyncPromise.isFulfilled(), true);
-			assert.strictEqual(oSyncPromise.getResult(), vResult);
+			if (vResult && typeof vResult === "object" && "test" in vResult) {
+				// Sinon.JS matcher
+				assert.ok(vResult.test(oSyncPromise.getResult()), vResult);
+			} else {
+				assert.strictEqual(oSyncPromise.getResult(), vResult);
+			}
 			// self-guard to avoid that a complex right-hand side evaluates to undefined
 			assert.notStrictEqual(vResult, undefined, "use this test for defined results only!");
 		});
@@ -1098,7 +1162,7 @@ sap.ui.require([
 		// "@" to access to all annotations, e.g. for iteration
 		"/tea_busi.Worker/@/@missing",
 		// operations -----------------------------------------------------------------------------
-		"/name.space.VoidAction/"
+		"/VoidAction/"
 	].forEach(function (sPath) {
 		QUnit.test("fetchObject: " + sPath + " --> undefined", function (assert) {
 			var oSyncPromise;
@@ -2808,8 +2872,10 @@ sap.ui.require([
 			"/EQUIPM€NTS",
 			"/GetEmployeeMaxAge",
 			"/Me",
+			"/OverloadedAction",
 			"/TEAMS",
-			"/T€AMS"
+			"/T€AMS",
+			"/VoidAction"
 		]
 	}, {
 		// <template:repeat list="{property>@}" ...>

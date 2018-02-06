@@ -114,7 +114,6 @@ sap.ui.define([
 				if (iPos >= 0) { // deferred operation binding
 					this.oOperation = {
 						bAction : undefined,
-						oMetadataPromise : undefined,
 						mParameters : {},
 						sResourcePath : undefined
 					};
@@ -166,51 +165,6 @@ sap.ui.define([
 			that.oElementContext = null;
 			that._fireChange({reason : ChangeReason.Remove});
 		});
-	};
-
-	/**
-	 * Requests the metadata for this operation binding. Caches the result.
-	 *
-	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise that is resolved with the operation metadata.
-	 *
-	 * @private
-	 */
-	ODataContextBinding.prototype._fetchOperationMetadata = function () {
-		var oMetaModel = this.oModel.getMetaModel(),
-			sOperationName,
-			iPos;
-
-		if (!this.oOperation.oMetadataPromise) {
-			// take the last segment and remove "(...)" at the end
-			// We do not need special code if there is no '/', because iPos + 1 === 0 then.
-			iPos = this.sPath.lastIndexOf("/");
-			sOperationName = this.sPath.slice(iPos + 1, -5);
-			this.oOperation.oMetadataPromise = oMetaModel.fetchObject("/" + sOperationName)
-				.then(function (vMetadata) {
-					if (!vMetadata) {
-						throw new Error("Unknown operation: " + sOperationName);
-					}
-					if (Array.isArray(vMetadata)
-							&& (vMetadata[0].$kind === "Action"
-								|| vMetadata[0].$kind === "Function")) {
-						return vMetadata;
-					}
-					if (vMetadata.$kind === "ActionImport") {
-						return oMetaModel.fetchObject("/" + vMetadata.$Action);
-					}
-					if (vMetadata.$kind === "FunctionImport") {
-						return oMetaModel.fetchObject("/" + vMetadata.$Function);
-					}
-					throw new Error("Not an operation: " + sOperationName);
-				}).then(function (aOperationMetadata) {
-					if (aOperationMetadata.length !== 1) {
-						throw new Error("Unsupported operation overloading: " + sOperationName);
-					}
-					return aOperationMetadata[0];
-				});
-		}
-		return this.oOperation.oMetadataPromise;
 	};
 
 	/**
@@ -296,7 +250,8 @@ sap.ui.define([
 	 * @returns {SyncPromise}
 	 *   The request promise
 	 * @throws {Error}
-	 *   If a collection-valued parameter for an operation other than a V4 action is encountered
+	 *   If a collection-valued parameter for an operation other than a V4 action is encountered,
+	 *   or if the given metadata is neither an "Action" nor a "Function"
 	 *
 	 * @private
 	 */
@@ -308,6 +263,10 @@ sap.ui.define([
 			sETag,
 			mParameters = jQuery.extend({}, this.oOperation.mParameters),
 			mQueryOptions = jQuery.extend({}, this.oModel.mUriParameters, this.mQueryOptions);
+
+		if (!bAction && oOperationMetadata.$kind !== "Function") {
+			throw new Error("Not an operation: " + sPath);
+		}
 
 		this.oOperation.bAction = bAction;
 		if (bAction && fnGetEntity) {
@@ -458,8 +417,9 @@ sap.ui.define([
 	 *   specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @returns {Promise}
 	 *   A promise that is resolved without data when the operation call succeeded, or rejected
-	 *   with an instance of <code>Error</code> in case of failure, for instance if a
-	 *   collection-valued function parameter is encountered.
+	 *   with an instance of <code>Error</code> in case of failure, for instance if the operation
+	 *   metadata is not found, if overloading is not supported, or if a collection-valued function
+	 *   parameter is encountered.
 	 * @throws {Error} If the given group ID is invalid, if the binding is not a deferred operation
 	 *   binding (see {@link sap.ui.model.odata.v4.ODataContextBinding}), if the binding is not
 	 *   resolved or relative to a transient context
@@ -470,7 +430,10 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataContextBinding.prototype.execute = function (sGroupId) {
-		var oPromise, that = this;
+		var oMetaModel = this.oModel.getMetaModel(),
+			oPromise,
+			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
+			that = this;
 
 		this.oModel.checkGroupId(sGroupId);
 		sGroupId = sGroupId || this.getGroupId();
@@ -478,45 +441,45 @@ sap.ui.define([
 			throw new Error("The binding must be deferred: " + this.sPath);
 		}
 		if (this.bRelative) {
-			if (!this.oContext) {
+			if (!sResolvedPath) {
 				throw new Error("Unresolved binding: " + this.sPath);
 			}
 			if (this.oContext.isTransient && this.oContext.isTransient()) {
-				throw new Error("Execute for transient context not allowed: "
-					+ this.oModel.resolve(this.sPath, this.oContext));
+				throw new Error("Execute for transient context not allowed: " + sResolvedPath);
 			}
 			if (this.oContext.getPath().indexOf("(...)") >= 0) {
 				throw new Error("Nested deferred operation bindings not supported: "
-					+ this.oModel.resolve(this.sPath, this.oContext));
+					+ sResolvedPath);
 			}
 		}
 
-		oPromise = this._fetchOperationMetadata().then(function (oOperationMetadata) {
-			if (that.bRelative) {
-				if (!that.oContext.getBinding) {
-					return that.createCacheAndRequest(sGroupId,
-						(that.oContext.getPath() === "/" ? "/" : that.oContext.getPath() + "/")
-						+ that.sPath, oOperationMetadata);
-				}
-				return that.getContext().fetchCanonicalPath().then(function (sCanonicalPath) {
-					var iIndex = that.sPath.lastIndexOf("/"),
-						sPath = iIndex >= 0 ? that.sPath.slice(0, iIndex) : "";
+		oPromise = oMetaModel.fetchObject(oMetaModel.getMetaPath(sResolvedPath) + "/@$ui5.overload")
+			.then(function (aOperationMetadata) {
+				var fnGetEntity, iIndex, sPath;
 
-					return that.createCacheAndRequest(sGroupId, sCanonicalPath + "/" + that.sPath,
-						oOperationMetadata, that.oContext.getObject.bind(that.oContext, sPath));
+				if (!aOperationMetadata) {
+					throw new Error("Unknown operation: " + sResolvedPath);
+				}
+				if (aOperationMetadata.length !== 1) {
+					throw new Error("Unsupported overloads for " + sResolvedPath);
+				}
+				if (that.bRelative && that.oContext.getBinding) {
+					iIndex = that.sPath.lastIndexOf("/");
+					sPath = iIndex >= 0 ? that.sPath.slice(0, iIndex) : "";
+					fnGetEntity = that.oContext.getObject.bind(that.oContext, sPath);
+				}
+				return that.createCacheAndRequest(sGroupId, sResolvedPath, aOperationMetadata[0],
+					fnGetEntity);
+			}).then(function (oResult) {
+				that._fireChange({reason : ChangeReason.Change});
+				that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
+					oDependentBinding.refreshInternal(sGroupId, true);
 				});
-			}
-			return that.createCacheAndRequest(sGroupId, that.sPath, oOperationMetadata);
-		}).then(function (oResult) {
-			that._fireChange({reason : ChangeReason.Change});
-			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
-				oDependentBinding.refreshInternal(sGroupId, true);
+				// do not return anything
+			})["catch"](function (oError) {
+				that.oModel.reportError("Failed to execute " + sResolvedPath, sClassName, oError);
+				throw oError;
 			});
-			// do not return anything
-		})["catch"](function (oError) {
-			that.oModel.reportError("Failed to execute " + that.sPath, sClassName, oError);
-			throw oError;
-		});
 
 		return Promise.resolve(oPromise);
 	};

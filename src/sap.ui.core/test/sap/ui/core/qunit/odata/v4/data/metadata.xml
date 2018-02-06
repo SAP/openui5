@@ -163,6 +163,21 @@
 				<Parameter Name="TeamID" Type="Edm.String" Nullable="false" MaxLength="10"/>
 				<ReturnType Type="com.sap.gateway.default.iwbep.tea_busi.v0001.TEAM" Nullable="false"/>
 			</Action>
+			<Action Name="__FAKE__AcOverload" IsBound="true">
+				<Parameter Name="_it" Type="com.sap.gateway.default.iwbep.tea_busi.v0001.Worker" Nullable="false"/>
+				<Parameter Name="Message" Type="Edm.String"/>
+				<ReturnType Type="com.sap.gateway.default.iwbep.tea_busi.v0001.Worker"/>
+			</Action>
+			<Action Name="__FAKE__AcOverload" IsBound="true">
+				<Parameter Name="_it" Type="com.sap.gateway.default.iwbep.tea_busi.v0001.EQUIPMENT" Nullable="false"/>
+				<Parameter Name="Message" Type="Edm.String"/>
+				<ReturnType Type="com.sap.gateway.default.iwbep.tea_busi.v0001.EQUIPMENT"/>
+			</Action>
+			<Action Name="__FAKE__AcOverload" IsBound="true">
+				<Parameter Name="_it" Type="com.sap.gateway.default.iwbep.tea_busi.v0001.MANAGER" Nullable="false"/>
+				<Parameter Name="Message" Type="Edm.String"/>
+				<ReturnType Type="com.sap.gateway.default.iwbep.tea_busi.v0001.MANAGER"/>
+			</Action>
 			<Function Name="FuGetEmployeeAges">
 				<ReturnType Type="Collection(Edm.Int16)" Nullable="false"/>
 			</Function>
