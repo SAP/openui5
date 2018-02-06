@@ -1777,16 +1777,18 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("resumeInternal", function (assert) {
-		var oContext = Context.create(this.oModel, {}, "/ProductList('42')"),
-			oBinding = this.oModel.bindProperty("Category", oContext),
-			oBindingMock = this.mock(oBinding);
+	[true, false].forEach(function (bCheckUpdate) {
+		QUnit.test("resumeInternal: bCheckUpdate=" + bCheckUpdate, function (assert) {
+			var oContext = Context.create(this.oModel, {}, "/ProductList('42')"),
+				oBinding = this.oModel.bindProperty("Category", oContext),
+				oBindingMock = this.mock(oBinding);
 
-		oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext));
-		oBindingMock.expects("checkUpdate").withExactArgs();
+			oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext));
+			oBindingMock.expects("checkUpdate").exactly(bCheckUpdate ? 1 : 0).withExactArgs();
 
-		// code under test
-		oBinding.resumeInternal();
+			// code under test
+			oBinding.resumeInternal(bCheckUpdate);
+		});
 	});
 
 	//*********************************************************************************************

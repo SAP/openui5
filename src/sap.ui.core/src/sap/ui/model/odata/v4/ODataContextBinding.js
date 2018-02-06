@@ -628,14 +628,17 @@ sap.ui.define([
 	/**
 	 * Resumes this binding and all dependent bindings and fires a change event afterwards.
 	 *
+	 * @param {boolean} bCheckUpdate
+	 *   Whether dependent property bindings shall call <code>checkUpdate</code>
+	 *
 	 * @private
 	 */
-	ODataContextBinding.prototype.resumeInternal = function () {
+	ODataContextBinding.prototype.resumeInternal = function (bCheckUpdate) {
 		this.mAggregatedQueryOptions = {};
 		this.mCacheByContext = undefined;
 		this.fetchCache(this.oContext);
 		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
-			oDependentBinding.resumeInternal();
+			oDependentBinding.resumeInternal(bCheckUpdate);
 		});
 		this._fireChange({reason : ChangeReason.Change});
 	};

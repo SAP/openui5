@@ -1473,7 +1473,9 @@ sap.ui.require([
 	QUnit.test("isSuspended: absolute binding", function (assert) {
 		var bSuspended = {/*use object for comparison in strictEqual*/},
 			oBinding = new ODataBinding({
-				oContext : {/* sap.ui.model.odata.v4.Context */getBinding : function () {} },
+				oContext : { // sap.ui.model.odata.v4.Context
+					getBinding : function () {}
+				},
 				sPath : "/Employees",
 				bRelative : false,
 				bSuspended : bSuspended
@@ -1528,9 +1530,9 @@ sap.ui.require([
 				isSuspended : function () {}
 			},
 			oBinding = new ODataBinding({
-				oContext : {/* sap.ui.model.odata.v4.Context */getBinding : function () {
-					return oParentBinding;
-				}},
+				oContext : { // sap.ui.model.odata.v4.Context
+					getBinding : function () { return oParentBinding; }
+				},
 				sPath : "~path~",
 				bRelative : true,
 				bSuspended : false

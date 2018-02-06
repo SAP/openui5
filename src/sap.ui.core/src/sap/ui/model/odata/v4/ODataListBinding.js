@@ -1408,13 +1408,18 @@ sap.ui.define([
 	/**
 	 * Resumes this binding and all dependent bindings and fires a change event afterwards.
 	 *
+	 * @param {boolean} bCheckUpdate
+	 *   Parameter is ignored; dependent property bindings of a list binding never call checkUpdate
+	 *
 	 * @private
 	 */
 	ODataListBinding.prototype.resumeInternal = function () {
 		this.reset();
 		this.fetchCache(this.oContext);
 		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
-			oDependentBinding.resumeInternal();
+			// do not call checkUpdate in dependent property bindings because the cache of this
+			// binding is reset and the binding has not yet fired a change event
+			oDependentBinding.resumeInternal(false);
 		});
 		this._fireChange({reason : ChangeReason.Change});
 	};

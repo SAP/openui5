@@ -1636,14 +1636,16 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("resumeInternal", function (assert) {
-		var oContext = Context.create(this.oModel, {}, "/TEAMS('42')"),
+		var bCheckUpdate = {/* true or false */},
+			oContext = Context.create(this.oModel, {}, "/TEAMS('42')"),
 			oBinding = this.oModel.bindContext("TEAM_2_EMPLOYEE", oContext),
 			oBindingMock = this.mock(oBinding),
 			oDependent0 = {resumeInternal : function () {}},
 			oDependent1 = {resumeInternal : function () {}},
 			oFetchCacheExpectation,
 			oFireChangeExpectation,
-			oGetDependentBindingsExpectation;
+			oResumeInternalExpectation0,
+			oResumeInternalExpectation1;
 
 		oFetchCacheExpectation = oBindingMock.expects("fetchCache")
 			.withExactArgs(sinon.match.same(oContext))
@@ -1652,21 +1654,24 @@ sap.ui.require([
 				assert.deepEqual(oBinding.mAggregatedQueryOptions, {});
 				assert.strictEqual(oBinding.mCacheByContext, undefined);
 			});
-		oGetDependentBindingsExpectation = this.mock(this.oModel).expects("getDependentBindings")
+		this.mock(this.oModel).expects("getDependentBindings")
 			.withExactArgs(sinon.match.same(oBinding))
 			.returns([oDependent0, oDependent1]);
-		this.mock(oDependent0).expects("resumeInternal").withExactArgs();
-		this.mock(oDependent1).expects("resumeInternal").withExactArgs();
+		oResumeInternalExpectation0 = this.mock(oDependent0).expects("resumeInternal")
+			.withExactArgs(sinon.match.same(bCheckUpdate));
+		oResumeInternalExpectation1 = this.mock(oDependent1).expects("resumeInternal")
+			.withExactArgs(sinon.match.same(bCheckUpdate));
 		oFireChangeExpectation = oBindingMock.expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Change});
 		oBinding.mAggregatedQueryOptions = {$select : ["Team_Id"]};
 		oBinding.mCacheByContext = {};
 
 		// code under test
-		oBinding.resumeInternal();
+		oBinding.resumeInternal(bCheckUpdate);
 
-		assert.ok(oGetDependentBindingsExpectation.calledAfter(oFetchCacheExpectation));
-		assert.ok(oFireChangeExpectation.calledAfter(oGetDependentBindingsExpectation));
+		assert.ok(oResumeInternalExpectation0.calledAfter(oFetchCacheExpectation));
+		assert.ok(oResumeInternalExpectation1.calledAfter(oFetchCacheExpectation));
+		assert.ok(oFireChangeExpectation.calledAfter(oResumeInternalExpectation1));
 	});
 
 	//*********************************************************************************************

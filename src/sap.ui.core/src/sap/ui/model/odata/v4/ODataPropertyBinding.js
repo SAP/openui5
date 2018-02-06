@@ -513,16 +513,22 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resumes this binding and checks for updates.
+	 * Resumes this binding and checks for updates if the parameter <code>bCheckUpdate</code> is
+	 * set.
+	 *
+	 * @param {boolean} bCheckUpdate
+	 *   Whether this property binding shall call <code>checkUpdate</code>
 	 *
 	 * @private
 	 */
-	ODataPropertyBinding.prototype.resumeInternal = function () {
+	ODataPropertyBinding.prototype.resumeInternal = function (bCheckUpdate) {
 		this.fetchCache(this.oContext);
-		this.checkUpdate();
+		if (bCheckUpdate) {
+			this.checkUpdate();
+		}
 	};
 
-		/**
+	/**
 	 * Sets the (base) context if the binding path is relative. Triggers (@link #fetchCache) to
 	 * create a cache and {@link #checkUpdate} to check for the current value if the
 	 * context has changed. In case of absolute bindings nothing is done.
