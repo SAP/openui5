@@ -370,8 +370,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			}
 
 			if (bScrollNeeded && oTabsDomRef && oTabsContainerDomRef) {
-				if (this._bRtl && Device.browser.firefox) {
-					iScrollLeft = -oTabsContainerDomRef.scrollLeft;
+				if (this._bRtl) {
+					iScrollLeft = jQuery(oTabsContainerDomRef).scrollLeftRTL();
 				} else {
 					iScrollLeft = oTabsContainerDomRef.scrollLeft;
 				}
@@ -383,14 +383,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 				}
 
 				if (iScrollLeft > 0) {
-					if (this._bRtl && Device.browser.webkit) {
+					if (this._bRtl) {
 						bScrollForward = true;
 					} else {
 						bScrollBack = true;
 					}
 				}
 				if ((realWidth > availableWidth) && (iScrollLeft + availableWidth < realWidth)) {
-					if (this._bRtl && Device.browser.webkit) {
+					if (this._bRtl) {
 						bScrollBack = true;
 					} else {
 						bScrollForward = true;
