@@ -187,6 +187,23 @@
 	var DEFAULT_BASE_URL = 'resources/';
 
 	/**
+	 * Temporarily saved reference to the original value of the global define variable.
+	 *
+	 * @type {any}
+	 * @private
+	 */
+	var vOriginalDefine;
+
+	/**
+	 * Temporarily saved reference to the original value of the global require variable.
+	 *
+	 * @type {any}
+	 * @private
+	 */
+	var vOriginalRequire;
+
+
+	/**
 	 * A map of URL prefixes keyed by the corresponding module name prefix.
 	 * URL prefix can either be given as string or as object with properties url and final.
 	 * When final is set to true, module name prefix cannot be overwritten.
@@ -1916,6 +1933,15 @@
 			if ( report === 0 || report === 1 || report === 2 ) {
 				syncCallBehavior = report;
 			}
+		},
+		noConflict: function(bValue) {
+			if (bValue) {
+				__global.define = vOriginalDefine;
+				__global.require = vOriginalRequire;
+			} else {
+				__global.define = define;
+				__global.require = require;
+			}
 		}
 	};
 
@@ -2019,9 +2045,12 @@
 	}
 	Module.get('sap/ui/thirdparty/es6-string-methods.js').ready(null); // no module value
 
-	// @evo-todo enable usage of global define/require
-	// __global.define = define;
-	// __global.require = require;
+	// Store current global define and require values
+	vOriginalDefine = __global.define;
+	vOriginalRequire = __global.require;
+
+	__global.define = define;
+	__global.require = require;
 
 	__global.sap = __global.sap || {};
 	sap.ui = sap.ui || {};
