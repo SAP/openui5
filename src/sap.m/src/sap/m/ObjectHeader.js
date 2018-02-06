@@ -769,6 +769,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.fireTitleSelectorPress({
 				domRef : jQuery.sap.domById(sSourceId)
 			});
+		} else {
+			// we didn't click on any of the active parts of the ObjectHeader
+			// event should not trigger any further actions
+			oEvent.setMarked();
+			oEvent.preventDefault();
 		}
 	};
 
