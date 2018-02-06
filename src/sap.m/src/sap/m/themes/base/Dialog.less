@@ -161,7 +161,7 @@ html.sap-desktop .sapMDialog {
 	min-width: 20rem;
 }
 
-.sapMDialog .sapMBar {
+.sapMDialog .sapMIBar {
 	position: relative;
 	width: auto;
 }
@@ -372,7 +372,7 @@ html.sap-desktop .sapMDialog {
 			height: @_sap_m_Dialog_BarCompactHeight;
 			top: @_sap_m_Dialog_BarCompactHeight;
 
-			.sapMBar {
+			.sapMIBar {
 				height: @_sap_m_Dialog_BarCompactHeight;
 			}
 		}
@@ -523,7 +523,7 @@ html[data-sap-ui-animation='off'] {
 		color: @sapUiCriticalElement;
 	}
 
-	&:last-of-type .sapMBar.sapMIBar {
+	&:last-of-type .sapMIBar.sapMIBar { // .sapMIBar.sapMIBar - doubles the specificity in order to override other styles
 		box-shadow: inset 0 -0.125rem @sapUiWarningBorder;
 	}
 }
@@ -534,7 +534,7 @@ html[data-sap-ui-animation='off'] {
 		color: @sapUiNegativeElement;
 	}
 
-	&:last-of-type .sapMBar.sapMIBar {
+	&:last-of-type .sapMIBar.sapMIBar { // .sapMIBar.sapMIBar - doubles the specificity in order to override other styles
 		box-shadow: inset 0 -0.125rem @sapUiErrorBorder;
 	}
 }
@@ -544,7 +544,7 @@ html[data-sap-ui-animation='off'] {
 		color: @sapUiPositiveElement;
 	}
 
-	&:last-of-type .sapMBar.sapMIBar {
+	&:last-of-type .sapMIBar.sapMIBar { // .sapMIBar.sapMIBar - doubles the specificity in order to override other styles
 		box-shadow: inset 0 -0.125rem @sapUiSuccessBorder;
 	}
 }
