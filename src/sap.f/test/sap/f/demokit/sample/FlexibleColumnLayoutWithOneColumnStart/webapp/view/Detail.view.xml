@@ -9,56 +9,74 @@
 					alwaysShowContentHeader="false"
 					preserveHeaderStateOnScroll="false"
 					headerContentPinnable="true"
-					isChildPage="true">
-                <headerTitle>
-                    <ObjectPageDynamicHeaderTitle>
-                        <expandedHeading>
+					isChildPage="true"
+					upperCaseAnchorBar="false">
+				<headerTitle>
+					<ObjectPageDynamicHeaderTitle>
+						<expandedHeading>
 							<m:Title text="{products>Name}" wrapping="true" class="sapUiSmallMarginEnd"/>
-                        </expandedHeading>
+						</expandedHeading>
 
-                        <snappedHeading>
-                            <m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">
-                                <m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
-                                    <f:Avatar src="../../../../../../../{products>ProductPicUrl}" displaySize="S"/>
-                                    <m:Title text="{products>Name}" wrapping="true" class="sapUiTinyMarginEnd"/>
-                                </m:FlexBox>
-                            </m:FlexBox>
-                        </snappedHeading>
+						<snappedHeading>
+							<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">
+								<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
+									<f:Avatar src="../../../../../../../{products>ProductPicUrl}" displaySize="S" displayShape="Square"/>
+									<m:Title text="{products>Name}" wrapping="true" class="sapUiTinyMarginEnd"/>
+								</m:FlexBox>
+							</m:FlexBox>
+						</snappedHeading>
 
-                        <content>
-							<m:HBox>
-								<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
-									<m:Label text="Main Category"/>
-									<m:Text text="{products>MainCategory}"/>
-								</m:VBox>
-								<m:VBox class="sapUiSmallMarginEnd">
-									<m:Label text="Subcategory"/>
-									<m:Text text="{products>Category}"/>
-								</m:VBox>
-								<m:VBox class="sapUiSmallMarginEnd">
-									<m:Label text="Price"/>
-									<m:ObjectNumber
-										number="{products>CurrencyCode} {products>Price}"/>
-								</m:VBox>
-							</m:HBox>
-                        </content>
-
-                        <navigationActions>
-                            <m:OverflowToolbarButton type="Transparent" icon="sap-icon://full-screen" press="handleFullScreen" tooltip="Enter Full Screen Mode" visible="{= ${/actionButtonsInfo/midColumn/fullScreen} !== null }"/>
+						<navigationActions>
+							<m:OverflowToolbarButton type="Transparent" icon="sap-icon://full-screen" press="handleFullScreen" tooltip="Enter Full Screen Mode" visible="{= ${/actionButtonsInfo/midColumn/fullScreen} !== null }"/>
 							<m:OverflowToolbarButton type="Transparent" icon="sap-icon://exit-full-screen" press="handleExitFullScreen" tooltip="Exit Full Screen Mode" visible="{= ${/actionButtonsInfo/midColumn/exitFullScreen} !== null }"/>
-                            <m:OverflowToolbarButton type="Transparent" icon="sap-icon://decline" press="handleClose"  tooltip="Close column" visible="{= ${/actionButtonsInfo/midColumn/closeColumn} !== null }"/>
-                        </navigationActions>
+							<m:OverflowToolbarButton type="Transparent" icon="sap-icon://decline" press="handleClose"  tooltip="Close column" visible="{= ${/actionButtonsInfo/midColumn/closeColumn} !== null }"/>
+						</navigationActions>
 
-                    </ObjectPageDynamicHeaderTitle>
-                </headerTitle>
+						<actions>
+							<m:Button
+									text="Edit"
+									type="Emphasized"
+									press="toggleAreaPriority"/>
+							<m:Button
+									text="Delete"
+									type="Transparent"/>
+							<m:Button
+									text="Copy"
+									type="Transparent"/>
+							<m:Button
+									text="Toggle Footer"
+									type="Transparent"
+									press="onToggleFooter"/>
+							<m:Button
+									icon="sap-icon://action"
+									type="Transparent"/>
+						</actions>
 
-                <headerContent>
-                    <m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Stretch">
-                        <f:Avatar src="../../../../../../../{products>ProductPicUrl}"
-								  displaySize="L">
-                        </f:Avatar>
-                    </m:FlexBox>
-                </headerContent>
+					</ObjectPageDynamicHeaderTitle>
+				</headerTitle>
+
+				<headerContent>
+					<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Stretch">
+						<f:Avatar src="../../../../../../../{products>ProductPicUrl}"
+								  displaySize="L"
+								  displayShape="Square"
+								  class="sapUiTinyMarginEnd">
+						</f:Avatar>
+						<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
+							<m:Label text="Main Category"/>
+							<m:Text text="{products>MainCategory}"/>
+						</m:VBox>
+						<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
+							<m:Label text="Subcategory"/>
+							<m:Text text="{products>Category}"/>
+						</m:VBox>
+						<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
+							<m:Label text="Price"/>
+							<m:ObjectNumber number="{products>CurrencyCode} {products>Price}" emphasized="false"/>
+						</m:VBox>
+					</m:FlexBox>
+				</headerContent>
+
 		<sections>
 			<ObjectPageSection title="General Information">
 				<subSections>
@@ -92,19 +110,19 @@
 				<subSections>
 					<ObjectPageSubSection>
 						<blocks>
-							<m:List
-								width="auto"
-								items="{
-									path : 'products>/ProductCollectionStats/Filters/1/values'
-								}">
+							<m:Table id="suppliersTable"
+									 items="{path : 'products>/ProductCollectionStats/Filters/1/values'}">
+								<m:columns>
+									<m:Column />
+								</m:columns>
 								<m:items>
-									<m:ObjectListItem
-										title="{products>text}"
-										type="Navigation"
-										press="handleItemPress">
-									</m:ObjectListItem>
+									<m:ColumnListItem type="Navigation" press="handleItemPress">
+										<m:cells>
+											<m:ObjectIdentifier text="{products>text}" />
+										</m:cells>
+									</m:ColumnListItem>
 								</m:items>
-							</m:List>
+							</m:Table>
 						</blocks>
 					</ObjectPageSubSection>
 				</subSections>
