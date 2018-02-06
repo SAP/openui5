@@ -22,13 +22,15 @@
 
 	var oCfg = window['sap-ui-config'],
 		sBaseUrl, bNojQuery,
-		aScripts, rBootScripts, i;
+		aScripts, rBootScripts, i,
+		oBootstrapScript, bNoConflict = false;
 
 	function findBaseUrl(oScript, rUrlPattern) {
 		var sUrl = oScript && oScript.getAttribute("src"),
 			oMatch = rUrlPattern.exec(sUrl);
 		if ( oMatch ) {
 			sBaseUrl = oMatch[1] || "";
+			oBootstrapScript = oScript;
 			bNojQuery = /sap-ui-core-nojQuery\.js(?:\?|#|$)/.test(sUrl);
 			return true;
 		}
@@ -47,7 +49,15 @@
 				break;
 			}
 		}
+	}
 
+	var sNoConflictBootstrapValue = oBootstrapScript && oBootstrapScript.getAttribute("data-sap-ui-noloaderconflict");
+	if (sNoConflictBootstrapValue) {
+		bNoConflict = /^(?:true|x|X)$/.test(sNoConflictBootstrapValue);
+	}
+	var aNoConflictURLMatches = window.location.search.match(/(?:^\?|&)sap-ui-noLoaderConflict=(true|x|X|false)(?:&|$)/);
+	if (aNoConflictURLMatches) {
+		bNoConflict = aNoConflictURLMatches[1] != "false";
 	}
 
 	// configuration via window['sap-ui-config'] always overrides an auto detected base URL
@@ -63,6 +73,8 @@
 
 	sap.ui._ui5loader.config({
 		baseUrl: sBaseUrl,
+
+		noConflict: bNoConflict,
 
 		map: {
 			"*": {
