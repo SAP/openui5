@@ -646,7 +646,7 @@ sap.ui.define([
 	 *
 	 * @throws {Error}
 	 *   If this binding is relative to a {@link sap.ui.model.odata.v4.Context} or if it is an
-	 *   operation binding
+	 *   operation binding or if it is not suspended
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#resume
@@ -664,7 +664,7 @@ sap.ui.define([
 			throw new Error("Cannot resume a relative binding: " + this);
 		}
 		if (!this.bSuspended) {
-			return;
+			throw new Error("Cannot resume a not suspended binding: " + this);
 		}
 
 		this.bSuspended = false;
@@ -705,10 +705,12 @@ sap.ui.define([
 	 *
 	 * @throws {Error}
 	 *   If this binding is relative to a {@link sap.ui.model.odata.v4.Context} or if it is an
-	 *   operation binding
+	 *   operation binding or if it is already suspended or if it has pending changes
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#suspend
+	 * @see sap.ui.model.odata.v4.ODataContextBinding#hasPendingChanges
+	 * @see sap.ui.model.odata.v4.ODataListBinding#hasPendingChanges
 	 * @see #resume
 	 * @since 1.37.0
 	 */
@@ -719,6 +721,12 @@ sap.ui.define([
 		}
 		if (this.bRelative && (!this.oContext || this.oContext.fetchValue)) {
 			throw new Error("Cannot suspend a relative binding: " + this);
+		}
+		if (this.bSuspended) {
+			throw new Error("Cannot suspend a suspended binding: " + this);
+		}
+		if (this.hasPendingChanges()) {
+			throw new Error("Cannot suspend a binding with pending changes: " + this);
 		}
 
 		this.bSuspended = true;
