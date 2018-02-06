@@ -28,8 +28,8 @@
 			], function (Ancestor, Button, HorizontalLayout) {
 				QUnit.module("Ancestor", {
 					beforeEach : function(){
-						this.oLayout1 = new HorizontalLayout();
-						this.oLayout2 = new HorizontalLayout();
+						this.oLayout1 = new HorizontalLayout({id: "layout1"});
+						this.oLayout2 = new HorizontalLayout({id: "layout2"});
 						this.oButton = new Button();
 						this.oButton.placeAt(this.oLayout2);
 					},
@@ -40,28 +40,32 @@
 					}
 				});
 
-				QUnit.test("Should match direct parent", function(assert) {
-					var bResult = new Ancestor(this.oLayout1)(this.oButton);
-					assert.strictEqual(bResult, false, "Layout1 is not an ancestor");
+				QUnit.test("Should match direct parent", function (assert) {
+					[[this.oLayout1, this.oLayout2], ["layout1", "layout2"]].forEach(function (layouts) {
+						var bResult = new Ancestor(layouts[0])(this.oButton);
+						assert.strictEqual(bResult, false, "Layout1 is not an ancestor");
 
-					bResult = new Ancestor(this.oLayout2)(this.oButton);
-					assert.strictEqual(bResult, true, "Layout2 is an ancestor");
+						bResult = new Ancestor(layouts[1])(this.oButton);
+						assert.strictEqual(bResult, true, "Layout2 is an ancestor");
 
-					bResult = Ancestor(this.oLayout2, true)(this.oButton);
-					assert.strictEqual(bResult, true, "Layout2 is a direct ancestor (parent)");
+						bResult = new Ancestor(layouts[1], true)(this.oButton);
+						assert.strictEqual(bResult, true, "Layout2 is a direct ancestor (parent)");
+					}.bind(this));
 				});
 
-				QUnit.test("Should match across multiple level's ancestor", function(assert) {
+				QUnit.test("Should match across multiple level's ancestor", function (assert) {
 					this.oLayout2.placeAt(this.oLayout1);
 
-					var bResult = new Ancestor(this.oLayout1)(this.oButton);
-					assert.strictEqual(bResult, true, "Layout1 is an ancestor");
+					[this.oLayout1, "layout1"].forEach(function (layout) {
+						var bResult = new Ancestor(layout)(this.oButton);
+						assert.strictEqual(bResult, true, "Layout1 is an ancestor");
 
-					bResult = new Ancestor(this.oLayout1, true)(this.oButton);
-					assert.strictEqual(bResult, false, "Layout1 is not a direct ancestor");
+						bResult = new Ancestor(layout, true)(this.oButton);
+						assert.strictEqual(bResult, false, "Layout1 is not a direct ancestor");
+					}.bind(this));
 				});
 
-				QUnit.test("Should match undefined ancestor", function(assert) {
+				QUnit.test("Should match undefined ancestor", function (assert) {
 					var bResult = new Ancestor(undefined)(this.oButton);
 					assert.strictEqual(bResult, true, "No ancestor means valid");
 				});
