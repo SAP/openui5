@@ -16,20 +16,22 @@
 		<!-- DynamicPage Content -->
 		<f:content>
 			<VBox fitContainer="true">
-				<Toolbar>
-					<SearchField
-						search="onSearch"/>
+				<Toolbar class="sapFDynamicPageAlignContent">
+					<ToolbarSpacer/>
+					<SearchField search="onSearch" width="50%"/>
 					<Button icon="sap-icon://add" type="Transparent" press="onAdd"/>
 					<Button icon="sap-icon://sort" type="Transparent" press="onSort"/>
 				</Toolbar>
 				<Table id="productsTable"
 					   inset="false"
 					   items="{
-					   		path: 'products>/ProductCollection',
+							path: 'products>/ProductCollection',
 							sorter: {
 								path: 'Name'
 							}
-					}">
+						}"
+					   class="sapFDynamicPageAlignContent"
+					   width="auto">
 					<columns>
 						<Column width="12em">
 							<Text text="Product" />
