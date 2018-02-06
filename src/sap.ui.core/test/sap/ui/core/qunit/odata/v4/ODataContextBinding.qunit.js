@@ -791,85 +791,34 @@ sap.ui.require([
 	//*********************************************************************************************
 	[{
 		path : "/Unknown(...)",
-		request1 : "/Unknown",
-		metadata1 : undefined,
-		error : "Unknown operation: Unknown"
+		request : "/Unknown/@$ui5.overload",
+		metadata : undefined,
+		error : "Unknown operation: /Unknown(...)"
 	}, {
-		path : "/EntitySet(...)",
-		request1 : "/EntitySet",
-		metadata1 : {$kind : "EntitySet"},
-		error : "Not an operation: EntitySet"
+		path : "/EntitySet(ID='1')/schema.EmptyOverloads(...)",
+		request : "/EntitySet/schema.EmptyOverloads/@$ui5.overload",
+		metadata : [],
+		error : "Unsupported overloads for /EntitySet(ID='1')/schema.EmptyOverloads(...)"
 	}, {
-		path : "/ActionImport(...)",
-		request1 : "/ActionImport",
-		metadata1 : {$kind : "ActionImport", $Action : "schema.Action"},
-		request2 : "/schema.Action",
-		metadata2 : [{$kind : "Action"}]
-	}, {
-		path : "/FunctionImport(...)",
-		request1 : "/FunctionImport",
-		metadata1 : {$kind : "FunctionImport", $Function : "schema.Function"},
-		request2 : "/schema.Function",
-		metadata2 : [{$kind : "Function"}]
-	}, {
-		path : "/OverloadedActionImport(...)",
-		request1 : "/OverloadedActionImport",
-		metadata1 : {$kind : "ActionImport", $Action : "schema.Action"},
-		request2 : "/schema.Action",
-		metadata2 : [{$kind : "Action"}, {$kind : "Action"}],
-		error : "Unsupported operation overloading: OverloadedActionImport"
-	}, {
-		path : "schema.Action(...)",
-		context : "/EntitySet",
-		request1 : "/schema.Action",
-		metadata1 : [{$kind : "Action"}]
-	}, {
-		path : "/EntitySet/schema.Function(...)",
-		request1 : "/schema.Function",
-		metadata1 : [{$kind : "Function"}]
-	}, {
-		path : "/EntitySet/schema.OverloadedAction(...)",
-		request1 : "/schema.OverloadedAction",
-		metadata1 : [{$kind : "Action"}, {}],
-		error : "Unsupported operation overloading: schema.OverloadedAction"
+		path : "/EntitySet(ID='1')/schema.OverloadedFunction(...)",
+		request : "/EntitySet/schema.OverloadedFunction/@$ui5.overload",
+		metadata : [{$kind : "Function"}, {$kind : "Function"}],
+		error : "Unsupported overloads for /EntitySet(ID='1')/schema.OverloadedFunction(...)"
 	}].forEach(function (oFixture) {
-		QUnit.test("_fetchOperationMetadata: " + oFixture.path, function (assert) {
-			var oBinding = this.oModel.bindContext(oFixture.path),
-				oMetaModel = this.oModel.getMetaModel(),
-				oMetaModelMock = this.mock(oMetaModel),
-				oParentBinding,
-				oPromise,
-				oResult = oFixture.metadata1;
+		QUnit.test("execute: " + oFixture.error, function (assert) {
+			this.mock(this.oModel.getMetaModel()).expects("fetchObject")
+				.withExactArgs(oFixture.request)
+				.returns(Promise.resolve(oFixture.metadata));
+			this.mock(this.oModel).expects("reportError").withExactArgs(
+				"Failed to execute " + oFixture.path, sClassName, sinon.match.instanceOf(Error));
 
-			if (oFixture.context) {
-				oParentBinding = this.oModel.bindContext(oFixture.context);
-				oParentBinding.initialize();
-				oBinding.setContext(oParentBinding.getBoundContext());
-			}
-			oMetaModelMock.expects("fetchObject")
-				.withExactArgs(oFixture.request1)
-				.returns(Promise.resolve(oFixture.metadata1));
-			if (oFixture.request2) {
-				oMetaModelMock.expects("fetchObject")
-					.withExactArgs(oFixture.request2)
-					.returns(Promise.resolve(oFixture.metadata2));
-				oResult = oFixture.metadata2;
-			}
-
-			// code under test
-			oPromise = oBinding._fetchOperationMetadata();
-
-			assert.strictEqual(oBinding._fetchOperationMetadata(), oPromise);
-
-			return oPromise.then(function (oMetadata) {
-				if (oFixture.error) {
+			return this.oModel.bindContext(oFixture.path)
+				.execute() // code under test
+				.then(function () {
 					assert.ok(false);
-				} else {
-					assert.strictEqual(oMetadata, oResult[0]);
-				}
-			}, function (oError) {
-				assert.strictEqual(oError.message, oFixture.error);
-			});
+				}, function (oError) {
+					assert.strictEqual(oError.message, oFixture.error);
+				});
 		});
 	});
 
@@ -944,10 +893,11 @@ sap.ui.require([
 				that.mock(oChild1).expects("refreshInternal").withExactArgs(sGroupId, true);
 			}
 
-			oBindingMock.expects("_fetchOperationMetadata")
-				.returns(SyncPromise.resolve(oOperationMetadata));
+			this.mock(this.oModel.getMetaModel()).expects("fetchObject")
+				.withExactArgs("/OperationImport/@$ui5.overload")
+				.returns(SyncPromise.resolve([oOperationMetadata]));
 			oBindingMock.expects("createCacheAndRequest").withExactArgs(sGroupId,
-					"/OperationImport(...)", sinon.match.same(oOperationMetadata))
+					"/OperationImport(...)", sinon.match.same(oOperationMetadata), undefined)
 				.returns(SyncPromise.resolve({/*oResult*/}));
 			expectChangeAndRefreshDependent();
 
@@ -961,7 +911,7 @@ sap.ui.require([
 		});
 	});
 	// TODO function returning collection
-	// TODO function overloading
+	// TODO function overloads
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bBaseContext) {
@@ -975,7 +925,7 @@ sap.ui.require([
 					oEntity = {},
 					oExpectation,
 					sGroupId = "group",
-					oOperationMetaData = {},
+					oOperationMetadata = {},
 					oParentContext1 = createContext("/EntitySet(ID='1')/navigation1"),
 					oParentContext2 = createContext("/EntitySet(ID='2')/navigation1"),
 					oBinding = this.oModel.bindContext(sOperation + "(...)", oParentContext1,
@@ -1006,8 +956,9 @@ sap.ui.require([
 					that.mock(oChild1).expects("refreshInternal").withExactArgs(sGroupId, true);
 				}
 
-				oBindingMock.expects("_fetchOperationMetadata").twice()
-					.returns(SyncPromise.resolve(oOperationMetaData));
+				this.mock(this.oModel.getMetaModel()).expects("fetchObject").twice()
+					.withExactArgs("/EntitySet/navigation1/" + sOperation + "/@$ui5.overload")
+					.returns(SyncPromise.resolve([oOperationMetadata]));
 
 				// code under test - must not ask its context
 				assert.strictEqual(oBinding.fetchValue().getResult(), undefined);
@@ -1015,13 +966,11 @@ sap.ui.require([
 				if (bBaseContext) {
 					oBindingMock.expects("createCacheAndRequest").withExactArgs(sGroupId,
 						"/EntitySet(ID='1')/navigation1/" + sOperation + "(...)",
-						sinon.match.same(oOperationMetaData));
+						sinon.match.same(oOperationMetadata), undefined);
 				} else {
-					this.mock(oParentContext1).expects("fetchCanonicalPath").withExactArgs()
-						.returns(SyncPromise.resolve("/EntitySet(ID='1')/navigation1"));
 					oExpectation = oBindingMock.expects("createCacheAndRequest").withExactArgs(
 						sGroupId, "/EntitySet(ID='1')/navigation1/" + sOperation + "(...)",
-						sinon.match.same(oOperationMetaData), sinon.match.func);
+						sinon.match.same(oOperationMetadata), sinon.match.func);
 					this.mock(oParentContext1).expects("getObject").on(oParentContext1)
 						.withExactArgs(sPathPrefix).returns(oEntity);
 				}
@@ -1045,13 +994,11 @@ sap.ui.require([
 					if (bBaseContext) {
 						oBindingMock.expects("createCacheAndRequest").withExactArgs(sGroupId,
 							"/EntitySet(ID='2')/navigation1/" + sOperation + "(...)",
-							sinon.match.same(oOperationMetaData));
+							sinon.match.same(oOperationMetadata), undefined);
 					} else {
-						that.mock(oParentContext2).expects("fetchCanonicalPath").withExactArgs()
-							.returns(Promise.resolve("/EntitySet(ID='2')/navigation1"));
 						oExpectation = oBindingMock.expects("createCacheAndRequest").withExactArgs(
 							sGroupId, "/EntitySet(ID='2')/navigation1/" + sOperation + "(...)",
-							sinon.match.same(oOperationMetaData), sinon.match.func);
+							sinon.match.same(oOperationMetadata), sinon.match.func);
 						that.mock(oParentContext2).expects("getObject").on(oParentContext2)
 							.withExactArgs(sPathPrefix).returns(oEntity);
 					}
@@ -1077,12 +1024,13 @@ sap.ui.require([
 			oBindingMock = this.mock(oBinding),
 			oError = new Error("deliberate failure"),
 			oModelMock = this.mock(this.oModel),
-			oOperationMetaData = {};
+			oOperationMetadata = {};
 
-		oBindingMock.expects("_fetchOperationMetadata")
-			.returns(SyncPromise.resolve(oOperationMetaData));
-		oBindingMock.expects("createCacheAndRequest")
-			.withExactArgs("group", "/OperationImport(...)", sinon.match.same(oOperationMetaData))
+		this.mock(this.oModel.getMetaModel()).expects("fetchObject")
+			.withExactArgs("/OperationImport/@$ui5.overload")
+			.returns(SyncPromise.resolve([oOperationMetadata]));
+		oBindingMock.expects("createCacheAndRequest").withExactArgs("group",
+				"/OperationImport(...)", sinon.match.same(oOperationMetadata), undefined)
 			.returns(SyncPromise.reject(oError));
 		oBindingMock.expects("_fireChange").never();
 		oModelMock.expects("getDependentBindings").never();
@@ -1104,12 +1052,13 @@ sap.ui.require([
 			oBindingMock = this.mock(oBinding),
 			oError = new Error("deliberate failure"),
 			oModelMock = this.mock(this.oModel),
-			oOperationMetaData = {};
+			oOperationMetadata = {};
 
-		oBindingMock.expects("_fetchOperationMetadata")
-			.returns(SyncPromise.resolve(oOperationMetaData));
-		oBindingMock.expects("createCacheAndRequest")
-			.withExactArgs("group", "/OperationImport(...)", sinon.match.same(oOperationMetaData))
+		this.mock(this.oModel.getMetaModel()).expects("fetchObject")
+			.withExactArgs("/OperationImport/@$ui5.overload")
+			.returns(SyncPromise.resolve([oOperationMetadata]));
+		oBindingMock.expects("createCacheAndRequest").withExactArgs("group",
+				"/OperationImport(...)", sinon.match.same(oOperationMetadata), undefined)
 			.returns(SyncPromise.resolve({/*oResult*/}));
 		oModelMock.expects("getDependentBindings").never();
 		oModelMock.expects("reportError").withExactArgs(
@@ -1356,6 +1305,16 @@ sap.ui.require([
 		assert.strictEqual(oBinding.oOperation.bAction, true);
 		assert.strictEqual(oBinding.oCachePromise.getResult(), oSingleCache);
 		assert.strictEqual(fnGetEntity.callCount, 1);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createCacheAndRequest: wrong $kind", function (assert) {
+		var oBinding = this.oModel.bindContext("n/a(...)");
+
+		assert.throws(function () {
+			// code under test
+			oBinding.createCacheAndRequest("group", "/OperationImport(...)", {$kind : "n/a"});
+		}, new Error("Not an operation: /OperationImport(...)"));
 	});
 
 	//*********************************************************************************************
