@@ -742,7 +742,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 	 * Used for rendering sum rows.
 	 *
 	 * @public
-	 * @returns {boolean} wether the binding has totaled measures or not
+	 * @returns {boolean} Whether the binding has totaled measures or not
 	 */
 	AnalyticalTreeBindingAdapter.prototype.hasTotaledMeasures = function() {
 		var bHasMeasures = false;
