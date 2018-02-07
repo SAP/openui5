@@ -5,21 +5,15 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/fl/Utils",
-	"sap/m/MessageBox",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/transport/Transports",
 	"sap/ui/fl/transport/TransportDialog",
-	"sap/ui/fl/registry/Settings",
-	"sap/ui/core/BusyIndicator"
+	"sap/ui/fl/registry/Settings"
 ], function(
 	jQuery,
 	Utils,
-	MessageBox,
-	FlexControllerFactory,
 	Transports,
 	TransportDialog,
-	FlexSettings,
-	BusyIndicator
+	FlexSettings
 ) {
 	"use strict";
 	/**
@@ -411,40 +405,9 @@ sap.ui.define([
 						oChange.setResponse(oDefinition);
 					}
 				});
+				return Promise.resolve();
 			});
 		}
-	};
-
-	TransportSelection.prototype.transportAllUIChanges = function(oRootControl, sStyleClass, sLayer) {
-		var fnHandleAllErrors = function (oError) {
-			BusyIndicator.hide();
-			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
-			var sMessage = oResourceBundle.getText("MSG_TRANSPORT_ERROR", oError ? [oError.message || oError] : undefined);
-			var sTitle = oResourceBundle.getText("HEADER_TRANSPORT_ERROR");
-			Utils.log.error("transport error" + oError);
-			MessageBox.show(sMessage, {
-				icon: MessageBox.Icon.ERROR,
-				title: sTitle,
-				styleClass: sStyleClass
-			});
-			return "Error";
-		};
-
-		return this.openTransportSelection(null, oRootControl, sStyleClass)
-			.then(function(oTransportInfo) {
-				if (this.checkTransportInfo(oTransportInfo)) {
-					BusyIndicator.show(0);
-					var oFlexController = FlexControllerFactory.createForControl(oRootControl);
-					oFlexController.getComponentChanges({currentLayer: sLayer, includeCtrlVariants: true})
-						.then(function(aAllLocalChanges) {
-							return this._prepareChangesForTransport(oTransportInfo, aAllLocalChanges)
-								.then(function() {
-									BusyIndicator.hide();
-								});
-						}.bind(this));
-				}
-			}.bind(this))
-			['catch'](fnHandleAllErrors);
 	};
 
 	return TransportSelection;

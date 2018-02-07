@@ -839,6 +839,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * Reset changes on the server.
+	 *
+	 * @returns {Promise} promise that resolves without parameters
+	 */
+	FlexController.prototype.resetChanges = function () {
+		return this._oChangePersistence.resetChanges();
+	};
+
+	/**
 	 * Discard changes on the server.
 	 *
 	 * @param {array} aChanges array of {sap.ui.fl.Change} to be discarded

@@ -8,8 +8,6 @@ sap.ui.require([
 	"sap/ui/core/Control",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/FlexControllerFactory",
-	"sap/m/MessageBox",
 	// should be last
 	'sap/ui/thirdparty/sinon',
 	'sap/ui/thirdparty/sinon-ie',
@@ -21,8 +19,6 @@ sap.ui.require([
 	Control,
 	Change,
 	Utils,
-	FlexControllerFactory,
-	MessageBox,
 	sinon) {
 	"use strict";
 
@@ -180,64 +176,6 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.test("when calling transportAllUIChanges successfully", function(assert) {
-		var oMockTransportInfo = {
-				packageName : "PackageName",
-				transport : "transportId"
-			},
-			oMockNewChange = {
-				packageName : "$TMP",
-				fileType : "change",
-				id : "changeId2",
-				namespace : "namespace",
-				getDefinition : function(){
-					return {
-						packageName : this.packageName,
-						fileType : this.fileType
-					};
-				},
-				getId : function(){
-					return this.id;
-				},
-				getNamespace : function(){
-					return this.namespace;
-				},
-				setResponse : function(oDefinition){
-					this.packageName = oDefinition.packageName;
-				},
-				getPackage : function(){
-					return this.packageName;
-				}
-			},
-			aMockLocalChanges = [oMockNewChange],
-			oFlexController = {
-				getComponentChanges : function () {
-					return Promise.resolve(aMockLocalChanges);
-				}
-			};
-		sandbox.stub(Utils, "getClient").returns('');
-		sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
-		var fnOpenTransportSelectionStub = sandbox.stub(this.oTransportSelection, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
-		var fnCheckTransportInfoStub = sandbox.stub(this.oTransportSelection, "checkTransportInfo").returns(true);
-		var fnPrepareChangesForTransportStub = sandbox.stub(this.oTransportSelection, "_prepareChangesForTransport").returns(Promise.resolve());
-		var fnCreateForControlStub = sandbox.stub(FlexControllerFactory, "createForControl").returns(oFlexController);
-
-		return this.oTransportSelection.transportAllUIChanges().then(function(){
-			assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
-			assert.ok(fnCheckTransportInfoStub.calledOnce, "then checkTransportInfo called once");
-			assert.ok(fnPrepareChangesForTransportStub.calledOnce, "then _prepareChangesForTransport called once");
-			assert.ok(fnPrepareChangesForTransportStub.calledWith(oMockTransportInfo, aMockLocalChanges), "then _prepareChangesForTransport called with the transport info and changes array");
-			assert.ok(fnCreateForControlStub.calledOnce, "then createForControl called once");
-		});
-	});
-
-	QUnit.test("when calling transportAllUIChanges unsuccessfully", function(assert){
-		sandbox.stub(this.oTransportSelection, "openTransportSelection").returns(Promise.reject());
-		sandbox.stub(MessageBox, "show");
-		return this.oTransportSelection.transportAllUIChanges().then(function(sError){
-			assert.equal(sError, "Error", "then Promise.resolve() with error message is returned");
-		});
-	});
 
 
 	QUnit.module("sap.ui.fl.transport.TransportSelection", {

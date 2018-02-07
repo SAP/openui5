@@ -33,7 +33,6 @@ sap.ui.define([
 		"sap/ui/dt/plugin/TabHandling",
 		"sap/ui/fl/FlexControllerFactory",
 		"sap/ui/rta/Utils",
-		"sap/ui/fl/transport/TransportSelection",
 		"sap/ui/fl/Utils",
 		"sap/ui/fl/registry/Settings",
 		"sap/m/MessageBox",
@@ -76,7 +75,6 @@ sap.ui.define([
 		TabHandlingPlugin,
 		FlexControllerFactory,
 		Utils,
-		TransportSelection,
 		FlexUtils,
 		FlexSettings,
 		MessageBox,
@@ -924,13 +922,12 @@ sap.ui.define([
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._onTransport = function() {
-		var oTransportSelection = new TransportSelection();
 		this._handleStopCutPaste();
 
 		BusyIndicator.show(500);
 		return this._serializeToLrep().then(function () {
 			BusyIndicator.hide();
-			return oTransportSelection.transportAllUIChanges(this._oRootControl, Utils.getRtaStyleClassName(), this.getLayer())
+			return this._getFlexController()._oChangePersistence.transportAllUIChanges(this._oRootControl, Utils.getRtaStyleClassName(), this.getLayer())
 				.then(function(sError) {
 					if (sError !== "Error") {
 						this._showMessageToast("MSG_TRANSPORT_SUCCESS");
@@ -945,34 +942,9 @@ sap.ui.define([
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._deleteChanges = function() {
-		var oTransportSelection = new TransportSelection();
-		var sCurrentLayer = this.getLayer();
-
-		// all new changes from commands that are only in our stack and not yet in the LREP, filtered by them having a change
-		var aUnsavedChanges = this.getCommandStack().getAllExecutedCommands().reduce(function(aChanges, oCommand) {
-			if (oCommand.getPreparedChange) {
-				aChanges.push(oCommand.getPreparedChange());
-			} else if (oCommand.getVariantChange && oCommand.getVariantChange()) {
-				aChanges.push(oCommand.getVariantChange());
-			}
-			return aChanges;
-		}, []);
-
-		this._getFlexController().getComponentChanges({currentLayer: sCurrentLayer}).then(function(aChanges) {
-			return FlexSettings.getInstance(FlexUtils.getComponentClassName(this._oRootControl)).then(function(oSettings) {
-				if (!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured()) {
-					return oTransportSelection.setTransports(aChanges, this._oRootControl);
-				}
-			}.bind(this)).then(function() {
-				BusyIndicator.show(0);
-				aChanges = aChanges.concat(aUnsavedChanges);
-				return this._getFlexController().discardChanges(aChanges, sCurrentLayer === "USER");
-			}.bind(this)).then(function() {
-				BusyIndicator.hide();
-				this._reloadPage();
-			}.bind(this));
+		this._getFlexController().resetChanges().then(function() {
+			this._reloadPage();
 		}.bind(this))["catch"](function(oError) {
-			BusyIndicator.hide();
 			return Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
 		});
 	};
@@ -1163,7 +1135,7 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.prototype._checkChangesExist = function() {
 		if (this._getFlexController().getComponentName().length > 0) {
-			return this._getFlexController().getComponentChanges({currentLayer: this.getLayer()}).then(function(aAllLocalChanges) {
+			return this._getFlexController().getComponentChanges({currentLayer: this.getLayer(), includeCtrlVariants: true}).then(function(aAllLocalChanges) {
 				return aAllLocalChanges.length > 0;
 			});
 		} else {
