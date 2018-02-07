@@ -109,7 +109,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				}
 			});
 			if (aViolatedConstraints.length > 0) {
-				throw new ValidateException(aMessages.join(" "), aViolatedConstraints);
+				throw new ValidateException(this.combineMessages(aMessages), aViolatedConstraints);
 			}
 		}
 	};
