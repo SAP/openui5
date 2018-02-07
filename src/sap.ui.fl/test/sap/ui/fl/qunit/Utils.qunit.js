@@ -843,23 +843,97 @@ function(
 
 	});
 
-	QUnit.test("when calling 'getTechnicalURLParameterValues' with a Component containing a valid URL parameter", function(assert){
+	QUnit.test("when calling 'getTechnicalParametersForComponent' with a Component containing a valid URL parameter", function(assert){
+		var mParameters = {
+			"first-tech-parameter" : ["value1, value2"],
+			"second-tech-parameter" : ["value3"]
+		};
+
 		var oComponentMock = {
 			getComponentData: function(){
 				return {
-					technicalParameters: {
-						"sap-ui-fl-control-variant-id" : ["variant0"]
-					}
+					technicalParameters: mParameters
 				};
 			}
 		};
 
-		assert.equal(Utils.getTechnicalURLParameterValues(oComponentMock, "sap-ui-fl-control-variant-id").indexOf("variant0"),
-			0,
+		assert.deepEqual(Utils.getTechnicalParametersForComponent(oComponentMock),
+			mParameters,
 			"then the function returns the variant reference in the URL parameter");
 	});
 
-	QUnit.test("when calling 'setTechnicalURLParameterValues' with a parameter name and some values", function(assert){
+	QUnit.test("when calling 'getTechnicalParametersForComponent' with technical parameters not existing", function(assert){
+		var oComponentMock = {
+			getComponentData: function(){
+				return {
+					technicalParameters: {}
+				};
+			}
+		};
+
+		assert.deepEqual(Utils.getTechnicalParametersForComponent(oComponentMock),
+			{},
+			"then the function returns the variant reference in the URL parameter");
+	});
+
+	QUnit.test("when calling 'getTechnicalParametersForComponent' with an invalid component", function(assert){
+		var oComponentMock = {};
+		assert.notOk(Utils.getTechnicalParametersForComponent(oComponentMock), "then the function returns undefined");
+	});
+
+	QUnit.test("when calling 'setTechnicalURLParameterValues' with a component, parameter name and some values", function(assert){
+		var oMockedURLParser = {
+			getHash : function(){
+				return "";
+			},
+			parseShellHash : function(sHash){
+				return {
+					semanticObject : "Action",
+					action : "somestring",
+					params : {
+						"sap-ui-fl-max-layer" : ["CUSTOMER"]
+					}
+				};
+			},
+			constructShellHash : function(oParsedHash){
+				assert.equal(hasher.changed.active, false, "then the 'active' flag of the hasher is first set to false (to avoid navigation)");
+				assert.deepEqual(oParsedHash.params["sap-ui-fl-max-layer"][0], "CUSTOMER", "then the previous parameters are still present for the hash");
+				assert.deepEqual(oParsedHash.params["testParameter"][0], "testValue", "then the new parameter is properly added to the hash");
+				assert.deepEqual(oParsedHash.params["testParameter"][1], "testValue2", "then the new parameter is properly added to the hash");
+				return "hashValue";
+			}
+		};
+
+		var oMockComponent = {
+			oComponentData : {
+				technicalParameters: {}
+			},
+			getComponentData : function () {
+				return this.oComponentData;
+			}
+		};
+
+		// this overrides the ushell globally => it gets restored in afterEach
+		sap.ushell = jQuery.extend(sap.ushell, {
+			Container : {
+				getService : function() {
+					return oMockedURLParser;
+				}
+			}
+		});
+
+		sandbox.stub(hasher, "setHash", function(sHash){
+			assert.equal(sHash, "hashValue", "then the 'setHash' function of the hasher is called with the proper parameter");
+		});
+
+		Utils.setTechnicalURLParameterValues(oMockComponent, "testParameter", ["testValue", "testValue2"]);
+
+		assert.equal(hasher.changed.active, true, "then the 'active' flag of the hasher is restored to true");
+		assert.equal(oMockComponent.getComponentData().technicalParameters["testParameter"][0], "testValue", "then the new parameter is properly added to the technical parameter");
+		assert.equal(oMockComponent.getComponentData().technicalParameters["testParameter"][1], "testValue2", "then the new parameter is properly added to the technical parameter");
+	});
+
+	QUnit.test("when calling 'setTechnicalURLParameterValues' with an invalid component, parameter name and some values", function(assert){
 		var oMockedURLParser = {
 			getHash : function(){
 				return "";
@@ -890,13 +964,58 @@ function(
 				}
 			}
 		});
+		sandbox.stub(Utils.log, "error");
+		Utils.setTechnicalURLParameterValues({}, "testParameter", ["testValue", "testValue2"]);
 
-		sandbox.stub(hasher, "setHash", function(sHash){
-			assert.equal(sHash, "hashValue", "then the 'setHash' function of the hasher is called with the proper parameter");
+		assert.ok(Utils.log.error.calledWith("Component instance not provided, so technical parameters in component data would remain unchanged"), "then error produced as component is invalid");
+		assert.equal(hasher.changed.active, true, "then the 'active' flag of the hasher is restored to true");
+	});
+
+	QUnit.test("when calling 'setTechnicalURLParameterValues' with a component, parameter name (having previously existing values) and no values", function(assert){
+		var oMockedURLParser = {
+			getHash : function(){
+				return "";
+			},
+			parseShellHash : function(sHash){
+				return {
+					semanticObject : "Action",
+					action : "somestring",
+					params : {
+						"sap-ui-fl-max-layer" : ["CUSTOMER"],
+						"testParameter" : ["testValue", "testValue2"]
+					}
+				};
+			},
+			constructShellHash : function(oParsedHash){
+				assert.equal(hasher.changed.active, false, "then the 'active' flag of the hasher is first set to false (to avoid navigation)");
+				assert.deepEqual(oParsedHash.params["sap-ui-fl-max-layer"][0], "CUSTOMER", "then the previous parameters are still present for the hash");
+				assert.notOk(oParsedHash.params["testParameter"], "then the parameter name no longer exists for the hash");
+				return "hashValue";
+			}
+		};
+
+		var oMockComponent = {
+			oComponentData : {
+				technicalParameters: {
+					"testParameter" : ["testValue", "testValue2"]
+				}
+			},
+			getComponentData : function () {
+				return this.oComponentData;
+			}
+		};
+
+		// this overrides the ushell globally => it gets restored in afterEach
+		sap.ushell = jQuery.extend(sap.ushell, {
+			Container : {
+				getService : function() {
+					return oMockedURLParser;
+				}
+			}
 		});
-
-		Utils.setTechnicalURLParameterValues("testParameter", ["testValue", "testValue2"]);
-
+		assert.equal(oMockComponent.getComponentData().technicalParameters["testParameter"].length, 2, "then initially the parameter exists in technical parameters with 2 values");
+		Utils.setTechnicalURLParameterValues(oMockComponent, "testParameter", []);
+		assert.notOk(oMockComponent.getComponentData().technicalParameters["testParameter"], "then the parameter no longer exists as a technical parameter");
 		assert.equal(hasher.changed.active, true, "then the 'active' flag of the hasher is restored to true");
 	});
 

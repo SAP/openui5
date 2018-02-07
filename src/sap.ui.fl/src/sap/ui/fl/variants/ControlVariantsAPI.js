@@ -13,6 +13,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	var sVariantTechnicalParameterName = "sap-ui-fl-control-variant-id";
+
 	var ControlVariantsAPI = {
 
 		/**
@@ -27,14 +29,14 @@ sap.ui.define([
 				var oAppComponent = Utils.getAppComponentForControl(oVariantManagementControl);
 				var oVariantModel = oAppComponent.getModel("$FlexVariants");
 				var sVariantManagementReference = oVariantModel._getLocalId(oVariantManagementControl.getId(), oAppComponent);
-				var mVariantParametersInURL = oVariantModel._getVariantIndexInURL(sVariantManagementReference);
+				var mVariantParametersInURL = oVariantModel.getVariantIndexInURL(sVariantManagementReference);
 
 				if (mVariantParametersInURL.index > -1) {
-					mVariantParametersInURL.parameters.splice(mVariantParametersInURL.index, 1);
-					aUrlParameters = mVariantParametersInURL.parameters.slice(0);
+					mVariantParametersInURL.parameters[sVariantTechnicalParameterName].splice(mVariantParametersInURL.index, 1);
+					aUrlParameters = mVariantParametersInURL.parameters[sVariantTechnicalParameterName].slice(0);
 				}
 			}
-			Utils.setTechnicalURLParameterValues("sap-ui-fl-control-variant-id", aUrlParameters);
+			Utils.setTechnicalURLParameterValues(oAppComponent, sVariantTechnicalParameterName, aUrlParameters);
 		},
 
 		/**
