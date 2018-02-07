@@ -120,7 +120,7 @@ sap.ui.require([
 		asV2Requestor(oRequestor);
 		oRequestorMock.expects("getTypeForName").twice().withExactArgs("TypeQName").returns(oType);
 		oRequestorMock.expects("convertPrimitive")
-			.withExactArgs("42", "Edm.Double", "TypeQName", "property")
+			.withExactArgs("42", {$Type : "Edm.Double"}, "TypeQName", "property")
 			.returns(42);
 
 		// code under test
@@ -166,10 +166,10 @@ sap.ui.require([
 		asV2Requestor(oRequestor);
 		oRequestorMock.expects("getTypeForName").thrice().withExactArgs("TypeQName").returns(oType);
 		oRequestorMock.expects("convertPrimitive")
-			.withExactArgs("42", "Edm.Double", "TypeQName", "property")
+			.withExactArgs("42", {$Type : "Edm.Double"}, "TypeQName", "property")
 			.returns(42);
 		oRequestorMock.expects("convertPrimitive")
-			.withExactArgs("77", "Edm.Double", "TypeQName", "property")
+			.withExactArgs("77", {$Type : "Edm.Double"}, "TypeQName", "property")
 			.returns(77);
 
 		// code under test
@@ -207,7 +207,7 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(oObject.complex))
 			.returns(oObject.complex);
 		this.mock(oRequestor).expects("convertPrimitive")
-			.withExactArgs(oObject.property, "Edm.Double", "TypeQName", "property")
+			.withExactArgs(oObject.property, {$Type : "Edm.Double"}, "TypeQName", "property")
 			.returns(42);
 
 		// code under test
@@ -264,29 +264,37 @@ sap.ui.require([
 
 			asV2Requestor(oRequestor);
 			if (oFixture.sConvertMethod) {
-				this.mock(oRequestor).expects(oFixture.sConvertMethod)
-					.withExactArgs(sinon.match.same(vV2Value))
-					.returns(vV4Value);
+				oFixture.sType === "Edm.DateTimeOffset"
+					? this.mock(oRequestor).expects(oFixture.sConvertMethod)
+						.withExactArgs(sinon.match.same(vV2Value), {$Type : oFixture.sType})
+						.returns(vV4Value)
+					: this.mock(oRequestor).expects(oFixture.sConvertMethod)
+						.withExactArgs(sinon.match.same(vV2Value))
+						.returns(vV4Value);
 			} else {
 				vV4Value = vV2Value; // no conversion
 			}
 
 			// code under test
-			assert.strictEqual(oRequestor.convertPrimitive(vV2Value, oFixture.sType, "property",
-				"Type"), vV4Value);
+			assert.strictEqual(oRequestor.convertPrimitive(vV2Value, {$Type : oFixture.sType},
+				"property", "Type"), vV4Value);
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("convertPrimitive, unknown type", function (assert) {
+	QUnit.test("convertPrimitive, unknown and undefined type", function (assert) {
 		var oRequestor = {};
 
 		asV2Requestor(oRequestor);
 
 		// code under test
 		assert.throws(function () {
-			oRequestor.convertPrimitive("foo", "Unknown", "Type", "Property");
+			oRequestor.convertPrimitive("foo", {$Type : "Unknown"}, "Type", "Property");
 		}, new Error("Type 'Unknown' of property 'Property' in type 'Type' is unknown; "
+			+ "cannot convert value: foo"));
+		assert.throws(function () {
+			oRequestor.convertPrimitive("foo", undefined, "Type", "Property");
+		}, new Error("Type 'undefined' of property 'Property' in type 'Type' is unknown; "
 			+ "cannot convert value: foo"));
 	});
 
@@ -345,25 +353,33 @@ sap.ui.require([
 	//*********************************************************************************************
 	[{
 		input : "/Date(1420529121547+0000)/",
-		output : "2015-01-06T07:25:21.547Z"
+		output : "2015-01-06T07:25:21Z"
 	}, {
 		input : "/Date(1420529121547+0500)/",
-		output : "2015-01-06T12:25:21.547+05:00"
+		output : "2015-01-06T12:25:21+05:00"
 	}, {
 		input : "/Date(1420529121547+1500)/",
-		output : "2015-01-06T22:25:21.547+15:00"
+		output : "2015-01-06T22:25:21+15:00"
 	}, {
 		input : "/Date(1420529121547+0530)/",
-		output : "2015-01-06T12:55:21.547+05:30"
+		output : "2015-01-06T12:55:21+05:30"
 	}, {
 		input : "/Date(1420529121547+0030)/",
-		output : "2015-01-06T07:55:21.547+00:30"
+		output : "2015-01-06T07:55:21+00:30"
 	}, {
 		input : "/Date(1420529121547-0530)/",
-		output : "2015-01-06T01:55:21.547-05:30"
+		output : "2015-01-06T01:55:21-05:30"
+	}, {
+		input : "/Date(1420529121547-0530)/",
+		output : "2015-01-06T01:55:21-05:30",
+		precision : 0
+	}, {
+		input : "/Date(1420529121547-0530)/",
+		output : "2015-01-06T01:55:21.547000-05:30",
+		precision : 6
 	}, {
 		input : "/Date(1395752399000)/", // DateTime in V2
-		output : "2014-03-25T12:59:59.000Z"  // must be interpreted as UTC
+		output : "2014-03-25T12:59:59Z"  // must be interpreted as UTC
 	}].forEach(function (oFixture, i) {
 		QUnit.test("convertDateTimeOffset, success " + i, function (assert) {
 			var oRequestor = {};
@@ -371,7 +387,8 @@ sap.ui.require([
 			asV2Requestor(oRequestor);
 
 			// code under test
-			assert.strictEqual(oRequestor.convertDateTimeOffset(oFixture.input), oFixture.output);
+			assert.strictEqual(oRequestor.convertDateTimeOffset(oFixture.input,
+				{$Precision : oFixture.precision}), oFixture.output);
 		});
 	});
 
@@ -390,9 +407,25 @@ sap.ui.require([
 
 			assert.throws(function () {
 				// code under test
-				return oRequestor.convertDateTimeOffset(oFixture.input);
+				return oRequestor.convertDateTimeOffset(oFixture.input, {});
 			}, new Error(oFixture.expectedError));
 		});
+	});
+
+	//*********************************************************************************************
+	// This test assumes that the precisions in this test are not used in other tests
+	QUnit.test("convertDateTimeOffset, DateTimeInstance map callCount", function (assert) {
+		var oDateFormatMock = this.mock(DateFormat),
+			oRequestor = {};
+
+		asV2Requestor(oRequestor);
+
+		oRequestor.convertDateTimeOffset("/Date(1395752399000)/", {$Precision : 42});
+		// after calling #getDateTimeInstance, there is no further call with the same precision
+		oDateFormatMock.expects("getDateTimeInstance").never();
+
+		// code under test
+		oRequestor.convertDateTimeOffset("/Date(1395752399000)/", {$Precision : 42});
 	});
 
 	//*********************************************************************************************
