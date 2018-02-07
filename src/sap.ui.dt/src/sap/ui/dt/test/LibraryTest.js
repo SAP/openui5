@@ -13,7 +13,8 @@ sap.ui.define(['sap/ui/model/resource/ResourceModel', 'sap/ui/model/json/JSONMod
 		return oBundle.hasText(sKey) || oBundle.getText(sKey, [], true) !== null;
 	}
 	var LibraryTest = function(sTestLibrary, QUnit) {
-		QUnit.config.autostart = false;
+		//switching off autostart needs to be done in the individual test files before the LibraryTest.js is loaded.
+		//QUnit.config.autostart = false;
 		var oPromise = new Promise(function(resolve) {
 			sap.ui.getCore().loadLibraries([sTestLibrary]).then(function() {
 				var oLibrary = sap.ui.getCore().getLoadedLibraries()[sTestLibrary],

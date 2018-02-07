@@ -1,5 +1,7 @@
 /*global QUnit*/
 
+QUnit.config.autostart = false;
+
 /**
  * General consistency checks on designtime metadata of controls in the sap.f library
  */
