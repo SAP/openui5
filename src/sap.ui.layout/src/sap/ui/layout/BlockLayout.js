@@ -80,7 +80,7 @@ sap.ui.define([
 				 * Keeps the font-size of the contents as is, independent from the screen size.
 				 * @since 1.52
 				 */
-				keepFontSize: { type: "boolean", group:"Behaviour", defaultValue: false}
+				keepFontSize: { type: "boolean", group:"Behavior", defaultValue: false}
 			},
 			defaultAggregation : "content",
 			aggregations : {
