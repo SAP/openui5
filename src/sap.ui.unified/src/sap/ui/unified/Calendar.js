@@ -2,9 +2,39 @@
  * ${copyright}
  */
 //Provides control sap.ui.unified.Calendar.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/unified/calendar/CalendarUtils',
-		'./calendar/Header', './calendar/Month', './calendar/MonthPicker', './calendar/YearPicker', './calendar/CalendarDate', './library', 'sap/ui/Device', 'sap/ui/core/format/DateFormat', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Locale'],
-	function (jQuery, Control, LocaleData, CalendarUtils, Header, Month, MonthPicker, YearPicker, CalendarDate, library, Device, DateFormat, ResizeHandler, Locale) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Control',
+	'sap/ui/core/LocaleData',
+	'sap/ui/unified/calendar/CalendarUtils',
+	'./calendar/Header',
+	'./calendar/Month',
+	'./calendar/MonthPicker',
+	'./calendar/YearPicker',
+	'./calendar/CalendarDate',
+	'./library',
+	'sap/ui/Device',
+	'sap/ui/core/format/DateFormat',
+	'sap/ui/core/ResizeHandler',
+	'sap/ui/core/Locale',
+	"./CalendarRenderer"
+], function(
+	jQuery,
+	Control,
+	LocaleData,
+	CalendarUtils,
+	Header,
+	Month,
+	MonthPicker,
+	YearPicker,
+	CalendarDate,
+	library,
+	Device,
+	DateFormat,
+	ResizeHandler,
+	Locale,
+	CalendarRenderer
+) {
 	"use strict";
 
 	/*

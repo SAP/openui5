@@ -3,8 +3,24 @@
  */
 
 // Provides control sap.ui.unified.FileUploader.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/core/LabelEnablement', 'sap/ui/core/library', 'sap/ui/Device', 'jquery.sap.keycodes'],
-	function(jQuery, Control, library, LabelEnablement, coreLibrary, Device) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Control',
+	'./library',
+	'sap/ui/core/LabelEnablement',
+	'sap/ui/core/library',
+	'sap/ui/Device',
+	"./FileUploaderRenderer",
+	'jquery.sap.keycodes'
+], function(
+	jQuery,
+	Control,
+	library,
+	LabelEnablement,
+	coreLibrary,
+	Device,
+	FileUploaderRenderer
+) {
 	"use strict";
 
 

@@ -1,8 +1,14 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/unified/calendar/DatesRow', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/library'],
-	function(DatesRow, CalendarUtils, CalendarDate, library) {
+sap.ui.define([
+	'sap/ui/unified/calendar/DatesRow',
+	'sap/ui/unified/calendar/CalendarUtils',
+	'sap/ui/unified/calendar/CalendarDate',
+	'sap/ui/unified/library',
+	"./OneMonthDatesRowRenderer"
+],
+	function(DatesRow, CalendarUtils, CalendarDate, library, OneMonthDatesRowRenderer) {
 		"use strict";
 
 	/*

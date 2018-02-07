@@ -3,9 +3,31 @@
  */
 
 //Provides control sap.ui.unified.CalendarTimeInterval.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/core/delegate/ItemNavigation',
-               'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/date/UniversalDate', 'sap/ui/unified/library', 'sap/ui/core/format/DateFormat', 'sap/ui/core/library', 'sap/ui/core/Locale'],
-               function(jQuery, Control, LocaleData, ItemNavigation, CalendarUtils, UniversalDate, library, DateFormat, coreLibrary, Locale) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Control',
+	'sap/ui/core/LocaleData',
+	'sap/ui/core/delegate/ItemNavigation',
+	'sap/ui/unified/calendar/CalendarUtils',
+	'sap/ui/core/date/UniversalDate',
+	'sap/ui/unified/library',
+	'sap/ui/core/format/DateFormat',
+	'sap/ui/core/library',
+	'sap/ui/core/Locale',
+	"./TimesRowRenderer"
+], function(
+	jQuery,
+	Control,
+	LocaleData,
+	ItemNavigation,
+	CalendarUtils,
+	UniversalDate,
+	library,
+	DateFormat,
+	coreLibrary,
+	Locale,
+	TimesRowRenderer
+) {
 	"use strict";
 
 	// shortcut for sap.ui.core.CalendarType

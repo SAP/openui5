@@ -3,8 +3,25 @@
  */
 
 //Provides control sap.ui.unified.Calendar.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/LocaleData', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/unified/library', 'sap/ui/core/Locale'],
-		function(jQuery, Control, Device, LocaleData, ItemNavigation, library, Locale) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Control',
+	'sap/ui/Device',
+	'sap/ui/core/LocaleData',
+	'sap/ui/core/delegate/ItemNavigation',
+	'sap/ui/unified/library',
+	'sap/ui/core/Locale',
+	"./MonthPickerRenderer"
+], function(
+	jQuery,
+	Control,
+	Device,
+	LocaleData,
+	ItemNavigation,
+	library,
+	Locale,
+	MonthPickerRenderer
+) {
 	"use strict";
 
 	/**

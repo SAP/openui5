@@ -3,9 +3,29 @@
  */
 
 //Provides control sap.ui.unified.Calendar.
-sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils',
-		'./Calendar', './calendar/DatesRow', './calendar/MonthPicker', './calendar/YearPicker', 'sap/ui/unified/calendar/CalendarDate', './library', 'sap/ui/Device'],
-	function(jQuery, CalendarUtils, Calendar, DatesRow, MonthPicker, YearPicker, CalendarDate, library, Device) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/unified/calendar/CalendarUtils',
+	'./Calendar',
+	'./calendar/DatesRow',
+	'./calendar/MonthPicker',
+	'./calendar/YearPicker',
+	'sap/ui/unified/calendar/CalendarDate',
+	'./library',
+	'sap/ui/Device',
+	"./CalendarDateIntervalRenderer"
+], function(
+	jQuery,
+	CalendarUtils,
+	Calendar,
+	DatesRow,
+	MonthPicker,
+	YearPicker,
+	CalendarDate,
+	library,
+	Device,
+	CalendarDateIntervalRenderer
+) {
 	"use strict";
 
 	/*
