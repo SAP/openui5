@@ -399,8 +399,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * _refresh for compatibility
 	 * @private
 	 */
-	Binding.prototype._refresh = function() {
-		this.refresh();
+	Binding.prototype._refresh = function(bForceUpdate) {
+		this.refresh(bForceUpdate);
 	};
 
 	/**
