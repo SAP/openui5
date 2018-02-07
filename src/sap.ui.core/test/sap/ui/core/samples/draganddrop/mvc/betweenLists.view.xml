@@ -9,24 +9,24 @@
 					</Toolbar>
 				</headerToolbar>
 				<dragDropConfig>
-					<dnd:DragDropInfo
+					<dnd:DragInfo
 						sourceAggregation="items"
-						targetElement="targetList"
-						targetAggregation="items"
-						drop="handleDrop"
-						dragEnter="handleDragEnter"
-						dropEffect="Copy"/>
+						groupName="sap"/>
 				</dragDropConfig>
 
 				<StandardListItem title="{lastName}" description="{firstName}"/>
 			</List>
 
-			<List id="targetList" items="{/selectedNames}">
-				<headerToolbar>
-					<Toolbar>
-						<Title text="Selected Developers (drop here)" />
-					</Toolbar>
-				</headerToolbar>
+			<List id="targetList" items="{/selectedNames}" headerText="Selected Developers (drop here)">
+				<dragDropConfig>
+					<dnd:DropInfo
+						targetAggregation="items"
+						groupName="sap"
+						drop="handleDrop"
+						dragEnter="handleDragEnter"
+						dropPosition="On"
+						dropEffect="Copy"/>
+				</dragDropConfig>
 				<StandardListItem title="{lastName}" description="{firstName}"/>
 			</List>
 

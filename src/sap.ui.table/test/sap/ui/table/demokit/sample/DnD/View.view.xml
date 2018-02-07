@@ -61,13 +61,13 @@
 						</Column>
 					</columns>
 					<dragDropConfig>
-						<dnd:DragDropInfo
+						<dnd:DragInfo
+							groupName="moveToTable2"
 							sourceAggregation="rows"
-							targetAggregation="rows"
-							targetElement="table2"
-							dropPosition="Between"
-							dragStart="onDragStart"
-							drop="onDropTable2"/>
+							dragStart="onDragStart" />
+						<dnd:DropInfo
+							groupName="moveToTable1"
+							drop="onDropTable1" />
 					</dragDropConfig>
 				</Table>
 				<m:VBox justifyContent="Center" class="sapUiTinyMarginBeginEnd">
@@ -131,18 +131,21 @@
 						</Column>
 					</columns>
 					<dragDropConfig>
-						<dnd:DragDropInfo
+						<dnd:DragInfo 
+							groupName="moveToTable1"
 							sourceAggregation="rows"
-							targetElement="table1"
-							dropPosition="On"
-							dragStart="onDragStart"
-							drop="onDropTable1"/>
+							dragStart="onDragStart" />
+						<dnd:DropInfo
+							groupName="moveToTable2"
+							targetAggregation="rows"
+							dropPosition="Between"
+							drop="onDropTable2" />
 						<dnd:DragDropInfo
 							sourceAggregation="rows"
 							targetAggregation="rows"
 							dropPosition="Between"
 							dragStart="onDragStart"
-							drop="onDropTable2"/>
+							drop="onDropTable2" />
 					</dragDropConfig>
 				</Table>
 			</m:HBox>

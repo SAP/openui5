@@ -60,11 +60,11 @@ sap.ui.define([
 		ondragstart: function(oEvent) {
 			var oDragSession = oEvent.dragSession;
 
-			if (oDragSession == null || oDragSession.draggedControl == null) {
+			if (oDragSession == null || oDragSession.getDragControl() == null) {
 				return;
 			}
 
-			var oDraggedControl = oDragSession.draggedControl;
+			var oDraggedControl = oDragSession.getDragControl();
 			var oSessionData = {};
 
 			if (TableUtils.isInstanceOf(oDraggedControl, "sap/ui/table/Row")) {
@@ -101,13 +101,13 @@ sap.ui.define([
 		ondragenter: function(oEvent) {
 			var oDragSession = oEvent.dragSession;
 
-			if (oDragSession == null || oDragSession.dropControl == null) {
+			if (oDragSession == null || oDragSession.getDropControl() == null) {
 				return;
 			}
 
 			var oSessionData = ExtensionHelper.getInstanceSessionData(oDragSession, this);
-			var oDraggedControl = oDragSession.draggedControl;
-			var oDropControl = oDragSession.dropControl;
+			var oDraggedControl = oDragSession.getDragControl();
+			var oDropControl = oDragSession.getDropControl();
 
 			if (oSessionData == null) {
 				oSessionData = {};
@@ -130,23 +130,21 @@ sap.ui.define([
 					|| (oDraggedRowContext != null && oDraggedRowContext === oDropRowContext) // The dragged row itself
 					|| oDropRowDomRef.classList.contains("sapUiTableGroupHeader") // Group header row
 					|| oDropRowDomRef.classList.contains("sapUiAnalyticalTableSum")) { // Sum row
-					oEvent.preventDefault();
+					oEvent.setMarked("NonDroppable");
 				} else {
 					// Because the vertical scrollbar can appear after expanding rows on "longdragover",
 					// the dimensions of the drop indicator always need to be updated.
 					var bVerticalScrollbarVisible = this._getScrollExtension().isVerticalScrollbarVisible();
 					var mTableCntRect = this.getDomRef("sapUiTableCnt").getBoundingClientRect();
-					oSessionData.indicatorSize = {
+					oDragSession.setIndicatorConfig({
 						width: mTableCntRect.width - (bVerticalScrollbarVisible ? 16 : 0),
 						left: mTableCntRect.left + (this._bRtlMode && bVerticalScrollbarVisible ? 16 : 0)
-					};
+					});
 				}
 			} else if (TableUtils.isInstanceOf(oDropControl, "sap/ui/table/Column")) {
-				oEvent.preventDefault();
+				oEvent.setMarked("NonDroppable");
 			} else if (oDraggedControl === oDropControl) {
-				oEvent.preventDefault();
-			} else {
-				delete oSessionData.indicatorSize;
+				oEvent.setMarked("NonDroppable");
 			}
 
 			/*
@@ -195,14 +193,12 @@ sap.ui.define([
 
 			var iScrollDistance = 32;
 			var iThreshold = 50;
-			var oDropControl = oDragSession.dropControl;
-			var oIndicator = jQuery(oDragSession.getIndicator());
+			var oDropControl = oDragSession.getDropControl();
 			var oScrollExtension = this._getScrollExtension();
 			var oVerticalScrollbar = oScrollExtension.getVerticalScrollbar();
 			var oHorizontalScrollbar = oScrollExtension.getHorizontalScrollbar();
 			var oVerticalScrollEdge = oSessionData.verticalScrollEdge;
 			var oHorizontalScrollEdge = oSessionData.horizontalScrollEdge;
-			var oIndicatorSize = oSessionData.indicatorSize;
 
 			if (oVerticalScrollEdge != null && oVerticalScrollbar != null && oDropControl !== this) {
 				var iPageY = oEvent.pageY;
@@ -223,10 +219,6 @@ sap.ui.define([
 					oHorizontalScrollbar.scrollLeft += iScrollDistance;
 				}
 			}
-
-			if (oIndicator != null && oIndicatorSize != null && oDropControl != null) {
-				oIndicator.css(oIndicatorSize);
-			}
 		},
 
 		onlongdragover: function(oEvent) {
@@ -239,7 +231,7 @@ sap.ui.define([
 			var $Cell = TableUtils.getCell(this, oEvent.target);
 			var iRowIndex = TableUtils.getCellInfo($Cell).rowIndex;
 			var oRow = iRowIndex == null ? null : this.getRows()[iRowIndex];
-			var oDropControl = oDragSession.dropControl;
+			var oDropControl = oDragSession.getDropControl();
 
 			if (oRow != null && (oDropControl == oRow || oDropControl == null)) {
 				TableUtils.Grouping.toggleGroupHeader(this, oRow.getIndex(), true);

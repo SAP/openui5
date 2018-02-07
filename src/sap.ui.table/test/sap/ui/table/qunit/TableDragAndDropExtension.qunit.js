@@ -67,6 +67,12 @@ sap.ui.require([
 				},
 				getComplexData: function(sId) {
 					return this.mData[sId];
+				},
+				getDragControl: function() {
+					return this.dragControl;
+				},
+				getDropControl: function() {
+					return this.dropControl;
 				}
 			}
 		};
@@ -132,6 +138,7 @@ sap.ui.require([
 		var oFakeEvent = {
 			dragSession: {
 				mData: {},
+				mConfig: {},
 				setComplexData: function(sId, oData) {
 					this.mData[sId] = oData;
 				},
@@ -140,6 +147,18 @@ sap.ui.require([
 				},
 				getIndicator: function() {
 					return oFakeIndicator[0];
+				},
+				getDropControl: function() {
+					return this.dropControl;
+				},
+				setIndicatorConfig: function(mConfig) {
+					this.mConfig = mConfig || {};
+					if (this.dropControl) {
+						oFakeIndicator.css(this.mConfig);
+					}
+				},
+				getIndicatorConfig: function(mConfig) {
+					return this.mConfig;
 				}
 			}
 		};
@@ -207,29 +226,23 @@ sap.ui.require([
 
 		// If there is no drop target, there is no need to modify the indicator.
 		oFakeEvent.dragSession.dropControl = null;
-		oFakeEvent.dragSession.setComplexData("sap.ui.table-" + oTable.getId(), {
-			indicatorSize: {
-				width: 500
-			}
+		oFakeEvent.dragSession.setIndicatorConfig({
+			width: 500
 		});
 		testIndicatorSize(oFakeEvent, 0, 0, 0, 0);
 
 		// If there is an indicator size in the drag session, the indicator should be modified accordingly.
 		oFakeEvent.dragSession.dropControl = "a control which needs indicator modification";
-		oFakeEvent.dragSession.setComplexData("sap.ui.table-" + oTable.getId(), {
-			indicatorSize: {
-				width: 500,
-				height: 50,
-				left: 33,
-				right: 222
-			}
+		oFakeEvent.dragSession.setIndicatorConfig({
+			width: 500,
+			height: 50,
+			left: 33,
+			right: 222
 		});
 		testIndicatorSize(oFakeEvent, 500, 50, 33, 222);
 
 		// Not all controls need indicator modifications, so there might be no indicator size. In this case the indicator should not be modified.
-		oFakeEvent.dragSession.setComplexData("sap.ui.table-" + oTable.getId(), {
-			indicatorSize: undefined
-		});
+		oFakeEvent.dragSession.setIndicatorConfig();
 		testIndicatorSize(oFakeEvent, 500, 50, 33, 222);
 	});
 
@@ -281,9 +294,6 @@ sap.ui.require([
 					assert.equal(oEvent.dragSession.getComplexData("sap.ui.table-" + oTable.getId()), null,
 						sMessagePrefix + "No drag session data was stored in the drag session");
 				}
-			} else {
-				assert.ok(!oEvent.isDefaultPrevented(), sMessagePrefix + "The default action was not prevented");
-				assert.equal(oEvent.dragSession, null, sMessagePrefix + "No drag session available");
 			}
 		};
 
@@ -347,8 +357,7 @@ sap.ui.require([
 
 		this.oDragAndDropExtension._ExtensionDelegate.ondragenter = function(oEvent) {
 			var mParams = oEvent._mTestParameters;
-			var oDragSessionData = oEvent.dragSession.getComplexData("sap.ui.table-" + oTable.getId());
-			var bDraggingOverItself = oEvent.dragSession.draggedControl === oEvent.dragSession.dropControl;
+			var bDraggingOverItself = oEvent.dragSession.getDragControl() === oEvent.dragSession.getDropControl();
 			var sMessagePrefix;
 
 			if (bDraggingOverItself) {
@@ -365,13 +374,13 @@ sap.ui.require([
 				var bVerticalScrollbarVisible = oTable._getScrollExtension().isVerticalScrollbarVisible();
 				var mTableCntRect = oTable.getDomRef("sapUiTableCnt").getBoundingClientRect();
 
-				assert.deepEqual(oDragSessionData.indicatorSize, {
+				assert.deepEqual(oEvent.dragSession.getIndicatorConfig(), {
 					width: mTableCntRect.width - (bVerticalScrollbarVisible ? 16 : 0),
 					left: mTableCntRect.left + (oTable._bRtlMode && bVerticalScrollbarVisible ? 16 : 0)
 				}, sMessagePrefix + "The indicator size is stored in the drag session");
 			} else {
-				assert.ok(oEvent.isDefaultPrevented(), sMessagePrefix + "The default action was prevented");
-				assert.equal(oDragSessionData.indicatorSize, null, sMessagePrefix + "The indicator size is not stored in the drag session");
+				assert.ok(oEvent.isMarked("NonDroppable"), sMessagePrefix + "The default action was prevented");
+				assert.equal(oEvent.dragSession.getIndicatorConfig(), null, sMessagePrefix + "The indicator size is not stored in the drag session");
 			}
 		};
 
@@ -474,7 +483,9 @@ sap.ui.require([
 
 	QUnit.test("Expand rows - longdragover", function(assert) {
 		var oFakeEvent = {
-			dragSession: "not null",
+			dragSession: {
+				getDropControl: function() {}
+			},
 			target: null
 		};
 		var oToggleGroupHeaderSpy = sinon.spy(TableUtils.Grouping, "toggleGroupHeader");
@@ -500,7 +511,9 @@ sap.ui.require([
 		oToggleGroupHeaderSpy.reset();
 
 		oFakeEvent.dragSession = {
-			dropControl: oTable.getRows()[0].getCells()[1]
+			getDropControl: function() {
+				return oTable.getRows()[0].getCells()[1];
+			}
 		};
 		oFakeEvent.target = oTable.getRows()[0].getCells()[1].getDomRef();
 		this.oDragAndDropExtension._ExtensionDelegate.onlongdragover.call(oTable, oFakeEvent);
@@ -571,7 +584,7 @@ sap.ui.require([
 
 			fnOriginalDragEnterHandler.apply(oTable, arguments);
 
-			assert.ok(oEvent.isDefaultPrevented(),
+			assert.ok(oEvent.isMarked("NonDroppable"),
 				"Column " + mParams.iColumnIndex + " - " + mParams.sColumnAreaType + ": The default action was prevented");
 		};
 

@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides the base class class for all drag and drop configurations.
+// Provides the base class for all drag and drop configurations.
 sap.ui.define(['../Element', '../library', './DragAndDrop'],
 	function(Element, library /*, DragAndDrop */) {
 	"use strict";
@@ -22,7 +22,7 @@ sap.ui.define(['../Element', '../library', './DragAndDrop'],
 	 *   <li>There is no accessible alternative for drag and drop. Applications which use the drag-and-drop functionality must provide an
 	 *   accessible alternative UI (for example, action buttons or menus) to perform the same operations.</li>
 	 *   <li>A custom dragging ghost element is not possible in Internet Explorer.</li>
-	 *   <li>Transparency of the drag ghost element depends on the browser implementation.</li>
+	 *   <li>Transparency of the drag ghost element and the cursor during drag-and-drop operations depends on the browser implementation.</li>
 	 *   <li>Internet Explorer does only support plain text MIME type for the DataTransfer Object.</li>
 	 *   <li>Constraining a drag position is not possible, therefore there is no snap-to-grid or snap-to-element feature possible.</li>
 	 *   <li>For controls which do not provide an aggregation <code>dragDropConfig</code> drag and drop might not work correctly
@@ -55,7 +55,7 @@ sap.ui.define(['../Element', '../library', './DragAndDrop'],
 	/**
 	 * @abstract
 	 */
-	DragDropBase.prototype.isDroppable = function(oControl) {
+	DragDropBase.prototype.isDroppable = function(oControl, oEvent) {
 		return false;
 	};
 
