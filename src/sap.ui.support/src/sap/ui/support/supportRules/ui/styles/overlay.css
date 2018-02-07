@@ -138,3 +138,11 @@ body {
 .selectedRuleTitle {
 	height: 2rem !important;
 }
+
+.issuesSeverityIcon.sapUiIcon {
+	top: 0.2rem;
+}
+
+.sapMBarContainer.sapMBarRight > .sapMBarChild.sapMIBar > .sapUiIcon {
+	padding: 0;
+}
