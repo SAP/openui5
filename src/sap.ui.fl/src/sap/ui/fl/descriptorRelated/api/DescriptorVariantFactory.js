@@ -187,6 +187,21 @@ sap.ui.define([
 		return this._id;
 	};
 
+	/**
+	 * Set the reference of the descriptor variant
+	 *
+	 * @param {string} sReference the new reference
+	 *
+	 * @private
+	 * @sap-restricted
+	 */
+	DescriptorVariant.prototype.setReference = function(sReference) {
+		if (sReference === undefined || typeof sReference !== "string") {
+			throw new Error("No parameter sReference of type string provided");
+		}
+		this._reference = sReference;
+	};
+
 	DescriptorVariant.prototype.getReference = function() {
 		return this._reference;
 	};
@@ -332,6 +347,25 @@ sap.ui.define([
 				mDescriptorVariantJSON = JSON.parse(mDescriptorVariantJSON);
 			}
 			return Promise.resolve(new DescriptorVariant(null,mDescriptorVariantJSON,false,oSettings));
+		});
+	};
+
+	/**
+	 * Creates a descriptor variant instance from a json
+	 *
+	 * @param {object} mParameters DT content of descriptor variant
+	 *
+	 * @return {Promise} resolving the DescriptorVariant instance
+	 *
+	 * @private
+	 * @sap-restricted
+	 */
+	DescriptorVariantFactory.createFromJson = function(mParameters) {
+		if (!jQuery.isPlainObject(mParameters)) {
+			throw new Error("Parameter \"mParameters\" must be provided of type object");
+		}
+		return Settings.getInstance().then( function(oSettings){
+			return Promise.resolve(new DescriptorVariant(null,mParameters,false,oSettings));
 		});
 	};
 

@@ -58,6 +58,61 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		});
 	});
 
+	QUnit.test("createFromJson", function(assert) {
+		return DescriptorVariantFactory.createFromJson({
+			"id": "id1",
+			"reference": "base.id1",
+			"fileName": "fileName1",
+			"namespace": "namespace1",
+			"layer": "layer1",
+			"fileType": "fileType1",
+			"content": []
+		}).then(function(oVariant){
+			assert.equal(oVariant._getMap().id, "id1");
+			assert.equal(oVariant._getMap().reference, "base.id1");
+			assert.ok(!oVariant._getMap().referenceVersion);
+			assert.equal(oVariant._getMap().fileName, "fileName1");
+			assert.equal(oVariant._getMap().namespace, "namespace1");
+			assert.equal(oVariant._getMap().layer, "layer1");
+			assert.equal(oVariant._getMap().fileType, "fileType1");
+			assert.deepEqual(oVariant._getMap().content, []);
+			return DescriptorVariantFactory.createFromJson({
+				"id": "id2",
+				"reference": "base.id2",
+				"referenceVersion": "1.2",
+				"fileName": "fileName2",
+				"namespace": "namespace2",
+				"layer": "layer2",
+				"fileType": "fileType2",
+				"content": [{
+					"changeType": "changeType2",
+					"content": {}
+				}]
+			});
+		}).then(function(oVariant){
+			assert.equal(oVariant._getMap().id, "id2");
+			assert.equal(oVariant._getMap().reference, "base.id2");
+			assert.equal(oVariant._getMap().referenceVersion, "1.2");
+			assert.equal(oVariant._getMap().fileName, "fileName2");
+			assert.equal(oVariant._getMap().namespace, "namespace2");
+			assert.equal(oVariant._getMap().layer, "layer2");
+			assert.equal(oVariant._getMap().fileType, "fileType2");
+			assert.deepEqual(oVariant._getMap().content, [{
+				"changeType": "changeType2",
+				"content": {}
+			}]);
+		});
+	});
+
+	QUnit.test("createFromJson failure", function (assert) {
+		assert.throws(function(){
+			DescriptorVariantFactory.createFromJson();
+		});
+		assert.throws(function(){
+			DescriptorVariantFactory.createFromJson("string");
+		});
+	});
+
 	QUnit.test("createDescriptorInlineChange", function(assert) {
 		return DescriptorInlineChangeFactory.createDescriptorInlineChange('appdescr_ovp_addNewCard', {
 			"card" : {
@@ -669,6 +724,30 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 			"reference": "a.reference"
 		}).then(function(oDescriptorVariant){
 			assert.strictEqual(oDescriptorVariant.getId(), "a.id");
+		});
+	});
+
+	QUnit.test("setId", function(assert) {
+		return DescriptorVariantFactory.createNew({
+			"id" : "a.id",
+			"reference": "a.reference"
+		}).then(function(oDescriptorVariant){
+			assert.strictEqual(oDescriptorVariant.getReference(), "a.reference");
+			oDescriptorVariant.setReference("new.reference");
+			assert.strictEqual(oDescriptorVariant.getReference(), "new.reference");
+		});
+	});
+
+	QUnit.test("setReference failure", function (assert) {
+		return DescriptorVariantFactory.createNew({
+			"id" : "a.id",
+			"reference": "a.reference"
+		}).then(function(oDescriptorVariant){
+			assert.throws(function(){
+				oDescriptorVariant.setReference({
+					"ref" : "a.id"
+				});
+			});
 		});
 	});
 
