@@ -13,7 +13,7 @@
 				<Property Name="MiddleName" Type="Edm.String"/>
 				<Property Name="Gender" Type="Microsoft.OData.Service.Sample.TrippinInMemory.Models.PersonGender"
 						  Nullable="false"/>
-				<Property Name="Age" Type="Edm.String"/>
+				<Property Name="Age" Type="Edm.Int64"/>
 				<Property Name="Emails" Type="Collection(Edm.String)"/>
 				<Property Name="AddressInfo"
 						  Type="Collection(Microsoft.OData.Service.Sample.TrippinInMemory.Models.Location)"/>
