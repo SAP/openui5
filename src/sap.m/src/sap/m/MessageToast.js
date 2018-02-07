@@ -198,7 +198,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 			}
 		};
 
-		function hasDefaulPosition(mOptions) {
+		function hasDefaultPosition(mOptions) {
 			for (var aPositionOptions = ["my", "at", "of", "offset"], i = 0; i < aPositionOptions.length; i++) {
 				if (mOptions[aPositionOptions[i]] !== undefined) {
 					return false;
@@ -230,7 +230,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 			if (mOptions) {
 
 				// if no position options are provided
-				if (hasDefaulPosition(mOptions)) {
+				if (hasDefaultPosition(mOptions)) {
 
 					// change the default offset
 					mOptions.offset = OFFSET;
@@ -306,9 +306,8 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 		};
 
 		MessageToast._applyPosition = function(oPopup, mPosition) {
-			var mPosition = mPosition || oPopup._oPosition,
-				oMessageToastDomRef = oPopup.getContent();
-
+			mPosition = mPosition || oPopup._oPosition;
+			var oMessageToastDomRef = oPopup.getContent();
 			oPopup.setPosition(mPosition.my, mPosition.at, mPosition.of, mPosition.offset);
 			oMessageToastDomRef.style.visibility = "visible";
 		};
