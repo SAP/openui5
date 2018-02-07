@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.ToggleButton.
-sap.ui.define(['jquery.sap.global', './Button'],
-	function(jQuery, Button) {
+sap.ui.define(['jquery.sap.global', './Button', "./ToggleButtonRenderer"],
+	function(jQuery, Button, ToggleButtonRenderer) {
 	"use strict";
 
 

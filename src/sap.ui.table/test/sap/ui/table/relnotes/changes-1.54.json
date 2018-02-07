@@ -121,6 +121,12 @@
         "type": "FIX",
         "text": " Table: Selected checkbox not visible properly",
         "references": []
+      },
+      {
+        "id": "e4cc91804bb1c66b81fe964b4a4e2f655fd05f5f",
+        "type": "FIX",
+        "text": " ClientTreeBinding: selectAll + expand may result in incorrect selectedNodesCount",
+        "references": []
       }
     ]
   }

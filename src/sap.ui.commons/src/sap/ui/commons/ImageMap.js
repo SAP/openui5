@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.commons.ImageMap.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation'],
-	function(jQuery, library, Control, ItemNavigation) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/Control',
+    'sap/ui/core/delegate/ItemNavigation',
+    "./ImageMapRenderer"
+],
+	function(jQuery, library, Control, ItemNavigation, ImageMapRenderer) {
 	"use strict";
 
 

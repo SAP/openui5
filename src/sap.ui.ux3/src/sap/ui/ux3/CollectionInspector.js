@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.ux3.CollectionInspector.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation', './library'],
-	function(jQuery, Control, ItemNavigation, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/Control',
+    'sap/ui/core/delegate/ItemNavigation',
+    './library',
+    "./CollectionInspectorRenderer"
+],
+	function(jQuery, Control, ItemNavigation, library, CollectionInspectorRenderer) {
 	"use strict";
 
 

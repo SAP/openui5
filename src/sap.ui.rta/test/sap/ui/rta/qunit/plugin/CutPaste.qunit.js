@@ -47,8 +47,12 @@ function(
 
 	QUnit.test('When retrieving the context menu items', function(assert) {
 		sandbox.stub(this.CutPastePlugin, "getDesignTime").returns({
-			getSelection : function(){
-				return ['selection'];
+			getSelectionManager : function(){
+				return {
+					get: function(){
+						return ['selection'];
+					}
+				};
 			}
 		});
 

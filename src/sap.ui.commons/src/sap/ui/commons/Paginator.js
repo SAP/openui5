@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.commons.Paginator.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/Control',
+    "./PaginatorRenderer"
+],
+	function(jQuery, library, Control, PaginatorRenderer) {
 	"use strict";
 
 

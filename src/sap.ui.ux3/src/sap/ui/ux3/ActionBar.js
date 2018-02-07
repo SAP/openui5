@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.ux3.ActionBar.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation', './library'],
-	function(jQuery, Control, ItemNavigation, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/Control',
+    'sap/ui/core/delegate/ItemNavigation',
+    './library',
+    "./ActionBarRenderer"
+],
+	function(jQuery, Control, ItemNavigation, library, ActionBarRenderer) {
 	"use strict";
 
 

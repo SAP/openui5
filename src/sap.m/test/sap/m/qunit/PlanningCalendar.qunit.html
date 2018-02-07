@@ -46,6 +46,7 @@
 		jQuery.sap.require("sap.ui.unified.calendar.CalendarDate");
 		jQuery.sap.require("sap.ui.unified.DateTypeRange");
 		jQuery.sap.require("sap.ui.unified.CalendarLegend");
+		jQuery.sap.require("sap.ui.unified.CalendarLegendRenderer");
 		jQuery.sap.require("sap.m.PlanningCalendarLegend");
 		jQuery.sap.require("sap.ui.unified.CalendarAppointment");
 		jQuery.sap.require("sap.ui.unified.CalendarLegendItem");
@@ -53,6 +54,7 @@
 		var CalendarDate = sap.ui.unified.calendar.CalendarDate,
 			DateTypeRange = sap.ui.unified.DateTypeRange,
 			CalendarLegend = sap.ui.unified.CalendarLegend,
+			CalendarLegendRenderer = sap.ui.unified.CalendarLegendRenderer,
 			PlanningCalendarLegend = sap.m.PlanningCalendarLegend,
 			CalendarLegendItem = sap.ui.unified.CalendarLegendItem,
 			CalendarAppointment = sap.ui.unified.CalendarAppointment,
@@ -1762,6 +1764,47 @@
 			oPC.destroy();
 		});
 
+		QUnit.test("Sticky header", function () {
+			// arrange
+			var oInfoToolbar,
+				oToolbar,
+				oPC = createPlanningCalendar(
+					"invalidationExample",
+					new sap.m.SearchField(),
+					new sap.m.Button(),
+					new Date(Date.UTC(2015, 0, 7)),
+					CalendarIntervalType.Week
+				);
+
+			// act
+			oPC.placeAt("uiArea2");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.ok(!oPC.$("InfoToolbar").hasClass("sapMPlanCalStickyHeader"), "sticky class shouldn't be set on the info bar");
+			assert.ok(!oPC.$("Toolbar").hasClass("sapMPlanCalStickyHeader"), "sticky class shouldn't be set on the toolbar");
+
+			// act
+			oPC.setStickyHeader(true);
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.ok(oPC.$("InfoToolbar").hasClass("sapMPlanCalStickyHeader"), "sticky class should be set on the info bar");
+			assert.ok(oPC.$("Toolbar").hasClass("sapMPlanCalStickyHeader"), "sticky class should be set on the toolbar");
+
+			// act
+			oPC.setStickyHeader(false);
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.ok(!oPC.$("InfoToolbar").hasClass("sapMPlanCalStickyHeader"), "sticky class shouldn't be set on the info bar");
+			assert.ok(!oPC.$("Toolbar").hasClass("sapMPlanCalStickyHeader"), "sticky class shouldn't be set on the toolbar");
+
+			// cleanup
+			oPC.destroy();
+		});
+
+
 		QUnit.module("NonWorking Special Dates", {
 			beforeEach: function() {
 				this.oPC = createPlanningCalendar("PCNonWorking", new sap.m.SearchField(), new sap.m.Button()),
@@ -2972,6 +3015,18 @@
 			assert.ok(this.oPCInterval.$().hasClass("sapUiCalOneMonthInt"), "sapUiCalOneMonthInt is rendered");
 		});
 
+		QUnit.test("Has sticky header on big size", function () {
+
+			//act
+			_switchToView.call(this, CalendarIntervalType.Month, this.oPC);
+			this.oPC.setStickyHeader(true);
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.ok(this.oPC.$("InfoToolbar").hasClass("sapMPlanCalStickyHeader"), "sticky class should be set on the info bar");
+			assert.ok(this.oPC.$("Toolbar").hasClass("sapMPlanCalStickyHeader"), "sticky class should be set on the toolbar");
+		});
+
 		QUnit.module("OneMonth view (size S)", {
 			beforeEach: function () {
 				this._simulateMobileEnvironment();
@@ -3211,6 +3266,18 @@
 			oSelectedAppointment = undefined;
 		});
 
+		QUnit.test("No sticky header on phone size", function () {
+			//arrange
+			this._createCalendar();
+
+			//act
+			this._oPC.setStickyHeader(true);
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.ok(!this._oPC.$("InfoToolbar").hasClass("sapMPlanCalStickyHeader"), "sticky class shouldn't be set on the info bar");
+			assert.ok(!this._oPC.$("Toolbar").hasClass("sapMPlanCalStickyHeader"), "sticky class shouldn't be set on the toolbar");
+		});
 
 		QUnit.module("ARIA", {
 			beforeEach: function() {
@@ -3335,7 +3402,7 @@
 
 				this.assertAppointmentsWithoutConnectedLegendHaveDefaultAriaLabelledBy = function(aAppointmentsWithoutLegend, sMsgPref) {
 					aAppointmentsWithoutLegend.forEach(function (oApp) {
-						var sBuiltInTypeText = CalendarLegend.typeARIATexts[oApp.getType()].getText(),
+						var sBuiltInTypeText = CalendarLegendRenderer.typeARIATexts[oApp.getType()].getText(),
 							sAriaLabelledByText = oApp.$().find(".sapUiInvisibleText").text();
 
 						assert.ok(sAriaLabelledByText.indexOf(sBuiltInTypeText) >= 0, sMsgPref +
@@ -3382,7 +3449,7 @@
 
 						sAriaDescribedBy = $specialDate.attr("aria-describedby");
 
-						assert.ok(sAriaDescribedBy && sAriaDescribedBy.indexOf(CalendarLegend.typeARIATexts[oSpecialDate.getType()].getId()) >= 0,
+						assert.ok(sAriaDescribedBy && sAriaDescribedBy.indexOf(CalendarLegendRenderer.typeARIATexts[oSpecialDate.getType()].getId()) >= 0,
 							sMsgPref + ": Special date " + sSpecialDate + " of type CalendarDayType." + oSpecialDate.getType() +
 							" should be describedBy built-in text for this type. Current aria-describedby: " + sAriaDescribedBy);
 					});

@@ -21,11 +21,12 @@
 				<Property Name="Property01" Type="Edm.String"
 					Nullable="false" MaxLength="10" sap:display-format="UpperCase"
 					sap:label="Entity1-Property01-Label" sap:heading="Entity1-Property01-Heading"
-					sap:quickinfo="Entity1-Property01-QuickInfo" sap:creatable="false"
+					sap:creatable="false"
+					sap:quickinfo="sap:quickinfo will be overwritten by annotation based quickinfo"
 					sap:updatable="false" sap:sortable="false" />
 				<Property Name="Property02" Type="Edm.String"
 					Nullable="false" MaxLength="10" sap:display-format="UpperCase"
-					sap:label="Entity1-Property02-Label" sap:heading="Entity1-Property02-Heading"
+					sap:label="Entity1-Property02-Label will be overwritten by annotation based label" sap:heading="Entity1-Property02-Heading"
 					sap:quickinfo="Entity1-Property02-QuickInfo" sap:creatable="false"
 					sap:updatable="false" sap:sortable="false" />
 				<Property Name="Property03" Type="Edm.String"
@@ -43,11 +44,11 @@
 					sap:creatable="false" sap:sortable="false" />
 				<Property Name="Property06" Type="Edm.String"
 					Nullable="false" MaxLength="25"
-					sap:label="Entity1-Property06-Unbound" sap:quickinfo="Unbound Property"
+					sap:label="Entity1-Property06-Unbound" sap:quickinfo="Unbound Property6"
 					sap:creatable="false" sap:sortable="false" />
 				<Property Name="Property07" Type="Edm.String"
 					Nullable="false" MaxLength="25"
-					sap:label="Entity1-Property07-ignored-unbound" sap:quickinfo="Unbound Property"
+					sap:label="Entity1-Property07-ignored-unbound" sap:quickinfo="Unbound Property7"
 					sap:creatable="false" sap:sortable="false" />
 				<Property Name="Property08" Type="Edm.String"
 					Nullable="false" MaxLength="25" sap:quickinfo="Property without sap:label"
@@ -318,6 +319,21 @@
 			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="AdditionalElementsTest.EntityType01/EntityType01_TechnicalInvisibleProperty">
 				<Annotation Term="com.sap.vocabularies.Common.v1.FieldControl">
 					<EnumMember>com.sap.vocabularies.Common.v1.FieldControlType/Hidden</EnumMember>
+				</Annotation>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="AdditionalElementsTest.EntityType01/Property01">
+				<Annotation Term="com.sap.vocabularies.Common.v1.QuickInfo">
+					<String>EntityType01/Property01 Quickinfo (from annotation)</String>
+				</Annotation>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="AdditionalElementsTest.EntityType01/Property02">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label">
+					<String>Entity1-Property02-Label (from annotation)</String>
+				</Annotation>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="AdditionalElementsTest.EntityType02/EntityType02_Property03">
+				<Annotation Term="com.sap.vocabularies.Common.v1.QuickInfo">
+					<String>Entity2-EntityType02_Property03-QuickInfo (from annotation)</String>
 				</Annotation>
 			</Annotations>
 		</Schema>

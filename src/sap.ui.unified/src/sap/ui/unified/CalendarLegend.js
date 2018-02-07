@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.unified.CalendarLegend.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/Device', 'sap/ui/core/InvisibleText'],
-	function(jQuery, Control, library, Device, InvisibleText) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/Device'],
+	function(jQuery, Control, library, Device) {
 	"use strict";
 
 	// shortcut for sap.ui.unified.CalendarDayType
@@ -218,32 +218,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		}
 
 		return Object.keys(oFreeTypes);
-	};
-
-	CalendarLegend.typeARIATexts = {};
-
-	/**
-	 * Creates and returns an invisible static label containing the translated type of the text.
-	 * @param {string} sType A string in the same format as sap.ui.unified.CalendarDayType entries
-	 * @returns {sap.ui.core.InvisibleText} An invisible static label containing the translated type of the text
-	 * @private
-	 */
-	CalendarLegend.getTypeAriaText = function(sType) {
-		var rb,
-			sText;
-
-		if (sType.indexOf("Type") !== 0) {
-			return;
-		}
-
-		if (!CalendarLegend.typeARIATexts[sType]) {
-			rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
-			sText = rb.getText("LEGEND_UNNAMED_TYPE", parseInt(sType.slice(4), 10).toString());
-			CalendarLegend.typeARIATexts[sType] = new InvisibleText({ text: sText });
-			CalendarLegend.typeARIATexts[sType].toStatic();
-		}
-
-		return CalendarLegend.typeARIATexts[sType];
 	};
 
 	return CalendarLegend;

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/unified/CalendarLegend'],
-	function(CalendarLegend) {
+sap.ui.define(['sap/ui/core/InvisibleText'],
+	function(InvisibleText) {
 	"use strict";
 
 	/**
@@ -179,13 +179,39 @@ sap.ui.define(['sap/ui/unified/CalendarLegend'],
 			mAccProps["label"] = mAccProps["label"] ? mAccProps["label"] + "; " + sTypeLabelText : sTypeLabelText;
 		} else {
 			//use static invisible labels - "Type 1", "Type 2"
-			oStaticLabel = CalendarLegend.getTypeAriaText(sType);
+			oStaticLabel = CalendarLegendRenderer.getTypeAriaText(sType);
 			if (oStaticLabel) {
 				mAccProps["describedby"] = mAccProps["describedby"] ? mAccProps["describedby"] + " " + oStaticLabel.getId() : oStaticLabel.getId();
 			}
 		}
 	};
 
-		return CalendarLegendRenderer;
+	CalendarLegendRenderer.typeARIATexts = {};
+
+	/**
+	 * Creates and returns an invisible static label containing the translated type of the text.
+	 * @param {string} sType A string in the same format as sap.ui.unified.CalendarDayType entries
+	 * @returns {sap.ui.core.InvisibleText} An invisible static label containing the translated type of the text
+	 * @private
+	 */
+	CalendarLegendRenderer.getTypeAriaText = function(sType) {
+		var rb,
+			sText;
+
+		if (sType.indexOf("Type") !== 0) {
+			return;
+		}
+
+		if (!CalendarLegendRenderer.typeARIATexts[sType]) {
+			rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+			sText = rb.getText("LEGEND_UNNAMED_TYPE", parseInt(sType.slice(4), 10).toString());
+			CalendarLegendRenderer.typeARIATexts[sType] = new InvisibleText({ text: sText });
+			CalendarLegendRenderer.typeARIATexts[sType].toStatic();
+		}
+
+		return CalendarLegendRenderer.typeARIATexts[sType];
+	};
+
+	return CalendarLegendRenderer;
 
 }, /* bExport= */ true);

@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.ux3.Shell.
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Menu', 'sap/ui/core/Control', 'sap/ui/core/theming/Parameters', './library'],
-	function(jQuery, Menu, Control, Parameters, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/commons/Menu',
+    'sap/ui/core/Control',
+    'sap/ui/core/theming/Parameters',
+    './library',
+    "./ShellRenderer"
+],
+	function(jQuery, Menu, Control, Parameters, library, ShellRenderer) {
 	"use strict";
 
 

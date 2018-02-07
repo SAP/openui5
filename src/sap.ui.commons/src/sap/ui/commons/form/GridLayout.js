@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.commons.form.GridLayout.
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/layout/form/GridLayout'],
-	function(jQuery, library, GridLayout1) {
+sap.ui.define([
+ 'jquery.sap.global',
+ 'sap/ui/commons/library',
+ 'sap/ui/layout/form/GridLayout',
+ "./GridLayoutRenderer"
+],
+	function(jQuery, library, GridLayout1, GridLayoutRenderer) {
 	"use strict";
 
 

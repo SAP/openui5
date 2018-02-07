@@ -138,8 +138,12 @@ function(
 		QUnit.test("when using common methods of the plugin", function (assert) {
 			var aSelection = ["selection1"];
 			sandbox.stub(this.oPlugin, "getDesignTime").returns({
-				getSelection : function(){
-					return aSelection;
+				getSelectionManager : function(){
+					return {
+						get: function(){
+							return aSelection;
+						}
+					};
 				}
 			});
 			assert.equal(this.oPlugin.isMultiSelectionInactive(), true, "calling 'isMultiSelectionInactive' for a single selection returns true");

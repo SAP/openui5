@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ListItemBase.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Icon', 'sap/m/Button', 'sap/ui/model/BindingMode', 'sap/ui/Device', 'jquery.sap.keycodes'],
-	function(jQuery, library, Control, IconPool, Icon, Button, BindingMode, Device) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Icon', 'sap/m/Button', 'sap/ui/model/BindingMode', 'sap/ui/Device', 'sap/m/CheckBox', 'jquery.sap.keycodes'],
+	function(jQuery, library, Control, IconPool, Icon, Button, BindingMode, Device, CheckBox) {
 	"use strict";
 
 
@@ -527,7 +527,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return this._oMultiSelectControl;
 		}
 
-		this._oMultiSelectControl = new sap.m.CheckBox({
+		this._oMultiSelectControl = new CheckBox({
 			id : this.getId() + "-selectMulti",
 			activeHandling : false,
 			selected : this.getSelected()

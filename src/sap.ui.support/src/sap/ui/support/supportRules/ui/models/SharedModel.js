@@ -88,7 +88,8 @@ sap.ui.define([
 		issuesCount: 0,
 		visibleRowCount: 5,
 		supportAssistantOrigin: "",
-		supportAssistantVersion: ""
+		supportAssistantVersion: "",
+		initialRulesLoading: true
 	});
 
 	return model;

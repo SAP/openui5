@@ -25,6 +25,12 @@
         "type": "FIX",
         "text": " sap.tnt.ToolPage: correct header DOM structure",
         "references": []
+      },
+      {
+        "id": "cf137de19a839e809bf656d6fcf51af6355cce88",
+        "type": "FEATURE",
+        "text": " sap.tnt.InfoLabel: control implemented",
+        "references": []
       }
     ]
   }

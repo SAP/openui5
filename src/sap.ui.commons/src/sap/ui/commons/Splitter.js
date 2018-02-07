@@ -3,8 +3,26 @@
  */
 
 // Provides control sap.ui.commons.Splitter.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/Popup', 'sap/ui/core/ResizeHandler', 'sap/ui/core/delegate/ItemNavigation', 'jquery.sap.events', 'jquery.sap.keycodes'],
-	function(jQuery, library, Control, Popup, ResizeHandler, ItemNavigation/* , jQuerySap, jQuerySap1 */) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/Control',
+    'sap/ui/core/Popup',
+    'sap/ui/core/ResizeHandler',
+    'sap/ui/core/delegate/ItemNavigation',
+    "./SplitterRenderer",
+    'jquery.sap.events',
+    'jquery.sap.keycodes'
+],
+	function(
+	    jQuery,
+		library,
+		Control,
+		Popup,
+		ResizeHandler,
+		ItemNavigation/* , jQuerySap, jQuerySap1 */,
+		SplitterRenderer
+	) {
 	"use strict";
 
 

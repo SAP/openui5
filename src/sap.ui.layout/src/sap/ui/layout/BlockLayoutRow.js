@@ -6,8 +6,14 @@
   * @typedef {Object} sap.ui.layout.BlockRowColorSets
   * @typedef {Object} sap.ui.layout.BlockLayoutRow
   */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/layout/BlockLayoutCellData'],
-	function(jQuery, Control, library, BlockLayoutCellData) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/Control',
+    './library',
+    'sap/ui/layout/BlockLayoutCellData',
+    "./BlockLayoutRowRenderer"
+],
+	function(jQuery, Control, library, BlockLayoutCellData, BlockLayoutRowRenderer) {
 		"use strict";
 
 		// shortcut for sap.ui.layout.BlockBackgroundType

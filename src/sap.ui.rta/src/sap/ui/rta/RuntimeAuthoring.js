@@ -685,7 +685,7 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.prototype.getSelection = function() {
 		if (this._oDesignTime) {
-			return this._oDesignTime.getSelection();
+			return this._oDesignTime.getSelectionManager().get();
 		} else {
 			return [];
 		}
@@ -1067,30 +1067,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks whether the two parent information maps are equal.
-	 *
-	 * @param {Object}
-	 *          oInfo1 First map of information
-	 * @param {Object}
-	 *          oInfo2 Second map of information
-	 * @return {boolean} Returns true if they are equal, false otherwise
-	 * @private
-	 */
-	RuntimeAuthoring.prototype._isEqualParentInfo = function(oInfo1, oInfo2) {
-		var oResult = !!oInfo1 && !!oInfo2;
-		if (oResult && (oInfo1.parent && oInfo2.parent)) {
-			oResult = oInfo1.parent.getId() === oInfo2.parent.getId();
-		}
-		if (oResult && (oInfo1.index || oInfo2.index)) {
-			oResult = oInfo1.index === oInfo2.index;
-		}
-		if (oResult && (oInfo1.aggregation || oInfo2.aggregation)) {
-			oResult = oInfo1.aggregation === oInfo2.aggregation;
-		}
-		return oResult;
-	};
-
-	/**
 	 * Function to automatically start the rename plugin on a container when it gets created
 	 * @param {object} vAction       The create action from designtime metadata
 	 * @param {string} sNewControlID The id of the newly created container
@@ -1178,22 +1154,6 @@ sap.ui.define([
 		if (this.getPlugins()["cutPaste"]){
 			this.getPlugins()["cutPaste"].stopCutAndPaste();
 		}
-	};
-
-	/**
-	 * Get the Title of the Application from the manifest.json
-	 *
-	 * @private
-	 * @returns {String} the application title or empty string
-	 */
-	RuntimeAuthoring.prototype._getApplicationTitle = function() {
-
-		var sTitle = "";
-		var oComponent = sap.ui.core.Component.getOwnerComponentFor(this._oRootControl);
-		if (oComponent) {
-			sTitle = oComponent.getMetadata().getManifestEntry("sap.app").title;
-		}
-		return sTitle;
 	};
 
 	/**

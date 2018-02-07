@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.Panel.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', "./PanelRenderer"],
+	function(jQuery, library, Control, PanelRenderer) {
 	"use strict";
 
 

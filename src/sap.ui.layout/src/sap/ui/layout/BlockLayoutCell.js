@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Control', './library'],
-	function(Control, library) {
+sap.ui.define(['sap/ui/core/Control', './library', "./BlockLayoutCellRenderer"],
+	function(Control, library, BlockLayoutCellRenderer) {
 		"use strict";
 
 		/**

@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.commons.layout.BorderLayout.
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/commons/library',
+    'sap/ui/core/Control',
+    "./BorderLayoutRenderer"
+],
+	function(jQuery, library, Control, BorderLayoutRenderer) {
 	"use strict";
 
 

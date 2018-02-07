@@ -2,12 +2,40 @@
  * ${copyright}
  */
 
-sap.ui.define(["./WizardProgressNavigator"], function (WizardProgressNavigator) {
+sap.ui.define([], function () {
 	"use strict";
 
-	var CLASSES = WizardProgressNavigator.CLASSES,
-		ATTRIBUTES = WizardProgressNavigator.ATTRIBUTES,
-		WizardProgressNavigatorRenderer = {},
+	var CLASSES = {
+		NAVIGATION: "sapMWizardProgressNav",
+		LIST: "sapMWizardProgressNavList",
+		LIST_VARYING: "sapMWizardProgressNavListVarying",
+		LIST_NO_TITLES: "sapMWizardProgressNavListNoTitles",
+		STEP: "sapMWizardProgressNavStep",
+		ANCHOR: "sapMWizardProgressNavAnchor",
+		ANCHOR_CIRCLE: "sapMWizardProgressNavAnchorCircle",
+		ANCHOR_TITLE: "sapMWizardProgressNavAnchorTitle",
+		ANCHOR_TITLE_OPTIONAL_TITLE: "sapMWizardProgressNavAnchorTitleOptional",
+		ANCHOR_TITLE_OPTIONAL_LABEL: "sapMWizardProgressNavAnchorLabelOptional",
+		ANCHOR_ICON: "sapMWizardProgressNavAnchorIcon",
+		ANCHOR_TITLE_CONTAINER: "sapMWizardProgressNavAnchorTitleContainer"
+	};
+
+	var ATTRIBUTES = {
+		STEP: "data-sap-ui-wpn-step",
+		STEP_COUNT: "data-sap-ui-wpn-step-count",
+		CURRENT_STEP: "data-sap-ui-wpn-step-current",
+		ACTIVE_STEP: "data-sap-ui-wpn-step-active",
+		OPEN_STEP: "data-sap-ui-wpn-step-open",
+		OPEN_STEP_PREV: "data-sap-ui-wpn-step-open-prev",
+		OPEN_STEP_NEXT: "data-sap-ui-wpn-step-open-next",
+		ARIA_LABEL: "aria-label",
+		ARIA_DISABLED: "aria-disabled"
+	};
+
+	var WizardProgressNavigatorRenderer = {
+			CLASSES: CLASSES,
+			ATTRIBUTES: ATTRIBUTES
+		},
 		oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 	WizardProgressNavigatorRenderer.render = function (oRm, oControl) {

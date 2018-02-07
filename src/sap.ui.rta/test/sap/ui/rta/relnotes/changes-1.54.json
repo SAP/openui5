@@ -223,6 +223,30 @@
         "type": "FIX",
         "text": ": PopupManager test fix when document doesn\u0027t have focus",
         "references": []
+      },
+      {
+        "id": "fa513022b2647b43e2eed9c88ee13b8a60b70323",
+        "type": "FEATURE",
+        "text": " sap.ui.rta: Refactoring the unsaved changes which are booked",
+        "references": []
+      },
+      {
+        "id": "9c0243bae76c0be70cd7feaa90a6f04d28622c9a",
+        "type": "FIX",
+        "text": " Fixing the backend call \u0027Manifest supported\u0027 runtime in order to",
+        "references": []
+      },
+      {
+        "id": "6d5cd2af90f83af669a07d34c2fe694938d7c245",
+        "type": "FIX",
+        "text": " sap.ui.rta - contextMenu voter problem",
+        "references": []
+      },
+      {
+        "id": "3e4fc2be35157cb9e30ae7b7f5d5b051d7f9d54f",
+        "type": "FIX",
+        "text": ": DT - New Selection API",
+        "references": []
       }
     ]
   }

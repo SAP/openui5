@@ -517,8 +517,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 
 			//extract property
 			sPath = aParts[0].replace(/^\/|\/$/g, "");
-			sPropertyPath = sPath.substr(sPath.indexOf('/') + 1);
-			oProperty = this._getPropertyMetadata(oEntityType,sPropertyPath);
+			sPropertyPath = sPath;
+			while (!oProperty && sPropertyPath.indexOf("/") > 0) {
+				sPropertyPath = sPropertyPath.substr(sPropertyPath.indexOf('/') + 1);
+				oProperty = this._getPropertyMetadata(oEntityType, sPropertyPath);
+			}
 
 			jQuery.sap.assert(oProperty, sPropertyPath + " is not a valid property path");
 			if (!oProperty) {

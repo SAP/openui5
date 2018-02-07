@@ -3,8 +3,32 @@
  */
 
 // Provides control sap.ui.ux3.Exact.
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Menu', 'sap/ui/commons/SearchField', 'sap/ui/commons/TextView', 'sap/ui/core/Control', './ExactArea', './ExactAttribute', './ExactBrowser', './library'],
-	function(jQuery, Button, Menu, SearchField, TextView, Control, ExactArea, ExactAttribute, ExactBrowser, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/commons/Button',
+    'sap/ui/commons/Menu',
+    'sap/ui/commons/SearchField',
+    'sap/ui/commons/TextView',
+    'sap/ui/core/Control',
+    './ExactArea',
+    './ExactAttribute',
+    './ExactBrowser',
+    './library',
+    "./ExactRenderer"
+],
+	function(
+	    jQuery,
+		Button,
+		Menu,
+		SearchField,
+		TextView,
+		Control,
+		ExactArea,
+		ExactAttribute,
+		ExactBrowser,
+		library,
+		ExactRenderer
+	) {
 	"use strict";
 
 

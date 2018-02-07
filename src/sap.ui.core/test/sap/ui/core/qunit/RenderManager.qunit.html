@@ -789,6 +789,50 @@
 			jQuery.sap.log.error.restore();
 
 		});
+
+		sap.ui.require(["sap/ui/core/RenderManager"], function(RenderManager) {
+			QUnit.module("Events", {
+				beforeEach: function() {
+					this.oElement = document.createElement("div");
+					this.oSpy = sinon.spy();
+					this.oContext = {};
+				},
+				afterEach: function() {
+					RenderManager.detachPreserveContent(this.oSpy);
+				}
+			});
+
+			QUnit.test("preserveContent", function(assert) {
+				RenderManager.attachPreserveContent(this.oSpy);
+				RenderManager.preserveContent(this.oElement);
+				sinon.assert.calledOnce(this.oSpy);
+				sinon.assert.calledWith(this.oSpy, {domNode: this.oElement});
+				sinon.assert.calledOn(this.oSpy, RenderManager);
+				this.oSpy.reset();
+
+				RenderManager.detachPreserveContent(this.oSpy);
+				RenderManager.preserveContent(this.oElement);
+				sinon.assert.notCalled(this.oSpy);
+			});
+			QUnit.test("preserveContent with context", function(assert) {
+				RenderManager.attachPreserveContent(this.oSpy, this.oContext);
+				RenderManager.preserveContent(this.oElement);
+				sinon.assert.calledOnce(this.oSpy);
+				sinon.assert.calledWith(this.oSpy, {domNode: this.oElement});
+				sinon.assert.calledOn(this.oSpy, this.oContext);
+			});
+			QUnit.test("preserveContent duplicate listener", function(assert) {
+				RenderManager.attachPreserveContent(this.oSpy);
+				RenderManager.preserveContent(this.oElement);
+				sinon.assert.calledOnce(this.oSpy);
+				this.oSpy.reset();
+
+				RenderManager.attachPreserveContent(this.oSpy, this.oContext);
+				RenderManager.preserveContent(this.oElement);
+				sinon.assert.calledOnce(this.oSpy);
+				sinon.assert.calledOn(this.oSpy, this.oContext);
+			});
+		});
 	</script>
 
 </head>

@@ -138,7 +138,7 @@
 	 * Callback for performance measurement.
 	 *
 	 * When set, it must be an object with methods <code>start</code> and <code>end</code>.
-	 * @type {{start:function(string,...},end:function(string)}}
+	 * @type {{start:function(string,any),end:function(string)}}
 	 * @private
 	 */
 	var measure;
@@ -224,7 +224,7 @@
 	 * </ul>
 	 *
 	 * @see config method
-	 * @type {Object.<string,{amd:boolean,exports:string|string[],deps:string[]}>}
+	 * @type {Object.<string,{amd:boolean,exports:(string|string[]),deps:string[]}>}
 	 * @private
 	 */
 		mShims = Object.create(null),

@@ -133,6 +133,30 @@
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: Years in Compact mode are now visible and selectable",
         "references": []
+      },
+      {
+        "id": "83ba855c769fc64916d23fb02891235335a1b774",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Now appointments could be custom sorted",
+        "references": []
+      },
+      {
+        "id": "4e0f59534549f6de426a5e8b57973e7dbeb402f2",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.CalendarLegend: standardItems introduced.",
+        "references": []
+      },
+      {
+        "id": "e799159db6a73916fda16412f11039428b06c87d",
+        "type": "FIX",
+        "text": " sap.ui.unified.Currency: align currency labels properly",
+        "references": []
+      },
+      {
+        "id": "c023ce7cb6ea3a834a9435bce4b956b6a011a407",
+        "type": "FIX",
+        "text": " unified.CalendarRow and testsuite: Fixed broken Unit Tests",
+        "references": []
       }
     ]
   }

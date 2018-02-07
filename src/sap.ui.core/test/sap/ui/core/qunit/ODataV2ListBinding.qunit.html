@@ -29,12 +29,6 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 	var sURI = "http://services.odata.org/V3/Northwind/Northwind.svc/";
 		sURI = "../../../../../proxy/http/" + sURI.replace("http://","");
 
-	// create a dummy AMD fdefine to check if shim works for datajs
-	window.define = function() {
-		throw Error("define should not be called");
-	};
-	window.define.amd = { vendor : "SAPUI5 QUnit Test" };
-
 	function removeSharedMetadata() {
 		var sServiceURI = sURI.replace(/\/$/, "");
 		if (sap.ui.model.odata.v2.ODataModel.mServiceData

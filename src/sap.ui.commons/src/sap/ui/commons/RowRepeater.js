@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.commons.RowRepeater.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/Control',
+    "./RowRepeaterRenderer"
+],
+	function(jQuery, library, Control, RowRepeaterRenderer) {
 	"use strict";
 
 

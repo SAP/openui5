@@ -5,8 +5,9 @@
 // Provides control sap.ui.layout.form.ResponsiveGridLayout.
 sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridData',
                './Form', './FormContainer', './FormElement', './FormLayout',
-               'sap/ui/layout/library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler'],
-	function(jQuery, Grid, GridData, Form, FormContainer, FormElement, FormLayout, library, Control, ResizeHandler) {
+               'sap/ui/layout/library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', './ResponsiveGridLayoutRenderer'],
+	function(jQuery, Grid, GridData, Form, FormContainer, FormElement, FormLayout,
+	         library, Control, ResizeHandler, ResponsiveGridLayoutRenderer) {
 	"use strict";
 
 	/**

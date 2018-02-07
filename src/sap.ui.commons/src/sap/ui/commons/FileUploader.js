@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.commons.FileUploader.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/unified/FileUploader'],
-	function(jQuery, library, UnifiedFileUploader) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/unified/FileUploader',
+    "./FileUploaderRenderer"
+],
+	function(jQuery, library, UnifiedFileUploader, FileUploaderRenderer) {
 	"use strict";
 
 	/**

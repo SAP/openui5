@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.commons.ResponsiveContainer.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler'],
-	function(jQuery, library, Control, ResizeHandler) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/Control',
+    'sap/ui/core/ResizeHandler',
+    "./ResponsiveContainerRenderer"
+],
+	function(jQuery, library, Control, ResizeHandler, ResponsiveContainerRenderer) {
 	"use strict";
 
 

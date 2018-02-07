@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"jquery.sap.global",
-	"sap/ui/core/mvc/Controller",
+	"sap/ui/support/supportRules/ui/controllers/BaseController",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/support/supportRules/WindowCommunicationBus",
 	"sap/ui/support/supportRules/ui/models/SharedModel",
@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/support/supportRules/ui/models/formatter",
 	"sap/ui/support/supportRules/Constants",
 	"sap/m/OverflowToolbarAssociativePopoverControls"
-], function ($, Controller, JSONModel, CommunicationBus, SharedModel, ElementTree, IssueManager, channelNames, formatter, constants, OverflowToolbarAssociativePopoverControls) {
+], function ($, BaseController, JSONModel, CommunicationBus, SharedModel, ElementTree, IssueManager, channelNames, formatter, constants, OverflowToolbarAssociativePopoverControls) {
 	"use strict";
 
 	var mIssueSettings = {
@@ -26,7 +26,7 @@ sap.ui.define([
 		}
 	};
 
-	return Controller.extend("sap.ui.support.supportRules.ui.controllers.Issues", {
+	return BaseController.extend("sap.ui.support.supportRules.ui.controllers.Issues", {
 		ISSUES_LIMIT : 1000,
 		formatter: formatter,
 		onInit: function () {

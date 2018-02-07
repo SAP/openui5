@@ -33,10 +33,10 @@ function(
 			library: "sap.ui.dt",
 			properties: {
 				"scrollTop": {
-					type: "int"
+					type: "float"	// replaced 'int' with 'float'. In some special cases (chrome on a retina mac) jquery returns a float value instead of int
 				},
 				"scrollLeft": {
-					type: "int"
+					type: "float"	// replaced 'int' with 'float'. In some special cases (chrome on a retina mac) jquery returns a float value instead of int
 				},
 				"targets": {
 					type: "any[]",

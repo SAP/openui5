@@ -62,6 +62,7 @@
 		jQuery.sap.require("sap.ui.unified.CalendarLegendRenderer");
 
 		var CalendarLegend = sap.ui.unified.CalendarLegend,
+			CalendarLegendRenderer = sap.ui.unified.CalendarLegendRenderer,
 			CalendarLegendItem = sap.ui.unified.CalendarLegendItem,
 			StandardCalendarLegendItem = sap.ui.unified.StandardCalendarLegendItem,
 			CalendarDayType = sap.ui.unified.CalendarDayType,
@@ -345,10 +346,10 @@
 		});
 
 		QUnit.test("getTypeAriaText", function (assert) {
-			var oInvisibleText = CalendarLegend.getTypeAriaText("Type03");
+			var oInvisibleText = CalendarLegendRenderer.getTypeAriaText("Type03");
 
 			assert.ok(oInvisibleText, "there is a label created");
-			assert.equal(CalendarLegend.getTypeAriaText("Type03").getId(), oInvisibleText.getId(), "the label is static");
+			assert.equal(CalendarLegendRenderer.getTypeAriaText("Type03").getId(), oInvisibleText.getId(), "the label is static");
 			assert.ok(oInvisibleText.getDomRef(), "the label is in the dom");
 		});
 
@@ -384,7 +385,7 @@
 			sap.ui.unified.CalendarLegendRenderer.addCalendarTypeAccInfo(mAccProps, CalendarDayType.Type03, oLegendType01Type02);
 			//Assert
 			assert.equal(mAccProps["label"], undefined, "When the given type does not match legend item's, type 'label' is correct");
-			assert.equal(mAccProps["describedby"], CalendarLegend.getTypeAriaText(CalendarDayType.Type03).getId(),
+			assert.equal(mAccProps["describedby"], CalendarLegendRenderer.getTypeAriaText(CalendarDayType.Type03).getId(),
 				"When the given type does not match legend item's type, 'describedby' is correct");
 
 		})

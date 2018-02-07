@@ -97,6 +97,42 @@
         "type": "FEATURE",
         "text": " Adding new group \"DIALOG\" to designtime metadata tests",
         "references": []
+      },
+      {
+        "id": "8506ead7fda26a47539883ec96d4a2a3ef36fa60",
+        "type": "FIX",
+        "text": " sap.ui.dt - Mutation Observer QUnit test reformulation",
+        "references": []
+      },
+      {
+        "id": "f02530fb1e8cfc4076d1cbf838bea861a03a4570",
+        "type": "FIX",
+        "text": " sap.ui.dt - Test fixes after DT refactoring",
+        "references": []
+      },
+      {
+        "id": "08b7249b3cb7297bda020e8be418c826cf5b9842",
+        "type": "FIX",
+        "text": " sap.ui.dt - Visibility check of Overlay",
+        "references": []
+      },
+      {
+        "id": "6d5cd2af90f83af669a07d34c2fe694938d7c245",
+        "type": "FIX",
+        "text": " sap.ui.rta - contextMenu voter problem",
+        "references": []
+      },
+      {
+        "id": "3e4fc2be35157cb9e30ae7b7f5d5b051d7f9d54f",
+        "type": "FIX",
+        "text": ": DT - New Selection API",
+        "references": []
+      },
+      {
+        "id": "03928b0dc95e0ac26812ceff48ad1ffa26efbdfd",
+        "type": "FIX",
+        "text": "sap.ui.dt - ElementOverlayRTL test fix for IE + Edge",
+        "references": []
       }
     ]
   }

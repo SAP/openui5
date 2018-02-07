@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.commons.layout.AbsoluteLayout.
-sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/library', 'sap/ui/core/Control'],
-	function(jQuery, PositionContainer, library, Control) {
+sap.ui.define([
+    'jquery.sap.global',
+    './PositionContainer',
+    'sap/ui/commons/library',
+    'sap/ui/core/Control',
+    "./AbsoluteLayoutRenderer"
+],
+	function(jQuery, PositionContainer, library, Control, AbsoluteLayoutRenderer) {
 	"use strict";
 
 

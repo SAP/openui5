@@ -565,6 +565,108 @@
         "type": "FIX",
         "text": " typo for available",
         "references": []
+      },
+      {
+        "id": "92cd92161b61fb539f542060379dad0a5c5d3d74",
+        "type": "FEATURE",
+        "text": " ComponentContainer: introduce manifest property",
+        "references": []
+      },
+      {
+        "id": "8472aad0e671504fd42d096fe5a2b7d67d730f86",
+        "type": "FEATURE",
+        "text": " Core: added config option to specify init module",
+        "references": []
+      },
+      {
+        "id": "539d6f286ae0113473aafff560b71581657acfe8",
+        "type": "FEATURE",
+        "text": " NumberFormat: UOM created Unit type",
+        "references": []
+      },
+      {
+        "id": "e4cc91804bb1c66b81fe964b4a4e2f655fd05f5f",
+        "type": "FIX",
+        "text": " ClientTreeBinding: selectAll + expand may result in incorrect selectedNodesCount",
+        "references": []
+      },
+      {
+        "id": "a406c26852f515c782fa821c2fcf12cc0a0d9f3e",
+        "type": "FIX",
+        "text": " Configuration#setRTL: do not avoid flash of unstyled content",
+        "references": []
+      },
+      {
+        "id": "f54aee7703dc6d7d64792cc38071872ee2389353",
+        "type": "FIX",
+        "text": " Context: sPath parameter on getPath method is optional",
+        "references": []
+      },
+      {
+        "id": "b9900356fd2b8171fdfecc0cc092499364bb61ca",
+        "type": "FIX",
+        "text": " FilterProcessor: Adapt normalization for MS Edge 14+",
+        "references": []
+      },
+      {
+        "id": "3d0d8321317d126ec283a06cf2a444ab2e274656",
+        "type": "FIX",
+        "text": " ODataMetadata: Make getAnnotation work with nav properties",
+        "references": []
+      },
+      {
+        "id": "2a2911bbf8d5e336d355809f99c8f5a0c2f060bd",
+        "type": "FIX",
+        "text": " Revert sap.ui.core.util.MockServer When the data for an entity is set",
+        "references": []
+      },
+      {
+        "id": "47c9b5339654d0fb3b6d442430bbb216369d2bc9",
+        "type": "FIX",
+        "text": " Sorter: Make null sorted last in ascending order again",
+        "references": []
+      },
+      {
+        "id": "a1ed0bc09b0579a616739897771eac5cfc167720",
+        "type": "FIX",
+        "text": " core.DateFormat: Adapt the difference calculation for relative",
+        "references": []
+      },
+      {
+        "id": "d3912937bec6bd00e324614062340816c695852e",
+        "type": "FIX",
+        "text": " core/Element: notify parent Element for layout change on destroyLayoutData",
+        "references": []
+      },
+      {
+        "id": "a6bf7dff0b90d172dd877a6a9ba67f0159c191c8",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: avoid duplicate \u0027tap\u0027 event (continued)",
+        "references": []
+      },
+      {
+        "id": "15bd18ee4b8f8a0400133ec8e91a0dd3abfc4e2c",
+        "type": "FIX",
+        "text": " odata.ODataUtils: include milliseconds in Edm.DateTime pattern",
+        "references": []
+      },
+      {
+        "id": "301de492c870498af1cdbb8bfcf74dcbf0c7c4ea",
+        "type": "FIX",
+        "text": " sap.ui.core.demokit.sample.ViewTemplate.types:  Application changed because warning",
+        "references": []
+      },
+      {
+        "id": "d20446c66f0547329de83acbd65ba1c747fc7cf1",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: avoid Error: Cannot read property \u0027getEntityType\u0027 of null",
+        "references": []
+      },
+      {
+        "id": "04590c9e4b830accbf64fc05a92b2ebfe9bdf855",
+        "type": "FIX",
+        "text": " ui.core.qunit.component.Models.qunit.js Removed debugger statement",
+        "references": []
       }
     ]
   }

@@ -1104,17 +1104,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	Core.prototype._executeOnInit = function() {
-		var oConfig = this.oConfiguration;
+		var vOnInit = this.oConfiguration.onInit;
 
 		// execute a configured init hook
-		if ( oConfig.onInit ) {
-			if ( typeof oConfig.onInit === "function" ) {
-				oConfig.onInit();
-			} else {
-				// DO NOT USE jQuery.globalEval as it executes async in FF!
-				jQuery.sap.globalEval(oConfig.onInit);
+		if ( vOnInit ) {
+			if ( typeof vOnInit === "function" ) {
+				vOnInit();
+			} else if (typeof vOnInit === "string") {
+				// determine onInit being a module name prefixed via module or a global name
+				var aResult = /^module\:((?:(?:[_$a-zA-Z][_$a-zA-Z0-9]*)\/?)*)$/.exec(vOnInit);
+				if (aResult && aResult[1]) {
+					// ensure that the require is done async and the Core is finally booted!
+					setTimeout(sap.ui.require.bind(sap.ui, [aResult[1]]), 0);
+				} else {
+					// lookup the name specified in onInit and try to call the function directly
+					var fn = jQuery.sap.getObject(vOnInit);
+					if (typeof fn === "function") {
+						fn();
+					} else {
+						// DO NOT USE jQuery.globalEval as it executes async in FF!
+						jQuery.sap.globalEval(vOnInit);
+					}
+				}
 			}
-			oConfig.onInit = undefined;
+			this.oConfiguration.onInit = undefined;
 		}
 	};
 
@@ -1405,7 +1418,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		var lib = libConfig.name,
 			fileType = libConfig.fileType,
-			libPackage = lib.replace(/\./g, '/');
+			libPackage = lib.replace(/\./g, '/'),
+			http2 = this.oConfiguration.getDepCache();
 
 		if ( fileType === 'none' || jQuery.sap.isResourceLoaded(libPackage + '/library.js') ) {
 			return Promise.resolve(true);
@@ -1425,7 +1439,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		// first preload code, resolves with list of dependencies (or undefined)
 		var p;
 		if ( fileType !== 'json' /* 'js' or 'both', not forced to JSON */ ) {
-			var sPreloadModule = libPackage + '/library-preload.js';
+			var sPreloadModule = libPackage + (http2 ? '/library-h2-preload.js' : '/library-preload.js');
 			p = jQuery.sap._loadJSResourceAsync(sPreloadModule).then(
 					function() {
 						return dependenciesFromManifest(lib);
@@ -3379,7 +3393,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	Core.prototype.getEventBus = function() {
 		if (!this.oEventBus) {
 			var EventBus = sap.ui.requireSync('sap/ui/core/EventBus');
-			this.oEventBus = new EventBus();
+			var oEventBus = this.oEventBus = new EventBus();
+			this._preserveHandler = function(event) {
+				// for compatibility reasons
+				oEventBus.publish("sap.ui", "__preserveContent", {domNode: event.domNode});
+			};
+			RenderManager.attachPreserveContent(this._preserveHandler);
 		}
 		return this.oEventBus;
 	};
@@ -3769,6 +3788,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	Core.prototype.destroy = function() {
+		RenderManager.detachPreserveContent(this._preserveHandler);
 		this.oFocusHandler.destroy();
 		_oEventProvider.destroy();
 		BaseObject.prototype.destroy.call(this);

@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.commons.TextField.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/ValueStateSupport'],
-	function(jQuery, library, Control, ValueStateSupport) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/Control',
+    'sap/ui/core/ValueStateSupport',
+    "./TextFieldRenderer"
+],
+	function(jQuery, library, Control, ValueStateSupport, TextFieldRenderer) {
 	"use strict";
 
 	/**

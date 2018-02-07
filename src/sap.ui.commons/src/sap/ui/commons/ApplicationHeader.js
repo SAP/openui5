@@ -3,8 +3,24 @@
  */
 
 // Provides control sap.ui.commons.ApplicationHeader.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Image', './TextView', './Button'],
-	function(jQuery, library, Control, Image, TextView, Button) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/Control',
+    './Image',
+    './TextView',
+    './Button',
+    "./ApplicationHeaderRenderer"
+],
+	function(
+	    jQuery,
+		library,
+		Control,
+		Image,
+		TextView,
+		Button,
+		ApplicationHeaderRenderer
+	) {
 	"use strict";
 
 

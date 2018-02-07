@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.commons.form.FormLayout.
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/layout/form/FormLayout'],
-	function(jQuery, library, FormLayout1) {
+sap.ui.define([
+ 'jquery.sap.global',
+ 'sap/ui/commons/library',
+ 'sap/ui/layout/form/FormLayout',
+ "./FormLayoutRenderer"
+],
+	function(jQuery, library, FormLayout1, FormLayoutRenderer) {
 	"use strict";
 
 

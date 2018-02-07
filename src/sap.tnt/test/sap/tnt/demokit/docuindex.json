@@ -78,18 +78,18 @@
 		"samples": [
 			{
 				"id": "sap.tnt.sample.InfoLabel",
-				"name": "Info Label in non-editable Form",
-				"description": "Info Label used in non-editable Form. Property displayOnly of the <code>InfoLabel</code> must be set to true"
+				"name": "InfoLabel in non-editable Form",
+				"description": "<code>InfoLabel</code> used in non-editable <code>Form</code>. Property <code>displayOnly</code> of the Control must be set to true"
 			},
 			{
 				"id": "sap.tnt.sample.InfoLabelInTable",
-				"name": "Info Label in Table",
-				"description": "Info Label used in content of Table"
+				"name": "InfoLabel in Table",
+				"description": "<code>InfoLabel</code> used in content of <code>Table</code>"
 			},
 			{
 				"id": "sap.tnt.sample.InfoLabelInDynamicPage",
-				"name": "Info Label used in Dynamic Page",
-				"description": "Info Label used as Subheader in Dynamic Page"
+				"name": "InfoLabel in DynamicPage",
+				"description": "<code>InfoLabel</code> used as subheader in <code>DynamicPage</code>"
 			},
 			{
 				"id": "sap.tnt.sample.NavigationList",

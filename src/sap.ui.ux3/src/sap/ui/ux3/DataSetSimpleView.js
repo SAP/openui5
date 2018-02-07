@@ -3,8 +3,22 @@
  */
 
 // Provides control sap.ui.ux3.DataSetSimpleView.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', './library', 'jquery.sap.script'],
-	function(jQuery, Control, ResizeHandler, library/* , jQuerySap */) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Control',
+	'sap/ui/core/ResizeHandler',
+	'./library',
+	"./DataSetSimpleViewRenderer",
+	'jquery.sap.script'
+],
+	function(
+		jQuery,
+		Control,
+		ResizeHandler,
+		library,
+		DataSetSimpleViewRenderer
+		/* jQuerySap */
+	) {
 	"use strict";
 
 

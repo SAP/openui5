@@ -2206,13 +2206,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		function preload(sComponentName, bAsync) {
 
 			var sController = sComponentName + '.Component',
+				http2 = sap.ui.getCore().getConfiguration().getDepCache(),
 				sPreloadName;
 
 			// only load the Component-preload file if the Component module is not yet available
 			if ( bComponentPreload && sComponentName != null && !jQuery.sap.isDeclared(sController, /* bIncludePreloaded=*/ true) ) {
 
 				if ( bAsync ) {
-					sPreloadName = jQuery.sap.getResourceName(sController, '-preload.js'); // URN
+					sPreloadName = jQuery.sap.getResourceName(sController, http2 ? '-h2-preload.js' : '-preload.js'); // URN
 					return jQuery.sap._loadJSResourceAsync(sPreloadName, true);
 				}
 

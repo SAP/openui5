@@ -930,8 +930,9 @@ sap.ui.define([
 	QUnit.test("dynamic enhance of models and datasources", function(assert) {
 		this.stubGetUriParameters();
 
-		jQuery.sap.declare("sap.ui.test.v2local.Component");
-		sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
+		// @evo-todo using declare and define without name together was bad,
+		// using define with a name is better, but still the result is expected synchronously - will fail in future!
+		sap.ui.define("sap/ui/test/v2local/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 
 			var LocalComponent = UIComponent.extend("sap.ui.test.v2local.Component", {
 				metadata : {
@@ -976,7 +977,6 @@ sap.ui.define([
 
 				mCacheTokens.dataSources["/path/to/odata/service"] = "1234567890";
 
-				debugger;
 				UIComponent.prototype._initComponentModels.call(this, mModels, mDataSources, mCacheTokens);
 
 			};

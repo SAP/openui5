@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.ux3.FacetFilter.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
-	function(jQuery, Control, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/Control',
+    './library',
+    "./FacetFilterRenderer"
+],
+	function(jQuery, Control, library, FacetFilterRenderer) {
 	"use strict";
 
 

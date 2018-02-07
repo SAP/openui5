@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="UTF-8" >
+		<title>Modularization</title>
+		<!-- Commented out as it is not relevant for base modules -->
+		<!-- <script src="../shared-config.js"></script> -->
+
+		<!-- minimal bootstrap code starts here -->
+		<script src="../../../../../resources/sap/ui/thirdparty/es6-promise.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/es6-string-methods.js"></script>
+		<script src="../../../../../resources/ui5loader.js"></script>
+		<script src="../../../../../resources/ui5loader-autoconfig.js" id="sap-ui-bootstrap"
+			data-sap-ui-resource></script>
+		<!-- end of minimal bootstrap code -->
+
+		<link href="../../../../../resources/sap/ui/thirdparty/qunit-2.css" rel="stylesheet" media="screen" />
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"
+			data-cover-flags="branchTracking">
+		</script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+		<script>
+		sap.ui._ui5loader.config({
+			async: 'mixed',
+			paths: {
+				'tests': '../../../../'
+			}
+		});
+		QUnit.config.autostart = false;
+		QUnit.config.reorder = true;
+		sap.ui.require([
+			"tests/sap/ui/karma/polyfillsForTests",
+
+			// sap/base/*
+			"tests/sap/base/assert.qunit",
+			"tests/sap/base/log.qunit",
+			"tests/sap/base/storage.qunit",
+
+			// sap/base/encoding/*
+			"tests/sap/base/encoding/encodeCSS.qunit",
+			"tests/sap/base/encoding/encodeJS.qunit",
+			"tests/sap/base/encoding/encodeURL.qunit",
+			"tests/sap/base/encoding/encodeURLParameters.qunit",
+			"tests/sap/base/encoding/encodeXML.qunit",
+			"tests/sap/base/encoding/sanitizeHTML.qunit",
+			"tests/sap/base/encoding/toHex.qunit",
+
+			// sap/base/strings/*
+			"tests/sap/base/strings/camelCase.qunit",
+			"tests/sap/base/strings/charToUpperCase.qunit",
+			"tests/sap/base/strings/endsWithIgnoreCase.qunit",
+			"tests/sap/base/strings/escapeRegExp.qunit",
+			"tests/sap/base/strings/formatMessage.qunit",
+			"tests/sap/base/strings/hyphen.qunit",
+			"tests/sap/base/strings/normalize-polyfill.qunit",
+			"tests/sap/base/strings/startsWithIgnoreCase.qunit",
+
+			// sap/base/util/*
+			"tests/sap/base/util/arraySymbolDiff.qunit",
+			"tests/sap/base/util/each.qunit",
+			"tests/sap/base/util/equal.qunit",
+			"tests/sap/base/util/extend.qunit",
+			"tests/sap/base/util/getObject.qunit",
+			"tests/sap/base/util/getter.qunit",
+			"tests/sap/base/util/hashCode.qunit",
+			"tests/sap/base/util/isPlainObject.qunit",
+			"tests/sap/base/util/isWindow.qunit",
+			"tests/sap/base/util/JSTokenizer.qunit",
+			"tests/sap/base/util/now.qunit",
+			"tests/sap/base/util/uid.qunit",
+			"tests/sap/base/util/unique.qunit",
+			"tests/sap/base/util/UriParameters.qunit",
+			"tests/sap/base/util/URLWhiteList.qunit",
+
+			// sap/ui/*
+			"tests/sap/ui/ActivityDetection.qunit",
+			"tests/sap/ui/MobileSupport.qunit",
+
+			// sap/ui/karma/*
+			"tests/sap/ui/karma/Device.qunit",
+			"tests/sap/ui/karma/initjQueryBrowser.qunit",
+			"tests/sap/ui/karma/initjQuerySupport.qunit",
+			"tests/sap/ui/karma/XHRProxy.qunit",
+
+			// sap/ui/karma/bootstrap/*
+			"tests/sap/ui/karma/bootstrap/StoredConfig.qunit",
+
+			// sap/ui/karma/dom/*
+			"tests/sap/ui/karma/dom/appendHead.qunit",
+			"tests/sap/ui/karma/dom/includeScript.qunit",
+			"tests/sap/ui/karma/dom/includeStylesheet.qunit",
+
+			// sap/ui/karma/performance/*
+			"tests/sap/ui/karma/performance/XHRInterceptor.qunit",
+			"tests/sap/ui/karma/performance/E2ETrace/Passport.qunit",
+
+			// sap/ui/karma/security/*
+			"tests/sap/ui/karma/security/FrameOptions.qunit",
+
+			// sap/ui/xml/*
+			"tests/sap/ui/xml/serializeXML.qunit",
+			"tests/sap/ui/xml/XMLParser.qunit"
+
+		], function(applyPolyfills) {
+			applyPolyfills();
+
+			QUnit.start();
+		});
+		</script>
+
+	</head>
+	<body>
+		<div id="qunit"></div>
+	</body>
+</html>

@@ -92,7 +92,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					"modules"               : { type : "string[]", defaultValue : [],        noUrl:true },
 					"areas"                 : { type : "string[]", defaultValue : null,      noUrl:true },
 					// "libs"               : { type : "string[]", defaultValue : [],        noUrl:true }, deprecated, handled below
-					"onInit"                : { type : "code",     defaultValue : undefined, noUrl:true },
+					"onInit"                : { type : "code",     defaultValue : undefined, noUrl:true }, // could be either a reference to a JavaScript function, the name of a global function (string value) or the name of a module (indicated with prefix "module:")
 					"uidPrefix"             : { type : "string",   defaultValue : "__",      noUrl:true },
 					"ignoreUrlParams"       : { type : "boolean",  defaultValue : false,     noUrl:true },
 					"preload"               : { type : "string",   defaultValue : "auto" },
@@ -116,6 +116,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					"xx-loadAllMode"        : { type : "boolean",  defaultValue : false,     noUrl:true },
 					"xx-viewCache"          : { type : "boolean",  defaultValue : true },
 					"xx-test-mobile"        : { type : "boolean",  defaultValue : false },
+					"xx-depCache"           : { type : "boolean",  defaultValue : false },
 					"xx-domPatching"        : { type : "boolean",  defaultValue : false },
 					"xx-libraryPreloadFiles": { type : "string[]", defaultValue : [] },
 					"xx-componentPreload"   : { type : "string",   defaultValue : "" },
@@ -131,7 +132,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					"xx-cache-serialization": { type : "boolean",  defaultValue : false},
 					"xx-nosync"             : { type : "string",   defaultValue : "" },
 					"xx-waitForTheme"       : { type : "boolean",  defaultValue : false},
-					"xx-xml-processing"    : { type : "string",  defaultValue : "" },
+					"xx-xml-processing"     : { type : "string",  defaultValue : "" },
 					"statistics"            : { type : "boolean",  defaultValue : false }
 			};
 
@@ -1251,6 +1252,16 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 */
 		getPreload : function() {
 			return this.preload;
+		},
+
+		/**
+		 * Whether dependency cache info files should be loaded instead of preload files.
+		 *
+		 * This is an experimental feature intended for HTTP/2 scenarios.
+		 * @private
+		 */
+		getDepCache : function() {
+			return this["xx-depCache"];
 		},
 
 		/**

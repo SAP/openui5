@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.layout.form.FormLayout.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/library'],
-	function(jQuery, Control, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/library', './FormLayoutRenderer'],
+	function(jQuery, Control, library, FormLayoutRenderer) {
 	"use strict";
 
 	// shortcut for sap.ui.layout.BackgroundDesign
