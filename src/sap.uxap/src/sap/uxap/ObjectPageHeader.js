@@ -54,17 +54,22 @@ sap.ui.define([
 	var ObjectPageHeaderPictureShape = library.ObjectPageHeaderPictureShape;
 
 	/**
-	 * Constructor for a new ObjectPageHeader.
+	 * Constructor for a new <code>ObjectPageHeader</code>.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 *  <code>ObjectPageHeader</code> represents the static part of an <code>ObjectPageLayout</code> header.
-	 * Typically used to display the basic information about a business object, such as title/description/picture, as well as a list of common actions.
+	 * Represents the static part (header title) of the classic header of the {@link sap.uxap.ObjectPageLayout}.
+	 *
+	 * <h3>Overview</h3>
+	 *
+	 * The <code>ObjectPageHeader</code> is used to display the basic information about a business object,
+	 * such as title/description/picture, as well as a list of common actions.
 	 *
 	 * <b>Note:</b> The <code>ObjectPageHeader</code> is meant to be used inside the <code>ObjectPageLayout</code>
 	 * control. Any other usage is not supported and can lead to unexpected behavior.
+	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.uxap.IHeaderTitle
 	 *
@@ -74,6 +79,9 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.uxap.ObjectPageHeader
 	 * @since 1.26
+	 * @see {@link topic:0fecbce45e39406aa939bd25e89823f4 Object Page Classic Header}
+	 * @see {@link topic:d2ef0099542d44dc868719d908e576d0 Object Page Headers}
+	 * @see {@link topic:9c9d94fd28284539a9a5a57e9caf82a8 Object Page Headers Comparison}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ObjectPageHeader = Control.extend("sap.uxap.ObjectPageHeader", /** @lends sap.uxap.ObjectPageHeader.prototype */ {
