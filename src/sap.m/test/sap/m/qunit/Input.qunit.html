@@ -423,6 +423,7 @@
 		assert.ok(oInputVHO.$().hasClass("sapMInputVHO") === true, "Outer div has additional CSS class\"sapMInputVHO\"");
 
 		// Value help event check
+
 		oInputVHO._$input.focus().trigger("tap");
 		this.clock.tick(500);
         assert.strictEqual(spy.callCount, 1, "Value Help Request has been fired and received successfully");
@@ -3011,6 +3012,40 @@
 		var oInputClone  = this.oTabularInputToClone.clone();
 
 		assert.equal(oInputClone.getValue(), "The selected item: Auch ein gutes Ding", "The selectedRow association should be cloned");
+	});
+
+	QUnit.module("Focus");
+
+	QUnit.test("Value Help Only 'tap' on Phone", function(assert) {
+		var bIsPhone = sap.ui.Device.system.phone;
+		sap.ui.Device.system.phone = true;
+		var dialog = new sap.m.Dialog({
+		});
+
+		var oInputValueHelpOnly = new sap.m.Input({
+			showValueHelp: true,
+			valueHelpOnly:  true,
+			valueHelpRequest: function (oEvent) {
+				dialog.open();
+			}
+		});
+
+		oInputValueHelpOnly.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInputValueHelpOnly.ontap();
+		this.clock.tick(1000);
+		sap.ui.getCore().applyChanges();
+
+		dialog.close();
+		this.clock.tick(1000);
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(document.activeElement.id, oInputValueHelpOnly._$input[0].id, 'active element is the input');
+
+		dialog.destroy();
+		oInputValueHelpOnly.destroy();
+		sap.ui.Device.system.phone = bIsPhone;
 	});
 
 </script>

@@ -1023,6 +1023,9 @@ function(
 	Input.prototype._fireValueHelpRequestForValueHelpOnly = function() {
 		// if all the named properties are set to true, the control triggers "valueHelpRequest" for all user interactions
 		if (this.getEnabled() && this.getEditable() && this.getShowValueHelp() && this.getValueHelpOnly()) {
+			if (Device.system.phone) {
+				this.focus();
+			}
 			this.fireValueHelpRequest({fromSuggestions: false});
 		}
 	};
