@@ -28,7 +28,9 @@ sap.ui.require([
 		sandbox.stub(this.oModel, "_getLocalId").returns("variantMgmtId1");
 		sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variant1").returns(true);
 		sandbox.stub(Utils, "getUshellContainer").returns(true);
-		sandbox.stub(Utils, "getTechnicalURLParameterValues").returns(aUrlTechnicalParameters);
+		sandbox.stub(Utils, "getTechnicalParametersForComponent").returns({
+			'sap-ui-fl-control-variant-id' : aUrlTechnicalParameters
+		});
 		sandbox.stub(Utils, "setTechnicalURLParameterValues");
 	};
 
@@ -76,7 +78,8 @@ sap.ui.require([
 			this.oModel = new VariantModel(this.oData, {}, this.oComponent);
 
 			this.oModel.oVariantController = {
-				getVariant: function () {}
+				getVariant: function () {},
+				sVariantTechnicalParameterName: "sap-ui-fl-control-variant-id"
 			};
 
 			this.oDummyControl = new sap.ui.core.Element("dummyControl");
@@ -101,8 +104,8 @@ sap.ui.require([
 
 		ControlVariantsAPI.clearVariantParameterInURL(this.oDummyControl);
 
-		assert.ok(Utils.getTechnicalURLParameterValues.calledWithExactly(this.oModel.oComponent, 'sap-ui-fl-control-variant-id'), "then 'sap-ui-fl-control-variant-id' parameter values are requested");
-		assert.ok(Utils.setTechnicalURLParameterValues.calledWithExactly('sap-ui-fl-control-variant-id', [aUrlTechnicalParameters[0]]), "then 'sap-ui-fl-control-variant-id' parameter value for the provided variant management control is cleared");
+		assert.ok(Utils.getTechnicalParametersForComponent.calledWithExactly(this.oModel.oComponent), "then 'sap-ui-fl-control-variant-id' parameter values are requested");
+		assert.ok(Utils.setTechnicalURLParameterValues.calledWithExactly(this.oComponent, 'sap-ui-fl-control-variant-id', [aUrlTechnicalParameters[0]]), "then 'sap-ui-fl-control-variant-id' parameter value for the provided variant management control is cleared");
 	});
 
 	QUnit.test("when calling 'clearVariantParameterInURL' without a parameter", function(assert) {
@@ -111,8 +114,8 @@ sap.ui.require([
 
 		ControlVariantsAPI.clearVariantParameterInURL();
 
-		assert.equal(Utils.getTechnicalURLParameterValues.callCount, 0, "then 'sap-ui-fl-control-variant-id' parameter values are not requested");
-		assert.ok(Utils.setTechnicalURLParameterValues.calledWithExactly('sap-ui-fl-control-variant-id', []), "then all 'sap-ui-fl-control-variant-id' parameter values are cleared");
+		assert.equal(Utils.getTechnicalParametersForComponent.callCount, 0, "then 'sap-ui-fl-control-variant-id' parameter values are not requested");
+		assert.ok(Utils.setTechnicalURLParameterValues.calledWithExactly(undefined, 'sap-ui-fl-control-variant-id', []), "then all 'sap-ui-fl-control-variant-id' parameter values are cleared");
 	});
 
 	QUnit.test("when calling 'activateVariant' with a control id", function(assert) {
