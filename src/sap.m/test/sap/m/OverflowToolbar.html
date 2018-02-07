@@ -643,6 +643,49 @@
 		})
 	];
 
+	var toolbarContent9 = [
+		new sap.m.Label({
+			text: "SplitButton controls"
+		}),
+		new sap.m.ToolbarSpacer(),
+		new sap.m.SplitButton({
+			text: "Apply text color",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				priority: sap.m.OverflowToolbarPriority.AlwaysOverflow,
+				closeOverflowOnInteraction: true
+			}),
+			icon: "sap-icon://e-care",
+			press: function () {
+				sap.m.MessageToast.show("Text color is applied");
+			},
+			arrowPress: function () {
+				new sap.m.ColorPalettePopover({
+					colorSelect: function () {
+						sap.m.MessageToast.show("Color is selected");
+					}
+				}).openBy(this)
+			}
+		}),
+		new sap.m.SplitButton({
+			text: "Apply background color",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				priority: sap.m.OverflowToolbarPriority.AlwaysOverflow,
+				closeOverflowOnInteraction: false
+			}),
+			icon: "sap-icon://e-care",
+			press: function () {
+				sap.m.MessageToast.show("Background color is applied");
+			},
+			arrowPress: function () {
+				new sap.m.ColorPalettePopover({
+					colorSelect: function () {
+						sap.m.MessageToast.show("Color is selected");
+					}
+				}).openBy(this)
+			}
+		})
+	];
+
 	var toolbarContentFooter = [
 		new sap.m.Label({
 			text : "When the toolbar is in the footer, the action sheet opens above it."
@@ -728,6 +771,11 @@
 		new sap.m.OverflowToolbar("otb8", {
 			width: 'auto',
 			content : toolbarContent8
+		}),
+
+		new sap.m.OverflowToolbar("otb9", {
+			width: 'auto',
+			content: toolbarContent9
 		}),
 
 		new sap.m.OverflowToolbar("otbFooter", {

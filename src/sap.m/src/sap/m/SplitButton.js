@@ -34,6 +34,9 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './Button', './ButtonRenderer
 		 */
 		var SplitButton = Control.extend("sap.m.SplitButton", /** @lends sap.m.SplitButton.prototype */ { metadata : {
 
+			interfaces : [
+				"sap.m.IOverflowToolbarContent"
+			],
 			library : "sap.m",
 			properties : {
 
@@ -309,6 +312,20 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './Button', './ButtonRenderer
 			}
 
 			return sResult;
+		};
+
+		/**
+		 * Required by the {@link sap.m.IOverflowToolbarContent} interface.
+		 */
+		SplitButton.prototype.getOverflowToolbarConfig = function() {
+			var oConfig = {
+				canOverflow: true,
+				propsUnrelatedToSize: ["enabled", "type", "icon", "activeIcon"],
+				autoCloseEvents: ["press"]
+			};
+
+
+			return oConfig;
 		};
 
 		return SplitButton;
