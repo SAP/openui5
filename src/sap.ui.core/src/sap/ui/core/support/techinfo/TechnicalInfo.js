@@ -25,6 +25,15 @@ sap.ui.define([
 
 		_MIN_UI5VERSION_SUPPORT_ASSISTANT: "1.47",
 		_MIN_EXPAND_LEVEL_DEBUG_MODULES: 3,
+		_SUPPORT_ASSISTANT_POPOVER_ID:"technicalInfoDialogAssistantPopover",
+		_DEBUG_MODULES_ID:"TechnicalInfoDialogDebugModules",
+		_TECHNICAL_INFO_DIALOG_ID:"technicalInfoDialog",
+		_LOCAL_STORAGE_KEYS: {
+			STANDARD_URL: "sap-ui-standard-bootstrap-URL",
+			CUSTOM_URL: "sap-ui-custom-bootstrap-URL",
+			LOCATION: "sap-ui-selected-location",
+			OPEN_IN_NEW_WINDOW: "sap-ui-open-sa-in-new-window"
+		},
 
 		_storage : jQuery.sap.storage(jQuery.sap.storage.Type.local),
 
@@ -49,7 +58,7 @@ sap.ui.define([
 
 			// create dialog lazily
 			if (!this._oDialog) {
-				this._oDialog = sap.ui.xmlfragment("technicalInfoDialog", "sap.ui.core.support.techinfo.TechnicalInfo", this);
+				this._oDialog = sap.ui.xmlfragment(this._TECHNICAL_INFO_DIALOG_ID, "sap.ui.core.support.techinfo.TechnicalInfo", this);
 			}
 
 			// refresh configuration data and open dialog
@@ -89,10 +98,10 @@ sap.ui.define([
 			var oModel = this._oDialog.getModel("view"),
 				sVersionString = oModel.getProperty("/ProductName") + ": " +
 					oModel.getProperty("/ProductVersion") + " " +
-					sap.ui.getCore().byId("technicalInfoDialog--versionBuiltAt").getText(),
+					this._getControl("versionBuiltAt", this._TECHNICAL_INFO_DIALOG_ID).getText(),
 				sVersionOpenUI5String = "OpenUI5 Version: " +
 					oModel.getProperty("/OpenUI5ProductVersion") + " " +
-					sap.ui.getCore().byId("technicalInfoDialog--versionOpenUI5BuiltAt").getText(),
+					this._getControl("versionOpenUI5BuiltAt", this._TECHNICAL_INFO_DIALOG_ID).getText(),
 				sString = sVersionString + "\r\n" +
 					(oModel.getProperty("/OpenUI5ProductVersion") ? sVersionOpenUI5String + "\r\n" : "") +
 					this._getText("TechInfo.UserAgent.Label") + ": " + oModel.getProperty("/UserAgent") + "\r\n" +
@@ -145,10 +154,10 @@ sap.ui.define([
 
 			// create dialog lazily
 			if (!this._oDebugPopover) {
-				this._oDebugPopover = sap.ui.xmlfragment("TechnicalInfoDialogDebugModules", "sap.ui.core.support.techinfo.TechnicalInfoDebugDialog", this);
+				this._oDebugPopover = sap.ui.xmlfragment(this._DEBUG_MODULES_ID, "sap.ui.core.support.techinfo.TechnicalInfoDebugDialog", this);
 				this._oDialog.addDependent(this._oDebugPopover);
 				jQuery.sap.syncStyleClass(this._getContentDensityClass(), this._oDialog, this._oDebugPopover);
-				var oControl = sap.ui.getCore().byId("TechnicalInfoDialogDebugModules--customDebugValue");
+				var oControl = this._getControl("customDebugValue", this._DEBUG_MODULES_ID);
 				try {
 					this._validateCustomDebugValue(oControl.getValue());
 				} catch (oException)  {
@@ -158,7 +167,7 @@ sap.ui.define([
 			}
 
 			// adopt tree depth to the deepest currently selected module
-			sap.ui.getCore().byId("TechnicalInfoDialogDebugModules--tree").expandToLevel(Math.max(this._MIN_EXPAND_LEVEL_DEBUG_MODULES, oTreeResults.depth));
+			this._getControl("tree", this._DEBUG_MODULES_ID).expandToLevel(Math.max(this._MIN_EXPAND_LEVEL_DEBUG_MODULES, oTreeResults.depth));
 
 			// open dialog
 			this._oDebugPopover.open();
@@ -193,7 +202,7 @@ sap.ui.define([
 				oContext = oListItem.getItemNodeContext(),
 				oNodePath = oContext.context.getPath(),
 				oSubTreeData = oModel.getProperty(oNodePath),
-				oControl = sap.ui.getCore().byId("TechnicalInfoDialogDebugModules--customDebugValue");
+				oControl = this._getControl("customDebugValue", this._DEBUG_MODULES_ID);
 
 			this._resetValueState(oControl);
 			this._treeHelper.recursiveSelect(oSubTreeData, oListItem.getSelected());
@@ -205,7 +214,7 @@ sap.ui.define([
 		 */
 		onChangeCustomDebugMode: function () {
 			var oModel = this._oDialog.getModel("view"),
-				oControl = sap.ui.getCore().byId("TechnicalInfoDialogDebugModules--customDebugValue"),
+				oControl = this._getControl("customDebugValue", this._DEBUG_MODULES_ID),
 				oTreeResults;
 
 			try {
@@ -229,7 +238,7 @@ sap.ui.define([
 			oModel.setProperty("/DebugModules", [oTreeResults.tree]);
 
 			// adopt tree depth to the deepest currently selected module
-			sap.ui.getCore().byId("TechnicalInfoDialogDebugModules--tree").expandToLevel(Math.max(this._MIN_EXPAND_LEVEL_DEBUG_MODULES, oTreeResults.depth));
+			this._getControl("tree", this._DEBUG_MODULES_ID).expandToLevel(Math.max(this._MIN_EXPAND_LEVEL_DEBUG_MODULES, oTreeResults.depth));
 
 			this._updateTreeInfos();
 		},
@@ -265,18 +274,31 @@ sap.ui.define([
 				sSelectedLocation = oModel.getProperty("/SelectedLocation"),
 				sStandardUrl = oModel.getProperty("/StandardBootstrapURL"),
 				sCustomUrl = oModel.getProperty("/CustomBootstrapURL"),
+				aSupportedUrls = [],
 				sBootstrapURL;
+
+			oModel.getProperty("/SupportAssistantPopoverURLs").forEach(function (element) {
+				aSupportedUrls.push(element.Value);
+			});
+
+			if (aSupportedUrls.indexOf(sStandardUrl) === -1 && sSelectedLocation === "standard") {
+				sSelectedLocation = "custom";
+				sCustomUrl = sStandardUrl;
+				oModel.setProperty("/SelectedLocation", sSelectedLocation);
+				this._storage.put(this._LOCAL_STORAGE_KEYS.STANDARD_URL, aSupportedUrls[0]);
+				oModel.setProperty("/StandardBootstrapURL", this._storage.get(this._LOCAL_STORAGE_KEYS.STANDARD_URL));
+			}
 
 			if (sSelectedLocation === "standard") {
 				sBootstrapURL = sStandardUrl;
-			} else	if (sCustomUrl) {
+			} else if (sCustomUrl) {
 				// this checks if selected location is custom and CustomBootstrapURL is filed
 				if (!sCustomUrl.match(/\/$/)) {
 					// checks if custom URL is missing / at the end and adds it if missing
 					sCustomUrl += "/";
 				}
-				this._storage.put("sap-ui-custom-bootstrap-URL", sCustomUrl);
-				oModel.setProperty("/CustomBootstrapURL", this._storage.get("sap-ui-custom-bootstrap-URL"));
+				this._storage.put(this._LOCAL_STORAGE_KEYS.CUSTOM_URL, sCustomUrl);
+				oModel.setProperty("/CustomBootstrapURL", this._storage.get(this._LOCAL_STORAGE_KEYS.CUSTOM_URL));
 				sBootstrapURL = sCustomUrl;
 			}
 			this._startAssistant(sBootstrapURL);
@@ -298,7 +320,7 @@ sap.ui.define([
 		onChangeStandardBootstrapURL: function (oEvent) {
 			var sValue = oEvent.getParameter("selectedItem").getKey(),
 				oControl = oEvent.getSource();
-			this._storage.put("sap-ui-standard-bootstrap-URL", sValue);
+			this._storage.put(this._LOCAL_STORAGE_KEYS.STANDARD_URL, sValue);
 			this._resetValueState(oControl);
 			this._pingUrl(sValue, oControl)
 				.then(function success() {
@@ -317,7 +339,7 @@ sap.ui.define([
 		onLiveChangeCustomBootstrapURL:function (oEvent) {
 			var sValue = oEvent.getParameter("value"),
 				oControl = oEvent.getSource();
-			this._storage.put("sap-ui-custom-bootstrap-URL", sValue);
+			this._storage.put(this._LOCAL_STORAGE_KEYS.CUSTOM_URL, sValue);
 			try {
 				this._validateValue(oControl.getValue());
 				this._resetValueState(oControl);
@@ -332,7 +354,7 @@ sap.ui.define([
 		 */
 		onChangeOpenInNewWindow: function (oEvent) {
 			var bSelected = oEvent.getParameter("selected");
-			this._storage.put("sap-ui-open-sa-in-new-window", bSelected);
+			this._storage.put(this._LOCAL_STORAGE_KEYS.OPEN_IN_NEW_WINDOW, bSelected);
 		},
 
 		/**
@@ -346,19 +368,19 @@ sap.ui.define([
 			}
 			// create dialog lazily
 			if (!this._oAssistantPopover) {
-				this._oAssistantPopover = sap.ui.xmlfragment("technicalInfoDialogAssistantPopover", "sap.ui.core.support.techinfo.TechnicalInfoAssistantPopover", this);
+				this._oAssistantPopover = sap.ui.xmlfragment(this._SUPPORT_ASSISTANT_POPOVER_ID, "sap.ui.core.support.techinfo.TechnicalInfoAssistantPopover", this);
 				this._oAssistantPopover.attachAfterOpen(this._onAssistantPopoverOpened, this);
 				this._oDialog.addDependent(this._oAssistantPopover);
 				jQuery.sap.syncStyleClass(this._getContentDensityClass(), this._oDialog, this._oAssistantPopover);
 
 				// register message validation and trigger it once to validate the value coming from local storage
-				var oCustomBootstrapURL = sap.ui.getCore().byId("technicalInfoDialogAssistantPopover--customBootstrapURL");
+				var oCustomBootstrapURL =  this._getControl("customBootstrapURL", this._SUPPORT_ASSISTANT_POPOVER_ID);
 				sap.ui.getCore().getMessageManager().registerObject(oCustomBootstrapURL, true);
 
 			}
 
 			// enable or disable default option for version >= 1.48
-			var oCurrentItem = sap.ui.getCore().byId("technicalInfoDialogAssistantPopover--standardBootstrapURL").getItems()[0];
+			var oCurrentItem = this._getControl("standardBootstrapURL", this._SUPPORT_ASSISTANT_POPOVER_ID).getItems()[0];
 			if (this._isVersionBiggerThanMinSupported()) {
 				var sAppVersion = sap.ui.getCore().getConfiguration().getVersion().toString();
 				oCurrentItem.setText(oCurrentItem.getText().replace("[[version]]", sAppVersion));
@@ -373,7 +395,7 @@ sap.ui.define([
 
 			this._setActiveLocations(sSelectedLocation);
 
-			var oSupportAssistantSettingsButton = sap.ui.getCore().byId("technicalInfoDialog--supportAssistantSettingsButton");
+			var oSupportAssistantSettingsButton = this._getControl("supportAssistantSettingsButton", this._TECHNICAL_INFO_DIALOG_ID);
 			this._oAssistantPopover.openBy(oSupportAssistantSettingsButton);
 		},
 
@@ -532,7 +554,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Initalizes the view model with the current runtime information
+		 * Initializes the view model with the current runtime information
 		 * @private
 		 * @return {JSONModel} Model with filled data.
 		 */
@@ -541,16 +563,16 @@ sap.ui.define([
 				sDefaultSelectedLocation = "standard",
 				sDefaultOpenInNewWindow = false;
 
-			this._saveLocalStorageDefault("sap-ui-standard-bootstrap-URL", sDefaultBootstrapURL);
-			this._saveLocalStorageDefault("sap-ui-selected-location", sDefaultSelectedLocation);
-			this._saveLocalStorageDefault("sap-ui-open-sa-in-new-window", sDefaultOpenInNewWindow);
+			this._saveLocalStorageDefault(this._LOCAL_STORAGE_KEYS.STANDARD_URL, sDefaultBootstrapURL);
+			this._saveLocalStorageDefault(this._LOCAL_STORAGE_KEYS.LOCATION, sDefaultSelectedLocation);
+			this._saveLocalStorageDefault(this._LOCAL_STORAGE_KEYS.OPEN_IN_NEW_WINDOW, sDefaultOpenInNewWindow);
 
 			var oViewModel = new JSONModel({
 				"ProductName": "SAPUI5",
-				"StandardBootstrapURL": this._storage.get("sap-ui-standard-bootstrap-URL"),
-				"CustomBootstrapURL": this._storage.get("sap-ui-custom-bootstrap-URL"),
-				"OpenSupportAssistantInNewWindow": this._storage.get("sap-ui-open-sa-in-new-window"),
-				"SelectedLocation": this._storage.get("sap-ui-selected-location"),
+				"StandardBootstrapURL": this._storage.get(this._LOCAL_STORAGE_KEYS.STANDARD_URL),
+				"CustomBootstrapURL": this._storage.get(this._LOCAL_STORAGE_KEYS.CUSTOM_URL),
+				"OpenSupportAssistantInNewWindow": this._storage.get(this._LOCAL_STORAGE_KEYS.OPEN_IN_NEW_WINDOW),
+				"SelectedLocation": this._storage.get(this._LOCAL_STORAGE_KEYS.LOCATION),
 				"OpenUI5ProductVersion": null,
 				"OpenUI5ProductTimestamp": null,
 				"DebugModuleSelectionCount": 0
@@ -623,8 +645,9 @@ sap.ui.define([
 			// to OpenUI5 (Nightly) because the SA is not available in 1.44 or lower version
 			if (!this._isVersionBiggerThanMinSupported()) {
 				oViewModel.setProperty("/StandardBootstrapURL",aSupportedUrls[2].Value);
-				this._storage.put("sap-ui-standard-bootstrap-URL",aSupportedUrls[2].Value);
+				this._storage.put(this._LOCAL_STORAGE_KEYS.STANDARD_URL,aSupportedUrls[2].Value);
 			}
+			oViewModel.setSizeLimit(100000);
 			return oViewModel;
 		},
 
@@ -636,7 +659,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_saveLocalStorageDefault: function (sParameter,sDefault) {
-			if (!this._storage.get(sParameter)) {
+		if (!this._storage.get(sParameter)) {
 				this._storage.put(sParameter, sDefault);
 			}
 		},
@@ -675,10 +698,10 @@ sap.ui.define([
 		 */
 		_setActiveLocations: function (sValue) {
 			var oModel = this._oDialog.getModel("view"),
-				oRadioBtnStandart = sap.ui.getCore().byId("technicalInfoDialogAssistantPopover--standard"),
-				oRadioBtnCustom = sap.ui.getCore().byId("technicalInfoDialogAssistantPopover--custom"),
-				oCustom = sap.ui.getCore().byId("technicalInfoDialogAssistantPopover--customBootstrapURL"),
-				oStandard = sap.ui.getCore().byId("technicalInfoDialogAssistantPopover--standardBootstrapURL"),
+				oRadioBtnStandart = this._getControl("standard", this._SUPPORT_ASSISTANT_POPOVER_ID),
+				oRadioBtnCustom = this._getControl("custom", this._SUPPORT_ASSISTANT_POPOVER_ID),
+				oCustom = this._getControl("customBootstrapURL", this._SUPPORT_ASSISTANT_POPOVER_ID),
+				oStandard = this._getControl("standardBootstrapURL", this._SUPPORT_ASSISTANT_POPOVER_ID),
 				bStandardLocationEnabled;
 
 				this._resetValueState(oCustom);
@@ -686,7 +709,7 @@ sap.ui.define([
 
 			if (sValue === "standard") {
 				bStandardLocationEnabled = true;
-				oModel.setProperty("/StandardBootstrapURL", this._storage.get("sap-ui-standard-bootstrap-URL"));
+				oModel.setProperty("/StandardBootstrapURL", this._storage.get(this._LOCAL_STORAGE_KEYS.STANDARD_URL));
 				oStandard.setSelectedKey(oModel.getProperty("/StandardBootstrapURL"));
 			} else {
 				bStandardLocationEnabled = false;
@@ -697,8 +720,8 @@ sap.ui.define([
 			oCustom.setEnabled(!bStandardLocationEnabled);
 			oRadioBtnCustom.setSelected(!bStandardLocationEnabled);
 
-			this._storage.put("sap-ui-selected-location", sValue);
-			oModel.setProperty("/SelectedLocation", this._storage.get("sap-ui-selected-location"));
+			this._storage.put(this._LOCAL_STORAGE_KEYS.LOCATION, sValue);
+			oModel.setProperty("/SelectedLocation", this._storage.get(this._LOCAL_STORAGE_KEYS.LOCATION));
 		},
 
 		/**
@@ -745,7 +768,7 @@ sap.ui.define([
 				oControl;
 
 			if (sSelectedLocation === "custom") {
-				oControl = sap.ui.getCore().byId("technicalInfoDialogAssistantPopover--customBootstrapURL");
+				oControl = this._getControl("customBootstrapURL",this._SUPPORT_ASSISTANT_POPOVER_ID);
 				var sValue = oControl.getValue();
 				try {
 					this._validateValue(sValue);
@@ -757,7 +780,7 @@ sap.ui.define([
 					return;
 				}
 			} else {
-				oControl = sap.ui.getCore().byId("technicalInfoDialogAssistantPopover--standardBootstrapURL");
+				oControl = this._getControl("standardBootstrapURL", this._SUPPORT_ASSISTANT_POPOVER_ID);
 			}
 
 			if (this._sErrorMessage) {
@@ -799,6 +822,19 @@ sap.ui.define([
 				context: this,
 				url: sUrl + "Bootstrap.js"
 			});
+		},
+		/**
+		 * Gets the instance of the control. If context such as fragment is provided the
+		 * function will search for id in provided context. If context is not provided the standard
+		 * @param {string} sControlId The id of the searched control.
+		 * @param {string} sFragmentId The id of the context where the searched control is located.
+		 * @private
+		 */
+		_getControl:function (sControlId, sFragmentId) {
+			if (sFragmentId) {
+				return sap.ui.getCore().byId(sFragmentId + "--" + sControlId);
+			}
+			return sap.ui.getCore().byId(sControlId);
 		},
 
 		/**
@@ -856,7 +892,6 @@ sap.ui.define([
 			var oModel = this._oDialog.getModel("view"),
 				oTreeData = oModel.getProperty("/DebugModules")[0],
 				sDisplayCount;
-
 			oModel.setProperty("/CustomDebugMode", this._treeHelper.toDebugInfo(oTreeData));
 			oModel.setProperty("/DebugModuleSelectionCount", this._treeHelper.getSelectionCount(oTreeData));
 			sDisplayCount = oModel.getProperty("/DebugModuleSelectionCount").toString();
