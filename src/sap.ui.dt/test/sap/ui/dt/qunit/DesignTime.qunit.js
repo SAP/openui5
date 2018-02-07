@@ -161,7 +161,7 @@ function(
 			assert.ok(OverlayRegistry.getOverlay(this.oButton1), "overlay for button1 exists");
 			assert.ok(OverlayRegistry.getOverlay(this.oButton2), "overlay for button2 exists");
 
-			assert.strictEqual(this.oDesignTime.getSelectionManager().get().length, 0, "and a new selection is created and initially empty");
+			assert.strictEqual(this.oDesignTime.getSelection().length, 0, "and a new selection is created and initially empty");
 		});
 
 		QUnit.test("when '_onAddAggregation' is called and a foreign error occurs during overlay creation", function (assert) {
@@ -215,7 +215,6 @@ function(
 
 		QUnit.test("when a control is destroyed while loading design time metadata while adding it through aggregation", function(assert) {
 			var fnDone = assert.async();
-			var fnDone2 = assert.async();
 
 			var oButton = new Button();
 
@@ -229,12 +228,6 @@ function(
 			var fnElementOverlayDestroyedSpy = sinon.spy();
 			this.oDesignTime.attachEventOnce("elementOverlayCreated", fnElementOverlayCreatedSpy);
 			this.oDesignTime.attachEventOnce("elementOverlayDestroyed", fnElementOverlayDestroyedSpy);
-
-			sandbox.stub(jQuery.sap.log, "error", function() {
-				assert.ok(true, 'then the error was printed');
-				fnDone2();
-			});
-
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				assert.notOk(fnElementOverlayCreatedSpy.called, "then event 'elementOverlayCreated' wasn't called");

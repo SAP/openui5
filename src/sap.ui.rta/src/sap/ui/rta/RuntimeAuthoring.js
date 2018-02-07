@@ -526,9 +526,7 @@ sap.ui.define([
 					jQuery.sap.measure.end("rta.dt.startup","Measurement of RTA: DesignTime start up");
 				}, this);
 
-				this._oDesignTime.attachEventOnce("syncFailed", function() {
-					this.fireFailed();
-				}, this);
+				this._oDesignTime.attachEventOnce("syncFailed", this.fireFailed);
 
 				// Register function for checking unsaved before leaving RTA
 				this._oldUnloadHandler = window.onbeforeunload;
@@ -565,7 +563,8 @@ sap.ui.define([
 						var sStyles = sData.replace(/%scrollWidth%/g, DOMUtil.getScrollbarWidth() + 'px');
 						DOMUtil.insertStyles(sStyles);
 					});
-			})
+				this._oDesignTime.detachEvent("syncFailed", this.fireFailed);
+			}.bind(this))
 			.catch(function(vError) {
 				if (vError) {
 					return Promise.reject(vError);

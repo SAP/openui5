@@ -877,7 +877,11 @@ function(
 							)
 						);
 
-						jQuery.sap.log.error(Util.errorToString(oError));
+						// Omit error message if the element was destroyed during overlay initialisation
+						// (e.g. SimpleForm case when multi-removal takes place)
+						if (!oElement.bIsDestroyed){
+							jQuery.sap.log.error(Util.errorToString(oError));
+						}
 					}.bind(this, oElement.getId(), oParentAggregationOverlay.getId()));
 			} else {
 				// This is necessary when ElementOverlay was created for an Element which is not inside RootElement
