@@ -22,7 +22,6 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	/**
 	 * Constructor for a new sap.ui.fl.variants.VariantModel model.
 	 * @class Variant Model implementation for JSON format
 	 * @extends sap.ui.model.json.JSONModel
@@ -115,22 +114,37 @@ sap.ui.define([
 	};
 
 	VariantModel.prototype._updateVariantInURL = function (sVariantManagementReference, sNewVariantReference) {
-		var mVariantParametersInURL = this._getVariantIndexInURL(sVariantManagementReference);
-		mVariantParametersInURL.index  === -1 ? mVariantParametersInURL.parameters.push(sNewVariantReference) : (mVariantParametersInURL.parameters[mVariantParametersInURL.index] = sNewVariantReference);
-		Utils.setTechnicalURLParameterValues("sap-ui-fl-control-variant-id", mVariantParametersInURL.parameters);
+		var mTechnicalParametersWithIndex = this.getVariantIndexInURL(sVariantManagementReference);
+
+		if (!mTechnicalParametersWithIndex.parameters) {
+			// Case when app is in standalone mode
+			return;
+		}
+
+		var aParameterValues = mTechnicalParametersWithIndex.parameters[this.oVariantController.sVariantTechnicalParameterName]
+			? mTechnicalParametersWithIndex.parameters[this.oVariantController.sVariantTechnicalParameterName].slice(0)
+			: [];
+
+		mTechnicalParametersWithIndex.index  === -1
+			? aParameterValues.push(sNewVariantReference)
+			: (aParameterValues[mTechnicalParametersWithIndex.index] = sNewVariantReference);
+
+		Utils.setTechnicalURLParameterValues(this.oComponent, this.oVariantController.sVariantTechnicalParameterName, aParameterValues);
 	};
 
-	VariantModel.prototype._getVariantIndexInURL = function (sVariantManagementReference) {
+	VariantModel.prototype.getVariantIndexInURL = function (sVariantManagementReference) {
 		var iParamIndex = -1;
-		var aUrlHashParameters = Utils.getTechnicalURLParameterValues(this.oComponent, "sap-ui-fl-control-variant-id");
-		aUrlHashParameters.some(function (sParam, index) {
-			if (!!this.oVariantController.getVariant(sVariantManagementReference, sParam)) {
-				iParamIndex = index;
-				return true;
-			}
-		}.bind(this));
+		var mTechnicalParameters = Utils.getTechnicalParametersForComponent(this.oComponent);
+		if (mTechnicalParameters && Array.isArray(mTechnicalParameters[this.oVariantController.sVariantTechnicalParameterName])) {
+			mTechnicalParameters[this.oVariantController.sVariantTechnicalParameterName].some(function (sParam, index) {
+				if (!!this.oVariantController.getVariant(sVariantManagementReference, sParam)) {
+					iParamIndex = index;
+					return true;
+				}
+			}.bind(this));
+		}
 		return {
-			parameters: aUrlHashParameters,
+			parameters: mTechnicalParameters,
 			index: iParamIndex
 		};
 	};

@@ -325,54 +325,57 @@ sap.ui.require([
 	});
 
 	QUnit.test("when calling '_updateVariantInURL' with a valid 'sap-ui-fl-control-variant-id' URL parameter", function(assert) {
-		var aUrlTechnicalParameters = ["Dummy", "variantMgmtId1"];
+		var mTechnicalParameters = {
+			"sap-ui-fl-control-variant-id": ["Dummy", "variantMgmtId1"]
+		};
 		var aModifiedUrlTechnicalParameters = ["Dummy", "variant0"];
 		sandbox.stub(Utils, "getUshellContainer").returns(true);
 		sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
 
-		var fnGetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "getTechnicalURLParameterValues").returns(aUrlTechnicalParameters);
+		var fnGetTechnicalParametersForComponentStub = sandbox.stub(Utils, "getTechnicalParametersForComponent").returns(mTechnicalParameters);
 		var fnSetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "setTechnicalURLParameterValues");
 		this.oModel._updateVariantInURL("variantMgmtId1", "variant0");
-		assert.ok(fnGetTechnicalURLParameterValuesStub.calledWithExactly(this.oModel.oComponent, 'sap-ui-fl-control-variant-id'), "then 'sap-ui-fl-control-variant-id' parameter values are requested");
-		assert.ok(fnSetTechnicalURLParameterValuesStub.calledWithExactly('sap-ui-fl-control-variant-id', aModifiedUrlTechnicalParameters), "then the correct 'sap-ui-fl-control-variant-id' parameter value update called with the new value");
+		assert.ok(fnGetTechnicalParametersForComponentStub.calledWithExactly(this.oModel.oComponent), "then technical parameters requested for variant model component");
+		assert.ok(fnSetTechnicalURLParameterValuesStub.calledWithExactly(this.oModel.oComponent, 'sap-ui-fl-control-variant-id', aModifiedUrlTechnicalParameters), "then the correct 'sap-ui-fl-control-variant-id' parameter value update called with the new value");
 	});
 
 	QUnit.test("when calling '_updateVariantInURL' with no 'sap-ui-fl-control-variant-id' URL parameter", function(assert) {
-		var aUrlTechnicalParameters = [];
+		var mTechnicalParameters = {};
 		var aModifiedUrlTechnicalParameters = ["variant0"];
 		sandbox.stub(Utils, "getUshellContainer").returns(true);
 		sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
 
-		var fnGetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "getTechnicalURLParameterValues").returns(aUrlTechnicalParameters);
+		var fnGetTechnicalParametersForComponentStub = sandbox.stub(Utils, "getTechnicalParametersForComponent").returns(mTechnicalParameters);
 		var fnSetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "setTechnicalURLParameterValues");
 		this.oModel._updateVariantInURL("variantMgmtId1", "variant0");
-		assert.ok(fnGetTechnicalURLParameterValuesStub.calledWithExactly(this.oModel.oComponent, 'sap-ui-fl-control-variant-id'), "then 'sap-ui-fl-control-variant-id' parameter values are requested");
-		assert.ok(fnSetTechnicalURLParameterValuesStub.calledWithExactly('sap-ui-fl-control-variant-id', aModifiedUrlTechnicalParameters), "then the correct 'sap-ui-fl-control-variant-id' parameter value update called with the new value");
+		assert.ok(fnGetTechnicalParametersForComponentStub.calledWithExactly(this.oModel.oComponent), "then technical parameters requested for variant model component");
+		assert.ok(fnSetTechnicalURLParameterValuesStub.calledWithExactly(this.oModel.oComponent, 'sap-ui-fl-control-variant-id', aModifiedUrlTechnicalParameters), "then the correct 'sap-ui-fl-control-variant-id' parameter value update called with the new value");
 	});
 
 	QUnit.test("when calling '_updateVariantInURL' with no 'sap-ui-fl-control-variant-id' URL parameter", function(assert) {
-		var aUrlTechnicalParameters = [];
+		var mTechnicalParameters = {};
 		var aModifiedUrlTechnicalParameters = ["variant0"];
 		sandbox.stub(Utils, "getUshellContainer").returns(true);
 		sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
 
-		var fnGetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "getTechnicalURLParameterValues").returns(aUrlTechnicalParameters);
+		var fnGetTechnicalParametersForComponentStub = sandbox.stub(Utils, "getTechnicalParametersForComponent").returns(mTechnicalParameters);
 		var fnSetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "setTechnicalURLParameterValues");
 		this.oModel._updateVariantInURL("variantMgmtId1", "variant0");
-		assert.ok(fnGetTechnicalURLParameterValuesStub.calledWithExactly(this.oModel.oComponent, 'sap-ui-fl-control-variant-id'), "then 'sap-ui-fl-control-variant-id' parameter values are requested");
-		assert.ok(fnSetTechnicalURLParameterValuesStub.calledWithExactly('sap-ui-fl-control-variant-id', aModifiedUrlTechnicalParameters), "then the correct 'sap-ui-fl-control-variant-id' parameter value update called with the new value");
+		assert.ok(fnGetTechnicalParametersForComponentStub.calledWithExactly(this.oModel.oComponent), "then technical parameters requested for variant model component");
+		assert.ok(fnSetTechnicalURLParameterValuesStub.calledWithExactly(this.oModel.oComponent, 'sap-ui-fl-control-variant-id', aModifiedUrlTechnicalParameters), "then the correct 'sap-ui-fl-control-variant-id' parameter value update called with the new value");
 	});
 
 	QUnit.test("when calling '_updateVariantInURL' without a ushell container", function(assert) {
 		sandbox.stub(Utils, "getUshellContainer").returns(false);
 
-		var fnGetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "getTechnicalURLParameterValues").returns([]);
-		var fnGetVariantIndexInURLSpy = sandbox.spy(this.oModel, "_getVariantIndexInURL");
+		var fnGetTechnicalParametersForComponentStub = sandbox.stub(Utils, "getTechnicalParametersForComponent");
 		var fnSetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "setTechnicalURLParameterValues");
+		var fnGetVariantIndexInURLSpy = sandbox.spy(this.oModel, "getVariantIndexInURL");
 		this.oModel._updateVariantInURL("variantMgmtId1", "variant0");
-		assert.ok(fnGetTechnicalURLParameterValuesStub.calledWithExactly(this.oModel.oComponent, 'sap-ui-fl-control-variant-id'), "then 'getTechnicalURLParameterValues' not called");
-		assert.ok(fnGetVariantIndexInURLSpy.returned({parameters: ["variant0"], index: -1}), "then 'getTechnicalURLParameterValues' not called");
-		assert.ok(fnSetTechnicalURLParameterValuesStub.calledOnce, "then 'setTechnicalURLParameterValues' not called");
+		assert.ok(fnGetTechnicalParametersForComponentStub.calledWithExactly(this.oModel.oComponent), "then technical parameters requested for variant model component");
+		assert.ok(fnGetTechnicalParametersForComponentStub.calledOnce, "then 'getTechnicalParametersForComponent' not called second time");
+		assert.equal(fnSetTechnicalURLParameterValuesStub.callCount, 0,  "then 'setTechnicalURLParameterValues' not called as component doesn't have technical parameters");
+		assert.ok(fnGetVariantIndexInURLSpy.returned({parameters: undefined, index: -1}), "then 'getVariantIndexInURL' returned the correct index and parameters");
 	});
 
 	QUnit.test("when calling '_removeDirtyChanges'", function(assert) {
