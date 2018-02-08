@@ -286,7 +286,6 @@
 					<template:if test="{data>/hasEvents}">
 						<ObjectPageSection id="events"
 										   title="Events"
-										   subSections="{/events}"
 										   titleUppercase="false">
 							<subSections>
 								<custom:ObjectPageSubSection title="{name}">
