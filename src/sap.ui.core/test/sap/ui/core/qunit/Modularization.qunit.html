@@ -28,83 +28,81 @@
 		sap.ui._ui5loader.config({
 			async: 'mixed',
 			paths: {
-				'tests': '../../../../'
+				'local': './'
 			}
 		});
 		QUnit.config.autostart = false;
 		QUnit.config.reorder = true;
 		sap.ui.require([
-			"tests/sap/ui/karma/polyfillsForTests",
+			"local/polyfillsForTests",
 
 			// sap/base/*
-			"tests/sap/base/assert.qunit",
-			"tests/sap/base/log.qunit",
-			"tests/sap/base/storage.qunit",
+			"local/base/assert.qunit",
+			"local/base/log.qunit",
+			"local/base/storage.qunit",
 
 			// sap/base/encoding/*
-			"tests/sap/base/encoding/encodeCSS.qunit",
-			"tests/sap/base/encoding/encodeJS.qunit",
-			"tests/sap/base/encoding/encodeURL.qunit",
-			"tests/sap/base/encoding/encodeURLParameters.qunit",
-			"tests/sap/base/encoding/encodeXML.qunit",
-			"tests/sap/base/encoding/sanitizeHTML.qunit",
-			"tests/sap/base/encoding/toHex.qunit",
+			"local/base/encoding/encodeCSS.qunit",
+			"local/base/encoding/encodeJS.qunit",
+			"local/base/encoding/encodeURL.qunit",
+			"local/base/encoding/encodeURLParameters.qunit",
+			"local/base/encoding/encodeXML.qunit",
+			"local/base/encoding/sanitizeHTML.qunit",
+			"local/base/encoding/toHex.qunit",
 
 			// sap/base/strings/*
-			"tests/sap/base/strings/camelCase.qunit",
-			"tests/sap/base/strings/charToUpperCase.qunit",
-			"tests/sap/base/strings/endsWithIgnoreCase.qunit",
-			"tests/sap/base/strings/escapeRegExp.qunit",
-			"tests/sap/base/strings/formatMessage.qunit",
-			"tests/sap/base/strings/hyphen.qunit",
-			"tests/sap/base/strings/normalize-polyfill.qunit",
-			"tests/sap/base/strings/startsWithIgnoreCase.qunit",
+			"local/base/strings/camelCase.qunit",
+			"local/base/strings/charToUpperCase.qunit",
+			"local/base/strings/endsWithIgnoreCase.qunit",
+			"local/base/strings/escapeRegExp.qunit",
+			"local/base/strings/formatMessage.qunit",
+			"local/base/strings/hyphen.qunit",
+			"local/base/strings/normalize-polyfill.qunit",
+			"local/base/strings/startsWithIgnoreCase.qunit",
 
 			// sap/base/util/*
-			"tests/sap/base/util/arraySymbolDiff.qunit",
-			"tests/sap/base/util/each.qunit",
-			"tests/sap/base/util/equal.qunit",
-			"tests/sap/base/util/extend.qunit",
-			"tests/sap/base/util/getObject.qunit",
-			"tests/sap/base/util/getter.qunit",
-			"tests/sap/base/util/hashCode.qunit",
-			"tests/sap/base/util/isPlainObject.qunit",
-			"tests/sap/base/util/isWindow.qunit",
-			"tests/sap/base/util/JSTokenizer.qunit",
-			"tests/sap/base/util/now.qunit",
-			"tests/sap/base/util/uid.qunit",
-			"tests/sap/base/util/unique.qunit",
-			"tests/sap/base/util/UriParameters.qunit",
-			"tests/sap/base/util/URLWhiteList.qunit",
+			"local/base/util/arraySymbolDiff.qunit",
+			"local/base/util/each.qunit",
+			"local/base/util/equal.qunit",
+			"local/base/util/extend.qunit",
+			"local/base/util/getObject.qunit",
+			"local/base/util/getter.qunit",
+			"local/base/util/hashCode.qunit",
+			"local/base/util/isPlainObject.qunit",
+			"local/base/util/isWindow.qunit",
+			"local/base/util/JSTokenizer.qunit",
+			"local/base/util/now.qunit",
+			"local/base/util/uid.qunit",
+			"local/base/util/unique.qunit",
+			"local/base/util/UriParameters.qunit",
+			"local/base/util/URLWhiteList.qunit",
 
 			// sap/ui/*
-			"tests/sap/ui/ActivityDetection.qunit",
-			"tests/sap/ui/MobileSupport.qunit",
+			"local/ActivityDetection.qunit",
+			"local/MobileSupport.qunit",
+			"local/Device.qunit",
+			"local/initjQueryBrowser.qunit",
+			"local/initjQuerySupport.qunit",
+			"local/XHRProxy.qunit",
 
-			// sap/ui/karma/*
-			"tests/sap/ui/karma/Device.qunit",
-			"tests/sap/ui/karma/initjQueryBrowser.qunit",
-			"tests/sap/ui/karma/initjQuerySupport.qunit",
-			"tests/sap/ui/karma/XHRProxy.qunit",
+			// sap/ui/bootstrap/*
+			"local/bootstrap/StoredConfig.qunit",
 
-			// sap/ui/karma/bootstrap/*
-			"tests/sap/ui/karma/bootstrap/StoredConfig.qunit",
+			// sap/ui/dom/*
+			"local/dom/appendHead.qunit",
+			"local/dom/includeScript.qunit",
+			"local/dom/includeStylesheet.qunit",
 
-			// sap/ui/karma/dom/*
-			"tests/sap/ui/karma/dom/appendHead.qunit",
-			"tests/sap/ui/karma/dom/includeScript.qunit",
-			"tests/sap/ui/karma/dom/includeStylesheet.qunit",
+			// sap/ui/performance/*
+			"local/performance/XHRInterceptor.qunit",
+			"local/performance/E2ETrace/Passport.qunit",
 
-			// sap/ui/karma/performance/*
-			"tests/sap/ui/karma/performance/XHRInterceptor.qunit",
-			"tests/sap/ui/karma/performance/E2ETrace/Passport.qunit",
-
-			// sap/ui/karma/security/*
-			"tests/sap/ui/karma/security/FrameOptions.qunit",
+			// sap/ui/security/*
+			"local/security/FrameOptions.qunit",
 
 			// sap/ui/xml/*
-			"tests/sap/ui/xml/serializeXML.qunit",
-			"tests/sap/ui/xml/XMLParser.qunit"
+			"local/xml/serializeXML.qunit",
+			"local/xml/XMLParser.qunit"
 
 		], function(applyPolyfills) {
 			applyPolyfills();
