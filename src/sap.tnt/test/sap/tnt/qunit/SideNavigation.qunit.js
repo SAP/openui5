@@ -67,6 +67,28 @@
 		assert.strictEqual(fixedListItem.$().hasClass('sapTntNavLIItemSelected'), false, 'The class "sapTntNavLIItemSelected" should be removed from the deselected item');
 	});
 
+	QUnit.test("Switch Between active items without fixedItem aggregation", function(assert) {
+
+		// arrange
+		var listItem = new sap.tnt.NavigationListItem({text: 'List Item'});
+		var listItem1 = new sap.tnt.NavigationListItem({text: 'List Item'});
+
+		// act
+		this.sideNavigation.getItem().addItem(listItem);
+		this.sideNavigation.getItem().addItem(listItem1);
+
+		//remove the fixedItem aggregation from the sideNavigation
+		this.sideNavigation.setAggregation('fixedItem', null);
+
+		this.sideNavigation.setSelectedItem(listItem);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(this.sideNavigation.getSelectedItem(), listItem.getId(), 'The correct item should be selected');
+		assert.strictEqual(listItem.$().hasClass('sapTntNavLIItemSelected'), true, 'The item should have class "sapTntNavLIItemSelected"');
+		assert.strictEqual(listItem.$().hasClass('sapTntNavLIItemSelected'), true, 'The class "sapTntNavLIItemSelected" should be removed from the deselected item');
+	});
+
 	QUnit.test('Passing null should deselect the selected item', function (assert) {
 		// arrange
 		var listItem = new sap.tnt.NavigationListItem({text: 'List Item'});
