@@ -538,7 +538,7 @@
 		assert.strictEqual(Math.floor(iButton3Width), Math.floor(iButton1Width), 'Third button width should be equal to the ' +
 				'first button width');
 
-		assert.strictEqual(iControlWidth, Math.round(iButton1Width + iButton2Width + iButton3Width), "The sum of all buttons width " +
+		assert.strictEqual(Math.round(iControlWidth), Math.round(iButton1Width + iButton2Width + iButton3Width), "The sum of all buttons width " +
 				"should be the same as the control width");
 
 		// Cleanup
@@ -1821,9 +1821,9 @@
 
 		oSB = new sap.m.SegmentedButton({
 			buttons: [
-				new sap.m.Button({text: "Btn 1", width: "100px"}),
-				new sap.m.Button({text: "Btn 2 long", width: "100px"}),
-				new sap.m.Button({text: "Btn 3 again longer", width: "100px"})
+				new sap.m.Button({text: "Btn 1", width: "99.5px"}),
+				new sap.m.Button({text: "Btn 2 long", width: "99.5px"}),
+				new sap.m.Button({text: "Btn 3 again longer", width: "99.5px"})
 			]
 		});
 		aButtons = oSB.getButtons();
@@ -1837,7 +1837,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.deepEqual(oSB._getRenderedButtonWidths(aButtons), [100,100,100], "Returned array of widths " +
+		assert.deepEqual(oSB._getRenderedButtonWidths(aButtons), [99.5,99.5,99.5], "Returned array of widths " +
 				"equals to predefined widths of the buttons");
 
 		// Cleanup
