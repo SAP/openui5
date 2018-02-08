@@ -440,6 +440,36 @@
 					oObjectHeader.destroy();
 				});
 
+				QUnit.test("Tap on ObjectHeader title arrow span should lead to preventing default action", function(assert){
+					var oEvent_title_arrow,
+						oSpyPreventDefaultTitleArrow,
+						oObjectHeader = createObjectHeader({
+							title: "OH title",
+							responsive: true,
+							titleActive: true
+						});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// click on title arrow div
+					oEvent_title_arrow = {
+						setMarked: function(){},
+						preventDefault: function(){},
+						stopPropagation: function(){},
+						target: oObjectHeader.$("title-arrow").get(0)
+					};
+
+					oSpyPreventDefaultTitleArrow = this.spy(oEvent_title_arrow, "preventDefault");
+
+					oObjectHeader.ontap(oEvent_title_arrow);
+					assert.equal(oSpyPreventDefaultTitleArrow.callCount, 1, ".. prevents default browser action");
+
+					// Clean up
+					oSpyPreventDefaultTitleArrow.restore();
+					oObjectHeader.destroy();
+				});
 
 			QUnit.module("Basic aggregations rendering", {
 				afterEach: function () {
