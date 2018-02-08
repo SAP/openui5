@@ -1,6 +1,7 @@
 {
 	"@odata.context" : "$metadata#SalesOrderList(ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID,SO_2_SOITEM(SOITEM_2_PRODUCT(PRODUCT_2_BP(BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))),SO_2_BP(BusinessPartnerID,CompanyName,PhoneNumber),SO_2_SCHDL(ScheduleKey,DeliveryDate))/$entity",
 	"@odata.etag" : "W/\"20160619220000.0000000\"",
+	"BuyerID" : "0100000000",
 	"ChangedAt" : "2016-06-26T22:00:00.000000Z",
 	"CreatedAt" : "2016-06-26T22:00:00.000000Z",
 	"CurrencyCode" : "EUR",
