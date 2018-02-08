@@ -249,7 +249,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			if (selectedInFlexibleList) {
 				navigationList.setSelectedItem(listItemToSelect, suppressInvalidate);
-				fixedNavigationList.setSelectedItem(null, true);
+				if (fixedNavigationList) {
+					fixedNavigationList.setSelectedItem(null, true);
+				}
 			}
 
 			if (selectedInFixedList) {
