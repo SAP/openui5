@@ -22,9 +22,11 @@ sap.ui.require([
 
 	var oFakeLrepConnectorLocalStorage = sap.ui.fl.LrepConnector.createConnector();
 
-	var oTestData = {"fileName":"id_1445501120486_25","fileType":"change","changeType":"hideControl","component":"sap.ui.rta.test.Demo.md.Component","packageName":"$TMP","content":{},"selector":{"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"},"layer":"CUSTOMER","texts":{},"namespace":"sap.ui.rta.test.Demo.md.Component","creation":"","originalLanguage":"EN","conditions":{},"support":{"generator":"Change.createInitialFileContent","service":"","user":""}};
+	var oTestData = {"fileName":"id_1445501120486_25","fileType":"change","changeType":"hideControl","reference":"sap.ui.rta.test.Demo.md.Component","packageName":"$TMP","content":{},"selector":{"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"},"layer":"CUSTOMER","texts":{},"namespace":"sap.ui.rta.test.Demo.md.Component","creation":"","originalLanguage":"EN","conditions":{},"support":{"generator":"Change.createInitialFileContent","service":"","user":""}, "validAppVersions": {"creation": "1.0.0", "from": "1.0.0"}};
 
-	var aTestData = [{"fileName":"id_1449484290389_26","fileType":"change","changeType":"moveFields","component":"sap.ui.rta.test.Demo.md.Component","packageName":"$TMP","content":{"moveFields":[{"id":"RTADemoAppMD---detail--GroupElementGeneralDataAddressStreet","index":1}]},"selector":{"id":"RTADemoAppMD---detail--GroupGeneralData"},"layer":"CUSTOMER","texts":{},"namespace":"sap.ui.rta.test.Demo.md.Component","creation":"","originalLanguage":"EN","conditions":{},"support":{"generator":"Change.createInitialFileContent","service":"","user":""}},{"fileName":"id_1449484290389_27","fileType":"change","changeType":"moveFields","component":"sap.ui.rta.test.Demo.md.Component","packageName":"$TMP","content":{"moveFields":[{"id":"RTADemoAppMD---detail--GroupElementGeneralDataAddressZipCode","index":4}]},"selector":{"id":"RTADemoAppMD---detail--GroupGeneralData"},"layer":"CUSTOMER","texts":{},"namespace":"sap.ui.rta.test.Demo.md.Component","creation":"","originalLanguage":"EN","conditions":{},"support":{"generator":"Change.createInitialFileContent","service":"","user":""}},{"fileName":"id_1449484290389_28","fileType":"change","changeType":"moveFields","component":"sap.ui.rta.test.Demo.md.Component","packageName":"$TMP","content":{"moveFields":[{"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus","index":4}],"targetId":"RTADemoAppMD---detail--GroupGeneralData"},"selector":{"id":"RTADemoAppMD---detail--GroupDates"},"layer":"CUSTOMER","texts":{},"namespace":"sap.ui.rta.test.Demo.md.Component","creation":"","originalLanguage":"EN","conditions":{},"support":{"generator":"Change.createInitialFileContent","service":"","user":""}}];
+	var aTestData = [{"fileName":"id_1449484290389_26","fileType":"change","changeType":"moveFields","reference":"sap.ui.rta.test.Demo.md.Component","packageName":"$TMP","content":{"moveFields":[{"id":"RTADemoAppMD---detail--GroupElementGeneralDataAddressStreet","index":1}]},"selector":{"id":"RTADemoAppMD---detail--GroupGeneralData"},"layer":"CUSTOMER","texts":{},"namespace":"sap.ui.rta.test.Demo.md.Component","creation":"","originalLanguage":"EN","conditions":{},"support":{"generator":"Change.createInitialFileContent","service":"","user":""}, "validAppVersions": {"creation": "1.0.0", "from": "1.0.0"}},
+	                 {"fileName":"id_1449484290389_27","fileType":"change","changeType":"moveFields","reference":"sap.ui.rta.test.Demo.md.Component","packageName":"$TMP","content":{"moveFields":[{"id":"RTADemoAppMD---detail--GroupElementGeneralDataAddressZipCode","index":4}]},"selector":{"id":"RTADemoAppMD---detail--GroupGeneralData"},"layer":"CUSTOMER","texts":{},"namespace":"sap.ui.rta.test.Demo.md.Component","creation":"","originalLanguage":"EN","conditions":{},"support":{"generator":"Change.createInitialFileContent","service":"","user":""}, "validAppVersions": {"creation": "1.0.0", "from": "1.0.0"}},
+	                 {"fileName":"id_1449484290389_28","fileType":"change","changeType":"moveFields","reference":"sap.ui.rta.test.Demo.md.Component","packageName":"$TMP","content":{"moveFields":[{"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus","index":4}],"targetId":"RTADemoAppMD---detail--GroupGeneralData"},"selector":{"id":"RTADemoAppMD---detail--GroupDates"},"layer":"CUSTOMER","texts":{},"namespace":"sap.ui.rta.test.Demo.md.Component","creation":"","originalLanguage":"EN","conditions":{},"support":{"generator":"Change.createInitialFileContent","service":"","user":""}, "validAppVersions": {"creation": "1.0.0", "from": "1.0.0"}}];
 
 	QUnit.module("Given I use SAP RTA Fake Lrep Connector Local Storage", {
 
@@ -33,6 +35,7 @@ sap.ui.require([
 		},
 		afterEach : function(assert) {
 			oFakeLrepConnectorLocalStorage.deleteChanges();
+			sandbox.restore();
 		}
 	});
 
@@ -49,6 +52,31 @@ sap.ui.require([
 		.then(function (oSettings) {
 			assert.ok(oSettings);
 		});
+	});
+
+	QUnit.test("when calling send function with DELETE flag", function(assert) {
+		var done = assert.async();
+		var sUri = "/sap/bc/lrep/changes/" +
+			"?reference=" + aTestData[0].reference +
+			"&appVersion=" + "1.0.0" +
+			"&layer=" + aTestData[0].layer +
+			"&generator=Change.createInitialFileContent";
+		var oForeignTestData = {"fileName":"id_1445501120486_45","fileType":"change","changeType":"hideControl","reference":"sap.ui.rta.test.ForeignDemo.md.Component","packageName":"$TMP","content":{},"selector":{"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"},"layer":"CUSTOMER","texts":{},"namespace":"sap.ui.rta.test.ForeignDemo.md.Component","creation":"","originalLanguage":"EN","conditions":{},"support":{"generator":"Change.createInitialFileContent","service":"","user":""}, "validAppVersions": {"creation": "1.0.0", "from": "1.0.0"}};
+		var aMixedTestData = aTestData.concat([oForeignTestData]);
+
+		var fnDeleteChangeSpy = sandbox.spy(FakeLrepLocalStorage, "deleteChange");
+
+		return oFakeLrepConnectorLocalStorage.create(aMixedTestData)
+		.then(function() {
+			assert.equal(FakeLrepLocalStorage.getNumChanges(), 4, "Local Storage contains four changes in the beginning");
+			return Promise.resolve();
+		}).then(oFakeLrepConnectorLocalStorage.send(sUri, "DELETE"))
+			.then(function() {
+				assert.equal(fnDeleteChangeSpy.callCount, 3, "deleteChange of FakeLrepLocalStorage has been called three times");
+				assert.equal(FakeLrepLocalStorage.getNumChanges(), 1, "Finally one change is in the Local Storage");
+				assert.equal(FakeLrepLocalStorage.getChanges()[0].reference, "sap.ui.rta.test.ForeignDemo.md.Component", "and it is the one with a different reference");
+				done();
+			});
 	});
 
 
