@@ -30,15 +30,18 @@ sap.ui.define([
 	var ButtonType = mobileLibrary.ButtonType;
 
 	/**
-	 * Constructor for a new ObjectPageSection.
+	 * Constructor for a new <code>ObjectPageSection</code>.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
+	 * Top-level information container of an {@link sap.uxap.ObjectPageLayout}.
 	 *
-	 * An ObjectPageSection is the top-level information container of an Object page. Its purpose is to aggregate Subsections.
-	 * Disclaimer: This control is intended to be used only as part of the Object page layout
+	 * The <code>ObjectPageSection</code>'s purpose is to aggregate subsections.
+	 *
+	 * <b>Note:</b> This control is intended to be used only as part of the <code>ObjectPageLayout</code>.
+	 *
 	 * @extends sap.uxap.ObjectPageSectionBase
 	 *
 	 * @constructor

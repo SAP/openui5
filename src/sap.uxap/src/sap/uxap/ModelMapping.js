@@ -8,14 +8,14 @@ sap.ui.define(["sap/ui/core/Element", "./library"],
 		"use strict";
 
 	/**
-	 * Constructor for a new ModelMapping.
+	 * Constructor for a new <code>ModelMapping</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
+	 * Defines the entity that will be passed to the {@link sap.uxap.ObjectPageLayout}.
 	 *
-	 * Define the entity that will be passed to the ObjectPageLayout.
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE

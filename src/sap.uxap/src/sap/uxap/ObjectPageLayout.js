@@ -48,13 +48,56 @@ sap.ui.define([
 	var ObjectPageSubSectionLayout = library.ObjectPageSubSectionLayout;
 
 	/**
-	 * Constructor for a new ObjectPageLayout.
+	 * Constructor for a new <code>ObjectPageLayout</code>.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * An ObjectPageLayout is the layout control, used to put together all parts of an Object page - Header, Navigation bar and Sections/Subsections.
+	 * A layout that allows apps to easily display information related to a business object.
+	 *
+	 * <h3>Overview</h3>
+	 *
+	 * The <code>ObjectPageLayout</code> layout is composed of a header (title and content),
+	 * an optional anchor bar and block content wrapped in sections and subsections that
+	 * structure the information.
+	 *
+	 * <h3>Structure</h3>
+	 *
+	 * An <code>ObjectPageLayout</code> control is used to put together all parts of an Object page
+	 * - Header, optional Anchor Bar and Sections/Subsections.
+	 *
+	 * <h4>Header<h4>
+	 * The <code>ObjectPageLayout</code> implements the snapping header concept. This means that
+	 * the upper part of the header (Header Title) always stays visible, while the lower part
+	 * (Header Content) can scroll out of view.
+	 *
+	 * Header Title is displayed at the top of the header and always remains visible above the
+	 * scrollable content of the page. It contains the title and most prominent details of the object.
+	 *
+	 * The Header Content scrolls along with the content of the page until it disappears (collapsed header).
+	 * When scrolled back to the top it becomes visible again (expanded header). It contains all the
+	 * additional information of the object.
+	 *
+	 * <h4>Anchor Bar<h4>
+	 * The Anchor Bar is an automatically generated internal menu that shows the titles of the sections
+	 * and subsections and allows the user to scroll to the respective section and subsection content.
+	 *
+	 * <h4>Sections, Subsections, Blocks</h4>
+	 * The content of the page that appears bellow the header is composed of blocks structured into
+	 * sections and subsections.
+	 *
+	 * <h3>Usage</h3>
+	 * Use the <code>ObjectPageLayout</code> if:
+	 * <ul>
+	 * <li>The users need to see, edit, or create an item with all its details.</li>
+	 * <li>Users need to get an overview of an object and interact with different parts of the object.</li>
+	 * </ul>
+	 *
+	 * <h3>Responsive behavior</h3>
+	 *
+	 * The <code>ObjectPageLayout</code> is responsive and adapts to all screen sizes.
+	 *
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -63,6 +106,12 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.uxap.ObjectPageLayout
 	 * @since 1.26
+	 * @see {@link topic:2e61ab6c68a2480eb666c1927a707658 Object Page Layout}
+	 * @see {@link topic:d2ef0099542d44dc868719d908e576d0 Object Page Headers}
+	 * @see {@link topic:370b67986497463187336fa130aebbf1 Anchor Bar}
+	 * @see {@link topic:4527729576cb4a4888275b6935aad03a Object Page Blocks}
+	 * @see {@link topic:2978f6064742456ebed31c5ccf4d051d Creating Blocks}
+	 * @see {@link topic:bc410e94e46540efa02857e15aae583f Object Page Scrolling}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ObjectPageLayout = Control.extend("sap.uxap.ObjectPageLayout", /** @lends sap.uxap.ObjectPageLayout.prototype */ {

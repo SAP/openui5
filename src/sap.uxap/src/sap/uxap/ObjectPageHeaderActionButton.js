@@ -7,14 +7,14 @@ sap.ui.define(["sap/m/Button", "./library", "./ObjectPageHeaderActionButtonRende
 	"use strict";
 
 	/**
-	 * Constructor for a new ObjectPageHeaderActionButton.
+	 * Constructor for a new <code>ObjectPageHeaderActionButton</code>.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
+	 * A Button that is used in the <code>actions</code> aggregation of the {@link sap.uxap.ObjectPageHeader}.
 	 *
-	 * Button that can be used in the ObjectPageHeader action aggregation.
 	 * @extends sap.m.Button
 	 *
 	 * @author SAP SE

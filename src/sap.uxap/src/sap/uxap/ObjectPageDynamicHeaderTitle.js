@@ -33,7 +33,16 @@ sap.ui.define([
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * Dynamic title for the {@link sap.uxap.ObjectPageLayout ObjectPage}.
+		 * Represents the static part (header title) of the dynamic header of the {@link sap.uxap.ObjectPageLayout}.
+		 *
+		 * <h3>Overview</h3>
+		 *
+		 * The <code>ObjectPageDynamicHeaderTitle</code> is used to represent the most important details of
+		 * the displayed business object, such as the object title and actions that the user can perform.
+		 *
+		 *<b>Note:</b> The <code>ObjectPageDynamicHeaderTitle</code> is meant to be used inside the <code>ObjectPageLayout</code>
+		 * control. Any other usage is not supported and can lead to unexpected behavior.
+		 *
 		 * @extends sap.f.DynamicPageTitle
 		 * @implements sap.uxap.IHeaderTitle
 		 *
@@ -45,6 +54,9 @@ sap.ui.define([
 		 * @alias sap.uxap.ObjectPageDynamicHeaderTitle
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 * @since 1.52
+		 * @see {@link topic:6e340c119ddd4c778b315f65a0432420 Object Page Dynamic Header}
+		 * @see {@link topic:d2ef0099542d44dc868719d908e576d0 Object Page Headers}
+		 * @see {@link topic:9c9d94fd28284539a9a5a57e9caf82a8 Object Page Headers Comparison}
 		 */
 		var ObjectPageDynamicHeaderTitle = DynamicPageTitle.extend("sap.uxap.ObjectPageDynamicHeaderTitle", /** @lends sap.uxap.ObjectPageDynamicHeaderTitle.prototype */ { metadata : {
 

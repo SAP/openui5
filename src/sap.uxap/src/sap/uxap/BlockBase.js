@@ -30,24 +30,31 @@ sap.ui.define([
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
+		 * The main element that holds the content that is displayed in an
+		 * {@link sap.uxap.ObjectPageLayout ObjectPageLayout}, but not necessarily only there.
 		 *
-		 * A <code>sap.uxap.BlockBase</code> is the main element that will be displayed, mainly in an object page, but not necessarily
-		 * only there.
+		 * <h3>Overview</h3>
 		 *
-		 * A block is a control that uses an XML view for storing its internal control tree.
-		 * A block is a control that has modes and a view associated to every mode.
-		 * At rendering time, the view associated to the mode is rendered.
+		 * The blocks give the flexibility to combine different content types.
 		 *
-		 * <b>Note:</b> The control supports only XML views.
+		 * A block is a control that:
+		 * <ul>
+		 * <li>Has modes and a view associated to each mode. At rendering time, the view associated to the mode is rendered.</li>
+		 * <li>Can use all view types for storing its internal control tree (XML, JS, JSON, HTML)</li>
+		 * </ul>
 		 *
-		 * As any UI5 view, the XML view can have a controller which automatically comes with a <code>this.oParentBlock</code> attribute (so that the controller can interact with the block).
-		 * If the controller implements the <code>onParentBlockModeChange</code> method, this method will be called with the <code>sMode</code> parameter when the view is used or reused by the block.
+		 * As any UI5 view, the XML view can have a controller which automatically comes with a
+		 * <code>this.oParentBlock</code> attribute (so that the controller can interact with the block).
+		 * If the controller implements the <code>onParentBlockModeChange</code> method, this method will
+		 * be called with the <code>sMode</code> parameter when the view is used or reused by the block.
 		 *
 		 * @extends sap.ui.core.Control
 		 * @author SAP SE
 		 * @constructor
 		 * @public
 		 * @since 1.26
+		 * @see {@link topic:4527729576cb4a4888275b6935aad03a Block Base}
+		 * @see {@link topic:2978f6064742456ebed31c5ccf4d051d Creating Blocks}
 		 * @alias sap.uxap.BlockBase
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
@@ -70,7 +77,7 @@ sap.ui.define([
 					"visible": {type: "boolean", group: "Appearance", defaultValue: true},
 
 					/**
-					 * Determines on how columns the layout will be rendered.
+					 * Determines on how many columns the layout will be rendered.
 					 * Allowed values are integers from 1 to 4 and "auto".
 					 */
 					"columnLayout": {type: "sap.uxap.BlockBaseColumnLayout", group: "Behavior", defaultValue: "auto"},

@@ -13,14 +13,16 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a new HierarchicalSelect.
+	 * Constructor for a new <code>HierarchicalSelect</code>.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A select that display items on 2 level of hierarchy.
-	 * If a provided item has a custom data named "secondLevel", then it will be displayed as a second level, otherwise it would be displayed as a first level.
+	 * A select that displays items on a hierarchy of 2 levels.
+	 *
+	 * If a provided item has a custom data named <code>secondLevel</code>, then it will be displayed as a second level,
+	 * otherwise it would be displayed as a first level.
 	 * @extends sap.m.Select
 	 *
 	 * @author SAP SE
