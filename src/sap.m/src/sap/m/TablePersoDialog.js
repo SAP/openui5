@@ -275,7 +275,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			// Scroll container gets focused in Firefox
 			that._oScrollContainer.$().attr('tabindex', '-1');
 		};
-		
+
 		// Selects or deselects the sap.m.Checkbox when the ListItem is pressed and
 		// triggers the select event.
 		this._fnListItemPressed = jQuery.proxy(function(oEvent) {
