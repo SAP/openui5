@@ -73,6 +73,7 @@ sap.ui.define([
 	Rename.prototype.exit = function() {
 		Plugin.prototype.exit.apply(this, arguments);
 
+		this._bPreventMenu = false;
 		RenameHandler._exit.call(this);
 	};
 
@@ -84,7 +85,6 @@ sap.ui.define([
 	};
 
 	Rename.prototype.startEdit = function (oOverlay) {
-		this._bPreventMenu = true;
 		var oElement = oOverlay.getElement(),
 			oDesignTimeMetadata = oOverlay.getDesignTimeMetadata(),
 			vDomRef = oDesignTimeMetadata.getAction("rename", oElement).domRef;
@@ -92,7 +92,6 @@ sap.ui.define([
 	};
 
 	Rename.prototype.stopEdit = function (bRestoreFocus) {
-		this._bPreventMenu = false;
 		RenameHandler._stopEdit.call(this, bRestoreFocus, "plugin.Rename.stopEdit");
 	};
 

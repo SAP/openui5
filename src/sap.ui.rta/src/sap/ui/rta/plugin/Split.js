@@ -145,7 +145,7 @@ sap.ui.define([
 	 * @return {object[]}          Returns array containing the items with required data
 	 */
 	Split.prototype.getMenuItems = function(oOverlay){
-		return this._getMenuItems(oOverlay, {pluginId : "CTX_UNGROUP_FIELDS", rank : 100});
+		return this._getMenuItems(oOverlay, {pluginId : "CTX_UNGROUP_FIELDS", rank : 100, icon : "sap-icon://screen-split-two"});
 	};
 
 	/**

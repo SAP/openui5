@@ -360,6 +360,10 @@ sap.ui.define([
 		RenameHandler._stopEdit.call(this, bRestoreFocus, "plugin.ControlVariant.stopEdit");
 	};
 
+	ControlVariant.prototype.isBusy = function(){
+		return this._bPreventMenu;
+	};
+
 	/**
 	 * Performs a variant duplicate
 	 *

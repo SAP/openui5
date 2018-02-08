@@ -57,32 +57,27 @@ sap.ui.define([
 		this.iMenuHoverOpeningDelay = 1250;
 		this.iMenuHoverClosingDelay = 250; //Should be lower than iMenuHoverOpeningDelay, otherwise MiniMenu is instantly closed
 
-		this.oMiniMenu = new sap.ui.dt.MiniMenuControl({
+		this.oMiniMenuControl = new sap.ui.dt.MiniMenuControl({
 			maxButtonsDisplayed: 4 //The maximum number of buttons which should be displayed in the collapsed version of the MiniMenu (including overflow-button)
 		});
 
-		this.oMiniMenu.attachClosed(this._miniMenuClosed, this);
-		this.oMiniMenu.attachOverflowButtonPressed(this._pressedOverflowButton, this);
+		this.oMiniMenuControl.attachClosed(this._miniMenuClosed, this);
+		this.oMiniMenuControl.attachOverflowButtonPressed(this._pressedOverflowButton, this);
 
 		this._aMenuItems = [];
 		this._aGroupedItems = [];
 		this._aSubMenus = [];
 		this._aPluginsWithBusyFunction = [];
-
-		this._oMousePosition = {
-			iMouseX: null,
-			iMouseY: null
-		};
 	};
 
-
 	MiniMenu.prototype.exit = function () {
-		this.oMiniMenu.detachClosed(this._miniMenuClosed, this);
-		this.oMiniMenu.detachOverflowButtonPressed(this._pressedOverflowButton, this);
+		this._clearHoverTimeout();
 		delete this._aMenuItems;
-		if (this.oMiniMenu) {
-			this.oMiniMenu.destroy();
-			delete this.oMiniMenu;
+		if (this.oMiniMenuControl) {
+			this.oMiniMenuControl.detachClosed(this._miniMenuClosed, this);
+			this.oMiniMenuControl.detachOverflowButtonPressed(this._pressedOverflowButton, this);
+			this.oMiniMenuControl.destroy();
+			delete this.oMiniMenuControl;
 		}
 	};
 
@@ -121,7 +116,7 @@ sap.ui.define([
 		oOverlay.attachBrowserEvent("touchstart", this._onTouch, this);
 		oOverlay.attachBrowserEvent("contextmenu", this._onContextMenu, this);
 		oOverlay.attachBrowserEvent("mouseover", this._onHover, this);
-		oOverlay.attachBrowserEvent("mouseout", this._onHoverExit, this);
+		oOverlay.attachBrowserEvent("mouseout", this._clearHoverTimeout, this);
 		oOverlay.attachBrowserEvent("keydown", this._onKeyDown, this);
 	};
 
@@ -137,7 +132,7 @@ sap.ui.define([
 		oOverlay.detachBrowserEvent("touchstart", this._onTouch, this);
 		oOverlay.detachBrowserEvent("contextmenu", this._onContextMenu, this);
 		oOverlay.detachBrowserEvent("mouseover", this._onHover, this);
-		oOverlay.detachBrowserEvent("mouseout", this._onHoverExit, this);
+		oOverlay.detachBrowserEvent("mouseout", this._clearHoverTimeout, this);
 		oOverlay.detachBrowserEvent("keydown", this._onKeyDown, this);
 	};
 
@@ -199,18 +194,18 @@ sap.ui.define([
 
 		if (aMenuItems.length > 0) {
 
-			this.oMiniMenu._bUseExpPop = !!bContextMenu;
+			this.oMiniMenuControl._bUseExpPop = !!bContextMenu;
 
 			aMenuItems = this._sortMenuItems(aMenuItems);
-			this.oMiniMenu.setButtons(aMenuItems, this, oOverlay);
+			this.oMiniMenuControl.setButtons(aMenuItems, this, oOverlay);
 
-			this.oMiniMenu.setStyleClass(this.getStyleClass());
+			this.oMiniMenuControl.setStyleClass(this.getStyleClass());
 			if (bIsSubMenu) {
-				this.oMiniMenu.setOpenNew(true);
+				this.oMiniMenuControl.setOpenNew(true);
 			}
 
 
-			this.oMiniMenu.show(oOverlay, bContextMenu, {
+			this.oMiniMenuControl.show(oOverlay, bContextMenu, {
 				x: oEvent.clientX,
 				y: oEvent.clientY
 			});
@@ -253,7 +248,7 @@ sap.ui.define([
 			oEvent.preventDefault();
 			if (!this._bTouched) {
 				this._oCurrentOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
-				this.oMiniMenu.close();
+				this.oMiniMenuControl.close();
 				this._bOpenedByHover = false;
 
 				//IE sometimes returns null for document.activeElement
@@ -269,7 +264,7 @@ sap.ui.define([
 				clearTimeout(this.clickTimeout);
 
 				this.lockMenuOpening();
-				this.oMiniMenu.bOpenNew = true;
+				this.oMiniMenuControl.setOpenNew(true);
 				this.open(oEvent, oOverlay, true);
 				oEvent.stopPropagation();
 			}
@@ -283,7 +278,7 @@ sap.ui.define([
 	 * @private
 	 */
 	MiniMenu.prototype._onItemSelected = function (oEvent) {
-		this.oMiniMenu.close();
+		this.oMiniMenuControl.close();
 		this._ensureSelection(this._oCurrentOverlay);
 		this.setFocusLock(true);
 
@@ -348,7 +343,7 @@ sap.ui.define([
 					this.unlockMenuOpening();
 					this._onHover(oEvent);
 					this._bTouched = false;
-					this.oMiniMenu.close();
+					this.oMiniMenuControl.close();
 					return;
 				}
 
@@ -387,13 +382,13 @@ sap.ui.define([
 
 			oEvent.stopPropagation();
 
-			if (this._shouldMiniMenuOpen(oEvent, !this.oMiniMenu.bOpen)) {
+			if (this._shouldMiniMenuOpen(oEvent)) {
 				this._ensureSelection(oOverlay);
 				if (this._oCurrentOverlay.isSelected() || Device.os.android) {
 					if (bLockOpening) {
 						this.lockMenuOpening();
 					}
-					this.oMiniMenu.bOpenNew = true;
+					this.oMiniMenuControl.setOpenNew(true);
 					this.open(oEvent, oOverlay);
 
 					return true;
@@ -408,26 +403,18 @@ sap.ui.define([
 	 * @private
 	 */
 	MiniMenu.prototype._onHover = function (oEvent) {
-		if (this._oMousePosition.iMouseX === oEvent.clientX && this._oMousePosition.iMouseY === oEvent.clientY) {
-			return;
-		}
-
 		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
 		if (oOverlay && oOverlay.isSelectable() && !oEvent.ctrlKey && this.getOpenOnHover()) {
 			oEvent.stopPropagation();
-			if (this._shouldMiniMenuOpen(oEvent, true, true)) {
-				this._oMousePosition = {
-					iMouseX: oEvent.clientX,
-					iMouseY: oEvent.clientY
-				};
+			if (this._shouldMiniMenuOpen(oEvent, true)) {
 				if (this.iMenuHoverClosingDelay >= this.iMenuHoverOpeningDelay) {
 					jQuery.error("sap.ui.dt MiniMenu iMenuHoverClosingDelay is bigger or equal to iMenuHoverOpeningDelay!");
 				}
 
-				if (this.oMiniMenu.getPopover().isOpen()) {
+				if (this.oMiniMenuControl.getPopover().isOpen()) {
 					this._closingTimeout = setTimeout(function () {
-						if (!this._bTouched && this.oMiniMenu.getPopover().isOpen()) {
-							this.oMiniMenu.close();
+						if (!this._bTouched && this.oMiniMenuControl.getPopover().isOpen()) {
+							this.oMiniMenuControl.close();
 						}
 					}.bind(this), this.iMenuHoverClosingDelay);
 				}
@@ -445,10 +432,9 @@ sap.ui.define([
 
 	/**
 	 * Called when the user stops hovering over an overlay
-	 * @param {sap.ui.base.Event} oEvent event object
 	 * @private
 	 */
-	MiniMenu.prototype._onHoverExit = function (oEvent) {
+	MiniMenu.prototype._clearHoverTimeout = function () {
 		if (this.hoverTimeout) {
 			clearTimeout(this.hoverTimeout);
 			this.hoverTimeout = null;
@@ -482,13 +468,12 @@ sap.ui.define([
 	/**
 	 * Checks whether a new Minimenu should be opened
 	 * @param {sap.ui.base.Event} oEvent event object
-	 * @param {boolean} bOverwriteOpenValue should the check skip the test whether there is already a MiniMenu opened
 	 * @param {boolean} onHover if true, the new overlay doesn't get stored in this._oCurrentOverlay
 	 * @return {boolean} whether the check was sucessfull and a new MiniMenu should be opened
 	 * @private
 	 */
-	MiniMenu.prototype._shouldMiniMenuOpen = function (oEvent, bOverwriteOpenValue, onHover) {
-		if ((!this.isMenuOpeningLocked() || this._bTouched)) {
+	MiniMenu.prototype._shouldMiniMenuOpen = function (oEvent, onHover) {
+		if ((!this._checkForPluginLock() && !this.isMenuOpeningLocked() || this._bTouched)) {
 			if (!onHover) {
 				this._oCurrentOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
 			}
@@ -524,7 +509,7 @@ sap.ui.define([
 	 * @param {boolean} bOverwriteOpenValue overwrites the "isOpen" value from the MiniMenuControl
 	 */
 	MiniMenu.prototype.lockMenuOpening = function (bOverwriteOpenValue) {
-		if ((this.oMiniMenu.getPopover(true).isOpen() || this.oMiniMenu.getPopover(false).isOpen()) && bOverwriteOpenValue !== true) { //sometimes this function needs to be called after the old MiniMenu is closed
+		if ((this.oMiniMenuControl.getPopover(true).isOpen() || this.oMiniMenuControl.getPopover(false).isOpen()) && bOverwriteOpenValue !== true) { //sometimes this function needs to be called after the old MiniMenu is closed
 			this._bAsyncLock = true;
 		} else {
 			this._bOpeningLocked = true;
@@ -651,7 +636,7 @@ sap.ui.define([
 				oEvent.clientY = null;
 			}
 
-			this.oMiniMenu.close();
+			this.oMiniMenuControl.close();
 			setTimeout(function () {
 				this.open(oEvent, oOverlay, true, true);
 			}.bind(this), 0);
@@ -689,7 +674,7 @@ sap.ui.define([
 					oEvent.clientX = null;
 					oEvent.clientY = null;
 
-					this.oMiniMenu.close();
+					this.oMiniMenuControl.close();
 					setTimeout(function () {
 						this.open(oEvent, oOverlay, true, true);
 					}.bind(this), 0);
