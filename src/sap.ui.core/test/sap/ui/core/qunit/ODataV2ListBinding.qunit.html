@@ -2339,6 +2339,28 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 				});
 			});
 
+			QUnit.test("Batch: ListBinding - create preliminary context for non existing entity", function(assert) {
+				var done = assert.async();
+
+				//the change event should be called exactly twice as the preliminary context is created for a non-existing entity
+				var i = 0;
+				var fnCompleted = function(event) {
+					assert.ok(event.oSource);
+					i++;
+					if(i === 2) {
+						done();
+					}
+				};
+
+				oModel = new ODataModel(sURI, {});
+
+				var oPanel = new Panel();
+				this.aRegisteredControls.push(oPanel);
+				oPanel.setModel(oModel);
+
+				oPanel.bindElement({path: "/Products(121231)", events: {change: fnCompleted}, parameters: {createPreliminaryContext: true}});
+			});
+
 			QUnit.test("Batch: ListBinding - create/use preliminary Context (parameter variant 1)", function(assert) {
 				var done = assert.async();
 				var fnCompleted = function(oList) {
