@@ -310,46 +310,43 @@ sap.ui.define([
 			oEntityData["@$ui5.transient"] = true;
 		}
 
-		function request(sPostGroupId) {
+		function request(sPostPath, sPostGroupId) {
 			oEntityData["@$ui5.transient"] = sPostGroupId; // mark as transient (again)
-			return SyncPromise.resolve(vPostPath).then(function (sPostPath) {
-				sPostPath += that.oRequestor.buildQueryString(that.sResourcePath,
-					that.mQueryOptions, true);
-				that.addByPath(that.mPostRequests, sPath, oEntityData);
-				return that.oRequestor.request("POST", sPostPath, sPostGroupId, null, oEntityData,
-						setCreatePending, cleanUp)
-					.then(function (oResult) {
-						delete oEntityData["@$ui5.transient"];
-						// now the server has one more element
-						addToCount(that.mChangeListeners, sPath, aCollection, 1);
-						that.removeByPath(that.mPostRequests, sPath, oEntityData);
-						// update the cache with the POST response
-						_Helper.updateCacheAfterPost(that.mChangeListeners,
-							_Helper.buildPath(sPath, "-1"), oEntityData, oResult,
-							_Helper.getSelectForPath(that.mQueryOptions, sPath));
-						// determine and save the key predicate
-						that.fetchTypes().then(function (mTypeForMetaPath) {
-							oEntityData["@$ui5.predicate"] = that.oRequestor.getKeyPredicate(
-								oEntityData,
-								_Helper.getMetaPath(_Helper.buildPath(that.sResourcePath, sPath)),
-								mTypeForMetaPath);
-						});
-					}, function (oError) {
-						if (oError.canceled) {
-							// for cancellation no error is reported via fnErrorCallback
-							throw oError;
-						}
-						if (fnErrorCallback) {
-							fnErrorCallback(oError);
-						}
-						return request(that.oRequestor.getGroupSubmitMode(sPostGroupId) === "API" ?
+			that.addByPath(that.mPostRequests, sPath, oEntityData);
+			return that.oRequestor.request("POST", sPostPath, sPostGroupId, null, oEntityData,
+					setCreatePending, cleanUp)
+				.then(function (oResult) {
+					delete oEntityData["@$ui5.transient"];
+					// now the server has one more element
+					addToCount(that.mChangeListeners, sPath, aCollection, 1);
+					that.removeByPath(that.mPostRequests, sPath, oEntityData);
+					// update the cache with the POST response
+					_Helper.updateCacheAfterPost(that.mChangeListeners,
+						_Helper.buildPath(sPath, "-1"), oEntityData, oResult,
+						_Helper.getSelectForPath(that.mQueryOptions, sPath));
+					// determine and save the key predicate
+					that.fetchTypes().then(function (mTypeForMetaPath) {
+						oEntityData["@$ui5.predicate"] = that.oRequestor.getKeyPredicate(
+							oEntityData,
+							_Helper.getMetaPath(_Helper.buildPath(that.sResourcePath, sPath)),
+							mTypeForMetaPath);
+					});
+				}, function (oError) {
+					if (oError.canceled) {
+						// for cancellation no error is reported via fnErrorCallback
+						throw oError;
+					}
+					if (fnErrorCallback) {
+						fnErrorCallback(oError);
+					}
+					return request(sPostPath,
+						that.oRequestor.getGroupSubmitMode(sPostGroupId) === "API" ?
 							sPostGroupId : "$parked." + sPostGroupId);
-				});
 			});
 		}
 
 		// clone data to avoid modifications outside the cache
-		oEntityData = oEntityData ? JSON.parse(JSON.stringify(oEntityData)) : {};
+		oEntityData = jQuery.extend(true, {}, oEntityData);
 
 		aCollection = this.fetchValue("$cached", sPath).getResult();
 		if (!Array.isArray(aCollection)) {
@@ -358,7 +355,11 @@ sap.ui.define([
 		}
 		aCollection[-1] = oEntityData;
 
-		return request(sGroupId);
+		return SyncPromise.resolve(vPostPath).then(function (sPostPath) {
+			sPostPath += that.oRequestor.buildQueryString(that.sResourcePath, that.mQueryOptions,
+				true);
+			return request(sPostPath, sGroupId);
+		});
 	};
 
 	/**
