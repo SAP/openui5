@@ -65,7 +65,7 @@ sap.ui.define([
 		this.oModel = this.oAppComponent.getModel(this.MODEL_NAME);
 
 		var mPropertyBag = {
-				variantManagementControl : oVariantManagementControl,
+				variantManagementReference : this.sVariantManagementReference,
 				appComponent : this.oAppComponent,
 				layer : this.sLayer,
 				newVariantReference : sNewVariantReference,
