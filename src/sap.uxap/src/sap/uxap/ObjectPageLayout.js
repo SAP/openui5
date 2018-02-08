@@ -67,7 +67,7 @@ sap.ui.define([
 	 * An <code>ObjectPageLayout</code> control is used to put together all parts of an Object page
 	 * - Header, optional Anchor Bar and Sections/Subsections.
 	 *
-	 * <h4>Header<h4>
+	 * <h4>Header</h4>
 	 * The <code>ObjectPageLayout</code> implements the snapping header concept. This means that
 	 * the upper part of the header (Header Title) always stays visible, while the lower part
 	 * (Header Content) can scroll out of view.
@@ -79,7 +79,7 @@ sap.ui.define([
 	 * When scrolled back to the top it becomes visible again (expanded header). It contains all the
 	 * additional information of the object.
 	 *
-	 * <h4>Anchor Bar<h4>
+	 * <h4>Anchor Bar</h4>
 	 * The Anchor Bar is an automatically generated internal menu that shows the titles of the sections
 	 * and subsections and allows the user to scroll to the respective section and subsection content.
 	 *

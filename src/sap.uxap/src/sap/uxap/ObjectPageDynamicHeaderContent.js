@@ -40,7 +40,7 @@ sap.ui.define([
 		 * Documentation links:
 		 * <ul>
 		 * <li>{@link topic:d2ef0099542d44dc868719d908e576d0 Object Page Headers}</li>
-		 * <li>{@link topic:6e340c119ddd4c778b315f65a0432420 Object Page Dynamic Header)</li>
+		 * <li>{@link topic:6e340c119ddd4c778b315f65a0432420 Object Page Dynamic Header}</li>
 		 * </ul>
 		 *
 		 * @extends sap.f.DynamicPageHeader

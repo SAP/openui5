@@ -41,7 +41,7 @@ sap.ui.define([
 		 * Documentation links:
 		 * <ul>
 		 * <li>{@link topic:d2ef0099542d44dc868719d908e576d0 Object Page Headers}</li>
-		 * <li>{@link topic:0fecbce45e39406aa939bd25e89823f4 Object Page Classic Header)</li>
+		 * <li>{@link topic:0fecbce45e39406aa939bd25e89823f4 Object Page Classic Header}</li>
 		 * </ul>
 		 *
 		 * @extends sap.ui.core.Control
