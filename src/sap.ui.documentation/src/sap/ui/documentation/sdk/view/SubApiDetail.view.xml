@@ -289,48 +289,54 @@
 										   subSections="{/events}"
 										   titleUppercase="false">
 							<subSections>
-								<custom:ObjectPageSubSection title="{name}">
-									<custom:blocks>
-										<layout:VerticalLayout width="100%">
+								<template:repeat list="{data>/events}" var="event">
+									<custom:ObjectPageSubSection title="{event>name}">
+										<custom:blocks>
+											<layout:VerticalLayout width="100%">
 
-											<core:HTML content="{description}"/>
+												<core:HTML content="{event>description}"/>
 
-											<m:ObjectStatus text="Visibility: {visibility}" state="{= ${visibility} === 'public' ? 'Success' : 'Warning'}" class="sapUiSmallMarginBottom"/>
+												<m:ObjectStatus text="Visibility: {event>visibility}" state="{= ${event>visibility} === 'public' ? 'Success' : 'Warning'}" class="sapUiSmallMarginBottom"/>
 
-											<m:MessageStrip
-												visible="{=${deprecated} !== undefined}"
-												text="{deprecatedText}"
-												type="Error"
-												showIcon="true"
-												showCloseButton="false"
-												enableFormattedText="true"
-												class="sapUiSmallMarginBottom">
-											</m:MessageStrip>
-											<m:MessageStrip
-												visible="{=${experimental} !== undefined}"
-												text="Experimental API since {experimental/since} {experimental/text}"
-												type="Warning"
-												showIcon="true"
-												showCloseButton="false"
-												enableFormattedText="true"
-												class="sapUiSmallMarginBottom">
-											</m:MessageStrip>
-
-											<custom:LightTable rows="{ path : 'parameters', templateShareable: 'false'}"
-												columnTitles="Param,Type,Description"
-												columnCount="3">
-												<custom:Row>
-													<custom:ParamText text="{name}" phoneText="{phoneName}" depth="{depth}" optional="{optional}"/>
-													<m:Link text="{type}"
-															href="#/api/{type}"
-															enabled="{= !!${linkEnabled} }"/>
-													<core:HTML content="{description}"/>
-												</custom:Row>
-											</custom:LightTable>
-
-										</layout:VerticalLayout>
-									</custom:blocks>
-								</custom:ObjectPageSubSection>
+												<template:if test="{=${event>deprecated} !== undefined}">
+													<m:MessageStrip
+														text="{event>deprecatedText}"
+														type="Error"
+														showIcon="true"
+														showCloseButton="false"
+														enableFormattedText="true"
+														class="sapUiSmallMarginBottom">
+													</m:MessageStrip>
+												</template:if>
+												<template:if test="{=${event>experimental} !== undefined}">
+													<m:MessageStrip
+														text="Experimental API since {event>experimental/since} {event>experimental/text}"
+														type="Warning"
+														showIcon="true"
+														showCloseButton="false"
+														enableFormattedText="true"
+														class="sapUiSmallMarginBottom">
+													</m:MessageStrip>
+												</template:if>
+												<template:if test="{= !!${event>parameters} &amp;&amp; ${event>parameters}.length > 0}">
+													<custom:LightTable
+														columnTitles="Param,Type,Description"
+														columnCount="3">
+														<template:repeat list="{event>parameters}" var="parameter">
+															<custom:Row>
+																<custom:ParamText text="{parameter>name}" phoneText="{parameter>phoneName}" depth="{parameter>depth}" optional="{parameter>optional}"/>
+																<m:Link text="{parameter>type}"
+																		href="#/api/{parameter>type}"
+																		enabled="{= !!${parameter>linkEnabled} }"/>
+																<core:HTML content="{parameter>description}"/>
+															</custom:Row>
+														</template:repeat>
+													</custom:LightTable>
+												</template:if>
+											</layout:VerticalLayout>
+										</custom:blocks>
+									</custom:ObjectPageSubSection>
+								</template:repeat>
 							</subSections>
 						</ObjectPageSection>
 					</template:if>
