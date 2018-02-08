@@ -64,8 +64,18 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	/**
 	 * Returns an array of binding contexts for the bound target list.
 	 *
+	 * <h4>Extended Change Detection</h4>
+	 * If extended change detection is enabled using {@link sap.ui.model.ListBinding.prototype.enableExtendedChangeDetection},
+	 * the context array may carry an additional property named <code>diff</code>, which contains an array of actual changes
+	 * on the context array compared to the last call of <code>getContexts()</code>.
+	 * In case no <code>diff</code> property is available on the context array, the list is completely different and needs to
+	 * be recreated. In case the <code>diff</code> property contains an empty array, there have been no changes on the list.
+	 *
+	 * Sample diff array:
+	 * <code>[{index: 1, type: "delete"}, {index: 4, type: "insert}]</code>
+	 *
 	 * <strong>Note:</strong>The public usage of this method is deprecated, as calls from outside of controls will lead
-	 * to unexpected side effects. For avoidance use {@link sap.ui.model.ListBinding.prototype.getCurrentContexts}
+	 * to unexpected side effects. To avoid these side effect, use {@link sap.ui.model.ListBinding.prototype.getCurrentContexts}
 	 * instead.
 	 *
 	 * @function
@@ -83,7 +93,7 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	 * Depending on the nature of the model (client or server), the operation might be
 	 * executed locally or on a server and it might execute asynchronously.
 	 *
-	 * <h3>Application and Control Filters</h3>
+	 * <h4>Application and Control Filters</h4>
 	 * Each list binding maintains two separate lists of filters, one for filters defined by the
 	 * control that owns the binding and another list for filters that an application can define
 	 * in addition. When executing the filter operation, both sets of filters are combined.
@@ -93,12 +103,14 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	 * behavior depends on the model implementation and should be documented in the API reference
 	 * for that model.
 	 *
-	 * <h3>Auto-Grouping of Filters<h3>
+	 * <h4>Auto-Grouping of Filters</h4>
 	 * Filters are first grouped according to their binding path.
 	 * All filters belonging to the same group are ORed and after that the
 	 * results of all groups are ANDed.
 	 * Usually this means, all filters applied to a single table column
 	 * are ORed, while filters on different table columns are ANDed.
+	 * Please either use the automatic grouping of filters (where applicable) or use explicit
+	 * AND/OR filters, a mixture of both is not supported.
 	 *
 	 * @param {sap.ui.model.Filter[]} aFilters Array of filter objects
 	 * @param {sap.ui.model.FilterType} [sFilterType=undefined] Type of the filter which should
@@ -111,7 +123,17 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	 */
 
 	/**
-	 * Sorts the list according to the sorter object
+	 * Sorts the list according to the sorter object.
+	 *
+	 * Instead of a single sorter also an array of sorters can be passed to the sort method. In this case they
+	 * are processed in the sequence in which they are contained in the array.
+	 *
+	 * <h4>Grouping</h4>
+	 * Sorting and grouping are closely related, in case a list should be grouped, it must be sorted by the
+	 * property to group with. Grouping is enabled by setting the <code>group</code> property on the sorter object. If it is
+	 * enabled, you can get the current group of an item using {@link sap.ui.model.ListBinding.prototype.getGroup}.
+	 * In case multiple sorters are provided, grouping can only be done on the first sorter, nested grouping is
+	 * not supported.
 	 *
 	 * @function
 	 * @name sap.ui.model.ListBinding.prototype.sort
@@ -262,11 +284,17 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	};
 
 	/**
-	 * Enable extended change detection
+	 * Enable extended change detection.
+	 * When extended change detection is enabled, the list binding provides detailed information about changes, for example
+	 * which entries have been removed or inserted. This can be utilized by a control for fine-grained update of its elements.
+	 * Please see {@link sap.ui.model.ListBinding.prototype.getContexts} for more information.
+	 *
+	 * For models that do not have a unique key on each entry by default, a key property or function can be set which is used to
+	 * identify entries.
 	 *
 	 * @param {boolean} bDetectUpdates Whether changes within the same entity should cause a delete and insert command
 	 * @param {function|string} vKey The path of the property containing the key or a function getting the context as only parameter to calculate a key to identify an entry
-	 * @private
+	 * @protected
 	 */
 	ListBinding.prototype.enableExtendedChangeDetection = function(bDetectUpdates, vKey) {
 		this.bUseExtendedChangeDetection = true;
