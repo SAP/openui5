@@ -173,13 +173,31 @@ sap.ui.define([
 		 * @private
 		 * @param {string[]} aLibNames Contains all library names for the given state
 		 * @param {function} fnProcessFile Callback that publishes all rules within each library in the SupportAssistant
+		 * @param {boolean} bSupressProgressReporting Flag wether to report ruleset loading to UI. Default is falsy
 		 * @returns {Promise[]} Promises for each library in the SupportAssistant
 		 */
-		RuleSetLoader._fetchLibraryFiles = function (aLibNames, fnProcessFile) {
+		RuleSetLoader._fetchLibraryFiles = function (aLibNames, fnProcessFile, bSupressProgressReporting) {
 			var aAjaxPromises = [],
 				that = this,
 				supportModulePath = jQuery.sap.getModulePath("sap.ui.support"),
-				supportModulesRoot = supportModulePath.replace("sap/ui/support", "");
+				supportModulesRoot = supportModulePath.replace("sap/ui/support", ""),
+				oApplicationVersionInfo = sap.ui.getVersionInfo(),
+				bHasInternalRules = !Utils.isDistributionOpenUI5(oApplicationVersionInfo) && aLibNames.internalRules.length > 0,
+				iProgress = 0,
+				iRulesNumber = aLibNames.publicRules.length;
+
+			var supportModeConfig = sap.ui.getCore().getConfiguration().getSupportMode();
+			var bSilentMode = supportModeConfig && supportModeConfig.indexOf("silent") > -1;
+
+			if (bHasInternalRules) {
+				iRulesNumber += aLibNames.internalRules.length;
+			}
+
+			function reportCurrentLoadingProgress() {
+				iProgress += 1;
+				var iPercentileProgressValue = Math.ceil((iProgress / iRulesNumber) * 100);
+				CommunicationBus.publish(channelNames.CURRENT_LOADING_PROGRESS, { value: iPercentileProgressValue });
+			}
 
 			if (aLibNames.publicRules.length > 0) {
 				aLibNames.publicRules.forEach(function (oLibName) {
@@ -187,7 +205,16 @@ sap.ui.define([
 
 					if (libraryNames) {
 						// CHECK FOR PUBLIC RULES
-						aAjaxPromises.push(that._requireRuleSet(libraryNames.customizableLibName, fnProcessFile));
+						var oLibPublicRulesPromise = that._requireRuleSet(libraryNames.customizableLibName, fnProcessFile);
+
+						// Do not report progress if in silent mode
+						if (!bSilentMode && !bSupressProgressReporting) {
+							oLibPublicRulesPromise.then(function () {
+								reportCurrentLoadingProgress();
+							});
+						}
+
+						aAjaxPromises.push(oLibPublicRulesPromise);
 					}
 				});
 			}
@@ -198,7 +225,16 @@ sap.ui.define([
 
 					if (libraryNames) {
 						// CHECK FOR INTERNAL RULES
-						aAjaxPromises.push(that._requireRuleSet(libraryNames.internalLibName, fnProcessFile));
+						var oLibPrivateRulesPromise = that._requireRuleSet(libraryNames.internalLibName, fnProcessFile);
+
+						// Do not report progress if in silent mode
+						if (!bSilentMode && !bSupressProgressReporting) {
+							oLibPrivateRulesPromise.then(function () {
+								reportCurrentLoadingProgress();
+							});
+						}
+
+						aAjaxPromises.push(oLibPrivateRulesPromise);
 					}
 				});
 			}
@@ -330,26 +366,27 @@ sap.ui.define([
 		RuleSetLoader.fetchNonLoadedRuleSets = function () {
 			var aLibraries = sap.ui.getVersionInfo().libraries,
 				data = [],
-				aLibNames = [],
-				oLibNamesSortedPublicAndInternalRules = [];
+				oLibraries = {};
 
 			aLibraries.forEach(function (lib) {
-				// For brute discovery we need to search in every library for internal and public rules
-				aLibNames.push(lib.name);
+				oLibraries[lib.name] = lib;
 			});
 
-			oLibNamesSortedPublicAndInternalRules = { publicRules: aLibNames, internalRules: aLibNames };
-			var libFetchPromises = RuleSetLoader._fetchLibraryFiles(oLibNamesSortedPublicAndInternalRules, function (sLibraryName) {
-				sLibraryName = sLibraryName.replace("." + sCustomSuffix, "").replace(".internal", "");
+			var oLibNamesWithRulesPromise = this._fetchLibraryNamesWithSupportRules(oLibraries);
 
-				if (data.indexOf(sLibraryName) < 0) {
-					data.push(sLibraryName);
-				}
-			});
+			oLibNamesWithRulesPromise.then(function (oLibNamesWithRules) {
+				var libFetchPromises = RuleSetLoader._fetchLibraryFiles(oLibNamesWithRules, function (sLibraryName) {
+					sLibraryName = sLibraryName.replace("." + sCustomSuffix, "").replace(".internal", "");
 
-			Promise.all(libFetchPromises).then(function () {
-				CommunicationBus.publish(channelNames.POST_AVAILABLE_LIBRARIES, {
-					libNames: data
+					if (data.indexOf(sLibraryName) < 0) {
+						data.push(sLibraryName);
+					}
+				}, true);
+
+				Promise.all(libFetchPromises).then(function () {
+					CommunicationBus.publish(channelNames.POST_AVAILABLE_LIBRARIES, {
+						libNames: data
+					});
 				});
 			});
 		};

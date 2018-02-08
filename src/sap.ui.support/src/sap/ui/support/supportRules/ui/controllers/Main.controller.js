@@ -57,9 +57,9 @@ sap.ui.define([
 			this.model.setProperty("/supportAssistantVersion", supportAssistantVersion);
 		},
 
-		copySupportAssistantOriginToClipboard: function(oEvent) {
+		copySupportAssistantOriginToClipboard: function (oEvent) {
 			var supportAssistantOrigin = this.model.getProperty("/supportAssistantOrigin"),
-				copyToClipboardEventHandler = function(oEvent) {
+				copyToClipboardEventHandler = function (oEvent) {
 					if (oEvent.clipboardData) {
 						oEvent.clipboardData.setData('text/plain', supportAssistantOrigin);
 					} else {
@@ -78,6 +78,25 @@ sap.ui.define([
 		},
 
 		setCommunicationSubscriptions: function () {
+
+			CommunicationBus.subscribe(channelNames.CURRENT_LOADING_PROGRESS, function (data) {
+				var iCurrentProgress = data.value,
+					oProgressIndicator = this.byId("progressIndicator");
+
+				if (data.value < 100) {
+					this.model.setProperty("/showProgressIndicator", true);
+				} else {
+					// Hides ProgressIndicator after a timeout of 2 seconds
+					setTimeout(function () {
+						this.model.setProperty("/showProgressIndicator", false);
+					}.bind(this), 2000);
+				}
+
+				oProgressIndicator.setDisplayValue(constants.RULESET_LOADING + " " + iCurrentProgress + "%");
+
+				this.model.setProperty("/progress", iCurrentProgress);
+			}, this);
+
 			CommunicationBus.subscribe(channelNames.ON_ANALYZE_FINISH, function (data) {
 				this._clearProcessIndicator();
 				this.ensureOpened();
@@ -102,7 +121,7 @@ sap.ui.define([
 		},
 
 		resizeUp: function () {
-			CommunicationBus.publish(channelNames.RESIZE_FRAME, {bigger: true});
+			CommunicationBus.publish(channelNames.RESIZE_FRAME, { bigger: true });
 		},
 
 		ensureOpened: function () {
@@ -110,7 +129,7 @@ sap.ui.define([
 		},
 
 		resizeDown: function () {
-			CommunicationBus.publish(channelNames.RESIZE_FRAME, {bigger: false});
+			CommunicationBus.publish(channelNames.RESIZE_FRAME, { bigger: false });
 		},
 
 		onSettings: function (oEvent) {
@@ -208,13 +227,13 @@ sap.ui.define([
 			CommunicationBus.publish(channelNames.TOGGLE_FRAME_HIDDEN, this.hidden);
 		},
 
-		_clearProcessIndicator: function() {
+		_clearProcessIndicator: function () {
 			var pi = this.byId("progressIndicator");
 			pi.setDisplayValue("None");
 			this.model.setProperty("/progress", 0.1);
 		},
 
-		_setContextSettings: function() {
+		_setContextSettings: function () {
 			var cookie = storage.readPersistenceCookie(constants.COOKIE_NAME);
 			if (cookie) {
 				this.model.setProperty("/persistingSettings", true);
@@ -223,7 +242,7 @@ sap.ui.define([
 				if (contextSettings) {
 					this.model.setProperty("/analyzeContext", contextSettings.analyzeContext);
 					this.model.setProperty("/subtreeExecutionContextId", contextSettings.subtreeExecutionContextId);
-				}else {
+				} else {
 					this.model.setProperty("/analyzeContext", this.model.getProperty("/analyzeContext"));
 					this.model.setProperty("/subtreeExecutionContextId", "");
 				}
