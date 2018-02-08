@@ -15,6 +15,9 @@ sap.ui.require([
 	"sap/uxap/ObjectPageSubSection",
 	"sap/m/VBox",
 	"sap/m/Button",
+	"sap/m/List",
+	"sap/m/CustomListItem",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon"
 ],
 function(
@@ -30,6 +33,9 @@ function(
 	ObjectPageSubSection,
 	VBox,
 	Button,
+	List,
+	CustomListItem,
+	JSONModel,
 	sinon
 ) {
 	'use strict';
@@ -420,6 +426,71 @@ function(
 			assert.equal(OverlayUtil.findAllUniqueAggregationOverlaysInContainer(this.oButtonOverlay4, this.oSectionOverlay1).length, 2, "then it returns the correct overlays");
 			assert.equal(OverlayUtil.findAllUniqueAggregationOverlaysInContainer(this.oButtonOverlay6, this.oSubSectionOverlay2).length, 1, "then it returns the correct overlays");
 			assert.equal(OverlayUtil.findAllUniqueAggregationOverlaysInContainer(this.oButtonOverlay8, this.oSubSectionOverlay1).length, 1, "then it returns the correct overlays");
+		});
+	});
+
+	QUnit.module("Given a List with bound items and a List with unbound items", {
+		beforeEach : function(assert) {
+			var done = assert.async();
+
+			// create list with bound items
+			var oData = [
+				{text: "item1-bound"},
+				{text: "item2-bound"}
+			];
+			var oModel = new JSONModel(oData);
+			this.oBoundList = new List("boundlist").setModel(oModel);
+			this.oBoundList.bindAggregation("items", "/", function(sId, oContext) {
+				return new CustomListItem(sId, {content: [new Button(sId + "-btn",{text:'{text}'})]});
+			});
+
+			//create list with unbound items
+			this.oUnboundList = new List("unboundlist");
+			this.oUnboundList.addItem(new CustomListItem("unboundlist-0", {content: [new Button("item1-btn",{text:'item1-unbound'})]}));
+			this.oUnboundList.addItem(new CustomListItem("unboundlist-1", {content: [new Button("item2-btn",{text:'item2-unbound'})]}));
+
+			//create a HorizontalLayout containing the two lists
+			this.oVerticalLayout = new VerticalLayout("verticalLayout0",{
+				content: [this.oBoundList, this.oUnboundList]
+			});
+			this.oVerticalLayout.placeAt("qunit-fixture");
+
+			this.oDesignTime = new DesignTime({
+				rootElements : [this.oVerticalLayout]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oBoundOverlay = OverlayRegistry.getOverlay(this.oBoundList.getItems()[0]);
+				this.oBoundChildOverlay = OverlayRegistry.getOverlay(this.oBoundList.getItems()[0].getContent()[0]);
+				this.oUnboundOverlay = OverlayRegistry.getOverlay(this.oUnboundList.getItems()[0]);
+				this.oUnboundChildOverlay = OverlayRegistry.getOverlay(this.oUnboundList.getItems()[0].getContent()[0]);
+				done();
+			}.bind(this));
+
+		},
+		afterEach : function(assert) {
+			this.oVerticalLayout.destroy();
+			this.oDesignTime.destroy();
+			sandbox.restore();
+		}
+	}, function(){
+		QUnit.test("when 'isInAggregationBinding' is called", function(assert) {
+			assert.strictEqual(
+				OverlayUtil.isInAggregationBinding(this.oBoundOverlay, this.oBoundOverlay.getElement().sParentAggregationName),
+				true,
+				"... then for the bound Item it returns true");
+			assert.strictEqual(
+				OverlayUtil.isInAggregationBinding(this.oBoundChildOverlay, this.oBoundChildOverlay.getElement().sParentAggregationName),
+				true,
+				"... then for the bound Item content it returns true");
+			assert.strictEqual(
+				OverlayUtil.isInAggregationBinding(this.oUnboundOverlay, this.oUnboundOverlay.getElement().sParentAggregationName),
+				false,
+				"... then for the unbound Item it returns false");
+			assert.strictEqual(
+				OverlayUtil.isInAggregationBinding(this.oUnboundChildOverlay, this.oUnboundChildOverlay.getElement().sParentAggregationName),
+				false,
+				"... then for the unbound Item content it returns false");
 		});
 	});
 });

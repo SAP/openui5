@@ -128,26 +128,16 @@ function(
 	 * @param {object} mPropertyBag Map of additional information to be passed to isEditable
 	 */
 	BasePlugin.prototype.evaluateEditable = function(aOverlays, mPropertyBag) {
-		var fnCheckBinding = function(oOverlay, sAggregationName){
-			if (sAggregationName && oOverlay.getElement().getBinding(sAggregationName)) {
-				return false;
-			}
-			return oOverlay.isRoot() || fnCheckBinding(
-				oOverlay.getParentElementOverlay(),
-				oOverlay.getElement().sParentAggregationName
-			);
-		};
-
 		var vEditable;
 		aOverlays.forEach(function(oOverlay) {
-			//check aggregation Binding recursively
-			if (oOverlay.getElement() && !fnCheckBinding(oOverlay, oOverlay.getElement().sParentAggregationName)) {
+			var oElement = oOverlay.getElement();
+			if (oElement && OverlayUtil.isInAggregationBinding(oOverlay, oElement.sParentAggregationName)) {
 				vEditable = false;
 			} else {
 				// when a control gets destroyed it gets deregistered before it gets removed from the parent aggregation.
 				// this means that getElementInstance is undefined when we get here via removeAggregation mutation
 				// when an overlay is not registered yet, we should not evaluate editable. In this case getDesignTimeMetadata returns null.
-				vEditable = oOverlay.getElement() && oOverlay.getDesignTimeMetadata() && this._isEditable(oOverlay, mPropertyBag);
+				vEditable = oElement && oOverlay.getDesignTimeMetadata() && this._isEditable(oOverlay, mPropertyBag);
 			}
 			// for the createContainer and additionalElements plugin the isEditable function returns an object with 2 properties, asChild and asSibling.
 			// for every other plugin isEditable should be a boolean.
