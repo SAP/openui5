@@ -345,7 +345,9 @@ sap.ui.define([
 	 * binding's path; the aggregated query options initially hold the binding's local query
 	 * options with the entity type's key properties added to $select.
 	 *
-	 * @param {sap.ui.model.Context} oContext The child binding's context
+	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 *   The child binding's context, must not be <code>null</code> or <code>undefined</code>. See
+	 *   <code>sap.ui.model.odata.v4.ODataBinding#fetchQueryOptionsForOwnCache</code>.
 	 * @param {string} sChildPath The child binding's binding path
 	 * @param {sap.ui.base.SyncPromise} oChildQueryOptionsPromise Promise resolving with the child
 	 *   binding's (aggregated) query options
@@ -395,12 +397,8 @@ sap.ui.define([
 		}
 
 		if (this.oOperation || sChildPath === "$count" || sChildPath.slice(-7) === "/$count"
-				|| sChildPath[0] === "@" || this.isSuspended()) {
+				|| sChildPath[0] === "@" || this.getRootBinding().isSuspended()) {
 			return SyncPromise.resolve(true);
-		}
-
-		if (!oContext) {
-			return SyncPromise.resolve(false);
 		}
 
 		// Note: this.oCachePromise exists for all bindings except operation bindings
@@ -520,15 +518,16 @@ sap.ui.define([
 
 	/**
 	 * Initializes the OData list binding: Fires a 'change' event in case the binding has a
-	 * resolved path and it is not suspended.
+	 * resolved path and its root binding is not suspended.
 	 *
 	 * @protected
 	 * @see sap.ui.model.Binding#initialize
+	 * @see #getRootBinding
 	 * @since 1.37.0
 	 */
 	// @override sap.ui.model.Binding#initialize
 	ODataParentBinding.prototype.initialize = function () {
-		if ((!this.bRelative || this.oContext) && !this.isSuspended()) {
+		if ((!this.bRelative || this.oContext) && !this.getRootBinding().isSuspended()) {
 			this._fireChange({reason : ChangeReason.Change});
 		}
 	};

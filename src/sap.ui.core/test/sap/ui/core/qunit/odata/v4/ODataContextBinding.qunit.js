@@ -645,15 +645,16 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchValue: suspended binding", function (assert) {
-		var oBinding = this.oModel.bindContext("/absolute");
+	QUnit.test("fetchValue: suspended root binding", function (assert) {
+		var oBinding = this.oModel.bindContext("~path~"),
+			oRootBinding = {isSuspended : function () {}};
 
-		oBinding.suspend();
-		this.mock(oBinding).expects("isSuspended").withExactArgs().returns(true);
+		this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
+		this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(true);
 
 		assert.throws(function () {
 			// code under test
-			oBinding.fetchValue("/absolute/bar");
+			oBinding.fetchValue("~path~/bar");
 		}, function (oError) {
 			assert.strictEqual(oError.message, "Suspended binding provides no value");
 			assert.strictEqual(oError.canceled, "noDebugLog");
@@ -926,6 +927,10 @@ sap.ui.require([
 					oExpectation,
 					sGroupId = "group",
 					oOperationMetadata = {},
+					oRootBinding = {
+						getRootBinding : function () { return oRootBinding; },
+						isSuspended : function () { return false; }
+					},
 					oParentContext1 = createContext("/EntitySet(ID='1')/navigation1"),
 					oParentContext2 = createContext("/EntitySet(ID='2')/navigation1"),
 					oBinding = this.oModel.bindContext(sOperation + "(...)", oParentContext1,
@@ -936,8 +941,7 @@ sap.ui.require([
 				function createContext(sPath) {
 					return bBaseContext
 						? that.oModel.createBindingContext(sPath)
-						: Context.create(that.oModel, {isSuspended : function () { return false; }},
-							sPath);
+						: Context.create(that.oModel, oRootBinding, sPath);
 				}
 
 				function expectChangeAndRefreshDependent() {

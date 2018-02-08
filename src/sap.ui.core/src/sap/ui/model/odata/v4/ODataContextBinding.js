@@ -82,6 +82,7 @@ sap.ui.define([
 	 * @since 1.37.0
 	 * @version ${version}
 	 *
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#getRootBinding as #getRootBinding
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#refresh as #refresh
@@ -498,16 +499,17 @@ sap.ui.define([
 	 *   binding's cache is used
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
-	 * @throws {Error} If the binding is suspended, a "canceled" error is thrown
+	 * @throws {Error} If the binding's root binding is suspended, a "canceled" error is thrown
 	 *
 	 * @private
 	 */
 	ODataContextBinding.prototype.fetchValue = function (sPath, oListener, sGroupId) {
 		var oError,
+			oRootBinding = this.getRootBinding(),
 			that = this;
 
 		// dependent binding will update its value when the suspended binding is resumed
-		if (this.isSuspended()) {
+		if (oRootBinding && oRootBinding.isSuspended()) {
 			oError = new Error("Suspended binding provides no value");
 			oError.canceled = "noDebugLog";
 			throw oError;
