@@ -326,7 +326,6 @@ sap.ui.define([
 		return {
 				fileName: sVariantManagementReference,
 				fileType: "ctrl_variant",
-				layer: "VENDOR",
 				variantManagementReference: sVariantManagementReference,
 				variantReference: "",
 				content: {
