@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/Device'],
-	function(jQuery, library, Control, Device) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/theming/Parameters'],
+	function(jQuery, library, Control, Device, Parameters) {
 	"use strict";
 
 
@@ -208,8 +208,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ShellHeader.prototype._getLogo = function(){
 		var ico = this.getLogo();
 		if (!ico) {
-			jQuery.sap.require("sap.ui.core.theming.Parameters");
-			ico = sap.ui.core.theming.Parameters._getThemeImage(null, true); // theme logo
+			ico = Parameters._getThemeImage(null, true); // theme logo
 		}
 		return ico;
 	};

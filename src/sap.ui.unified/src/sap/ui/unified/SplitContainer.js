@@ -9,8 +9,9 @@ sap.ui.define([
 	'sap/ui/core/theming/Parameters',
 	'./library',
 	'sap/ui/core/library',
-	"./SplitContainerRenderer"
-], function(jQuery, Control, Parameters, library, coreLibrary, SplitContainerRenderer) {
+	'./SplitContainerRenderer',
+	'jquery.sap.script'
+], function(jQuery, Control, Parameters, library, coreLibrary, SplitContainerRenderer /*, jQueryScript*/ ) {
 	"use strict";
 
 
