@@ -38,6 +38,7 @@ sap.ui.define([
 		var sSupportModulePath = jQuery.sap.getModulePath("sap.ui.support");
 		var sSupportModuleRootPath = sSupportModulePath.replace('/sap/ui/support', '');
 		var sAbsUrl = getAbsoluteUrl(sSupportModuleRootPath);
+		var bCanLoadInternalRules;
 
 		var RuleSetLoader = {};
 
@@ -65,6 +66,11 @@ sap.ui.define([
 			var that = this,
 				mLoadedLibraries = sap.ui.getCore().getLoadedLibraries(),
 				oLibNamesWithRulesPromise = this._fetchLibraryNamesWithSupportRules(mLoadedLibraries);
+
+			// Initializing the flag which shows if the internal rules are present and can be loaded
+			if (typeof bCanLoadInternalRules === "undefined") {
+				bCanLoadInternalRules = !Utils.isDistributionOpenUI5(sap.ui.getVersionInfo()) && Utils.canLoadInternalRules();
+			}
 
 			var oMainPromise = new Promise(function (resolve) {
 				RuleSet.versionInfo = sap.ui.getVersionInfo();
@@ -173,8 +179,7 @@ sap.ui.define([
 			var aAjaxPromises = [],
 				that = this,
 				supportModulePath = jQuery.sap.getModulePath("sap.ui.support"),
-				supportModulesRoot = supportModulePath.replace("sap/ui/support", ""),
-				oApplicationVersionInfo = sap.ui.getVersionInfo();
+				supportModulesRoot = supportModulePath.replace("sap/ui/support", "");
 
 			if (aLibNames.publicRules.length > 0) {
 				aLibNames.publicRules.forEach(function (oLibName) {
@@ -187,12 +192,11 @@ sap.ui.define([
 				});
 			}
 
-			if (!Utils.isDistributionOpenUI5(oApplicationVersionInfo) && aLibNames.internalRules.length > 0) {
+			if (bCanLoadInternalRules && aLibNames.internalRules.length > 0) {
 				aLibNames.internalRules.forEach(function (oLibName) {
 					var libraryNames = that._registerLibraryPath(oLibName, supportModulePath, supportModulesRoot);
 
 					if (libraryNames) {
-
 						// CHECK FOR INTERNAL RULES
 						aAjaxPromises.push(that._requireRuleSet(libraryNames.internalLibName, fnProcessFile));
 					}
