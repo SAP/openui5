@@ -41,6 +41,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 	 * Use <code>LayoutData</code> to influence the layout for special cases in the Input/Display controls.
 	 *
 	 * <b>Note:</b> If a more complex form is needed, use <code>Form</code> instead.
+	 *
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
@@ -81,7 +82,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
 			/**
-			 * Applies a device-specific and theme-specific line-height to the form rows if the form has editable content.
+			 * Applies a device-specific and theme-specific line height and label alignment to the form rows if the form has editable content.
 			 * If set, all (not only the editable) rows of the form will get the line height of editable fields.
 			 *
 			 * <b>Note:</b> The setting of the property has no influence on the editable functionality of the form's content.
@@ -272,9 +273,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 			 * <li>Add a <code>Label</code> control to start a new row (<code>FormElement</code>).</li>
 			 * <li>Add controls as input fields, text fields or other as needed.</li>
 			 * <li>Use <code>LayoutData</code> to influence the layout for special cases in the single controls.
-			 * For example, if a <code>ResponsiveLayout</code> is used as a layout, the form content is weighted using weight 3 for the labels and weight 5 for the fields part. By default the label column is 192 pixels wide.
-			 * If your input controls should influence their width, you can add <code>sap.ui.layout.ResponsiveFlowLayoutData</code> to them via <code>setLayoutData</code> method.
-			 * Ensure that the sum of the weights in the <code>ResponsiveFlowLayoutData</code> is not more than 5, as this is the total width of the input control part of each form row.</li>
+			 * For example, if a <code>ResponsiveLayout</code> is used as a layout,
+			 * the form content is weighted using weight 3 for the labels and weight 5 for the fields part.
+			 * By default the label column is 192 pixels wide.
+			 * If your input controls should influence their width, you can add <code>sap.ui.layout.ResponsiveFlowLayoutData</code>
+			 * to them via <code>setLayoutData</code> method.
+			 * Ensure that the sum of the weights in the <code>ResponsiveFlowLayoutData</code> is not more than 5,
+			 * as this is the total width of the input control part of each form row.</li>
 			 * </ul>
 			 * Example for a row where the <code>Input</code> weight 4 and the second <code>Input</code> weight 1 (using <code>ResponsiveLayout</code>):
 			 * <pre>
@@ -283,20 +288,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 			 * new sap.m.Input({value:"Weight 1", layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({weight:1})}),
 			 * </pre>
 			 *
-			 * For example, if a <code>ResponsiveGridLayout</code> is used as a layout, there are 12 cells in one row. Depending on the screen size the labels use the defined <code>labelSpan</code>.
-			 * The remaining cells are used for the fields (and <code>emptySpan</code> if defined). The available cells are distributed to all fields in the row. If one field should use a fixed number of cells
+			 * For example, if a <code>ResponsiveGridLayout</code> is used as a layout, there are 12 cells in one row.
+			 * Depending on the screen size the labels use the defined <code>labelSpan</code>.
+			 * The remaining cells are used for the fields (and <code>emptySpan</code> if defined).
+			 * The available cells are distributed to all fields in the row. If one field should use a fixed number of cells
 			 * you can add <code>sap.ui.layout.GridData</code> to them via <code>setLayoutData</code> method.
 			 * If there are additional fields in the row they will get the remaining cells.
 			 * </ul>
-			 * Example for a row with two <code>Input</code> controls where one uses four cells on small screens, one cell on medium screens and 2 cells on larger screens (using <code>ResponsiveGridLayout</code>):
+			 * Example for a row with two <code>Input</code> controls where one uses four cells on small screens,
+			 * one cell on medium screens and 2 cells on larger screens (using <code>ResponsiveGridLayout</code>):
 			 * <pre>
 			 * new sap.m.Label({text:"Label"});
 			 * new sap.m.Input({value:"auto size"}),
 			 * new sap.m.Input({value:"fix size", layoutData: new sap.ui.layout.GridData({span: "XL1 L1 M2 S4"})}),
 			 * </pre>
 			 *
-			 * <b>Note:</b> Do not put any layout controls in here. This could destroy the visual layout,
-			 * keyboard support and screen-reader support.
+			 * <b>Warning:</b> Do not put any layout or other container controls in here. This could damage the visual layout,
+			 * keyboard support and screen-reader support. Only labels, titles, toolbars and form controls are allowed.
+			 * Views are also not supported. Allowed form controls implement the interface <code>sap.ui.core.IFormContent</code>.
+			 *
+			 * If editable controls are used as content, the <code>editable</code> property must be set to <code>true</code>,
+			 * otherwise to <code>false</code>. If the <code>editable</code> property is set incorrectly, there will be visual issues
+			 * like wrong label alignment or wrong spacing between the controls.
 			 */
 			content : {type : "sap.ui.core.Element", multiple : true, singularName : "content"},
 
