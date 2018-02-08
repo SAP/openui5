@@ -156,7 +156,7 @@ sap.ui.define([
 					stretchOnPhone: {type: "boolean", group: "Appearance", defaultValue: false, deprecated: true},
 
 					/**
-					 * Determines  if the dialog will be stretched to full screen. This property is only applicable to standard dialog and message type dialog ignores this property.
+					 * Determines  if the dialog will be stretched to full screen on mobile, when on desktop the dialog will be stretched to 93% of the viewport. This property is only applicable to standard dialog and message type dialog ignores this property.
 					 * @since 1.13.1
 					 */
 					stretch: {type: "boolean", group: "Appearance", defaultValue: false},
