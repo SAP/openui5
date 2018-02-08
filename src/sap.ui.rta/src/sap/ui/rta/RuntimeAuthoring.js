@@ -862,9 +862,12 @@ sap.ui.define([
 			}
 
 			this._checkChangesExist().then(function(bResult){
-				this._bChangesExist = bResult;
-				this.getToolbar().setPublishEnabled(bResult);
-				this.getToolbar().setRestoreEnabled(bResult);
+				// FIXME: remove this condition when start() is refactored properly
+				if (!this.bIsDestroyed) {
+					this._bChangesExist = bResult;
+					this.getToolbar().setPublishEnabled(bResult);
+					this.getToolbar().setRestoreEnabled(bResult);
+				}
 			}.bind(this));
 		}
 	};

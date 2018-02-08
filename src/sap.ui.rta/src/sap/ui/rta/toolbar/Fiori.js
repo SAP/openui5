@@ -102,6 +102,16 @@ function(
 		}
 	};
 
+	Fiori.prototype.destroy = function () {
+		// In case of destroy() without normal hide() call.
+		this._oFioriHeader.removeStyleClass(FIORI_HIDDEN_CLASS);
+
+		delete this._oRenderer;
+		delete this._oFioriHeader;
+
+		Adaptation.prototype.destroy.apply(this, arguments);
+	};
+
 	return Fiori;
 
 }, true);
