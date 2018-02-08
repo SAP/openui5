@@ -6,11 +6,11 @@
 sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator',
 		'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/IconPool', 'sap/ui/core/delegate/ScrollEnablement',
 		'./IconTabBarSelectList', './Button', './ResponsivePopover', './IconTabFilter',
-		'sap/ui/Device', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Icon', 'sap/ui/core/dnd/DragDropInfo'],
+		'sap/ui/Device', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Icon', 'sap/ui/core/dnd/DragDropInfo', './IconTabBarDragAndDropUtil'],
 	function(jQuery, library, Control, EnabledPropagator,
 				ItemNavigation, IconPool, ScrollEnablement,
 				IconTabBarSelectList, Button, ResponsivePopover, IconTabFilter,
-				Device, ResizeHandler, Icon, DragDropInfo) {
+				Device, ResizeHandler, Icon, DragDropInfo, IconTabBarDragAndDropUtil) {
 	"use strict";
 
 	// shortcut for sap.m.touch
@@ -515,7 +515,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				targetAggregation: "items",
 				dropPosition: "Between",
 				dropLayout: "Horizontal",
-				drop: this._handleDrop.bind(this)
+				drop: this._handleDragAndDrop.bind(this)
 			});
 			this.addAggregation("dragDropConfig", oDragDropInfo, true);
 		}
@@ -1570,187 +1570,83 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
-	IconTabHeader.prototype._handleDrop = function (oEvent) {
+	IconTabHeader.prototype._handleDragAndDrop = function (oEvent) {
 		var oDropPosition = oEvent.getParameter("dropPosition"),
 			oDraggedControl = oEvent.getParameter("draggedControl"),
-			oDroppedControl = oEvent.getParameter("droppedControl"),
-			aTabs = this.getAggregation("items"),
-			iBeginDragIndex = this.indexOfItem(oDraggedControl),
-			oTabToBeMoved = aTabs[iBeginDragIndex],
-			iDropIndex = this.indexOfItem(oDroppedControl),
-			$DraggedTab = jQuery("#" + oDraggedControl.sId),
-			$tabAfter = jQuery("#" + oDroppedControl.sId),
-			iAggregationDropIndex = 0;
+			oDroppedControl = oEvent.getParameter("droppedControl");
 
-		if (this._bRtl) {
-			if (oDropPosition === "Before") {
-				$DraggedTab.insertAfter($tabAfter);
-				iAggregationDropIndex = iBeginDragIndex < iDropIndex ?  iDropIndex : iDropIndex + 1;
-			} else {
-				$DraggedTab.insertBefore($tabAfter);
-				iAggregationDropIndex = iBeginDragIndex < iDropIndex ?  iDropIndex - 1 : iDropIndex;
-			}
-		} else {
-			if (oDropPosition === "Before") {
-				$DraggedTab.insertBefore($tabAfter);
-				iAggregationDropIndex = iBeginDragIndex < iDropIndex ? iDropIndex - 1 : iDropIndex;
-			} else {
-				$DraggedTab.insertAfter($tabAfter);
-				iAggregationDropIndex = iBeginDragIndex < iDropIndex ? iDropIndex : iDropIndex + 1;
-			}
-		}
-		$DraggedTab.focus();
-		this._handleConfigurationAfterDragAndDrop(oTabToBeMoved, iAggregationDropIndex);
-	};
-
-	/**
-	 * Recalculates and sets the correct aria-posinset attribute value.
-	 * This is done based on the rearranging ot tabs in IconTabHeader after Drag&Drop.
-	 * @private
-	 */
-	IconTabHeader.prototype._updateAccessibilityInfo = function () {
-		var oIconTabHeaderItems = this.getAggregation("items"),
-			iAriaPointSet = 1;
-		oIconTabHeaderItems.forEach(function(oItem) {
-			var oItemDom = oItem.getDomRef();
-			if (oItemDom) {
-				oItemDom.setAttribute("aria-posinset", iAriaPointSet++);
-			}
-		});
-	};
-
-	/**
-	 * Handling IconTabBar configuration after Drag&Drop
-	 * Removing and inserting aggregations to their new positions.
-	 * Updating Accessibility information for the tabs
-	 * Initialize ItemNavigation
-	 * Disable text selection
-	 * @param {Object} oTabToBeMoved Moved tab
-	 * @param {Number} iNewAggregationIndex New index after the tab has been moved
-	 * @private
-	 */
-	IconTabHeader.prototype._handleConfigurationAfterDragAndDrop = function (oTabToBeMoved, iNewAggregationIndex) {
-		this.removeAggregation('items', oTabToBeMoved, true);
-		this.insertAggregation('items', oTabToBeMoved, iNewAggregationIndex, true);
-		this._updateAccessibilityInfo();
+		IconTabBarDragAndDropUtil.handleDrop.call(this, oDropPosition, oDraggedControl, oDroppedControl);
 		this._initItemNavigation();
+		oDraggedControl.$().focus();
 	};
 
 	/* =========================================================== */
 	/*           end: tab drag-drop		                           */
 	/* =========================================================== */
+
 	/* =========================================================== */
 	/*           start: tab keyboard handling - drag-drop          */
 	/* =========================================================== */
 
 	/**
-	 * Move focused tab of IconTabHeader to first position
+	 * Moves a tab by a specific key code
+	 *
+	 * @param {object} oTab The event object
+	 * @param {int} iKeyCode The key code
+	 * @private
+	 */
+	IconTabHeader.prototype._moveTab = function (oTab, iKeyCode) {
+		var bResult = IconTabBarDragAndDropUtil.moveItem.call(this, oTab, iKeyCode);
+		this._initItemNavigation();
+
+		if (bResult) {
+			this._scrollIntoView(oTab, 0);
+		}
+	};
+
+	/**
+	 * Handle keyboard drag&drop
+	 * @param {jQuery.Event} oEvent
+	 * @private
+	 */
+	IconTabHeader.prototype.ondragrearranging = function (oEvent) {
+		if (!this.getEnableTabReordering()) {
+			return;
+		}
+
+		var oTab = sap.ui.getCore().byId(oEvent.target.id);
+		this._moveTab(oTab, oEvent.keyCode);
+		oTab.$().focus();
+	};
+
+	/**
+	 * Moves tab on first position
 	 * Ctrl + Home
 	 * @param {jQuery.Event} oEvent
 	 */
-	IconTabHeader.prototype.onsaphomemodifiers = function (oEvent) {
-		this._handleKeyboardDragDrop(oEvent);
-	};
+	IconTabHeader.prototype.onsaphomemodifiers = IconTabHeader.prototype.ondragrearranging;
+
 	/**
 	 * Move focused tab of IconTabHeader to last position
 	 * Ctrl + End
 	 * @param {jQuery.Event} oEvent
 	 */
-	IconTabHeader.prototype.onsapendmodifiers = function (oEvent) {
-		this._handleKeyboardDragDrop(oEvent);
-	};
+	IconTabHeader.prototype.onsapendmodifiers = IconTabHeader.prototype.ondragrearranging;
+
 	/**
 	 * Moves tab for Drag&Drop keyboard handling
-	 * Ctrl + Right Arrow || Ctrl + Arrow Up
+	 * Ctrl + Left Right || Ctrl + Arrow Up
 	 * @param {jQuery.Event} oEvent
 	 */
-	IconTabHeader.prototype.onsapincreasemodifiers = function (oEvent) {
-		this._handleKeyboardDragDrop(oEvent);
-	};
+	IconTabHeader.prototype.onsapincreasemodifiers = IconTabHeader.prototype.ondragrearranging;
 
 	/**
 	 * Moves tab for Drag&Drop keyboard handling
 	 * Ctrl + Left Arrow || Ctrl + Arrow Down
 	 * @param {jQuery.Event} oEvent
 	 */
-	IconTabHeader.prototype.onsapdecreasemodifiers = function (oEvent) {
-		this._handleKeyboardDragDrop(oEvent);
-	};
+	IconTabHeader.prototype.onsapdecreasemodifiers = IconTabHeader.prototype.ondragrearranging;
 
-	/**
-	 * Handle keyboard Drag&Drop
-	 * @param {jQuery.Event} oEvent
-	 */
-	IconTabHeader.prototype._handleKeyboardDragDrop = function (oEvent) {
-		if (!this.getEnableTabReordering()) {
-			return;
-		}
-
-		var $tabToBeMoved = jQuery("#" + oEvent.target.id),
-			oTabToBeMoved = sap.ui.getCore().byId(oEvent.target.id),
-			aTabs = this.getAggregation("items"),
-			iBeginDragIndex = this.indexOfItem(oTabToBeMoved),
-			iNewTab;
-
-		switch (oEvent.keyCode) {
-			//Handles Ctrl + Home
-			case 36:
-				iNewTab = 0;
-				break;
-			//Handles Ctrl + End
-			case  35:
-				iNewTab = aTabs.length - 1;
-				break;
-			// Handles Ctrl + Left Arrow || Ctrl + Arrow Down
-			case 37 || 40:
-				if (this._bRtl) {
-					if (iBeginDragIndex === aTabs.length - 1) {
-						return;
-					}
-					iNewTab = iBeginDragIndex + 1;
-				} else {
-					if (iBeginDragIndex === 0)  {
-						return;
-					}
-					iNewTab = iBeginDragIndex - 1;
-				}
-				break;
-			// Handles Ctrl + Right Arrow || Ctrl + Arrow UP
-			case 39 || 38:
-				if (this._bRtl) {
-					iNewTab = iBeginDragIndex - 1;
-				} else {
-					if (iBeginDragIndex === aTabs.length - 1) {
-						return;
-					}
-					iNewTab = iBeginDragIndex + 1;
-				}
-				break;
-
-			default: return;
-		}
-
-		var	$tabToBeReplaced = jQuery("#" + aTabs[iNewTab].sId);
-		// Handles Ctrl + Left Arrow || Ctrl + Arrow Down || Ctrl + Home
-		if (oEvent.keyCode === 37 || oEvent.keyCode === 40 || oEvent.keyCode === 36) {
-			if (this._bRtl) {
-				$tabToBeMoved.insertAfter($tabToBeReplaced);
-			} else {
-				$tabToBeMoved.insertBefore($tabToBeReplaced);
-			}
-		// Handles Ctrl + Right Arrow || Ctrl + Arrow Up || Ctrl + End
-		} else if (oEvent.keyCode === 39 || oEvent.keyCode === 38 || oEvent.keyCode === 35) {
-			if (this._bRtl) {
-				$tabToBeMoved.insertBefore($tabToBeReplaced);
-			} else {
-				$tabToBeMoved.insertAfter($tabToBeReplaced);
-			}
-		}
-
-		this._handleConfigurationAfterDragAndDrop(oTabToBeMoved, iNewTab);
-		this._scrollIntoView(oTabToBeMoved, 0);
-		$tabToBeMoved.focus();
-	};
 	/* =========================================================== */
 	/*           end: tab keyboard handling - drag-drop            */
 	/* =========================================================== */
