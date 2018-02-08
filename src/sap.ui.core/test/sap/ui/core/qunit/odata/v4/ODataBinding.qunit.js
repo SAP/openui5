@@ -4,10 +4,11 @@
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/model/Binding",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/ODataBinding"
-], function (jQuery, SyncPromise, _Helper, Context, asODataBinding) {
+], function (jQuery, SyncPromise, Binding, _Helper, Context, asODataBinding) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -21,7 +22,7 @@ sap.ui.require([
 	 *   A template object to fill the binding, all properties are copied
 	 */
 	function ODataBinding(oTemplate) {
-		jQuery.extend(this, oTemplate);
+		jQuery.extend(this, {isSuspended : Binding.prototype.isSuspended}, oTemplate);
 	}
 
 	asODataBinding(ODataBinding.prototype);
@@ -185,47 +186,55 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refresh: does nothing for suspended binding", function (assert) {
-		var oBinding = new ODataBinding({
-				oModel : {
-					checkGroupId : function () {}
-				},
-				refreshInternal : function () {},
-				bSuspended : true
-			}),
-			oBindingMock = this.mock(oBinding);
+	[false, true].forEach(function (bSuspended) {
+		QUnit.test("isRefreshable: absolute, bSuspended = " + bSuspended, function (assert) {
+			var oBinding = new ODataBinding({
+					bRelative : false
+				});
 
-		oBindingMock.expects("isRefreshable").withExactArgs().returns(true);
-		oBindingMock.expects("hasPendingChanges").returns(false);
-		this.mock(oBinding.oModel).expects("checkGroupId");
-		oBindingMock.expects("isSuspended").withExactArgs().returns(true);
-		oBindingMock.expects("refreshInternal").never();
-
-		// code under test
-		oBinding.refresh("groupId");
+			this.mock(oBinding).expects("isSuspended").withExactArgs().returns(bSuspended);
+			assert.strictEqual(oBinding.isRefreshable(), !bSuspended);
+		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("isRefreshable", function (assert) {
-		var oBinding = new ODataBinding({bRelative : false});
-		assert.strictEqual(oBinding.isRefreshable(), true, "absolute");
+	[false, true].forEach(function (bSuspended) {
+		QUnit.test("isRefreshable: unresolved, bSuspended = " + bSuspended, function (assert) {
+			var oBinding = new ODataBinding({
+					bRelative : true
+				});
 
-		oBinding = new ODataBinding({bRelative : true});
-		assert.strictEqual(oBinding.isRefreshable(), undefined, "relative - no context");
-
-		oBinding = new ODataBinding({
-			bRelative : true,
-			oContext : {
-				getBinding : function () {}
-			}
+			assert.strictEqual(oBinding.isRefreshable(), undefined);
 		});
-		assert.strictEqual(oBinding.isRefreshable(), false, "relative - V4 context");
 
-		oBinding = new ODataBinding({
-			bRelative : true,
-			oContext : {}
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bSuspended) {
+		QUnit.test("isRefreshable: V4 context, bSuspended = " + bSuspended, function (assert) {
+			var oBinding = new ODataBinding({
+					bRelative : true,
+					oContext : {
+						getBinding : function () {}
+					}
+				});
+
+			assert.strictEqual(oBinding.isRefreshable(), false);
 		});
-		assert.strictEqual(oBinding.isRefreshable(), true, "relative - base context");
+
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bSuspended) {
+		QUnit.test("isRefreshable: quasi-absolute, bSuspended = " + bSuspended, function (assert) {
+			var oBinding = new ODataBinding({
+					bRelative : true,
+					oContext : {}
+				});
+
+			this.mock(oBinding).expects("isSuspended").withExactArgs().returns(bSuspended);
+			assert.strictEqual(oBinding.isRefreshable(), !bSuspended);
+		});
 	});
 
 	//*********************************************************************************************
@@ -1470,78 +1479,58 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("isSuspended: absolute binding", function (assert) {
-		var bSuspended = {/*use object for comparison in strictEqual*/},
-			oBinding = new ODataBinding({
-				oContext : { // sap.ui.model.odata.v4.Context
-					getBinding : function () {}
-				},
+	QUnit.test("getRootBinding: absolute binding", function (assert) {
+		var oBinding = new ODataBinding({
 				sPath : "/Employees",
-				bRelative : false,
-				bSuspended : bSuspended
+				bRelative : false
 			});
 
-		this.mock(oBinding.oContext).expects("getBinding").never();
-
 		// code under test
-		assert.strictEqual(oBinding.isSuspended(), bSuspended);
-
-		oBinding.bSuspended = true; // simulate oBinding.suspend()
-
-		// code under test
-		assert.strictEqual(oBinding.isSuspended(), true);
-
-		oBinding.bSuspended = false; // simulate oBinding.resume()
-
-		// code under test
-		assert.strictEqual(oBinding.isSuspended(), false);
+		assert.strictEqual(oBinding.getRootBinding(), oBinding);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("isSuspended: quasi-absolute binding", function (assert) {
-		var bSuspended = {/*use object for comparison in strictEqual*/},
-			oBinding = new ODataBinding({
+	QUnit.test("getRootBinding: quasi-absolute binding", function (assert) {
+		var oBinding = new ODataBinding({
 				oContext : {/*base context, has no method getBinding*/},
 				sPath : "SO_2_SCHEDULE",
-				bRelative : true,
-				bSuspended : bSuspended
+				bRelative : true
 			});
 
 		// code under test
-		assert.strictEqual(oBinding.isSuspended(), bSuspended);
+		assert.strictEqual(oBinding.getRootBinding(), oBinding);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("isSuspended: unresolved relative binding", function (assert) {
+	QUnit.test("getRootBinding: relative, unresolved binding", function (assert) {
 		var oBinding = new ODataBinding({
 				oContext : undefined,
 				sPath : "SO_2_SCHEDULE",
-				bRelative : true,
-				bSuspended : false // sap.ui.model.Binding constructor sets bSuspended to false
+				bRelative : true
 			});
 
 		// code under test
-		assert.strictEqual(oBinding.isSuspended(), false);
+		assert.strictEqual(oBinding.getRootBinding(), undefined);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("isSuspended: resolved relative binding", function (assert) {
+	QUnit.test("getRootBinding: relative, resolved binding", function (assert) {
 		var oParentBinding = {
-				isSuspended : function () {}
+				getRootBinding : function () {}
 			},
 			oBinding = new ODataBinding({
-				oContext : { // sap.ui.model.odata.v4.Context
+				oContext :  { // sap.ui.model.odata.v4.Context
 					getBinding : function () { return oParentBinding; }
 				},
-				sPath : "~path~",
-				bRelative : true,
-				bSuspended : false
-			}),
-			bSuspended = {/*use object for comparison in strictEqual*/};
+				sPath : "SO_2_SCHEDULE",
+				bRelative : true
+			});
 
-		this.mock(oParentBinding).expects("isSuspended").returns(bSuspended);
+		this.mock(oParentBinding).expects("getRootBinding")
+			.withExactArgs()
+			.returns(oParentBinding);
 
 		// code under test
-		assert.strictEqual(oBinding.isSuspended(), bSuspended);
+		assert.strictEqual(oBinding.getRootBinding(), oParentBinding);
 	});
 });

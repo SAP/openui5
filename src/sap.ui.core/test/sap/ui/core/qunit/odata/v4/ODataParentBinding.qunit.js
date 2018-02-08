@@ -4,12 +4,13 @@
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataParentBinding"
-], function (jQuery, SyncPromise, ChangeReason, Context, _Helper, ODataModel,
+], function (jQuery, SyncPromise, Binding, ChangeReason, Context, _Helper, ODataModel,
 		asODataParentBinding) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0, max-nested-callbacks: 0*/
@@ -38,7 +39,7 @@ sap.ui.require([
 		if (!("oCachePromise" in oTemplate)) {
 			oTemplate.oCachePromise = SyncPromise.resolve(); // mimic c'tor
 		}
-		jQuery.extend(this, oTemplate);
+		jQuery.extend(this, {isSuspended : Binding.prototype.isSuspended}, oTemplate);
 	}
 
 	asODataParentBinding(ODataParentBinding.prototype);
@@ -53,16 +54,24 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("initialize: absolute", function (assert) {
-		var oBinding = new ODataParentBinding({
-				bRelative : false,
-				_fireChange : function () {}
-			});
+	[false, true].forEach(function (bSuspended) {
+		QUnit.test("initialize: absolute, suspended = " + bSuspended, function (assert) {
+			var oBinding = new ODataParentBinding({
+					bRelative : false,
+					_fireChange : function () {}
+				}),
+				oBindingMock = this.mock(oBinding);
 
-		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
+			oBindingMock.expects("getRootBinding").withExactArgs().returns(oBinding);
+			oBindingMock.expects("isSuspended").withExactArgs().returns(bSuspended);
 
-		// code under test
-		oBinding.initialize();
+			oBindingMock.expects("_fireChange")
+				.exactly(bSuspended ? 0 : 1)
+				.withExactArgs({reason : ChangeReason.Change});
+
+			// code under test
+			oBinding.initialize();
+		});
 	});
 
 	//*********************************************************************************************
@@ -80,17 +89,27 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("initialize: relative, resolved", function (assert) {
-		var oBinding = new ODataParentBinding({
-				oContext : {},
-				bRelative : true,
-				_fireChange : function () {}
-			});
+	[false, true].forEach(function (bSuspended) {
+		QUnit.test("initialize: relative, resolved, bSuspended = " + bSuspended, function (assert) {
+			var oBinding = new ODataParentBinding({
+					oContext : {},
+					bRelative : true,
+					_fireChange : function () {}
+				}),
+				oBindingMock = this.mock(oBinding),
+				oRootBinding = {
+					isSuspended : function () {}
+				};
 
-		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
+			oBindingMock.expects("getRootBinding").withExactArgs().returns(oRootBinding);
+			this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(bSuspended);
+			oBindingMock.expects("_fireChange")
+				.exactly(bSuspended ? 0 : 1)
+				.withExactArgs({reason : ChangeReason.Change});
 
-		// code under test
-		oBinding.initialize();
+			// code under test
+			oBinding.initialize();
+		});
 	});
 
 	//*********************************************************************************************
@@ -1022,27 +1041,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[undefined, null].forEach(function (oContext, i) {
-		QUnit.test("fetchIfChildCanUseCache, unresolved parent binding, " + i, function (assert) {
-			var oBinding = new ODataParentBinding({
-					oModel : {
-						getMetaModel : function () { return {}; }
-					}
-				}),
-				oPromise;
-
-				// code under test
-				oPromise = oBinding.fetchIfChildCanUseCache(oContext, "childPath",
-					SyncPromise.resolve({}));
-
-				return oPromise.then(function (bUseCache) {
-					assert.strictEqual(bUseCache, false);
-				});
-			}
-		);
-	});
-
-	//*********************************************************************************************
 	[
 		SyncPromise.reject.bind(SyncPromise, {}), // "Failed to create cache..."
 		SyncPromise.resolve.bind(SyncPromise, { // cache sent read request
@@ -1376,9 +1374,16 @@ sap.ui.require([
 					getMetaModel : function () { return {}; }
 				}
 			}),
+			oRootBinding = {
+				isSuspended : function () {}
+			},
 			oPromise;
 
-			this.mock(oBinding).expects("isSuspended").withExactArgs().returns(true);
+			// getRootBinding cannot return undefined in fetchIfChildCanUseCache because it is
+			// called on a resolved binding see
+			// sap.ui.model.odata.v4.ODataBinding#fetchQueryOptionsForOwnCache
+			this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
+			this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(true);
 
 			// code under test
 			oPromise = oBinding.fetchIfChildCanUseCache(undefined, "childPath",
@@ -2016,22 +2021,6 @@ sap.ui.require([
 				}).suspend();
 			}, new Error("Cannot suspend a relative binding: ~"));
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("initialize: no change event for suspended binding", function (assert) {
-		var oBinding = new ODataParentBinding({
-				_fireChange : function () {},
-				sPath : "/Employees",
-				bRelative : false
-			}),
-			oBindingMock = this.mock(oBinding);
-
-		oBindingMock.expects("isSuspended").withExactArgs().returns(true);
-		oBindingMock.expects("_fireChange").never();
-
-		// code under test
-		oBinding.initialize();
 	});
 
 	//*********************************************************************************************

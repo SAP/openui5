@@ -213,8 +213,8 @@ sap.ui.require([
 		 * @returns {string} The ID of the text control which can be used for {@link #expectChange}
 		 */
 		addToTable : function (oTable, sPropertyPath, assert) {
-			var bAbsolute = oTable.getBinding("items").getPath()[0] === "/",
-				sId = "id" + sPropertyPath.replace("/", "_"),
+			var sId = "id" + sPropertyPath.replace("/", "_"),
+				bRelative = oTable.getBinding("items").isRelative(),
 				oTemplate = oTable.getBindingInfo("items").template,
 				oText = new Text({
 					id : this.oView.createId(sId),
@@ -229,7 +229,7 @@ sap.ui.require([
 			// It is not possible to modify the aggregation's template on an existing binding.
 			// Hence, we have to re-create.
 			oTable.bindItems(jQuery.extend({}, oTable.getBindingInfo("items"),
-				{suspended : bAbsolute, template : oTemplate}));
+				{suspended : !bRelative, template : oTemplate}));
 			return sId;
 		},
 
@@ -643,14 +643,14 @@ sap.ui.require([
 		 * @param {string} sControlId The ID of the control to remove
 		 */
 		removeFromTable : function (oTable, sControlId) {
-			var bAbsolute = oTable.getBinding("items").getPath()[0] === "/",
+			var bRelative = oTable.getBinding("items").isRelative(),
 				oTemplate = oTable.getBindingInfo("items").template;
 
 			oTemplate.removeCell(this.oView.byId(sControlId));
 			// ensure template control is not destroyed on re-creation of the "items" aggregation
 			delete oTable.getBindingInfo("items").template;
 			oTable.bindItems(jQuery.extend({}, oTable.getBindingInfo("items"),
-				{suspended : bAbsolute, template : oTemplate}));
+				{suspended : !bRelative, template : oTemplate}));
 		},
 
 		/**
