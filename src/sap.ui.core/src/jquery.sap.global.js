@@ -54,6 +54,22 @@
 		});
 	}
 
+	/**
+	 * Resolves the given url relative to the given base or relative to the document base
+	 * if base is <code>undefined</code>. If the document base is used, its query parameters
+	 * will be suppressed.
+	 *
+	 * @param {string} url URL to resolve
+	 * @param {string} [base=document.baseURI] Base URL (optional)
+	 * @returns {string} Absolute URL
+	 */
+	function resolveURL(url, base) {
+		if ( base === undefined ) {
+			base = new URI(document.baseURI).search(""); // suppress query portion of document base
+		}
+		return new URI(url, base).toString();
+	}
+
 	var _sBootstrapUrl;
 
 	// -------------------------- VERSION -------------------------------------
@@ -1770,7 +1786,7 @@
 					}
 					options = options || {};
 
-					var sMeasureId = new URI(url || options.url).absoluteTo(document.location.origin + document.location.pathname).href();
+					var sMeasureId = resolveURL(url || options.url);
 					jQuery.sap.measure.start(sMeasureId, "Request for " + sMeasureId, "xmlhttprequest");
 					var fnComplete = options.complete;
 					options.complete = function() {
@@ -2887,8 +2903,6 @@
 		// max size a script should have when executing it with execScript (IE). Otherwise fallback to eval
 			MAX_EXEC_SCRIPT_LENGTH = 512 * 1024,
 
-			sDocumentLocation = document.location.href.replace(/\?.*|#.*/g, ""),
-
 			FRAGMENT = "fragment",
 			VIEW = "view",
 			mKnownSubtypes = {
@@ -3112,7 +3126,7 @@
 				sResourceName;
 
 			// Make sure to have an absolute URL to check against absolute prefix URLs
-			sURL = new URI(sURL, sDocumentLocation).toString();
+			sURL = resolveURL(sURL);
 
 			for (sNamePrefix in mUrlPrefixes) {
 				if ( mUrlPrefixes.hasOwnProperty(sNamePrefix) ) {
@@ -3476,7 +3490,7 @@
 								// found a sourcemap annotation with a typical UI5 generated relative URL
 								sScript = sScript.slice(0, oMatch.index) + oMatch[0].slice(0, -oMatch[2].length) + URI(oMatch[2]).absoluteTo(oModule.url);
 							} else if ( !oMatch ) {
-								sScript += "\n//# sourceURL=" + URI(oModule.url).absoluteTo(sDocumentLocation);
+								sScript += "\n//# sourceURL=" + resolveURL(oModule.url);
 								if (Device.browser.safari || Device.browser.chrome) {
 									sScript += "?eval";
 								}
@@ -3752,7 +3766,7 @@
 
 				// calculate absolute url
 				// only to be used by 'guessResourceName'
-				vUrlPrefix.absoluteUrl = new URI(vUrlPrefix.url, sDocumentLocation).toString();
+				vUrlPrefix.absoluteUrl = resolveURL(vUrlPrefix.url);
 
 				mUrlPrefixes[sResourceNamePrefix] = vUrlPrefix;
 
@@ -5004,7 +5018,7 @@
 		var oLink = _createLink(sUrl, mAttributes, fnLoadCallback, fnErrorCallback);
 		if (oOld && oOld.tagName === "LINK" && oOld.rel === "stylesheet") {
 			// link exists, so we replace it - but only if a callback has to be attached or if the href will change. Otherwise don't touch it
-			if (fnLoadCallback || fnErrorCallback || oOld.href !== URI(String(sUrl), URI().search("") /* returns current URL without search params */ ).toString()) {
+			if (fnLoadCallback || fnErrorCallback || oOld.href !== resolveURL(sUrl)) {
 				// if the attribute "data-sap-ui-foucmarker" exists and the value
 				// matches the id of the new link the new link will be put
 				// before the old link into the document and the id attribute
