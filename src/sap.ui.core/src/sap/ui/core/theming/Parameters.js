@@ -132,7 +132,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element', 'jque
 			if (jQuery.sap.getUriParameters().get("sap-ui-xx-no-inline-theming-parameters") !== "true") {
 				var $link = jQuery(oLink);
 				var sDataUri = $link.css("background-image");
-				var aParams = /\(["']data:text\/plain;utf-8,(.*)["']\)$/i.exec(sDataUri);
+				var aParams = /\(["']?data:text\/plain;utf-8,(.*?)['"]?\)$/i.exec(sDataUri);
 				if (aParams && aParams.length >= 2) {
 					var sParams = aParams[1];
 					// decode only if necessary
