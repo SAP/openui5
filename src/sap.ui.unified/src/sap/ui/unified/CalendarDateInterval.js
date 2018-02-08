@@ -86,7 +86,8 @@ sap.ui.define([
 			 */
 			calendarPicker : {type : "sap.ui.unified.Calendar", multiple : false, visibility : "hidden"}
 
-		}
+		},
+		designtime: "sap/ui/unified/designtime/CalendarDateInterval.designtime"
 	}});
 
 	CalendarDateInterval.prototype.init = function(){

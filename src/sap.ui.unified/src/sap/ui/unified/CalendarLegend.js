@@ -59,7 +59,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 
 				// holds a reference to all standard items in the given format, which will be eventually rendered.
 				_standardItems: {type: "sap.ui.unified.CalendarLegendItem", multiple: true, visibility: "hidden"}
-			}
+			},
+			designtime: "sap/ui/unified/designtime/CalendarLegend.designtime"
 		},
 
 		constructor: function (vId, mSettings) {

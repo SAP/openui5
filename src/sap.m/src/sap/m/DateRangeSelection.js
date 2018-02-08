@@ -130,7 +130,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 			 * @deprecated since version 1.22.0, replaced by <code>secondDateValue</code> property
 			 */
 			to : {type : "object", group : "Misc", defaultValue : null, deprecated: true}
-		}
+		},
+		designtime: "sap/m/designtime/DateRangeSelection.designtime"
 	}});
 
 	/**
