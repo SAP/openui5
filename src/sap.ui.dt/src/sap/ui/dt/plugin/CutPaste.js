@@ -60,7 +60,11 @@ sap.ui.define([
 		var oElement = oOverlay.getElement();
 		//Register key down so that ESC is possible on all overlays
 		oOverlay.attachBrowserEvent("keydown", this._onKeyDown, this);
-		if (this.getElementMover().isMovableType(oElement) && this.getElementMover().checkMovable(oOverlay)) {
+		if (
+			this.getElementMover().isMovableType(oElement)
+			&& this.getElementMover().checkMovable(oOverlay)
+			&& !OverlayUtil.isInAggregationBinding(oOverlay, oElement.sParentAggregationName)
+		) {
 			oOverlay.setMovable(true);
 		}
 

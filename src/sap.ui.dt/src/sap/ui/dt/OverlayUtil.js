@@ -606,5 +606,26 @@ function(
 		});
 	};
 
+	/**
+	 * Checks if an Overlay is part of an aggregation binding
+	 * The check is done recursively
+	 * @param  {sap.ui.dt.ElementOverlay} oElementOverlay Overlay being checked
+	 * @param  {string}  sAggregationName The name of the aggregation being checked
+	 * @return {Boolean}                  Returns true if Overlay is in aggregation binding
+	 */
+	OverlayUtil.isInAggregationBinding = function(oElementOverlay, sAggregationName) {
+		if (sAggregationName && oElementOverlay.getElement().getBinding(sAggregationName)) {
+			return true;
+		}
+		return oElementOverlay.isRoot()
+			? false
+			: (
+				this.isInAggregationBinding(
+					oElementOverlay.getParentElementOverlay(),
+					oElementOverlay.getElement().sParentAggregationName
+				)
+			);
+	};
+
 	return OverlayUtil;
 }, /* bExport= */true);
