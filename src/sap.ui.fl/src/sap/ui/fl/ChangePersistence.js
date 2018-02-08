@@ -964,10 +964,8 @@ sap.ui.define([
 	 *
 	 * @returns {Promise} promise that resolves without parameters
 	 */
-	ChangePersistence.prototype.resetChanges = function () {
-		var sActiveLayer = Utils.getCurrentLayer();
-
-		return this.getChangesForComponent({currentLayer: sActiveLayer, includeCtrlVariants: true})
+	ChangePersistence.prototype.resetChanges = function (sLayer, sGenerator) {
+		return this.getChangesForComponent({currentLayer: sLayer, includeCtrlVariants: true})
 			.then(function(aChanges) {
 				return Settings.getInstance(this.getComponentName())
 					.then(function(oSettings) {
@@ -979,8 +977,8 @@ sap.ui.define([
 							var sUriOptions =
 								"?reference=" + this.getComponentName() +
 								"&appVersion=" + this._mComponent.appVersion +
-								"&layer=" + sActiveLayer +
-								"&generator=Change.createInitialFileContent";
+								"&layer=" + sLayer +
+								"&generator=" + sGenerator;
 							if (aChanges[0].getRequest().length > 0) {
 								sUriOptions = sUriOptions + "&changelist=" + aChanges[0].getRequest();
 							}
