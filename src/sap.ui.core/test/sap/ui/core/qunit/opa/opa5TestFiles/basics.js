@@ -94,12 +94,16 @@ sap.ui.define([
 
 	QUnit.test("Should read a config value from URL parameter", function (assert) {
 		var fnDone = assert.async();
-		var oStub = sinon.stub(URI.prototype, "search", function () {
-			return {
-				"newKey": "value",		// should parse unprefixed params
-				"opaSpecific": "value",	// should exclude opa params
-				"existingKey": "value"	// uri params should override defaults
-			};
+		var fnOrig = URI.prototype.search;
+		var oStub = sinon.stub(URI.prototype, "search", function (query) {
+			if ( query === true ) {
+				return {
+					"newKey": "value",		// should parse unprefixed params
+					"opaSpecific": "value",	// should exclude opa params
+					"existingKey": "value"	// uri params should override defaults
+				};
+			}
+			return fnOrig.apply(this, arguments); // should use callThrough with sinon > 3.0
 		});
 		$.sap.unloadResources("sap/ui/test/Opa5.js", false, true, true);
 

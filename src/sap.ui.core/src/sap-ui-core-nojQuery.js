@@ -42,6 +42,7 @@
 }([
 	"raw:sap/ui/Device.js",
 	"raw:sap/ui/thirdparty/URI.js",
+	"raw:sap/ui/thirdparty/baseuri.js",
 	"raw:sap/ui/thirdparty/es6-promise.js",
 	"raw:jquery.sap.global.js",
 	"require:sap.ui.core.Core"
