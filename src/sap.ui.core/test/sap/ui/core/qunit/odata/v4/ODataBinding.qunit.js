@@ -22,7 +22,17 @@ sap.ui.require([
 	 *   A template object to fill the binding, all properties are copied
 	 */
 	function ODataBinding(oTemplate) {
-		jQuery.extend(this, {isSuspended : Binding.prototype.isSuspended}, oTemplate);
+		jQuery.extend(this, {
+			//Returns the metadata for the class that this object belongs to.
+			getMetadata : function () {
+				return {
+					getName : function () {
+						return sClassName;
+					}
+				};
+			},
+			isSuspended : Binding.prototype.isSuspended
+		}, oTemplate);
 	}
 
 	asODataBinding(ODataBinding.prototype);
@@ -1532,5 +1542,29 @@ sap.ui.require([
 
 		// code under test
 		assert.strictEqual(oBinding.getRootBinding(), oParentBinding);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("toString", function (assert) {
+		var oBinding = new ODataBinding({
+				bRelative : false,
+				sPath : "/Employees(ID='1')"
+			});
+
+		// code under test
+		assert.strictEqual(oBinding.toString(), sClassName + ": /Employees(ID='1')", "absolute");
+
+		oBinding.sPath = "Employee_2_Team";
+		oBinding.bRelative = true;
+
+		// code under test
+		assert.strictEqual(oBinding.toString(), sClassName + ": undefined|Employee_2_Team",
+			"relative, unresolved");
+
+		oBinding.oContext = {toString : function () {return "/Employees(ID='1')";}};
+
+		// code under test
+		assert.strictEqual(oBinding.toString(), sClassName
+			+ ": /Employees(ID='1')|Employee_2_Team", "relative, resolved");
 	});
 });

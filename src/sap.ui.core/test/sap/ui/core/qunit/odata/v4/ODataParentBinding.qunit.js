@@ -16,6 +16,8 @@ sap.ui.require([
 	/*eslint no-warning-comments: 0, max-nested-callbacks: 0*/
 	"use strict";
 
+	var sClassName = "sap.ui.model.odata.v4.ODataParentBinding";
+
 	/**
 	 * Returns a clone, that is a deep copy, of the given object.
 	 *
@@ -35,11 +37,18 @@ sap.ui.require([
 	 *   A template object to fill the binding, all properties are copied
 	 */
 	function ODataParentBinding(oTemplate) {
-		oTemplate = oTemplate || {};
-		if (!("oCachePromise" in oTemplate)) {
-			oTemplate.oCachePromise = SyncPromise.resolve(); // mimic c'tor
-		}
-		jQuery.extend(this, {isSuspended : Binding.prototype.isSuspended}, oTemplate);
+		jQuery.extend(this, {
+			oCachePromise : SyncPromise.resolve(), // mimic c'tor
+			//Returns the metadata for the class that this object belongs to.
+			getMetadata : function () {
+				return {
+					getName : function () {
+						return sClassName;
+					}
+				};
+			},
+			isSuspended : Binding.prototype.isSuspended
+		}, oTemplate);
 	}
 
 	asODataParentBinding(ODataParentBinding.prototype);
@@ -683,7 +692,7 @@ sap.ui.require([
 			.returns({});
 		this.oLogMock.expects("debug").withExactArgs(
 			"Cannot wrap $apply into $expand: NavigationProperty",
-			JSON.stringify(mChildQueryOptions), "sap.ui.model.odata.v4.ODataParentBinding"
+			JSON.stringify(mChildQueryOptions), sClassName
 		);
 
 		// code under test
@@ -728,8 +737,7 @@ sap.ui.require([
 			"Failed to enhance query options for auto-$expand/$select as the child "
 				+ "binding has query options, but its path 'Property' points to a "
 				+ "structural property",
-			JSON.stringify(mChildLocalQueryOptions),
-			"sap.ui.model.odata.v4.ODataParentBinding");
+			JSON.stringify(mChildLocalQueryOptions), sClassName);
 
 		// code under test
 		assert.strictEqual(oBinding.wrapChildQueryOptions("/EMPLOYEES", "Property",
@@ -1092,8 +1100,7 @@ sap.ui.require([
 					this.mock(oCachePromise.getResult()).expects("setQueryOptions").never();
 				} else {
 					this.mock(oBinding.oModel).expects("reportError")
-						.withExactArgs("Failed to update cache for binding " + oBinding,
-							"sap.ui.model.odata.v4.ODataParentBinding",
+						.withExactArgs("Failed to update cache for binding " + oBinding, sClassName,
 							sinon.match.same(oCachePromise.getResult()));
 				}
 
@@ -1273,8 +1280,7 @@ sap.ui.require([
 				"Failed to enhance query options for auto-$expand/$select as the path "
 					+ "'/EMPLOYEES" + sPath
 					+ "' does not point to a property",
-				JSON.stringify(oFixture.oProperty),
-				"sap.ui.model.odata.v4.ODataParentBinding");
+				JSON.stringify(oFixture.oProperty), sClassName);
 
 			// code under test
 			oPromise = oBinding.fetchIfChildCanUseCache(oContext, sPath.slice(1));
@@ -1736,8 +1742,7 @@ sap.ui.require([
 		this.mock(oBinding.oContext).expects("fetchCanonicalPath").withExactArgs()
 			.returns(SyncPromise.resolve(oPathPromise));
 		this.mock(oBinding.oModel).expects("reportError")
-			.withExactArgs("Failed to update foo", "sap.ui.model.odata.v4.ODataParentBinding",
-				sinon.match.same(oError));
+			.withExactArgs("Failed to update foo", sClassName, sinon.match.same(oError));
 
 		// code under test
 		oBinding.checkUpdate();
@@ -1851,7 +1856,7 @@ sap.ui.require([
 
 			this.mock(oBinding.oModel).expects("reportError")
 				.withExactArgs("POST on 'EMPLOYEES' failed; will be repeated automatically",
-					"sap.ui.model.odata.v4.ODataParentBinding", sinon.match.same(oError));
+					sClassName, sinon.match.same(oError));
 
 			// code under test
 			oExpectation.args[0][5](oError); // call fnErrorCallback to simulate error
