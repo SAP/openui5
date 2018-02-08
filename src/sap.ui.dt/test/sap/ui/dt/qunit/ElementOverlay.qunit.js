@@ -319,40 +319,6 @@ function(
 		});
 	});
 
-	QUnit.module("Given that an Overlay is created for a control, but not rendered yet", {
-		beforeEach: function(assert) {
-			var fnDone = assert.async();
-
-			this.oButton = new Button();
-			this.oButton.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
-
-			this.oElementOverlay = new ElementOverlay({
-				element: this.oButton,
-				isRoot: true,
-				init: function () {
-					fnDone();
-				}
-			});
-		},
-		afterEach : function() {
-			this.oElementOverlay.destroy();
-			this.oButton.destroy();
-		}
-	}, function () {
-		QUnit.test("when overlay is rendered it should receive previously attached browser events", function (assert) {
-			var fnDone = assert.async();
-			assert.strictEqual(this.oElementOverlay.isRendered(), false, 'then an overlay is not rendered');
-			this.oElementOverlay.attachBrowserEvent('click', function () {
-				assert.ok(true, 'event was attached and triggered');
-				fnDone();
-			});
-			this.oElementOverlay.placeInOverlayContainer();
-			assert.strictEqual(this.oElementOverlay.isRendered(), true, 'then an overlay is rendered');
-			this.oElementOverlay.$().trigger('click');
-		});
-	});
-
 	QUnit.module("Given that an Overlay is created for a control with an invisible domRef", {
 		beforeEach : function(assert) {
 			var done = assert.async();
