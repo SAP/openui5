@@ -217,6 +217,7 @@ sap.ui.define([
 		oEvent = createjQueryDragEventDummy("drop", this.oControl, false);
 		DragAndDrop.preprocessEvent(oEvent);
 		assert.ok(oEvent.dragSession === oDragSession, "drop: Drag session was preserved");
+		assert.ok(oEvent.isDefaultPrevented(), "drop: Default is prevented");
 
 		DragAndDrop.postprocessEvent(oEvent); // Postprocessing "drop" destroys the drag session.
 		oEvent = createjQueryDragEventDummy("dragenter", this.oControl, false);

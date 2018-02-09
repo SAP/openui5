@@ -418,12 +418,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 	}
 
 	function setDropEffect(oEvent, oDropInfo) {
-		// hide the drop indicator if there is no drop info
-		if (!oDropInfo || oDropInfo.getDropEffect() == "None") {
-			hideDropIndicator();
-			return;
-		}
-
 		// allow dropping
 		oEvent.preventDefault();
 
@@ -433,11 +427,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 	}
 
 	function showDropPosition(oEvent, oDropInfo, oValidDropControl) {
-		// we need valid drop info and control
-		if (!oDropInfo || !oValidDropControl) {
-			return;
-		}
-
 		// no target aggregation so entire control is the target
 		var sTargetAggregation = oDropInfo.getTargetAggregation();
 		if (!sTargetAggregation) {
@@ -544,23 +533,26 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 			oEvent.setMark("DragWithin", "SameControl");
 		} else {
 			iTargetEnteringTime = Date.now();
+			oDropControl = oControl;
 		}
 
-		oDropControl = oControl;
+		var aDropInfos = [];
 		oValidDropControl = oControl;
-		var oValidDropInfo = aValidDropInfos[0];
 
 		// find the first valid drop control and corresponding valid DropInfos at the control hierarchy
 		for (var i = 0; i < 10 && oValidDropControl; i++, oValidDropControl = oValidDropControl.getParent()) {
-			aValidDropInfos = getValidDropInfos(oValidDropControl, aValidDragInfos, oEvent);
-			if (aValidDropInfos.length) {
+			aDropInfos = getValidDropInfos(oValidDropControl, aValidDragInfos, oEvent);
+			if (aDropInfos.length) {
 				break;
 			}
 		}
 
-		// if valid drop info is changed, clear indicator config
-		if (oValidDropInfo != aValidDropInfos[0] && oDragSession) {
-			oDragSession.setIndicatorConfig(null);
+		// if we are not dragging within the same control we can update valid drop infos
+		if (oEvent.getMark("DragWithin") != "SameControl") {
+			aValidDropInfos = aDropInfos;
+			if (oDragSession) {
+				oDragSession.setIndicatorConfig(null);
+			}
 		}
 
 		// no valid drop info found
@@ -583,10 +575,15 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 			});
 		}
 
-		// set drop effect and show drop position
+		// set drop effect and drop position
 		var oValidDropInfo = aValidDropInfos[0];
-		setDropEffect(oEvent, oValidDropInfo);
-		sCalculatedDropPosition = showDropPosition(oEvent, oValidDropInfo, oValidDropControl);
+		if (!oValidDropInfo || oValidDropInfo.getDropEffect() == "None") {
+			hideDropIndicator();
+			sCalculatedDropPosition = "";
+		} else {
+			setDropEffect(oEvent, oValidDropInfo);
+			sCalculatedDropPosition = showDropPosition(oEvent, oValidDropInfo, oValidDropControl);
+		}
 	};
 
 	DnD.onbeforedragover = function(oEvent) {
@@ -601,6 +598,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 	DnD.onafterdragover = function(oEvent) {
 		var oValidDropInfo = aValidDropInfos[0];
 
+		// let the browser do the default if there is no valid drop info
+		if (!oValidDropInfo || oValidDropInfo.getDropEffect() == "None") {
+			return;
+		}
+
 		// browsers drop effect must be set on dragover always
 		setDropEffect(oEvent, oValidDropInfo);
 
@@ -611,6 +613,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 
 		// drop indicator position may change depending on the mouse pointer location
 		sCalculatedDropPosition = showDropPosition(oEvent, oValidDropInfo, oValidDropControl);
+	};
+
+	DnD.onbeforedrop = function(oEvent) {
+		// prevent default action
+		oEvent.preventDefault();
 	};
 
 	DnD.onafterdrop = function(oEvent) {
