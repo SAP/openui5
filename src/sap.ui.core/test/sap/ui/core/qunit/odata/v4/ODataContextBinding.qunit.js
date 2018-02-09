@@ -870,6 +870,7 @@ sap.ui.require([
 				that.mock(oChild1).expects("refreshInternal").withExactArgs(sGroupId, true);
 			}
 
+			oBindingMock.expects("checkSuspended").withExactArgs();
 			this.mock(this.oModel.getMetaModel()).expects("fetchObject")
 				.withExactArgs("/OperationImport/@$ui5.overload")
 				.returns(SyncPromise.resolve([oOperationMetadata]));
