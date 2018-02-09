@@ -133,8 +133,9 @@ sap.ui.define([
 	var _oBootstrap = BootstrapInfo;
 
 	/**
-	 * Determine whether to use debug sources depending on URL parameter and local storage
-	 * and load debug library if necessary
+	 * Determine whether to use debug sources depending on URL parameter, local storage
+	 * and script tag attribute.
+	 * If full debug mode is required, restart with a debug version of the bootstrap.
 	 */
 	(function() {
 		// check URI param
@@ -175,6 +176,46 @@ sap.ui.define([
 				throw oRestart;
 			}
 		}
+
+		function makeRegExp(sGlobPattern) {
+			if (!/\/\*\*\/$/.test(sGlobPattern)) {
+				sGlobPattern = sGlobPattern.replace(/\/$/, '/**/');
+			}
+			return sGlobPattern.replace(/\*\*\/|\*|[[\]{}()+?.\\^$|]/g, function(sMatch) {
+				switch (sMatch) {
+					case '**/': return '(?:[^/]+/)*';
+					case '*': return '[^/]*';
+					default: return '\\' + sMatch;
+				}
+			});
+		}
+
+		var fnIgnorePreload;
+
+		if (typeof vDebugInfo === 'string') {
+			var sPattern = "^(?:" + vDebugInfo.split(/,/).map(makeRegExp).join("|") + ")",
+				rFilter = new RegExp(sPattern);
+
+			fnIgnorePreload = function(sModuleName) {
+				return rFilter.test(sModuleName);
+			};
+
+			_earlyLog("debug", "Modules that should be excluded from preload: '" + sPattern + "'");
+
+		} else if (vDebugInfo === true) {
+
+			fnIgnorePreload = function() {
+				return true;
+			};
+
+			_earlyLog("debug", "All modules should be excluded from preload");
+
+		}
+
+		_ui5loader.config({
+			debugSources: !!window["sap-ui-loaddbg"],
+			ignoreBundledResources: fnIgnorePreload
+		});
 
 	})();
 
