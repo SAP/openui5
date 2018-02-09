@@ -329,7 +329,7 @@
 					assert.strictEqual(parseInt(aFESR[7]), 0, "network_time");
 					assert.strictEqual(parseInt(aFESR[8]), 6, "request_time");
 
-					assert.strictEqual(this.oInteraction.incompleteRequests, 1, "incomplete request counted");
+					assert.strictEqual(this.oInteraction.completeRoundtrips, 3, "complete request counted");
 				});
 
 				QUnit.module("Global busy duration measurement",{

@@ -21,10 +21,18 @@ sap.ui.define(["./Measurement", "./ResourceTimings", "./XHRInterceptor", "sap/ba
 		}
 	}
 
-	function isCompleteTiming(oRequestTiming) {
-		return oRequestTiming.startTime > 0 &&
+	/**
+	 * Valid timings are all timings which are complete and not responded from browser cache.
+	 *
+	 * @param {object} oRequestTiming
+	 * @private
+	 */
+	function isValidRoundtrip(oRequestTiming) {
+		var bComplete = oRequestTiming.startTime > 0 &&
 			oRequestTiming.startTime <= oRequestTiming.requestStart &&
 			oRequestTiming.requestStart <= oRequestTiming.responseEnd;
+		var bCached = oRequestTiming.transferSize < oRequestTiming.encodedBodySize;
+		return bComplete && !bCached;
 	}
 
 	function aggregateRequestTiming(oRequest) {
@@ -88,14 +96,14 @@ sap.ui.define(["./Measurement", "./ResourceTimings", "./XHRInterceptor", "sap/ba
 			oPendingInteraction.end = iTime;
 			oPendingInteraction.duration = oPendingInteraction.processing;
 			oPendingInteraction.requests = ResourceTimings.getRequestTimings();
-			oPendingInteraction.incompleteRequests = 0;
+			oPendingInteraction.completeRoundtrips = 0;
 			oPendingInteraction.measurements = Measurement.filterMeasurements(isCompleteMeasurement, true);
 
-			var aCompleteRequestTimings = oPendingInteraction.requests.filter(isCompleteTiming);
-			if (aCompleteRequestTimings.length > 0) {
-				aggregateRequestTimings(aCompleteRequestTimings);
-				oPendingInteraction.incompleteRequests = oPendingInteraction.requests.length - aCompleteRequestTimings.length;
+			var aCompleteRoundtripTimings = oPendingInteraction.requests.filter(isValidRoundtrip);
+			if (aCompleteRoundtripTimings.length > 0) {
+				aggregateRequestTimings(aCompleteRoundtripTimings);
 			}
+			oPendingInteraction.completeRoundtrips = aCompleteRoundtripTimings.length;
 
 			// calculate real processing time if any processing took place
 			// cannot be negative as then requests took longer than processing
