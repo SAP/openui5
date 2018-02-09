@@ -332,7 +332,6 @@ sap.ui.define([
 		this._oTable = new Table({
 			mode: ListMode.MultiSelect,
 			rememberSelections: false,
-			// itemPress: jQuery.proxy(this._onItemPressed, this),
 			selectionChange: jQuery.proxy(this._onSelectionChange, this),
 			columns: [
 				new sap.m.Column({
@@ -358,28 +357,38 @@ sap.ui.define([
 				path: "/items",
 				templateShareable: false,
 				template: new ColumnListItem({
-					cells: [
-						new sap.m.Link({
-							href: "{href}",
-							text: "{text}",
-							target: "{target}",
-							enabled: {
-								path: 'href',
-								formatter: function(oValue) {
-									if (!oValue) {
-										this.addStyleClass("sapUiCompSmartLink");
+					cells: new sap.m.VBox({
+						items: [
+							new sap.m.Link({
+								href: "{href}",
+								text: "{text}",
+								target: "{target}",
+								enabled: {
+									path: 'href',
+									formatter: function(oValue) {
+										if (!oValue) {
+											this.addStyleClass("sapUiCompSmartLink");
+										}
+										return !!oValue;
 									}
-									return !!oValue;
+								},
+								press: function(oEvent) {
+									var fOnLinkPress = that._getInternalModel().getProperty("/linkPressMap")[this.getText() + "---" + this.getHref()];
+									if (fOnLinkPress) {
+										fOnLinkPress(oEvent);
+									}
 								}
-							},
-							press: function(oEvent) {
-								var fOnLinkPress = that._getInternalModel().getProperty("/linkPressMap")[this.getText() + "---" + this.getHref()];
-								if (fOnLinkPress) {
-									fOnLinkPress(oEvent);
-								}
-							}
-						})
-					],
+							}), new sap.m.Text({
+								visible: {
+									path: 'description',
+									formatter: function(sDescription) {
+										return !!sDescription;
+									}
+								},
+								text: "{description}"
+							})
+						]
+					}),
 					visible: "{visible}",
 					selected: "{persistentSelected}",
 					tooltip: "{tooltip}",
@@ -575,7 +584,8 @@ sap.ui.define([
 				href: oItem.getHref(),
 				target: oItem.getTarget(),
 				// default value
-				persistentSelected: oItem.getVisible()
+				persistentSelected: oItem.getVisible(),
+				description: oItem.getDescription()
 			};
 		}, this));
 
