@@ -9,7 +9,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 			version : "1.0",
 			rootView : {
 				viewName: "samples.components.ext.sap.Main",
-				type: "XML"
+				type: "XML",
+				async: true
 			},
 			config : {
 				"myConfig": {
@@ -20,8 +21,5 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 
 	});
 
-
-
 	return Component;
-
 });
