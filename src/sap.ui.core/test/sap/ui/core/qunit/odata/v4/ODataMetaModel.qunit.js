@@ -2188,9 +2188,6 @@ sap.ui.require([
 	}, { // decode navigation property, encode entity set
 		path : "/EMPLOYEES('7')/EMPLOYEE_2_EQUIPM%E2%82%ACNTS(42)|ID",
 		editUrl : "EQUIPM%E2%82%ACNTS(42)"
-	}, { // navigation property with @odata.bind annotation
-		path : "/TEAMS('42')|TEAM_2_EMPLOYEES@odata.bind",
-		editUrl : "TEAMS('42')"
 	}].forEach(function (oFixture) {
 		QUnit.test("fetchUpdateData: " + oFixture.path, function (assert) {
 			var i = oFixture.path.indexOf("|"),
@@ -2283,9 +2280,6 @@ sap.ui.require([
 	}, {
 		dataPath : "/TEAMS/0/Foo/Bar",
 		message : "Not a (navigation) property: Foo"
-	}, {
-		dataPath : "/TEAMS/0/Foo@odata.bind",
-		message : "Not a (navigation) property: Foo@odata.bind"
 	}, {
 		dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
 		instance : undefined,

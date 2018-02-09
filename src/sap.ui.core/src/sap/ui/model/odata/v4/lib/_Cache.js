@@ -377,8 +377,7 @@ sap.ui.define([
 	 * Drills down into the given object according to <code>sPath</code>. Logs an error if the path
 	 * leads into void. Paths may contain key predicates like "TEAM_2_EMPLOYEES('42')/Name". The
 	 * initial segment in a collection cache may even start with a key predicate, for example a path
-	 * could be "('42')/Name". Paths containing a not-expanded navigation property having an
-	 * <code>@odata.bind</code> annotation result in <code>undefined</code> without an error log.
+	 * could be "('42')/Name".
 	 *
 	 * @param {object} oData
 	 *   The result from a read or cache lookup
@@ -416,9 +415,6 @@ sap.ui.define([
 					return _Helper.makeAbsolute(sReadLink, sServiceUrl);
 				}
 				return sServiceUrl + sPropertyPath;
-			}
-			if (oValue[sSegment + "@odata.bind"] !== undefined) {
-				return undefined;
 			}
 			return invalidSegment(sSegment);
 		}
