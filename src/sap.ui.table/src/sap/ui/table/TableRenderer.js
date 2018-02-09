@@ -986,7 +986,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.writeClasses();
 		rm.writeAttribute("data-sap-ui-rowindex", iRowIndex);
 		if (oTable.getRowHeight() > 0) {
-			rm.addStyle("height", oTable._getDefaultRowHeight + "px");
+			rm.addStyle("height", oTable._getDefaultRowHeight() + "px");
 		}
 		rm.writeStyles();
 
