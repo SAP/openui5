@@ -83,17 +83,20 @@ sap.ui.define([
 
 			if (oBinding && oBinding.isResolved()) {
 				oBinding.requestValueListType().then(function (sValueListType) {
-					var oField = that.getAggregation("field");
+					var oField = that.getAggregation("field"),
+						sId = that.getId() + "-field";
 
-					if (oField) {
-						return; // changes to sValueListType are not supported
+					if (oField // changes to sValueListType are not supported
+							// no need to create a field if control is already destroyed
+							|| that.bIsDestroyed) {
+						return;
 					}
 
 					switch (sValueListType) {
 						case ValueListType.Standard:
 							oField = new Input({
 								change: that.onValueChange.bind(that),
-								id : that.getId() + "-field",
+								id : sId,
 								showValueHelp : true,
 								value : that.getValue(),
 								valueHelpRequest : that.onValueHelp.bind(that)
@@ -101,14 +104,14 @@ sap.ui.define([
 							break;
 						case ValueListType.Fixed:
 							oField = new ComboBox({
-								id : that.getId() + "-field",
+								id : sId,
 								loadItems : that.onLoadItems.bind(that),
 								value : that.getValue()
 							});
 							break;
 						default:
 							oField = new Input({
-								id : that.getId() + "-field",
+								id : sId,
 								showValueHelp : false,
 								value : that.getValue()
 							});

@@ -4438,12 +4438,10 @@ sap.ui.require([
 				"Team_Id": "TEAM_01",
 				"MEMBER_COUNT": 2,
 				"TEAM_2_EMPLOYEES": [{
-					"@odata.etag": "W/\"19770724000000.0000000\"",
 					"ID": "1",
 					"Name": "Frederic Fall",
 					"AGE": 52
 				}, {
-					"@odata.etag": "W/\"19770724000000.0000000\"",
 					"ID": "3",
 					"Name": "Jonathan Smith",
 					"AGE": 56
@@ -4470,12 +4468,10 @@ sap.ui.require([
 					"Team_Id": "TEAM_01",
 					"MANAGER_ID": "3",
 					"TEAM_2_EMPLOYEES": [{
-						"@odata.etag": "W/\"19770724000000.0000000\"",
 						"ID": "1",
 						"Name": "Frederic Fall",
 						"STATUS": "Available"
 					}, {
-						"@odata.etag": "W/\"19770724000000.0000000\"",
 						"ID": "3",
 						"Name": "Jonathan Smith",
 						"STATUS": "Occupied"
@@ -4606,6 +4602,118 @@ sap.ui.require([
 					oEmployeeBinding.suspend();
 					oEmployeeBinding.resume();
 				});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Master table with list binding is suspended after initialization. Detail form for
+	//   "selected" context from table is then changed by adding and removing a form field; table
+	//   remains unchanged.
+	//   After resume, *separate* new requests for the master table and the details form are sent;
+	//   the request for the form reflects the changes. The field added to the form is updated.
+	QUnit.skip("suspend/resume: master list binding with details context binding, only context"
+			+ " binding is adapted", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{path : \'/Equipments\', templateShareable : false}">\
+	<items>\
+		<ColumnListItem>\
+			<Text id="idEquipmentName" text="{Name}" />\
+		</ColumnListItem>\
+	</items>\
+</Table>\
+<FlexBox id="form" binding="{EQUIPMENT_2_EMPLOYEE}">\
+	<Text id="idName" text="{Name}" />\
+	<Text id="idAge" text="{AGE}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Equipments?$select=Category,ID,Name&$skip=0&$top=100", {
+				value : [{
+					"Category": "Electronics",
+					"ID": 1,
+					"Name": "Office PC"
+				}, {
+					"Category": "Electronics",
+					"ID": 2,
+					"Name": "Tablet X"
+				}]
+			})
+			.expectChange("idEquipmentName", ["Office PC", "Tablet X"])
+			.expectChange("idName")
+			.expectChange("idAge");
+		return this.createView(assert, sView, oModel).then(function () {
+			var oForm = that.oView.byId("form");
+
+			oForm.setBindingContext(that.oView.byId("table").getBinding("items")
+				.getCurrentContexts()[0]);
+
+			that.expectRequest("Equipments(Category='Electronics',ID=1)/EQUIPMENT_2_EMPLOYEE"
+					+ "?$select=AGE,ID,Name", {
+						"AGE" : 52,
+						"ID" : "2",
+						"Name" : "Frederic Fall"
+					})
+				.expectChange("idName", "Frederic Fall")
+				.expectChange("idAge", "52");
+
+			return that.waitForChanges(assert).then(function () {
+				var sIdManagerId;
+
+				// no change in table, only in contained form
+				oForm.getObjectBinding().getRootBinding().suspend();
+				sIdManagerId = that.addToForm(oForm, "MANAGER_ID", assert);
+				that.removeFromForm(oForm, "idAge");
+
+				that.expectRequest("Equipments?$select=Category,ID,Name&$skip=0&$top=100", {
+						value : [{
+							"Category": "Electronics",
+							"ID": 1,
+							"Name": "Office PC"
+						}, {
+							"Category": "Electronics",
+							"ID": 2,
+							"Name": "Tablet X"
+						}]
+					})
+					.expectRequest("Equipments(Category='Electronics',ID=1)/EQUIPMENT_2_EMPLOYEE"
+						+ "?$select=ID,MANAGER_ID,Name", {
+							"ID" : "2",
+							"Name" : "Frederic Fall",
+							"MANAGER_ID" : "1"
+						})
+//TODO this is what happens today: initially different requests for master/detail are combined in
+// one request with $expand: This must not happen; we need a way to declare that bindings must
+// not be combined on auto-$expand/$select
+//				that.expectRequest("Equipments?$select=Category,ID,Name"
+//							+ "&$expand=EQUIPMENT_2_EMPLOYEE($select=ID,MANAGER_ID,Name)"
+//							+ "&$skip=0&$top=100", {
+//						value : [{
+//							"Category": "Electronics",
+//							"ID": 1,
+//							"Name": "Office PC",
+//							"EQUIPMENT_2_EMPLOYEE" : {
+//								"ID" : "2",
+//								"Name" : "Frederic Fall",
+//								"MANAGER_ID" : "1"
+//							}
+//						}, {
+//							"Category": "Electronics",
+//							"ID": 2,
+//							"Name": "Tablet X",
+//							"EQUIPMENT_2_EMPLOYEE" : {
+//								"ID" : "3",
+//								"Name" : "Jonathan Smith",
+//								"MANAGER_ID" : "2"
+//							}
+//					}]})
+					.expectChange("idEquipmentName", ["Office PC", "Tablet X"])
+					.expectChange(sIdManagerId, "1");
+
+				oForm.getObjectBinding().getRootBinding().resume();
+
+				return that.waitForChanges(assert);
 			});
 		});
 	});

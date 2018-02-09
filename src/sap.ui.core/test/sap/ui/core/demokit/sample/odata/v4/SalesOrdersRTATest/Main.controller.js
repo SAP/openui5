@@ -34,7 +34,7 @@ sap.ui.define([
 				press : this.onAdaptBusinessPartner.bind(this)
 			}));
 			this.byId("SalesOrderLineItemsTitleToolbar").addContent(new Button({
-				enabled : false,
+				enabled : bRealOData,
 				icon : "sap-icon://settings",
 				press : this.onAdaptSalesOrderItems.bind(this)
 			}));
