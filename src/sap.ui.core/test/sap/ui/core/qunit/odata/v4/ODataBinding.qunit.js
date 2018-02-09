@@ -402,6 +402,7 @@ sap.ui.require([
 		var oBinding = new ODataBinding(),
 			oBindingMock = this.mock(oBinding);
 
+		oBindingMock.expects("checkSuspended").withExactArgs();
 		oBindingMock.expects("resetChangesForPath").withExactArgs("");
 		oBindingMock.expects("resetChangesInDependents").withExactArgs();
 		oBindingMock.expects("resetInvalidDataState").withExactArgs();
@@ -1532,5 +1533,43 @@ sap.ui.require([
 
 		// code under test
 		assert.strictEqual(oBinding.getRootBinding(), oParentBinding);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkSuspended: resumed", function (assert) {
+		var oBinding = new ODataBinding(),
+			oRootBinding = new ODataBinding();
+
+		this.mock(oBinding).expects("getRootBinding").returns(oRootBinding);
+		this.mock(oRootBinding).expects("isSuspended").returns(false);
+
+		// code under test
+		oBinding.checkSuspended();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkSuspended: unresolved", function (assert) {
+		var oBinding = new ODataBinding();
+
+		this.mock(oBinding).expects("getRootBinding").returns(undefined);
+
+		// code under test
+		oBinding.checkSuspended();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkSuspended: suspended", function (assert) {
+		var oBinding = new ODataBinding({
+				toString : function () {return "/Foo";}
+			}),
+			oRootBinding = new ODataBinding();
+
+		this.mock(oBinding).expects("getRootBinding").returns(oRootBinding);
+		this.mock(oRootBinding).expects("isSuspended").returns(true);
+
+		// code under test
+		assert.throws(function () {
+			oBinding.checkSuspended();
+		}, new Error("Must not call method when the binding's root binding is suspended: /Foo"));
 	});
 });

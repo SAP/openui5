@@ -359,6 +359,7 @@ sap.ui.require([
 				}),
 				oBindingMock = this.mock(oBinding);
 
+			oBindingMock.expects("checkSuspended").withExactArgs();
 			oBindingMock.expects("hasPendingChanges").returns(false);
 			oBindingMock.expects("applyParameters")
 				.withExactArgs(oFixture.mExpectedParameters,

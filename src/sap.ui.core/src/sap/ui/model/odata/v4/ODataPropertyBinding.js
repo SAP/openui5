@@ -596,7 +596,8 @@ sap.ui.define([
 	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
 	 *   specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @throws {Error}
-	 *   If the new value is not primitive or no value has been read before
+	 *   If the binding's root binding is suspended, the new value is not primitive or no value has
+	 *   been read before
 	 *
 	 * @public
 	 * @see sap.ui.model.PropertyBinding#setValue
@@ -612,6 +613,7 @@ sap.ui.define([
 			return oError;
 		}
 
+		this.checkSuspended();
 		if (typeof vValue === "function" || (vValue && typeof vValue === "object")) {
 			throw reportError(new Error("Not a primitive value"));
 		}

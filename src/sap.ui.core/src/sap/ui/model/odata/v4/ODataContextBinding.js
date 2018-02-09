@@ -424,11 +424,11 @@ sap.ui.define([
 	 *   with an instance of <code>Error</code> in case of failure, for instance if the operation
 	 *   metadata is not found, if overloading is not supported, or if a collection-valued function
 	 *   parameter is encountered.
-	 * @throws {Error} If the given group ID is invalid, if the binding is not a deferred operation
-	 *   binding (see {@link sap.ui.model.odata.v4.ODataContextBinding}), if the binding is not
-	 *   resolved or relative to a transient context
-	 *   (see {@link sap.ui.model.odata.v4.Context#isTransient}), or if deferred operation bindings
-	 *   are nested.
+	 * @throws {Error} If the binding's root binding is suspended, the given group ID is invalid, if
+	 *   the binding is not a deferred operation binding (see
+	 *   {@link sap.ui.model.odata.v4.ODataContextBinding}), if the binding is not resolved or
+	 *   relative to a transient context (see {@link sap.ui.model.odata.v4.Context#isTransient}), or
+	 *   if deferred operation bindings are nested.
 	 *
 	 * @public
 	 * @since 1.37.0
@@ -439,6 +439,7 @@ sap.ui.define([
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
 			that = this;
 
+		this.checkSuspended();
 		this.oModel.checkGroupId(sGroupId);
 		sGroupId = sGroupId || this.getGroupId();
 		if (!this.oOperation) {
