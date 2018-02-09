@@ -181,8 +181,7 @@ sap.ui.define([
 				that = this,
 				supportModulePath = jQuery.sap.getModulePath("sap.ui.support"),
 				supportModulesRoot = supportModulePath.replace("sap/ui/support", ""),
-				oApplicationVersionInfo = sap.ui.getVersionInfo(),
-				bHasInternalRules = !Utils.isDistributionOpenUI5(oApplicationVersionInfo) && aLibNames.internalRules.length > 0,
+				bHasInternalRules = bCanLoadInternalRules && aLibNames.internalRules.length > 0,
 				iProgress = 0,
 				iRulesNumber = aLibNames.publicRules.length;
 
