@@ -16,6 +16,9 @@
 		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
 		<script>
 			jQuery.sap.require("sap.ui.unified.calendar.CalendarDate");
 			jQuery.sap.require("sap.ui.unified.CalendarLegend");
@@ -311,6 +314,46 @@
 				QUnit.test("_isValueInThreshold return false if provided value is out of provided threshold", function (assert) {
 					assert.equal(this.oM._isValueInThreshold(248, 237, 10), false, "value is lower"); // (reference value, actual value, threshold)
 					assert.equal(this.oM._isValueInThreshold(248, 259, 10), false, "value is upper"); // (reference value, actual value, threshold)
+				});
+
+				// BCP: 1880151681
+				QUnit.test("Selecting a weeknumber does not throw an error", function (assert) {
+					// Arrange
+					var oTarget = document.createElement("span");
+					oTarget.classList.add("sapUiCalWeekNum");
+					var oMouseEvent = { clientX: 10, clientY: 10, target: oTarget },
+						deviceStub = this.stub(sap.ui.Device.support, "touch", true),
+						isValueInThresholdStub = this.stub(this.oM, "_isValueInThreshold", function () { return true; });
+
+					// Act
+					this.oM._oMousedownPosition = oMouseEvent;
+					this.oM.onmouseup(oMouseEvent);
+
+					// Assert
+					assert.ok(true, "onmouseup does not throw an exception when weeknum is selected");
+
+					deviceStub.restore();
+					isValueInThresholdStub.restore();
+				});
+
+				// BCP: 1880151681
+				QUnit.test("Selecting a day header does not throw an error", function (assert) {
+					// Arrange
+					var oTarget = document.createElement("span");
+					oTarget.classList.add("sapUiCalWH");
+					var oMouseEvent = { clientX: 10, clientY: 10, target: oTarget },
+						deviceStub = this.stub(sap.ui.Device.support, "touch", true),
+						isValueInThresholdStub = this.stub(this.oM, "_isValueInThreshold", function () { return true; });
+
+					// Act
+					this.oM._oMousedownPosition = oMouseEvent;
+					this.oM.onmouseup(oMouseEvent);
+
+					// Assert
+					assert.ok(true, "onmouseup does not throw an exception when day header is selected");
+
+					deviceStub.restore();
+					isValueInThresholdStub.restore();
 				});
 
 				QUnit.module("Aria", {
