@@ -218,8 +218,10 @@ sap.ui.define([
 				oScrollExtension._iFirstVisibleRowInBuffer = null;
 			}
 
+			jQuery.sap.clearDelayedCall(this._mTimeouts.largeDataScrolling);
+			delete this._mTimeouts.largeDataScrolling;
+
 			if (this._bLargeDataScrolling && !oScrollExtension._bIsScrolledVerticallyByWheel) {
-				jQuery.sap.clearDelayedCall(this._mTimeouts.largeDataScrolling);
 				this._mTimeouts.largeDataScrolling = jQuery.sap.delayedCall(300, this, function() {
 					delete this._mTimeouts.largeDataScrolling;
 					VerticalScrollingHelper.updateFirstVisibleRow(this);
@@ -378,8 +380,7 @@ sap.ui.define([
 		isUpdatePending: function(oTable) {
 			return oTable != null
 				   && (oTable._mAnimationFrames.verticalScrollUpdate != null
-					   || oTable._mTimeouts.verticalScrollUpdate != null
-					   || oTable._mTimeouts.largeDataScrolling != null);
+					   || oTable._mTimeouts.verticalScrollUpdate != null);
 		},
 
 		/**
