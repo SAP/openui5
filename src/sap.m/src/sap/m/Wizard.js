@@ -640,10 +640,17 @@ sap.ui.define([
 		 */
 		Wizard.prototype._toggleNextButtonVisibility = function () {
 			jQuery.sap.delayedCall(0, this, function () {
-				if (this._getNextButton().getEnabled()) {
-					this._getNextButton().addStyleClass("sapMWizardNextButtonVisible");
+				var oButton = this._getNextButton(),
+					oButtonDomRef = oButton.getDomRef();
+
+				if (oButton.getEnabled()) {
+					oButton.addStyleClass("sapMWizardNextButtonVisible");
+					oButtonDomRef && oButtonDomRef.removeAttribute("aria-hidden");
 				} else {
-					this._getNextButton().removeStyleClass("sapMWizardNextButtonVisible");
+					oButton.removeStyleClass("sapMWizardNextButtonVisible");
+					// aria-hidden attribute is used instead of setVisible(false)
+					// in order to preserve the current animation implementation
+					oButtonDomRef && oButtonDomRef.setAttribute("aria-hidden", true);
 				}
 			});
 		};
