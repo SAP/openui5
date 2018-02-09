@@ -258,15 +258,12 @@ sap.ui.define([
 		 * @private
 		 */
 		_getCurrentEditableFieldText : function () {
-			var sText = this._$editableField.text();
 			// Rename to empty string should not be possible
 			// to prevent issues with disappearing elements
-			if (sText === "") {
-				sText = '\xa0'; // = non-breaking space (&nbsp)
-			}
-			return sText;
+			// '\xa0' = non-breaking space (&nbsp)
+			var sText = this._$editableField.text();
+			return sText === "" ? '\xa0' : sText.trim();
 		},
-
 
 		/**
 		 * @param {sap.ui.base.Event} oEvent - event object
