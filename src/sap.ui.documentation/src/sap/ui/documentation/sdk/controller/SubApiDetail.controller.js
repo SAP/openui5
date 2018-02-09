@@ -9,22 +9,21 @@ sap.ui.define([
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
-		"sap/uxap/ObjectPageSubSection",
+		"sap/ui/documentation/sdk/controls/ObjectPageSubSection",
 		"sap/ui/documentation/sdk/controller/util/APIInfo",
 		"sap/ui/documentation/sdk/controls/ParamText",
 		"sap/ui/layout/VerticalLayout",
-		"sap/m/Table",
-		"sap/m/Column",
 		"sap/m/Label",
-		"sap/m/ColumnListItem",
 		"sap/m/Link",
 		"sap/m/ObjectStatus",
 		"sap/ui/core/HTML",
 		"sap/m/Title",
 		"sap/m/Panel",
-		"sap/ui/documentation/sdk/controls/BorrowedList"
+		"sap/ui/documentation/sdk/controls/BorrowedList",
+		"sap/ui/documentation/sdk/controls/LightTable",
+		"sap/ui/documentation/sdk/controls/Row"
 	], function (jQuery, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, ObjectPageSubSection, APIInfo,
-				 ParamText, VerticalLayout, Table, Column, Label, ColumnListItem, Link, ObjectStatus, HTML, Title, Panel, BorrowedList) {
+				 ParamText, VerticalLayout, Label, Link, ObjectStatus, HTML, Title, Panel, BorrowedList, LightTable, Row) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.SubApiDetail", {
@@ -248,29 +247,15 @@ sap.ui.define([
 						new VerticalLayout({
 							width: "100%",
 							content: [
-								new Table({
-									fixedLayout: false,
-									columns: [
-										new Column({
-											vAlign: "Top",
-											width: "25%",
-											header: new Label({text: "Method"})
-										}),
-										new Column({
-											vAlign: "Top",
-											width: "75%",
-											minScreenWidth: "Desktop",
-											demandPopin: true,
-											popinDisplay: "WithoutHeader",
-											header: new Label({text: "Description"})
-										})
-									],
-									items: {
+								new LightTable({
+									columnTitles: ["Method", "Description"],
+									columnCount: 2,
+									rows: {
 										path: "/methods",
 										templateShareable: false,
-										template: new ColumnListItem({
+										template: new Row({
 											visible: "{= !!${path: 'name'} }",
-											cells: [
+											content: [
 												new ParamText({
 													text: "{name}",
 													href: "#/api/{/name}/methods/{name}",
@@ -333,28 +318,16 @@ sap.ui.define([
 						new VerticalLayout({
 							width: "100%",
 							content: [
-								new Table({
-									fixedLayout: false,
+								new LightTable({
 									visible: "{/hasOwnEvents}",
-									columns: [
-										new Column({
-											vAlign: "Top",
-											header: new Label({text: "Event"})
-										}),
-										new Column({
-											vAlign: "Top",
-											minScreenWidth: "Tablet",
-											demandPopin: true,
-											popinDisplay: "WithoutHeader",
-											header: new Label({text: "Description"})
-										})
-									],
-									items: {
+									columnTitles: ["Event", "Description"],
+									columnCount: 2,
+									rows: {
 										path: "/events",
 										templateShareable: false,
-										template: new ColumnListItem({
+										template: new Row({
 											visible: "{= !!${path: 'name'} }",
-											cells: [
+											content: [
 												new ParamText({
 													text: "{name}",
 													href: "#/api/{/name}/events/{name}",
@@ -407,29 +380,15 @@ sap.ui.define([
 				this._oAnnotationSummary = new ObjectPageSubSection({
 					title: "Summary",
 					blocks: [
-						new Table({
-							fixedLayout: false,
-							columns: [
-								new Column({
-									vAlign: "Top",
-									width: "25%",
-									header: new Label({text: "Annotation"})
-								}),
-								new Column({
-									vAlign: "Top",
-									width: "75%",
-									minScreenWidth: "Desktop",
-									demandPopin: true,
-									popinDisplay: "WithoutHeader",
-									header: new Label({text: "Description"})
-								})
-							],
-							items: {
+						new LightTable({
+							columnTitles: ["Annotation", "Description"],
+							columnCount: 2,
+							rows: {
 								path: "/ui5-metadata/annotations",
 								templateShareable: false,
-								template: new ColumnListItem({
+								template: new Row({
 									visible: "{= !!${annotation} }",
-									cells: [
+									content: [
 										new Link({
 											text: "{= ${annotation} !== 'undefined' ? ${annotation} : '(' + ${namespaceText} + ')' }",
 											press: this.scrollToAnnotation.bind(this),

@@ -9,10 +9,9 @@ sap.ui.define([
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
-		"sap/uxap/ObjectPageSubSection",
 		"sap/ui/documentation/sdk/controller/util/APIInfo",
 		"sap/ui/core/library"
-	], function (jQuery, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, ObjectPageSubSection, APIInfo, CoreLibrary) {
+	], function (jQuery, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, APIInfo, CoreLibrary) {
 		"use strict";
 
 		var ViewType = CoreLibrary.mvc.ViewType;
