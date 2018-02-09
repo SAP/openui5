@@ -313,6 +313,11 @@ sap.ui.require([
 		assertFulfilled(assert, SyncPromise.all([42]), [42]);
 		assertFulfilled(assert, SyncPromise.all([SyncPromise.resolve(42)]), [42]);
 
+		// 1st arg not an array
+		//TODO is there a way to throw TypeError for such cases?
+		// "The iterable protocol" is an ECMAScript 2015 (6th Edition, ECMA-262) feature
+		assertFulfilled(assert, SyncPromise.all({}), []);
+
 		(function () {
 			// not exactly an array (Note: checkEqual() currently cannot handle this)
 			assertFulfilled(assert, SyncPromise.all(arguments), [42]/*arguments*/);

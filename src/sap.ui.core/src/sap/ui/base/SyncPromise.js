@@ -299,13 +299,14 @@ sap.ui.define([
 	 * <code>Promise.all(aValues)</code>.
 	 *
 	 * @param {any[]} aValues
-	 *   The values
+	 *   The values as an iterable object such as an <code>Array</code> or <code>String</code>
+	 *   which is supported by <code>Array.prototype.slice</code>
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   The {@link sap.ui.base.SyncPromise}
 	 */
 	SyncPromise.all = function (aValues) {
 		return new SyncPromise(function (resolve, reject) {
-			var iPending = aValues.length; // number of pending promises
+			var iPending; // number of pending promises
 
 			function checkFulfilled() {
 				if (iPending === 0) {
@@ -313,8 +314,9 @@ sap.ui.define([
 				}
 			}
 
-			checkFulfilled();
 			aValues = Array.prototype.slice.call(aValues);
+			iPending = aValues.length;
+			checkFulfilled();
 			aValues.forEach(function (vValue, i) {
 				if (hasThen(vValue)) {
 					SyncPromise.resolve(vValue).then(function (vResult0) {

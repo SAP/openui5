@@ -79,6 +79,7 @@ sap.ui.define([
 				type : "sap.ui.model.odata.type.TimeOfDay"
 			}
 		},
+		UNBOUND = {},
 		sValueListMapping = "@com.sap.vocabularies.Common.v1.ValueListMapping",
 		mValueListModelByUrl = {},
 		sValueListReferences = "@com.sap.vocabularies.Common.v1.ValueListReferences",
@@ -334,7 +335,8 @@ sap.ui.define([
 					sResolvedPath = sResolvedPath.slice(0, -1);
 				}
 				return Object.keys(oResult).filter(function (sKey) {
-					// always filter technical properties; filter annotations iff. not iterating them
+					// always filter technical properties;
+					// filter annotations iff. not iterating them
 					return sKey[0] !== "$" &&  bIterateAnnotations !== (sKey[0] !== "@");
 				}).map(function (sKey) {
 					return new BaseContext(that.oModel, sResolvedPath + sKey);
@@ -757,7 +759,10 @@ sap.ui.define([
 		}
 
 		return this.fetchEntityContainer().then(function (mScope) {
-			var vLocation, // {string[]|string} location of indirection
+				// binding parameter's type name ({string}) for overloading of bound operations
+				// or UNBOUND ({object}) for unbound operations called via an import
+			var vBindingParameterType,
+				vLocation, // {string[]|string} location of indirection
 				sName, // what "@sapui.name" refers to: OData or annotation name
 				bODataMode = true, // OData navigation mode with scope lookup etc.
 				// parent for next "17.2 SimpleIdentifier"...
@@ -807,6 +812,22 @@ sap.ui.define([
 				}
 
 				return false;
+			}
+
+			/*
+			 * Tells whether the given overload is the right one.
+			 *
+			 * @param {object} oOverload
+			 *   A single operation overload
+			 * @returns {true}
+			 *   Iff the given overload is an action with the appropriate binding parameter (bound
+			 *   and unbound cases), or not an action at all.
+			 */
+			function isRightOverload(oOverload) {
+				return oOverload.$kind !== "Action"
+					|| (!oOverload.$IsBound && vBindingParameterType === UNBOUND
+						|| oOverload.$IsBound
+						&& vBindingParameterType === oOverload.$Parameter[0].$Type);
 			}
 
 			/*
@@ -873,6 +894,7 @@ sap.ui.define([
 					return log.apply(this, arguments);
 				}
 
+				vBindingParameterType = vResult && vResult.$Type;
 				if (that.bSupportReferences && !(sQualifiedName in mScope)) {
 					// unknown qualified name: maybe schema is referenced and can be included?
 					sSchema = schema(sQualifiedName);
@@ -969,6 +991,7 @@ sap.ui.define([
 								if (!scopeLookup(vResult.$Action, "$Action")) {
 									return false;
 								}
+								vBindingParameterType = UNBOUND;
 							} else if (vResult && "$Function" in vResult) {
 								// implicit $Function insertion at function import
 								if (!scopeLookup(vResult.$Function, "$Function")) {
@@ -987,6 +1010,10 @@ sap.ui.define([
 								}
 							}
 							if (Array.isArray(vResult)) { // overloads of Action or Function
+								vResult = vResult.filter(isRightOverload);
+								if (sSegment === "@$ui5.overload") {
+									return false;
+								}
 								if (vResult.length !== 1) {
 									return log(WARNING, "Unsupported overloads");
 								}
@@ -994,7 +1021,8 @@ sap.ui.define([
 								sTarget = sTarget + "/0/$ReturnType";
 								if (vResult) {
 									if (sSegment === "value"
-										&& !(mScope[vResult.$Type] && mScope[vResult.$Type].value)) {
+										&& !(mScope[vResult.$Type]
+											&& mScope[vResult.$Type].value)) {
 										// symbolic name "value" points to primitive return type
 										sName = undefined; // block "@sapui.name"
 										return true;
