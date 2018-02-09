@@ -70,17 +70,17 @@ sap.ui.require([
 			this.oRta.destroy();
 			sandbox.restore();
 		}
-	});
+	}, function() {
+		QUnit.test("when RTA starts", function(assert) {
+			this.oUtilsLogStub = sandbox.stub(Utils.log, "error");
+			var done = assert.async();
 
-	QUnit.test("when RTA starts", function(assert) {
-		this.oUtilsLogStub = sandbox.stub(Utils.log, "error");
-		var done = assert.async();
-
-		this.oRta.start().catch(function(vError){
-			assert.ok(vError, "then the promise is rejected");
-			assert.strictEqual(this.oUtilsLogStub.callCount, 1, "and an error is logged");
-			done();
-		}.bind(this));
+			this.oRta.start().catch(function(vError){
+				assert.ok(vError, "then the promise is rejected");
+				assert.strictEqual(this.oUtilsLogStub.callCount, 1, "and an error is logged");
+				done();
+			}.bind(this));
+		});
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is created and started with non-default plugin sets only...", {
@@ -119,20 +119,20 @@ sap.ui.require([
 			this.oRta.destroy();
 			sandbox.restore();
 		}
-	});
+	}, function() {
+		QUnit.test("when we check the plugins on RTA", function(assert) {
+			var done = assert.async();
 
-	QUnit.test("when we check the plugins on RTA", function(assert) {
-		var done = assert.async();
+			assert.equal(this.oRta.getPlugins()['contextMenu'], this.oContextMenuPlugin, " then the custom ContextMenuPlugin is set");
+			assert.equal(this.oRta.getPlugins()['rename'], undefined, " and the default plugins are not loaded");
+			assert.equal(this.fnDestroy.callCount, 1, " and _destroyDefaultPlugins have been called 1 time after oRta.start()");
 
-		assert.equal(this.oRta.getPlugins()['contextMenu'], this.oContextMenuPlugin, " then the custom ContextMenuPlugin is set");
-		assert.equal(this.oRta.getPlugins()['rename'], undefined, " and the default plugins are not loaded");
-		assert.equal(this.fnDestroy.callCount, 1, " and _destroyDefaultPlugins have been called 1 time after oRta.start()");
-
-		return this.oRta.stop(false).then(function() {
-			this.oRta.destroy();
-			assert.equal(this.fnDestroy.callCount, 2, " and _destroyDefaultPlugins have been called once again after oRta.stop()");
-			done();
-		}.bind(this));
+			return this.oRta.stop(false).then(function() {
+				this.oRta.destroy();
+				assert.equal(this.fnDestroy.callCount, 2, " and _destroyDefaultPlugins have been called once again after oRta.stop()");
+				done();
+			}.bind(this));
+		});
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is created and started with default plugin sets...", {
@@ -158,37 +158,37 @@ sap.ui.require([
 			FakeLrepLocalStorage.deleteChanges();
 			sandbox.restore();
 		}
-	});
+	}, function() {
+		QUnit.test("when we check the plugins on RTA", function(assert) {
+			var done = assert.async();
 
-	QUnit.test("when we check the plugins on RTA", function(assert) {
-		var done = assert.async();
+			assert.ok(this.oRta.getPlugins()['contextMenu'], " then the default ContextMenuPlugin is set");
+			assert.notOk(this.oRta.getPlugins()['contextMenu'].bIsDestroyed, " and the default ContextMenuPlugin is not destroyed");
+			assert.ok(this.oRta.getPlugins()['dragDrop'], " and the default DragDropPlugin is set");
+			assert.notOk(this.oRta.getPlugins()['dragDrop'].bIsDestroyed, " and the default DragDropPlugin is not destroyed");
+			assert.ok(this.oRta.getPlugins()['cutPaste'], " and the default CutPastePlugin is set");
+			assert.notOk(this.oRta.getPlugins()['cutPaste'].bIsDestroyed, " and the default CutPastePlugin is not destroyed");
+			assert.ok(this.oRta.getPlugins()['remove'], " and the default RemovePlugin is set");
+			assert.notOk(this.oRta.getPlugins()['remove'].bIsDestroyed, " and the default RemovePlugin is not destroyed");
+			assert.ok(this.oRta.getPlugins()['additionalElements'], " and the default AdditionalElementsPlugin is set");
+			assert.notOk(this.oRta.getPlugins()['additionalElements'].bIsDestroyed, " and the default AdditionalElementsPlugin is not destroyed");
+			assert.ok(this.oRta.getPlugins()['rename'], " and the default RenamePlugin is set");
+			assert.notOk(this.oRta.getPlugins()['rename'].bIsDestroyed, " and the default RenamePlugin is not destroyed");
+			assert.ok(this.oRta.getPlugins()['selection'], " and the default SelectionPlugin is set");
+			assert.notOk(this.oRta.getPlugins()['selection'].bIsDestroyed, " and the default SelectionPlugin is not destroyed");
+			assert.ok(this.oRta.getPlugins()['settings'], " and the default SettingsPlugin is set");
+			assert.notOk(this.oRta.getPlugins()['settings'].bIsDestroyed, " and the default SettingsPlugin is not destroyed");
+			assert.ok(this.oRta.getPlugins()['createContainer'], " and the default CreateContainerPlugin is set");
+			assert.notOk(this.oRta.getPlugins()['createContainer'].bIsDestroyed, " and the default CreateContainerPlugin is not destroyed");
+			assert.ok(this.oRta.getPlugins()['tabHandling'], " and the default TabHandlingPlugin is set");
+			assert.notOk(this.oRta.getPlugins()['tabHandling'].bIsDestroyed, " and the default TabHandlingPlugin is not destroyed");
 
-		assert.ok(this.oRta.getPlugins()['contextMenu'], " then the default ContextMenuPlugin is set");
-		assert.notOk(this.oRta.getPlugins()['contextMenu'].bIsDestroyed, " and the default ContextMenuPlugin is not destroyed");
-		assert.ok(this.oRta.getPlugins()['dragDrop'], " and the default DragDropPlugin is set");
-		assert.notOk(this.oRta.getPlugins()['dragDrop'].bIsDestroyed, " and the default DragDropPlugin is not destroyed");
-		assert.ok(this.oRta.getPlugins()['cutPaste'], " and the default CutPastePlugin is set");
-		assert.notOk(this.oRta.getPlugins()['cutPaste'].bIsDestroyed, " and the default CutPastePlugin is not destroyed");
-		assert.ok(this.oRta.getPlugins()['remove'], " and the default RemovePlugin is set");
-		assert.notOk(this.oRta.getPlugins()['remove'].bIsDestroyed, " and the default RemovePlugin is not destroyed");
-		assert.ok(this.oRta.getPlugins()['additionalElements'], " and the default AdditionalElementsPlugin is set");
-		assert.notOk(this.oRta.getPlugins()['additionalElements'].bIsDestroyed, " and the default AdditionalElementsPlugin is not destroyed");
-		assert.ok(this.oRta.getPlugins()['rename'], " and the default RenamePlugin is set");
-		assert.notOk(this.oRta.getPlugins()['rename'].bIsDestroyed, " and the default RenamePlugin is not destroyed");
-		assert.ok(this.oRta.getPlugins()['selection'], " and the default SelectionPlugin is set");
-		assert.notOk(this.oRta.getPlugins()['selection'].bIsDestroyed, " and the default SelectionPlugin is not destroyed");
-		assert.ok(this.oRta.getPlugins()['settings'], " and the default SettingsPlugin is set");
-		assert.notOk(this.oRta.getPlugins()['settings'].bIsDestroyed, " and the default SettingsPlugin is not destroyed");
-		assert.ok(this.oRta.getPlugins()['createContainer'], " and the default CreateContainerPlugin is set");
-		assert.notOk(this.oRta.getPlugins()['createContainer'].bIsDestroyed, " and the default CreateContainerPlugin is not destroyed");
-		assert.ok(this.oRta.getPlugins()['tabHandling'], " and the default TabHandlingPlugin is set");
-		assert.notOk(this.oRta.getPlugins()['tabHandling'].bIsDestroyed, " and the default TabHandlingPlugin is not destroyed");
-
-		this.oRta.stop(false).then(function(){
-			this.oRta.destroy();
-			assert.equal(this.fnDestroy.callCount, 2, " and _destroyDefaultPlugins have been called once again after oRta.stop()");
-			done();
-		}.bind(this));
+			this.oRta.stop(false).then(function(){
+				this.oRta.destroy();
+				assert.equal(this.fnDestroy.callCount, 2, " and _destroyDefaultPlugins have been called once again after oRta.stop()");
+				done();
+			}.bind(this));
+		});
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is started with one different (non-default) plugin (using setPlugins method)...", {
@@ -228,18 +228,18 @@ sap.ui.require([
 			FakeLrepLocalStorage.deleteChanges();
 			this.oRta.destroy();
 		}
-	});
+	}, function() {
+		QUnit.test("when we check the plugins on RTA", function (assert) {
+			var done = assert.async();
 
-	QUnit.test("when we check the plugins on RTA", function (assert) {
-		var done = assert.async();
+			this.oRta.attachStop(function(oEvent) {
+				this.oRta.destroy();
+				assert.equal(this.fnDestroy.callCount, 2, " and _destroyDefaultPlugins have been called once again after oRta.stop()");
+				done();
+			}.bind(this));
 
-		this.oRta.attachStop(function(oEvent) {
-			this.oRta.destroy();
-			assert.equal(this.fnDestroy.callCount, 2, " and _destroyDefaultPlugins have been called once again after oRta.stop()");
-			done();
-		}.bind(this));
-
-		this.oRta.stop(false);
+			this.oRta.stop(false);
+		});
 	});
 
 	QUnit.module("Given that RTA is started in FLP", {
@@ -286,80 +286,80 @@ sap.ui.require([
 			sandbox.restore();
 			delete window.bUShellNavigationTriggered;
 		}
-	});
+	}, function() {
+		QUnit.test("when there are personalized changes and when _handlePersonalizationChangesOnStart() method is called", function(assert) {
+			var stubFlexController = {
+				isPersonalized : function(){
+					return Promise.resolve(true);
+				}
+			};
 
-	QUnit.test("when there are personalized changes and when _handlePersonalizationChangesOnStart() method is called", function(assert) {
-		var stubFlexController = {
-			isPersonalized : function(){
+			sandbox.stub(this.oRta, "_getFlexController").returns(stubFlexController);
+
+			this.fnStubMessageBox = sandbox.stub(sap.m.MessageBox,
+				"show",
+				function(sMessage, mOptions){
+					mOptions.onClose.call(this);
+				}
+			);
+
+			return this.oRta._handlePersonalizationChangesOnStart().then(function(){
+				assert.strictEqual(this.fnEnableRestartSpy.calledOnce,
+					true,
+					"then enableRestart() is called only once");
+				assert.equal(this.fnEnableRestartSpy.calledWith("CUSTOMER"),
+					true,
+					"then enableRestart() is called with the correct parameter");
+				assert.strictEqual(window.bUShellNavigationTriggered,
+					true,
+					"then the reload inside FLP is triggered");
+			}.bind(this));
+		});
+
+		QUnit.test("when no personalized changes and _handlePersonalizationChangesOnStart() is called", function(assert) {
+			var stubFlexController = {
+				isPersonalized : function(){
+					return Promise.resolve(false);
+				}
+			};
+
+			sandbox.stub(this.oRta, "_getFlexController").returns(stubFlexController);
+
+			return this.oRta._handlePersonalizationChangesOnStart().then(function(){
+				assert.strictEqual(this.fnEnableRestartSpy.callCount,
+					0,
+					"then enableRestart() is not called");
+				assert.strictEqual(window.bUShellNavigationTriggered,
+					false,
+					"then the reload inside FLP is not triggered");
+			}.bind(this));
+		});
+
+		QUnit.test("when RTA toolbar gets closed (exit without appClosed)", function(assert) {
+			var done = assert.async();
+
+			sandbox.stub(this.oRta, "_handlePersonalizationChangesOnExit", function(){
+				//The test will timeout if the Personalization handling is not called
+				assert.ok("then the check for personalized changes was executed");
+				done();
+			});
+
+			var stubFlexController = {
+				isPersonalized : function(){
+					return Promise.resolve(false);
+				}
+			};
+
+			sandbox.stub(this.oRta, "_getFlexController").returns(stubFlexController);
+			sandbox.stub(this.oRta, "_checkChangesExist", function() {
 				return Promise.resolve(true);
-			}
-		};
+			});
+			this.oRta.setShowToolbars(true);
 
-		sandbox.stub(this.oRta, "_getFlexController").returns(stubFlexController);
-
-		this.fnStubMessageBox = sandbox.stub(sap.m.MessageBox,
-			"show",
-			function(sMessage, mOptions){
-				mOptions.onClose.call(this);
-			}
-		);
-
-		return this.oRta._handlePersonalizationChangesOnStart().then(function(){
-			assert.strictEqual(this.fnEnableRestartSpy.calledOnce,
-				true,
-				"then enableRestart() is called only once");
-			assert.equal(this.fnEnableRestartSpy.calledWith("CUSTOMER"),
-				true,
-				"then enableRestart() is called with the correct parameter");
-			assert.strictEqual(window.bUShellNavigationTriggered,
-				true,
-				"then the reload inside FLP is triggered");
-		}.bind(this));
-	});
-
-	QUnit.test("when no personalized changes and _handlePersonalizationChangesOnStart() is called", function(assert) {
-		var stubFlexController = {
-			isPersonalized : function(){
-				return Promise.resolve(false);
-			}
-		};
-
-		sandbox.stub(this.oRta, "_getFlexController").returns(stubFlexController);
-
-		return this.oRta._handlePersonalizationChangesOnStart().then(function(){
-			assert.strictEqual(this.fnEnableRestartSpy.callCount,
-				0,
-				"then enableRestart() is not called");
-			assert.strictEqual(window.bUShellNavigationTriggered,
-				false,
-				"then the reload inside FLP is not triggered");
-		}.bind(this));
-	});
-
-	QUnit.test("when RTA toolbar gets closed (exit without appClosed)", function(assert) {
-		var done = assert.async();
-
-		sandbox.stub(this.oRta, "_handlePersonalizationChangesOnExit", function(){
-			//The test will timeout if the Personalization handling is not called
-			assert.ok("then the check for personalized changes was executed");
-			done();
+			this.oRta.start().then(function () {
+				this.oRta.getToolbar().getControl('exit').firePress();
+			}.bind(this));
 		});
-
-		var stubFlexController = {
-			isPersonalized : function(){
-				return Promise.resolve(false);
-			}
-		};
-
-		sandbox.stub(this.oRta, "_getFlexController").returns(stubFlexController);
-		sandbox.stub(this.oRta, "_checkChangesExist", function() {
-			return Promise.resolve(true);
-		});
-		this.oRta.setShowToolbars(true);
-
-		this.oRta.start().then(function () {
-			this.oRta.getToolbar().getControl('exit').firePress();
-		}.bind(this));
 	});
 
 	QUnit.module("Given that RTA is started in FLP with sap-ui-fl-max-layer = CUSTOMER already in the URL", {
@@ -406,107 +406,107 @@ sap.ui.require([
 			sap.ushell = this.originalUShell;
 			sandbox.restore();
 		}
-	});
+	}, function() {
+		QUnit.test("when _handlePersonalizationChangesOnStart() method is called", function(assert) {
+			var stubFlexController = {
+				isPersonalized : function(){
+					return Promise.resolve(true);
+				}
+			};
 
-	QUnit.test("when _handlePersonalizationChangesOnStart() method is called", function(assert) {
-		var stubFlexController = {
-			isPersonalized : function(){
-				return Promise.resolve(true);
-			}
-		};
+			sandbox.stub(this.oRta, "_getFlexController").returns(stubFlexController);
 
-		sandbox.stub(this.oRta, "_getFlexController").returns(stubFlexController);
+			this.fnStubMessageBox = sandbox.stub(sap.m.MessageBox,
+				"show",
+				function(sMessage, mOptions){
+					mOptions.onClose.call(this);
+				}
+			);
 
-		this.fnStubMessageBox = sandbox.stub(sap.m.MessageBox,
-			"show",
-			function(sMessage, mOptions){
-				mOptions.onClose.call(this);
-			}
-		);
+			return this.oRta._handlePersonalizationChangesOnStart().then(function(){
+				assert.strictEqual(this.fnEnableRestartSpy.calledOnce,
+					false,
+					"then enableRestart() is not called");
+				assert.strictEqual(window.bUShellNavigationTriggered,
+					false,
+					"then the reload inside FLP is not triggered");
+			}.bind(this));
+		});
 
-		return this.oRta._handlePersonalizationChangesOnStart().then(function(){
-			assert.strictEqual(this.fnEnableRestartSpy.calledOnce,
-				false,
-				"then enableRestart() is not called");
-			assert.strictEqual(window.bUShellNavigationTriggered,
-				false,
-				"then the reload inside FLP is not triggered");
-		}.bind(this));
-	});
+		QUnit.test("when personalized changes exist and user exits reloading the personalization...", function(assert) {
+			var stubFlexController = {
+				isPersonalized : function(){
+					return Promise.resolve(true);
+				}
+			};
 
-	QUnit.test("when personalized changes exist and user exits reloading the personalization...", function(assert) {
-		var stubFlexController = {
-			isPersonalized : function(){
-				return Promise.resolve(true);
-			}
-		};
+			sandbox.stub(this.oRta, "_getFlexController").returns(stubFlexController);
 
-		sandbox.stub(this.oRta, "_getFlexController").returns(stubFlexController);
+			var sMessageBoxConfirmText = this.oRta._getTextResources().getText("MSG_PERSONALIZATION_CONFIRM_BUTTON_TEXT");
 
-		var sMessageBoxConfirmText = this.oRta._getTextResources().getText("MSG_PERSONALIZATION_CONFIRM_BUTTON_TEXT");
+			this.fnStubMessageBox = sandbox.stub(sap.m.MessageBox,
+				"confirm",
+				function(sMessage, mOptions){
+					mOptions.onClose.call(this, sMessageBoxConfirmText);
+				}
+			);
 
-		this.fnStubMessageBox = sandbox.stub(sap.m.MessageBox,
-			"confirm",
-			function(sMessage, mOptions){
-				mOptions.onClose.call(this, sMessageBoxConfirmText);
-			}
-		);
+			return this.oRta._handlePersonalizationChangesOnExit().then(function(){
+				assert.strictEqual(this.fnEnableRestartSpy.callCount,
+					0,
+					"then enableRestart() is not called");
+				assert.strictEqual(window.bUShellNavigationTriggered,
+					true,
+					"then the reload inside FLP is triggered");
+			}.bind(this));
+		});
 
-		return this.oRta._handlePersonalizationChangesOnExit().then(function(){
-			assert.strictEqual(this.fnEnableRestartSpy.callCount,
-				0,
-				"then enableRestart() is not called");
-			assert.strictEqual(window.bUShellNavigationTriggered,
-				true,
-				"then the reload inside FLP is triggered");
-		}.bind(this));
-	});
+		QUnit.test("when personalized changes exist and user exits without personalization...", function(assert) {
+			var stubFlexController = {
+				isPersonalized : function(){
+					return Promise.resolve(true);
+				}
+			};
 
-	QUnit.test("when personalized changes exist and user exits without personalization...", function(assert) {
-		var stubFlexController = {
-			isPersonalized : function(){
-				return Promise.resolve(true);
-			}
-		};
+			sandbox.stub(this.oRta, "_getFlexController").returns(stubFlexController);
 
-		sandbox.stub(this.oRta, "_getFlexController").returns(stubFlexController);
+			var sMessageBoxCancelText = this.oRta._getTextResources().getText("MSG_PERSONALIZATION_CANCEL_BUTTON_TEXT");
 
-		var sMessageBoxCancelText = this.oRta._getTextResources().getText("MSG_PERSONALIZATION_CANCEL_BUTTON_TEXT");
+			this.fnStubMessageBox = sandbox.stub(sap.m.MessageBox,
+				"confirm",
+				function(sMessage, mOptions){
+					mOptions.onClose.call(this, sMessageBoxCancelText);
+				}
+			);
 
-		this.fnStubMessageBox = sandbox.stub(sap.m.MessageBox,
-			"confirm",
-			function(sMessage, mOptions){
-				mOptions.onClose.call(this, sMessageBoxCancelText);
-			}
-		);
+			return this.oRta._handlePersonalizationChangesOnExit().then(function(){
+				assert.strictEqual(this.fnEnableRestartSpy.callCount,
+					0,
+					"then enableRestart() is not called");
+				assert.strictEqual(window.bUShellNavigationTriggered,
+					false,
+					"then the reload inside FLP is not triggered");
+			}.bind(this));
+		});
 
-		return this.oRta._handlePersonalizationChangesOnExit().then(function(){
-			assert.strictEqual(this.fnEnableRestartSpy.callCount,
-				0,
-				"then enableRestart() is not called");
-			assert.strictEqual(window.bUShellNavigationTriggered,
-				false,
-				"then the reload inside FLP is not triggered");
-		}.bind(this));
-	});
+		QUnit.test("when there are no personalized changes and _handlePersonalizationChangesOnExit() is called", function(assert) {
+			var stubFlexController = {
+				isPersonalized : function(){
+					return Promise.resolve(false);
+				}
+			};
 
-	QUnit.test("when there are no personalized changes and _handlePersonalizationChangesOnExit() is called", function(assert) {
-		var stubFlexController = {
-			isPersonalized : function(){
-				return Promise.resolve(false);
-			}
-		};
+			sandbox.stub(this.oRta, "_getFlexController").returns(stubFlexController);
 
-		sandbox.stub(this.oRta, "_getFlexController").returns(stubFlexController);
-
-		return this.oRta._handlePersonalizationChangesOnExit().then(function(){
-			assert.strictEqual(this.fnEnableRestartSpy.callCount,
-				0,
-				"then enableRestart() is not called");
-			assert.strictEqual(window.bUShellNavigationTriggered,
-				false,
-				"then the reload inside FLP is not triggered");
-		}.bind(this));
+			return this.oRta._handlePersonalizationChangesOnExit().then(function(){
+				assert.strictEqual(this.fnEnableRestartSpy.callCount,
+					0,
+					"then enableRestart() is not called");
+				assert.strictEqual(window.bUShellNavigationTriggered,
+					false,
+					"then the reload inside FLP is not triggered");
+			}.bind(this));
+		});
 	});
 
 	QUnit.module("Given that RTA is started on stand-alone applications", {
@@ -526,24 +526,24 @@ sap.ui.require([
 			this.oRta.exit();
 			sandbox.restore();
 		}
-	});
+	}, function() {
+		QUnit.test("when the _handlePersonalizationChangesOnStart() method is called", function(assert) {
+			return this.oRta._handlePersonalizationChangesOnStart().then(function(){
+				assert.strictEqual(this.fnEnableRestartSpy.callCount, 0, "then enableRestart() is not called");
+				assert.strictEqual(this.fnReloadWithPersonalizationChangesSpy.callCount,
+					0,
+					"then reloadWithoutPersonalizationChanges() is not called");
+			}.bind(this));
+		});
 
-	QUnit.test("when the _handlePersonalizationChangesOnStart() method is called", function(assert) {
-		return this.oRta._handlePersonalizationChangesOnStart().then(function(){
-			assert.strictEqual(this.fnEnableRestartSpy.callCount, 0, "then enableRestart() is not called");
-			assert.strictEqual(this.fnReloadWithPersonalizationChangesSpy.callCount,
-				0,
-				"then reloadWithoutPersonalizationChanges() is not called");
-		}.bind(this));
-	});
-
-	QUnit.test("when the _handlePersonalizationChangesOnExit() method is called", function(assert) {
-		return this.oRta._handlePersonalizationChangesOnExit().then(function(){
-			assert.strictEqual(this.fnEnableRestartSpy.callCount, 0, "then enableRestart() is not called");
-			assert.strictEqual(this.fnReloadWithoutPersonalizationChangesSpy.callCount,
-				0,
-				"then reloadWithPersonalizationChanges() is not called");
-		}.bind(this));
+		QUnit.test("when the _handlePersonalizationChangesOnExit() method is called", function(assert) {
+			return this.oRta._handlePersonalizationChangesOnExit().then(function(){
+				assert.strictEqual(this.fnEnableRestartSpy.callCount, 0, "then enableRestart() is not called");
+				assert.strictEqual(this.fnReloadWithoutPersonalizationChangesSpy.callCount,
+					0,
+					"then reloadWithPersonalizationChanges() is not called");
+			}.bind(this));
+		});
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl ...", {
@@ -570,11 +570,11 @@ sap.ui.require([
 			this.oRta.destroy();
 			sandbox.restore();
 		}
-	});
-
-	QUnit.test("and publish is disabled", function(assert) {
-		assert.equal(this.oRta.getToolbar().getControl('restore').getVisible(), true, "then the Reset Button is still visible");
-		assert.equal(this.oRta.getToolbar().getControl('publish').getVisible(), false, "then the Publish Button is invisible");
+	}, function() {
+		QUnit.test("and publish is disabled", function(assert) {
+			assert.equal(this.oRta.getToolbar().getControl('restore').getVisible(), true, "then the Reset Button is still visible");
+			assert.equal(this.oRta.getToolbar().getControl('publish').getVisible(), false, "then the Publish Button is invisible");
+		});
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl...", {
@@ -601,11 +601,11 @@ sap.ui.require([
 			this.oRta.destroy();
 			sandbox.restore();
 		}
-	});
-
-	QUnit.test("and publish is enabled", function(assert) {
-		assert.equal(this.oRta.getToolbar().getControl('restore').getVisible(), true, "then the Reset Button is visible");
-		assert.equal(this.oRta.getToolbar().getControl('publish').getVisible(), true, "then the Publish Button is visible");
+	}, function() {
+		QUnit.test("and publish is enabled", function(assert) {
+			assert.equal(this.oRta.getToolbar().getControl('restore').getVisible(), true, "then the Reset Button is visible");
+			assert.equal(this.oRta.getToolbar().getControl('publish').getVisible(), true, "then the Publish Button is visible");
+		});
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl...", {
@@ -625,34 +625,12 @@ sap.ui.require([
 			this.oRta.destroy();
 			sandbox.restore();
 		}
+	}, function() {
+		QUnit.test("and FL settings return rejected promise", function(assert) {
+			assert.equal(this.oRta.getToolbar().getControl('restore').getVisible(), true, "then the Reset Button is still visible");
+			assert.equal(this.oRta.getToolbar().getControl('publish').getVisible(), false, "then the Publish Button is invisible");
+		});
 	});
-
-	QUnit.test("and FL settings return rejected promise", function(assert) {
-		assert.equal(this.oRta.getToolbar().getControl('restore').getVisible(), true, "then the Reset Button is still visible");
-		assert.equal(this.oRta.getToolbar().getControl('publish').getVisible(), false, "then the Publish Button is invisible");
-	});
-
-	QUnit.module("Given that changeSpecificData is given with changes for two controls...", {
-		beforeEach : function(assert) {
-			this.oRta = new RuntimeAuthoring({
-				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl")
-			});
-
-			this.oFlexController = this.oRta._getFlexController();
-			this.aChangeSpecificData = [
-				{ selector : { id : "Comp1---idMain1--GeneralLedgerDocument.Name" } },
-				{ selector : { id : "Comp1---idMain1--GeneralLedgerDocument.CompanyCode" } }
-			];
-			this.oCheckTargetAndApplyChangeStub = sandbox.stub(this.oFlexController, "createAndApplyChange");
-			this.oSaveAllStub = sandbox.stub(this.oFlexController, "saveAll");
-			this.oUtilsLogStub = sandbox.stub(Utils.log, "error");
-			this.oShowMessageStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve());
-		},
-		afterEach : function(assert) {
-			sandbox.restore();
-		}
-	});
-
 
 	QUnit.module("Given that RuntimeAuthoring is called and a Variant Management control is initialized", {
 		beforeEach : function(assert) {
@@ -699,38 +677,38 @@ sap.ui.require([
 			this.oRta.destroy();
 			sandbox.restore();
 		}
-	});
+	}, function() {
+		QUnit.test("when '_handleElementModified' is called for an event that sets title on a variant", function(assert) {
+			var fnDone = assert.async();
 
-	QUnit.test("when '_handleElementModified' is called for an event that sets title on a variant", function(assert) {
-		var fnDone = assert.async();
+			sandbox.stub(this.oControlVariantPlugin, "startEdit", function(){
+				assert.ok(true, "then rename is triggered");
+				fnDone();
+			});
 
-		sandbox.stub(this.oControlVariantPlugin, "startEdit", function(){
-			assert.ok(true, "then rename is triggered");
-			fnDone();
-		});
+			var oDummyCommand = new RTABaseCommand();
 
-		var oDummyCommand = new RTABaseCommand();
-
-		var oEvent = {
-			getParameter : function(sParameter){
-				if (sParameter === "action"){
-					return "setTitle";
-				} else if (sParameter === "command"){
-					return oDummyCommand;
+			var oEvent = {
+				getParameter : function(sParameter){
+					if (sParameter === "action"){
+						return "setTitle";
+					} else if (sParameter === "command"){
+						return oDummyCommand;
+					}
 				}
-			}
-		};
+			};
 
-		sandbox.stub(this.oCommandStack, "pushAndExecute", function(){
-			assert.ok(true, "then the command is executed");
-			//Simulate command execution (in real application the geometry will always be changed with delay)
-			setTimeout(function(){
-				this.oVariantManagementOverlay.fireGeometryChanged();
+			sandbox.stub(this.oCommandStack, "pushAndExecute", function(){
+				assert.ok(true, "then the command is executed");
+				//Simulate command execution (in real application the geometry will always be changed with delay)
+				setTimeout(function(){
+					this.oVariantManagementOverlay.fireGeometryChanged();
+				}.bind(this));
+				return Promise.resolve();
 			}.bind(this));
-			return Promise.resolve();
-		}.bind(this));
 
-		this.oRta._handleElementModified(oEvent);
+			this.oRta._handleElementModified(oEvent);
+		});
 	});
 
 	QUnit.done(function( details ) {
