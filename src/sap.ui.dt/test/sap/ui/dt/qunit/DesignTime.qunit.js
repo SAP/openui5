@@ -735,8 +735,8 @@ function(
 			var iIndexOfHeaderOverlayInDom = this.oPageOverlay.$().find('>.sapUiDtOverlayChildren > *').index(oHeaderOverlay.$());
 
 			assert.ok(
-				(iIndexOfContentOverlay < iIndexOfHeaderOverlay && iIndexOfContentOverlayInDom < iIndexOfHeaderOverlayInDom)
-				|| (iIndexOfContentOverlay > iIndexOfHeaderOverlay && iIndexOfContentOverlayInDom > iIndexOfHeaderOverlayInDom),
+				(iIndexOfContentOverlay < iIndexOfHeaderOverlay && iIndexOfContentOverlayInDom <= iIndexOfHeaderOverlayInDom)
+				|| (iIndexOfContentOverlay > iIndexOfHeaderOverlay && iIndexOfContentOverlayInDom >= iIndexOfHeaderOverlayInDom),
 				'then aggregations are on the correct positions'
 			);
 		});
