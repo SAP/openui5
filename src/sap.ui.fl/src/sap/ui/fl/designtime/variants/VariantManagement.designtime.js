@@ -6,6 +6,9 @@
 sap.ui.define([], function() {
 	"use strict";
 	return {
+		domRef: function(oControl) {
+			return oControl.getTitle().getDomRef("inner");
+		},
 		annotations: {},
 		properties: {
 			showExecuteOnSelection: {
