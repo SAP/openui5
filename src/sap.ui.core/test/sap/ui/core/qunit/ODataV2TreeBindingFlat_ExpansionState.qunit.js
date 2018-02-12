@@ -57,10 +57,7 @@ QUnit.test("Restore tree state: Expand server index node", function(assert){
 
 			oFirstChild = oBinding.findNode(1);
 
-			oBinding.attachRefresh(function() {
-				assert.ok(oBinding.findNode(1) === undefined, "All children removed");
-			});
-			oBinding.attachChange(handler3);
+			oBinding.attachRefresh(handler3);
 			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
 			oBinding._restoreTreeState().then(function(aResponseData) {
 				// Success: Promise resolved
@@ -68,10 +65,13 @@ QUnit.test("Restore tree state: Expand server index node", function(assert){
 				assert.equal(getLogCallsFromSpy(oLogSpy, "ODataTreeBindingFlat - Tree state restoration request failed."), 0, "No error logged");
 				oLogSpy.restore();
 				done();
+			}, function (err) {
+				assert.notOk(true, "Promise should not reject with error " + err.message);
+				done();
 			});
 		}
 		function handler3 (oEvent) {
-			oBinding.detachChange(handler3);
+			oBinding.detachRefresh(handler3);
 
 			var oParent = oBinding.findNode(0),
 				oChild, i;
@@ -128,10 +128,7 @@ QUnit.test("Restore tree state: Expand deep node", function(assert){
 
 			oFirstChild = oBinding.findNode(2);
 
-			oBinding.attachRefresh(function() {
-				assert.ok(oBinding.findNode(2) === undefined, "All children removed")
-			});
-			oBinding.attachChange(handler4);
+			oBinding.attachRefresh(handler4);
 			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
 			oBinding._restoreTreeState().then(function(aResponseData) {
 				// Success: Promise resolved
@@ -139,10 +136,13 @@ QUnit.test("Restore tree state: Expand deep node", function(assert){
 				assert.equal(getLogCallsFromSpy(oLogSpy, "ODataTreeBindingFlat - Tree state restoration request failed."), 0, "No error logged");
 				oLogSpy.restore();
 				done();
+			}, function (err) {
+				assert.notOk(true, "Promise should not reject with error " + err.message);
+				done();
 			});
 		}
 		function handler4 (oEvent) {
-			oBinding.detachChange(handler4);
+			oBinding.detachRefresh(handler4);
 
 			var oParent = oBinding.findNode(1),
 				oChild;
@@ -196,22 +196,16 @@ QUnit.test("Restore tree state: Expand error handling, the whole batch request f
 
 			oFirstChild = oBinding.findNode(1);
 
-			oBinding.attachRefresh(function() {
-				assert.ok(oBinding.findNode(1) === undefined, "All children removed");
-			});
-			oBinding.attachChange(handler3);
-
+			oBinding.attachRefresh(handler3);
 			that.fakeService.setServiceStatus({ batch: 500 });
-			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
-			oBinding._restoreTreeState().then(function() {
-				assert.equal(getLogCallsFromSpy(oLogSpy, "ODataTreeBindingFlat - Tree state restoration request failed."), 2, "Two errors got logged");
+			oBinding._restoreTreeState().catch(function(err) {
+				assert.ok(true, "Promise got rejected")
 				that.fakeService.resetServiceStatus();
-				oLogSpy.restore();
 				done();
 			});
 		}
 		function handler3 (oEvent) {
-			oBinding.detachChange(handler3);
+			oBinding.detachRefresh(handler3);
 
 			var oParent = oBinding.findNode(0);
 			assert.notOk(oParent, "There is no node available.");
@@ -258,17 +252,15 @@ QUnit.test("Restore tree state: Expand error handling, the whole batch request i
 
 			oFirstChild = oBinding.findNode(1);
 
-			oBinding.attachRefresh(function() {
-				assert.ok(oBinding.findNode(1) === undefined, "All children removed");
-			});
-			oBinding.attachChange(oChangeSpy);
-
+			oBinding.attachRefresh(oChangeSpy);
 			that.fakeService.setServiceStatus({ batch: "abort" });
-			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
 			oBinding._restoreTreeState().then(function() {
-				assert.equal(getLogCallsFromSpy(oLogSpy, "ODataTreeBindingFlat - Tree state restoration request failed."), 0, "No error got logged");
 				that.fakeService.resetServiceStatus();
-				oLogSpy.restore();
+				assert.deepEqual(oChangeSpy.callCount, 0, "No refresh event fired");
+				oBinding.detachRefresh(oChangeSpy);
+				done();
+			}, function (err) {
+				assert.notOk(true, "Promise should not reject with error " + err.message);
 				done();
 			});
 		}
@@ -312,10 +304,7 @@ QUnit.test("Restore tree state: Expand error handling, restore of deep nodes fai
 
 			oFirstChild = oBinding.findNode(1);
 
-			oBinding.attachRefresh(function() {
-				assert.ok(oBinding.findNode(1) === undefined, "All children removed");
-			});
-			oBinding.attachChange(handler3);
+			oBinding.attachRefresh(handler3);
 
 			// let the loading of deep nodes fail
 			that.fakeService.setServiceStatus({
@@ -326,16 +315,14 @@ QUnit.test("Restore tree state: Expand error handling, restore of deep nodes fai
 				}
 			});
 
-			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
-			oBinding._restoreTreeState().then(function() {
-				assert.equal(getLogCallsFromSpy(oLogSpy, "ODataTreeBindingFlat - Tree state restoration request failed."), 1, "One error got logged");
+			oBinding._restoreTreeState().catch(function(err) {
+				assert.ok(true, "Promise got rejected")
 				that.fakeService.resetServiceStatus();
-				oLogSpy.restore();
 				done();
 			});
 		}
 		function handler3 (oEvent) {
-			oBinding.detachChange(handler3);
+			oBinding.detachRefresh(handler3);
 
 			var oParent = oBinding.findNode(0);
 			var oNextNode = oBinding.findNode(1);
@@ -382,10 +369,7 @@ QUnit.test("Restore tree state: Expand error handling, restore of server index n
 
 			oFirstChild = oBinding.findNode(1);
 
-			oBinding.attachRefresh(function() {
-				assert.ok(oBinding.findNode(1) === undefined, "All children removed");
-			});
-			oBinding.attachChange(handler3);
+			oBinding.attachRefresh(handler3);
 
 			// let the loading of deep nodes fail
 			that.fakeService.setServiceStatus({
@@ -396,16 +380,14 @@ QUnit.test("Restore tree state: Expand error handling, restore of server index n
 				}
 			});
 
-			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
-			oBinding._restoreTreeState().then(function() {
-				assert.equal(getLogCallsFromSpy(oLogSpy, "ODataTreeBindingFlat - Tree state restoration request failed."), 1, "One error got logged");
+			oBinding._restoreTreeState().catch(function(err) {
+				assert.ok(true, "Promise got rejected")
 				that.fakeService.resetServiceStatus();
-				oLogSpy.restore();
 				done();
 			});
 		}
 		function handler3 (oEvent) {
-			oBinding.detachChange(handler3);
+			oBinding.detachRefresh(handler3);
 
 			var oParent = oBinding.findNode(0);
 			assert.notOk(oParent, "Nothing is restored in binding");
@@ -450,10 +432,7 @@ QUnit.test("Restore tree state: Expand error handling, all sub requests fail", f
 
 			oFirstChild = oBinding.findNode(1);
 
-			oBinding.attachRefresh(function() {
-				assert.ok(oBinding.findNode(1) === undefined, "All children removed");
-			});
-			oBinding.attachChange(handler3);
+			oBinding.attachRefresh(handler3);
 
 			// let the loading of deep nodes fail
 			that.fakeService.setServiceStatus({
@@ -465,16 +444,14 @@ QUnit.test("Restore tree state: Expand error handling, all sub requests fail", f
 				}
 			});
 
-			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
-			oBinding._restoreTreeState().then(function() {
-				assert.equal(getLogCallsFromSpy(oLogSpy, "ODataTreeBindingFlat - Tree state restoration request failed."), 2, "Two error got logged");
+			oBinding._restoreTreeState().catch(function(err) {
+				assert.ok(true, "Promise got rejected")
 				that.fakeService.resetServiceStatus();
-				oLogSpy.restore();
 				done();
 			});
 		}
 		function handler3 (oEvent) {
-			oBinding.detachChange(handler3);
+			oBinding.detachRefresh(handler3);
 
 			var oParent = oBinding.findNode(0);
 			assert.notOk(oParent, "Nothing is restored in binding");
@@ -526,21 +503,21 @@ QUnit.test("Restore tree state: Collapse server index node", function(assert){
 			assert.ok(!oBinding.isExpanded(0), "Collapsed node is collapsed");
 
 			oFirstChild = oBinding._aNodes[1];
-			oBinding.attachRefresh(function() {
-				assert.ok(oBinding.findNode(0) === undefined, "All nodes are removed");
-			});
-			oBinding.attachChange(handler2);
 
+			oBinding.attachRefresh(handler2);
 			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
 			oBinding._restoreTreeState().then(function(aResponseData) {
 				assert.ok(Array.isArray(aResponseData), "The promise should be resolved");
 				assert.equal(getLogCallsFromSpy(oLogSpy, "ODataTreeBindingFlat - Tree state restoration request failed."), 0, "No error got logged");
 				oLogSpy.restore();
 				done();
-			});
+			}), function (err) {
+				assert.notOk(true, "Promise should not reject with error " + err.message);
+				done();
+			};
 		}
 		function handler2 (oEvent) {
-			oBinding.detachChange(handler2);
+			oBinding.detachRefresh(handler2);
 
 			assert.ok(!oBinding.isExpanded(0), "Collapsed node is still collapsed after restore");
 
@@ -597,18 +574,21 @@ QUnit.test("Restore tree state: Collapse deep node", function(assert){
 			oBinding.collapse(1, true);
 			assert.notOk(oBinding.isExpanded(1), "First child node is collapsed");
 
-			oBinding.attachChange(handler4);
+			oBinding.attachRefresh(handler4);
 			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
 			oBinding._restoreTreeState().then(function(aResponseData) {
 				assert.ok(Array.isArray(aResponseData), "The promise should be resolved");
 				assert.equal(getLogCallsFromSpy(oLogSpy, "ODataTreeBindingFlat - Tree state restoration request failed."), 0, "No error got logged");
 				oLogSpy.restore();
 				done();
+			}, function (err) {
+				assert.notOk(true, "Promise should not reject with error " + err.message);
+				done();
 			});
 		}
 
 		function handler4(oEvent) {
-			oBinding.detachChange(handler4);
+			oBinding.detachRefresh(handler4);
 
 			var oParent = oBinding.findNode(0),
 				oChild, i;
@@ -650,10 +630,8 @@ QUnit.test("Restore tree state: Collapse error handling, whole batch fails", fun
 			assert.ok(!oBinding.isExpanded(0), "Collapsed node is collapsed");
 
 			oFirstChild = oBinding._aNodes[1];
-			oBinding.attachRefresh(function() {
-				assert.ok(oBinding.findNode(0) === undefined, "All nodes are removed");
-			});
-			oBinding.attachChange(handler2);
+
+			oBinding.attachRefresh(handler2);
 
 			// let the loading of deep nodes fail
 			that.fakeService.setServiceStatus({
@@ -664,16 +642,14 @@ QUnit.test("Restore tree state: Collapse error handling, whole batch fails", fun
 				}
 			});
 
-			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
-			oBinding._restoreTreeState().then(function() {
-				assert.equal(getLogCallsFromSpy(oLogSpy, "ODataTreeBindingFlat - Tree state restoration request failed."), 1, "One error got logged");
+			oBinding._restoreTreeState().catch(function(err) {
+				assert.ok(true, "Promise got rejected")
 				that.fakeService.resetServiceStatus();
-				oLogSpy.restore();
 				done();
 			});
 		}
 		function handler2 (oEvent) {
-			oBinding.detachChange(handler2);
+			oBinding.detachRefresh(handler2);
 			assert.ok(!oBinding.findNode(0), "No node available");
 		}
 
@@ -682,7 +658,27 @@ QUnit.test("Restore tree state: Collapse error handling, whole batch fails", fun
 	});
 });
 
-QUnit.test("Restore tree state: adapt server node sections", function(assert) {
+QUnit.module("ODataTreeBindingFlat - Tree State: Remove", {
+	beforeEach: function() {
+		var that = this;
+		sServiceUrl = "ZTJ_SFIN_HIERARCHY_02_SRV"
+		return new Promise(function(resolve, reject) {
+			sap.ui.require(["ODataTreeBindingFakeService"], function(ODataTreeBindingFakeService) {
+				that.fakeService = ODataTreeBindingFakeService;
+				that.fakeService.setup();
+				oModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl);
+				resolve();
+			});
+		});
+	},
+	afterEach: function() {
+		this.fakeService.teardown();
+		sServiceUrl = "/odataFake/";
+		delete oModel;
+	}
+});
+
+QUnit.test("Restore tree state: adapt server node sections - remove", function(assert) {
 	createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='9999')/Results", null, [], {
 		threshold: 10,
 		countMode: "Inline",
@@ -707,7 +703,8 @@ QUnit.test("Restore tree state: adapt server node sections", function(assert) {
 	];
 
 	oBinding._adaptSections(aSections, {
-		removed: aRemovedNodes
+		removed: aRemovedNodes,
+		added: []
 	});
 
 	var aExpectedSections = [
@@ -719,7 +716,7 @@ QUnit.test("Restore tree state: adapt server node sections", function(assert) {
 	assert.deepEqual(aSections, aExpectedSections, "The server sections are correctly adapted");
 });
 
-QUnit.test("Restore tree state: adapt deep node sections", function(assert) {
+QUnit.test("Restore tree state: adapt deep node sections - remove", function(assert) {
 	createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='9999')/Results", null, [], {
 		threshold: 10,
 		countMode: "Inline",
@@ -736,7 +733,7 @@ QUnit.test("Restore tree state: adapt deep node sections", function(assert) {
 	];
 
 	var aRemovedNodes = [
-		{ positionInParent: 0, magnitude: 0 },
+		{ positionInParent: 0, magnitude: 0 }, // magnitude properties should be ignored
 		{ positionInParent: 1, magnitude: 3 },
 		{ positionInParent: 2, magnitude: 0 },
 		{ positionInParent: 5, magnitude: 2 },
@@ -748,7 +745,8 @@ QUnit.test("Restore tree state: adapt deep node sections", function(assert) {
 	];
 
 	oBinding._adaptSections(aSections, {
-		removed: aRemovedNodes
+		removed: aRemovedNodes,
+		added: []
 	}, {
 		indexName: "positionInParent",
 		ignoreMagnitude: true
@@ -801,12 +799,12 @@ QUnit.test("Restore tree state: after delete server index nodes", function(asser
 
 		oBinding.removeContext(oDeleteNode.context);
 
-		oBinding.attachChange(handler3);
+		oBinding.attachRefresh(handler3);
 		oBinding.submitChanges();
 	}
 
 	function handler3() {
-		oBinding.detachChange(handler3);
+		oBinding.detachRefresh(handler3);
 
 		assert.ok(oBinding.findNode(116), "The loaded section is adapted");
 		assert.ok(!oBinding.findNode(117), "The loaded section is adapted with the deleted node's magnitude");
@@ -827,3 +825,918 @@ QUnit.test("Restore tree state: after delete server index nodes", function(asser
 	oBinding.attachChange(handler1);
 	oBinding.getContexts(0, 20, 100);
 });
+
+QUnit.module("ODataTreeBindingFlat - Tree State: Insert", {
+	beforeEach: function() {
+		var that = this;
+		sServiceUrl = "ZTJ_SFIN_HIERARCHY_02_SRV"
+		return new Promise(function(resolve, reject) {
+			sap.ui.require(["ODataTreeBindingFakeService"], function(ODataTreeBindingFakeService) {
+				that.fakeService = ODataTreeBindingFakeService;
+				that.fakeService.setup();
+				oModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl);
+				resolve();
+			});
+		});
+	},
+	afterEach: function() {
+		this.fakeService.teardown();
+		sServiceUrl = "/odataFake/";
+		delete oModel;
+	}
+});
+
+function createAddedNode(oConfig) {
+	var oNode = {
+		context: {
+			getProperty: function(sName) {
+				if (sName === "GLAccount_SiblingsPosition") {
+					return oConfig.siblingsPosition;
+				} else if (sName === "GLAccount_PreorderPosition") {
+					return oConfig.preorderPosition;
+				} else if (sName === "GLAccount_Nodecount") {
+					return oConfig.magnitude;
+				}
+			}
+		},
+		isDeepOne: oConfig.isDeepOne
+	};
+	return oNode;
+}
+
+QUnit.test("Restore tree state: adapt server node sections - add nodes", function(assert) {
+	createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='9999')/Results", null, [], {
+		threshold: 10,
+		countMode: "Inline",
+		operationMode: "Server",
+		numberOfExpandedLevels: 0,
+		restoreTreeStateAfterChange: true
+	});
+
+	var aAdded = [];
+
+	var aSections = [
+		{ iSkip: 0, iTop: 20 },
+		{ iSkip: 80, iTop: 20 },
+		{ iSkip: 120, iTop: 40 },
+		{ iSkip: 200, iTop: 40 }
+	];
+
+	var aAddedNodesConfig = [
+		{preorderPosition: 1},
+		{preorderPosition: 40},
+		{preorderPosition: 41},
+		{preorderPosition: 300},
+	];
+
+	aAddedNodesConfig.forEach(function(oConfig) {
+		aAdded.push(createAddedNode(oConfig));
+	});
+
+	oBinding._adaptSections(aSections, {
+		added: aAdded,
+	});
+
+	var aExpectedSections = [
+		{ iSkip: 0, iTop: 21 },
+		{ iSkip: 40, iTop: 2 },
+		{ iSkip: 83, iTop: 20 },
+		{ iSkip: 123, iTop: 40 },
+		{ iSkip: 203, iTop: 40 },
+		{ iSkip: 300, iTop: 1 }
+	];
+
+	assert.deepEqual(aSections, aExpectedSections, "The server sections are correctly adapted");
+});
+
+QUnit.test("Restore tree state: adapt server node sections - add nodes with magnitudes", function(assert) {
+	createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='9999')/Results", null, [], {
+		threshold: 10,
+		countMode: "Inline",
+		operationMode: "Server",
+		numberOfExpandedLevels: 0,
+		restoreTreeStateAfterChange: true
+	});
+
+	var aAdded = [];
+
+	var aSections = [
+		{ iSkip: 0, iTop: 20 },
+		{ iSkip: 80, iTop: 10 }
+	];
+
+	var aAddedNodesConfig = [
+		{preorderPosition: 1, magnitude: 9}
+		// {preorderPosition: 2, magnitude: 1} //  // Never happens: optimizeOptimizedChanges ignores adds inside added parents
+	];
+
+	aAddedNodesConfig.forEach(function(oConfig) {
+		aAdded.push(createAddedNode(oConfig));
+	});
+
+	oBinding._adaptSections(aSections, {
+		added: aAdded,
+	});
+
+	var aExpectedSections = [
+		{ iSkip: 0, iTop: 30 },
+		{ iSkip: 90, iTop: 10 }
+	];
+
+	assert.deepEqual(aSections, aExpectedSections, "The server sections are correctly adapted");
+});
+
+QUnit.test("Restore tree state: adapt deep node sections - add nodes", function(assert) {
+	createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='9999')/Results", null, [], {
+		threshold: 10,
+		countMode: "Inline",
+		operationMode: "Server",
+		numberOfExpandedLevels: 0,
+		restoreTreeStateAfterChange: true
+	});
+
+	var aSections = [
+		{ iSkip: 0, iTop: 20 },
+		{ iSkip: 80, iTop: 20 },
+		{ iSkip: 120, iTop: 40 },
+		{ iSkip: 200, iTop: 40 }
+	];
+
+	var aAddedNodesConfig = [
+		{siblingsPosition: 1, isDeepOne: true}, // New node at actual position 1
+		{siblingsPosition: 40, isDeepOne: true}, // New node at actual position 40 (abap starts at 1)
+		{siblingsPosition: 41, isDeepOne: true},
+		{siblingsPosition: 300, isDeepOne: true},
+	];
+
+	var aAdded = [];
+	aAddedNodesConfig.forEach(function(oConfig) {
+		aAdded.push(createAddedNode(oConfig));
+	});
+
+	oBinding._adaptSections(aSections, {
+		added: aAdded,
+	}, {
+		indexName: "positionInParent",
+		ignoreMagnitude: true
+	});
+
+	var aExpectedSections = [
+		{ iSkip: 0, iTop: 21 },
+		{ iSkip: 40, iTop: 2 },
+		{ iSkip: 83, iTop: 20 },
+		{ iSkip: 123, iTop: 40 },
+		{ iSkip: 203, iTop: 40 },
+		{ iSkip: 300, iTop: 1 }
+	];
+
+	assert.deepEqual(aSections, aExpectedSections, "The server sections are correctly adapted");
+});
+
+QUnit.test("Restore tree state: insert server index node (UC1)", function(assert) {
+	var done = assert.async();
+	var iOldLength, sOldLastNodeKey;
+	createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='001')/Results", null, [], {
+		threshold: 10,
+		countMode: "Inline",
+		operationMode: "Server",
+		numberOfExpandedLevels: 4,
+		restoreTreeStateAfterChange: true
+	});
+
+	function handler1() {
+		oBinding.detachChange(handler1);
+		iOldLength = oBinding.getLength();
+		sOldLastNodeKey = oBinding.findNode(iOldLength - 1).key;
+
+		var oParent = oBinding.findNode(5);
+		var oContext = oBinding.createEntry({
+			urlParameters: {
+				"hierarchy_fake_node_id": "NODE111114"
+			}
+		});
+		oBinding.addContexts(oParent.context, [oContext])
+		oBinding.attachRefresh(handler2);
+		oBinding.submitChanges();
+	}
+
+	function handler2() {
+		oBinding.detachRefresh(handler2);
+		var iNewLength = oBinding.getLength();
+		assert.equal(iNewLength, iOldLength + 1, "New binding length is old length plus one");
+
+		if (iNewLength === 0) {
+			assert.notOk(true, "No data loaded");
+		}  else {
+			var sNewLastNodeKey = oBinding.findNode(iNewLength - 1).key;
+			assert.equal(sNewLastNodeKey, sOldLastNodeKey, "Last node in binding is still the same");
+		}
+		done();
+	}
+
+	oBinding.attachChange(handler1);
+	oBinding.getContexts(0, 20, 100);
+});
+
+QUnit.test("Restore tree state: insert deep node (UC2)", function(assert) {
+	var done = assert.async();
+	var iOldLength, sOldLastNodeKey, oParent;
+	createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='002')/Results", null, [], {
+		threshold: 10,
+		countMode: "Inline",
+		operationMode: "Server",
+		numberOfExpandedLevels: 3,
+		restoreTreeStateAfterChange: true
+	});
+
+	function handler1() {
+		oBinding.detachChange(handler1);
+		iOldLength = oBinding.getLength();
+		sOldLastNodeKey = oBinding.findNode(iOldLength - 1).key;
+
+		oParent = oBinding.findNode(4);
+
+		oBinding.attachChange(handler2);
+		oBinding.expand(oParent, true);
+	}
+
+	function handler2() {
+		oBinding.detachChange(handler2);
+
+		// update the length after expand which is used for comparing after the save
+		iOldLength = oBinding.getLength();
+
+		var oStubUid = sinon.stub(jQuery.sap, "uid", function() {
+			return "uc2-new-node-1";
+		});
+		var oContext = oBinding.createEntry({
+			urlParameters: {
+				"hierarchy_fake_node_id": "NODE113334"
+			}
+		});
+		oStubUid.restore();
+
+		oBinding.addContexts(oParent.context, [oContext]);
+
+		oBinding.attachRefresh(handler3);
+		oBinding.submitChanges();
+	}
+
+	function handler3() {
+		oBinding.detachRefresh(handler3);
+		var iNewLength = oBinding.getLength();
+		assert.equal(iNewLength, iOldLength + 1, "New binding length is old length plus one");
+
+		// TODO test for still expanded node
+
+		if (iNewLength === 0) {
+			assert.notOk(true, "No data loaded");
+		}  else {
+			var sNewLastNodeKey = oBinding.findNode(iNewLength - 1).key;
+			assert.equal(sNewLastNodeKey, sOldLastNodeKey, "Last node in binding is still the same");
+		}
+		done();
+	}
+	oBinding.attachChange(handler1);
+	oBinding.getContexts(0, 20, 100);
+});
+
+QUnit.test("Restore tree state: insert deep nodes (UC3)", function(assert) {
+	var done = assert.async();
+	var iOldLength, sOldLastNodeKey, oParent;
+	var oContext1;
+	createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='003')/Results", null, [], {
+		threshold: 10,
+		countMode: "Inline",
+		operationMode: "Server",
+		numberOfExpandedLevels: 3,
+		restoreTreeStateAfterChange: true
+	});
+
+	function handler1() {
+		oBinding.detachChange(handler1);
+		iOldLength = oBinding.getLength();
+		sOldLastNodeKey = oBinding.findNode(iOldLength - 1).key;
+
+		oParent = oBinding.findNode(7);
+
+		oBinding.attachChange(handler2);
+		oBinding.expand(oParent, true);
+	}
+
+	function handler2() {
+		oBinding.detachChange(handler2);
+
+		// update the length after expand which is used for comparing after the save
+		iOldLength = oBinding.getLength();
+
+		assert.equal(iOldLength, 47, "Length is correct after expand");
+
+		oContext1 = oBinding.createEntry({
+			urlParameters: {
+				"hierarchy_fake_node_id": "NODE333444"
+			}
+		});
+		oBinding.addContexts(oParent.context, [oContext1])
+
+		var oContext2 = oBinding.createEntry({
+			urlParameters: {
+				"hierarchy_fake_node_id": "RANGE333444"
+			}
+		});
+		oBinding.addContexts(oContext1, [oContext2])
+
+		oBinding.attachRefresh(handler3);
+		oBinding.submitChanges();
+	}
+
+	function handler3() {
+		oBinding.detachRefresh(handler3);
+		var iNewLength = oBinding.getLength();
+		assert.equal(iNewLength, iOldLength + 1, "New binding length is old length plus one");
+
+		// TODO test for still expanded node
+
+		if (iNewLength === 0) {
+			assert.notOk(true, "No data loaded");
+		}  else {
+			var sNewLastNodeKey = oBinding.findNode(iNewLength - 1).key;
+			assert.equal(sNewLastNodeKey, sOldLastNodeKey, "Last node in binding is still the same");
+		}
+		done();
+	}
+	oBinding.attachChange(handler1);
+	oBinding.getContexts(0, 20, 100);
+});
+
+QUnit.test("Restore tree state: insert server index- and deep nodes (UC4)", function(assert) {
+	var done = assert.async();
+	var iOldLength, sOldLastNodeKey, oParent;
+	var oContext1;
+	createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='004')/Results", null, [], {
+		threshold: 10,
+		countMode: "Inline",
+		operationMode: "Server",
+		numberOfExpandedLevels: 3,
+		restoreTreeStateAfterChange: true
+	});
+
+	function handler1() {
+		oBinding.detachChange(handler1);
+		iOldLength = oBinding.getLength();
+		sOldLastNodeKey = oBinding.findNode(iOldLength - 1).key;
+
+		oParent = oBinding.findNode(5);
+		var oStubUid = sinon.stub(jQuery.sap, "uid", function() {
+			return "uc4-new-node-1";
+		});
+		var oContext1 = oBinding.createEntry({
+			urlParameters: {
+				"hierarchy_fake_node_id": "NODE500000"
+			}
+		});
+		oStubUid.restore();
+		oBinding.addContexts(oParent.context, [oContext1]);
+
+		// oStubUid = sinon.stub(jQuery.sap, "uid", function() {
+		// 	return "uc4-new-node-2";
+		// });
+		var oContext2 = oBinding.createEntry({
+			urlParameters: {
+				"hierarchy_fake_node_id": "NODE500001"
+			}
+		});
+		// oStubUid.restore();
+		oBinding.addContexts(oContext1, [oContext2]);
+
+		oBinding.expand(6, true);
+
+		var oContext3 = oBinding.createEntry({
+			urlParameters: {
+				"hierarchy_fake_node_id": "RANGE500001"
+			}
+		});
+		var oContext4 = oBinding.createEntry({
+			urlParameters: {
+				"hierarchy_fake_node_id": "RANGE500002"
+			}
+		});
+		oBinding.addContexts(oContext2, [oContext3, oContext4]);
+
+		oBinding.expand(7, true);
+
+		assert.equal(oBinding.getLength(), iOldLength + 4, "length is correct after adding 4 new nodes");
+		iOldLength = oBinding.getLength();
+
+		oBinding.attachRefresh(handler2);
+		oBinding.submitChanges();
+	}
+
+	function handler2() {
+		oBinding.detachRefresh(handler2);
+
+		var iNewLength = oBinding.getLength();
+		assert.equal(iNewLength, iOldLength, "New binding length should stay the same after new nodes are saved");
+
+		// TODO test for still expanded node
+
+		if (iNewLength === 0) {
+			assert.notOk(true, "No data loaded");
+		}  else {
+			var sNewLastNodeKey = oBinding.findNode(iNewLength - 1).key;
+			assert.equal(sNewLastNodeKey, sOldLastNodeKey, "Last node in binding is still the same");
+		}
+		done();
+	}
+	oBinding.attachChange(handler1);
+	oBinding.getContexts(0, 20, 100);
+});
+
+QUnit.test("Restore tree state: insert server index- and deep nodes (UC4b)", function(assert) {
+	var done = assert.async();
+	var iOldLength, sOldLastNodeKey, oParent;
+	createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='004b')/Results", null, [], {
+		threshold: 10,
+		countMode: "Inline",
+		operationMode: "Server",
+		numberOfExpandedLevels: 3,
+		restoreTreeStateAfterChange: true
+	});
+
+	function handler1() {
+		oBinding.detachChange(handler1);
+		iOldLength = oBinding.getLength();
+		sOldLastNodeKey = oBinding.findNode(iOldLength - 1).key;
+
+		oParent = oBinding.findNode(11);
+
+		// Add node E (server index node)
+		var oContext1 = oBinding.createEntry({
+			urlParameters: {
+				"hierarchy_fake_node_id": "NODE40090"
+			}
+		});
+		oBinding.addContexts(oParent.context, [oContext1]);
+
+
+		// Add node E1 (server index node)
+		var oContext2 = oBinding.createEntry({
+			urlParameters: {
+				"hierarchy_fake_node_id": "NODE40091"
+			}
+		});
+
+		oBinding.addContexts(oContext1, [oContext2]);
+
+		// Expanding E
+		oBinding.expand(12, true);
+
+		// Add node E1.1 (deep node)
+		var oContext3 = oBinding.createEntry({
+			urlParameters: {
+				"hierarchy_fake_node_id": "RANGE400090"
+			}
+		});
+		// Add node E1.2 (deep node)
+		var oContext4 = oBinding.createEntry({
+			urlParameters: {
+				"hierarchy_fake_node_id": "RANGE400092"
+			}
+		});
+		oBinding.addContexts(oContext2, [oContext3, oContext4]);
+
+		// Exapnding E1
+		oBinding.expand(13, true);
+
+		assert.equal(oBinding.getLength(), iOldLength + 4, "length is correct after adding 4 new nodes");
+		iOldLength = oBinding.getLength();
+
+		oBinding.attachRefresh(handler2);
+		oBinding.submitChanges();
+	}
+
+	function handler2() {
+		oBinding.detachRefresh(handler2);
+
+		var iNewLength = oBinding.getLength();
+		assert.equal(iNewLength, iOldLength, "New binding length should stay the same after new nodes are saved");
+
+		// TODO test for still expanded node
+
+		if (iNewLength === 0) {
+			assert.notOk(true, "No data loaded");
+		}  else {
+			var sNewLastNodeKey = oBinding.findNode(iNewLength - 1).key;
+			assert.equal(sNewLastNodeKey, sOldLastNodeKey, "Last node in binding is still the same");
+		}
+		done();
+	}
+	oBinding.attachChange(handler1);
+	oBinding.getContexts(0, 20, 100);
+});
+
+
+QUnit.test("Restore tree state: insert server index node w/ generated deep node (UCx3)", function(assert) {
+	var done = assert.async();
+	var iOldLength, sOldLastNodeKey;
+	var oContext1;
+	createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='0x3')/Results", null, [], {
+		threshold: 10,
+		countMode: "Inline",
+		operationMode: "Server",
+		numberOfExpandedLevels: 2,
+		restoreTreeStateAfterChange: true
+	});
+
+	function handler1() {
+		oBinding.detachChange(handler1);
+		iOldLength = oBinding.getLength();
+		sOldLastNodeKey = oBinding.findNode(iOldLength - 1).key;
+
+		var oParent = oBinding.findNode(1);
+		var oContext1 = oBinding.createEntry({
+			urlParameters: {
+				"hierarchy_fake_node_id": "NODE123456"
+			}
+		});
+		oBinding.addContexts(oParent.context, [oContext1])
+
+		oBinding.attachRefresh(handler2);
+		oBinding.submitChanges();
+	}
+
+	function handler2() {
+		oBinding.detachRefresh(handler2);
+
+		var iNewLength = oBinding.getLength();
+		assert.equal(iNewLength, iOldLength + 1, "New binding length is old length plus 1 (server side generated node is a deep node)");
+
+		// TODO check for generated node
+
+		if (iNewLength === 0) {
+			assert.notOk(true, "No data loaded");
+		}  else {
+			var sNewLastNodeKey = oBinding.findNode(iNewLength - 1).key;
+			assert.equal(sNewLastNodeKey, sOldLastNodeKey, "Last node in binding is still the same");
+		}
+		done();
+	}
+	oBinding.attachChange(handler1);
+	oBinding.getContexts(0, 20, 100);
+});
+
+// commentted out because the implementation for handling the automatically generated nodes from the backend
+// is not in the scope of the current sprint
+
+// QUnit.test("Restore tree state: insert server index node w/ generated server index node (UCx4)", function(assert) {
+// 	var done = assert.async();
+// 	var iOldLength, sOldLastNodeKey;
+// 	var oContext1;
+// 	createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='0x4')/Results", null, [], {
+// 		threshold: 10,
+// 		countMode: "Inline",
+// 		operationMode: "Server",
+// 		numberOfExpandedLevels: 3,
+// 		restoreTreeStateAfterChange: true
+// 	});
+
+// 	function handler1() {
+// 		oBinding.detachChange(handler1);
+// 		iOldLength = oBinding.getLength();
+// 		sOldLastNodeKey = oBinding.findNode(iOldLength - 1).key;
+
+// 		var oParent = oBinding.findNode(1);
+// 		var oContext1 = oBinding.createEntry({
+// 			urlParameters: {
+// 				"hierarchy_fake_node_id": "NODE000001"
+// 			}
+// 		});
+// 		oBinding.addContexts(oParent.context, [oContext1])
+
+// 		oBinding.attachRefresh(handler2);
+// 		oBinding.submitChanges();
+// 	}
+
+// 	function handler2() {
+// 		oBinding.detachRefresh(handler2);
+
+// 		var iNewLength = oBinding.getLength();
+// 		assert.equal(iNewLength, iOldLength + 2, "New binding length is old length plus two (server side generated node)");
+
+// 		// TODO check for generated node
+
+// 		if (iNewLength === 0) {
+// 			assert.notOk(true, "No data loaded");
+// 		}  else {
+// 			var sNewLastNodeKey = oBinding.findNode(iNewLength - 1).key;
+// 			assert.equal(sNewLastNodeKey, sOldLastNodeKey, "Last node in binding is still the same");
+// 		}
+// 		done();
+// 	}
+// 	oBinding.attachChange(handler1);
+// 	oBinding.getContexts(0, 20, 100);
+// });
+
+QUnit.module("ODataTreeBindingFlat - Tree State: Move", {
+	beforeEach: function() {
+		var that = this;
+		sServiceUrl = "ZTJ_SFIN_HIERARCHY_02_SRV"
+		return new Promise(function(resolve, reject) {
+			sap.ui.require(["ODataTreeBindingFakeService"], function(ODataTreeBindingFakeService) {
+				that.fakeService = ODataTreeBindingFakeService;
+				that.fakeService.setup();
+				oModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl, {
+					defaultUpdateMethod: sap.ui.model.odata.UpdateMethod.Put
+				});
+				resolve();
+			});
+		});
+	},
+	afterEach: function() {
+		this.fakeService.teardown();
+		sServiceUrl = "/odataFake/";
+		delete oModel;
+	}
+});
+
+QUnit.test("Restore tree state: adapt server node sections - move nodes", function(assert) {
+	createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='9999')/Results", null, [], {
+		threshold: 10,
+		countMode: "Inline",
+		operationMode: "Server",
+		numberOfExpandedLevels: 0,
+		restoreTreeStateAfterChange: true
+	});
+
+	var aSections = [
+		{ iSkip: 0, iTop: 20 },
+		{ iSkip: 80, iTop: 20 },
+		{ iSkip: 120, iTop: 40 },
+		{ iSkip: 180, iTop: 2 },
+		{ iSkip: 200, iTop: 40 }
+	];
+
+	var aAddedNodesConfig = [
+		{preorderPosition: 1}, // New node at actual position 1
+		{preorderPosition: 40}, // New node at actual position 40 (abap starts at 1)
+		{preorderPosition: 41},
+		{preorderPosition: 100},
+		{preorderPosition: 129},
+		{preorderPosition: 300},
+	];
+
+	var aAdded = [];
+	aAddedNodesConfig.forEach(function(oConfig) {
+		aAdded.push(createAddedNode(oConfig));
+	});
+
+	var aRemovedNodes = [
+		{ serverIndex: 10, magnitude: 1 },
+		{ serverIndex: 17, magnitude: 2 },
+		{ serverIndex: 90, magnitude: 90 }, // removes end of section 80, full 120 and start of 180
+		// { serverIndex: 91, magnitude: 1 }, // Never happens: optimizeChanges ignores removes inside removed parents
+		{ serverIndex: 239, magnitude: 0 }
+	];
+
+	oBinding._adaptSections(aSections, {
+		added: aAdded,
+		removed: aRemovedNodes
+	});
+
+	var aExpectedSections = [
+		{ iSkip: 0, iTop: 16 },
+		{ iSkip: 40, iTop: 2 },
+		{ iSkip: 78, iTop: 10 },
+		{ iSkip: 87, iTop: 1 },
+		{ iSkip: 100, iTop: 1 },
+		{ iSkip: 108, iTop: 40 }, // Was section { iSkip: 200, iTop: 40 }
+		{ iSkip: 300, iTop: 1 }
+	];
+
+	assert.deepEqual(aSections, aExpectedSections, "The server sections are correctly adapted");
+});
+
+QUnit.test("Restore tree state: adapt deep node sections - move nodes", function(assert) {
+	createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='9999')/Results", null, [], {
+		threshold: 10,
+		countMode: "Inline",
+		operationMode: "Server",
+		numberOfExpandedLevels: 0,
+		restoreTreeStateAfterChange: true
+	});
+
+	var aSections = [
+		{ iSkip: 0, iTop: 20 },
+		{ iSkip: 80, iTop: 20 },
+		{ iSkip: 120, iTop: 40 },
+		{ iSkip: 200, iTop: 40 }
+	];
+
+	var aAddedNodesConfig = [
+		{siblingsPosition: 1, isDeepOne: true}, // New node at actual position 1
+		{siblingsPosition: 40, isDeepOne: true}, // New node at actual position 40 (abap starts at 1)
+		{siblingsPosition: 41, isDeepOne: true},
+		{siblingsPosition: 300, isDeepOne: true},
+	];
+
+	var aAdded = [];
+	aAddedNodesConfig.forEach(function(oConfig) {
+		aAdded.push(createAddedNode(oConfig));
+	});
+
+	var aRemovedNodes = [
+		{ positionInParent: 10, magnitude: 5 }, // magnitude properties should be ignored
+		{ positionInParent: 17, magnitude: 2 },
+		{ positionInParent: 90, magnitude: 15 },
+		{ positionInParent: 120, magnitude: 50 },
+		{ positionInParent: 239, magnitude: 10 }
+	];
+
+	oBinding._adaptSections(aSections, {
+		added: aAdded,
+		removed: aRemovedNodes
+	}, {
+		indexName: "positionInParent",
+		ignoreMagnitude: true
+	});
+
+	var aExpectedSections = [
+		{ iSkip: 0, iTop: 19 },
+		{ iSkip: 40, iTop: 2 },
+		{ iSkip: 81, iTop: 19 },
+		{ iSkip: 120, iTop: 39 },
+		{ iSkip: 199, iTop: 39 },
+		{ iSkip: 300, iTop: 1 }
+	];
+
+	assert.deepEqual(aSections, aExpectedSections, "The server sections are correctly adapted");
+});
+
+QUnit.test("Restore tree state: move server index node to deep nodes (UC8)", function(assert) {
+	var done = assert.async();
+	var iOldLength, sOldLastNodeKey;
+	var oContext1;
+	createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='008')/Results", null, [], {
+		threshold: 10,
+		countMode: "Inline",
+		operationMode: "Server",
+		numberOfExpandedLevels: 3,
+		restoreTreeStateAfterChange: true
+	});
+
+	function handler1() {
+		oBinding.detachChange(handler1);
+		oBinding.attachChange(handler2);
+		oBinding.expand(6, true);
+	}
+
+	function handler2() {
+		oBinding.detachChange(handler2);
+		iOldLength = oBinding.getLength();
+		sOldLastNodeKey = oBinding.findNode(iOldLength - 1).key;
+
+		var oNode = oBinding.findNode(12);
+		oBinding.removeContext(oNode.context);
+
+		var oNewParent = oBinding.findNode(6);
+		oBinding.addContexts(oNewParent.context, [oNode.context]);
+
+		oBinding.attachRefresh(handler3);
+		oBinding.submitChanges();
+	}
+
+	function handler3() {
+		oBinding.detachRefresh(handler3);
+
+		var iNewLength = oBinding.getLength();
+		assert.equal(iNewLength, iOldLength - 4, "New binding length is equal to old length minus four (child nodes of moved node)");
+
+		if (iNewLength === 0) {
+			assert.notOk(true, "No data loaded");
+		}  else {
+			var sNewLastNodeKey = oBinding.findNode(iNewLength - 1).key;
+			assert.equal(sNewLastNodeKey, sOldLastNodeKey, "Last node in binding is still the same");
+		}
+		done();
+	}
+	oBinding.attachChange(handler1);
+	oBinding.getContexts(0, 20, 100);
+});
+
+QUnit.test("Restore tree state: Move one level down - server-index child nodes become deep nodes (UC10)", function(assert) {
+	var done = assert.async();
+	var iOldLength, sOldLastNodeKey;
+	var oContext1;
+
+	createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='010')/Results", null, [], {
+		threshold: 10,
+		countMode: "Inline",
+		operationMode: "Server",
+		numberOfExpandedLevels: 3,
+		restoreTreeStateAfterChange: true
+	});
+
+	function handler1() {
+		oBinding.detachChange(handler1);
+		iOldLength = oBinding.getLength();
+		sOldLastNodeKey = oBinding.findNode(iOldLength - 1).key;
+
+		var oNode = oBinding.findNode(4);
+		oBinding.removeContext(oNode.context);
+
+		var oNewParent = oBinding.findNode(13);
+		oBinding.addContexts(oNewParent.context, [oNode.context]);
+
+		oBinding.attachRefresh(handler2);
+		oBinding.submitChanges();
+	}
+
+	function handler2() {
+		oBinding.detachRefresh(handler2);
+
+		var iNewLength = oBinding.getLength();
+		assert.equal(iNewLength, iOldLength - 1, "New binding length is equal to old length minus one (child node of moved node)");
+
+		if (iNewLength === 0) {
+			assert.notOk(true, "No data loaded");
+		}  else {
+			var sNewLastNodeKey = oBinding.findNode(iNewLength - 1).key;
+			assert.equal(sNewLastNodeKey, sOldLastNodeKey, "Last node in binding is still the same");
+		}
+		done();
+	}
+	oBinding.attachChange(handler1);
+	oBinding.getContexts(0, 20, 100);
+});
+
+
+QUnit.test("Restore tree state: move deep nodes to server index (UC17)", function(assert) {
+	var done = assert.async();
+	var iOldLength, sOldLastNodeKey;
+	var oContext1;
+	createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='017')/Results", null, [], {
+		threshold: 10,
+		countMode: "Inline",
+		operationMode: "Server",
+		numberOfExpandedLevels: 3,
+		restoreTreeStateAfterChange: true
+	});
+
+	function handler1() {
+		oBinding.detachChange(handler1);
+		oBinding.attachChange(handler2);
+		oBinding.expand(3, true);
+	}
+
+	function handler2() {
+		oBinding.detachChange(handler2);
+		oBinding.attachChange(handler3);
+		oBinding.expand(5, true);
+	}
+
+	function handler3() {
+		oBinding.detachChange(handler3);
+		oBinding.attachChange(handler4);
+		oBinding.expand(6, true);
+	}
+
+	function handler4() {
+		oBinding.detachChange(handler4);
+		oBinding.attachChange(handler5);
+		oBinding.expand(7, true);
+	}
+
+	function handler5() {
+		oBinding.detachChange(handler5);
+		iOldLength = oBinding.getLength();
+		sOldLastNodeKey = oBinding.findNode(iOldLength - 1).key;
+
+		var oNode = oBinding.findNode(5);
+		oBinding.removeContext(oNode.context);
+
+		var oNewParent = oBinding.findNode(1);
+		oBinding.addContexts(oNewParent.context, [oNode.context]);
+
+		oBinding.attachRefresh(handler6);
+		oBinding.submitChanges();
+	}
+
+	function handler6() {
+		oBinding.detachRefresh(handler6);
+
+		var iNewLength = oBinding.getLength();
+		assert.equal(iNewLength, iOldLength, "New binding length is equal to old length");
+
+		if (iNewLength === 0) {
+			assert.notOk(true, "No data loaded");
+		}  else {
+			var sNewLastNodeKey = oBinding.findNode(iNewLength - 1).key;
+			assert.equal(sNewLastNodeKey, sOldLastNodeKey, "Last node in binding is still the same");
+		}
+		done();
+	}
+	oBinding.attachChange(handler1);
+	oBinding.getContexts(0, 20, 100);
+});
+
+
