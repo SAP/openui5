@@ -284,61 +284,106 @@ sap.ui.require([
 		var oBindingInfo = {path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results"};
 		var done = assert.async();
 
-		function test(mTestSettings) {
+		function testRun(mTestSettings) {
 			return new Promise(function(resolve) {
 				var oTable = new sap.ui.table.AnalyticalTable({
 					columns: [new sap.ui.table.AnalyticalColumn()]
 				});
+
+				if (mTestSettings.renderTable) {
+					oTable.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				}
+
 				var oUpdateColumnsSpy = sinon.spy(oTable, "_updateColumns");
+				var oInvalidateSpy = sinon.spy(oTable, "invalidate");
+
 				oTable.setModel(mTestSettings.model);
 				if (mTestSettings.bindingInfo != null) {
 					oTable.bindRows(mTestSettings.bindingInfo);
 				}
 
 				TableUtils.Binding.metadataLoaded(oTable).then(function() {
-					mTestSettings.metadataLoaded(oUpdateColumnsSpy);
+					mTestSettings.metadataLoaded(oUpdateColumnsSpy, oInvalidateSpy, mTestSettings.renderTable);
+					oTable.destroy();
 					resolve();
 				}).catch(function() {
-					mTestSettings.metadataLoaded(oUpdateColumnsSpy);
+					mTestSettings.metadataLoaded(oUpdateColumnsSpy, oInvalidateSpy, mTestSettings.renderTable);
+					oTable.destroy();
 					resolve();
 				});
 			});
 		}
 
+		function test(mTestSettings) {
+			return new Promise(function(resolve) {
+				mTestSettings.renderTable = true;
+				testRun(mTestSettings).then(function() {
+					mTestSettings.renderTable = false;
+					return testRun(mTestSettings);
+				}).then(resolve);
+			});
+		}
+
 		test({
 			bindingInfo: oBindingInfo,
-			metadataLoaded: function(oUpdateColumnsSpy) {
+			metadataLoaded: function(oUpdateColumnsSpy, oInvalidateSpy, bTableIsRendered) {
 				assert.ok(oUpdateColumnsSpy.notCalled, "No Model -> Columns not updated");
+				if (bTableIsRendered) {
+					assert.ok(oInvalidateSpy.notCalled, "Table is rendered -> Not invalidated");
+				} else {
+					assert.ok(oInvalidateSpy.notCalled, "Table is not rendered -> Not invalidated");
+				}
 			}
 		}).then(function() {
 			return test({
 				model: new ODataModelV2(sServiceURI),
-				metadataLoaded: function(oUpdateColumnsSpy) {
+				metadataLoaded: function(oUpdateColumnsSpy, oInvalidateSpy, bTableIsRendered) {
 					assert.ok(oUpdateColumnsSpy.notCalled, "No BindingInfo -> Columns not updated");
+					if (bTableIsRendered) {
+						assert.ok(oInvalidateSpy.notCalled, "Table is rendered -> Not invalidated");
+					} else {
+						assert.ok(oInvalidateSpy.notCalled, "Table is not rendered -> Not invalidated");
+					}
 				}
 			});
 		}).then(function() {
 			return test({
 				bindingInfo: oBindingInfo,
 				model: new ODataModelV2(sServiceURI),
-				metadataLoaded: function(oUpdateColumnsSpy) {
+				metadataLoaded: function(oUpdateColumnsSpy, oInvalidateSpy, bTableIsRendered) {
 					assert.ok(oUpdateColumnsSpy.calledOnce, "V2 model -> Columns updated");
+					if (bTableIsRendered) {
+						assert.ok(oInvalidateSpy.calledOnce, "Table is rendered -> Invalidated");
+					} else {
+						assert.ok(oInvalidateSpy.notCalled, "Table is not rendered -> Not invalidated");
+					}
 				}
 			});
 		}).then(function() {
 			return test({
 				bindingInfo: oBindingInfo,
 				model: new ODataModel(sServiceURI, {loadMetadataAsync: false}),
-				metadataLoaded: function(oUpdateColumnsSpy) {
+				metadataLoaded: function(oUpdateColumnsSpy, oInvalidateSpy, bTableIsRendered) {
 					assert.ok(oUpdateColumnsSpy.calledOnce, "V1 model; Load metadata synchronously -> Columns updated");
+					if (bTableIsRendered) {
+						assert.ok(oInvalidateSpy.calledOnce, "Table is rendered -> Invalidated");
+					} else {
+						assert.ok(oInvalidateSpy.notCalled, "Table is not rendered -> Not invalidated");
+					}
 				}
 			});
 		}).then(function() {
 			return test({
 				bindingInfo: oBindingInfo,
 				model: new ODataModel(sServiceURI, {loadMetadataAsync: true}),
-				metadataLoaded: function(oUpdateColumnsSpy) {
+				metadataLoaded: function(oUpdateColumnsSpy, oInvalidateSpy, bTableIsRendered) {
 					assert.ok(oUpdateColumnsSpy.calledOnce, "V1 model; Load metadata asynchronously -> Columns updated");
+					if (bTableIsRendered) {
+						assert.ok(oInvalidateSpy.calledOnce, "Table is rendered -> Invalidated");
+					} else {
+						assert.ok(oInvalidateSpy.notCalled, "Table is not rendered -> Not invalidated");
+					}
 				}
 			});
 		}).then(done);
