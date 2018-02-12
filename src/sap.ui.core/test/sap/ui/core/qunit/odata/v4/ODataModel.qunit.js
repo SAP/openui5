@@ -381,11 +381,12 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("Model creates _Requestor", function (assert) {
-		var oEntitySetMetaDataPromise = {},
-			oExpectedBind0,
+		var oExpectedBind0,
 			oExpectedBind1,
+			oExpectedBind2,
 			oExpectedCreate = this.mock(_Requestor).expects("create"),
 			fnFetchEntityContainer = function () {},
+			fnFetchMetadata = function () {},
 			oModel,
 			oModelInterface,
 			oRequestor = {},
@@ -397,7 +398,9 @@ sap.ui.require([
 			.returns(oRequestor);
 		oExpectedBind0 = this.mock(ODataMetaModel.prototype.fetchEntityContainer).expects("bind")
 			.returns(fnFetchEntityContainer);
-		oExpectedBind1 = this.mock(ODataModel.prototype.getGroupProperty).expects("bind")
+		oExpectedBind1 = this.mock(ODataMetaModel.prototype.fetchObject).expects("bind")
+			.returns(fnFetchMetadata);
+		oExpectedBind2 = this.mock(ODataModel.prototype.getGroupProperty).expects("bind")
 			.returns(ODataModel.prototype.getGroupProperty);
 
 		// code under test
@@ -406,7 +409,8 @@ sap.ui.require([
 		assert.ok(oModel instanceof Model);
 		assert.strictEqual(oModel.oRequestor, oRequestor);
 		assert.strictEqual(oExpectedBind0.firstCall.args[0], oModel.oMetaModel);
-		assert.strictEqual(oExpectedBind1.firstCall.args[0], oModel);
+		assert.strictEqual(oExpectedBind1.firstCall.args[0], oModel.oMetaModel);
+		assert.strictEqual(oExpectedBind2.firstCall.args[0], oModel);
 
 		this.mock(oModel._submitBatch).expects("bind")
 			.withExactArgs(sinon.match.same(oModel), "$auto")
@@ -418,17 +422,6 @@ sap.ui.require([
 		oModelInterface = oExpectedCreate.firstCall.args[1];
 		oModelInterface.fnOnCreateGroup("$auto");
 		oModelInterface.fnOnCreateGroup("foo");
-
-		this.mock(ODataMetaModel.prototype).expects("getMetaPath")
-			.withExactArgs("/EntitySet(42)")
-			.returns("/EntitySet");
-		this.mock(ODataMetaModel.prototype).expects("fetchObject")
-			.withExactArgs("/EntitySet")
-			.returns(oEntitySetMetaDataPromise);
-
-		// code under test
-		assert.strictEqual(oModelInterface.fnFetchMetadata("/EntitySet(42)"),
-			oEntitySetMetaDataPromise);
 	});
 
 	//*********************************************************************************************

@@ -158,12 +158,12 @@ sap.ui.define([
 	 * Converts the filter string literals to OData V2 syntax
 	 *
 	 * @param {string} sFilter The filter string
-	 * @param {string} sResourcePath
-	 *   The resource path (allows metadata access, but does not become part of the result)
+	 * @param {string} sMetaPath
+	 *   The meta path corresponding to the resource path
 	 * @returns {string} The filter string ready for a V2 query
 	 * @throws {Error} If the filter path is invalid
 	 */
-	_V2Requestor.prototype.convertFilter = function (sFilter, sResourcePath) {
+	_V2Requestor.prototype.convertFilter = function (sFilter, sMetaPath) {
 		var oFilterTree = _Parser.parseFilter(sFilter),
 			that = this;
 
@@ -207,8 +207,8 @@ sap.ui.define([
 				};
 			}
 			if (oNode.id === "PATH") {
-				oProperty = that.oModelInterface
-					.fnFetchMetadata("/" + sResourcePath + "/" + oNode.value).getResult();
+				oProperty = that.oModelInterface.fnFetchMetadata(sMetaPath + "/" + oNode.value)
+					.getResult();
 				if (!oProperty) {
 					throw new Error("Invalid filter path: " + oNode.value);
 				}
@@ -452,8 +452,8 @@ sap.ui.define([
 	 * Converts the supported V4 OData system query options to the corresponding V2 OData system
 	 * query options.
 	 *
-	 * @param {string} sResourcePath
-	 *   The resource path (allows metadata access, but does not become part of the result)
+	 * @param {string} sMetaPath
+	 *   The meta path corresponding to the resource path
 	 * @param {object} mQueryOptions The query options
 	 * @param {function(string,any)} fnResultHandler
 	 *   The function to process the converted options getting the name and the value
@@ -465,7 +465,7 @@ sap.ui.define([
 	 *   If a system query option other than $expand and $select is used or if any $expand value is
 	 *   not an object
 	 */
-	_V2Requestor.prototype.doConvertSystemQueryOptions = function (sResourcePath, mQueryOptions,
+	_V2Requestor.prototype.doConvertSystemQueryOptions = function (sMetaPath, mQueryOptions,
 			fnResultHandler, bDropSystemQueryOptions, bSortExpandSelect) {
 		var aSelects = [],
 			that = this;
@@ -548,7 +548,7 @@ sap.ui.define([
 						Array.isArray(vValue) ? vValue : vValue.split(","));
 					return; // don't call fnResultHandler; this is done later
 				case "$filter":
-					vValue = that.convertFilter(vValue, sResourcePath);
+					vValue = that.convertFilter(vValue, sMetaPath);
 					break;
 				default:
 					if (bIsSystemQueryOption) {

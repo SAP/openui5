@@ -605,7 +605,7 @@ sap.ui.require([
 				asV2Requestor(oRequestor);
 
 				// code under test
-				oRequestor.doConvertSystemQueryOptions("Foo", oFixture.queryOptions,
+				oRequestor.doConvertSystemQueryOptions("/Foo", oFixture.queryOptions,
 					fnResultHandlerSpy, oFixture.dropSystemQueryOptions, bSorted);
 
 				assert.strictEqual(fnResultHandlerSpy.callCount,
@@ -639,7 +639,7 @@ sap.ui.require([
 
 			// code under test
 			assert.throws(function () {
-				oRequestor.doConvertSystemQueryOptions("Foo", {"$expand" : vExpandOption});
+				oRequestor.doConvertSystemQueryOptions("/Foo", {"$expand" : vExpandOption});
 			}, new Error("$expand must be a valid object"));
 		});
 	});
@@ -695,7 +695,7 @@ sap.ui.require([
 
 			// code under test
 			assert.throws(function () {
-				oRequestor.doConvertSystemQueryOptions("Foo", oFixture.queryOptions,
+				oRequestor.doConvertSystemQueryOptions("/Foo", oFixture.queryOptions,
 					function () {});
 			}, new Error(oFixture.error));
 		});
@@ -710,10 +710,10 @@ sap.ui.require([
 		asV2Requestor(oRequestor);
 
 		this.mock(oRequestor).expects("convertFilter")
-			.withExactArgs(sFilter, "Foo").returns("~");
+			.withExactArgs(sFilter, "/Foo").returns("~");
 
 		// code under test
-		oRequestor.doConvertSystemQueryOptions("Foo", {$filter : sFilter},
+		oRequestor.doConvertSystemQueryOptions("/Foo", {$filter : sFilter},
 			fnResultHandlerSpy);
 
 		sinon.assert.calledOnce(fnResultHandlerSpy);
@@ -948,20 +948,20 @@ sap.ui.require([
 	].forEach(function (oFixture) {
 		QUnit.test("convertFilter: " + oFixture.type, function (assert) {
 			var sFilter = "foo/bar eq " + oFixture.literal,
+				sMetaPath = "/MyEntitySet",
 				oProperty = {$Type : oFixture.type, $v2Type : oFixture.v2type},
 				oRequestor = {
 					oModelInterface : {fnFetchMetadata : function () {}}
-				},
-				sResourcePath = "MyEntitySet";
+				};
 
 			asV2Requestor(oRequestor);
 
 			this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
-				.withExactArgs("/" + sResourcePath + "/foo/bar")
+				.withExactArgs(sMetaPath + "/foo/bar")
 				.returns(SyncPromise.resolve(oProperty));
 
 			// code under test
-			assert.strictEqual(oRequestor.convertFilter(sFilter, sResourcePath),
+			assert.strictEqual(oRequestor.convertFilter(sFilter, sMetaPath),
 				oFixture.result || sFilter);
 		});
 	});
@@ -1075,23 +1075,20 @@ sap.ui.require([
 		error : "Invalid filter path: foo/bar"
 	}].forEach(function (oFixture) {
 		QUnit.test("convertFilter: " + oFixture.error, function (assert) {
-			var oRequestor = {
-					oModelInterface : {
-						fnFetchMetadata : function () {
-						}
-					}
-				},
-				sResourcePath = "MyEntitySet";
+			var sMetaPath = "/MyEntitySet",
+				oRequestor = {
+					oModelInterface : {fnFetchMetadata : function () {}}
+				};
 
 			asV2Requestor(oRequestor);
 
 			this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
-				.withExactArgs("/" + sResourcePath + "/foo/bar")
+				.withExactArgs(sMetaPath + "/foo/bar")
 				.returns(SyncPromise.resolve(oFixture.property));
 
 			// code under test
 			assert.throws(function () {
-				oRequestor.convertFilter("foo/bar eq " + oFixture.literal, sResourcePath);
+				oRequestor.convertFilter("foo/bar eq " + oFixture.literal, sMetaPath);
 			}, new Error(oFixture.error));
 		});
 	});
@@ -1122,9 +1119,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("getTypeForName", function (assert) {
 		var oRequestor = {
-				oModelInterface : {
-					fnFetchMetadata : function () {}
-				}
+				oModelInterface : {fnFetchMetadata : function () {}}
 			},
 			oType = {};
 
@@ -1243,9 +1238,7 @@ sap.ui.require([
 
 		QUnit.test(sTitle, function (assert) {
 			var oEntity = {"Foo" : 42, "ID" : "1"},
-				oModelInterface = {
-					fnFetchMetadata : function () {}
-				},
+				oModelInterface = {fnFetchMetadata : function () {}},
 				oOperationMetadata = {
 					"$IsBound" : true,
 					"$Parameter" : [{ // "$Name" : null, "$Nullable" : false,
