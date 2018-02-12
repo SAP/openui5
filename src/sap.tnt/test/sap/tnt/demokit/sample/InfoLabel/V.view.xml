@@ -6,7 +6,7 @@
 	xmlns:f="sap.ui.layout.form"
 	xmlns:tnt="sap.tnt"
 	height="100%">
-	<VBox>
+	<ScrollContainer vertical="true" height="100%">
 		<f:Form id="FormDisplay" editable="false">
 			<f:layout>
 				<f:ResponsiveGridLayout
@@ -76,5 +76,5 @@
 				</f:FormContainer>
 			</f:formContainers>
 		</f:Form>
-	</VBox>
+	</ScrollContainer>
 </mvc:View>
