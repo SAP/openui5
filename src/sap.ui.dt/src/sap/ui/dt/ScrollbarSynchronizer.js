@@ -173,5 +173,9 @@ function(
 		ManagedObject.prototype.destroy.apply(this, arguments);
 	};
 
+	ScrollbarSynchronizer.prototype.isSyncing = function () {
+		return this._bSyncing;
+	};
+
 	return ScrollbarSynchronizer;
 }, true);

@@ -50,7 +50,6 @@
 				assert.strictEqual(this.oDesignTimeMetadata.getData().testField, "testValue", "then the field is returned right");
 				assert.strictEqual(this.oDesignTimeMetadata.getDomRef(), "domRef", "then the domRef is returned right");
 				assert.strictEqual(this.oDesignTimeMetadata.isIgnored(), false, "then ignore property is returned right");
-				assert.strictEqual(this.oDesignTimeMetadata.getCloneDomRef(), false, "then cloneDomRef property is returned right");
 			});
 
 			QUnit.test("when getAction is called...", function(assert) {
