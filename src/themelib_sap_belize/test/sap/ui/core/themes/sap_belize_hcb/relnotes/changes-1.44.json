@@ -639,5 +639,22 @@
         "references": []
       }
     ]
+  },
+  "1.44.27": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "3c1fb975dfdab80fdd91d124b36b1522c13b9db3",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: correct font color when select appointments",
+        "references": []
+      },
+      {
+        "id": "3e1601aaf487a515f881728cc6a5743d79de8b16",
+        "type": "FIX",
+        "text": " sap.m.Popover: correct header, subheader and footer DOM structure",
+        "references": []
+      }
+    ]
   }
 }

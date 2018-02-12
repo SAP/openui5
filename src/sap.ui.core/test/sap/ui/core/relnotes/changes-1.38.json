@@ -2123,5 +2123,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.32": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "545a9da8c15273858163c5776fab1b67aebf4e31",
+        "type": "FIX",
+        "text": " Opa: fix action focus when IE11 browser is not focused",
+        "references": []
+      }
+    ]
   }
 }
