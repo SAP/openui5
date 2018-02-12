@@ -11,6 +11,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 	// shortcut for sap.ui.core.CalendarType
 	var CalendarType = coreLibrary.CalendarType;
 
+	// shortcut for sap.ui.unified.CalendarDayType
+	var CalendarDayType = library.CalendarDayType;
+
 	/*
 	 * Inside the Month CalendarDate objects are used. But in the API JS dates are used.
 	 * So conversion must be done on API functions.
@@ -114,8 +117,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 			selectedDates : {type : "sap.ui.unified.DateRange", multiple : true, singularName : "selectedDate"},
 
 			/**
-			 * Date Range with type to visualize special days in the Calendar.
-			 * If one day is assigned to more than one Type, only the first one will be used.
+			 * <code>DateRange</code> with type to visualize special days in the Calendar.
+			 *
+			 * <b>Note:</b> If one day is assigned to more than one DateTypeRange, only the first one
+			 * will be used. The only exception is when one of the types is
+			 * <code>NonWorking</code>, then you can have both <code>NonWorking</code>
+			 * and the other type.
+			 * For example, you can have <code>NonWorking</code> + <code>Type01</code>
+			 * but you can't have <code>Type01</code> + <code>Type02</code>.
 			 */
 			specialDates : {type : "sap.ui.unified.DateTypeRange", multiple : true, singularName : "specialDate"},
 
@@ -735,17 +744,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 	};
 
 	/*
-	 * gets the type of a single date checking the specialDates aggregation
-	 * the first hit is used
+	 * Gets the type of a single date checking the specialDates aggregation
+	 * the first hit is used. The only exception is when one of the types is
+	 * NonWorking, then you can have both NonWorking and the other type.
 	 * @param {sap.ui.unified.calendar.CalendarDate} oDate
-	 * @return {object} date type and tooltip defined in CalendarDayType
+	 * @return {object[]} an array that contains maximum 2 objects each with date type and tooltip defined in CalendarDayType
 	 * @private
 	 */
-	Month.prototype._getDateType = function(oDate){
+	Month.prototype._getDateTypes = function(oDate){
 
 		CalendarUtils._checkCalendarDate(oDate);
 
-		var oType;
+		var oType, oTypeNW, bNonWorkingType, aTypes = [];
 		var aSpecialDates = this.getSpecialDates();
 		var oTimeStamp = oDate.toUTCJSDate().getTime();
 		var sCalendarType = this.getPrimaryCalendarType();
@@ -766,13 +776,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 				oEndTimeStamp = oEndDate.toUTCJSDate().getTime();
 			}
 
+			bNonWorkingType = oRange.getType() === CalendarDayType.NonWorking;
+
+			// collects non working day with the first occurrence of one of the types01..types20
 			if ((oTimeStamp == oStartTimeStamp && !oEndDate) || (oTimeStamp >= oStartTimeStamp && oTimeStamp <= oEndTimeStamp)) {
-				oType = {type: oRange.getType(), tooltip: oRange.getTooltip_AsString()};
-				break;
+				if (!bNonWorkingType && !oType) {
+					oType = {type: oRange.getType(), tooltip: oRange.getTooltip_AsString()};
+					aTypes.push(oType);
+				} else if (bNonWorkingType && !oTypeNW) {
+						oTypeNW = {type: oRange.getType(), tooltip: oRange.getTooltip_AsString()};
+						aTypes.push(oTypeNW);
+				}
+				if (oType && oTypeNW) {
+					break;
+				}
 			}
 		}
 
-		return oType;
+		return aTypes;
 
 	};
 
