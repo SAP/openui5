@@ -36,11 +36,11 @@ sap.ui.define([],
 			 * @returns {boolean} whether there could be internal rules to load
 			 */
 			canLoadInternalRules: function () {
-				var sFilePath = jQuery.sap.getModulePath("sap.ui.support") + "/internal/.ping";
+				var sFilePath = jQuery.sap.getModulePath("sap.ui.support").replace("/resources/", "/test-resources/") + "/internal/.ping";
 				var bCanLoadInternalRules;
 
 				jQuery.ajax({
-					type: "GET",
+					type: "HEAD",
 					async: false,
 					url: sFilePath,
 					success: function () {
