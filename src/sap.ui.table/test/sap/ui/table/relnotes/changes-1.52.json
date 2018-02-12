@@ -232,5 +232,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.6": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "0b809a348a443843e72c1102d67df3f3b8a601f6",
+        "type": "FIX",
+        "text": " TreeTable: Outline offset of tree icon in zoom levels \u003c 100%",
+        "references": []
+      }
+    ]
   }
 }

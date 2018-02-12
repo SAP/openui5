@@ -1831,5 +1831,148 @@
         "references": []
       }
     ]
+  },
+  "1.50.9": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "f39587ac145889d8cc2bf912cc1795d1dd21729d",
+        "type": "FIX",
+        "text": " Control: BusyIndicator animation default",
+        "references": []
+      },
+      {
+        "id": "8edacc9136469f2d261839161aebb511d8af4392",
+        "type": "FIX",
+        "text": " Control: refactor fnHandleInteraction",
+        "references": []
+      },
+      {
+        "id": "763ec109a1a928056e1fb4354d16e6cfd1ea474e",
+        "type": "FIX",
+        "text": " sap.m.Button: Reference to the text content of the button is added to the AriaLabelledBy only when the button has text",
+        "references": []
+      },
+      {
+        "id": "adef296100daafd3e1662f48281aeabe87dccf43",
+        "type": "FIX",
+        "text": " sap.m.Button: focus outline is visible on click",
+        "references": []
+      },
+      {
+        "id": "2fd37e68326c0071f10ae6605a729f6420acb128",
+        "type": "FIX",
+        "text": " sap.m.DateTimeField: setDateValue accepts JS Date Object from iframe",
+        "references": []
+      },
+      {
+        "id": "3f234eb76551a9e1f1000e3aad7595515f6cebbf",
+        "type": "FIX",
+        "text": " sap.m.Dialog: correct header, subheader and footer DOM structure",
+        "references": []
+      },
+      {
+        "id": "8ea49c96f06ee703b4ddbe41c54a375a1a1bffc2",
+        "type": "FIX",
+        "text": " sap.m.Input: Description is now read correctly by JAWS",
+        "references": []
+      },
+      {
+        "id": "e6ddb5822648c9128779a395e70dc87a91a9d7c9",
+        "type": "FIX",
+        "text": " sap.m.Input: Issue with calling selectedKey from ValueHelp is now fixed.",
+        "references": []
+      },
+      {
+        "id": "f32abb0949d5c0cbab1c925e6084a1c9c6b64c7f",
+        "type": "FIX",
+        "text": " sap.m.Menu: recreate menu if all items are removed",
+        "references": []
+      },
+      {
+        "id": "ded3478f72452dd277c78faeca40cfaaead67a5e",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Now when Reject or Accept button is pressed, the icon has correct color",
+        "references": []
+      },
+      {
+        "id": "d13731b7df0ba28378909e4d2c0c32a3dd42272e",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Selecting an item now clears the input field",
+        "references": []
+      },
+      {
+        "id": "9b7b3239a29a55cbb92dc2b308715f6c60bcdc0a",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: getAccessibilityInfo returns the tooltip also",
+        "references": []
+      },
+      {
+        "id": "2fa075b6b1daebb40def993d4a444b6617b55672",
+        "type": "FIX",
+        "text": " sap.m.Popover: correct header, subheader and footer DOM structure",
+        "references": []
+      },
+      {
+        "id": "d8de5d93263852ccb0edbee541c95fb32eec9987",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Now correctly goes into overflow when used inside OverflowToolbar",
+        "references": []
+      },
+      {
+        "id": "78d81f9d14746439570a5841a241dff75158c249",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Vertically aligned correctly alongside other controls",
+        "references": []
+      },
+      {
+        "id": "93daa02e30db1c0e3571cdbc49045f2b0b517a03",
+        "type": "FIX",
+        "text": " sap.m.Slider: sap.m.RangeSlider exception fixed.",
+        "references": []
+      },
+      {
+        "id": "268300946ea5307292e54d7c4a86e5a8e8f7ca46",
+        "type": "FIX",
+        "text": " sap.m.StandardTreeItem: setIcon function is enhanced",
+        "references": []
+      },
+      {
+        "id": "8102f5969e833ea04279deb9c63b6817cdbb080e",
+        "type": "FIX",
+        "text": " sap.m.Table: Selection column should be hidden from screen readers",
+        "references": []
+      },
+      {
+        "id": "db7ba4875cb1072386a19230827db81204acdbf6",
+        "type": "FIX",
+        "text": " sap.m.Text: maxLines property is now working",
+        "references": []
+      },
+      {
+        "id": "0bcb507f496a49fdedaa9807cd11961e336f8c1f",
+        "type": "FIX",
+        "text": " sap.m.Tile: Focus is cleared indicated in HCB and HCW",
+        "references": []
+      },
+      {
+        "id": "71457f2e21d86197028a390808301ae42cef4236",
+        "type": "FIX",
+        "text": " sap.m.Timepicker: position selection frame properly in DateTimepicker on small screens",
+        "references": []
+      },
+      {
+        "id": "ebc17130c785f1e9c6b80e08f46dbc5de706a9c3",
+        "type": "FIX",
+        "text": " sap.m: Replace non-breaking spaces with normal spaces",
+        "references": []
+      },
+      {
+        "id": "85568749c9a898e17743fd8e5a6abaa084ed4e34",
+        "type": "FIX",
+        "text": " sap.m: instanceof Date in public methods corrected",
+        "references": []
+      }
+    ]
   }
 }

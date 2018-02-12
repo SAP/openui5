@@ -239,5 +239,22 @@
         "references": []
       }
     ]
+  },
+  "1.52.6": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "e0ef4b72a95fcd5450fd0d9cc92b5a0df1351723",
+        "type": "FIX",
+        "text": " sap.m: instanceof Date in public methods corrected",
+        "references": []
+      },
+      {
+        "id": "5f5d25980c8fd489e8f4ca9c1940169422486591",
+        "type": "FIX",
+        "text": " sap.ui.unified.Currency: align currency labels properly",
+        "references": []
+      }
+    ]
   }
 }

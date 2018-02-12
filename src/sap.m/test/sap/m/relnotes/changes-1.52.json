@@ -1372,5 +1372,70 @@
         "references": []
       }
     ]
+  },
+  "1.52.6": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "20e716df550f686821a63fff843a173bb9c3de9f",
+        "type": "FIX",
+        "text": " Control: BusyIndicator animation default",
+        "references": []
+      },
+      {
+        "id": "7ee98473da416ba687395addf61237861014462a",
+        "type": "FIX",
+        "text": " sap.m.Dialog: correct header, subheader and footer DOM structure",
+        "references": []
+      },
+      {
+        "id": "c0df344767c21d7361a3df8acc8b3fb7ca3b81f5",
+        "type": "FIX",
+        "text": " sap.m.Dialog: correct padding of the subheader when Toolbar is used",
+        "references": []
+      },
+      {
+        "id": "cceb41b1953f2336e043bae4edf86394347d856f",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: focus correctly set on a FacetFilterList in SingleSelectMaster mode",
+        "references": []
+      },
+      {
+        "id": "9914edfb19568f2bd6ecb7f4a49c4ef7ae071aa0",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Now when Reject or Accept button is pressed, the icon has correct color",
+        "references": []
+      },
+      {
+        "id": "8e1323d4058350314d8e9b01ad2d455a02af7fae",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: Invisible text for the ValueState updated correctly on setState",
+        "references": []
+      },
+      {
+        "id": "7f64971307f16355aff56df9631e9acef5f60f66",
+        "type": "FIX",
+        "text": " sap.m.Popover: correct header, subheader and footer DOM structure",
+        "references": []
+      },
+      {
+        "id": "a29af6ce015c96bb379d1399c267124e6c1e4af2",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Scrolling issue in RTL on Safari corrected",
+        "references": []
+      },
+      {
+        "id": "82d2b12a96cf52bf1d63d2bfbda03a0a4d9099f8",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: apply sapContrastPlus to the TabStrip",
+        "references": []
+      },
+      {
+        "id": "e0ef4b72a95fcd5450fd0d9cc92b5a0df1351723",
+        "type": "FIX",
+        "text": " sap.m: instanceof Date in public methods corrected",
+        "references": []
+      }
+    ]
   }
 }

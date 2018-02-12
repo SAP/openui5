@@ -335,5 +335,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.6": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "5ae2115b14d68abdfb727d3e16e2636140658e63",
+        "type": "FIX",
+        "text": " sap.ui.rta Respect UI.Hidden annotation",
+        "references": []
+      }
+    ]
   }
 }

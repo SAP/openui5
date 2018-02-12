@@ -823,5 +823,64 @@
         "references": []
       }
     ]
+  },
+  "1.50.9": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "7763929205e0aaa068b50057f589fe938fdd61de",
+        "type": "FIX",
+        "text": " ClientTreeBinding: Incorrect filtering when using \"arrayNames\" constrain",
+        "references": []
+      },
+      {
+        "id": "a5f1895a371f4009136fdcfa1f900842f0f0ce13",
+        "type": "FIX",
+        "text": " ComponentContainer: component must be loaded only once",
+        "references": []
+      },
+      {
+        "id": "f39587ac145889d8cc2bf912cc1795d1dd21729d",
+        "type": "FIX",
+        "text": " Control: BusyIndicator animation default",
+        "references": []
+      },
+      {
+        "id": "8edacc9136469f2d261839161aebb511d8af4392",
+        "type": "FIX",
+        "text": " Control: refactor fnHandleInteraction",
+        "references": []
+      },
+      {
+        "id": "3b87170ad06795d05ac6f429846a6a7edf0df84b",
+        "type": "FIX",
+        "text": " Core#applyTheme: avoid flash of unstyled content (FOUC)",
+        "references": []
+      },
+      {
+        "id": "d1797035780e9d3604e8c79d6bcd23958f11a733",
+        "type": "FIX",
+        "text": " ODataListBinding: Change detection in combination with filtering",
+        "references": []
+      },
+      {
+        "id": "b39522da792d829037cb671775f4ff7261e4a50b",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Tab navigation is now correct",
+        "references": []
+      },
+      {
+        "id": "f429637b081fac86819dd214d4881a259a793fef",
+        "type": "FIX",
+        "text": " sap.ui.model.FilterProcessor: null check parameters",
+        "references": []
+      },
+      {
+        "id": "0b05e471fe82a090c6e2cf06a7a22e4200be9d58",
+        "type": "FIX",
+        "text": " v2.ODataModel: createCustomParams",
+        "references": []
+      }
+    ]
   }
 }

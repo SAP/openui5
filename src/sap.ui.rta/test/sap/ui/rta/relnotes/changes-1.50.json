@@ -147,5 +147,28 @@
         "references": []
       }
     ]
+  },
+  "1.50.9": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "cdd03b79323c64b5522d3bded8af30791e5080b8",
+        "type": "FIX",
+        "text": ": RTA - disable actions on binded aggregations",
+        "references": []
+      },
+      {
+        "id": "9e0711a6de87b428fad6bdabaf2c62aea554af94",
+        "type": "FIX",
+        "text": "sap.ui.rta: Local changes used when setting transports on reset",
+        "references": []
+      },
+      {
+        "id": "a09ac7381dc3d4e40ffd966dbb8e7a2b1aa82510",
+        "type": "FIX",
+        "text": "sap.ui.rta: Show BusyIndicator to block app during reset of changes",
+        "references": []
+      }
+    ]
   }
 }

@@ -1126,5 +1126,40 @@
         "references": []
       }
     ]
+  },
+  "1.48.19": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "064538124f7c59f151e5d4ab32bdfcd4d0ccf6b7",
+        "type": "FIX",
+        "text": " Control: BusyIndicator animation default",
+        "references": []
+      },
+      {
+        "id": "f0e209f44375e1c6fc3bc93456fb3cbee2aeb455",
+        "type": "FIX",
+        "text": " Control: refactor fnHandleInteraction",
+        "references": []
+      },
+      {
+        "id": "3ead433a8813d70ca3f58ed34ed14b95612e4221",
+        "type": "FIX",
+        "text": " Sorter: Make null sorted last in ascending order again",
+        "references": []
+      },
+      {
+        "id": "f852e5ad50a3e907dc0574d68157b16ddf880056",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: avoid duplicate \u0027tap\u0027 event (continued)",
+        "references": []
+      },
+      {
+        "id": "574f47ff0de4b1801c12cf4278bf2e93ba39d02f",
+        "type": "FIX",
+        "text": " v2.ODataModel: createCustomParams",
+        "references": []
+      }
+    ]
   }
 }

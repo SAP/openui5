@@ -652,5 +652,70 @@
         "references": []
       }
     ]
+  },
+  "1.52.6": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "6c52562004714800052a035acfda1a577f13bff0",
+        "type": "FIX",
+        "text": " Binding: Forward bForceUpdate when _refresh is called",
+        "references": []
+      },
+      {
+        "id": "b8472db4d3e239f98ac6f0e299fe5d0f888cc77c",
+        "type": "FIX",
+        "text": " Configuration#setRTL: do not avoid flash of unstyled content",
+        "references": []
+      },
+      {
+        "id": "20e716df550f686821a63fff843a173bb9c3de9f",
+        "type": "FIX",
+        "text": " Control: BusyIndicator animation default",
+        "references": []
+      },
+      {
+        "id": "20bff0d9f82c737989f8daece7d5472debf8b9a6",
+        "type": "FIX",
+        "text": " FilterProcessor: Adapt normalization for MS Edge 14+",
+        "references": []
+      },
+      {
+        "id": "9ccec79a07b3b4aa81ddc54f493a4ce768c4a9e9",
+        "type": "FIX",
+        "text": " Sorter: Make null sorted last in ascending order again",
+        "references": []
+      },
+      {
+        "id": "914395cc35b929d1516558ab854a2b67785cb596",
+        "type": "FIX",
+        "text": " Theming Parameters: Parse inline params in MS Edge",
+        "references": []
+      },
+      {
+        "id": "9da163839f938bab1f38fe74aaf72193bbb3af60",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: avoid duplicate \u0027tap\u0027 event (continued)",
+        "references": []
+      },
+      {
+        "id": "6bb78df22aeeb7165bb8439bd3143d3952933b4b",
+        "type": "FIX",
+        "text": " model.ODataContextBinding: use preliminary context",
+        "references": []
+      },
+      {
+        "id": "d5703828ae381485002b3769290679965665f726",
+        "type": "FIX",
+        "text": " odata.ODataUtils: include milliseconds in Edm.DateTime pattern",
+        "references": []
+      },
+      {
+        "id": "cdf8ad18874687327ef9134c0d24167d060ba63d",
+        "type": "FIX",
+        "text": " sap.ui.model: fix documentation, visibility of Client- \u0026 JSONModel",
+        "references": []
+      }
+    ]
   }
 }

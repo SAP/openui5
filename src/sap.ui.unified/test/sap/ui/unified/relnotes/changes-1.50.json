@@ -260,5 +260,28 @@
         "references": []
       }
     ]
+  },
+  "1.50.9": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "8edacc9136469f2d261839161aebb511d8af4392",
+        "type": "FIX",
+        "text": " Control: refactor fnHandleInteraction",
+        "references": []
+      },
+      {
+        "id": "85568749c9a898e17743fd8e5a6abaa084ed4e34",
+        "type": "FIX",
+        "text": " sap.m: instanceof Date in public methods corrected",
+        "references": []
+      },
+      {
+        "id": "805637c569878a08205cf845a53124e06893e886",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarDateInterval: hide content overlay properly",
+        "references": []
+      }
+    ]
   }
 }

@@ -65,13 +65,13 @@
           "src/sap.ui.demokit/pom.xml": "1",
           "src/sap.ui.dt/package.json": "2",
           "src/sap.ui.support/pom.xml": "1",
-          "src/sap.uxap/package.json": "4",
           "src/sap.ui.documentation/package.json": "4",
+          "src/sap.uxap/package.json": "4",
           "src/sap.tnt/package.json": "3",
-          "src/themelib_sap_belize/package.json": "15",
           "src/sap.ui.layout/package.json": "2",
-          "src/themelib_sap_bluecrystal/pom.xml": "1",
+          "src/themelib_sap_belize/package.json": "15",
           "src/sap.ui.fl/pom.xml": "1",
+          "src/themelib_sap_bluecrystal/pom.xml": "1",
           "src/sap.ui.dt/pom.xml": "1",
           "src/sap.ui.unified/package.json": "2",
           "src/sap.ui.suite/pom.xml": "1",
@@ -81,7 +81,7 @@
           "src/themelib_sap_belize/pom.xml": "1"
         }
       },
-      "lastCommitId": "4f40451c98afba918fdc879227e110f998ce7fcb"
+      "lastCommitId": "48f80b698a36f95bc3588bc366df33112a15b5ba"
     },
     "rel-1.52.1": {
       "changes": {
