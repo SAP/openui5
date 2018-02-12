@@ -343,7 +343,7 @@ sap.ui.define([
 
 			// we need the aggregation name in order to find all control nodes in the parent
 			// which are relevant to this aggregation and skip all other possible nodes
-			sAggregationName = this._getParentAggregationName(oParent, oControl);
+			sAggregationName = this.getParentAggregationName(oControl, oParent);
 
 			// get the relevant controls from the aggregation node
 			aControlsInAggregation = this.getAggregation(oParent, sAggregationName);
@@ -360,7 +360,7 @@ sap.ui.define([
 			}
 		},
 
-		_getParentAggregationName: function (oParent, oControl) {
+		getParentAggregationName: function (oControl, oParent) {
 			var bNotNamedAggregation,
 				sAggregationName;
 
