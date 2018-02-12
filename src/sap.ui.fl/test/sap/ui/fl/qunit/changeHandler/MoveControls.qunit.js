@@ -15,7 +15,8 @@ sap.ui.require([
 	"sap/ui/core/XMLTemplateProcessor",
 	"sap/ui/thirdparty/sinon"
 ],
-function(MoveControlsHandler,
+function(
+	MoveControlsHandler,
 	UIComponent,
 	ComponentContainer,
 	Change,
@@ -346,6 +347,46 @@ function(MoveControlsHandler,
 
 		assert.ok(MoveControlsHandler.revertChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier}));
 		fnAssertInitialState.call(this, assert);
+	});
+
+	QUnit.test("When applying a change and using mPropertyBag.sourceAggregation and .targetAggregation", function(assert) {
+		var oChange = new Change({
+			selector : this.mSelectorWithGlobalId,
+			content : {
+				movedElements : [{
+					selector : {
+						id : this.oObjectAttribute.getId(),
+						type : "sap.m.ObjectAttribute"
+					},
+					sourceIndex : 0,
+					targetIndex : 1
+				}],
+				source : {
+					selector : {
+						id : this.oObjectHeader.getId(),
+						aggregation : "attributes"
+					}
+				},
+				target : {
+					selector : {
+						id : this.oLayout.getId(),
+						aggregation : "content"
+					}
+				}
+			}
+		});
+
+		var oRemoveStub = sandbox.stub(JsControlTreeModifier, "removeAggregation");
+		var oInsertStub = sandbox.stub(JsControlTreeModifier, "insertAggregation");
+		sandbox.stub(JsControlTreeModifier, "getAggregation").returns([this.oObjectAttribute]);
+
+		MoveControlsHandler.applyChange(oChange, this.oObjectHeader, {
+			modifier: JsControlTreeModifier,
+			sourceAggregation: "newSourceAggregation",
+			targetAggregation: "newTargetAggregation"
+		});
+		assert.equal(oRemoveStub.lastCall.args[1], "newSourceAggregation", "then the source aggregation from the change got changed");
+		assert.equal(oInsertStub.lastCall.args[1], "newTargetAggregation", "then the target aggregation from the change got changed");
 	});
 
 	QUnit.test("When applying broken changes (functionality independent of modifier), Then", function(assert) {
