@@ -1,7 +1,9 @@
-/*global describe,it,element,by,takeScreenshot,expect*/
+/*global describe,it,browser,element,by,takeScreenshot,expect*/
 
 describe('sap.m.TabStrip', function() {
 	"use strict";
+
+	browser.testrunner.currentSuite.meta.controlName = 'sap.m.TabContainer';
 
 	it('should load test page', function () {
 		expect(takeScreenshot()).toLookAs('initial');
