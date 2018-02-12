@@ -25,9 +25,6 @@ sap.ui.define([
 				this.getRouter().getRoute("deprecated").attachPatternMatched(this._onTopicDeprecatedMatched, this);
 				this.getRouter().getRoute("experimental").attachPatternMatched(this._onTopicExperimentalMatched, this);
 
-				// click handler for @link tags in JSdoc fragments
-				this.getView().attachBrowserEvent("click", this.onJSDocLinkClick, this);
-
 				this._currentMedia = this.getView()._getCurrentMediaContainerRange();
 
 				this._hasMatched = false;
@@ -43,7 +40,6 @@ sap.ui.define([
 			},
 
 			onExit: function () {
-				this.getView().detachBrowserEvent("click", this.onJSDocLinkClick, this);
 				this.getView()._detachMediaContainerWidthChange(this._resizeMessageStrip, this);
 			},
 
@@ -53,6 +49,8 @@ sap.ui.define([
 				}
 
 				this._hasMatched = true;
+
+				this.getView().byId("deprecatedList").attachUpdateFinished(this._modifyLinks, this);
 
 				APIInfo.getDeprecatedPromise().then(function (oData) {
 					this.getModel("deprecatedAPIs").setData(oData);
@@ -66,6 +64,8 @@ sap.ui.define([
 				}
 
 				this._hasMatched = true;
+
+				this.getView().byId("experimentalList").attachUpdateFinished(this._modifyLinks, this);
 
 				APIInfo.getExperimentalPromise().then(function (oData) {
 					this.getModel("experimentalAPIs").setData(oData);
@@ -146,23 +146,6 @@ sap.ui.define([
 				return "";
 			},
 
-			onApiPress: function (oControlEvent) {
-				var oCustomData = oControlEvent.getSource().getCustomData(),
-					sClassName = oCustomData[0].getValue(),
-					sEntityId = oCustomData[1].getValue();
-
-				// oCustomData[3].getValue() is true if method is static, else it is false
-				if (oCustomData[3].getValue()) {
-					sEntityId = sClassName + "." + sEntityId;
-				}
-
-				this.getRouter().navTo("apiId", {
-					id: sClassName,
-					entityId: sEntityId,
-					entityType: oCustomData[2].getValue()
-				}, false);
-			},
-
 			/**
 			 * This function wraps a text in a span tag so that it can be represented in an HTML control.
 			 * @param {string} sText
@@ -209,39 +192,10 @@ sap.ui.define([
 							target = target.slice(0, iHashIndex) + '/methods/' + target.slice(iHashIndex + 1);
 						}
 
-						return "<a class=\"jsdoclink\" href=\"javascript:void(0);\" target=\"" + target + "\">" + text + "</a>";
+						return "<a class=\"jsdoclink\" href=\"#/api/" + target + "\" target=\"_self\">" + text + "</a>";
 
 					}
 				});
-			},
-
-			onJSDocLinkClick: function (oEvent) {
-				// get target
-				var sRoute = "apiId",
-					bJSDocLink = oEvent.target.classList.contains("jsdoclink"),
-					oComponent = this.getOwnerComponent(),
-					sTarget = oEvent.target.getAttribute("target"),
-					aNavInfo;
-
-				if (!bJSDocLink || !sTarget) {
-					return;
-				}
-
-				if (sTarget.indexOf('/') >= 0) {
-					// link refers to a method or event target="<class name>/methods/<method name>" OR
-					// target="<class name>/events/<event name>
-					aNavInfo = sTarget.split('/');
-
-					oComponent.getRouter().navTo(sRoute, {
-						id: aNavInfo[0],
-						entityType: aNavInfo[1],
-						entityId: aNavInfo[2]
-					}, false);
-				} else {
-					oComponent.getRouter().navTo(sRoute, { id: sTarget }, false);
-				}
-
-				oEvent.preventDefault();
 			},
 
 			_resizeMessageStrip: function (oMedia) {
@@ -261,6 +215,41 @@ sap.ui.define([
 					oMessageStripContainer.setWidth("calc(100% - 3rem)");
 				} else if (sName === "Tablet" || sName === "Phone") {
 					oMessageStripContainer.setWidth("calc(100% - 2rem)");
+				}
+			},
+
+			/**
+			 * Modify all deprecated and experimental links
+			 * @private
+			 */
+			_modifyLinks: function (oEvent) {
+				var aItems = oEvent.getSource().getItems(),
+					iLen = aItems.length,
+					oItem;
+
+				while (iLen--) {
+					oItem = aItems[iLen];
+					// Access control lazy loading method if available
+					if (oItem._getLinkSender) {
+						var oCustomData = oItem.getCustomData(),
+							sClassName = oCustomData[0].getValue(),
+							sEntityId = oCustomData[1].getValue(),
+							sEntityType = oCustomData[2].getValue(),
+							sHref;
+
+						// oCustomData[3].getValue() is true if method is static, else it is false
+						if (oCustomData[3].getValue()) {
+							sEntityId = sClassName + "." + sEntityId;
+						}
+
+						sHref = "#/api/" + sClassName;
+						if (sEntityType !== "class") {
+							sHref += "/" + sEntityType + "/" + sEntityId;
+						}
+
+						// Set link href to allow open in new window functionality
+						oItem._getLinkSender().setHref(sHref);
+					}
 				}
 			}
 		});

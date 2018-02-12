@@ -36,6 +36,7 @@
                             <ObjectPageSubSection>
                                 <blocks>
                                     <m:List
+											id="deprecatedList"
                                             items="{ path : 'deprecatedAPIs>apis', templateShareable: 'false'}"
                                             showSeparators="Inner">
                                         <m:items>
@@ -45,7 +46,6 @@
                                                               formatter : '.formatSenderLink'}"
                                                     text="{parts : [{path : 'deprecatedAPIs>text'}, {path : 'deprecatedAPIs>since'}],
                                                            formatter: '.formatDescription'}"
-                                                    senderPress="onApiPress"
                                                     app:control="{deprecatedAPIs>control}"
                                                     app:entity="{deprecatedAPIs>entityName}"
                                                     app:type="{deprecatedAPIs>type}"
