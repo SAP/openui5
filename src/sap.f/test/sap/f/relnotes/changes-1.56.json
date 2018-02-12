@@ -1,0 +1,13 @@
+{
+  "1.56.0": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "6e5c4af6172369f245eebb535ec1fbf3a0ae2ff4",
+        "type": "FIX",
+        "text": " QUnit Designtime Library tests in Firefox",
+        "references": []
+      }
+    ]
+  }
+}

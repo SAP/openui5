@@ -1,0 +1,67 @@
+{
+  "1.56.0": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "0162e96c5452e5045751e400739f7a07d96c7732",
+        "type": "FEATURE",
+        "text": " Core: DragInfo/DropInfo are added to configure drag-and-drop",
+        "references": []
+      },
+      {
+        "id": "0756c4618d5544b9357c3642e0992fda9f9a17e6",
+        "type": "FEATURE",
+        "text": " sap.m.IconTabBar: Drag\u0026Drop is enabled in overflow",
+        "references": []
+      },
+      {
+        "id": "6e5c4af6172369f245eebb535ec1fbf3a0ae2ff4",
+        "type": "FIX",
+        "text": " QUnit Designtime Library tests in Firefox",
+        "references": []
+      },
+      {
+        "id": "ff75969dbd03279d90a0b5b263fa1e74ec2cb903",
+        "type": "FIX",
+        "text": " sap.m.Dialog: correct padding of the subheader when Toolbar is used",
+        "references": []
+      },
+      {
+        "id": "b6ceba77dd7362cbfaf2ecd73699bd81ad2ed453",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: focus correctly set on a FacetFilterList in SingleSelectMaster mode",
+        "references": []
+      },
+      {
+        "id": "f4d502158f2d2cc50e5e48b69e934093ebe78c2e",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: prevent tap Event when tap is not on a active element",
+        "references": []
+      },
+      {
+        "id": "8cd6d566b6552d51038925f440ff376c9f8a6d7b",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: Invisible text for the ValueState updated correctly on setState",
+        "references": []
+      },
+      {
+        "id": "4c97b761a57adca3c04783d18e403249c12184a7",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Now the width is consistent in all browsers",
+        "references": []
+      },
+      {
+        "id": "a32aa6ee26e95c9b64fdd87461436e4dea6fa5db",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: native browser focus outline removed",
+        "references": []
+      },
+      {
+        "id": "3fddfcc095f7c31af693fc8b7d38a16a9eb8ce04",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Scrolling issue in RTL on Safari corrected",
+        "references": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "1.56.0": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "450cad221c6fb2bb23af7c834ef1d949d2751d78",
+        "type": "FIX",
+        "text": " Fix maven coldwater plugin errors",
+        "references": []
+      },
+      {
+        "id": "012b33628fe2749a95df15befd5163769fbb71aa",
+        "type": "FIX",
+        "text": " sap.ui.dt.MiniMenu - various bugfixes \u0026 cleaning (split1)",
+        "references": []
+      },
+      {
+        "id": "4d385e4122a066b70b8ce1699073406b77c8af82",
+        "type": "FIX",
+        "text": " sap.ui.rta - Fix and refactor SimpleFormMove tests",
+        "references": []
+      },
+      {
+        "id": "eae3461b28a5303637147cc679a7e7427de08ddb",
+        "type": "FIX",
+        "text": " sap.ui.rta: Adjust overlay container in PopupManager._applyPopupPatch to new dt implementation",
+        "references": []
+      }
+    ]
+  }
+}

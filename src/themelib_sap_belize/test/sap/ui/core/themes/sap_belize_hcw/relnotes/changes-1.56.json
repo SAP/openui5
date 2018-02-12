@@ -1,0 +1,13 @@
+{
+  "1.56.0": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "ff75969dbd03279d90a0b5b263fa1e74ec2cb903",
+        "type": "FIX",
+        "text": " sap.m.Dialog: correct padding of the subheader when Toolbar is used",
+        "references": []
+      }
+    ]
+  }
+}

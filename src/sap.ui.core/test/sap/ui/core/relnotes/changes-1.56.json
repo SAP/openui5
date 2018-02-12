@@ -1,0 +1,43 @@
+{
+  "1.56.0": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "0162e96c5452e5045751e400739f7a07d96c7732",
+        "type": "FEATURE",
+        "text": " Core: DragInfo/DropInfo are added to configure drag-and-drop",
+        "references": []
+      },
+      {
+        "id": "7465b51ae0d71c11ff59a383ef788fc4aa4e4680",
+        "type": "FEATURE",
+        "text": " ListBinding: Make extended change detection available",
+        "references": []
+      },
+      {
+        "id": "bed304c442fd10307a87c17e3f8083272007b953",
+        "type": "FIX",
+        "text": " Binding: Forward bForceUpdate when _refresh is called",
+        "references": []
+      },
+      {
+        "id": "6e5c4af6172369f245eebb535ec1fbf3a0ae2ff4",
+        "type": "FIX",
+        "text": " QUnit Designtime Library tests in Firefox",
+        "references": []
+      },
+      {
+        "id": "9ee29d3c39ef4992fbf6f620b6b3ada647b2c4f6",
+        "type": "FIX",
+        "text": " ThemeCheck: Fix Cross-Origin issues in theme fallback",
+        "references": []
+      },
+      {
+        "id": "67cbdec51c0cc4877eec49f2c3bfd96937da3f6b",
+        "type": "FIX",
+        "text": " Types: Improve validation message",
+        "references": []
+      }
+    ]
+  }
+}
