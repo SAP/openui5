@@ -680,10 +680,6 @@ function(
 				}.bind(this, oElement.getId()),
 				destroyed: this._onElementOverlayDestroyed,
 				elementDestroyed: this._onElementDestroyed.bind(this),
-				scrollSynced: function () {
-					// FIXME: temporal workaround for ObjectPage
-					this.applyStyles();
-				},
 				selectionChange: this._onElementOverlaySelectionChange.bind(this),
 				elementModified: this._onElementModified.bind(this)
 			});

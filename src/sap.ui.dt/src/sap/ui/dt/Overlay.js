@@ -418,33 +418,12 @@ function(
 		});
 		this._oScrollbarSynchronizers.clear();
 
-		this._restoreVisibility();
-
 		this.$().remove();
 		delete this._bInit;
 		delete this._bShouldBeDestroyed;
 		delete this._$domRef;
 		delete this._oScrollbarSynchronizers;
-		window.clearTimeout(this._iCloneDomTimeout);
 		this.fireDestroyed();
-	};
-
-	/**
-	 * Restore the visibility of the element which was set to "hidden" before DomRef cloning
-	 * TODO: refactor me
-	 * 1. move to ElementOverlay
-	 * 2. detect when visibility of overlay changes and call
-	 * @private
-	 */
-	Overlay.prototype._restoreVisibility = function(){
-		if (this._oCloneDomRefVisibility){
-			sap.ui.dt.Overlay.getMutationObserver().ignoreOnce({
-				target: jQuery(this._oCloneDomRefVisibility.domRef).get(0),
-				type: "attributes"
-			});
-			jQuery(this._oCloneDomRefVisibility.domRef).css("visibility", this._oCloneDomRefVisibility.visibility);
-			delete this._oCloneDomRefVisibility;
-		}
 	};
 
 	Overlay.prototype.setDesignTimeMetadata = function (vMetadata) {
@@ -555,21 +534,39 @@ function(
 	 * @public
 	 */
 	Overlay.prototype.applyStyles = function(bInvalidateGeometry) {
+		if (!(typeof bInvalidateGeometry === 'boolean')) {
+			bInvalidateGeometry = true;
+		}
 		if (this.isVisible()) {
-			var oGeometry = this.getGeometry(true);
+			var oGeometry = this.getGeometry(bInvalidateGeometry);
 
 			if (oGeometry && oGeometry.visible) {
 				this._setSize(this.$(), oGeometry);
-				this._setPosition(this.$(), oGeometry, this._getRenderingParent());
+				var $RenderingParent = this._getRenderingParent();
 
-				if (oGeometry.domRef) {
-					this._handleOverflowScroll(oGeometry, this.$(), this.getParent());
-					this._cloneDomRef(oGeometry.domRef);
+				if (!this.isRoot()) {
+					var aPromises = [];
+					this.getParent()._oScrollbarSynchronizers.forEach(function(oShr) {
+						if (oShr._bSyncing) {
+							aPromises.push(
+								new Promise(function (fnResolve) {
+									oShr.attachEventOnce('synced', fnResolve);
+								})
+							);
+						}
+					});
+					if (aPromises.length) {
+						Promise.all(aPromises).then(function () {
+							this._applySizes(oGeometry, $RenderingParent);
+							this.fireGeometryChanged();
+						}.bind(this));
+					} else {
+						this._applySizes(oGeometry, $RenderingParent);
+					}
+				} else {
+					this._applySizes(oGeometry, $RenderingParent);
 				}
 
-				this.getChildren().forEach(function(oChild) {
-					oChild.applyStyles();
-				});
 			} else {
 				// TODO: real use case?
 			}
@@ -577,7 +574,21 @@ function(
 			this.$().css("display", "none");
 		}
 
-		this.fireGeometryChanged();
+		// TODO: refactor geometryChanged event
+		if (!aPromises || !aPromises.length) {
+			this.fireGeometryChanged();
+		}
+	};
+
+	Overlay.prototype._applySizes = function (oGeometry, $RenderingParent) {
+		this._setPosition(this.$(), oGeometry, $RenderingParent);
+		if (oGeometry.domRef) {
+			this._handleOverflowScroll(oGeometry, this.$(), this.getParent());
+		}
+
+		this.getChildren().forEach(function(oChild) {
+			oChild.applyStyles();
+		});
 	};
 
 	/**
@@ -804,59 +815,6 @@ function(
 	};
 
 	/**
-	 * TODO: Web Worker candidate
-	 * @param {object} oDomRef element's DOM reference to be cloned
-	 * @private
-	 */
-	Overlay.prototype._cloneDomRef = function(oDomRef) {
-		var $this = this.$();
-
-		var $clonedDom = $this.find(">.sapUiDtClonedDom");
-		var vCloneDomRef = this.getDesignTimeMetadata().getCloneDomRef();
-		if (vCloneDomRef) {
-			if (oDomRef) {
-				var fnCloneDom = function() {
-					if (vCloneDomRef !== true) {
-						oDomRef = DOMUtil.getDomRefForCSSSelector(oDomRef, vCloneDomRef);
-					}
-
-					if (!$clonedDom.length) {
-						$clonedDom = jQuery("<div class='sapUiDtClonedDom'></div>").prependTo($this);
-					} else {
-						$clonedDom.empty();
-					}
-
-					this._restoreVisibility();
-
-					//TODO: disable update
-					DOMUtil.cloneDOMAndStyles(oDomRef, $clonedDom);
-
-					this._oCloneDomRefVisibility = {
-						domRef: jQuery(oDomRef),
-						visibility: jQuery(oDomRef).css("visibility")
-					};
-					sap.ui.dt.Overlay.getMutationObserver().ignoreOnce({
-						target: jQuery(oDomRef).get(0),
-						type: "attributes"
-					});
-					jQuery(oDomRef).css("visibility", "hidden");
-				}.bind(this);
-
-				if (!this._bClonedDom) {
-					this._bClonedDom = true;
-					fnCloneDom();
-				} else {
-					window.clearTimeout(this._iCloneDomTimeout);
-					// cloneDom is expensive, therefore the call is delayed
-					this._iCloneDomTimeout = window.setTimeout(fnCloneDom, 0);
-				}
-			}
-		} else {
-			$clonedDom.remove();
-		}
-	};
-
-	/**
 	 * Sets whether the Overlay is visible
 	 * @param {boolean} bVisible if the Overlay is visible
 	 * @returns {sap.ui.dt.Overlay} returns this
@@ -878,31 +836,20 @@ function(
 	 * @public
 	 */
 	Overlay.prototype.isVisible = function() {
-		return this.getVisible()
-			&& (this.isRoot() ? true : this.getParent().isVisible());
+		return (
+			this.getVisible()
+			&& (this.isRoot() ? true : this.getParent().isVisible())
+		);
 	};
 
 	/**
-	 * Checks whether overlay is a root one
+	 * Alias for this.getIsRoot()
 	 * @return {boolean} - true if the overlay is root one
 	 * @public
 	 */
 	Overlay.prototype.isRoot = function() {
-		// getParent() check if backwards compatibility since we don't specify
-		// every time "isRoot" property when creating an overlay
 		return this.getIsRoot();
 	};
-
-	/**
-	 * Returns if the Overlay is visible in the DOM (using jQuery).
-	 *
-	 * @return {boolean} Returns if the Overlay is visible in the DOM
-	 * @public
-	 */
-	// TODO: remove
-	// Overlay.prototype.isVisibleInDom = function() {
-	// 	return this.$().is(":visible");
-	// };
 
 	return Overlay;
 }, /* bExport= */ true);

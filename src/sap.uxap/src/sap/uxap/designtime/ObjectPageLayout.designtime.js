@@ -66,8 +66,6 @@ sap.ui.define(["sap/uxap/library"],
 				return oElement.$("vertSB-sb").get(0);
 			}
 		}],
-
-		cloneDomRef : ":sap-domref > header",
 		templates: {
 			create: "sap/uxap/designtime/ObjectPageLayout.create.fragment.xml"
 		}
