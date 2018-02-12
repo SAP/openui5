@@ -59,7 +59,7 @@ describe("sap.tnt.InfoLabel", function () {
 		expect(takeScreenshot(infoLabel7)).toLookAs("9_color_scheme_6");
 	});
 
-	it("should vizualize InfoLabel with color scheme 10", function () {
+	it("should vizualize InfoLabel with color scheme 7", function () {
 		var infoLabel8 = element(by.css("#vb1 .sapMFlexItem:nth-of-type(8) .sapTntInfoLabel"));
 		expect(takeScreenshot(infoLabel8)).toLookAs("10_color_scheme_7");
 	});
