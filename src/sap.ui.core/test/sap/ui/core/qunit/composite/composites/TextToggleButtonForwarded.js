@@ -7,7 +7,8 @@ sap.ui.define([
 			aggregations: {
 				textToggleButton: {
 					type: "composites.TextToggleButton",
-					multiple: false
+					multiple: false,
+					forwarding: { idSuffix: "--CC", aggregation: "content" }
 				}
 			},
 			defaultAggregation: "textToggleButton",
@@ -25,8 +26,10 @@ sap.ui.define([
 		this.fireTextChanged();
 	};
 	TextToggleButtonForwarded.prototype.onPressRefresh = function() {
-		this.getAggregation("_content").getItems()[0]._oContent.resetProperty("text");
-		this.getAggregation("_content").getItems()[0]._oContent.getAggregation("_content").getItems()[1].resetProperty("pressed");
+		var oTextToggleButton = this.getAggregation("_content").getItems()[0].getContent();
+		oTextToggleButton.resetProperty("text");
+		var oToggleButton = oTextToggleButton.getAggregation("_content").getItems()[1];
+		oToggleButton.resetProperty("pressed");
 		this.fireRefreshed();
 	};
 	return TextToggleButtonForwarded;

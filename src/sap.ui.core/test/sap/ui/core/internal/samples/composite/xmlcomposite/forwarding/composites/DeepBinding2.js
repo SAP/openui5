@@ -13,7 +13,8 @@ sap.ui.define([
 				aggregations: {
 					fcItems: {
 						type: "sap.ui.core.Control",
-						multiple: true
+						multiple: true,
+						forwarding: { idSuffix: "--innerVBox", aggregation: "items"}
 					}
 				},
 				defaultAggregation: "fcItems"

@@ -55,8 +55,9 @@
 			})
 		});
 
+		oPanel2 = new sap.m.Panel({ id: "panel2" });
+		oPanel2.setHeaderText("XMLComposite control ...");
 		var oDeepBinding = new composites.DeepBinding2({ id: "deepBinding" });
-		oDeepBinding.setText("XMLComposite control ...");
 		oDeepBinding.bindAggregation("fcItems", {
 			path: "/groups",
 			template: new sap.m.Panel({
@@ -72,7 +73,7 @@
 
 		var vBox = new sap.m.VBox();
 		vBox.addItem(oPanel);
-		vBox.addItem(oDeepBinding);
+		vBox.addItem(oPanel2.addContent(oDeepBinding));
 		vBox.placeAt("content");
 	</script>
 </head>

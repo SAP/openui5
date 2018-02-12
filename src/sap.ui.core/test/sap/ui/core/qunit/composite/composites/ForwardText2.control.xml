@@ -1,11 +1,4 @@
 <FragmentDefinition xmlns:m="sap.m" xmlns="sap.ui.core">
-
-    <m:VBox items="path: '$forwardtext>textItems', templateShareable: 'false'">
-        <!-- notice that we add the type here so that we can create the 'right' template -
-           in our setup, since VBox's default aggregation "items" accepts "sap.ui.core.Control",
-           we could omit this type specification -->
-        <AggregationProxy type="sap.m.Text"></AggregationProxy>
+    <m:VBox id="VBox">
     </m:VBox>
-    <!--<AggregationProxy ref="{$forwardtext>text}"></AggregationProxy>-->
-
 </FragmentDefinition>
