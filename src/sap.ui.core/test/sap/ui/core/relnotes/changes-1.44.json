@@ -1263,5 +1263,46 @@
         "references": []
       }
     ]
+  },
+  "1.44.27": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "5aca8d303c841dbf6ebf6c586bb724b7b097cea6",
+        "type": "FIX",
+        "text": " Control: BusyIndicator animation default",
+        "references": []
+      },
+      {
+        "id": "bb9e007c97524a06d5f8f194a0daf74cde88e20d",
+        "type": "FIX",
+        "text": " Control: refactor fnHandleInteraction",
+        "references": []
+      },
+      {
+        "id": "576ec024c05ba291badbee78a23cba683c60790c",
+        "type": "FIX",
+        "text": " Filter/Sorter: Get comparator methods right",
+        "references": []
+      },
+      {
+        "id": "428a950145c65150b06db7bff5d059fdd9a059c7",
+        "type": "FIX",
+        "text": " FilterProcessor: Adapt normalization for MS Edge 14+",
+        "references": []
+      },
+      {
+        "id": "f97860429881bc58600a173e33d64e02edc47819",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: avoid duplicate \u0027tap\u0027 event (continued)",
+        "references": []
+      },
+      {
+        "id": "2f2c9febe761db1ad2a65f5d80f6f6b39909357e",
+        "type": "FIX",
+        "text": " v2.ODataModel: createCustomParams",
+        "references": []
+      }
+    ]
   }
 }

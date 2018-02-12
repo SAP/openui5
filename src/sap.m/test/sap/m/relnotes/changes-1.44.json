@@ -2762,5 +2762,46 @@
         "references": []
       }
     ]
+  },
+  "1.44.27": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "5aca8d303c841dbf6ebf6c586bb724b7b097cea6",
+        "type": "FIX",
+        "text": " Control: BusyIndicator animation default",
+        "references": []
+      },
+      {
+        "id": "bb9e007c97524a06d5f8f194a0daf74cde88e20d",
+        "type": "FIX",
+        "text": " Control: refactor fnHandleInteraction",
+        "references": []
+      },
+      {
+        "id": "0c4135fe44b51945a71b969cf0748cb4eab84c9f",
+        "type": "FIX",
+        "text": " Select: ValueState message open/close on mouse click fixed",
+        "references": []
+      },
+      {
+        "id": "55639f151545425e6a615efbdc28f33c297101a8",
+        "type": "FIX",
+        "text": " sap.m.Button: Reference to the text content of the button is added to the AriaLabelledBy only when the button has text",
+        "references": []
+      },
+      {
+        "id": "3e1601aaf487a515f881728cc6a5743d79de8b16",
+        "type": "FIX",
+        "text": " sap.m.Popover: correct header, subheader and footer DOM structure",
+        "references": []
+      },
+      {
+        "id": "fe39f008ebe59400f7f9468dfda226e31d9941af",
+        "type": "FIX",
+        "text": " sap.m.StandardTreeItem: setIcon function is enhanced",
+        "references": []
+      }
+    ]
   }
 }

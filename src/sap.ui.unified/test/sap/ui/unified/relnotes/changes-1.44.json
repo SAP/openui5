@@ -262,5 +262,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.27": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "188006928eb2542303cbe0283f50b465aeb5cc88",
+        "type": "FIX",
+        "text": " sap.ui.unified.Currency: align currency labels properly",
+        "references": []
+      }
+    ]
   }
 }
