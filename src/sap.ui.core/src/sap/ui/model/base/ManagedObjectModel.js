@@ -140,10 +140,7 @@ sap.ui.define([
 			var sAggregationName = oBinding.sPath.replace("/","");
 			delete this.mListBinding[sAggregationName];
 		}
-		if (oBinding._bAttached) {
-			oBinding._bAttached = false;
-			this._getObject(oBinding.getPath(), oBinding.getContext(), false);
-		}
+		this._observeBeforeEvaluating(oBinding, false);
 	};
 
 	/**
@@ -401,18 +398,16 @@ sap.ui.define([
 	 * Supported selectors -> see _getSpecialNode
 	 * @private
 	 */
-	ManagedObjectModel.prototype._getObject = function(sPath, oContext, bChangeHandlers) {
+	ManagedObjectModel.prototype._getObject = function(sPath, oContext) {
 		var oNode = this._oObject,
-			sResolvedPath = "";
+			sResolvedPath = "",
+			that = this;
 
-		for (var i = 0; i < this.aBindings.length; i++) {
-			var oBinding = this.aBindings[i],
-				sResolved = this.resolve(oBinding.getPath(), oBinding.getContext());
-			if (sResolved && !oBinding._bAttached) {
-				oBinding._bAttached = true;
-				this._getObject(oBinding.getPath(), oBinding.getContext(), true);
+		this.aBindings.forEach(function(oBinding) {
+			if (!oBinding._bAttached) {
+				that._observeBeforeEvaluating(oBinding, true);
 			}
-		}
+		});
 
 		if (typeof sPath === "string" && sPath.indexOf("/") != 0 && !oContext) {
 			return null;
@@ -458,20 +453,10 @@ sap.ui.define([
 				sParentPart = sPart;
 				var oNodeMetadata = oNode.getMetadata(), oProperty = oNodeMetadata.getProperty(sPart);
 				if (oProperty) {
-					if (bChangeHandlers === true) {
-						this._observePropertyChange(oNode, oProperty);
-					} else if (bChangeHandlers === false) {
-						this._unobservePropertyChange(oNode, oProperty);
-					}
 					oNode = oNode[oProperty._sGetter]();
 				} else {
 					var oAggregation = oNodeMetadata.getAggregation(sPart) || oNodeMetadata.getAllPrivateAggregations()[sPart];
 					if (oAggregation) {
-						if (bChangeHandlers === true) {
-							this._observeAggregationChange(oNode, oAggregation);
-						} else if (bChangeHandlers === false) {
-							this._unobserveAggregationChange(oNode, oAggregation);
-						}
 						oNode = oNode[oAggregation._sGetter] ? oNode[oAggregation._sGetter]() : oNode.getAggregation(sPart);
 					} else {
 						if (oNode && oNode[sPart] && typeof oNode[sPart] === "function") {
@@ -508,6 +493,62 @@ sap.ui.define([
 			}
 		}
 		JSONModel.prototype.destroy.apply(this, arguments);
+	};
+
+	ManagedObjectModel.prototype._observeBeforeEvaluating = function(oBinding, bObserve) {
+		if (!oBinding.isResolved()) {
+			return;
+		}
+
+		var sPath = oBinding.getPath();
+		var oContext = oBinding.getContext(), oNode = this._oObject, sResolvedPath;
+
+		if (oContext instanceof ManagedObject) {
+			oNode = oContext;
+			sResolvedPath = sPath;
+		} else if (!oContext || oContext instanceof Context) {
+			sResolvedPath = this.resolve(sPath, oContext);
+			if (!sResolvedPath) {
+				return;
+			}
+			// handling custom data stored in the original this.oData object of the JSONModel
+			if (sResolvedPath.indexOf("/" + CUSTOMDATAKEY) === 0) {
+				return;
+			}
+		} else {
+			return;
+		}
+
+		var aParts = sResolvedPath.split("/");
+
+		if (!aParts[0]) {
+			// absolute path starting with slash
+			aParts.shift();
+		}
+
+		var sPart = aParts[0];
+
+		if (oNode instanceof ManagedObject) {
+			var oNodeMetadata = oNode.getMetadata(), oProperty = oNodeMetadata.getProperty(sPart);
+			if (oProperty) {
+				if (bObserve === true) {
+					this._observePropertyChange(oNode, oProperty);
+				} else if (bObserve === false) {
+					this._unobservePropertyChange(oNode, oProperty);
+				}
+			} else {
+				var oAggregation = oNodeMetadata.getAggregation(sPart) || oNodeMetadata.getAllPrivateAggregations()[sPart];
+				if (oAggregation) {
+					if (bObserve === true) {
+						this._observeAggregationChange(oNode, oAggregation);
+					} else if (bObserve === false) {
+						this._unobserveAggregationChange(oNode, oAggregation);
+					}
+				}
+			}
+
+			oBinding._bAttached = bObserve;
+		}
 	};
 
 	ManagedObjectModel.prototype.observerChanges = function(oChange) {
