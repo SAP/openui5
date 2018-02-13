@@ -36,6 +36,7 @@ module.exports = [
 	"Panel.spec.js",
 	"PlanningCalendar.spec.js",
 	"PlanningCalendarStickyHeader.spec.js",
+	"PlanningCalendarWithLegend.spec.js",
 	"Popover.spec.js",
 	"ProgressIndicator.spec.js",
 	"PullToRefresh.spec.js",
