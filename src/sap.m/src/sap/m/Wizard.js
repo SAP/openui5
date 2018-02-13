@@ -3,9 +3,24 @@
  */
 
 sap.ui.define([
-		"jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/core/delegate/ScrollEnablement",
-		"./WizardProgressNavigator", "./Button", "sap/ui/Device"],
-	function (jQuery, library, Control, ScrollEnablement, WizardProgressNavigator, Button, Device) {
+	"jquery.sap.global",
+	"./library",
+	"sap/ui/core/Control",
+	"sap/ui/core/delegate/ScrollEnablement",
+	"./WizardProgressNavigator",
+	"./Button",
+	"sap/ui/Device",
+	"./WizardRenderer"
+], function(
+	jQuery,
+	library,
+	Control,
+	ScrollEnablement,
+	WizardProgressNavigator,
+	Button,
+	Device,
+	WizardRenderer
+	) {
 		"use strict";
 
 		// shortcut for sap.m.ButtonType

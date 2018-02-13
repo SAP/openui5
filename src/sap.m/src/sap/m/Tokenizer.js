@@ -3,8 +3,27 @@
  */
 
 // Provides control sap.m.Tokenizer.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/Device', 'sap/ui/core/InvisibleText', 'sap/ui/core/ResizeHandler', 'jquery.sap.keycodes'],
-	function(jQuery, library, Control, ScrollEnablement, Device, InvisibleText, ResizeHandler) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/delegate/ScrollEnablement',
+	'sap/ui/Device',
+	'sap/ui/core/InvisibleText',
+	'sap/ui/core/ResizeHandler',
+	'./TokenizerRenderer',
+	'jquery.sap.keycodes'
+],
+	function(
+	jQuery,
+	library,
+	Control,
+	ScrollEnablement,
+	Device,
+	InvisibleText,
+	ResizeHandler,
+	TokenizerRenderer
+	) {
 	"use strict";
 
 

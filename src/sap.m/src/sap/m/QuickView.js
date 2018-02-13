@@ -4,12 +4,29 @@
 
 // Provides control sap.m.QuickView.
 sap.ui.define([
-		'./library', 'sap/ui/Device', 'sap/ui/core/IconPool',
-		'./QuickViewBase', './ResponsivePopover', './NavContainer',
-		'./Page', './Bar', './Button'],
-	function(library, Device, IconPool,
-			QuickViewBase, ResponsivePopover, NavContainer,
-			Page, Bar, Button) {
+	'./library',
+	'sap/ui/Device',
+	'sap/ui/core/IconPool',
+	'./QuickViewBase',
+	'./ResponsivePopover',
+	'./NavContainer',
+	'./Page',
+	'./Bar',
+	'./Button',
+	'./QuickViewRenderer'
+],
+	function(
+	library,
+	Device,
+	IconPool,
+	QuickViewBase,
+	ResponsivePopover,
+	NavContainer,
+	Page,
+	Bar,
+	Button,
+	QuickViewRenderer
+	) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType

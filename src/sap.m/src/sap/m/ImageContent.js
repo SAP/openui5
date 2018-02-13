@@ -2,8 +2,17 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Image', 'sap/ui/core/IconPool', 'sap/ui/Device', 'jquery.sap.keycodes'],
-	function(jQuery, library, Control, Image, IconPool, Device) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/m/Image',
+	'sap/ui/core/IconPool',
+	'sap/ui/Device',
+	'./ImageContentRenderer',
+	'jquery.sap.keycodes'
+],
+	function(jQuery, library, Control, Image, IconPool, Device, ImageContentRenderer) {
 	"use strict";
 
 	/**

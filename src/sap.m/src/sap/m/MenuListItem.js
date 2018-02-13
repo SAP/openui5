@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.m.MenuListItem.
-sap.ui.define(['./ListItemBase', './library', 'sap/ui/core/IconPool', 'sap/ui/core/library'],
-	function(ListItemBase, library, IconPool, coreLibrary) {
+sap.ui.define([
+	'./ListItemBase',
+	'./library',
+	'sap/ui/core/IconPool',
+	'sap/ui/core/library',
+	'./MenuListItemRenderer'
+],
+	function(ListItemBase, library, IconPool, coreLibrary, MenuListItemRenderer) {
 		"use strict";
 
 		// shortcut for sap.ui.core.TextDirection

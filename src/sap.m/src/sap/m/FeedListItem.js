@@ -2,8 +2,28 @@
  * ${copyright}
  */
 
-sap.ui.define(["./ListItemBase", "./Link", "./library", "./FormattedText", "sap/ui/core/Control", "sap/ui/core/IconPool", "sap/m/Button", "sap/ui/Device"],
-	function(ListItemBase, Link, library, FormattedText, Control, IconPool, Button, Device) {
+sap.ui.define([
+	"./ListItemBase",
+	"./Link",
+	"./library",
+	"./FormattedText",
+	"sap/ui/core/Control",
+	"sap/ui/core/IconPool",
+	"sap/m/Button",
+	"sap/ui/Device",
+	"./FeedListItemRenderer"
+],
+function(
+	ListItemBase,
+	Link,
+	library,
+	FormattedText,
+	Control,
+	IconPool,
+	Button,
+	Device,
+	FeedListItemRenderer
+	) {
 	"use strict";
 
 	// shortcut for sap.m.ListType

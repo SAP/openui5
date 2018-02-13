@@ -4,10 +4,21 @@
 
 // Provides control sap.m.QuickViewCard.
 sap.ui.define([
-		'./library',
-		 './QuickViewBase', './NavContainer', './Page', './ScrollContainer'],
-	function(library,
-			QuickViewBase, NavContainer, Page, ScrollContainer) {
+	'./library',
+	'./QuickViewBase',
+	'./NavContainer',
+	'./Page',
+	'./ScrollContainer',
+	'./QuickViewCardRenderer'
+],
+	function(
+	library,
+	QuickViewBase,
+	NavContainer,
+	Page,
+	ScrollContainer,
+	QuickViewCardRenderer
+	) {
 	"use strict";
 
 	/**

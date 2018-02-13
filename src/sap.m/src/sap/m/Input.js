@@ -3,14 +3,52 @@
  */
 
 // Provides control sap.m.Input.
-sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List', './Popover',
-		'sap/ui/core/Item', './ColumnListItem', './StandardListItem', './DisplayListItem', 'sap/ui/core/ListItem',
-		'./Table', './Toolbar', './ToolbarSpacer', './library', 'sap/ui/core/IconPool', 'sap/ui/core/InvisibleText',
-		'sap/ui/Device', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Control'],
-	function(jQuery, Bar, Dialog, InputBase, List, Popover,
-			Item, ColumnListItem, StandardListItem, DisplayListItem, ListItem,
-			Table, Toolbar, ToolbarSpacer, library, IconPool, InvisibleText,
-			Device, ResizeHandler, Control) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./Bar',
+	'./Dialog',
+	'./InputBase',
+	'./List',
+	'./Popover',
+	'sap/ui/core/Item',
+	'./ColumnListItem',
+	'./StandardListItem',
+	'./DisplayListItem',
+	'sap/ui/core/ListItem',
+	'./Table',
+	'./Toolbar',
+	'./ToolbarSpacer',
+	'./library',
+	'sap/ui/core/IconPool',
+	'sap/ui/core/InvisibleText',
+	'sap/ui/Device',
+	'sap/ui/core/ResizeHandler',
+	'sap/ui/core/Control',
+	'./InputRenderer'
+],
+function(
+	jQuery,
+	Bar,
+	Dialog,
+	InputBase,
+	List,
+	Popover,
+	Item,
+	ColumnListItem,
+	StandardListItem,
+	DisplayListItem,
+	ListItem,
+	Table,
+	Toolbar,
+	ToolbarSpacer,
+	library,
+	IconPool,
+	InvisibleText,
+	Device,
+	ResizeHandler,
+	Control,
+	InputRenderer
+) {
 	"use strict";
 
 

@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.m.StandardTreeItem.
-sap.ui.define(['./TreeItemBase', './library', 'sap/ui/core/IconPool'],
-	function(TreeItemBase, library, IconPool) {
+sap.ui.define([
+	'./TreeItemBase',
+	'./library',
+	'sap/ui/core/IconPool',
+	'./StandardTreeItemRenderer'
+],
+	function(TreeItemBase, library, IconPool, StandardTreeItemRenderer) {
 	"use strict";
 
 	/**

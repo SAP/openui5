@@ -3,8 +3,31 @@
  */
 
 // Provides control sap.m.ListItemBase.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Icon', 'sap/m/Button', 'sap/ui/model/BindingMode', 'sap/ui/Device', 'sap/m/CheckBox', 'jquery.sap.keycodes'],
-	function(jQuery, library, Control, IconPool, Icon, Button, BindingMode, Device, CheckBox) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/IconPool',
+	'sap/ui/core/Icon',
+	'sap/m/Button',
+	'sap/ui/model/BindingMode',
+	'sap/ui/Device',
+	'sap/m/CheckBox',
+	'./ListItemBaseRenderer',
+	'jquery.sap.keycodes'
+],
+function(
+	jQuery,
+	library,
+	Control,
+	IconPool,
+	Icon,
+	Button,
+	BindingMode,
+	Device,
+	CheckBox,
+	ListItemBaseRenderer
+) {
 	"use strict";
 
 

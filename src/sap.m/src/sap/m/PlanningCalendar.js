@@ -3,14 +3,53 @@
  */
 
 //Provides control sap.m.PlanningCalendar.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/ManagedObjectObserver', './PlanningCalendarRow',
-		'./library', 'sap/ui/unified/library', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate',
-		'sap/ui/unified/DateRange', 'sap/ui/unified/CalendarDateInterval', 'sap/ui/unified/CalendarWeekInterval',
-		'sap/ui/unified/CalendarOneMonthInterval', 'sap/ui/Device', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Item',
-		'sap/m/Select', 'sap/m/Button', 'sap/m/Toolbar', 'sap/m/Table', 'sap/m/Column', 'jquery.sap.events'],
-	function (jQuery, Control, ManagedObjectObserver, PlanningCalendarRow, library, unifiedLibrary, CalendarUtils, CalendarDate,
-			  DateRange, CalendarDateInterval, CalendarWeekInterval, CalendarOneMonthInterval, Device, ResizeHandler, Item,
-			  Select, Button, Toolbar, Table, Column) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Control',
+	'sap/ui/base/ManagedObjectObserver',
+	'./PlanningCalendarRow',
+	'./library',
+	'sap/ui/unified/library',
+	'sap/ui/unified/calendar/CalendarUtils',
+	'sap/ui/unified/calendar/CalendarDate',
+	'sap/ui/unified/DateRange',
+	'sap/ui/unified/CalendarDateInterval',
+	'sap/ui/unified/CalendarWeekInterval',
+	'sap/ui/unified/CalendarOneMonthInterval',
+	'sap/ui/Device',
+	'sap/ui/core/ResizeHandler',
+	'sap/ui/core/Item',
+	'sap/m/Select',
+	'sap/m/Button',
+	'sap/m/Toolbar',
+	'sap/m/Table',
+	'sap/m/Column',
+	'./PlanningCalendarRenderer',
+	'jquery.sap.events'
+],
+	function(
+	jQuery,
+	Control,
+	ManagedObjectObserver,
+	PlanningCalendarRow,
+	library,
+	unifiedLibrary,
+	CalendarUtils,
+	CalendarDate,
+	DateRange,
+	CalendarDateInterval,
+	CalendarWeekInterval,
+	CalendarOneMonthInterval,
+	Device,
+	ResizeHandler,
+	Item,
+	Select,
+	Button,
+	Toolbar,
+	Table,
+	Column,
+	PlanningCalendarRenderer
+	) {
 		"use strict";
 
 	// shortcut for sap.ui.unified.CalendarDayType

@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.m.PagingButton.
-sap.ui.define(['jquery.sap.global', './Button', 'sap/ui/core/Control', 'sap/ui/core/IconPool'],
-	function (jQuery, Button, Control, IconPool) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./Button',
+	'sap/ui/core/Control',
+	'sap/ui/core/IconPool',
+	'./PagingButtonRenderer'
+],
+	function(jQuery, Button, Control, IconPool, PagingButtonRenderer) {
 		"use strict";
 
 		/**

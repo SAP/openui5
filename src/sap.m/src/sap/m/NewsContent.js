@@ -2,8 +2,16 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Text', 'sap/ui/Device', 'jquery.sap.keycodes'],
-	function(jQuery, library, Control, Text, Device) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/m/Text',
+	'sap/ui/Device',
+	'./NewsContentRenderer',
+	'jquery.sap.keycodes'
+],
+	function(jQuery, library, Control, Text, Device, NewsContentRenderer) {
 	"use strict";
 
 	/**

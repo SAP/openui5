@@ -3,8 +3,22 @@
  */
 
 // Provides control sap.m.ColumnListItem.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './ListItemBase', './library', 'sap/ui/core/library'],
-	function(jQuery, Element, ListItemBase, library, coreLibrary) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Element',
+	'./ListItemBase',
+	'./library',
+	'sap/ui/core/library',
+	'./ColumnListItemRenderer'
+],
+	function(
+	jQuery,
+	Element,
+	ListItemBase,
+	library,
+	coreLibrary,
+	ColumnListItemRenderer
+	) {
 	"use strict";
 
 	// shortcut for sap.m.ListType

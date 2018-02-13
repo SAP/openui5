@@ -3,8 +3,26 @@
  */
 
 // Provides control sap.m.ObjectIdentifier.
-sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/InvisibleText', 'sap/ui/core/library', 'sap/ui/Device', 'sap/ui/base/ManagedObject'],
-	function(library, Control, IconPool, InvisibleText, coreLibrary, Device, ManagedObject) {
+sap.ui.define([
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/IconPool',
+	'sap/ui/core/InvisibleText',
+	'sap/ui/core/library',
+	'sap/ui/Device',
+	'sap/ui/base/ManagedObject',
+	'./ObjectIdentifierRenderer'
+],
+function(
+	library,
+	Control,
+	IconPool,
+	InvisibleText,
+	coreLibrary,
+	Device,
+	ManagedObject,
+	ObjectIdentifierRenderer
+	) {
 	"use strict";
 
 

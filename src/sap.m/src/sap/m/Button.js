@@ -3,8 +3,28 @@
  */
 
 // Provides control sap.m.Button.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/Device', 'sap/ui/core/ContextMenuSupport', 'sap/ui/core/library', 'jquery.sap.keycodes'],
-	function(jQuery, library, Control, EnabledPropagator, IconPool, Device, ContextMenuSupport, coreLibrary) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/EnabledPropagator',
+	'sap/ui/core/IconPool',
+	'sap/ui/Device',
+	'sap/ui/core/ContextMenuSupport',
+	'sap/ui/core/library',
+	'./ButtonRenderer',
+	'jquery.sap.keycodes'
+], function(
+	jQuery,
+	library,
+	Control,
+	EnabledPropagator,
+	IconPool,
+	Device,
+	ContextMenuSupport,
+	coreLibrary,
+	ButtonRenderer
+) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection

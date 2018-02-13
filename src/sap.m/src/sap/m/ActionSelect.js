@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ActionSelect.
-sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', './library'],
-	function(Select, InvisibleText, library) {
+sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', './library', './ActionSelectRenderer'],
+	function(Select, InvisibleText, library, ActionSelectRenderer) {
 		"use strict";
 
 		/**
