@@ -89,6 +89,7 @@ sap.ui.define([
 	function Cache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect) {
 		this.bActive = true;
 		this.mChangeListeners = {}; // map from path to an array of change listeners
+		this.sMetaPath = _Helper.getMetaPath("/" + sResourcePath);
 		this.mPatchRequests = {}; // map from path to an array of (PATCH) promises
 		this.mPostRequests = {}; // map from path to an array of entity data (POST bodies)
 		this.oRequestor = oRequestor;
@@ -140,8 +141,7 @@ sap.ui.define([
 			}
 			oEntity["$ui5.deleting"] = true;
 			mHeaders = {"If-Match" : oEntity["@odata.etag"]};
-			sEditUrl += that.oRequestor.buildQueryString(that.sResourcePath, that.mQueryOptions,
-				true);
+			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
 			return that.oRequestor.request("DELETE", sEditUrl, sGroupId, mHeaders)
 				["catch"](function (oError) {
 					if (oError.status !== 404) {
@@ -255,7 +255,7 @@ sap.ui.define([
 			});
 		}
 
-		visitInstance(oRootInstance, _Helper.getMetaPath(this.sResourcePath));
+		visitInstance(oRootInstance, this.sMetaPath);
 	};
 
 	/**
@@ -328,7 +328,7 @@ sap.ui.define([
 					that.fetchTypes().then(function (mTypeForMetaPath) {
 						oEntityData["@$ui5.predicate"] = that.oRequestor.getKeyPredicate(
 							oEntityData,
-							_Helper.getMetaPath(_Helper.buildPath(that.sResourcePath, sPath)),
+							_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sPath)),
 							mTypeForMetaPath);
 					});
 				}, function (oError) {
@@ -356,8 +356,7 @@ sap.ui.define([
 		aCollection[-1] = oEntityData;
 
 		return SyncPromise.resolve(vPostPath).then(function (sPostPath) {
-			sPostPath += that.oRequestor.buildQueryString(that.sResourcePath, that.mQueryOptions,
-				true);
+			sPostPath += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
 			return request(sPostPath, sGroupId);
 		});
 	};
@@ -399,7 +398,7 @@ sap.ui.define([
 		// Determine the implicit value if the value is missing in the cache. Report an invalid
 		// segment if there is no implicit value.
 		function missingValue(oValue, sSegment, iPathLength) {
-			var sPropertyPath = that.sResourcePath,
+			var sPropertyPath = "",
 				sPropertyType,
 				sReadLink,
 				sServiceUrl;
@@ -408,14 +407,16 @@ sap.ui.define([
 				sPropertyPath += "/";
 			}
 			sPropertyPath += sPath.split("/").slice(0, iPathLength).join("/");
-			sPropertyType = that.oRequestor.fetchTypeForPath(sPropertyPath, true).getResult();
+			sPropertyType = that.oRequestor
+				.fetchTypeForPath(that.sMetaPath + _Helper.getMetaPath(sPropertyPath), true)
+				.getResult();
 			if (sPropertyType === "Edm.Stream") {
 				sReadLink = oValue[sSegment + "@odata.mediaReadLink"];
 				sServiceUrl = that.oRequestor.getServiceUrl();
 				if (sReadLink) {
 					return _Helper.makeAbsolute(sReadLink, sServiceUrl);
 				}
-				return sServiceUrl + sPropertyPath;
+				return sServiceUrl + that.sResourcePath + sPropertyPath;
 			}
 			return invalidSegment(sSegment);
 		}
@@ -458,14 +459,14 @@ sap.ui.define([
 
 	/**
 	 * Fetches the type from the metadata for the root entity plus all types for $expand and puts
-	 * them into a map from type to meta path. Checks the types' key properties and puts their types
+	 * them into a map from meta path to type. Checks the types' key properties and puts their types
 	 * into the map, too, if they are complex.
 	 *
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that is resolved with a map from resource path + entity path to the type
 	 */
 	Cache.prototype.fetchTypes = function () {
-		var sMetaPath, aPromises, mTypeForMetaPath, that = this;
+		var aPromises, mTypeForMetaPath, that = this;
 
 		/*
 		 * Recursively calls fetchType for all (sub)paths in $expand.
@@ -513,11 +514,10 @@ sap.ui.define([
 		}
 
 		if (!this.oTypePromise) {
-			sMetaPath = _Helper.getMetaPath(this.sResourcePath);
 			aPromises = [];
 			mTypeForMetaPath = {};
-			fetchType(sMetaPath);
-			fetchExpandedTypes(sMetaPath, this.mQueryOptions);
+			fetchType(this.sMetaPath);
+			fetchExpandedTypes(this.sMetaPath, this.mQueryOptions);
 			this.oTypePromise = SyncPromise.all(aPromises).then(function () {
 				return mTypeForMetaPath;
 			});
@@ -646,9 +646,8 @@ sap.ui.define([
 		}
 
 		this.mQueryOptions = mQueryOptions;
-		// sResourcePath is only used for metadata access, it does not contribute to the result
-		this.sQueryString = this.oRequestor.buildQueryString(this.sResourcePath, mQueryOptions,
-			false, this.bSortExpandSelect);
+		this.sQueryString = this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false,
+			this.bSortExpandSelect);
 	};
 
 	/**
@@ -775,8 +774,7 @@ sap.ui.define([
 				return Promise.resolve({});
 			}
 			// send and register the PATCH request
-			sEditUrl += that.oRequestor.buildQueryString(that.sResourcePath, that.mQueryOptions,
-				true);
+			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
 			return patch();
 		});
 	};
@@ -1138,7 +1136,7 @@ sap.ui.define([
 		delete mQueryOptions["$count"];
 		delete mQueryOptions["$filter"];
 		delete mQueryOptions["$sort"];
-		sReadUrl += this.oRequestor.buildQueryString(this.sResourcePath, mQueryOptions, false,
+		sReadUrl += this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false,
 			this.bSortExpandSelect);
 
 		oPromise = SyncPromise.all([
@@ -1266,10 +1264,14 @@ sap.ui.define([
 	 *   Whether the cache uses POST requests. If <code>true</code>, only {@link #post} may lead to
 	 *   a request, {@link #read} may only read from the cache; otherwise {@link #post} throws an
 	 *   error.
+	 * @param {string} [sMetaPath]
+	 *   Optional meta path in case it cannot be derived from the given resource path
 	 */
-	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost) {
+	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost,
+			sMetaPath) {
 		Cache.apply(this, arguments);
 
+		this.sMetaPath = sMetaPath || this.sMetaPath; // overrides Cache c'tor
 		this.bPost = bPost;
 		this.bPosting = false;
 		this.oPromise = null;
@@ -1456,12 +1458,15 @@ sap.ui.define([
 	 *   Whether the cache uses POST requests. If <code>true</code>, only {@link #post} may
 	 *   lead to a request, {@link #read} may only read from the cache; otherwise {@link #post}
 	 *   throws an error.
+	 * @param {string} [sMetaPath]
+	 *   Optional meta path in case it cannot be derived from the given resource path
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 */
 	Cache.createSingle = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			bPost) {
-		return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost);
+			bPost, sMetaPath) {
+		return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost,
+			sMetaPath);
 	};
 
 	/**

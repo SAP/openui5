@@ -262,8 +262,11 @@ sap.ui.define([
 			oCache,
 			vEntity = fnGetEntity,
 			sETag,
+			oModel = this.oModel,
+			sMetaPath = oModel.getMetaModel().getMetaPath(sPath),
 			mParameters = jQuery.extend({}, this.oOperation.mParameters),
-			mQueryOptions = jQuery.extend({}, this.oModel.mUriParameters, this.mQueryOptions);
+			oRequestor = oModel.oRequestor,
+			mQueryOptions = jQuery.extend({}, oModel.mUriParameters, this.mQueryOptions);
 
 		if (!bAction && oOperationMetadata.$kind !== "Function") {
 			throw new Error("Not an operation: " + sPath);
@@ -274,10 +277,10 @@ sap.ui.define([
 			vEntity = fnGetEntity();
 			sETag = vEntity["@odata.etag"];
 		}
-		sPath = this.oModel.oRequestor.getPathAndAddQueryOptions(sPath, oOperationMetadata,
-			mParameters, mQueryOptions, vEntity);
-		oCache = _Cache.createSingle(this.oModel.oRequestor, sPath, mQueryOptions,
-			this.oModel.bAutoExpandSelect, bAction);
+		sPath = oRequestor.getPathAndAddQueryOptions(sPath, oOperationMetadata, mParameters,
+			mQueryOptions, vEntity);
+		oCache = _Cache.createSingle(oRequestor, sPath, mQueryOptions, oModel.bAutoExpandSelect,
+			bAction, sMetaPath);
 		this.oCachePromise = SyncPromise.resolve(oCache);
 		return bAction
 			? oCache.post(sGroupId, mParameters, sETag)

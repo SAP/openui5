@@ -1001,8 +1001,7 @@ sap.ui.require([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-//TODO Why is formatter on property binding in form called twice for the below?
-			that.expectChange("id", "1")
+			that.expectChange("id", "1") //TODO unexpected change
 				.expectChange("id", "1");
 
 			// code under test
@@ -1993,9 +1992,8 @@ sap.ui.require([
 				assert.ok(oTeamBinding.hasPendingChanges(), "parent has pending changes");
 				return that.waitForChanges(assert);
 			}).then(function () {
-				that.expectChange("id", "2", 0)
-					.expectChange("text", "Frederic Fall", 0)
-					//TODO why do we get events twice?
+				that.expectChange("id", "2", 0) //TODO unexpected change
+					.expectChange("text", "Frederic Fall", 0) //TODO unexpected change
 					.expectChange("id", "2", 0)
 					.expectChange("text", "Frederic Fall", 0);
 
@@ -2847,9 +2845,9 @@ sap.ui.require([
 				"Quantity" : "10.000",
 				"QuantityUnit" : "EA"
 			})
-			.expectChange("quantity", "10.000") //TODO duplicate change event
+			.expectChange("quantity", "10.000") //TODO unexpected change
 			.expectChange("quantity", "10.000")
-			.expectChange("quantityUnit", "EA")
+			.expectChange("quantityUnit", "EA") //TODO unexpected change
 			.expectChange("quantityUnit", "EA");
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -2970,8 +2968,8 @@ sap.ui.require([
 					}
 				}
 			})
+			.expectChange("id", "0500000001") //TODO unexpected change
 			.expectChange("id", "0500000001")
-			.expectChange("id", "0500000001") //TODO duplicate change event
 			.expectChange("item", ["0000000010", "0000000020", "0000000030"]);
 
 		// code under test
@@ -3150,7 +3148,7 @@ sap.ui.require([
 				})
 				//TODO The below null's are: Text has binding context null and its initial value is
 				// undefined (formatted to null by String type). (How) can we get rid of this?
-				.expectChange("text", null, null)
+				.expectChange("text", null, null) //TODO unexpected change
 				.expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
 			return that.waitForChanges(assert);
 		});
@@ -3835,13 +3833,6 @@ sap.ui.require([
 //					}
 				})
 				.expectChange("distance", "2,572.0000");
-			if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING,
-					"sap.ui.model.odata.v4.ODataMetaModel")) {
-				//TODO Cache#fetchTypes determines a V4 meta path from sResourcePath, which is V2
-				that.oLogMock.expects("warning").withExactArgs("Unknown child GetFlightDetails of"
-					+ " RMTSAMPLEFLIGHT.RMTSAMPLEFLIGHT_Entities", "/GetFlightDetails/",
-					"sap.ui.model.odata.v4.ODataMetaModel");
-			}
 
 			that.oView.byId("function").getObjectBinding().execute();
 			return that.waitForChanges(assert);
@@ -4440,5 +4431,4 @@ sap.ui.require([
 		});
 	});
 });
-
 //TODO test delete
