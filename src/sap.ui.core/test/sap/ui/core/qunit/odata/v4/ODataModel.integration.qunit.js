@@ -3811,8 +3811,7 @@ sap.ui.require([
 			that.expectRequest("GetFlightDetails?carrid='AA'&connid='0017'"
 				+ "&fldate=datetime'2017-08-10T00:00:00'", {
 					"d" : {
-//TODO support this, pretty much like ComplexType
-//						"GetFlightDetails" : {
+						"GetFlightDetails" : {
 							"__metadata" : {
 								"type" : "RMTSAMPLEFLIGHT.FlightDetails"
 							},
@@ -3830,7 +3829,7 @@ sap.ui.require([
 							"flightType" : "",
 							"period" : 0
 						}
-//					}
+					}
 				})
 				.expectChange("distance", "2,572.0000");
 
