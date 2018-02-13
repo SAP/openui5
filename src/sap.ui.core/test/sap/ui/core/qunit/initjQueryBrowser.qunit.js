@@ -1,5 +1,6 @@
 /*global QUnit */
-sap.ui.require(['sap/ui/initjQueryBrowser'], function(initjQueryBrowser){
+sap.ui.define(['sap/ui/initjQueryBrowser'], function(initjQueryBrowser) {
+	"use strict";
 
 	QUnit.module("sap.ui.initjQueryBrowser", {
 		before: function(){

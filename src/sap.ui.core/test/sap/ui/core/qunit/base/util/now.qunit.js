@@ -1,7 +1,5 @@
 /*global QUnit, sinon */
-sap.ui.require(
-	["sap/base/util/now"],
-	function(now) {
+sap.ui.define(["sap/base/util/now"], function(now) {
 	"use strict";
 
 	QUnit.module("Time now", {

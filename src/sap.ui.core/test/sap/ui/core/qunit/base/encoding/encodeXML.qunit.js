@@ -1,5 +1,5 @@
 /*global QUnit */
-sap.ui.require(["sap/base/encoding/encodeXML"], function(encodeXML) {
+sap.ui.define(["sap/base/encoding/encodeXML"], function(encodeXML) {
 	"use strict";
 
 	QUnit.module("Encode XML");

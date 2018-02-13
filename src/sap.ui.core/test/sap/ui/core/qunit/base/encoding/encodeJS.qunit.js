@@ -1,5 +1,5 @@
 /*global QUnit */
-sap.ui.require(["sap/base/encoding/encodeJS"], function(encodeJS) {
+sap.ui.define(["sap/base/encoding/encodeJS"], function(encodeJS) {
 	"use strict";
 
 	QUnit.module("Encode JS");

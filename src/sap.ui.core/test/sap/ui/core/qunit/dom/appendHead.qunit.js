@@ -1,5 +1,6 @@
 /*global QUnit */
-sap.ui.require(["sap/ui/dom/appendHead"], function(appendHead) {
+sap.ui.define(["sap/ui/dom/appendHead"], function(appendHead) {
+	"use strict";
 
 	QUnit.module("sap.ui.dom.appendHead");
 

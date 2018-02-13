@@ -1,5 +1,5 @@
 /*global QUnit */
-sap.ui.require(["sap/base/encoding/toHex"], function(toHex) {
+sap.ui.define(["sap/base/encoding/toHex"], function(toHex) {
 	"use strict";
 
 	QUnit.module("Transform to hex");

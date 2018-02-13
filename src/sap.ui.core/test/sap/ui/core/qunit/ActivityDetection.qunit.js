@@ -1,5 +1,5 @@
 /*global QUnit */
-sap.ui.require(["sap/ui/ActivityDetection"], function(ActivityDetection) {
+sap.ui.define(["sap/ui/ActivityDetection"], function(ActivityDetection) {
 	"use strict";
 	QUnit.module("sap.ui.ActivityDetection");
 

@@ -1,5 +1,5 @@
-/*global  QUnit,  */
-sap.ui.require(['sap/ui/thirdparty/jquery'], function(/* jQuery */) {
+/*global QUnit */
+sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	'use strict';
 
 	QUnit.module("window.XMLHttpRequest");
@@ -90,7 +90,7 @@ sap.ui.require(['sap/ui/thirdparty/jquery'], function(/* jQuery */) {
 		asyncXHR.removeEventListener("readystatechange", asyncListener1);
 
 		setTimeout(function() {
-			done()
+			done();
 		}, 0);
 	});
 
@@ -121,7 +121,7 @@ sap.ui.require(['sap/ui/thirdparty/jquery'], function(/* jQuery */) {
 			delete window.bTimeout;
 			delete window.bInterval;
 			done();
-		}, 100)
+		}, 100);
 	});
 
 	QUnit.test("sync/Promise/setTimeout", function(assert) {
