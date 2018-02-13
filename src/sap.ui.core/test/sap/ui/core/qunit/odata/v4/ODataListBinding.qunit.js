@@ -385,37 +385,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("toString", function (assert) {
-		var oBinding = this.oModel.bindList("/EMPLOYEES"),
-			oV4Context = {
-				fetchCanonicalPath : function () {},
-				getPath : function () {return "/TEAMS(Team_ID='TEAM01')";},
-				toString : function () {return "/TEAMS(Team_ID='TEAM01')";}
-			},
-			oBaseContext = {
-				getPath : function () {return "/TEAMS(Team_ID='TEAM01')";},
-				toString : function () {return "/TEAMS(Team_ID='TEAM01')";}
-			};
-
-		assert.strictEqual(oBinding.toString(), sClassName + ": /EMPLOYEES", "absolute");
-
-		oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES");
-
-		assert.strictEqual(oBinding.toString(), sClassName + ": undefined|TEAM_2_EMPLOYEES",
-			"relative, unresolved");
-
-		oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oV4Context);
-
-		assert.strictEqual(oBinding.toString(), sClassName
-			+ ": /TEAMS(Team_ID='TEAM01')|TEAM_2_EMPLOYEES", "relative, resolved");
-
-		oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oBaseContext);
-
-		assert.strictEqual(oBinding.toString(), sClassName
-				+ ": /TEAMS(Team_ID='TEAM01')|TEAM_2_EMPLOYEES", "relative, resolved");
-	});
-
-	//*********************************************************************************************
 	QUnit.test("reset", function (assert) {
 		var oBinding,
 			oCreatedContext = Context.create(this.oModel, oBinding, "/EMPLOYEES/-1", -1),

@@ -658,17 +658,5 @@ sap.ui.define([
 		throw new Error("Unsupported operation: suspend");
 	};
 
-	/**
-	 * Returns a string representation of this object including the binding path. If the binding is
-	 * relative, the parent path is also given, separated by a '|'.
-	 *
-	 * @return {string} A string description of this binding
-	 * @public
-	 * @since 1.37.0
-	 */
-	ODataPropertyBinding.prototype.toString = function () {
-		return sClassName + ": " + (this.bRelative ? this.oContext + "|" : "") + this.sPath;
-	};
-
 	return ODataPropertyBinding;
 });

@@ -513,6 +513,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a string representation of this object including the binding path. If the binding is
+	 * relative, the parent path is also given, separated by a '|'.
+	 *
+	 * @returns {string} A string description of this binding
+	 * @public
+	 * @since 1.37.0
+	 */
+	ODataBinding.prototype.toString = function () {
+		return this.getMetadata().getName() + ": " + (this.bRelative  ? this.oContext + "|" : "")
+			+ this.sPath;
+	};
+
+	/**
 	 * Calls the given processor with the cache containing this binding's data, the path relative
 	 * to the cache and the cache-owning binding. Adjusts the path if the cache is owned by a parent
 	 * binding.

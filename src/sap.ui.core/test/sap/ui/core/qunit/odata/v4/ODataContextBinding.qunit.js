@@ -244,30 +244,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("toString", function (assert) {
-		var oBinding = this.oModel.bindContext("/Employees(ID='1')");
-
-		assert.strictEqual(oBinding.toString(), sClassName + ": /Employees(ID='1')", "absolute");
-
-		oBinding = this.oModel.bindContext("Employee_2_Team");
-
-		assert.strictEqual(oBinding.toString(), sClassName + ": undefined|Employee_2_Team",
-				"relative, unresolved");
-
-		oBinding = this.oModel.bindContext("Employee_2_Team",
-			Context.create(this.oModel, /*oBinding*/{}, "/Employees", 1));
-
-		assert.strictEqual(oBinding.toString(), sClassName
-			+ ": /Employees[1]|Employee_2_Team", "relative, V4 context resolved");
-
-		oBinding = this.oModel.bindContext("Employee_2_Team",
-				this.oModel.createBindingContext("/Employees(ID='1')") );
-
-		assert.strictEqual(oBinding.toString(), sClassName
-			+ ": /Employees(ID='1')|Employee_2_Team", "relative, base context, resolved");
-	});
-
-	//*********************************************************************************************
 	QUnit.test("setContext, relative path", function (assert) {
 		var oBinding = this.oModel.bindContext("relative"),
 			oContext = {
