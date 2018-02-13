@@ -3770,8 +3770,7 @@ sap.ui.require([
 					// Note: This just illustrates the status quo. It is not meant to say this must
 					// be kept stable.
 					assert.strictEqual(oContext.getPath(), "/GetAvailableFlights(...)/value/" + i);
-					//TODO Precision="0" vs. ".000"?!
-					assert.strictEqual(oContext.getProperty("fldate"), "2017-08-10T00:00:00.000Z");
+					assert.strictEqual(oContext.getProperty("fldate"), "2017-08-10T00:00:00Z");
 				});
 			});
 		});
@@ -3893,8 +3892,7 @@ sap.ui.require([
 
 				assert.strictEqual(oContext.getProperty("carrid"), "AA");
 				assert.strictEqual(oContext.getProperty("connid"), "0017");
-				//TODO Precision="0"
-				assert.strictEqual(oContext.getProperty("fldate"), "2017-08-10T00:00:00.000Z");
+				assert.strictEqual(oContext.getProperty("fldate"), "2017-08-10T00:00:00Z");
 				assert.strictEqual(oContext.getProperty("SEATSMAX"), 320);
 
 				// Note: this is async due to type retrieval
@@ -3957,7 +3955,7 @@ sap.ui.require([
 			return Promise.all([oPromise, that.waitForChanges(assert)]).then(function () {
 				assert.strictEqual(
 					oContextBinding.getBoundContext().getProperty("CreatedAt"),
-					"2017-08-10T00:00:00.000Z"); //TODO Precision="7"
+					"2017-08-10T00:00:00.0000000Z");
 			});
 		});
 	});
