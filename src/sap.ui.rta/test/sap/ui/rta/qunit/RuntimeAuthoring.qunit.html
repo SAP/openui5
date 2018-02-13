@@ -34,8 +34,8 @@
 		</script>
 
 		<script>
-			jQuery.sap.require("sap.ui.qunit.qunit-2-css");
-			jQuery.sap.require('sap.ui.thirdparty.qunit-2');
+			jQuery.sap.includeStyleSheet(jQuery.sap.getModulePath('sap.ui.thirdparty.qunit') + '.css');
+			jQuery.sap.require('sap.ui.thirdparty.qunit');
 			jQuery.sap.require('sap.ui.qunit.qunit-junit');
 			jQuery.sap.require('sap.ui.qunit.QUnitUtils');
 			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
