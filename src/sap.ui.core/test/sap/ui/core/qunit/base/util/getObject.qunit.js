@@ -1,7 +1,5 @@
 /*global QUnit */
-sap.ui.require(
-	["sap/base/util/getObject"],
-	function(getObject) {
+sap.ui.define(["sap/base/util/getObject"], function(getObject) {
 	"use strict";
 
 	QUnit.module("Object getObject");

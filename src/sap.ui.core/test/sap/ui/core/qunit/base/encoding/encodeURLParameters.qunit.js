@@ -1,5 +1,5 @@
 /*global QUnit */
-sap.ui.require(["sap/base/encoding/encodeURLParameters"], function(encodeURLParameters) {
+sap.ui.define(["sap/base/encoding/encodeURLParameters"], function(encodeURLParameters) {
 	"use strict";
 
 	QUnit.module("Encode URL parameters");

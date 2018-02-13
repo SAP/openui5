@@ -1,7 +1,5 @@
 /*global QUnit */
-sap.ui.define(
-	["sap/base/util/extend"],
-	function(extend) {
+sap.ui.define(["sap/base/util/extend"], function(extend) {
 	"use strict";
 
 	QUnit.module("object extension");

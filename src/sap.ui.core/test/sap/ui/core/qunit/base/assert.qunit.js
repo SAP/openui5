@@ -2,8 +2,7 @@
  * ${copyright}
  */
 /*global QUnit, sinon */
-sap.ui.define(["sap/base/assert"],
-	function(assert) {
+sap.ui.define(["sap/base/assert"], function(assert) {
 	"use strict";
 
 	/*eslint-disable no-console*/

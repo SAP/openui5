@@ -1,7 +1,5 @@
 /*global QUnit */
-sap.ui.require(
-	["sap/base/util/isPlainObject"],
-	function(isPlainObject) {
+sap.ui.define(["sap/base/util/isPlainObject"], function(isPlainObject) {
 	"use strict";
 
 	QUnit.module("Object isPlainObject");
