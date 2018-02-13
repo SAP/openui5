@@ -105,8 +105,8 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', 's
 			 * Internal aggregation that contains the inner _picker pop-up.
 			 */
 			_popup: { type: "sap.m.ResponsivePopover", multiple: false, visibility: "hidden" }
-		}
-
+		},
+		designtime: "sap/m/designtime/DateTimePicker.designtime"
 	}});
 
 	var PopupContent = Control.extend("DateTimePickerPopup", {
