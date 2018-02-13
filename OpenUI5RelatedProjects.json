@@ -193,7 +193,7 @@
 			"description": "CLI tool to create ui5 projects quickly from developer maintained templates.", 
 			"githubLink": "https://github.com/handy-man/Expressui5", 
 			"documentationLink": "https://github.com/handy-man/Expressui5#README", 
-			"owner": "Nathan Hand", 
+			"owner": "handy-man", 
 			"license": "Apache 2.0", 
 			"type": "Tool" 
 		}
