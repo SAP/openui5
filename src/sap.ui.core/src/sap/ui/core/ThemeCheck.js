@@ -58,6 +58,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 
 	ThemeCheck.themeLoaded = false;
 
+	function safeAccessSheetCssRules(sheet) {
+		try {
+			return sheet.cssRules;
+		} catch (e) {
+			// Firefox throws a SecurityError or InvalidAccessError if "sheet.cssRules"
+			// is accessed on a stylesheet with 404 response code.
+			// Most browsers also throw when accessing from a different origin (CORS).
+
+			// Only rethrow if the error is different
+			if (e.name !== 'SecurityError' && e.name !== 'InvalidAccessError') {
+				throw e;
+			} else {
+				return null;
+			}
+		}
+	}
+	function hasSheetCssRules(sheet) {
+		var aCssRules = safeAccessSheetCssRules(sheet);
+		return !!aCssRules && aCssRules.length > 0;
+	}
+
 	ThemeCheck.checkStyle = function(sId, bLog) {
 		var oStyle = document.getElementById(sId);
 
@@ -75,16 +96,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			bLinkElementFinishedLoading = !!(oStyle && (oStyle.getAttribute("data-sap-ui-ready") === "true" || oStyle.getAttribute("data-sap-ui-ready") === "false"));
 
 			// Check for "sheet" object and if rules are available
-			try {
-				bSheet = !!(oStyle && oStyle.sheet && oStyle.sheet.href === oStyle.href && oStyle.sheet.cssRules && oStyle.sheet.cssRules.length > 0);
-			} catch (e) {
-				// Firefox throws a SecurityError or InvalidAccessError if "oStyle.sheet.cssRules"
-				// is accessed on a stylesheet with 404 response code or from a different origin (CORS).
-				// Only rethrow if the error is different
-				if (e.name !== 'SecurityError' && e.name !== 'InvalidAccessError') {
-					throw e;
-				}
-			}
+			bSheet = !!(oStyle && oStyle.sheet && oStyle.sheet.href === oStyle.href && hasSheetCssRules(oStyle.sheet));
 
 			// Check for "innerHTML" content
 			bInnerHtml = !!(oStyle && oStyle.innerHTML && oStyle.innerHTML.length > 0);
@@ -186,7 +198,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 				// E.g. in case an @import within the stylesheet fails, the error marker will
 				// also be set, but in this case no fallback should be done as there is a (broken) theme
 				if (oStyle && oStyle.getAttribute("data-sap-ui-ready") === "false" &&
-					!(oStyle.sheet && oStyle.sheet.cssRules && oStyle.sheet.cssRules.length > 0)
+					!(oStyle.sheet && hasSheetCssRules(oStyle.sheet))
 				) {
 					aFailedLibs.push(lib);
 				}
@@ -348,22 +360,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		 * checks if a particular class is available at the beginning of the stylesheet
 		*/
 
-		var aRules;
+		var aRules = cssFile.sheet ? safeAccessSheetCssRules(cssFile.sheet) : null;
 
-		try {
-			if (cssFile.sheet && cssFile.sheet.cssRules) {
-				aRules = cssFile.sheet.cssRules;
-			}
-		} catch (e) {
-			// Firefox throws a SecurityError or InvalidAccessError if "cssFile.sheet.cssRules"
-			// is accessed on a stylesheet with 404 response code or from a different origin (CORS).
-			// Only rethrow if the error is different
-			if (e.name !== 'SecurityError' && e.name !== 'InvalidAccessError') {
-				throw e;
-			}
-		}
-
-		if (!aRules || aRules.length == 0) {
+		if (!aRules || aRules.length === 0) {
 			jQuery.sap.log.warning("Custom check: Failed retrieving a CSS rule from stylesheet " + lib);
 			return false;
 		}
