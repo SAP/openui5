@@ -425,14 +425,17 @@ sap.ui.define([
 				delete this._mVariantManagement[sKey].initialVariant;
 			}
 			this.getVariants(sKey).forEach(function(oVariant, index) {
-				oVariantData[sKey].variants[index] = {
-					key : oVariant.content.fileName,
-					title : oVariant.content.content.title,
-					//author : oVariant.content.support.user, //TODO: get value from backend
-					layer : oVariant.content.layer,
-					favorite : oVariant.content.content.favorite,
-					visible : oVariant.content.content.visible
-				};
+				oVariantData[sKey].variants[index] =
+					//JSON.parse(JSON.stringify()) used to remove undefined properties e.g. standard variant layer
+					JSON.parse(
+						JSON.stringify({
+							key : oVariant.content.fileName,
+							title : oVariant.content.content.title,
+							layer : oVariant.content.layer,
+							favorite : oVariant.content.content.favorite,
+							visible : oVariant.content.content.visible
+						})
+					);
 			});
 		}.bind(this));
 

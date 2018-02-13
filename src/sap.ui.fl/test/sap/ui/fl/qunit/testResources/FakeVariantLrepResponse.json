@@ -159,7 +159,6 @@
 						"content":{
 							"title":"Standard"
 						},
-						"layer":"VENDOR",
 						"texts":{},
 						"namespace":"sap.ui.rta.test.Demo.md.Component",
 						"creation":"",

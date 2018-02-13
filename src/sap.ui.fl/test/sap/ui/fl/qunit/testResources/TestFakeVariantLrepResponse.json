@@ -194,7 +194,6 @@
 						"variantManagementReference":"idMain1--variantManagementOrdersTable",
 						"variantReference":"",
 						"reference":"sap.ui.rta.test.Demo.md.Component",
-						"layer":"CUSTOMER",
 						"support":{
 							"generator":"Change.createInitialFileContent",
 							"service":"",
