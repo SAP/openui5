@@ -26,7 +26,7 @@ sap.ui.define([
 			 * <code>com.sap.vocabularies.UI.v1.DataFieldAbstract</code> from the meta model. If no
 			 * <code>Label</code> property is available, but the data field has a <code>Value</code>
 			 * property with an <code>edm:Path</code> expression as value, the label will be taken
-			 * from the <code>com.sap.vocabularies.UI.v1.Label</code> annotation of the path's
+			 * from the <code>com.sap.vocabularies.Common.v1.Label</code> annotation of the path's
 			 * target property.
 			 *
 			 * Example:
