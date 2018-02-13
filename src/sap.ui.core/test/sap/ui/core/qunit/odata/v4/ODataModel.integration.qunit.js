@@ -2063,6 +2063,48 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: overloaded bound action
+	QUnit.test("Bound action w/ overloading", function (assert) {
+		var sView = '\
+<VBox binding="{/EMPLOYEES(\'1\')}">\
+	<Text id="name" text="{Name}" />\
+	<VBox id="action" \
+			binding="{com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcOverload(...)}">\
+		<Text id="resultingName" text="{Name}" />\
+	</VBox>\
+</VBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('1')", {
+				"Name" : "Jonathan Smith",
+				"@odata.etag" : "eTag"
+			})
+			.expectChange("name", "Jonathan Smith")
+			.expectChange("resultingName", null); //TODO unexpected change
+
+		return this.createView(assert, sView).then(function () {
+			that.expectRequest({
+					method : "POST",
+					headers : {"If-Match" : "eTag"},
+					url : "EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001"
+						+ ".__FAKE__AcOverload",
+					payload : {
+						"Message" : "The quick brown fox jumps over the lazy dog"
+					}
+				}, {
+					"Name" : "J. Smith"
+				})
+				.expectChange("resultingName", "J. Smith");
+
+			that.oView.byId("action").getObjectBinding()
+				.setParameter("Message", "The quick brown fox jumps over the lazy dog")
+				.execute();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Enable autoExpandSelect on an operation
 	QUnit.test("Auto-$expand/$select: Function import", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
@@ -2079,7 +2121,7 @@ sap.ui.require([
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
 					"Name" : "Jonathan Smith"
 				})
-				.expectChange("name", null) //TODO unexpected change
+				.expectChange("name", "Jonathan Smith") //TODO unexpected change
 				.expectChange("name", "Jonathan Smith");
 
 			that.oView.byId("function").getObjectBinding()
@@ -3320,7 +3362,7 @@ sap.ui.require([
 				{
 					"STATUS" : "42"
 				})
-				.expectChange("status", null) //TODO unexpected change
+				.expectChange("status", "42") //TODO unexpected change
 				.expectChange("status", "42");
 
 			that.oView.byId("function").getObjectBinding().execute();
@@ -3347,7 +3389,7 @@ sap.ui.require([
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
 					"Name" : "Jonathan Smith"
 				})
-				.expectChange("name", null) //TODO unexpected change
+				.expectChange("name", "Jonathan Smith") //TODO unexpected change
 				.expectChange("name", "Jonathan Smith");
 			oFunctionBinding.setParameter("EmployeeID", "1").execute();
 
@@ -3402,7 +3444,7 @@ sap.ui.require([
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=Name", {
 					"Name" : "Jonathan Smith"
 				})
-				.expectChange("name", null) //TODO unexpected change
+				.expectChange("name", "Jonathan Smith") //TODO unexpected change
 				.expectChange("name", "Jonathan Smith");
 			oFunctionBinding.setParameter("EmployeeID", "1").execute();
 
