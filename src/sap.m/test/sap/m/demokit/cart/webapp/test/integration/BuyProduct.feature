@@ -8,6 +8,10 @@ Feature: Buy a Product
     When on the category: I press on "The first Product"
     When on the product: I add the displayed product to the cart
     When on the category: I go to the cart page
+    Then on the category: I teardown my app
+
+    Given I start my App with the hash "#/cart/HT-1254" keeping local storage
+    Then on the product: I should see the right product
 
     When on the cart: I press on the proceed button
     Then on checkout: I should see the wizard step contents step
