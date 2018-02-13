@@ -3,8 +3,9 @@
  */
 
 // Provides control sap.m.MenuButton.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Button', './SplitButton', 'sap/ui/Device', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/library'],
-	function(jQuery, library, Control, Button, SplitButton, Device, EnabledPropagator, coreLibrary) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Button', './SplitButton', 'sap/ui/Device', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/library', 'sap/ui/core/Popup', 'sap/m/Menu'],
+	function(jQuery, library, Control, Button, SplitButton, Device, EnabledPropagator, coreLibrary, Popup, Menu) {
+
 		"use strict";
 
 		// shortcut for sap.m.MenuButtonMode
@@ -15,6 +16,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 
 		// shortcut for sap.m.ButtonType
 		var ButtonType = library.ButtonType;
+
+		// shortcut for sap.ui.core.Popup.Dock
+		var Dock = Popup.Dock;
 
 		/**
 		 * Constructor for a new MenuButton.
@@ -93,6 +97,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 				 * Defines whether the <code>MenuButton</code> is set to <code>Regular</code> or <code>Split</code> mode.
 				 */
 				buttonMode : { type : "sap.m.MenuButtonMode", group : "Misc", defaultValue : MenuButtonMode.Regular },
+
+				/**
+				 * Specifies the position of popup menu with enumerated options.
+				 * By default, the control open the menu at its bottom left.
+				 */
+				menuPosition : {type : "sap.ui.core.Popup.Dock", group : "Misc", defaultValue : Dock.BeginBottom},
 
 				/**
 				 * Controls whether the default action handler is invoked always or it is invoked only until a menu item is selected.
@@ -317,7 +327,56 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 			if (!oMenu.getTitle()) {
 				oMenu.setTitle(this.getText());
 			}
-			oMenu.openBy(this, bWithKeyboard);
+			var aParam = [this, bWithKeyboard];
+			switch (this.getMenuPosition()) {
+				case Dock.BeginTop:
+					aParam.push(Dock.BeginBottom, Dock.BeginTop, "0 +2");
+					break;
+				case Dock.BeginCenter:
+					aParam.push(Dock.BeginCenter, Dock.BeginCenter, "0 0");
+					break;
+				default:
+				case Dock.BeginBottom:
+					aParam.push(Dock.BeginTop, Dock.BeginBottom, "0 -2");
+					break;
+				case Dock.LeftTop:
+					aParam.push(Dock.RightBottom, Dock.LeftBottom, "+2 0");
+					break;
+				case Dock.LeftCenter:
+					aParam.push(Dock.RightCenter, Dock.LeftCenter, "+2 0");
+					break;
+				case Dock.LeftBottom:
+					aParam.push(Dock.RightTop, Dock.LeftTop, "+2 0");
+					break;
+				case Dock.CenterTop:
+					aParam.push(Dock.CenterBottom, Dock.CenterTop, "0 +2");
+					break;
+				case Dock.CenterCenter:
+					aParam.push(Dock.CenterCenter, Dock.CenterCenter, "0 0");
+					break;
+				case Dock.CenterBottom:
+					aParam.push(Dock.CenterTop, Dock.CenterBottom, "0 -2");
+					break;
+				case Dock.RightTop:
+					aParam.push(Dock.LeftBottom, Dock.RightBottom, "-2 0");
+					break;
+				case Dock.RightCenter:
+					aParam.push(Dock.LeftCenter, Dock.RightCenter, "-2 0");
+					break;
+				case Dock.RightBottom:
+					aParam.push(Dock.LeftTop, Dock.RightTop, "-2 0");
+					break;
+				case Dock.EndTop:
+					aParam.push(Dock.EndBottom, Dock.EndTop, "0 +2");
+					break;
+				case Dock.EndCenter:
+					aParam.push(Dock.EndCenter, Dock.EndCenter, "0 0");
+					break;
+				case Dock.EndBottom:
+					aParam.push(Dock.EndTop, Dock.EndBottom, "0 -2");
+					break;
+			}
+			Menu.prototype.openBy.apply(oMenu, aParam);
 
 			this._writeAriaAttributes();
 
