@@ -1939,12 +1939,22 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("suspend: absolute binding", function (assert) {
-		var oBinding = new ODataParentBinding({sPath : "/Employees"});
+		var oBinding = new ODataParentBinding({
+				sPath : "/Employees",
+				toString : function () { return "~"; }
+			});
+
+		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(false);
 
 		// code under test
 		oBinding.suspend();
 
 		assert.strictEqual(oBinding.bSuspended, true);
+
+		assert.throws(function () {
+			// code under test
+			oBinding.suspend();
+		}, new Error("Cannot suspend a suspended binding: ~"));
 	});
 
 	//*********************************************************************************************
@@ -1954,6 +1964,8 @@ sap.ui.require([
 				sPath : "SO_2_SCHEDULE",
 				bRelative : true
 			});
+
+		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(false);
 
 		// code under test
 		oBinding.suspend();
@@ -1971,6 +1983,21 @@ sap.ui.require([
 				toString : function () { return "~"; }
 			}).suspend();
 		}, new Error("Cannot suspend an operation binding: ~"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("suspend: error on binding with pending changes", function (assert) {
+		var oBinding = new ODataParentBinding({
+				sPath : "/operation",
+				toString : function () { return "~"; }
+			});
+
+		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oBinding.suspend();
+		}, new Error("Cannot suspend a binding with pending changes: ~"));
 	});
 
 	//*********************************************************************************************
@@ -2022,9 +2049,12 @@ sap.ui.require([
 		QUnit.test(oFixture.sTitle, function (assert) {
 			var oBinding = new ODataParentBinding(jQuery.extend({
 					_fireChange : function () {},
-					resumeInternal : function () {}
+					resumeInternal : function () {},
+					toString : function () { return "~"; }
 				}, oFixture)),
 				oBindingMock = this.mock(oBinding);
+
+			oBindingMock.expects("hasPendingChanges").withExactArgs().returns(false);
 
 			oBinding.suspend();
 
@@ -2041,23 +2071,12 @@ sap.ui.require([
 			oBinding.resume();
 
 			assert.strictEqual(oBinding.bSuspended, false);
+
+			assert.throws(function () {
+				// code under test
+				oBinding.resume();
+			}, new Error("Cannot resume a not suspended binding: ~"));
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("resume: does nothing for suspended binding", function (assert) {
-		var oBinding = new ODataParentBinding({
-				_fireChange : function () {},
-				resumeInternal : function () {}
-			}),
-			oBindingMock = this.mock(oBinding);
-
-		oBindingMock.expects("_fireChange").never();
-		oBindingMock.expects("resumeInternal").never();
-		this.mock(sap.ui.getCore()).expects("addPrerenderingTask").never();
-
-		// code under test
-		oBinding.resume();
 	});
 
 	//*********************************************************************************************

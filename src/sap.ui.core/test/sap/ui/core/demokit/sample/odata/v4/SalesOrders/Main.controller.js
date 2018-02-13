@@ -154,7 +154,8 @@ sap.ui.define([
 		},
 
 		onCreateSalesOrder : function (oEvent) {
-			var oContext = this.byId("SalesOrders").getBinding("items")
+			var oBPListBinding = this.byId("NewBuyerID").getBinding("suggestionItems"),
+				oContext = this.byId("SalesOrders").getBinding("items")
 					.create({
 						// TODO where to get initial values from to avoid "failed to drill-down"
 						// and "Not all properties provided while creation or update was executed."
@@ -185,7 +186,9 @@ sap.ui.define([
 			this._setSalesOrderBindingContext(oContext);
 
 			// resume binding to BusinessPartnerList to trigger request when dialog is opened
-			this.byId("NewBuyerID").getBinding("suggestionItems").resume();
+			if (oBPListBinding.isSuspended()) {
+				oBPListBinding.resume();
+			}
 			oCreateSalesOrderDialog.setBindingContext(oContext);
 			oCreateSalesOrderDialog.open();
 
