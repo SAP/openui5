@@ -322,8 +322,8 @@ sap.ui.define([
 
 		// complex value
 		if (!oObject.__metadata || !oObject.__metadata.type) {
-			throw new Error("Cannot convert complex value without type information in "
-					+ "__metadata.type: " + JSON.stringify(oObject));
+			throw new Error("Cannot convert structured value without type information in "
+				+ "__metadata.type: " + JSON.stringify(oObject));
 		}
 
 		sTypeName = oObject.__metadata.type;
@@ -443,17 +443,30 @@ sap.ui.define([
 	 *   If the OData V2 response payload cannot be converted
 	 */
 	_V2Requestor.prototype.doConvertResponse = function (oResponsePayload) {
-		var oPayload = this.convertNonPrimitive(oResponsePayload.d);
+		var oCandidate, bIsArray, aKeys, oPayload;
 
-		// d.results may be an array of entities in case of a collection request or the property
+		oResponsePayload = oResponsePayload.d;
+		// 'results' may be an array of entities in case of a collection request or the property
 		// 'results' of a single request.
-		if (oResponsePayload.d.results && !oResponsePayload.d.__metadata) {
-			oPayload = {value : oPayload};
-			if (oResponsePayload.d.__count) {
-				oPayload["@odata.count"] = oResponsePayload.d.__count;
+		bIsArray = oResponsePayload.results && !oResponsePayload.__metadata;
+		if (!bIsArray && !oResponsePayload.__metadata) {
+			aKeys = Object.keys(oResponsePayload);
+			oCandidate = oResponsePayload[aKeys[0]];
+			if (aKeys.length === 1 && oCandidate && oCandidate.__metadata) {
+				// drill down into candidate for "entityComplexProperty"
+				oResponsePayload = oCandidate;
 			}
-			if (oResponsePayload.d.__next) {
-				oPayload["@odata.nextLink"] = oResponsePayload.d.__next;
+		}
+
+		oPayload = this.convertNonPrimitive(oResponsePayload);
+
+		if (bIsArray) {
+			oPayload = {value : oPayload};
+			if (oResponsePayload.__count) {
+				oPayload["@odata.count"] = oResponsePayload.__count;
+			}
+			if (oResponsePayload.__next) {
+				oPayload["@odata.nextLink"] = oResponsePayload.__next;
 			}
 		}
 		return oPayload;
