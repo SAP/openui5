@@ -525,12 +525,13 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 				var bFound = aAverageMethods.indexOf(fnMethod) > -1;
 				if (!bFound) {
 					aOriginalMethods.push({func : fnMethod, obj: oObject, method: sMethod, id: sId});
+					var that = this;
 					oObject[sMethod] = function() {
-						this.average(sId, sId + " method average", aCategories);
+						that.average(sId, sId + " method average", aCategories);
 						var result = fnMethod.apply(this, arguments);
-						this.end(sId);
+						that.end(sId);
 						return result;
-					}.bind(this);
+					};
 					aAverageMethods.push(oObject[sMethod]);
 					return true;
 				}

@@ -254,6 +254,23 @@
 			assert.ok(oObject.func2 === f , "function2 is reset");
 		});
 
+		QUnit.test("registerMethod - correct function context", function(assert) {
+			jQuery.sap.measure.setActive(true);
+			jQuery.sap.measure.clear();
+			var f = function() {
+				// Check for equality by reference ("==")
+				assert.equal(this, oObject, "Registered function is called with correct 'this' value");
+			};
+			var oObject = {func: f};
+
+			//register functions
+			jQuery.sap.measure.registerMethod("oObject.func", oObject, "func");
+			oObject.func(); //execute
+
+			// unregister function
+			jQuery.sap.measure.unregisterAllMethods();
+		});
+
 		QUnit.test("Categories/Filtering/Completed measuremtents", function(assert) {
 			jQuery.sap.measure.setActive(true,"test1");
 			jQuery.sap.measure.clear();
