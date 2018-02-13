@@ -843,8 +843,8 @@ sap.ui.define([
 	 *
 	 * @returns {Promise} promise that resolves without parameters
 	 */
-	FlexController.prototype.resetChanges = function () {
-		return this._oChangePersistence.resetChanges();
+	FlexController.prototype.resetChanges = function (sLayer, sGenerator) {
+		return this._oChangePersistence.resetChanges(sLayer, sGenerator);
 	};
 
 	/**

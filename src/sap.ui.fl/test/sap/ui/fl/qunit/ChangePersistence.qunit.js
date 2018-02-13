@@ -1378,7 +1378,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			"&changelist=ATO_NOTIFICATION";
 		var oLrepStub = sandbox.stub(this.oChangePersistence._oConnector, "send").returns(Promise.resolve());
 
-		this.oChangePersistence.resetChanges().then(function() {
+		this.oChangePersistence.resetChanges("CUSTOMER", "Change.createInitialFileContent").then(function() {
 			assert.ok(oLrepStub.calledOnce, "the LrepConnector is called once");
 			assert.equal(oLrepStub.args[0][0], sExpectedUri, "and with the correct URI");
 			done();

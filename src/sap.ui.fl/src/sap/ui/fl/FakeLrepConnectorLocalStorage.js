@@ -75,6 +75,24 @@ sap.ui.define([
 		});
 	};
 
+	FakeLrepConnectorLocalStorage.prototype.send = function(sUri, sMethod, oData, mOptions) {
+		if (sMethod === "DELETE") {
+			return FakeLrepConnector.prototype.send.apply(this, arguments).then(function(oResponse) {
+				FakeLrepLocalStorage.getChanges().forEach(function(oChange) {
+					if (oChange.reference === oResponse.response.parameters[1]) {
+						FakeLrepLocalStorage.deleteChange(oChange.fileName);
+					}
+				});
+				return Promise.resolve({
+					response: undefined,
+					status: "nocontent"
+				});
+			});
+		} else {
+			return FakeLrepConnector.prototype.send.apply(this, arguments);
+		}
+	};
+
 	/**
 	 * Deletes a Fake Lrep change in localStorage
 	 * @param  {Object} oChange - The change object
