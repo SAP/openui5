@@ -637,7 +637,12 @@ function(
 		});
 
 		QUnit.test("when 'getRootElements' is called", function(assert) {
-			assert.ok(this.oDesignTime.getRootElements(), [this.oLayout1, this.oLayout3], "then layout1 and layout3 are returned");
+			assert.deepEqual(this.oDesignTime.getRootElements(), [this.oLayout1, this.oLayout3], "then layout1 and layout3 are returned");
+		});
+
+		QUnit.test("when 'getRootElements' is called after a root element is destroyed (e.g. app was closed)", function(assert) {
+			this.oLayout1.destroy();
+			assert.deepEqual(this.oDesignTime.getRootElements(), [this.oLayout3], "then only the remaining root element is returned");
 		});
 
 		QUnit.test("when one root element is removed", function(assert) {
