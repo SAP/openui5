@@ -315,7 +315,7 @@
 			},
 			{
 				"id": "sap.ui.layout.sample.BlockLayoutCustomBackground",
-				"name": "BlockLayout with custom backgorund for the cells",
+				"name": "BlockLayout with custom background for the cells",
 				"description": "The BlockLayout could be used with different backgrounds for its cells."
 			},
 			{
