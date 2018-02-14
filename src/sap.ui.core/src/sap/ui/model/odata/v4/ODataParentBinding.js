@@ -394,8 +394,8 @@ sap.ui.define([
 			});
 		}
 
-		if (this.isSuspended() || this.oOperation || sChildPath === "$count"
-				|| sChildPath.slice(-7) === "/$count" || sChildPath[0] === "@") {
+		if (this.oOperation || sChildPath === "$count" || sChildPath.slice(-7) === "/$count"
+				|| sChildPath[0] === "@" || this.isSuspended()) {
 			return SyncPromise.resolve(true);
 		}
 
@@ -642,6 +642,7 @@ sap.ui.define([
 	/**
 	 * Resumes this binding. The binding can again fire change events and trigger data service
 	 * requests.
+	 * Before 1.53.0, this method was not supported and threw an error.
 	 *
 	 * @throws {Error}
 	 *   If this binding is relative to a {@link sap.ui.model.odata.v4.Context} or if it is an
@@ -650,7 +651,7 @@ sap.ui.define([
 	 * @public
 	 * @see sap.ui.model.Binding#resume
 	 * @see #suspend
-	 * @since 1.53.0
+	 * @since 1.37.0
 	 */
 	// @override sap.ui.model.Binding#resume
 	ODataParentBinding.prototype.resume = function () {
@@ -662,7 +663,6 @@ sap.ui.define([
 		if (this.bRelative && (!this.oContext || this.oContext.fetchValue)) {
 			throw new Error("Cannot resume a relative binding: " + this);
 		}
-
 		if (!this.bSuspended) {
 			throw new Error("Cannot resume a not suspended binding: " + this);
 		}
@@ -671,7 +671,7 @@ sap.ui.define([
 		// dependent bindings are only removed in a *new task* in ManagedObject#updateBindings
 		// => must only resume in prerendering task
 		sap.ui.getCore().addPrerenderingTask(function () {
-			that.resumeInternal();
+			that.resumeInternal(true);
 		});
 	};
 
@@ -701,6 +701,7 @@ sap.ui.define([
 	/**
 	 * Suspends this binding. A suspended binding does not fire change events nor does it trigger
 	 * data service requests. Call {@link #resume} to resume the binding.
+	 * Before 1.53.0, this method was not supported and threw an error.
 	 *
 	 * @throws {Error}
 	 *   If this binding is relative to a {@link sap.ui.model.odata.v4.Context} or if it is an
@@ -711,7 +712,7 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataContextBinding#hasPendingChanges
 	 * @see sap.ui.model.odata.v4.ODataListBinding#hasPendingChanges
 	 * @see #resume
-	 * @since 1.53.0
+	 * @since 1.37.0
 	 */
 	// @override sap.ui.model.Binding#suspend
 	ODataParentBinding.prototype.suspend = function () {
