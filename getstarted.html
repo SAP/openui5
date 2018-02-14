@@ -78,26 +78,24 @@
 		<!-- MAIN CONTENT -->
 		<div id="main_content_wrap" class="outer">
 			<div id="main_content" class="inner">
-				<h3><a name="walkthrough"></a>A quick Guide to OpenUI5</h3>
+				<h3><a name="ready"></a>Get Ready</h3>
 				<p>
-					This short tutorial will get you started with your very first OpenUI5 application. It is an excerpt of the <a href="https://openui5.hana.ondemand.com/#/topic/8b49fc198bf04b2d9800fc37fecbb218" target="_blank">Demo Kit</a> that is part of the OpenUI5 SDK documentation. The code samples for each step can be found here:
-					<a href="https://openui5.hana.ondemand.com/explored.html#/entity/sap.m.tutorial.walkthrough/samples" target="_blank">Walkthrough Samples</a>.To try out the example below, you can get a <a href="https://openui5.hana.ondemand.com/#/topic/34bfb4531a974bf7be15f5937c7899d8.html" target="_blank">free Web IDE trial account.</a></p>
+					All you need to develop Web apps with OpenUI5 is a development environment and a browser. Chose between
+					SAP Web IDE in the cloud for maximum convenience or set up your local development environment or maximum flexibility.
+				</p>
+				<p>Both options are described in our <a href="https://openui5.hana.ondemand.com/#/topic/7bb04e05f9484e1b95b38a2e48ecef4f" target="_blank">documentation</a>.</p>
 
-				<h3><a name="step2"></a>Hello World</h3>
-				<p>Now it is time to build our first little UI by replacing the "Hello World" text in the HTML body by the OpenUI5 control sap.m.Text. 
-				For the time being we use the JavaScript control API to set up the UI. The control instance is then &quot;placed&quot; into the HTML body. 
-				Don’t forget to remove the line starting with &quot;jQuery(&quot;#content&quot;)&quot; from step 1.</p>
-				<p>Here’s the code for this step:</p>
+
+				<h3><a name="coding"></a>Start Coding</h3>
+				<p>Now it is time to build your first OpenUI5 app. To start simple, we load OpenUI5 from our <a href="https://openui5.hana.ondemand.com/#/topic/2d3eb2f322ea4a82983c1c62a33ec4ae" target="_blank">CDN</a> and place a sap.m.Text into the HTML body:
+
 				<pre class="codeblock">
-<span class="shTag">&lt;!DOCTYPE html&gt;</span>
 <span class="shTag">&lt;html&gt;</span>
 <span class="shTag">&lt;head&gt;</span>
-<span class="shTag">&lt;meta </span><span class="shAttr">http-equiv</span>=<span class="shString">'X-UA-Compatible'</span> <span class="shAttr">content</span>=<span class="shString">'IE=edge'</span> <span class="shTag">&gt;</span>
-<span class="shTag">&lt;meta </span><span class="shAttr">charset</span>=<span class="shString">'utf-8'</span><span class="shTag">&gt;</span>
 <span class="shTag">&lt;title&gt;</span>Hello World<span class="shTag">&lt;/title&gt;</span>
 
 <span class="shTag">&lt;script</span> <span class="shAttr">id</span>=<span class="shString">'sap-ui-bootstrap'</span>
-    <span class="shAttr">src</span>=<span class="shString">'resources/sap-ui-core.js'</span>
+    <span class="shAttr">src</span>=<span class="shString">'https://openui5.hana.ondemand.com/resources/sap-ui-core.js'</span>
     <span class="shAttr">data-sap-ui-theme</span>=<span class="shString">'sap_belize'</span>
     <span class="shAttr">data-sap-ui-libs</span>=<span class="shString">'sap.m'</span>
     <span class="shAttr">data-sap-ui-compatVersion</span>=<span class="shString">'edge'</span>
@@ -113,31 +111,25 @@
 <span class="shTag">&lt;/script&gt;</span>
 
 <span class="shTag">&lt;/head&gt;</span>
-<span class="shTag">&lt;body</span> <span class="shAttr">class</span>=<span class="shString">'sapUiBody'</span><span class="shTag">&gt;</span>
-    <span class="shTag">&lt;div</span> <span class="shAttr">id</span>=<span class="shString">'content'</span><span class="shTag">&gt;&lt;/div&gt;</span>
+<span class="shTag">&lt;body</span> <span class="shAttr">class</span>=<span class="shString">'sapUiBody'</span> <span class="shAttr">id</span>=<span class="shString">'content'</span><span class="shTag">&gt;</span>
 <span class="shTag">&lt;/body&gt;</span>
 <span class="shTag">&lt;/html&gt;</span></pre>
 
-			<p>Instead of using native JavaScript to change the content of the body tag, we want to use a simple OpenUI5 control. Controls are used to define appearance and behavior of parts of the screen.
-In the example above the content of the init event handler is now replaced with an OpenUI5 text control. 
-The name of the control is prefixed by the namespace of its control library "sap.m" and the options are passed to the constructor with a JavaScript object. 
-For our control we set the "text" property to the value "Hello World".
-We concatenate the constructor call of the control with the standard method "placeAt" that is used to position OpenUI5 controls inside a node of the DOM. 
-As the target node we use the body tag of the HTML document with the id &quot;content&quot;. The class "sapUiBody" adds additional theme dependent styles for displaying OpenUI5 apps.
-All controls of OpenUI have a defined set of properties and methods to interact with, the public API of the control. You can it look up in the API reference that is linked below.</p>
 				<p>
-					<a href="http://embed.plnkr.co/pypWW9" class="plunkerEmbedded" target="_blank">Try it out yourself - feel free to modify and extend this example!</a>
+					<a href="https://plnkr.co/edit/pypWW9?p=info" class="plunkerEmbedded" target="_blank">Try it out yourself - modify and extend this basic "Hello World!" example as you wish!</a>
 				</p>
 			
-				<h3><a name="deeper"></a>Now, Dig Deeper!</h3>
-				
-				<div class="downloadbuttons">
-					<a href="https://openui5.hana.ondemand.com/#/topic/8b49fc198bf04b2d9800fc37fecbb218" class="downloadbutton" target="_blank">Continue with the Demo Kit</a>
+				<h3><a name="deeper"></a>Dig Deeper</h3>
+				Have a look at our tutorials and demo apps in the OpenUI5 Demo Kit:
+				<div class="downloadbuttons" style="padding-bottom: 0">
+					<a href="https://openui5.hana.ondemand.com/#/topic/8b49fc198bf04b2d9800fc37fecbb218" class="downloadbutton" target="_blank">Learn OpenUI5</a>
 				</div>
+				<h4>Want more?</h4>
 				<ul>
-					<li>Check out the <a href="https://openui5.hana.ondemand.com/#docs/api/symbols/sap.ui.html" target="_blank">OpenUI5 API Reference</a></li>
-					<li>Watch training videos on our <a href="https://www.youtube.com/channel/UCOlLpeus2uAJhmxjKHHGTgA">YouTube channel</a></li>
-					<li>Enroll for the free openSAP course <a href="https://open.sap.com/courses/ui51">Developing Web Apps with SAPUI5</a> - it is also applicable for OpenUI5.</li>
+					<li>Try our free openSAP course <a href="https://open.sap.com/courses/ui51">Developing Web Apps with SAPUI5</a> - also applicable for OpenUI5.</li>
+					<li>Engage on <a href="http://stackoverflow.com/questions/tagged/sapui5">stackoverflow.com</a>, the <a href="https://www.sap.com/community/tag.html?id=500983881501772639608291559920477">SAP Community forum</a>, and <a href="http://slackui5invite.herokuapp.com/">Slack</a>.</li>
+					<li>Watch videos on <a href="https://www.youtube.com/channel/UCOlLpeus2uAJhmxjKHHGTgA">YouTube</a></li>
+					<li>Check out many <a href="https://openui5.hana.ondemand.com/#/controls" target="_blank">Samples</a></li>
 				</ul>
 			</div> <!-- closes main_content -->
 			
