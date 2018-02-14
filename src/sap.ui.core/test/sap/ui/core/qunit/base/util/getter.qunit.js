@@ -1,7 +1,5 @@
 /* global QUnit */
-sap.ui.define(
-	["sap/base/util/getter"],
-	function(getter) {
+sap.ui.define(["sap/base/util/getter"], function(getter) {
 	"use strict";
 
 	QUnit.module("Object getter");

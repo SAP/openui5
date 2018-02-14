@@ -1,6 +1,6 @@
 /*global sinon, QUnit */
-sap.ui.require(['sap/ui/performance/E2ETrace/Passport'],
-	function(Passport) {
+sap.ui.define(['sap/ui/performance/E2ETrace/Passport'], function(Passport) {
+	"use strict";
 
 	QUnit.module("Passport", {
 		beforeEach: function() {
@@ -68,7 +68,7 @@ sap.ui.require(['sap/ui/performance/E2ETrace/Passport'],
 	QUnit.test("XHR#setRequestHeader", function(assert) {
 		var spy = sinon.spy(window.XMLHttpRequest.prototype, "setRequestHeader");
 
-		oReq = new XMLHttpRequest();
+		var oReq = new XMLHttpRequest();
 		oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now(), false);
 
 		assert.ok(spy.calledWith("SAP-PASSPORT"), "Request header should be set");

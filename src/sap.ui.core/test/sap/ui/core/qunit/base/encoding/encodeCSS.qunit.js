@@ -1,5 +1,5 @@
 /*global QUnit */
-sap.ui.require(["sap/base/encoding/encodeCSS"], function(encodeCSS) {
+sap.ui.define(["sap/base/encoding/encodeCSS"], function(encodeCSS) {
 	"use strict";
 
 	QUnit.module("Encode CSS");

@@ -1,6 +1,6 @@
 /*global sinon, QUnit */
-sap.ui.require(['sap/ui/performance/XHRInterceptor', 'sap/base/log'],
-	function(XHRInterceptor, log){
+sap.ui.define(['sap/ui/performance/XHRInterceptor', 'sap/base/log'], function(XHRInterceptor, log) {
+	"use strict";
 
 	QUnit.module("XHRInterceptor", {
 		beforeEach: function() {

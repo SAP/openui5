@@ -1,5 +1,6 @@
 /*global QUnit */
-sap.ui.require(['sap/ui/initjQuerySupport'], function(initjQuerySupport){
+sap.ui.define(['sap/ui/initjQuerySupport'], function(initjQuerySupport) {
+	"use strict";
 
 	QUnit.module("sap.ui.initjQuerySupport");
 
