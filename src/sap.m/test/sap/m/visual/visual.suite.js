@@ -30,6 +30,7 @@ module.exports = [
 	"Page.spec.js",
 	"Panel.spec.js",
 	"PlanningCalendar.spec.js",
+	"PlanningCalendarWithLegend.spec.js",
 	"Popover.spec.js",
 	"ProgressIndicator.spec.js",
 	"QuickView.spec.js",
