@@ -192,6 +192,8 @@ sap.ui.define([
 
 		this.updateDomValue(this._formatValue(this.getDateValue()));
 
+		this._updateDomPlaceholder(this._getPlaceholder());
+
 		return this;
 	};
 
@@ -371,6 +373,19 @@ sap.ui.define([
 	//}
 	DateTimeField.prototype._isValidDate = function (oDate) {
 		return oDate && jQuery.type(oDate) !== "date";
+	};
+
+
+	/**
+	 * Updates the placeholder of the input element with a given valye
+	 * @param {string} sValue the new value
+	 * @private
+	 * @returns void
+	 */
+	DateTimeField.prototype._updateDomPlaceholder = function (sValue) {
+		if (this.getDomRef()) {
+			this._$input.attr("placeholder", sValue);
+		}
 	};
 
 	return DateTimeField;
