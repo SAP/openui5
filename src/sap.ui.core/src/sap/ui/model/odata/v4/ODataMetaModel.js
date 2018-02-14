@@ -1287,12 +1287,7 @@ sap.ui.define([
 					sNavigationPath = _Helper.buildPath(sNavigationPath, sPropertyName);
 					oProperty = oType[sPropertyName];
 					if (!oProperty) {
-						if (!oType[sPropertyName.split("@odata.bind")[0]]) {
-							error("Not a (navigation) property: " + sPropertyName);
-						} else {
-							// handle navigation properties with @odata.bind as simple property
-							oProperty = {};
-						}
+						error("Not a (navigation) property: " + sPropertyName);
 					}
 					oType = mScope[oProperty.$Type];
 					if (oProperty.$kind === "NavigationProperty") {
