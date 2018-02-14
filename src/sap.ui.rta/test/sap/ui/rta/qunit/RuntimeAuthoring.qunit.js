@@ -916,6 +916,15 @@ sap.ui.require([
 		});
 	});
 
+	QUnit.test("When transport function is called and transportAllUIChanges returns Promise.resolve() with 'Cancel' as parameter", function(assert) {
+		sandbox.stub(this.oRta, "_serializeToLrep").returns(Promise.resolve());
+		sandbox.stub(this.oChangePersistence, "transportAllUIChanges").returns(Promise.resolve('Cancel'));
+		var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
+		return this.oRta.transport().then(function() {
+			assert.equal(oMessageToastStub.callCount, 0, "then the messageToast was not shown");
+		});
+	});
+
 	QUnit.done(function( details ) {
 		oComp.destroy();
 		jQuery("#test-view").hide();
