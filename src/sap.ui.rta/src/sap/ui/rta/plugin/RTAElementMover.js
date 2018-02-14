@@ -88,7 +88,11 @@ function(
 	RTAElementMover.prototype.isEditable = function(oOverlay, bOnRegistration) {
 		var oElement = oOverlay.getElement();
 		var bMovable = false;
-		if (this.isMovableType(oElement) && this.checkMovable(oOverlay, bOnRegistration)) {
+		if (
+			this.isMovableType(oElement)
+			&& this.checkMovable(oOverlay, bOnRegistration)
+			&& !OverlayUtil.isInAggregationBinding(oOverlay, oElement.sParentAggregationName)
+		) {
 			bMovable = true;
 		}
 		oOverlay.setMovable(bMovable);
