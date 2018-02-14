@@ -117,12 +117,12 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 
 		return this.oChangePersistence.getChangesForComponent().then(function () {
 			assert.ok(fnSetChangeFileContentSpy.calledOnce, "then _setChangeFileContent of VariantManagement called once as file content is not set");
-			assert.ok(fnLoadInitialChangesStub.calledOnce, "then loadDefaultChanges of VariantManagement called once as file content is not set");
+			assert.ok(fnLoadInitialChangesStub.calledOnce, "then loadDefaultChanges of VariantManagement called for the first time");
 			assert.ok(fnApplyChangesOnVariantManagementStub.calledOnce, "then applyChangesOnVariantManagement called once for one variant management reference, as file content is not set");
 		}).then(function () {
 			this.oChangePersistence.getChangesForComponent().then(function () {
 				assert.ok(fnSetChangeFileContentSpy.calledOnce, "then _setChangeFileContent of VariantManagement not called again as file content is set");
-				assert.ok(fnLoadInitialChangesStub.calledOnce, "then loadDefaultChanges of VariantManagement not called again as file content is set");
+				assert.ok(fnLoadInitialChangesStub.calledTwice, "then loadDefaultChanges of VariantManagement called again");
 				assert.ok(fnApplyChangesOnVariantManagementStub.calledOnce, "then applyChangesOnVariantManagement not called again as file content is set\"");
 			});
 		}.bind(this));
@@ -1296,8 +1296,15 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 	QUnit.test("when calling transportAllUIChanges unsuccessfully", function(assert){
 		sandbox.stub(this.oChangePersistence._oTransportSelection, "openTransportSelection").returns(Promise.reject());
 		sandbox.stub(MessageBox, "show");
-		return this.oChangePersistence.transportAllUIChanges().then(function(sError){
-			assert.equal(sError, "Error", "then Promise.resolve() with error message is returned");
+		return this.oChangePersistence.transportAllUIChanges().then(function(sResponse){
+			assert.equal(sResponse, "Error", "then Promise.resolve() with error message is returned");
+		});
+	});
+
+	QUnit.test("when calling transportAllUIChanges successfully, but with cancelled transport selection", function(assert){
+		sandbox.stub(this.oChangePersistence._oTransportSelection, "openTransportSelection").returns(Promise.resolve());
+		return this.oChangePersistence.transportAllUIChanges().then(function(sResponse){
+			assert.equal(sResponse, "Cancel", "then Promise.resolve() with cancel message is returned");
 		});
 	});
 

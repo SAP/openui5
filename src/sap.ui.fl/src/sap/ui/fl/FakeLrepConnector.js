@@ -107,7 +107,7 @@ sap.ui.define([
 	function handleResetChanges(sUri, sMethod, oData, mOptions, resolve) {
 		if (sUri.match(/^\/sap\/bc\/lrep\/changes\//) && sMethod === 'DELETE') {
 			var aUriParameters = [];
-			var regExp = /\?reference=([\w.]+)\&appVersion=([\d.]+)\&layer=(\w+)\&generator=([\w.]+)/;
+			var regExp = /\?reference=([\w.]+)\&.+\&layer=(\w+)\&generator=([\w.]+)/;
 			aUriParameters = sUri.match(regExp);
 			resolve({
 				response: {

@@ -38,6 +38,7 @@ sap.ui.define([
 		this._mVariantManagement = {};
 		this._setChangeFileContent(oChangeFileContent, {});
 		this.sVariantTechnicalParameterName = "sap-ui-fl-control-variant-id";
+		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 	};
 
 	/**
@@ -83,6 +84,10 @@ sap.ui.define([
 					}
 					if (!oVariant.content.content.visible) {
 						oVariant.content.content.visible = true;
+					}
+					var aTitleKeyMatch = oVariant.content.content.title.match(/.i18n>(\w+)./);
+					if (aTitleKeyMatch) {
+						oVariant.content.content.title = this._oResourceBundle.getText(aTitleKeyMatch[1]);
 					}
 
 					this._applyChangesOnVariant(oVariant);
@@ -294,6 +299,17 @@ sap.ui.define([
 				sVariantReference = this._mVariantManagement[sVariantManagementReference].initialVariant;
 			} else {
 				sVariantReference = this._mVariantManagement[sVariantManagementReference].defaultVariant;
+			}
+
+			//check for visibility of the variant, else use standard variant
+			var sVisible = this.getVariant(sVariantManagementReference, sVariantReference).content.content.visible;
+			if (!sVisible) {
+				if (this._mVariantManagement[sVariantManagementReference].initialVariant) {
+					this._mVariantManagement[sVariantManagementReference].initialVariant = sVariantManagementReference;
+				} else {
+					this._mVariantManagement[sVariantManagementReference].defaultVariant = sVariantManagementReference;
+				}
+				sVariantReference = sVariantManagementReference;
 			}
 
 			aInitialVMChanges = this.getVariantChanges(sVariantManagementReference, sVariantReference);

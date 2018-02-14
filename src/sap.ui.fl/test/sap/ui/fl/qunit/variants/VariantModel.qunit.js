@@ -100,12 +100,23 @@ sap.ui.require([
 	});
 
 	QUnit.test("when calling '_setModelPropertiesForControl'", function(assert) {
+		this.oModel.getData()["variantMgmtId1"]._isEditable = true;
 		this.oModel._setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
 		assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, true, "the parameter variantsEditable is initially true");
 		this.oModel._setModelPropertiesForControl("variantMgmtId1", true, oDummyControl);
 		assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, false, "the parameter variantsEditable is set to false for bAdaptationMode = true");
 		this.oModel._setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
 		assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, true, "the parameter variantsEditable is set to true for bAdaptationMode = false");
+	});
+
+	QUnit.test("when calling '_setModelPropertiesForControl' and variant management control has property editable=false", function(assert) {
+		this.oModel.getData()["variantMgmtId1"]._isEditable = false;
+		this.oModel._setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
+		assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, false, "the parameter variantsEditable is initially false");
+		this.oModel._setModelPropertiesForControl("variantMgmtId1", true, oDummyControl);
+		assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, false, "the parameter variantsEditable stays false for bAdaptationMode = true");
+		this.oModel._setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
+		assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, false, "the parameter variantsEditable stays false for bAdaptationMode = false");
 	});
 
 	QUnit.test("when calling 'getVariantManagementReference'", function(assert) {
