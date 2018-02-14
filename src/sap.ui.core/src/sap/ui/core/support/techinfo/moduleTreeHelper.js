@@ -180,11 +180,32 @@ sap.ui.define([], function () {
 		 */
 		toHierarchy: function (oTree) {
 			var oResult = {};
-
+			oTree.selected = this.isNodeSelected(oTree);
 			this.setHierarchyNode(oResult, oTree);
 			return oResult;
 		},
 
+		/**
+		 * Checks and update the tree model based on selected child nodes.
+		 * @param oNode The tree to be updated
+		 * @returns {boolean} The selected of the node.
+		 */
+		isNodeSelected: function (oNode) {
+			var iSelectedNodesCount = 0,
+				oChildNode;
+
+			for (var i = 0; i < oNode.nodes.length; i++) {
+				oChildNode = oNode.nodes[i];
+				if (oChildNode.nodes.length) {
+					oChildNode.selected = this.isNodeSelected(oChildNode);
+				}
+				if (oChildNode.selected) {
+					iSelectedNodesCount++;
+				}
+			}
+
+			return iSelectedNodesCount === oNode.nodes.length;
+		},
 		/**
 		 * Recursively converts a bindable tree node to a hierarchical model tree node
 	 	 * @param {object} oHierarchy The module hierarchy node with selected state
