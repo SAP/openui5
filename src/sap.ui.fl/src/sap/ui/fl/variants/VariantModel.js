@@ -648,22 +648,31 @@ sap.ui.define([
 			});
 		} else {
 			// Personalization Settings
-			oControl.attachManage({
-				variantManagementReference: sVariantManagementReference
-			}, this.fnManageClick, this);
+			if (this.oData[sVariantManagementReference]._isEditable) {
+				oControl.attachManage({
+					variantManagementReference: sVariantManagementReference
+				}, this.fnManageClick, this);
 
-			this.oData[sVariantManagementReference].variantsEditable = true;
-			this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
-				oVariant.remove = fnRemove(oVariant, sVariantManagementReference, bAdaptationMode);
-				// Check for end-user variant
-				if (oVariant.layer === Utils.getCurrentLayer(true)) {
-					oVariant.rename = true;
-					oVariant.change = true;
-				} else {
+				this.oData[sVariantManagementReference].variantsEditable = true;
+				this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
+					oVariant.remove = fnRemove(oVariant, sVariantManagementReference, bAdaptationMode);
+					// Check for end-user variant
+					if (oVariant.layer === Utils.getCurrentLayer(true)) {
+						oVariant.rename = true;
+						oVariant.change = true;
+					} else {
+						oVariant.rename = false;
+						oVariant.change = false;
+					}
+				});
+			} else {
+				this.oData[sVariantManagementReference].variantsEditable = false;
+				this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
+					oVariant.remove = false;
 					oVariant.rename = false;
 					oVariant.change = false;
-				}
-			});
+				});
+			}
 		}
 	};
 
@@ -754,6 +763,8 @@ sap.ui.define([
 		this._ensureStandardVariantExists(sVariantManagementReference);
 
 		if (oVariantManagementControl) {
+			//original setting of control parameter 'editable' is needed
+			this.oData[sVariantManagementReference]._isEditable = oVariantManagementControl.getEditable();
 			//control property updateVariantInURL set initially
 			this.oData[sVariantManagementReference].updateVariantInURL = oVariantManagementControl.getUpdateVariantInURL();
 			//attach binding change event on VariantManagement control title

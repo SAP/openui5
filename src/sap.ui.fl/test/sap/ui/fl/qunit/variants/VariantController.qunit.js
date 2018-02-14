@@ -310,6 +310,55 @@ sap.ui.require([
 		assert.ok(fnApplyChangesOnVariantManagementSpy.calledTwice, "_applyChangesOnVariantManagement called twice, once per variant management reference");
 	});
 
+	QUnit.test("when calling '_setChangeFileContent' and the standard variant has a title from the resource bundle", function(assert) {
+		var oFakeVariantResponse = {
+				"changes" : {
+					"changes" : [],
+					"variantSection" : {
+						"variantMgmtId1" : {
+							"variants" : [
+								{
+									"content": {
+										"fileName":"variant0",
+										"layer":"CUSTOMER",
+										"support":{
+											"user":"Me"
+										},
+										"content": {
+											"title":"variant A"
+										}
+									},
+									"controlChanges" : [],
+									"variantChanges" : {
+										"setTitle": []
+									}
+								},
+								{
+									"content": {
+										"fileName":"variantMgmtId1",
+										"support":{
+											"user":"SAP"
+										},
+										"content": {
+											"title":"{i18n>STANDARD_VARIANT_TITLE}"
+										}
+									},
+									"controlChanges" : [],
+									"variantChanges" : {
+										"setTitle": []
+									}
+								}
+							],
+							"variantManagementChanges": {}
+						}
+					}
+				}
+			};
+		var oVariantController = new VariantController("MyComponent", "1.2.3", {});
+		oVariantController._setChangeFileContent(oFakeVariantResponse);
+		assert.equal(oVariantController._mVariantManagement["variantMgmtId1"].variants[0].content.content.title, "Standard", "then the standard variant title is set to the value from the resource bundle");
+	});
+
 	QUnit.test("when calling '_fillVariantModel' with a variant management change", function(assert) {
 		var oFakeVariantResponse = {
 			"changes" : {
@@ -1191,6 +1240,61 @@ sap.ui.require([
 
 		this.oVariantController._mVariantManagement["variantManagementId2"].variants[0].content.fileName = "variantCheckReference";
 		assert.deepEqual(sap.ui.fl.Cache.getEntry("MyComponent", "1.2.3").file.changes.variantSection, this.oVariantController._mVariantManagement, "then Cache.file.changes has the same structure as VariantController variantSection map, passed by reference");
+	});
+
+	QUnit.test("when calling '_setChangeFileContent' & 'loadInitialChanges' with an invisible default variant", function(assert){
+		this.oChangeContent4 = {"fileName":"change4"};
+		this.oChangeContent5 = {"fileName":"change5"};
+		this.oVariantManagementChangeContent = {
+			"fileName" : "change6",
+			"changeType" : "setDefault",
+			"content" : {
+				"defaultVariant" : "variant02"
+			}
+		};
+		this.oVariantChangeContent = {
+				"fileName" : "change7",
+				"changeType" : "setVisible",
+				"content" : {
+					"visible" : false
+				}
+			};
+
+		this.oFakeVariantResponse.changes.variantSection["variantManagementId2"] = {
+			"variants" : [{
+				"content" : {
+					"fileName": "variant02",
+					"content": {
+						"title": "variant 02",
+						"visible": true
+					}
+				},
+				"controlChanges" : [this.oChangeContent4],
+				"variantChanges" : {"setVisible": [this.oVariantChangeContent]}
+			},
+			{
+				"content" : {
+					"fileName": "variantManagementId2",
+					"content": {
+						"title": "variant default2"
+					}
+				},
+				"controlChanges" : [this.oChangeContent5],
+				"variantChanges" : {}
+			}],
+			"variantManagementChanges" : {
+				"setDefault" : [this.oVariantManagementChangeContent]
+			}
+		};
+
+		this.oVariantController._setChangeFileContent(this.oFakeVariantResponse, this.oComponent);
+		var aInitialChanges = this.oVariantController.loadInitialChanges();
+
+		var aExpectedChanges = this.oFakeVariantResponse.changes.variantSection.variantManagementId.variants[0].controlChanges.concat(
+			this.oFakeVariantResponse.changes.variantSection.variantManagementId2.variants[1].controlChanges);
+
+		assert.deepEqual(aExpectedChanges, aInitialChanges, "then the changes for the standard variant are used as initial changes");
+		assert.equal(this.oVariantController._mVariantManagement["variantManagementId2"].defaultVariant, "variantManagementId2", "and the parameter 'defaultVariant' is set to the standard variant");
 	});
 
 });
