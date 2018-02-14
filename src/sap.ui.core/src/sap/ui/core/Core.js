@@ -290,7 +290,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			}
 			// when the preload mode is 'auto', it will be set to 'sync' for optimized sources
 			if ( sPreloadMode === "auto" ) {
-				sPreloadMode = (window["sap-ui-optimized"] && !this.oConfiguration['xx-loadAllMode']) ? "sync" : "";
+				sPreloadMode = window["sap-ui-optimized"] ? "sync" : "";
 			}
 			// write back the determined mode for later evaluation (e.g. loadLibrary)
 			this.oConfiguration.preload = sPreloadMode;
@@ -1706,20 +1706,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		// load libraries only once
 		if ( !mLoadedLibraries[sLibrary] ) {
 
-			var sModule = sLibrary + ".library",
-				sAllInOneModule;
+			var sModule = sLibrary + ".library";
 
 			// if a sUrl is given, redirect access to it
 			if ( vUrl ) {
 				jQuery.sap.registerModulePath(sLibrary, vUrl);
 			}
 
-			// optimization: in all-in-one mode we are loading all modules of the lib in a single file
-			if ( this.oConfiguration['xx-loadAllMode'] && !jQuery.sap.isDeclared(sModule) ) {
-				sAllInOneModule = sModule + "-all";
-				jQuery.sap.log.debug("load all-in-one file " + sAllInOneModule);
-				jQuery.sap.require(sAllInOneModule);
-			} else if ( this.oConfiguration.preload === 'sync' || this.oConfiguration.preload === 'async' ) {
+			if ( this.oConfiguration.preload === 'sync' || this.oConfiguration.preload === 'async' ) {
 				preloadLibrarySync(sLibrary);
 			}
 
