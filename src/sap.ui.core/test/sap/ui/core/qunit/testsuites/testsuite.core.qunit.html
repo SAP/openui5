@@ -11,7 +11,8 @@
 		function suite() {
 			var suite = new parent.jsUnitTestSuite();
 			var contextPath = "/" + window.location.pathname.split("/")[1];
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/AppCacheBuster.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/appcachebuster/AppCacheBuster.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/baseuri.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/CacheManager.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ControlDefinition.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Core.qunit.html");

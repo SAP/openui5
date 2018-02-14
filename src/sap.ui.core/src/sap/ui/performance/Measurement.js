@@ -5,7 +5,7 @@
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
-/*global XMLHttpRequest */
+/*global XMLHttpRequest, document, location, window */
 sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 ], function(log, URI, now) {
 
@@ -144,7 +144,7 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 						sMeasureId;
 
 					oXHR.open = function() {
-						sMeasureId = new URI(arguments[1]).absoluteTo(document.location.origin + document.location.pathname).href();
+						sMeasureId = new URI(arguments[1], new URI(document.baseURI).search("")).href();
 						fnStart(sMeasureId, "Request for " + sMeasureId, "xmlhttprequest");
 						oXHR.addEventListener("loadend", fnEnd.bind(null, sMeasureId));
 
