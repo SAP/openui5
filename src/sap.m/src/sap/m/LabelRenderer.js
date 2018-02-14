@@ -35,13 +35,13 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/m/library', 'sap/ui/core/library'],
 			sWidth = oLabel.getWidth(),
 			sLabelText = oLabel.getText(),
 			sTooltip = oLabel.getTooltip_AsString(),
-			labelForRendering = oLabel.getLabelForRendering(),
-			htmlTagToRender = labelForRendering ? "label" : "span",
+			sLabelForRendering = oLabel.getLabelForRendering(),
+			sHtmlTagToRender = sLabelForRendering ? "label" : "span",
 			bDisplayOnly = oLabel.isDisplayOnly(),
 			sVerticalAlign = oLabel.getVAlign();
 		// write the HTML into the render manager
 		// for accessibility reasons when a label doesn't have a "for" attribute, pointing at a HTML element it is rendered as span
-		rm.write("<" + htmlTagToRender);
+		rm.write("<" + sHtmlTagToRender);
 		rm.writeControlData(oLabel);
 
 		// styles
@@ -61,7 +61,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/m/library', 'sap/ui/core/library'],
 			rm.addClass("sapMLabelRequired");
 		}
 
-		if (labelForRendering) {
+		if (sLabelForRendering) {
 			sap.ui.core.LabelEnablement.writeLabelForAttribute(rm, oLabel);
 		} else if (oLabel.getParent() instanceof sap.m.Toolbar) {
 			rm.addClass("sapMLabelTBHeader");
@@ -115,10 +115,10 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/m/library', 'sap/ui/core/library'],
 		}
 		rm.write("</bdi>");
 
-		rm.write("</" + htmlTagToRender + ">");
+		rm.write("</" + sHtmlTagToRender + ">");
 
 		// add invisible ":" span in "display only" mode
-		if (!labelForRendering && oLabel.isDisplayOnly && oLabel.isDisplayOnly()) {
+		if (!sLabelForRendering && oLabel.isDisplayOnly && oLabel.isDisplayOnly()) {
 			rm.write('<span id="' + oLabel.getId() + '-colon" class="sapUiPseudoInvisibleText">:</span>');
 		}
 	};

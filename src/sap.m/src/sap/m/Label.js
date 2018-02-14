@@ -71,6 +71,7 @@ function(
 	 * @constructor
 	 * @public
 	 * @alias sap.m.Label
+	 * @see {@link https://experience.sap.com/fiori-design-web/label/ UX Guidelines for sap.m.Label}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Label = Control.extend("sap.m.Label", /** @lends sap.m.Label.prototype */ { metadata : {
@@ -168,6 +169,13 @@ function(
 		return this;
 	};
 
+	/**
+	* Sets the tooltip of the <code>sap.m.Label</code>.
+	*
+	* @public
+	* @param {string} sTooltip Tooltip's value represented in string format.
+	* @returns {sap.m.Label} <code>this</code> pointer for chaining.
+	*/
 	Label.prototype.setTooltip = function(oTooltip) {
 		var oValue = this.getTooltip();
 		if (oValue !== oTooltip) {
@@ -189,15 +197,23 @@ function(
 	};
 
 	/**
-	 * See {@link sap.ui.core.Control#getAccessibilityInfo}. Provides the current accessibility state of the control.
+	 * Provides the current accessibility state of the control.
+	 * @see {@link sap.ui.core.Control#getAccessibilityInfo}.
+	 *
 	 * @protected
+	 *
+	 * @returns {object} AccessibilityInfo of the <code>sap.m.Label</code>
 	 */
 	Label.prototype.getAccessibilityInfo = function() {
 		return {description: this.getText()};
 	};
 
 	/**
+	 * Enables the <code>sap.m.Label</code> to move inside the sap.m.OverflowToolbar.
 	 * Required by the {@link sap.m.IOverflowToolbarContent} interface.
+	 *
+	 * @public
+	 * @returns {object} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
 	 */
 	Label.prototype.getOverflowToolbarConfig = function() {
 		var oConfig = {
