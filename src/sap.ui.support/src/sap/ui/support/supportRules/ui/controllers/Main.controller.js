@@ -79,12 +79,22 @@ sap.ui.define([
 
 		setCommunicationSubscriptions: function () {
 
+			var iProgressTimeout;
+
 			CommunicationBus.subscribe(channelNames.CURRENT_LOADING_PROGRESS, function (data) {
 				var iCurrentProgress = data.value,
 					oProgressIndicator = this.byId("progressIndicator");
 
 				if (data.value < 100) {
 					this.model.setProperty("/showProgressIndicator", true);
+
+					// handling unknown errors
+					// if the progress is not updated within 2500ms, remove progress indicator
+					clearTimeout(iProgressTimeout);
+					iProgressTimeout = setTimeout(function () {
+						this.model.setProperty("/showProgressIndicator", false);
+					}.bind(this), 2500);
+
 				} else {
 					// Hides ProgressIndicator after a timeout of 2 seconds
 					setTimeout(function () {
