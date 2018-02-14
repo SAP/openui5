@@ -2500,7 +2500,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		}.bind(this));
 	};
 
-	ODataTreeBinding.prototype._generatePreorderPositionRequest = function(oNode, mParameters) {
+	ODataTreeBindingFlat.prototype._generatePreorderPositionRequest = function(oNode, mParameters) {
 		var sGroupId, sKeyProperty, sKeySelect, mUrlParameters,
 			successHandler, errorHandler,
 			aFilters = [],
@@ -2512,7 +2512,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 			successHandler = mParameters.success;
 			errorHandler = mParameters.error;
 		}
-
 
 		if (this.aApplicationFilters) {
 			aFilters = aFilters.concat(this.aApplicationFilters);
@@ -2552,7 +2551,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		});
 	};
 
-	ODataTreeBinding.prototype._generateSiblingsPositionRequest = function(oNode, mParameters) {
+	ODataTreeBindingFlat.prototype._generateSiblingsPositionRequest = function(oNode, mParameters) {
 		var sGroupId, mUrlParameters, successHandler, errorHandler;
 			// aFilters = [], aSorters = this.aSorters || [];
 
@@ -3021,7 +3020,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 			aAdded = oChanges.added || [],
 			sIndexName = (oConfig && oConfig.indexName) || "serverIndex",
 			oNode, oSection, oAdded,
-			iRestLength, iRemovedLength, iMagnitude, iPosition, iPendingRemoveEnd, iNextPendingRemoveEnd, iPendingRemoveLength,
+			iRestLength, iRemovedLength, iRemovedNodeCount = 0, iMagnitude, iPosition, iPendingRemoveEnd, iNextPendingRemoveEnd, iPendingRemoveLength,
 			iAddedLength,
 			iNextDelta, iCurrentDelta = 0, iTopDelta, sPositionAnnot,
 			aAddedIndices = [];
@@ -3068,6 +3067,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 				iPosition = oNode[sIndexName];
 
 				if (iPosition >= oSection.iSkip && iPosition <= oSection.iSkip + oSection.iTop) { // Check if node is in section
+					if (sIndexName === "serverIndex") {
+						// Special handling for generated server index nodes.
+						// Service generates leaf nodes in case a nodes last child is getting removed.
+						// Not relevant for deep nodes. No restore action necessary if all child nodes got removed.
+
+						// To handle potentially generated server index nodes replacing removed nodes, we enhance all server index
+						//	sections by the amount of removed nodes (ignoring their child nodes, i.e. their magnitude).
+						iRemovedNodeCount++;
+					}
 					iMagnitude = (oConfig && oConfig.ignoreMagnitude) ? 0 : this._getInitialMagnitude(oNode);
 
 					iRemovedLength = (1 + iMagnitude);
@@ -3124,6 +3132,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 
 				oSection.iSkip += iCurrentDelta;
 				oSection.iTop += iTopDelta;
+				oSection.iTop += iRemovedNodeCount; // Enhance section by amount of so far removed nodes. Every removed node might get replaced with a generated leaf node by the service
 			}
 
 			if (oSection.iTop <= 0) {
