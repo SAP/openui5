@@ -2036,15 +2036,16 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#create: with given sPath", function (assert) {
-		var oBody,
-			oCache = new _Cache(this.oRequestor, "TEAMS"),
+		var oCache = new _Cache(this.oRequestor, "TEAMS"),
 			oCacheMock = this.mock(oCache),
 			aCollection = [],
 			oCountChangeListener = {onChange : function () {}},
 			oCreatePromise,
 			oIdChangeListener = {onChange : function () {}},
+			oInitialData = {ID : "", Name : "John Doe"},
+			oEntityData = jQuery.extend({}, oInitialData),
 			sPathInCache = "0/TEAM_2_EMPLOYEES",
-			oPostPathPromise = SyncPromise.resolve("TEAMS('0')/TEAM_2_EMPLOYEES"),
+			sPostPath = "TEAMS('0')/TEAM_2_EMPLOYEES",
 			mTypeForMetaPath = {};
 
 		oCache.fetchValue = function () {};
@@ -2052,13 +2053,12 @@ sap.ui.require([
 		oCacheMock.expects("fetchValue")
 			.withExactArgs("$cached", "0/TEAM_2_EMPLOYEES")
 			.returns(SyncPromise.resolve(aCollection));
+		this.mock(jQuery).expects("extend").withExactArgs(true, {}, sinon.match.same(oInitialData))
+			.returns(oEntityData);
 		this.spy(oCache, "addByPath");
 		this.oRequestorMock.expects("request")
 			.withExactArgs("POST", "TEAMS('0')/TEAM_2_EMPLOYEES", "updateGroup", null,
-				sinon.match(function (oPayload) {
-					oBody = oPayload;
-					return true;
-				}), /*fnSubmit*/sinon.match.func,
+				sinon.match.same(oEntityData), /*fnSubmit*/sinon.match.func,
 				/*fnCancel*/sinon.match.func)
 			.returns(SyncPromise.resolve(Promise.resolve({
 				ID : "7",
@@ -2074,16 +2074,15 @@ sap.ui.require([
 		this.mock(oIdChangeListener).expects("onChange");
 
 		// code under test
-		oCreatePromise = oCache.create("updateGroup", oPostPathPromise, sPathInCache,
-			{ID : "", Name : "John Doe"});
+		oCreatePromise = oCache.create("updateGroup", sPostPath, sPathInCache, oInitialData);
 
 		// initial data is synchronously available
-		assert.strictEqual(aCollection[-1].Name, "John Doe");
-		assert.strictEqual(aCollection[-1].ID, "");
+		assert.strictEqual(aCollection[-1], oEntityData);
 		assert.strictEqual(aCollection.$count, 0);
 
 		// request is added to mPostRequests
-		sinon.assert.calledWithExactly(oCache.addByPath, oCache.mPostRequests, sPathInCache, oBody);
+		sinon.assert.calledWithExactly(oCache.addByPath, sinon.match.same(oCache.mPostRequests),
+			sPathInCache, sinon.match.same(oEntityData));
 
 		oCache.registerChange(sPathInCache + "/-1/Name", function () {
 			assert.notOk(true, "No change event for Name");
@@ -2095,8 +2094,9 @@ sap.ui.require([
 			assert.strictEqual(aCollection[-1].ID, "7", "from Server");
 			assert.strictEqual(aCollection[-1]["@$ui5.predicate"], "(~)");
 			assert.strictEqual(aCollection.$count, 1);
-			sinon.assert.calledWithExactly(oCache.removeByPath, oCache.mPostRequests, sPathInCache,
-				oBody);
+			sinon.assert.calledWithExactly(oCache.removeByPath,
+				sinon.match.same(oCache.mPostRequests), sPathInCache,
+				sinon.match.same(oEntityData));
 		});
 	});
 
@@ -2340,8 +2340,10 @@ sap.ui.require([
 				});
 		}
 
+		this.mock(this.oRequestor).expects("buildQueryString").twice()
+			.returns("?sap-client=111");
 		oRequestExpectation1 = this.oRequestorMock.expects("request");
-		oRequestExpectation1.withExactArgs("POST", "Employees", "updateGroup", null,
+		oRequestExpectation1.withExactArgs("POST", "Employees?sap-client=111", "updateGroup", null,
 				sinon.match.object, sinon.match.func, sinon.match.func)
 			.returns(oFailedPostPromise = new Promise(function (resolve, reject) {
 				fnRejectPost = reject;
@@ -2353,8 +2355,8 @@ sap.ui.require([
 		checkUpdateSuccess("before submitBatch").then(function () {
 			oRequestExpectation2 = that.oRequestorMock.expects("request");
 			// immediately add the POST request again into queue
-			oRequestExpectation2.withExactArgs("POST", "Employees", "updateGroup", null,
-					sinon.match.object, sinon.match.func, sinon.match.func)
+			oRequestExpectation2.withExactArgs("POST", "Employees?sap-client=111", "updateGroup",
+					null, sinon.match.object, sinon.match.func, sinon.match.func)
 				.returns(new Promise(function (resolve) {
 						fnResolvePost = resolve;
 					}));
@@ -2381,7 +2383,7 @@ sap.ui.require([
 
 		return oCreatePromise.then(function () {
 			that.oRequestorMock.expects("request")
-				.withExactArgs("PATCH", "Employees", "updateGroup",
+				.withExactArgs("PATCH", "Employees?sap-client=111", "updateGroup",
 					{"If-Match" : undefined}, {foo : "baz2"}, undefined,
 					sinon.match.func)
 				.returns(Promise.resolve({}));
