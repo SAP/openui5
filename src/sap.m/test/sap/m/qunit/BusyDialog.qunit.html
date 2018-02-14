@@ -442,6 +442,44 @@
 				assert.strictEqual(this.oBusyDialog._oDialog._$content.attr('role'), 'application', 'Should be application.');
 			});
 
+			QUnit.module('Style Class Methods', {
+				beforeEach: function () {
+					this.oBusyDialog = new sap.m.BusyDialog({
+					});
+
+				},
+				afterEach: function () {
+					this.oBusyDialog.close();
+					this.oBusyDialog.destroy();
+					this.oBusyDialog = null;
+				}
+			});
+			// =========================================================================================================
+			// Testing StyleClass methods
+			// =========================================================================================================
+
+			QUnit.test("Check style classes of internal Dialog", function (assert) {
+				//Arrange
+				var oDialogAddStyleClassStub = this.stub(this.oBusyDialog._oDialog, "addStyleClass"),
+					oDialogHasStyleClassStub = this.stub(this.oBusyDialog._oDialog, "hasStyleClass"),
+					oDialogToggleStyleClassStub = this.stub(this.oBusyDialog._oDialog, "toggleStyleClass"),
+					oDialogRemoveStyleClassStub = this.stub(this.oBusyDialog._oDialog, "removeStyleClass"),
+					sMyStyleClass = "myStyleClass";
+
+				//Act
+				this.oBusyDialog.addStyleClass(sMyStyleClass);
+				this.oBusyDialog.hasStyleClass(sMyStyleClass);
+				this.oBusyDialog.toggleStyleClass(sMyStyleClass);
+				this.oBusyDialog.removeStyleClass(sMyStyleClass);
+
+				//Assert
+				assert.ok(oDialogAddStyleClassStub.called, "The Dialog addStyleClass has been called");
+				assert.equal(oDialogAddStyleClassStub.calledWith(sMyStyleClass), true, "Style class has been handed from BusyDialog to the Dialog successfully");
+				assert.ok(oDialogHasStyleClassStub.called, "The Dialog hasStyleClass has been called");
+				assert.ok(oDialogRemoveStyleClassStub.called, "The Dialog removeStyleClass has been called");
+				assert.ok(oDialogToggleStyleClassStub.called, "The Dialog toggleStyleClass has been called");
+			});
+
 		</script>
 	</head>
 	<body id='body' class='sapUiBody'>
