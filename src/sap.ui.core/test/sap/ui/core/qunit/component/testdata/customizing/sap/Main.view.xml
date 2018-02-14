@@ -10,6 +10,8 @@
 
 		<mvc:XMLView id="sub3View" viewName="testdata.customizing.sap.Sub3" />
 
+		<!-- fragment without id behaves different to a fragment with id -->
+		<core:Fragment fragmentName="testdata.customizing.sap.Frag1" type="XML" />
 		<core:Fragment id="frag1" fragmentName="testdata.customizing.sap.Frag1" type="XML" />
 
 		<html:h2>JSView Extension Tests start below:</html:h2>
