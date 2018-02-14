@@ -21,6 +21,7 @@ module.exports = function(grunt, config) {
 			src: [
 				sSourcesFolder + 'sap/ui/Device.js',
 				sSourcesFolder + 'sap/ui/thirdparty/URI.js',
+				sSourcesFolder + 'sap/ui/thirdparty/baseuri.js',
 				sSourcesFolder + 'sap/ui/thirdparty/es6-promise.js',
 				sSourcesFolder + 'jquery.sap.global.js'
 			],

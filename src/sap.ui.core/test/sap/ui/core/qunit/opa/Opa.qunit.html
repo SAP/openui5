@@ -734,13 +734,17 @@ sap.ui.require([
 
 	QUnit.test("Should read an opa config value from URL parameter", function (assert) {
 		var fnDone = assert.async();
-		var oStub = sinon.stub(URI.prototype, "search", function () {
-			return {
-				"opaKey": "value",			// should parse prefixed params
-				"opaExecutionDelay": "2000",// should override default value params
-				"another": "value",			// should not parse unprefixed params
-				"opaOverride": "value"		// should override already set params
-			};
+		var fnOrig = URI.prototype.search;
+		var oStub = sinon.stub(URI.prototype, "search", function (query) {
+			if ( query === true ) {
+				return {
+					"opaKey": "value",			// should parse prefixed params
+					"opaExecutionDelay": "2000",// should override default value params
+					"another": "value",			// should not parse unprefixed params
+					"opaOverride": "value"		// should override already set params
+				};
+			}
+			return fnOrig.apply(this, arguments); // should use callThrough with sinon > 3.0
 		});
 		$.sap.unloadResources("sap/ui/test/Opa.js", false, true, true);
 
