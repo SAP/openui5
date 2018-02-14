@@ -87,21 +87,38 @@
 
 
 				<h3><a name="coding"></a>Start Coding</h3>
-				<p>Now it is time to build your first OpenUI5 app. To start simple, we load OpenUI5 from our <a href="https://openui5.hana.ondemand.com/#/topic/2d3eb2f322ea4a82983c1c62a33ec4ae" target="_blank">CDN</a> and place a sap.m.Text and a sap.m.MessageToast into the HTML body.
-					You can try it out on the <a hred="https://openui5.hana.ondemand.com/#/sample/sap.m.tutorial.walkthrough.06/preview" target="_blank" alt="link to Hello World sample to try it out and look at the code">Hello World samples page in the OpenUI5 Demo Kit</a>. This is how it works: when you click on the button "Say Hello", the message "Hello World" will appear. You can display the code by clicking on the button to display the code as indicated in the screenshot below on the right side at the top of the screen. 
+				<p>Now it is time to build your first OpenUI5 app. To start simple, we load OpenUI5 from our <a href="https://openui5.hana.ondemand.com/#/topic/2d3eb2f322ea4a82983c1c62a33ec4ae" target="_blank">CDN</a> and place a sap.m.Text into the HTML body:
+
+				<pre class="codeblock">
+<span class="shTag">&lt;html&gt;</span>
+<span class="shTag">&lt;head&gt;</span>
+<span class="shTag">&lt;title&gt;</span>Hello World<span class="shTag">&lt;/title&gt;</span>
+
+<span class="shTag">&lt;script</span> <span class="shAttr">id</span>=<span class="shString">'sap-ui-bootstrap'</span>
+    <span class="shAttr">src</span>=<span class="shString">'https://openui5.hana.ondemand.com/resources/sap-ui-core.js'</span>
+    <span class="shAttr">data-sap-ui-theme</span>=<span class="shString">'sap_belize'</span>
+    <span class="shAttr">data-sap-ui-libs</span>=<span class="shString">'sap.m'</span>
+    <span class="shAttr">data-sap-ui-compatVersion</span>=<span class="shString">'edge'</span>
+    <span class="shAttr">data-sap-ui-preload</span>=<span class="shString">'async'</span><span class="shTag">&gt;</span>
+<span class="shTag">&lt;/script&gt;</span>
+
+<span class="shTag">&lt;script&gt;</span>
+    sap.ui.getCore().attachInit(<span class="sh-js-keyword">function</span> () {
+        <span class="sh-js-keyword">new</span> sap.m.Text({
+            <span class="shAttr">text</span>: <span class="shString">&quot;Hello World&quot;</span>
+        }).placeAt(<span class="shString">&quot;content&quot;</span>);
+    });
+<span class="shTag">&lt;/script&gt;</span>
+
+<span class="shTag">&lt;/head&gt;</span>
+<span class="shTag">&lt;body</span> <span class="shAttr">class</span>=<span class="shString">'sapUiBody'</span> <span class="shAttr">id</span>=<span class="shString">'content'</span><span class="shTag">&gt;</span>
+<span class="shTag">&lt;/body&gt;</span>
+<span class="shTag">&lt;/html&gt;</span></pre>
+
+				<p>
+					<a href="https://plnkr.co/edit/pypWW9?p=info" class="plunkerEmbedded" target="_blank">Try it out yourself - modify and extend this basic "Hello World!" example as you wish!</a>
 				</p>
-				<p>	You can see that the code is spead over three files: 
-					<ul>
-						<li>index.html</li>
-						<li>App.controller.js</li>
-						<li>App.view.xml</li>
-					</ul>
-					The reason is that code serving different purposes is seperated for a clearer app structure. Code handling the presentation of data is placed in the xml file and code responsible for responding to the user input and perform interactions is in the controller.js file. Here you can <a href="https://openui5.hana.ondemand.com/#/topic/91f233476f4d1014b6dd926db0e91070" target="_blank">read more about this pattern called MVC</a>, which stands for model-view-controller.
-					Go ahead an try it out with the link above!
-					<p style="text-align:center;">
-						<img src="images/code.png" alt="screenshot of the app indicating the display code button" width="400px" height="300px" align="middle"/>
-					</p>
-				
+			
 				<h3><a name="deeper"></a>Dig Deeper</h3>
 				Have a look at our tutorials and demo apps in the OpenUI5 Demo Kit:
 				<div class="downloadbuttons" style="padding-bottom: 0">
