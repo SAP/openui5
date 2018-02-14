@@ -127,17 +127,12 @@ sap.ui.define([
 				that._settingsPopover.openBy(oSource);
 			});
 		},
-		goToAnalysis: function (evt) {
-			var navCon = this.byId("navCon");
-			navCon.to(this.byId("analysis"), "show");
-			this.ensureOpened();
+		goToAnalysis: function (oEvent) {
+			this._setActiveView("analysis");
 		},
-		goToIssues: function () {
-			var navCon = this.byId("navCon");
-			navCon.to(this.byId("issues"), "show");
-			this.ensureOpened();
+		goToIssues: function (oEvent) {
+			this._setActiveView("issues");
 		},
-
 		_pingUrl: function (sUrl) {
 			return jQuery.ajax({
 				type: "HEAD",
@@ -219,7 +214,7 @@ sap.ui.define([
 			this.model.setProperty("/progress", 0.1);
 		},
 
-		_setContextSettings:function() {
+		_setContextSettings: function() {
 			var cookie = storage.readPersistenceCookie(constants.COOKIE_NAME);
 			if (cookie) {
 				this.model.setProperty("/persistingSettings", true);
@@ -233,6 +228,16 @@ sap.ui.define([
 					this.model.setProperty("/subtreeExecutionContextId", "");
 				}
 			}
+		},
+
+		_setActiveView: function(sId) {
+			this.byId("issuesBtn").setType(sap.m.ButtonType.Default);
+			this.byId("analysisBtn").setType(sap.m.ButtonType.Default);
+
+			//The corresponding button must have id with the name of the view
+			this.byId(sId + "Btn").setType(sap.m.ButtonType.Emphasized);
+			this.byId("navCon").to(this.byId(sId), "show");
+			this.ensureOpened();
 		}
 	});
 });

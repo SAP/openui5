@@ -47,8 +47,10 @@ sap.ui.define([
 
 					this.bAdditionalViewLoaded = true;
 					this.loadAdditionalUI();
+
 				}
 			}, this);
+
 		},
 
 		loadAdditionalUI: function () {
@@ -59,6 +61,7 @@ sap.ui.define([
 			this._ruleCreateUpdatePages.forEach(function (rcuPage) {
 				this.byId("rulesNavContainer").insertPage(rcuPage);
 			}, this);
+			this._updateRuleList();
 		},
 
 		onAfterRendering: function () {
@@ -174,8 +177,10 @@ sap.ui.define([
 					tempLib.rules.push(newRule);
 					treeTableTempLibrary = this._syncTreeTableVieModelTempRulesLib(tempLib, treeTable);
 
+					this._syncTreeTableVieModelTempRulesLib(tempLib, treeTable);
 					if (this.model.getProperty("/persistingSettings")) {
 						storage.setRules(tempLib.rules);
+
 						if (this.showRuleCreatedToast) {
 							MessageToast.show('Your temporary rule "' + newRule.id + '" was persisted in the local storage');
 							this.showRuleCreatedToast = false;
@@ -188,6 +193,7 @@ sap.ui.define([
 					this.model.setProperty("/selectedRule", newRule);
 
 					this.updateTreeViewTempRulesSelection(treeTableTempLibrary);
+					this._updateRuleList();
 				} else {
 					MessageToast.show("Add rule failed because: " + result);
 				}
@@ -593,6 +599,7 @@ sap.ui.define([
 					type: "library",
 					rules: rules
 				});
+
 			}
 
 			// Set first rule from first library if there is no temporary rules
@@ -801,6 +808,8 @@ sap.ui.define([
 			}
 			this.model.setProperty("/treeViewModel", treeViewModel);
 			storage.removeSelectedRules(rulesNotToBeDeleted);
+
+			this._updateRuleList();
 		},
 
 		/**
@@ -1259,6 +1268,16 @@ sap.ui.define([
 			}
 
 			return mIndex;
+		},
+
+		_updateRuleList: function() {
+			var oRuleList = this.getView().byId("ruleList"),
+				aTemplibs = this.getTemporaryLib()["rules"];
+			if (!aTemplibs.length) {
+				oRuleList.setRowActionCount(1);
+			}  else {
+				oRuleList.setRowActionCount(2);
+			}
 		}
 
 	});
