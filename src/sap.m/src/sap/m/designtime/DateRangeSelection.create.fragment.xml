@@ -1,5 +1,5 @@
 <core:FragmentDefinition
-	xmlns="sap.ui.unified"
+	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
 		<DateRangeSelection />
 </core:FragmentDefinition>
