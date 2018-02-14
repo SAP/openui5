@@ -618,6 +618,16 @@ sap.ui.define([
 		this.$().find(".sapUxAPBlockContainer").toggleClass("sapUxAPBlockContainerPhone", this._onPhoneMediaRange(oCurrentMedia));
 	};
 
+	ObjectPageSubSection.prototype._getMediaString = function (oCurrentMedia) {
+		if (this._onPhoneMediaRange(oCurrentMedia)) {
+			return "Phone";
+		}
+		if (this._onTabletMediaRange(oCurrentMedia)) {
+			return "Tablet";
+		}
+		return "Desktop";
+	};
+
 
 	/*************************************************************************************
 	 *  blocks & moreBlocks aggregation proxy
