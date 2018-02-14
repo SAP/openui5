@@ -1293,9 +1293,44 @@ function(
 					assert.ok(false, 'catch must never be called');
 				});
 		});
+
+		QUnit.test("when DesignTime instance is destroyed while creating an element overlay", function (assert) {
+			var fnDone = assert.async();
+			var oButton = new Button();
+
+			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime", function () {
+				this.oDesignTime.destroy();
+				return Promise.resolve({});
+			}.bind(this));
+
+			var fnElementOverlayCreatedSpy = sandbox.spy();
+			this.oDesignTime.attachEventOnce("elementOverlayCreated", fnElementOverlayCreatedSpy);
+			var fnElementOverlayDestroyedSpy = sandbox.spy();
+			this.oDesignTime.attachEventOnce("elementOverlayDestroyed", fnElementOverlayDestroyedSpy);
+
+			this.oDesignTime.createOverlay(oButton).then(
+				// Fulfilled
+				function () {
+					assert.ok(false, 'this must never be called');
+				},
+				// Rejected
+				function (oError) {
+					assert.ok(true, 'promise is rejected');
+					assert.ok(oError instanceof Error, 'proper rejection reason is provided');
+					assert.ok(
+						oError.toString().indexOf("while creating overlay, DesignTime instance has been destroyed") !== -1,
+						'proper rejection reason is provided'
+					);
+					assert.notOk(OverlayRegistry.getOverlay(oButton), 'no overlay for Button is registered');
+					assert.notOk(fnElementOverlayCreatedSpy.called, "then event 'elementOverlayCreated' is not called");
+					assert.notOk(fnElementOverlayDestroyedSpy.called, "then event 'elementOverlayDestroyed' is not called");
+					fnDone();
+				}
+			);
+		});
 	});
 
-	QUnit.done(function( details ) {
+	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
 });

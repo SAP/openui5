@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.dt.DesignTime.
 sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/ui/dt/ElementOverlay',
@@ -455,15 +454,18 @@ function(
 			root: true,
 			visible: this.getEnabled()
 		})
-			.then(function (oElementOverlay) {
-				Overlay.getOverlayContainer().append(oElementOverlay.render());
-				oElementOverlay.applyStyles();
-				this._oTaskManager.complete(iTaskId);
-				return oElementOverlay;
-			}.bind(this), function () {
-				jQuery.sap.log.error('sap.ui.dt: root element with id = "' + vRootElement.getId() + '" initialization is failed');
-				this._oTaskManager.cancel(iTaskId);
-			}.bind(this));
+			.then(
+				function (oElementOverlay) {
+					Overlay.getOverlayContainer().append(oElementOverlay.render());
+					oElementOverlay.applyStyles();
+					this._oTaskManager.complete(iTaskId);
+					return oElementOverlay;
+				}.bind(this),
+				function () {
+					jQuery.sap.log.error('sap.ui.dt: root element with id = "' + vRootElement.getId() + '" initialization is failed');
+					this._oTaskManager.cancel(iTaskId);
+				}.bind(this)
+			);
 	};
 
 	/**
@@ -561,8 +563,18 @@ function(
 							return this._createChildren(oElementOverlay, mParams.parentMetadata)
 								.then(function () {
 									delete this._mPendingOverlays[sElementId];
-									// Check if the overlay is still alive (case when element was destroyed during overlay creation process)
-									if (oElementOverlay.bIsDestroyed) {
+									// When DesignTime instance was destroyed during overlay creation process
+									if (this.bIsDestroyed) {
+										// TODO: refactor destroy() logic. See @676 & @788
+										oElementOverlay.detachEvent('destroyed', this._onElementOverlayDestroyed);
+										oElementOverlay.destroy();
+										this._oTaskManager.cancel(iTaskId);
+										return Promise.reject(Util.createError(
+											"DesignTime#createOverlay",
+											"while creating overlay, DesignTime instance has been destroyed"
+										));
+									// When element was destroyed during overlay creation process
+									} else if (oElementOverlay.bIsDestroyed) {
 										this._oTaskManager.cancel(iTaskId);
 										return Promise.reject(Util.createError(
 											"DesignTime#createOverlay",
