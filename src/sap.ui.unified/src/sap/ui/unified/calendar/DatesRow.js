@@ -130,8 +130,6 @@ sap.ui.define([
 	 * @param {object} oDate JavaScript date object for start date.
 	 * @returns {sap.ui.unified.calendar.DatesRow} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.unified.calendar.DatesRow#setDate
-	 * @function
 	 */
 	DatesRow.prototype.setDate = function(oDate){
 
@@ -190,9 +188,7 @@ sap.ui.define([
 	 *
 	 * @protected
 	 * @param {int} iFirstDayOfWeek The first day of the week
-	 * @name sap.ui.unified.calendar.DatesRow#setFirstDayOfWeek
 	 * @returns {sap.ui.unified.calendar.DatesRow} <code>this</code> to allow method chaining
-	 * @function
 	 */
 	DatesRow.prototype.setFirstDayOfWeek = function(iFirstDayOfWeek){
 

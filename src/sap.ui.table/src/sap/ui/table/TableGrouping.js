@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 	 * @author SAP SE
 	 * @version ${version}
 	 * @namespace
-	 * @name sap.ui.table.TableGrouping
+	 * @alias sap.ui.table.TableGrouping
 	 * @private
 	 */
 	var TableGrouping = {

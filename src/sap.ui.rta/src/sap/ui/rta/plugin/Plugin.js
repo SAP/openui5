@@ -264,7 +264,6 @@ function(
 
 	/**
 	 * Checks the Aggregations on the Overlay for a specific Action
-	 * @name sap.ui.rta.plugin.Plugin.prototype.checkAggregationsOnSelf
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay overlay to be checked for action
 	 * @param {string} sAction action to be checked
 	 * @return {boolean} whether the Aggregation has a valid Action

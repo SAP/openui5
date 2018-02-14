@@ -119,8 +119,6 @@ function(
 	/**
 	 * Sets up the initial values of the control.
 	 *
-	 * @name sap.m.NotificationListGroup.init
-	 * @method
 	 * @protected
 	 */
 	NotificationListGroup.prototype.init = function () {
@@ -176,8 +174,6 @@ function(
 	 * Overwrites the setter for collapsed property.
 	 *
 	 * @override
-	 * @name sap.m.NotificationListGroup.setCollapsed
-	 * @method
 	 * @public
 	 * @param {boolean} Collapsed Collapsed indicator.
 	 * @returns {sap.m.NotificationListGroup} this NotificationListGroup reference for chaining.
@@ -197,8 +193,6 @@ function(
 	 * Overrides the getter for priority property.
 	 *
 	 * @override
-	 * @name sap.m.notificationGroup.getPriority
-	 * @method
 	 * @public
 	 * @returns {sap.ui.core.Priority} Items by priority.
 	 */
@@ -229,8 +223,6 @@ function(
 	 * Overwrites the getter for unread property.
 	 *
 	 * @override
-	 * @name sap.m.NotificationListGroup.getUnread
-	 * @method
 	 * @public
 	 * @returns {boolean} Unread items.
 	 */
@@ -254,8 +246,6 @@ function(
 	 * Overwrites the onBeforeRendering.
 	 *
 	 * @overwrites
-	 * @name sap.m.NotificationListGroup.onBeforeRendering
-	 * @method
 	 * @public
 	 */
 	NotificationListGroup.prototype.onBeforeRendering = function() {
@@ -291,8 +281,6 @@ function(
 	/**
 	 * Returns the sap.m.Title control used in the NotificationListGroup's title.
 	 *
-	 * @name sap.m.NotificationListGroup._getHeaderTitle
-	 * @method
 	 * @private
 	 * @returns {sap.m.Text} The hidden title control aggregation used in the group title.
 	 */
@@ -311,8 +299,6 @@ function(
 	/**
 	 * Returns the sap.m.Text control used in the NotificationListGroup's datetime.
 	 *
-	 * @name sap.m.NotificationListGroup._getDateTimeText
-	 * @method
 	 * @private
 	 * @returns {sap.m.Text} The hidden text control aggregation used in the group's timestamp.
 	 */
@@ -331,8 +317,6 @@ function(
 	/**
 	 * Toggles the NotificationListGroup state between collapsed/expanded.
 	 *
-	 * @name sap.m.NotificationListGroup._toggleCollapsed
-	 * @method
 	 * @private
 	 */
 	NotificationListGroup.prototype._toggleCollapsed = function () {
@@ -347,8 +331,6 @@ function(
 	/**
 	 * Gets the number of visible NotificationListItems inside the group.
 	 *
-	 * @name sap.m.NotificationListGroup._getVisibleItemsCount
-	 * @method
 	 * @private
 	 * @returns {number} The number of visible notifications.
 	 */
@@ -369,8 +351,6 @@ function(
 	/**
 	 * Gets what the state (enabled/disabled) of the collapse button should be.
 	 *
-	 * @name sap.m.NotificationListGroup._getCollapseButtonEnabled
-	 * @method
 	 * @private
 	 * @returns {boolean} Should the collapse button be enabled.
 	 */
@@ -385,8 +365,6 @@ function(
 	/**
 	 * Focus handler for the NotificationListGroup's items.
 	 *
-	 * @name sap.m.NotificationListGroup._notificationFocusHandler
-	 * @method
 	 * @private
 	 * @param {jQuery.Event} event The passed event object.
 	 */
@@ -409,8 +387,6 @@ function(
 	/**
 	 * Event handler for keypressed.
 	 *
-	 * @name sap.m.NotificationListGroup._notificationNavigationHandler
-	 * @method
 	 * @private
 	 * @param {jQuery.Event} event The passed event object.
 	 */
@@ -450,8 +426,6 @@ function(
 	/**
 	 * Updates all the text needed for accessibility.
 	 *
-	 * @name sap.m.NotificationListGroup._updateAccessibilityInfo
-	 * @method
 	 * @private
 	 */
 	NotificationListGroup.prototype._updateAccessibilityInfo = function() {
@@ -474,8 +448,6 @@ function(
 	/**
 	 * Updates the collapse/expand text according to the new passed state.
 	 *
-	 * @name sap.m.NotificationListGroup._updateCollapseButtonText
-	 * @method
 	 * @private
 	 * @param {boolean} collapsed The new collapsed state.
 	 */
@@ -489,8 +461,6 @@ function(
 	/**
 	 * Compares two priorities and returns the higher one.
 	 *
-	 * @name comparePriority
-	 * @function
 	 * @private
 	 * @param {sap.ui.core.Priority} firstPriority First priority string to be compared.
 	 * @param {sap.ui.core.Priority} secondPriority Second priority string to be compared.

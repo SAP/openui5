@@ -14,7 +14,7 @@ sap.ui.define([], function() {
 	 * @author SAP SE
 	 * @version ${version}
 	 * @namespace
-	 * @name sap.ui.table.TableBindingUtils
+	 * @alias sap.ui.table.TableBindingUtils
 	 * @private
 	 */
 	return {

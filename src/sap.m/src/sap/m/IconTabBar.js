@@ -86,7 +86,6 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.m.IconTabBar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -277,8 +276,6 @@ sap.ui.define([
 	/**
 	 * Clones the IconTabBar.
 	 *
-	 * @name sap.m.IconTabBar.clone
-	 * @method
 	 * @public
 	 * @returns {sap.m.IconTabBar} The cloned IconTabBar.
 	 */
@@ -295,9 +292,6 @@ sap.ui.define([
 	/**
 	 * Sets the tab content as expanded.
 	 *
-	 * @overwrite
-	 * @name sap.m.IconTabBar.setExpanded
-	 * @method
 	 * @public
 	 * @param {boolean} bExpanded New parameter value.
 	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
@@ -316,9 +310,6 @@ sap.ui.define([
 	/**
 	 * Sets the tabs as collapsible and expandable without re-rendering the control.
 	 *
-	 * @overwrite
-	 * @name sap.m.IconTabBar.setExpandable
-	 * @method
 	 * @public
 	 * @param {boolean} bExpandable New parameter value.
 	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
@@ -332,9 +323,6 @@ sap.ui.define([
 	/**
 	 * Sets the header mode.
 	 *
-	 * @overwrite
-	 * @name sap.m.IconTabBar.setHeaderMode
-	 * @method
 	 * @public
 	 * @param {sap.m.IconTabHeaderMode} mode New parameter value.
 	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
@@ -352,9 +340,6 @@ sap.ui.define([
 	/**
 	 * Sets the header background design.
 	 *
-	 * @overwrite
-	 * @name sap.m.IconTabBar.setHeaderBackgroundDesign
-	 * @method
 	 * @public
 	 * @param {sap.m.BackgroundDesign} headerBackgroundDesign New parameter value.
 	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
@@ -371,9 +356,6 @@ sap.ui.define([
 	/**
 	 * Sets the showOverflowSelectList property.
 	 *
-	 * @overwrite
-	 * @name sap.m.IconTabBar.setShowOverflowSelectList
-	 * @method
 	 * @public
 	 * @param {boolean} value New value for showOverflowSelectList.
 	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
@@ -390,9 +372,6 @@ sap.ui.define([
 	/**
 	 * Sets the enableTabReordering property.
 	 *
-	 * @overwrite
-	 * @name sap.m.IconTabBar.setEnableTabReordering
-	 * @method
 	 * @public
 	 * @param {boolean} value New value for enableTabReordering.
 	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
@@ -409,8 +388,6 @@ sap.ui.define([
 	/**
 	 * Re-renders only the displayed content of the IconTabBar.
 	 *
-	 * @name sap.m.IconTabBar._rerenderContent
-	 * @method
 	 * @private
 	 * @param oContent Content, which should be rendered.
 	 */
@@ -429,8 +406,6 @@ sap.ui.define([
 	/**
 	 * Opens and closes the content container.
 	 *
-	 * @name sap.m.IconTabBar._toggleExpandCollapse
-	 * @method
 	 * @private
 	 * @param {boolean|undefined} bExpanded The new state of the container. If not specified, it will use the property expanded.
 	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
@@ -498,8 +473,6 @@ sap.ui.define([
 	/**
 	 * Function is executed when the expand/collapse animation is finished to adjust the UI.
 	 *
-	 * @name sap.m.IconTabBar.onTransitionEnded
-	 * @method
 	 * @private
 	 * @param {boolean} bExpanded The new state of the container.
 	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
@@ -533,8 +506,6 @@ sap.ui.define([
 	/**
 	 * Lazy initializes the iconTabHeader aggregation.
 	 *
-	 * @name sap.m.IconTabBar._getIconTabHeader
-	 * @method
 	 * @private
 	 * @returns {sap.m.IconTabBar} Aggregation for the IconTabBar.
 	 */
@@ -556,9 +527,6 @@ sap.ui.define([
 	/**
 	 * Reflector for the internal header's showSelection property.
 	 *
-	 * @overwrite
-	 * @name sap.m.IconTabBar.setShowSelection
-	 * @method
 	 * @public
 	 * @param {boolean} bValue the new value.
 	 * @returns {sap.m.IconTabBar} this IconTabBar reference for chaining.
@@ -571,8 +539,6 @@ sap.ui.define([
 	/**
 	 * Reflector for the internal header's showSelection property.
 	 *
-	 * @overwrite
-	 * @name sap.m.IconTabBar.getShowSelection
 	 * @public
 	 * @returns {boolean} The current property value.
 	 */
@@ -583,8 +549,6 @@ sap.ui.define([
 	/**
 	 * Reflector for the internal header's selectedKey property.
 	 *
-	 * @overwrite
-	 * @name sap.m.IconTabBar.setSelectedKey
 	 * @public
 	 * @param {string} sValue The new value.
 	 * @returns {sap.m.IconTabBar} this Pointer for chaining.
@@ -597,9 +561,6 @@ sap.ui.define([
 	/**
 	 * Reflector for the internal header's selectedKey property.
 	 *
-	 * @overwrite
-	 * @name sap.m.IconTabBar.getSelectedKey
-	 * @method
 	 * @public
 	 * @returns {string} The current property value.
 	 */
@@ -611,9 +572,6 @@ sap.ui.define([
 	 * Reflector for the internal header's selectedItem.
 	 * Sets the selected item, updates the UI, and fires the select event.
 	 *
-	 * @overwrite
-	 * @name sap.m.IconTabBar.setSelectedItem
-	 * @method
 	 * @private
 	 * @param {sap.m.IconTabFilter} oItem Item to be selected.
 	 * @return {sap.m.IconTabHeader} this IconTabBar reference for chaining.

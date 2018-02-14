@@ -57,8 +57,6 @@ sap.ui.define(["sap/ui/fl/Utils"], function(FlexUtils) {
 		 * @param {object} mPropertyBag Map of properties
 		 * @return {boolean} true Indicates whether the change can be applied
 		 * @public
-		 * @function
-		 * @name sap.f.changeHandler.MoveDynamicPageTitleActions#revertChange
 		 */
 		MoveActions.revertChange = function(oChange, oControl, mPropertyBag) {
 			var oModifier = mPropertyBag.modifier,

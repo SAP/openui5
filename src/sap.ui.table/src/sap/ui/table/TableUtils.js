@@ -135,7 +135,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @namespace
-	 * @name sap.ui.table.TableUtils
+	 * @alias sap.ui.table.TableUtils
 	 * @private
 	 */
 	var TableUtils = {

@@ -147,10 +147,7 @@ sap.ui.define([
 	 * To prevent from the layout thrashing of the <code>textContent</code> call, this method
 	 * first tries to set the <code>nodeValue</code> of the first child if it exists.
 	 *
-	 * @name sap.m.Text.setNodeValue
-	 * @method
 	 * @protected
-	 * @static
 	 * @param {HTMLElement} oDomRef DOM reference of the text node container.
 	 * @param {String} [sNodeValue] new Node value.
 	 * @since 1.30.3
@@ -168,8 +165,6 @@ sap.ui.define([
 	/**
 	 * Sets the text.
 	 *
-	 * @name sap.m.Text.setText
-	 * @method
 	 * @public
 	 * @param {string} sText Text value.
 	 * @returns {sap.m.Text} this Text reference for chaining.
@@ -201,8 +196,6 @@ sap.ui.define([
 	/**
 	 * Gets the text.
 	 *
-	 * @name sap.m.Text.getText
-	 * @method
 	 * @public
 	 * @param {boolean} bNormalize Indication for normalized text.
 	 * @returns {string} Text value.
@@ -222,8 +215,6 @@ sap.ui.define([
 	/**
 	 * Overwrites onAfterRendering
 	 *
-	 * @name sap.m.Text.onAfterRendering
-	 * @method
 	 * @public
 	 */
 	Text.prototype.onAfterRendering = function() {
@@ -241,8 +232,6 @@ sap.ui.define([
 	/**
 	 * Determines whether max lines should be rendered or not.
 	 *
-	 * @name sap.m.Text.hasMaxLines
-	 * @method
 	 * @protected
 	 * @returns {HTMLElement|null} Max lines of the text.
 	 * @since 1.22
@@ -255,8 +244,6 @@ sap.ui.define([
 	 * Returns the text node container's DOM reference.
 	 * This can be different from <code>getDomRef</code> when inner wrapper is needed.
 	 *
-	 * @name sap.m.Text.getTextDomRef
-	 * @method
 	 * @protected
 	 * @returns {HTMLElement|null} DOM reference of the text.
 	 * @since 1.22
@@ -304,8 +291,6 @@ sap.ui.define([
 	/**
 	 * Caches and returns the computed line height of the text.
 	 *
-	 * @name sap.m.Text.getLineHeight
-	 * @method
 	 * @protected
 	 * @param {HTMLElement} [oDomRef] DOM reference of the text container.
 	 * @returns {int} returns calculated line height
@@ -360,8 +345,6 @@ sap.ui.define([
 	 * Returns the max height according to max lines and line height calculation.
 	 * This is not calculated max height!
 	 *
-	 * @name sap.m.Text.getClampHeight
-	 * @method
 	 * @protected
 	 * @param {HTMLElement} [oDomRef] DOM reference of the text container.
 	 * @returns {int} The clamp height of the text.
@@ -375,8 +358,6 @@ sap.ui.define([
 	/**
 	 * Sets the max height to support <code>maxLines</code> property.
 	 *
-	 * @name sap.m.Text.clampHeight
-	 * @method
 	 * @protected
 	 * @param {HTMLElement} [oDomRef] DOM reference of the text container.
 	 * @returns {int} Calculated max height value.
@@ -401,8 +382,6 @@ sap.ui.define([
 	 * Clamps the wrapping text according to max lines and returns the found ellipsis position.
 	 * Parameters can be used for better performance.
 	 *
-	 * @name sap.m.Text.clampText
-	 * @method
 	 * @protected
 	 * @param {HTMLElement} [oDomRef] DOM reference of the text container.
 	 * @param {int} [iStartPos] Start point of the ellipsis search.
@@ -476,8 +455,6 @@ sap.ui.define([
 	/**
 	 * Gets the accessibility information for the text.
 	 *
-	 * @name sap.m.Text.getAccessibilityInfo
-	 * @method
 	 * @protected
 	 * @returns {object} Accessibility information for the text.
 	 * @see sap.ui.core.Control#getAccessibilityInfo
