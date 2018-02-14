@@ -25,6 +25,8 @@
 		jQuery.sap.require("sap.m.WizardProgressNavigator");
 		jQuery.sap.require("sap.m.WizardStep");
 
+		sinon.config.useFakeTimers = true;
+
 		QUnit.module("Wizard Public API", {
 			sWizardId: "wizard-id",
 			oSpies: {},
@@ -584,6 +586,27 @@
 			assert.strictEqual(sAriaLabel, sWizardLabel, "Aria-label attribute of the wizard should be set to '" + sWizardLabel + "'");
 		});
 
+		QUnit.test("Wizard aria-label attribute", function (assert) {
+			var oWizardStep = this.oWizard.getSteps()[0],
+				oNextButton = this.oWizard._getNextButton();
+
+			this.oWizard.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(0);
+
+			// assert
+			assert.ok(oWizardStep.getValidated(), "The step is validated.");
+			assert.strictEqual(oNextButton.$().attr("aria-hidden"), undefined, "The next button has no aria-hidden attribute for validated steps.");
+
+			// set-up
+			oWizardStep.setValidated(false);
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(0);
+
+			// assert
+			assert.notOk(oWizardStep.getValidated(), "The step is not validated.");
+			assert.strictEqual(oNextButton.$().attr("aria-hidden"), "true", "The next button has aria-hidden=true for not validated steps.");
+		});
 	</script>
 </head>
 <body id="body" class="sapUiBody">
