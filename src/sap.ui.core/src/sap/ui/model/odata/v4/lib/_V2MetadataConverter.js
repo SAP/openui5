@@ -10,6 +10,7 @@ sap.ui.define([
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
+		rHttpMethods = /^(?:DELETE|GET|MERGE|PATCH|POST|PUT)$/,
 
 		// namespaces
 		sEdmxNamespace = "http://schemas.microsoft.com/ado/2007/06/edmx",
@@ -922,7 +923,7 @@ sap.ui.define([
 	V2MetadataConverter.prototype.processFunctionImport = function (oElement) {
 		var sAnnotationActionFor,
 			sHttpMethod = oElement.getAttributeNS(sMicrosoftNamespace, "HttpMethod"),
-			sKind = sHttpMethod === "POST" ? "Action" : "Function",
+			sKind = sHttpMethod !== "GET" ? "Action" : "Function",
 			sLabel,
 			sName = oElement.getAttribute("Name"),
 			oOperation = {
@@ -943,13 +944,18 @@ sap.ui.define([
 			oOperation.$ReturnType = oReturnType = {};
 			this.processTypedCollection(sReturnType, oReturnType);
 		}
-		if (sHttpMethod !== "GET" && sHttpMethod !== "POST") {
+		if (!rHttpMethods.test(sHttpMethod)) {
 			jQuery.sap.log.warning("Unsupported HttpMethod at FunctionImport '" + sName
 				+ "', removing this FunctionImport", undefined, sClassName);
 			this.consumeSapAnnotation("action-for");
 			this.consumeSapAnnotation("applicable-path");
 		} else {
-			// add Function to the result
+			if (sHttpMethod !== "GET" && sHttpMethod !== "POST") {
+				// remember V2 HttpMethod only if needed
+				oOperation.$v2HttpMethod = sHttpMethod;
+			}
+
+			// add operation to the result
 			this.result[sQualifiedName] = [oOperation];
 
 			sAnnotationActionFor = this.consumeSapAnnotation("action-for");
@@ -968,7 +974,7 @@ sap.ui.define([
 					oOperation[mV2toV4["label"].term] = sLabel;
 				}
 			} else {
-				// add FunctionImport to the result
+				// add operation import to the result
 				this.entityContainer[sName] = oOperationImport;
 
 				this.v2annotatable(sName);

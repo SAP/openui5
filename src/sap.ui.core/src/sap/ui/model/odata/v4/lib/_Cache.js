@@ -1339,7 +1339,8 @@ sap.ui.define([
 	 *   ID of the group to associate the request with;
 	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {object} [oData]
-	 *   The data to be sent with the POST request
+	 *   A copy of the data to be sent with the POST request; may be used to tunnel a different
+	 *   HTTP method via a property "X-HTTP-Method" (which is removed)
 	 * @param {string} [sETag]
 	 *   The ETag to be sent as "If-Match" header with the POST request.
 	 * @returns {sap.ui.base.SyncPromise}
@@ -1348,7 +1349,8 @@ sap.ui.define([
 	 *   If the cache does not allow POST or another POST is still being processed.
 	 */
 	SingleCache.prototype.post = function (sGroupId, oData, sETag) {
-		var that = this;
+		var sHttpMethod = "POST",
+			that = this;
 
 		if (!this.bPost) {
 			throw new Error("POST request not allowed");
@@ -1359,12 +1361,16 @@ sap.ui.define([
 		if (this.bPosting) {
 			throw new Error("Parallel POST requests not allowed");
 		}
-		if (this.oRequestor.isActionBodyOptional() && !Object.keys(oData).length) {
-			oData = undefined;
+		if (oData) {
+			sHttpMethod = oData["X-HTTP-Method"] || sHttpMethod;
+			delete oData["X-HTTP-Method"];
+			if (this.oRequestor.isActionBodyOptional() && !Object.keys(oData).length) {
+				oData = undefined;
+			}
 		}
 		this.oPromise = SyncPromise.resolve(
 			this.oRequestor
-				.request("POST", this.sResourcePath + this.sQueryString, sGroupId,
+				.request(sHttpMethod, this.sResourcePath + this.sQueryString, sGroupId,
 					{"If-Match" : sETag}, oData)
 				.then(function (oResult) {
 					that.bPosting = false;
