@@ -1538,7 +1538,7 @@ sap.ui.define([
 
 			oPosParams._fArrowHeight = $arrow.outerHeight(true);
 			oPosParams._fWidth = Popover.outerWidth($popover[0]);
-			oPosParams._fWidthInner = oPosParams._$scrollArea ? (oPosParams._$scrollArea.width() || 0) : 0;
+            oPosParams._fWidthInner = oPosParams._$scrollArea ? (oPosParams._$scrollArea.width() + jQuery.sap.scrollbarSize().width || 0) : 0;
 			oPosParams._fHeight = Popover.outerHeight($popover[0]);
 			oPosParams._fHeaderHeight = oPosParams._$header.length > 0 ? oPosParams._$header.outerHeight(true) : 0;
 			oPosParams._fSubHeaderHeight = oPosParams._$subHeader.length > 0 ? oPosParams._$subHeader.outerHeight(true) : 0;
