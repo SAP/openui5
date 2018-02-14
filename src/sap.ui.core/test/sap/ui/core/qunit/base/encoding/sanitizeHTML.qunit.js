@@ -1,7 +1,5 @@
 /*global QUnit */
-sap.ui.require(
-	["sap/base/encoding/sanitizeHTML"],
-	function(sanitizeHTML) {
+sap.ui.define(["sap/base/encoding/sanitizeHTML"], function(sanitizeHTML) {
 	"use strict";
 
 	QUnit.module("Sanitize check");

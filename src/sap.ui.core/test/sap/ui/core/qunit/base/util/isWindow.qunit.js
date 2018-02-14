@@ -1,7 +1,5 @@
 /*global QUnit */
-sap.ui.require(
-	["sap/base/util/isWindow"],
-	function(isWindow) {
+sap.ui.define(["sap/base/util/isWindow"], function(isWindow) {
 	"use strict";
 
 	QUnit.module("Object isWindow");

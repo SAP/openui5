@@ -2,14 +2,6 @@
 sap.ui.define(["sap/base/strings/formatMessage"], function(formatMessage) {
 	"use strict";
 
-
-	window.jQuery = window.jQuery || {};
-	window.jQuery.sap = window.jQuery.sap || {};
-	window.jQuery.sap.assert = window.jQuery.sap.assert || function(){
-
-		};
-
-
 	QUnit.test("simple case", function(assert) {
 		assert.equal(formatMessage("Say {0}", ["Hello"]), "Say Hello", "should replace unqouted placeholder0");
 		assert.equal(formatMessage("{2},{1},{0}, {3}!", ["1", "2", "3", "Go"]), "3,2,1, Go!", "should replace multiple placeholders in the right order");

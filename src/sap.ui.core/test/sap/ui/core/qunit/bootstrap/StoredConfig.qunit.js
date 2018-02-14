@@ -1,5 +1,5 @@
 /*global QUnit, sinon */
-sap.ui.require(['sap/ui/bootstrap/StoredConfig'], function(StoredConfig){
+sap.ui.define(['sap/ui/bootstrap/StoredConfig'], function(StoredConfig) {
 	"use strict";
 
 	/*eslint-disable no-console, no-native-reassign, no-undef*/

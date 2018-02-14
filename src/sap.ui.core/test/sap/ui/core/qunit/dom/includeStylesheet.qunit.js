@@ -1,29 +1,18 @@
 /*global QUnit */
-sap.ui.require(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], function(includeStyleSheet /* jQuery*/) {
-	QUnit.module("sap.ui.dom.includeStylesheet", {
-		before: function() {
-			// @TODO-evo: remove stubbed functions once jquery.sap.dom is refactored
-			jQuery.sap = jQuery.sap || {};
-			jQuery.sap.domById = function domById(sId, oWindow) {
-				return sId ? (oWindow || window).document.getElementById(sId) : null;
-			};
-			jQuery.sap.byId = function byId(sId, oContext) {
-				var escapedId = "";
-				if (sId) {
-					escapedId = "#" + sId.replace(/(:|\.)/g, '\\$1');
-				}
-				return jQuery(escapedId, oContext);
-			};
+sap.ui.define(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], function(includeStyleSheet, jQuery) {
+	"use strict";
 
+	QUnit.module("sap.ui.dom.includeStylesheet", {
+		beforeEach: function() {
 			// create test area for stylsheets
-			this.oTestArea = $('<div id="includeStyleSheetTest" class="sap-jsunitIncludeStyleSheetTest" style="width:100px;height:100px">Test area for includeStyleSheet</div>');
-			$("body").append(this.oTestArea);
+			this.oTestArea = jQuery('<div id="includeStyleSheetTest" class="sap-jsunitIncludeStyleSheetTest" style="width:100px;height:100px">Test area for includeStyleSheet</div>');
+			jQuery("#qunit-fixture").append(this.oTestArea);
 
 			// pre-include a stylesheet
-			this.oLink = $("<link rel='stylesheet' href='./testdata/lib.css' data-marker='42' id='sap-ui-theme-sap.ui.layout'>");
-			$("head").append(this.oLink);
+			this.oLink = jQuery("<link rel='stylesheet' href='./dom/testdata/lib.css' data-marker='42' id='sap-ui-theme-sap.ui.layout'>");
+			jQuery("head").append(this.oLink);
 		},
-		after: function() {
+		afterEach: function() {
 			this.oTestArea.remove();
 			this.oLink.remove();
 		}
@@ -35,11 +24,11 @@ sap.ui.require(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], fun
 			assert.notOk(true, "Error callback called");
 			done();
 		}
-		includeStyleSheet("./testdata/testA.css", "jsunitIncludeStyleSheetTest", function (){
-			var oTestArea = jQuery.sap.domById("includeStyleSheetTest");
+		includeStyleSheet("./dom/testdata/testA.css", "jsunitIncludeStyleSheetTest", function (){
+			var oTestArea = document.getElementById("includeStyleSheetTest");
 			var sBefore = jQuery(oTestArea).css("backgroundColor");
 			var iLinkCnt = document.getElementsByTagName("LINK").length;
-			includeStyleSheet("./testdata/testB.css", "jsunitIncludeStyleSheetTest", function() {
+			includeStyleSheet("./dom/testdata/testB.css", "jsunitIncludeStyleSheetTest", function() {
 				assert.notStrictEqual(jQuery(oTestArea).css("backgroundColor"), sBefore, "background-color should have changed");
 				assert.strictEqual(document.getElementsByTagName("LINK").length, iLinkCnt, "no new link element should have been created");
 				done();
@@ -50,17 +39,15 @@ sap.ui.require(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], fun
 	QUnit.test("basic (Promise)", function(assert) {
 		var oTestArea, sBefore, iLinkCnt;
 		return includeStyleSheet({
-			url: "./testdata/testA.css",
-			id: "jsunitIncludeStyleSheetTest",
-			promisify: true
+			url: "./dom/testdata/testA.css",
+			id: "jsunitIncludeStyleSheetTest"
 		}).then(function() {
-			oTestArea = jQuery.sap.domById("includeStyleSheetTest");
+			oTestArea = document.getElementById("includeStyleSheetTest");
 			sBefore = jQuery(oTestArea).css("backgroundColor");
 			iLinkCnt = document.getElementsByTagName("LINK").length;
-		return includeStyleSheet({
-			url: "./testdata/testC.css",
-			id: "jsunitIncludeStyleSheetTest",
-			promisify: true
+			return includeStyleSheet({
+				url: "./dom/testdata/testC.css",
+				id: "jsunitIncludeStyleSheetTest"
 			});
 		}).then(function() {
 			assert.notStrictEqual(jQuery(oTestArea).css("backgroundColor"), sBefore, "background-color should have changed");
@@ -70,14 +57,14 @@ sap.ui.require(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], fun
 
 	QUnit.test("don't load twice", function(assert) {
 
-		var sStyleSheetUrl = "./testdata/lib.css";
-		var $link = jQuery.sap.byId("sap-ui-theme-sap.ui.layout");
+		var sStyleSheetUrl = "./dom/testdata/lib.css";
+		var $link = jQuery(document.getElementById("sap-ui-theme-sap.ui.layout"));
 		assert.equal($link.length, 1, "initially, there should be exactly one matching link)");
 		assert.equal($link.attr("data-marker"), "42", "initially, the link object should be the declarative one");
 
 		includeStyleSheet(sStyleSheetUrl, "sap-ui-theme-sap.ui.layout");
 
-		var $link = jQuery.sap.byId("sap-ui-theme-sap.ui.layout");
+		$link = jQuery(document.getElementById("sap-ui-theme-sap.ui.layout"));
 		assert.equal($link.length, 1, "after includeStylesheet, there still should be exactly one matching link");
 		assert.equal($link.attr("data-marker"), "42", "after includeStylesheet, the link object still should be the old one");
 
@@ -88,7 +75,7 @@ sap.ui.require(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], fun
 
 		includeStyleSheet(sAbsoluteStylesheetUrl, "sap-ui-theme-sap.ui.layout");
 
-		var $link = jQuery.sap.byId("sap-ui-theme-sap.ui.layout");
+		$link = jQuery(document.getElementById("sap-ui-theme-sap.ui.layout"));
 		assert.equal($link.length, 1, "after includeStylesheet with absolute URL, there still should be exactly one matching link");
 		assert.equal($link.attr("data-marker"), "42", "after includeStylesheet with absolute URL, the link object still should be the old one");
 
@@ -96,7 +83,7 @@ sap.ui.require(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], fun
 		// @TODO-evo: How to handle this without a booted core?
 		sap.ui.getCore().loadLibrary("sap.ui.layout");
 
-		var $link = jQuery.sap.byId("sap-ui-theme-sap.ui.layout");
+		var $link = jQuery(document.getElementById("sap-ui-theme-sap.ui.layout"));
 		assert.equal($link.length, 1, "after loadLibrary, there should be exactly one matching link");
 		assert.equal($link.attr("data-marker"), "42", "after loadLibrary, the link object still should be the old one");
 		*/
@@ -114,11 +101,11 @@ sap.ui.require(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], fun
 		}
 
 		// remember initial stylesheet count
-		var iInitialStylesheets = document.styleSheets.length;
+		var iInitialStylesheets = document.querySelectorAll("link[rel=stylesheet]").length;
 
 		// include 5 stylesheets
 		var iNewStylesheets = 5;
-		var sStyleBaseUrl = "./testdata/stylesheets/";
+		var sStyleBaseUrl = "./dom/testdata/stylesheets/";
 		var aPromises = [];
 		var i;
 		for (i = 0; i < iNewStylesheets; i++) {
@@ -137,7 +124,7 @@ sap.ui.require(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], fun
 
 		// wait until all stylesheets are loaded
 		return Promise.all(aPromises).then(function() {
-			assert.equal(document.styleSheets.length, iExpectedStylesheets, "Overall stylesheet count should be like expected");
+			assert.equal(document.querySelectorAll("link[rel=stylesheet]").length, iExpectedStylesheets, "Overall stylesheet count should be like expected");
 
 			// remove all added stylesheets again
 			for (i = 0; i < iNewStylesheets; i++) {
@@ -163,14 +150,14 @@ sap.ui.require(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], fun
 		var done = assert.async();
 		var aPromises = [];
 
-		aPromises.push(includeStyleSheetWrapped("./testdata/dummy.css", {
+		aPromises.push(includeStyleSheetWrapped("./dom/testdata/dummy.css", {
 			"id": "mylink",
 			"data-sap-ui-attr": "attrval"
 		}).then(function() {
 			var oLink = document.getElementById("mylink");
 			assert.ok(oLink, "link should have been found");
 			assert.strictEqual("attrval", oLink.getAttribute("data-sap-ui-attr"), "link should have a custom attribute");
-			return includeStyleSheetWrapped("./testdata/dummy.css", {
+			return includeStyleSheetWrapped("./dom/testdata/dummy.css", {
 				"id": "mylink",
 				"data-sap-ui-attr": "otherval"
 			}).then(function() {
@@ -180,7 +167,7 @@ sap.ui.require(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], fun
 			});
 		}));
 
-		aPromises.push(includeStyleSheetWrapped("./testdata/dummy.css", {
+		aPromises.push(includeStyleSheetWrapped("./dom/testdata/dummy.css", {
 			"data-sap-ui-id": "mylink",
 			"data-sap-ui-attr": "attrval"
 		}).then(function() {
@@ -190,7 +177,7 @@ sap.ui.require(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], fun
 		}));
 
 		aPromises.push(includeStyleSheet({
-			"url": "./testdata/dummy.css",
+			"url": "./dom/testdata/dummy.css",
 			"attributes": {
 				"id": "mylink-async-attrid",
 				"data-sap-ui-attr": "attrval"
@@ -200,7 +187,7 @@ sap.ui.require(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], fun
 			assert.ok(oLink, "link should have been found");
 			assert.strictEqual("attrval", oLink.getAttribute("data-sap-ui-attr"), "link should have a custom attribute");
 			return includeStyleSheet({
-				"url": "./testdata/dummy.css",
+				"url": "./dom/testdata/dummy.css",
 				"attributes": {
 					"id": "mylink-async-attrid",
 					"data-sap-ui-attr": "otherval"
@@ -213,7 +200,7 @@ sap.ui.require(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], fun
 		}));
 
 		aPromises.push(includeStyleSheet({
-			"url": "./testdata/dummy.css",
+			"url": "./dom/testdata/dummy.css",
 			"id": "mylink-async",
 			"attributes": {
 				"id": "mylink-async-override",
@@ -227,7 +214,7 @@ sap.ui.require(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], fun
 		}));
 
 		aPromises.push(includeStyleSheet({
-			"url": "./testdata/dummy.css",
+			"url": "./dom/testdata/dummy.css",
 			"attributes": {
 				"data-sap-ui-id": "mylink-async",
 				"data-sap-ui-attr": "attrval"
@@ -246,5 +233,5 @@ sap.ui.require(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], fun
 			done();
 		});
 	});
-	
+
 });

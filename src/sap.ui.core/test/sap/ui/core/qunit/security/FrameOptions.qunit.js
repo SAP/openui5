@@ -1,5 +1,5 @@
 /*global QUnit, sinon */
-sap.ui.require(['sap/ui/security/FrameOptions'], function(FrameOptions) {
+sap.ui.define(['sap/ui/security/FrameOptions'], function(FrameOptions) {
 	'use strict';
 
 	var oClock, oServer;

@@ -1,7 +1,5 @@
 /*global QUnit */
-sap.ui.require(
-	["sap/base/util/URLWhiteList"],
-	function(URLWhiteList) {
+sap.ui.define(["sap/base/util/URLWhiteList"], function(URLWhiteList) {
 	"use strict";
 
 	QUnit.module("sap/base/util/URLWhiteList.validate", {

@@ -1,5 +1,5 @@
 /*global QUnit */
-sap.ui.require(["sap/ui/Device"], function(Device) {
+sap.ui.define(["sap/ui/Device"], function(Device) {
 	"use strict";
 
 	var BROWSER = {
@@ -243,7 +243,7 @@ sap.ui.require(["sap/ui/Device"], function(Device) {
 				desktop: false,
 				tablet: true,
 				phone: false,
-				combi: false,
+				combi: false
 			},
 			touch: true
 		},
@@ -266,7 +266,7 @@ sap.ui.require(["sap/ui/Device"], function(Device) {
 				desktop: false,
 				tablet: true,
 				phone: false,
-				combi: false,
+				combi: false
 			},
 			touch: true
 		},
@@ -289,7 +289,7 @@ sap.ui.require(["sap/ui/Device"], function(Device) {
 				desktop: false,
 				tablet: true,
 				phone: false,
-				combi: false,
+				combi: false
 			},
 			touch: true
 		},
@@ -312,7 +312,7 @@ sap.ui.require(["sap/ui/Device"], function(Device) {
 				desktop: false,
 				tablet: true,
 				phone: false,
-				combi: false,
+				combi: false
 			},
 			touch: true
 		},
@@ -335,7 +335,7 @@ sap.ui.require(["sap/ui/Device"], function(Device) {
 				desktop: false,
 				tablet: false,
 				phone: true,
-				combi: false,
+				combi: false
 			},
 			touch: true
 		},
@@ -358,7 +358,7 @@ sap.ui.require(["sap/ui/Device"], function(Device) {
 				desktop: false,
 				tablet: false,
 				phone: true,
-				combi: false,
+				combi: false
 			},
 			touch: true
 		},
@@ -381,7 +381,7 @@ sap.ui.require(["sap/ui/Device"], function(Device) {
 				desktop: true,
 				tablet: true,
 				phone: false,
-				combi: true,
+				combi: true
 			},
 			os: {
 				name: "win",
