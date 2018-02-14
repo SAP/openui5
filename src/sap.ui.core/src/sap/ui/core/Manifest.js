@@ -164,7 +164,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 			var sComponentName = this.getComponentName(),
 			    sBaseUrl = mOptions && mOptions.baseUrl || sComponentName && jQuery.sap.getModulePath(sComponentName, "/");
 			if (sBaseUrl) {
-				this._oBaseUri = new URI(sBaseUrl).absoluteTo(new URI().search(""));
+				this._oBaseUri = new URI(sBaseUrl).absoluteTo(new URI(document.baseURI).search(""));
 			}
 
 			// make sure to freeze the raw manifest (avoid manipulations)
@@ -639,7 +639,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 		if (oUri.is("absolute") || (oUri.path() && oUri.path()[0] === "/")) {
 			return oUri;
 		}
-		var oPageBase = new URI().search("");
+		var oPageBase = new URI(document.baseURI).search("");
 		oBase = oBase.absoluteTo(oPageBase);
 		return oUri.absoluteTo(oBase).relativeTo(oPageBase);
 	};

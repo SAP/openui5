@@ -5,7 +5,7 @@
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
-/*global Promise */
+/*global Promise, document */
 sap.ui.define(["sap/ui/Device", "sap/ui/dom/appendHead", "sap/ui/thirdparty/URI", "sap/base/assert"],
 	function(Device, appendHead, URI, assert) {
 	"use strict";
@@ -95,7 +95,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/dom/appendHead", "sap/ui/thirdparty/URI"
 		if (oOld && oOld.tagName === "LINK" && oOld.rel === "stylesheet") {
 			// link exists, so we replace it - but only if a callback has to be attached or if the href will change. Otherwise don't touch it
 			if (typeof fnLoadCallback === "function" || typeof fnErrorCallback === "function" ||
-				oOld.href !== URI(String(sUrl), URI().search("") /* returns current URL without search params */ ).toString()) {
+				oOld.href !== URI(String(sUrl), URI(document.baseURI).search("") /* returns current URL without search params */ ).toString()) {
 				// if the attribute "data-sap-ui-foucmarker" exists and the value
 				// matches the id of the new link the new link will be put
 				// before the old link into the document and the id attribute

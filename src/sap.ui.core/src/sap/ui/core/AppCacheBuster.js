@@ -61,7 +61,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', 'sap/
 	var fnAjaxOrig, fnValidateProperty, descScriptSrc, descLinkHref;
 
 	// determine the application base url
-	var sLocation = document.location.href.replace(/\?.*|#.*/g, "");
+	var sLocation = document.baseURI.replace(/\?.*|#.*/g, "");
 
 	// determine the base urls (normalize and then calculate the resources and test-resources urls)
 	var oUri = URI(jQuery.sap.getModulePath("", "/../"));
