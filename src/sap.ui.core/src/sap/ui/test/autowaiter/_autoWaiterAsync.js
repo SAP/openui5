@@ -19,7 +19,7 @@ sap.ui.define([
 	var sLastAutoWaiterLog;
 	var config = {
 		interval: 400, // milliseconds
-		timeout: 15 // seconds
+		timeout: 15000 // milliseconds
 	};
 
 	function extendConfig(oConfig) {
@@ -42,18 +42,20 @@ sap.ui.define([
 		fnCheck();
 
 		function fnCheck() {
-			var pollTimeElapsed = (Date.now() - pollStartTime) / 1000;
+			var pollTimeElapsed = (Date.now() - pollStartTime);
 			if (pollTimeElapsed <= config.timeout) {
-				if (!_autoWaiter.hasToWait()) {
-					notifyCallback({log: "Polling finished successfully. There is no more pending asynchronous work for the moment"});
-					bWaitStarted = false;
-				} else {
-					sLastAutoWaiterLog = _autoWaiterLogCollector.getAndClearLog();
-					setTimeout(fnCheck, config.interval);
-				}
+				setTimeout(function() {
+					if (_autoWaiter.hasToWait()) {
+						sLastAutoWaiterLog = _autoWaiterLogCollector.getAndClearLog();
+						fnCheck();
+					} else {
+						notifyCallback({log: "Polling finished successfully. There is no more pending asynchronous work for the moment"});
+						bWaitStarted = false;
+					}
+				}, config.interval);
 			} else {
 				notifyCallback({error: "Polling stopped because the timeout of " + config.timeout +
-					" seconds has been reached but there is still pending asynchronous work.\n" +
+					" milliseconds has been reached but there is still pending asynchronous work.\n" +
 					"This is the last log of pending work:\n" + sLastAutoWaiterLog});
 				bWaitStarted = false;
 			}
@@ -73,8 +75,7 @@ sap.ui.define([
 			inputToValidate: oConfig,
 			validationInfo: {
 				interval: "numeric",
-				timeout: "numeric",
-				timeoutWaiter: "object"
+				timeout: "numeric"
 			}
 		});
 

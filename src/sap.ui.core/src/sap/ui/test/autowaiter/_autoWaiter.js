@@ -13,6 +13,8 @@ sap.ui.define([
 ], function ($,_OpaLogger,_XHRWaiter, _timeoutWaiter, _promiseWaiter, _navigationContainerWaiter, _UIUpdatesWaiter) {
 	"use strict";
 
+	var oLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._autoWaiter");
+
 	// TODO: add possibility to add and exclude validators
 	// execute wait helpers in sequence and stop on the first that returns true
 	// eg: there's no use to call _timeoutWaiter if _UIUpdatesWaiter is true
@@ -26,11 +28,10 @@ sap.ui.define([
 					result = true;
 				}
 			});
-			/* eslint-disable no-console */
-            if (!result && console.timeStamp && _OpaLogger.getLevel() >= $.sap.log.Level.DEBUG){
-                console.timeStamp("opa.autoWaiter.syncPoint");
+			if (!result) {
+				oLogger.timestamp("opa.autoWaiter.syncPoint");
+				oLogger.debug("AutoWaiter syncpoint");
 			}
-			/* eslint-enable no-console */
 			return result;
 		},
 		extendConfig: function (oConfig) {

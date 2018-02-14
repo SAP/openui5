@@ -723,6 +723,8 @@ sap.ui.define([
 				}
 
 				if (oWaitForCounter.get() === 0) {
+					oLogger.timestamp("opa.waitFor.success");
+					oLogger.debug("Execute success handler");
 					// No waitFors added by actions - directly execute the success
 					fnOriginalSuccess.apply(this, aArgs);
 					return;

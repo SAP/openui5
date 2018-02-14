@@ -2,8 +2,14 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
+sap.ui.define([
+	"jquery.sap.global",
+	"sap/ui/test/_OpaLogger",
+	"./Action"
+], function ($, _OpaLogger, Action) {
 	"use strict";
+
+	var oLogger = _OpaLogger.getLogger("sap.ui.test.actions.Press");
 
 	/**
 	 * The Press action is used to simulate a press interaction on a Control's dom ref.
@@ -60,7 +66,9 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 				oActionDomRef = $ActionDomRef[0];
 
 			if ($ActionDomRef.length) {
+				oLogger.timestamp("opa.actions.press");
 				$.sap.log.debug("Pressed the control " + oControl, this._sLogPrefix);
+
 				this._tryOrSimulateFocusin($ActionDomRef, oControl);
 
 				// the missing events like saptouchstart and tap will be fired by the event simulation
