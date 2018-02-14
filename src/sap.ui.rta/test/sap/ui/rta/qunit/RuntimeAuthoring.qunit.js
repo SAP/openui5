@@ -22,6 +22,7 @@ sap.ui.require([
 	'sap/ui/fl/Utils',
 	'sap/ui/rta/Utils',
 	'sap/ui/fl/FakeLrepLocalStorage',
+	'sap/ui/fl/ChangePersistence',
 	'sap/ui/fl/transport/TransportSelection',
 	'sap/ui/rta/RuntimeAuthoring',
 	'sap/ui/rta/command/Stack',
@@ -57,6 +58,7 @@ sap.ui.require([
 	Utils,
 	RtaUtils,
 	FakeLrepLocalStorage,
+	ChangePersistence,
 	TransportSelection,
 	RuntimeAuthoring,
 	Stack,
@@ -707,18 +709,11 @@ sap.ui.require([
 
 	QUnit.test("when calling '_deleteChanges' successfully, ", function(assert){
 		var fnDone = assert.async();
-
-		var fnShowBusyIndicatorSpy = sandbox.spy(BusyIndicator, "show");
-		var fnHideBusyIndicatorSpy = sandbox.spy(BusyIndicator, "hide");
-
-		sandbox.stub(this.oRta._getFlexController(), "discardChanges", function(aChanges){
-			assert.ok(fnShowBusyIndicatorSpy.calledOnce, "then the busy indicator is shown");
-			assert.equal(aChanges.length, 2, "then the changes are correctly passed to the Flex Controller");
+		sandbox.stub(this.oRta._getFlexController(), "resetChanges", function() {
 			return Promise.resolve();
 		});
 
 		sandbox.stub(this.oRta, "_reloadPage", function(){
-			assert.ok(fnHideBusyIndicatorSpy.calledOnce, "then the busy indicator is hidden");
 			assert.ok(true, "and page reload is triggered");
 			fnDone();
 		});
@@ -728,18 +723,13 @@ sap.ui.require([
 
 	QUnit.test("when calling '_deleteChanges and there is an error', ", function(assert){
 		var fnDone = assert.async();
-
-		var fnShowBusyIndicatorSpy = sandbox.spy(BusyIndicator, "show");
-		var fnHideBusyIndicatorSpy = sandbox.spy(BusyIndicator, "hide");
 		var fnReloadPageSpy = sandbox.spy(this.oRta, "_reloadPage");
 
-		sandbox.stub(this.oRta._getFlexController(), "discardChanges", function(aChanges){
-			assert.ok(fnShowBusyIndicatorSpy.calledOnce, "then the busy indicator is shown");
+		sandbox.stub(this.oRta._getFlexController(), "resetChanges", function(){
 			return Promise.reject("Error");
 		});
 
 		sandbox.stub(RtaUtils, "_showMessageBox", function(sIconType, sHeader, sMessage, sError){
-			assert.ok(fnHideBusyIndicatorSpy.calledOnce, "then the busy indicator is hidden");
 			assert.ok(fnReloadPageSpy.notCalled, "then the page does not reload");
 			assert.equal(sError, "Error", "and a message box shows the error to the user");
 			fnDone();
@@ -755,22 +745,26 @@ sap.ui.require([
 		sandbox.stub(Settings.prototype, "isProductiveSystem").returns(false);
 		sandbox.stub(Settings.prototype, "hasMergeErrorOccured").returns(false);
 
-		sandbox.stub(this.oRta._getFlexController(), "getComponentChanges", function(){
-			return Promise.resolve(['change1', 'change2']);
+		sandbox.stub(this.oRta._getFlexController()._oChangePersistence, "getChangesForComponent", function(){
+			return Promise.resolve(
+				[{fileName: 'change1', getRequest: function() {return "testtransport";}},
+				{fileName: 'change2', getRequest: function() {return "testtransport";}}]
+			);
 		});
 
-		sandbox.stub(TransportSelection.prototype, "setTransports", function(aChanges, oRootControl){
+		var oTransportSelection = this.oRta._getFlexController()._oChangePersistence._oTransportSelection;
+		sandbox.stub(oTransportSelection, "setTransports", function(aChanges, oRootControl){
 			assert.equal(aChanges.length, 2, "then only the 2 persisted changes are passed to the transport");
 			fnSetTransportCalled();
 			return Promise.resolve();
 		});
-
-		sandbox.stub(this.oRta._getFlexController(), "discardChanges", function(aChanges){
-			assert.equal(aChanges.length, 4, "then all 4 changes are correctly passed to the Flex Controller for deletion");
+		sandbox.stub(this.oRta._getFlexController()._oChangePersistence._oConnector, "send", function() {
+			assert.ok(true, "and the send function in LrepConnector is called");
 			return Promise.resolve();
 		});
 
 		sandbox.stub(this.oRta, "_reloadPage", function(){
+			assert.ok(true, "and page reload is triggered");
 			fnDone();
 		});
 
@@ -881,6 +875,7 @@ sap.ui.require([
 				}
 			});
 			sandbox.stub(BusyIndicator, "show");
+			this.oChangePersistence = this.oRta._getFlexController()._oChangePersistence;
 		},
 		afterEach : function(assert) {
 			this.oRta.destroy();
@@ -890,18 +885,18 @@ sap.ui.require([
 
 	QUnit.test("When transport function is called and transportAllUIChanges returns Promise.resolve()", function(assert) {
 		sandbox.stub(this.oRta, "_serializeToLrep").returns(Promise.resolve());
-		var oTransportStub = sandbox.stub(TransportSelection.prototype, "transportAllUIChanges").returns(Promise.resolve());
+		var oChangePersistenceStub = sandbox.stub(this.oChangePersistence, "transportAllUIChanges").returns(Promise.resolve());
 		var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
 		return this.oRta.transport().then(function() {
 			assert.equal(oMessageToastStub.callCount, 1, "then the messageToast was shown");
-			assert.equal(oTransportStub.firstCall.args[1], RtaUtils.getRtaStyleClassName(), "the styleClass was passed correctly");
-			assert.equal(oTransportStub.firstCall.args[2], "CUSTOMER", "the layer was passed correctly");
+			assert.equal(oChangePersistenceStub.firstCall.args[1], RtaUtils.getRtaStyleClassName(), "the styleClass was passed correctly");
+			assert.equal(oChangePersistenceStub.firstCall.args[2], "CUSTOMER", "the layer was passed correctly");
 		});
 	});
 
 	QUnit.test("When transport function is called and transportAllUIChanges returns Promise.reject()", function(assert) {
 		sandbox.stub(this.oRta, "_serializeToLrep").returns(Promise.resolve());
-		sandbox.stub(TransportSelection.prototype, "transportAllUIChanges").returns(Promise.reject(new Error("Error")));
+		sandbox.stub(this.oChangePersistence, "transportAllUIChanges").returns(Promise.reject(new Error("Error")));
 		var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
 		var oShowErrorStub = sandbox.stub(jQuery.sap.log, "error");
 		var oErrorBoxStub = sandbox.stub(MessageBox, "error");
@@ -914,7 +909,7 @@ sap.ui.require([
 
 	QUnit.test("When transport function is called and transportAllUIChanges returns Promise.resolve() with 'Error' as parameter", function(assert) {
 		sandbox.stub(this.oRta, "_serializeToLrep").returns(Promise.resolve());
-		sandbox.stub(TransportSelection.prototype, "transportAllUIChanges").returns(Promise.resolve('Error'));
+		sandbox.stub(this.oChangePersistence, "transportAllUIChanges").returns(Promise.resolve('Error'));
 		var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
 		return this.oRta.transport().then(function() {
 			assert.equal(oMessageToastStub.callCount, 0, "then the messageToast was not shown");
