@@ -416,7 +416,7 @@ sap.ui.require([
 
 			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
 
-			var onGetOverviewSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").returns(Promise.resolve(true));
+			var onGetOverviewSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").returns(Promise.resolve());
 
 			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(
 				new Settings({
@@ -483,10 +483,10 @@ sap.ui.require([
 
 			var fnCreateDescriptorSpy = sandbox.spy(AppVariantManager.prototype, "createDescriptor");
 			var fnSaveAppVariantToLREP = sandbox.spy(AppVariantManager.prototype, "saveAppVariantToLREP");
-			var fnCopyUnsavedChangesToLREP = sandbox.stub(AppVariantManager.prototype, "copyUnsavedChangesToLREP").returns(Promise.resolve(true));
+			var fnCopyUnsavedChangesToLREP = sandbox.stub(AppVariantManager.prototype, "copyUnsavedChangesToLREP").returns(Promise.resolve());
 			var fnShowSuccessMessageAndTriggerActionFlow = sandbox.spy(AppVariantManager.prototype, "showSuccessMessageAndTriggerActionFlow");
 
-			var fnNotifyKeyUserWhenTileIsReadySpy = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenTileIsReady").returns(Promise.resolve(true));
+			var fnNotifyKeyUserWhenTileIsReadySpy = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenTileIsReady").returns(Promise.resolve());
 
 			return RtaAppVariantFeature.onSaveAsFromOverviewDialog(oDescriptor, false).then(function() {
 				assert.ok(onGetOverviewSpy.calledOnce, "then the App variant dialog gets opened only once after the new app variant has been saved to LREP");
@@ -610,7 +610,7 @@ sap.ui.require([
 			var fnSaveAppVariantToLREP = sandbox.spy(AppVariantManager.prototype, "saveAppVariantToLREP");
 			var fnCopyUnsavedChangesToLREP = sandbox.stub(AppVariantManager.prototype, "copyUnsavedChangesToLREP").returns(Promise.resolve(true));
 			var fnShowSuccessMessageAndTriggerActionFlow = sandbox.spy(AppVariantManager.prototype, "showSuccessMessageAndTriggerActionFlow");
-			var fnNavigateToFLPHomepage = sandbox.spy(AppVariantManager.prototype, "_navigateToFLPHomepage");
+			var fnNavigateToFLPHomepage = sandbox.stub(AppVariantManager.prototype, "_navigateToFLPHomepage").returns(Promise.resolve());
 
 			return RtaAppVariantFeature.onSaveAsFromRtaToolbar(true, true).then(function() {
 				assert.ok(fnCreateDescriptorSpy.calledOnce, "then the create descriptor method is called once");
