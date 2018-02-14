@@ -87,8 +87,16 @@
 
 
 				<h3><a name="coding"></a>Start Coding</h3>
-				<p>Now it is time to build your first OpenUI5 app. To start simple, we load OpenUI5 from our <a href="https://openui5.hana.ondemand.com/#/topic/2d3eb2f322ea4a82983c1c62a33ec4ae" target="_blank">CDN</a> and place a sap.m.Text into the HTML body:
-
+				<p>Now it is time to build your first OpenUI5 app. To start simple, we load OpenUI5 from our <a href="https://openui5.hana.ondemand.com/#/topic/2d3eb2f322ea4a82983c1c62a33ec4ae" target="_blank">CDN</a> and place a sap.m.Text and a sap.m.MessageToast into the HTML body.
+					When you click on the button "Say Hello", the message "Hello World" will appear. You can display the code by clicking on this button <img src="code" alt="display code button" /> on the right side at the top of the screen. 
+					You can see that the code is spead over three files: 
+					<ul>
+						<li>index.html</li>
+						<li>App.controller.js</li>
+						<li>App.view.xml</li>
+					</ul>
+					The reason is that code handling the presentation of data and code responsible for responding to the user input and perform interactions is seperated. The pattern that this set-up corresponds to, is called <a href="https://openui5.hana.ondemand.com/#/topic/91f233476f4d1014b6dd926db0e91070" target="_blank">MVC, Model-view-controller</a>.
+					Go ahead an try it out with the link above!
 				<pre class="codeblock">
 <span class="shTag">&lt;html&gt;</span>
 <span class="shTag">&lt;head&gt;</span>
