@@ -720,6 +720,29 @@ function(
 	};
 
 	/**
+	 * Updates selectedItem or selectedRow from the suggestion list or table.
+	 *
+	 * @private
+	 * @returns {boolean} Indicates if an item or row is selected
+	 */
+	Input.prototype._updateSelectionFromList = function () {
+		if (this._iPopupListSelectedIndex  < 0) {
+			return false;
+		}
+
+		var oSelectedItem = this._oList.getSelectedItem();
+		if (oSelectedItem) {
+			if (this._hasTabularSuggestions()) {
+				this.setSelectionRow(oSelectedItem, true);
+			} else {
+				this.setSelectionItem(oSelectedItem._oItem, true);
+			}
+		}
+
+		return true;
+	};
+
+	/**
 	 * Updates and synchronizes the <code>selectedItem</code> association and <code>selectedKey</code> properties.
 	 *
 	 * @name sap.m.Input.setSelectionItem
@@ -1494,20 +1517,7 @@ function(
 		this.cancelPendingSuggest();
 
 		if (this._oSuggestionPopup && this._oSuggestionPopup.isOpen()) {
-			var oSelectedItem = this._oList.getSelectedItem();
-			if (oSelectedItem) {
-				if (this._hasTabularSuggestions()){
-					this.setSelectionRow(oSelectedItem, true);
-				} else {
-					this.setSelectionItem(oSelectedItem._oItem, true);
-				}
-			} else {
-				if (this._iPopupListSelectedIndex >= 0) {
-					this._fireSuggestionItemSelectedEvent();
-					this._doSelect();
-
-					this._iPopupListSelectedIndex = -1;
-				}
+			if (!this._updateSelectionFromList()) {
 				this._closeSuggestionPopup();
 			}
 		}
@@ -2142,9 +2152,9 @@ function(
 					initialFocus: oInput,
 					horizontalScrolling: true
 				}).attachAfterClose(function() {
-					if (oInput._iPopupListSelectedIndex  >= 0) {
-						oInput._fireSuggestionItemSelectedEvent();
-					}
+
+					oInput._updateSelectionFromList();
+
 					// only destroy items in simple suggestion mode
 					if (oInput._oList instanceof Table) {
 						oInput._oList.removeSelections(true);
