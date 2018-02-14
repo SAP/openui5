@@ -48,10 +48,11 @@ sap.ui.define([
 		/**
 		 * Convenience method for retrieving a translatable text.
 		 * @param {string} sTextId - the ID of the text to be retrieved.
+		 * @param {Array} [aArgs] - optional array of texts for placeholders.
 		 * @returns {string} the text belonging to the given ID.
 		 */
-		_getText : function (sTextId) {
-			return this.getOwnerComponent().getModel("i18n").getResourceBundle().getText(sTextId);
+		_getText : function (sTextId, aArgs) {
+			return this.getOwnerComponent().getModel("i18n").getResourceBundle().getText(sTextId, aArgs);
 		}
 	});
 });
