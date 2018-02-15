@@ -134,8 +134,6 @@ sap.ui.define([
 	 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent AppComponent
 	 * @return {boolean} true Indicates whether the change can be applied
 	 * @public
-	 * @function
-	 * @name sap.m.changeHandler.MoveTableColumns#applyChange
 	 */
 	MoveTableColumns.applyChange = function (oChange, oRelevantContainer, mPropertyBag) {
 		var aRevertData = [];
@@ -160,8 +158,6 @@ sap.ui.define([
 	 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent AppComponent
 	 * @return {boolean} true Indicates whether the change can be applied
 	 * @public
-	 * @function
-	 * @name sap.m.changeHandler.MoveTableColumns#revertChange
 	 */
 	MoveTableColumns.revertChange = function (oChange, oRelevantContainer, mPropertyBag) {
 		var aRevertData = oChange.getRevertData();
@@ -182,8 +178,6 @@ sap.ui.define([
 	 * @param {object} mPropertyBag Map of properties
 	 * @param {sap.ui.core.UiComponent} mPropertyBag.appComponent Component in which the change should be applied
 	 * @public
-	 * @function
-	 * @name sap.m.changeHandler.MoveTableColumns#completeChangeContent
 	 */
 	MoveTableColumns.completeChangeContent = function (oChange, mSpecificChangeInfo, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier,

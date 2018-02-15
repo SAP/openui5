@@ -683,7 +683,6 @@ sap.ui.define([
 		/**
 		 * Helper function for calculating offset.
 		 *
-		 * @name calculateOffset
 		 * @private
 		 * @returns {int} Calculated offset.
 		 */

@@ -466,8 +466,6 @@ sap.ui.define([
 	 * @protected
 	 * @param {int} iMonths How many months to be displayed
 	 * @returns {sap.ui.unified.CalendarDateInterval} <code>this</code> to allow method chaining
-	 * @name sap.ui.unified.CalendarDateInterval#setMonths
-	 * @function
 	 */
 	CalendarDateInterval.prototype.setMonths = function(iMonths){
 
@@ -487,8 +485,6 @@ sap.ui.define([
 	 * @protected
 	 * @param {int} [iFirstDayOfWeek] First day of the week
 	 * @returns {sap.ui.unified.CalendarDateInterval} <code>this</code> to allow method chaining
-	 * @name sap.ui.unified.CalendarDateInterval#setFirstDayOfWeek
-	 * @function
 	 */
 	CalendarDateInterval.prototype.setFirstDayOfWeek = function(iFirstDayOfWeek){
 
