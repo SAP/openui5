@@ -300,7 +300,7 @@ sap.ui.define([
 							return oPreprocessorImpl.getCacheKey(oPreprocessorInfo);
 						} else {
 							/* We cannot check for the getCacheKey function synchronous, but we later need
-							 * to differentiate wether the result of getCacheKey returns an invalid result
+							 * to differentiate whether the result of getCacheKey returns an invalid result
 							 * (null/undefined) or the function simply does not exist.
 							 * Therefore we use the 'notCacheRelevant' token to mark preProcessors that does
 							 * not provide a getCacheKey function and so are not relevant for caching.

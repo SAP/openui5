@@ -69,7 +69,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.CountMode} [mParameters.defaultCountMode=Request]
 	 *            Sets the default count mode for the model
 	 * @param {string} [mParameters.preliminaryContext=false]
-	 *            Wether a preliminary Context will be created/used by a binding
+	 *            Whether a preliminary Context will be created/used by a binding
 	 * @param {sap.ui.model.odata.OperationMode} [mParameters.defaultOperationMode=Default]
 	 *            Sets the default operation mode for the model
 	 * @param {sap.ui.model.odata.UpdateMethod} [mParameters.defaultUpdateMethod=Merge]
@@ -1636,7 +1636,7 @@ sap.ui.define([
 	 * @param {map} [mParameters] Map which contains additional parameters for the binding
 	 * @param {string} [mParameters.expand] Value for the OData <code>$expand</code> query parameter which should be included in the request
 	 * @param {string} [mParameters.select] Value for the OData <code>$select</code> query parameter which should be included in the request
-	 * @param {boolean} [mParameters.preliminaryContext] Wether a preliminary Context will be created
+	 * @param {boolean} [mParameters.preliminaryContext] Whether a preliminary Context will be created
 	 * @param {map} [mParameters.custom] Optional map of custom query parameters, names of custom parameters must not start with <code>$</code>.
 	 * @param {function} [fnCallBack] Function to be called when context has been created. The parameter of the callback function is the newly created binding context.
 	 * @param {boolean} [bReload] Whether to reload data
