@@ -114,7 +114,7 @@
 											class="demokitInitialPagesBrightLink"
 											text="Terms of Use"
 											href="https://www.sap.com/corporate/en/legal/terms-of-use.html"
-											visible="{=!${appView>/isOpenUI5}}"
+											visible="{=!${versionData>/isOpenUI5}}"
 											target="_blank"/>
 									<Link
 											class="demokitInitialPagesBrightLink"
