@@ -88,41 +88,41 @@
 
 				<h3><a name="coding"></a>Start Coding</h3>
 				<p><a href="https://plnkr.co/edit/QZbR9nSKBf17VpECaixx?p=preview" target="_blank" alt="Try it out yourself">Try it out yourself - modify and extend this basic "Hello World!" example as you wish!</a></p>  
-				<p>Now it is time to build your first OpenUI5 app: when you click on the button "Say Hello", the message "Hello World" appears.  
+				<p>Now it is time to build your first OpenUI5 app! Check out the code below or the link above.   
 					To start simple, we load OpenUI5 from our <a href="https://openui5.hana.ondemand.com/#/topic/2d3eb2f322ea4a82983c1c62a33ec4ae" target="_blank">CDN</a> and place UI5 controls into the HTML body.
 					
 				<pre class="codeblock">
 <span class="shTag">&lt;html&gt;</span>
-<span class="shTag">&lt;head&gt;</span>
-<span class="shTag">&lt;title&gt;</span>Hello World<span class="shTag">&lt;/title&gt;</span>
+	<span class="shTag">&lt;head&gt;</span>
+		<span class="shTag">&lt;title&gt;</span>Hello World<span class="shTag">&lt;/title&gt;</span>
 
-<span class="shTag">&lt;script src=<span class="shString">'https://openui5.hana.ondemand.com/resources/sap-ui-core.js'</span> 
-    <span class="shAttr">id</span>=<span class="shString">'sap-ui-bootstrap'</span>
-    <span class="shAttr">data-sap-ui-theme</span>=<span class="shString">'sap_belize'</span>
-    <span class="shAttr">data-sap-ui-libs</span>=<span class="shString">'sap.m'</span>
+		<span class="shTag">&lt;script src=<span class="shString">'https://openui5.hana.ondemand.com/resources/sap-ui-core.js'</span> 
+   		<span class="shAttr">id</span>=<span class="shString">'sap-ui-bootstrap'</span>
+    		<span class="shAttr">data-sap-ui-theme</span>=<span class="shString">'sap_belize'</span>
+    		<span class="shAttr">data-sap-ui-libs</span>=<span class="shString">'sap.m'</span>
 
-<span class="shTag">&lt;script&gt;</span>
-	var app = new sap.m.App("HelloWorldApp"); 
-	var page = new sap.m.Page("HelloWorldPage", {
-		title: "Hello World Page",
-		content : new sap.m.Button({
-			text : "Say Hello",
-			press : function() {
-				alert("Hello World!");	
-			}
-		})
-	});
-	app.addPage(page);
-	app.placeAt('content');
+		<span class="shTag">&lt;script&gt;</span>
+			var app = new sap.m.App("HelloWorldApp"); 
+			var page = new sap.m.Page("HelloWorldPage", {
+				title: "Hello World Page",
+				content : new sap.m.Button({
+					text : "Say Hello",
+					press : function() {
+						alert("Hello World!");	
+					}
+				})
+			});
+			app.addPage(page);
+			app.placeAt('content');
 
-<span class="shTag">&lt;/script&gt;</span>
+		<span class="shTag">&lt;/script&gt;</span>
 
-<span class="shTag">&lt;/head&gt;</span>
-<span class="shTag">&lt;body</span> <span class="shAttr">class</span>=<span class="shString">'sapUiBody'</span> <span class="shAttr">id</span>=<span class="shString">'content'</span><span class="shTag">&gt;</span>
-<span class="shTag">&lt;/body&gt;</span>
-<span class="shTag">&lt;/html&gt;</span></pre>
-				</p>
-				
+		<span class="shTag">&lt;/head&gt;</span>
+		<span class="shTag">&lt;body</span> <span class="shAttr">class</span>=<span class="shString">'sapUiBody'</span> <span class="shAttr">id</span>=<span class="shString">'content'</span><span class="shTag">&gt;</span>
+		<span class="shTag">&lt;/body&gt;</span>
+		<span class="shTag">&lt;/html&gt;</span></pre>
+						</p>
+
 				<p>This is what the code above does:
 					<p><strong>script src</strong> tells the browser where to find the core library. It initializes the UI5 runtime and loads additional resources, such as the libraries specified in the data-sap-ui-libs attribute.</p>
 					<p><strong>id</strong> gives this central source an ID, sap-ui-bootstrap is the recommended name.</p>
