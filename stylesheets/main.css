@@ -586,6 +586,9 @@ Common Styles
 padding-right: 10px; 
 }
 
+.indented {
+	text-indent: 50px;
+}	
 
 /*******************************************************************************
 Download links and page
