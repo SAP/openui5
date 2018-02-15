@@ -82,8 +82,8 @@
 								<MenuItem text="{= ${versionData>/isBetaVersion} ? 'Beta' : ''} Version {versionData>/version} {=${versionData>/isDevVersion} ? '- development in progress!' : ''}" visible="{appView>/bPhoneSize}" />
 								<MenuItem text="Feedback" visible="{appView>/bPhoneSize}" />
 								<MenuItem text="About" />
-								<MenuItem text="Legal" visible="{=!${versionData>/isOpenUI5}}"/>
-								<MenuItem text="Privacy" visible="{=!${versionData>/isOpenUI5}}"/>
+								<MenuItem text="Legal" />
+								<MenuItem text="Privacy" />
 								<MenuItem text="Terms of Use" visible="{=!${versionData>/isOpenUI5}}">
 									<items>
 										<MenuItem text="Terms of Use" />
@@ -92,6 +92,7 @@
 										<MenuItem text="Disclaimer" />
 									</items>
 								</MenuItem>
+								<MenuItem text="License" visible="{versionData>/isOpenUI5}"/>
 							</items>
 						</Menu>
 					</menu>

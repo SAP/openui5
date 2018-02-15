@@ -23,19 +23,23 @@
 								class="demokitInitialPagesBrightLink sapUiLargeMarginEnd sapUiTinyMarginBottom"
 								text="Legal Disclosure"
 								href="https://www.sap.com/corporate/en/legal/impressum.html"
-								visible="{=!${versionData>/isOpenUI5}}"
 								target="_blank"/>
 						<Link
 								class="demokitInitialPagesBrightLink sapUiLargeMarginEnd sapUiTinyMarginBottom"
 								text="Privacy"
 								href="https://www.sap.com/corporate/en/legal/privacy.html"
-								visible="{=!${versionData>/isOpenUI5}}"
 								target="_blank"/>
 						<Link
 								class="demokitInitialPagesBrightLink"
 								text="Terms of Use"
 								href="https://www.sap.com/corporate/en/legal/terms-of-use.html"
 								visible="{=!${versionData>/isOpenUI5}}"
+								target="_blank"/>
+						<Link
+								class="demokitInitialPagesBrightLink"
+								text="License"
+								href="LICENSE.txt"
+								visible="{versionData>/isOpenUI5}"
 								target="_blank"/>
 					</items>
 				</FlexBox>

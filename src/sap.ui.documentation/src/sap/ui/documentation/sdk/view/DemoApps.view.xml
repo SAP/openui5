@@ -99,8 +99,7 @@
 								<HBox
 										width="100%"
 										justifyContent="End"
-										wrap="Wrap"
-										visible="{=!${appView>/isOpenUI5}}">
+										wrap="Wrap">
 									<Link
 											class="demokitInitialPagesBrightLink sapUiLargeMarginEnd"
 											text="Legal Disclosure"
@@ -115,6 +114,13 @@
 											class="demokitInitialPagesBrightLink"
 											text="Terms of Use"
 											href="https://www.sap.com/corporate/en/legal/terms-of-use.html"
+											visible="{=!${appView>/isOpenUI5}}"
+											target="_blank"/>
+									<Link
+											class="demokitInitialPagesBrightLink"
+											text="License"
+											href="LICENSE.txt"
+											visible="{versionData>/isOpenUI5}"
 											target="_blank"/>
 								</HBox>
 							</HBox>
