@@ -2465,26 +2465,29 @@ sap.ui.define([
 	};
 
 	/**
+	 * @callback appointmentsSorterCallback
+	 * @param {sap.ui.unified.CalendarAppointment} appointment1
+	 * @param {sap.ui.unified.CalendarAppointment} appointment2
+	 */
+
+	/**
 	 * Setter for custom sorting of appointments. If not used, the appointments will be sorted according to their duration vertically.
 	 * For example, the start time and order to the X axis won't change.
 	 * @param {appointmentsSorterCallback} fnSorter
 	 * @since 1.54
 	 * @returns {sap.m.PlanningCalendar} <code>this</code> for chaining
 	 */
-	PlanningCalendar.prototype.setCustomAppointmentsSorterCallback = function(fnSorter) {
-		/**
-		 * This callback is displayed as part of the Requester class.
-		 * @callback appointmentsSorterCallback
-		 * @param {sap.ui.unified.CalendarAppointment} appointment1
-		 * @param {sap.ui.unified.CalendarAppointment} appointment2
-		 */
-		if (typeof fnSorter === "function") {
+
+		PlanningCalendar.prototype.setCustomAppointmentsSorterCallback = function(fnSorter) {
+		if (typeof fnSorter === "function" || fnSorter === null || fnSorter === undefined) {
 			this.getRows().forEach(function(oRow){
 				var oCalendarRow = oRow.getCalendarRow();
 				oCalendarRow._setCustomAppointmentsSorterCallback(fnSorter);
 			});
 
 			this._fnCustomSortedAppointments = fnSorter;
+		} else {
+			jQuery.sap.log.warning("Your custom sort function won't be used, but the old one will be preserved.", this);
 		}
 		return this;
 	};

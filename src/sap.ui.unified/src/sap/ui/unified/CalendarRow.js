@@ -893,6 +893,7 @@ sap.ui.define([
 	*/
 	CalendarRow.prototype._setCustomAppointmentsSorterCallback = function(fnSorter) {
 		this._fnCustomSortedAppointments = fnSorter;
+		this.invalidate();
 	};
 
 	function _getLocale(){
@@ -1022,8 +1023,6 @@ sap.ui.define([
 	 */
 	function _determineVisibleAppointments() {
 
-		// only use appointments in visible time frame for rendering
-		var aOldVisibleAppointments = this._aVisibleAppointments || [];
 		var aAppointments = this._getAppointmentsSorted();
 		var oAppointment;
 		var oGroupAppointment;
@@ -1099,14 +1098,6 @@ sap.ui.define([
 
 				iBegin = _calculateBegin.call(this, sIntervalType, iIntervals, oStartDate, oEndDate, iStartTime, oAppointmentStartDate);
 				iEnd = _calculateEnd.call(this, sIntervalType, iIntervals, oStartDate, oEndDate, iStartTime, oAppointmentEndDate);
-
-				// check if displayed before -> keep level
-				for (j = 0; j < aOldVisibleAppointments.length; j++) {
-					var oOldAppointment = aOldVisibleAppointments[j];
-					if (oAppointment == oOldAppointment.appointment) {
-						iLevel = oOldAppointment.level;
-					}
-				}
 
 				if (oGroupAppointment) {
 					oGroupAppointment._iBegin = iBegin;

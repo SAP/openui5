@@ -1133,6 +1133,24 @@
 				assert.equal(oRow2._getVisibleAppointments().length, 1, "The number of visible appointments is as expected");
 			});
 
+			QUnit.test("_setCustomAppointmentsSorterCallback after initial rendering", function (assert) {
+				//arrange and act
+				var $Appointment1 = jQuery("#App1");
+
+				oRow1._setCustomAppointmentsSorterCallback(function(oApp1, oApp2) {
+					if (oApp1.getType() > oApp2.getType()) {
+						return 1;
+					}
+					if (oApp1.getType() < oApp2.getType()) {
+						return -1;
+					}
+					return 0;
+				});
+				sap.ui.getCore().applyChanges();
+				assert.equal(oRow1._aVisibleAppointments[0].level, "0", "Appointment1 now has level 0");
+
+			});
+
 			QUnit.test("_setCustomAppointmentsSorterCallback", function (assert) {
 				//arrange and act
 				var fnCustom = this.spy();

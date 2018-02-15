@@ -1,5 +1,6 @@
 <mvc:View
 	controllerName="sap.m.sample.PlanningCalendarOneLine.Page"
+	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:unified="sap.ui.unified"
 	xmlns="sap.m">
@@ -16,6 +17,15 @@
 			intervalSelect="handleIntervalSelect">
 			<toolbarContent>
 				<Title text="Title" titleStyle="H4"/>
+				<ToolbarSpacer/>
+				<Select
+						change="handleSortChange"
+						width="230px">
+					<items>
+						<core:Item key="default" text="Default Appointments Sort" />
+						<core:Item key="custom" text="Alphabetical Appointments Sort" />
+					</items>
+				</Select>
 			</toolbarContent>
 			<rows>
 				<PlanningCalendarRow
