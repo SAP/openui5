@@ -320,6 +320,19 @@ sap.ui.define([
 								]
 							}, true);
 						},
+						_getUXGuidelinesBlock: function (oControlData) {
+							return _getHBox({
+								items: [
+									_getLabel({design: "Bold", text: "UX Guidelines:"}),
+									_getLink({
+										emphasized: true,
+										text: oControlData.uxGuidelinesLinkText,
+										href: oControlData.uxGuidelinesLink,
+										target: "_blank"
+									})
+								]
+							}, true);
+						},
 						_getExtendsBlock: function (oControlData, oEntityData) {
 							return _getHBox({
 								items: [
@@ -440,6 +453,7 @@ sap.ui.define([
 					aHeaderBlocksInfo = [
 						{creator: "_getControlSampleBlock", exists: oControlData.isClass},
 						{creator: "_getDocumentationBlock", exists: oControlData.docuLink !== undefined},
+						{creator: "_getUXGuidelinesBlock", exists: oControlData.uxGuidelinesLink !== undefined},
 						{creator: "_getExtendsBlock", exists: oControlData.isClass},
 						{creator: "_getSubclassesBlock", exists: aSubClasses.length > 0},
 						{creator: "_getImplementsBlock", exists: oControlData.hasImplementsData},
