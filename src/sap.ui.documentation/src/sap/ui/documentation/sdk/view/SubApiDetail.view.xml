@@ -466,7 +466,7 @@
 										<custom:LightTable rows="{ path : '/ui5-metadata/specialSettings'}"
 											columnCount="3"
 											columnTitles="Name,Type,Description"
-											class="sapUiSmallMarginTop">
+											class="sapUiSmallMarginTop sapUiDocumentationSpecialSettingsTable">
 											<custom:Row>
 												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}"/>
 												<m:Link text="{type}"
