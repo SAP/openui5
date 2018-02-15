@@ -1430,11 +1430,6 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDemoA
 	padding-bottom: 1.25rem;
 }
 
-/* fix to align link and label in horizontal layout*/
-.sapUiDemoApps .namespaceLink {
-	vertical-align: baseline;
-}
-
 /* fix to remove the 5px space below title images */
 .sapUiDemokit .sapUiDemokitLandingImageCell {
 	line-height: 0;
