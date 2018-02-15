@@ -697,16 +697,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 		 * Init delegator prototype according to various conditions.
 		 */
 		function initDelegateMembers(oScrollerInstance) {
-			var oDelegateMembers;
-
-			if (Device.support.touch || $.sap.simulateMobileOnDesktop) {
-				$.sap.require("jquery.sap.mobile");
-			}
-
-			oDelegateMembers = {
+			var oDelegateMembers = {
 				_init : function(oControl, sScrollContentDom, oConfig) {
 					// default scroll supression threshold of jQuery mobile is too small and prevent native scrolling
-					if ($.mobile && $.event.special.swipe && $.event.special.swipe.scrollSupressionThreshold < 120) {
+					if ($.event && $.event.special && $.event.special.swipe && $.event.special.swipe.scrollSupressionThreshold < 120) {
 						$.event.special.swipe.scrollSupressionThreshold = 120;
 					}
 
