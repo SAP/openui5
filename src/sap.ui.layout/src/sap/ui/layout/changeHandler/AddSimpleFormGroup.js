@@ -22,7 +22,7 @@ sap.ui.define([
 			for (var i = 0; i < aContent.length; i++) {
 				var sType = oModifier.getControlType(aContent[i]);
 				if (aStopToken.indexOf(sType) === -1) {
-					if (aContent[i].getVisible()) {
+					if (oModifier.getVisible(aContent[i])) {
 						return true;
 					}
 				} else {
