@@ -589,7 +589,7 @@
 							new sap.m.Button('myButtonSetSelectionItem3', {text:"#3", press: setSelectionItem3}),
 							new sap.m.Button('myButtonSetSelectionItem4', {text:"#4", press: setSelectionItem4}),
 							new sap.m.Button('myButtonSetSelectionItem5', {text:"#5", press: setSelectionItem5}),
-							new sap.m.Button('myButtonGetSelection', {text:"Get Selection", press: getSelection}),
+							new sap.m.Button('myButtonGetSelection', {text:"Get Selection", press: getSelection2}),
 											oButtonRemoveSelection = new sap.m.Button('myButtonRemoveSelection', {text:"Remove Selection", press: removeSelection}) ]
 		}),
 		footer : new sap.m.Bar({
@@ -1819,7 +1819,7 @@
 		}
 	}
 
-	function getSelection() {
+	function getSelection2() {
 		if (oListSelection.getMode() == sap.m.ListMode.SingleSelect || oListSelection.getMode() == sap.m.ListMode.SingleSelectLeft|| oListSelection.getMode() == sap.m.ListMode.SingleSelectMaster) {
 			var oResult = oListSelection.getSelectedItem();
 			showPopup(oResult);
