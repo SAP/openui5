@@ -476,7 +476,7 @@ sap.ui.require([
 						<End Type="GWSAMPLE_BASIC.Product" Multiplicity="*"\
 								Role="Foo2"/>\
 					</Association>\
-					<EntityContainer Name="Container">\
+					<EntityContainer Name="Container" m:IsDefaultEntityContainer="true">\
 						<EntitySet Name="BusinessPartnerSet"\
 								EntityType="GWSAMPLE_BASIC.BusinessPartner"/>\
 						<EntitySet Name="ProductSet"\ EntityType="GWSAMPLE_BASIC.Product"/>\
@@ -488,6 +488,9 @@ sap.ui.require([
 								Role="ToRole_Assoc_BusinessPartner_Products"/>\
 						</AssociationSet>\
 					</EntityContainer>\
+				</Schema>\
+				<Schema Namespace="AnotherSchema">\
+					<EntityContainer Name="Container"/>\
 				</Schema>',
 			{
 				"$EntityContainer" : "GWSAMPLE_BASIC.0001.Container",
@@ -535,9 +538,17 @@ sap.ui.require([
 						"$kind" : "EntitySet",
 						"$Type" : "GWSAMPLE_BASIC.0001.Product"
 					}
+				},
+				"AnotherSchema." : {
+					"$kind" : "Schema"
+				},
+				"AnotherSchema.Container" : {
+					"$kind" : "EntityContainer"
 				}
 			});
 	});
+	// TODO multiple containers in a schema
+	// TODO AssociationSets between two containers
 
 	//*********************************************************************************************
 	["DELETE", "GET", "MERGE", "PATCH", "POST", "PUT"].forEach(function (sHttpMethod) {
