@@ -325,17 +325,18 @@ sap.ui.define([
 
 	Panel.prototype._createIcon = function () {
 		var that = this,
-			sCollapsedIconURI = IconPool.getIconURI("navigation-right-arrow");
+			sCollapsedIconURI = IconPool.getIconURI("navigation-right-arrow"),
+			sTooltipBundleText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("PANEL_ICON");
 
 		return IconPool.createControlByURI({
 			id: that.getId() + "-CollapsedImg",
 			src: sCollapsedIconURI,
 			decorative: false,
-			useIconTooltip: false,
 			press: function () {
 				that._bInteractiveExpand = true;
 				that.setExpanded(!that.getExpanded());
-			}
+			},
+			tooltip: sTooltipBundleText
 		}).addStyleClass("sapMPanelExpandableIcon");
 	};
 
