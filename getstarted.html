@@ -87,8 +87,19 @@
 
 
 				<h3><a name="coding"></a>Start Coding</h3>
-				<p>Now it is time to build your first OpenUI5 app. To start simple, we load OpenUI5 from our <a href="https://openui5.hana.ondemand.com/#/topic/2d3eb2f322ea4a82983c1c62a33ec4ae" target="_blank">CDN</a> and place a sap.m.Text into the HTML body:
-
+				<p>Now it is time to build your first OpenUI5 app. To start simple, we load OpenUI5 from our <a href="https://openui5.hana.ondemand.com/#/topic/2d3eb2f322ea4a82983c1c62a33ec4ae" target="_blank">CDN</a> and place a sap.m.Button into the HTML body.
+					This is how it works: when you click on the button "Say Hello", the message "Hello World" appears.  
+				</p>
+				<p>	You can see that the code is spead over three files: 
+					<ul>
+						<li>index.html</li>
+						<li>App.controller.js</li>
+						<li>App.view.xml</li>
+					</ul>
+					The reason is that code serving different purposes is seperated for a clearer app structure. Code handling the presentation of data is placed in the xml file and code responsible for responding to the user input and perform interactions is in the controller.js file. 
+					The index.html file is just the entry point. Here you can <a href="https://openui5.hana.ondemand.com/#/topic/91f233476f4d1014b6dd926db0e91070" target="_blank">read more about this pattern called MVC</a>, which stands for model-view-controller.
+					You can try out the entire example by following the link below.  
+					
 				<pre class="codeblock">
 <span class="shTag">&lt;html&gt;</span>
 <span class="shTag">&lt;head&gt;</span>
@@ -104,8 +115,8 @@
 
 <span class="shTag">&lt;script&gt;</span>
     sap.ui.getCore().attachInit(<span class="sh-js-keyword">function</span> () {
-        <span class="sh-js-keyword">new</span> sap.m.Text({
-            <span class="shAttr">text</span>: <span class="shString">&quot;Hello World&quot;</span>
+        <span class="sh-js-keyword">new</span> sap.ui.xmlview({
+            <span class="shAttr">viewName</span>: <span class="shString">&quot;app&quot;</span>
         }).placeAt(<span class="shString">&quot;content&quot;</span>);
     });
 <span class="shTag">&lt;/script&gt;</span>
