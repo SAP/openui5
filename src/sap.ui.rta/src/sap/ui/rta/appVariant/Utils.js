@@ -97,7 +97,8 @@ sap.ui.define([
 		};
 
 		Utils.getAppVariantOverview = function(sReferenceAppId, bKeyUser) {
-			var sLayer = bKeyUser ? 'CUSTOMER' : 'VENDOR';
+			// Customer* means the layer can be either CUSTOMER or CUSTOMER_BASE. This layer calculation will be done backendside
+			var sLayer = bKeyUser ? 'CUSTOMER*' : 'VENDOR';
 			var sRoute = '/sap/bc/lrep/app_variant_overview/?sap.app/id=' + sReferenceAppId + '&layer=' + sLayer;
 
 			return this.sendRequest(sRoute, 'GET').then(function(oResult) {
