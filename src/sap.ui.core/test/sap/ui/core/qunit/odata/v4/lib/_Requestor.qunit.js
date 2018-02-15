@@ -2045,7 +2045,7 @@ sap.ui.require([
 		this.mock(oRequestor).expects("convertExpand")
 			.withExactArgs(sinon.match.same(oExpand), undefined).returns("expand");
 
-		assert.deepEqual(oRequestor.convertQueryOptions("Foo", {
+		assert.deepEqual(oRequestor.convertQueryOptions("/Foo", {
 			foo : "bar",
 			$apply : "filter(Price gt 100)",
 			$count : "true",
@@ -2069,7 +2069,7 @@ sap.ui.require([
 			$select : "select1,select2"
 		});
 
-		assert.deepEqual(oRequestor.convertQueryOptions("Foo", {
+		assert.deepEqual(oRequestor.convertQueryOptions("/Foo", {
 			foo : "bar",
 			"sap-client" : "111",
 			$apply : "filter(Price gt 100)",
@@ -2084,13 +2084,13 @@ sap.ui.require([
 			"sap-client" : "111"
 		});
 
-		assert.deepEqual(oRequestor.convertQueryOptions("Foo", {
+		assert.deepEqual(oRequestor.convertQueryOptions("/Foo", {
 			$select : "singleSelect"
 		}), {
 			$select : "singleSelect"
 		});
 
-		assert.strictEqual(oRequestor.convertQueryOptions("Foo", undefined), undefined);
+		assert.strictEqual(oRequestor.convertQueryOptions("/Foo", undefined), undefined);
 	});
 
 	//*********************************************************************************************
@@ -2134,27 +2134,26 @@ sap.ui.require([
 	[true, false].forEach(function (bSortExpandSelect, i) {
 		QUnit.test("buildQueryString, " + i, function (assert) {
 			var oConvertedQueryParams = {},
+				sMetaPath = "/Foo",
 				oQueryParams = {},
 				oRequestor = _Requestor.create("/~/"),
-				oRequestorMock = this.mock(oRequestor),
-				sResourcePath = "Foo";
+				oRequestorMock = this.mock(oRequestor);
 
 			oRequestorMock.expects("convertQueryOptions")
-				.withExactArgs(sResourcePath, undefined, undefined, undefined).returns(undefined);
+				.withExactArgs(sMetaPath, undefined, undefined, undefined).returns(undefined);
 
 			// code under test
-			assert.strictEqual(oRequestor.buildQueryString(sResourcePath), "");
+			assert.strictEqual(oRequestor.buildQueryString(sMetaPath), "");
 
 			oRequestorMock.expects("convertQueryOptions")
-				.withExactArgs(sResourcePath, sinon.match.same(oQueryParams), true,
-					bSortExpandSelect)
+				.withExactArgs(sMetaPath, sinon.match.same(oQueryParams), true, bSortExpandSelect)
 				.returns(oConvertedQueryParams);
 			this.mock(_Helper).expects("buildQuery")
 				.withExactArgs(sinon.match.same(oConvertedQueryParams)).returns("?query");
 
 			// code under test
 			assert.strictEqual(
-				oRequestor.buildQueryString(sResourcePath, oQueryParams, true, bSortExpandSelect),
+				oRequestor.buildQueryString(sMetaPath, oQueryParams, true, bSortExpandSelect),
 				"?query");
 		});
 	});
@@ -2212,7 +2211,7 @@ sap.ui.require([
 			var oRequestor = _Requestor.create("/~/");
 
 			assert.strictEqual(
-				oRequestor.buildQueryString("Foo", oFixture.o, undefined, true), "?" + oFixture.s,
+				oRequestor.buildQueryString("/Foo", oFixture.o, undefined, true), "?" + oFixture.s,
 				oFixture.s);
 		});
 	});
@@ -2387,10 +2386,10 @@ sap.ui.require([
 			oRequestor = _Requestor.create("/", oModelInterface);
 
 		this.mock(oModelInterface).expects("fnFetchMetadata")
-			.withExactArgs("/EMPLOYEES('1')/EMPLOYEE_2_TEAM/").returns(oPromise);
+			.withExactArgs("/EMPLOYEES/EMPLOYEE_2_TEAM/").returns(oPromise);
 
 		// code under test
-		assert.strictEqual(oRequestor.fetchTypeForPath("EMPLOYEES('1')/EMPLOYEE_2_TEAM"), oPromise);
+		assert.strictEqual(oRequestor.fetchTypeForPath("/EMPLOYEES/EMPLOYEE_2_TEAM"), oPromise);
 	});
 
 	//*********************************************************************************************
@@ -2399,10 +2398,10 @@ sap.ui.require([
 			oRequestor = _Requestor.create("/", oModelInterface);
 
 		this.mock(oModelInterface).expects("fnFetchMetadata")
-			.withExactArgs("/EMPLOYEES('1')/EMPLOYEE_2_TEAM/$Type").returns(oPromise);
+			.withExactArgs("/EMPLOYEES/EMPLOYEE_2_TEAM/$Type").returns(oPromise);
 
 		// code under test
-		assert.strictEqual(oRequestor.fetchTypeForPath("EMPLOYEES('1')/EMPLOYEE_2_TEAM", true),
+		assert.strictEqual(oRequestor.fetchTypeForPath("/EMPLOYEES/EMPLOYEE_2_TEAM", true),
 			oPromise);
 	});
 
@@ -2576,19 +2575,32 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getPathAndAddQueryOptions: Action", function (assert) {
-		var oOperationMetadata = {$kind : "Action"},
+		var oOperationMetadata = {
+				$kind : "Action",
+				"$Parameter" : [{
+					"$Name" : "Foo"
+				}, {
+					"$Name" : "ID"
+				}]
+			},
+			mParameters = {"ID" : "1", "Foo" : 42, "n/a" : NaN},
 			oRequestor = _Requestor.create("/");
 
 		// code under test
 		assert.strictEqual(
-			oRequestor.getPathAndAddQueryOptions("/OperationImport(...)", oOperationMetadata),
+			oRequestor.getPathAndAddQueryOptions("/OperationImport(...)", oOperationMetadata,
+				mParameters),
 			"OperationImport");
+
+		assert.deepEqual(mParameters, {"ID" : "1", "Foo" : 42}, "n/a is removed");
 
 		// code under test
 		assert.strictEqual(
 			oRequestor.getPathAndAddQueryOptions("/Entity('0815')/bound.Operation(...)",
-				oOperationMetadata),
+				{$kind : "Action"}, mParameters),
 			"Entity('0815')/bound.Operation");
+
+		assert.deepEqual(mParameters, {}, "no parameters accepted");
 	});
 
 	//*********************************************************************************************
@@ -2618,7 +2630,7 @@ sap.ui.require([
 		assert.strictEqual(
 			// code under test
 			oRequestor.getPathAndAddQueryOptions("/some.Function(...)", oOperationMetadata,
-				{"føø" : "bãr'1", "p2" : 42}),
+				{"føø" : "bãr'1", "p2" : 42, "n/a" : NaN}),
 			"some.Function(f%C3%B8%C3%B8='b%C3%A3r''1',p2=42)");
 	});
 

@@ -62,16 +62,15 @@
 					<form:SimpleForm editable="true" layout="ResponsiveGridLayout">
 						<Label labelFor="NewBuyerID" text="Buyer ID"/>
 						<!-- TODO Q: derive maxLength from type's constraints?! A: SmartField?! -->
-						<Input change="onChangeNewBuyerId" id="NewBuyerID"
+						<Input id="NewBuyerID"
 							maxLength="10"
 							placeholder="Enter Buyer ID starting with '0'..."
 							showSuggestion="true"
 							suggestionItems="{path : '/BusinessPartnerList', suspended : true}"
 							type="Text"
-							value="0100000000">
+							value="{BuyerID}">
 							<suggestionItems>
-								<core:ListItem key="{BusinessPartnerID}"
-									additionalText="{CompanyName}"
+								<core:ListItem additionalText="{CompanyName}"
 									text="{BusinessPartnerID}"/>
 							</suggestionItems>
 						</Input>

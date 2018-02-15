@@ -60,7 +60,7 @@ sap.ui.define([
 		}\
 	';
 
-	Controller.extend("sap.ui.test.BlanketReporter", {
+	Controller.extend("sap.ui.test.BlanketReporterUI", {
 		filterThreshold : function (bFilter) {
 			var oBinding,
 				oFilter = null,
@@ -406,7 +406,7 @@ sap.ui.define([
 	 * @returns {sap.ui.core.mvc.XMLView} The view
 	 */
 	function createView(oModel) {
-		return sap.ui.xmlview({viewName: "sap.ui.test.BlanketReporter", models: oModel});
+		return sap.ui.xmlview({viewName: "sap.ui.test.BlanketReporterUI", models: oModel});
 	}
 
 	/**
