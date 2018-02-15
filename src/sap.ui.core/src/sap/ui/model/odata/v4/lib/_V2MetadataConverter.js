@@ -738,9 +738,9 @@ sap.ui.define([
 	 */
 	V2MetadataConverter.prototype.processAssociationSet = function (oElement) {
 		var oAssociationSet = {
-				associationName : this.resolveAlias(
-					oElement.getAttribute("Association")),
-				ends : []
+				associationName : this.resolveAlias(oElement.getAttribute("Association")),
+				ends : [],
+				entityContainer : this.entityContainer
 			};
 
 		this.associationSet = oAssociationSet;
@@ -1444,7 +1444,7 @@ sap.ui.define([
 
 		this.associationSets.forEach(function (oAssociationSet) {
 			var oAssociation = that.associations[oAssociationSet.associationName],
-				oEntityContainer = that.entityContainer;
+				oEntityContainer = oAssociationSet.entityContainer;
 
 			/*
 			 * Creates a navigation property binding for the navigation property of the "from" set's
