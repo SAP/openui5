@@ -1071,6 +1071,28 @@
 			oMenu.destroy();
 		});
 
+		QUnit.test("openAsContextMenu functionality with explicit positions", function(assert) {
+			// arrange
+			var oMenu = new sap.ui.unified.Menu(),
+				oOpenerRef = document.createElement("DIV"),
+				oOpenStub = this.stub(oMenu, "open"),
+				oPositionObject = {
+					offsetX: 10,
+					offsetY: 10,
+					left: 10,
+					top: 10
+				};
+
+			// act
+			oMenu.openAsContextMenu(oPositionObject, oOpenerRef);
+
+			// assert
+			assert.ok(oOpenStub.firstCall.args[5], "10 10", "open method should be called with right parameters");
+
+			// cleanup
+			oMenu.destroy();
+			oOpenStub.restore();
+		});
 	</script>
 
 </head>
