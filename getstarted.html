@@ -89,7 +89,7 @@
 				<h3><a name="coding"></a>Start Coding</h3>
 				<p><a href="https://plnkr.co/edit/QZbR9nSKBf17VpECaixx?p=preview" target="_blank" alt="Try it out yourself">Try it out yourself - modify and extend this basic "Hello World!" example as you wish!</a></p>  
 				<p>Now it is time to build your first OpenUI5 app: when you click on the button "Say Hello", the message "Hello World" appears.  
-					To start simple, we load OpenUI5 from our <a href="https://openui5.hana.ondemand.com/#/topic/2d3eb2f322ea4a82983c1c62a33ec4ae" target="_blank">CDN</a> and place a sap.ui.xmlView into the HTML body.
+					To start simple, we load OpenUI5 from our <a href="https://openui5.hana.ondemand.com/#/topic/2d3eb2f322ea4a82983c1c62a33ec4ae" target="_blank">CDN</a> and place UI5 controls into the HTML body.
 					
 				<pre class="codeblock">
 <span class="shTag">&lt;html&gt;</span>
@@ -121,6 +121,21 @@
 <span class="shTag">&lt;body</span> <span class="shAttr">class</span>=<span class="shString">'sapUiBody'</span> <span class="shAttr">id</span>=<span class="shString">'content'</span><span class="shTag">&gt;</span>
 <span class="shTag">&lt;/body&gt;</span>
 <span class="shTag">&lt;/html&gt;</span></pre>
+				</p>
+				
+				<p>This is what the code does:
+					<ul>
+						<li><strong>script src</strong> provides the path to the control libraries.</li>
+						<li><strong>id<strong> gives this central source an ID, sap-ui-bootstrap is the recommended name.</li>
+						<li><strong>data-sap-ui-theme</strong> contains the name of the applied theme, which is the look and feel of the app).</li>
+						<li><strong>data-sap-ui-libs</strong> contains libraries that deliver controls to the app.</li>
+						<li><strong>var</strong> creates a variable. One contains the app and the other the page. In brackets is the name of the control.</li>
+						<li><strong>title</strong> and<strong> content</strong> are properties of the page that values are assigned to.</li>
+						<li><strong>text</strong> and<strong> press</strong> are properties of the button that values are assigned to - or a function with the call "alert("Hello !");".</li>
+						<li><strong>app.addPage(page);</strong> and<strong> app.placeAt('content');</strong> call the methods addPage and placeAt of the app. These functions are part of the app control and can be used without having to code them yourself</li>
+						<li><strong>class='sapUiBody'</strong> applies a look and feel to the body part of the html file.</li>
+						<li><strong>id='content'</strong> assigns the content part an ID to be able to handle it in the code of the app. The content part of the app displays the different parts/views/pages of an app.</li>
+					</ul>	
 				</p>
 			
 				<h3><a name="deeper"></a>Dig Deeper</h3>
