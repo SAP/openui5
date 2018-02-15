@@ -342,6 +342,9 @@
 					<Parameter Name="fldate" Type="Edm.DateTime" Precision="0"/>
 					<Parameter Name="flightTime" Type="Edm.Int32"/>
 				</FunctionImport>
+				<FunctionImport Name="__FAKE__FunctionImport" ReturnType="Edm.DateTime" m:HttpMethod="GET" sap:action-for="RMTSAMPLEFLIGHT.Notification">
+					<Parameter Name="ID" Type="Edm.String"/>
+				</FunctionImport>
 			</EntityContainer>
 			<Annotations Target="RMTSAMPLEFLIGHT.VL_BOOK_SMOKER/ID" xmlns="http://docs.oasis-open.org/odata/ns/edm">
 				<Annotation Term="Common.ValueList"/>

@@ -314,6 +314,7 @@ sap.ui.require([
 
 		QUnit.test(sTitle, function (assert) {
 			var oConvertedResponse = {},
+				sMetaPath = "~",
 				oRequestor = _Requestor.create(sServiceUrl, oModelInterface, undefined, undefined,
 					oFixture.sODataVersion),
 				oRequestorMock = this.mock(oRequestor),
@@ -328,11 +329,12 @@ sap.ui.require([
 			oRequestorMock.expects("doCheckVersionHeader")
 				.withExactArgs(sinon.match.func, "Employees");
 			oRequestorMock.expects("doConvertResponse")
-				.withExactArgs(oResponsePayload)
+				.withExactArgs(oResponsePayload, sMetaPath)
 				.returns(oConvertedResponse);
 
 			// code under test
-			return oRequestor.request("GET", "Employees", "$direct")
+			return oRequestor.request("GET", "Employees", "$direct", undefined, undefined,
+					undefined, undefined, sMetaPath)
 				.then(function (result) {
 					assert.strictEqual(result, oConvertedResponse);
 				});
@@ -350,7 +352,7 @@ sap.ui.require([
 			.withArgs(sServiceUrl + "Employees")
 			.returns(createMock(assert, oResponsePayload, "OK", {"DataServiceVersion" : "2.0"}));
 		this.mock(oRequestor).expects("doConvertResponse")
-			.withExactArgs(oResponsePayload)
+			.withExactArgs(oResponsePayload, undefined)
 			.throws(oError);
 
 		// code under test
@@ -515,12 +517,14 @@ sap.ui.require([
 
 		QUnit.test(sTitle, function (assert) {
 			var oConvertedPayload = {},
+				sMetaPath = "~",
 				aExpectedRequests = [{
 					method : "GET",
 					url : "Products",
 					headers : oFixture.mExpectedRequestHeaders,
 					body : undefined,
 					$cancel : undefined,
+					$metaPath : sMetaPath,
 					$promise : sinon.match.defined,
 					$reject : sinon.match.func,
 					$resolve : sinon.match.func,
@@ -532,9 +536,11 @@ sap.ui.require([
 				oRequestorMock = this.mock(oRequestor);
 
 			oRequestorMock.expects("doConvertResponse")
-				.withExactArgs(oFixture.mProductsResponse) // not same; it is stringified and parsed
+				// not same; it is stringified and parsed
+				.withExactArgs(oFixture.mProductsResponse, sMetaPath)
 				.returns(oConvertedPayload);
-			oGetProductsPromise = oRequestor.request("GET", "Products", "group1")
+			oGetProductsPromise = oRequestor.request("GET", "Products", "group1", undefined,
+					undefined, undefined, undefined, sMetaPath)
 				.then(function (oResponse) {
 					assert.strictEqual(oResponse, oConvertedPayload);
 				});
@@ -560,7 +566,7 @@ sap.ui.require([
 			oResponse = {d : {foo : "bar"}};
 
 		oRequestorMock.expects("doConvertResponse")
-			.withExactArgs(oResponse)
+			.withExactArgs(oResponse, undefined)
 			.throws(oError);
 		oGetProductsPromise = oRequestor.request("GET", "Products", "group1")
 			.then(function () {
@@ -1056,6 +1062,7 @@ sap.ui.require([
 				},
 				body : {"ID" : 1},
 				$cancel : undefined,
+				$metaPath : undefined,
 				$promise : sinon.match.defined,
 				$reject : sinon.match.func,
 				$resolve : sinon.match.func,
@@ -1070,6 +1077,7 @@ sap.ui.require([
 				},
 				body : undefined,
 				$cancel : undefined,
+				$metaPath : undefined,
 				$promise : sinon.match.defined,
 				$reject : sinon.match.func,
 				$resolve : sinon.match.func,
@@ -1085,6 +1093,7 @@ sap.ui.require([
 				},
 				body : undefined,
 				$cancel : undefined,
+				$metaPath : undefined,
 				$promise : sinon.match.defined,
 				$reject : sinon.match.func,
 				$resolve : sinon.match.func,

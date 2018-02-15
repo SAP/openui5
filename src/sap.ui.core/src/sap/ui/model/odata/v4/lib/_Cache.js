@@ -1315,7 +1315,7 @@ sap.ui.define([
 			}
 			this.oPromise = SyncPromise.all([
 				this.oRequestor.request("GET", sResourcePath, sGroupId, undefined, undefined,
-					fnDataRequested),
+					fnDataRequested, undefined, this.sMetaPath),
 				this.fetchTypes()
 			]).then(function (aResult) {
 				that.calculateKeyPredicates(aResult[0], aResult[1]);

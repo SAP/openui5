@@ -441,10 +441,14 @@ sap.ui.define([
 	 *
 	 * @param {object} oResponsePayload
 	 *   The OData response payload
+	 * @param {string} [sMetaPath]
+	 *   The meta path corresponding to the resource path; needed in case V2 response does not
+	 *   contain <code>__metadata.type</code>, for example "2.2.7.2.4 RetrievePrimitiveProperty
+	 *   Request"
 	 * @returns {object}
 	 *   The OData V4 response payload
 	 */
-	Requestor.prototype.doConvertResponse = function (oResponsePayload) {
+	Requestor.prototype.doConvertResponse = function (oResponsePayload, sMetaPath) {
 		return oResponsePayload;
 	};
 
@@ -776,6 +780,10 @@ sap.ui.define([
 	 *   A function that is called for clean-up if the request is canceled while waiting in a batch
 	 *   queue, ignored for GET requests; {@link #cancelChanges} cancels this request only if this
 	 *   callback is given
+	 * @param {string} [sMetaPath]
+	 *   The meta path corresponding to the resource path; needed in case V2 response does not
+	 *   contain <code>__metadata.type</code>, for example "2.2.7.2.4 RetrievePrimitiveProperty
+	 *   Request"
 	 * @param {boolean} [bIsFreshToken=false]
 	 *   Whether the CSRF token has already been refreshed and thus should not be refreshed
 	 *   again
@@ -787,7 +795,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Requestor.prototype.request = function (sMethod, sResourcePath, sGroupId, mHeaders, oPayload,
-			fnSubmit, fnCancel, bIsFreshToken) {
+			fnSubmit, fnCancel, sMetaPath, bIsFreshToken) {
 		var oBatchRequest,
 			bIsBatch = sResourcePath === "$batch",
 			sPayload,
@@ -823,7 +831,7 @@ sap.ui.define([
 							jqXHR.getResponseHeader("Content-Type"), oPayload));
 					} else {
 						try {
-							fnResolve(that.doConvertResponse(oPayload));
+							fnResolve(that.doConvertResponse(oPayload, sMetaPath));
 						} catch (oError) {
 							fnReject(oError);
 						}
@@ -837,7 +845,7 @@ sap.ui.define([
 							// no fnSubmit, it has been called already
 							// no fnCancel, it is only relevant while the request is in the queue
 							fnResolve(that.request(sMethod, sResourcePath, sGroupId, mHeaders,
-								oPayload, undefined, undefined, true));
+								oPayload, undefined, undefined, sMetaPath, true));
 						}, fnReject);
 					} else {
 						fnReject(_Helper.createError(jqXHR));
@@ -875,6 +883,7 @@ sap.ui.define([
 							that.mFinalHeaders),
 						body : oPayload,
 						$cancel : fnCancel,
+						$metaPath : sMetaPath,
 						$reject : fnReject,
 						$resolve : fnResolve,
 						$submit : fnSubmit
@@ -1009,7 +1018,7 @@ sap.ui.define([
 					try {
 						that.doCheckVersionHeader(getResponseHeader.bind(vResponse), vRequest.url,
 							true);
-						vRequest.$resolve(that.doConvertResponse(oResponse));
+						vRequest.$resolve(that.doConvertResponse(oResponse, vRequest.$metaPath));
 					} catch (oErr) {
 						vRequest.$reject(oErr);
 					}

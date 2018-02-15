@@ -145,11 +145,6 @@ sap.ui.require([
 	}, {
 		"d" : {
 			// "An optional "__metadata" name/value pair..."
-			"readMe1st" : null
-		}
-	}, {
-		"d" : {
-			// "An optional "__metadata" name/value pair..."
 			"ID" : 0,
 			"Name" : "Food"
 		}
@@ -166,6 +161,58 @@ sap.ui.require([
 			// code under test
 			assert.strictEqual(oRequestor.doConvertResponse(oResponsePayload), oPayload);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("doConvertResponse, 2.2.7.2.4 RetrievePrimitiveProperty Req.", function (assert) {
+		var sMetaPath = "/FlightCollection/fldate",
+			sOutput = "2017-08-10T00:00:00Z",
+			oProperty = {},
+			oRequestor = {
+				oModelInterface : {fnFetchMetadata : function () {}}
+			},
+			oResponsePayload = {
+				// /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
+				// FlightCollection(carrid='...',connid='...',fldate=datetime'...')/fldate
+				"d" : {
+					"fldate": "/Date(1502323200000)/"
+				}
+			};
+
+		asV2Requestor(oRequestor);
+		this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
+			.withExactArgs(sMetaPath)
+			.returns(SyncPromise.resolve(oProperty));
+		this.mock(oRequestor).expects("convertPrimitive")
+			.withExactArgs(oResponsePayload.d.fldate, sinon.match.same(oProperty), sMetaPath,
+				"fldate")
+			.returns(sOutput);
+
+		// code under test
+		assert.deepEqual(
+			oRequestor.doConvertResponse(oResponsePayload, sMetaPath),
+			{value : sOutput});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("doConvertResponse, 2.2.7.2.3 & 2.2.7.2.4: null", function (assert) {
+		var sMetaPath = "/FlightCollection/fldate",
+			oRequestor = {},
+			oResponsePayload = {
+				// /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
+				// FlightCollection(carrid='...',connid='...',fldate=datetime'...')/fldate
+				"d" : {
+					"fldate": null
+				}
+			};
+
+		asV2Requestor(oRequestor);
+		this.mock(oRequestor).expects("convertPrimitive").never();
+
+		// code under test
+		assert.deepEqual(
+			oRequestor.doConvertResponse(oResponsePayload, sMetaPath),
+			{value : null});
 	});
 
 	//*********************************************************************************************
@@ -325,13 +372,15 @@ sap.ui.require([
 
 			asV2Requestor(oRequestor);
 			if (oFixture.sConvertMethod) {
-				oFixture.sType === "Edm.DateTimeOffset"
-					? this.mock(oRequestor).expects(oFixture.sConvertMethod)
+				if (oFixture.sType === "Edm.DateTimeOffset") {
+					this.mock(oRequestor).expects(oFixture.sConvertMethod)
 						.withExactArgs(sinon.match.same(vV2Value), {$Type : oFixture.sType})
-						.returns(vV4Value)
-					: this.mock(oRequestor).expects(oFixture.sConvertMethod)
+						.returns(vV4Value);
+				} else {
+					this.mock(oRequestor).expects(oFixture.sConvertMethod)
 						.withExactArgs(sinon.match.same(vV2Value))
 						.returns(vV4Value);
+				}
 			} else {
 				vV4Value = vV2Value; // no conversion
 			}

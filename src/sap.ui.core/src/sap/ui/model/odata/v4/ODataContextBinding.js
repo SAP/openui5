@@ -263,7 +263,7 @@ sap.ui.define([
 			vEntity = fnGetEntity,
 			sETag,
 			oModel = this.oModel,
-			sMetaPath = oModel.getMetaModel().getMetaPath(sPath),
+			sMetaPath = oModel.getMetaModel().getMetaPath(sPath) + "/@$ui5.overload/0/$ReturnType",
 			mParameters = jQuery.extend({}, this.oOperation.mParameters),
 			oRequestor = oModel.oRequestor,
 			mQueryOptions = jQuery.extend({}, oModel.mUriParameters, this.mQueryOptions);
