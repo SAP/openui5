@@ -3601,6 +3601,27 @@
 			tp.destroy();
 		});
 
+		QUnit.test("_handleInputChange formats correctly givven value before setting it to the property value", function(assert) {
+			//system under test
+			var tp = new sap.m.TimePicker("tp", {
+				valueFormat: "h:mm:ss",
+				displayFormat: "h:mm:ss"
+			});
+
+			//arrange
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//act
+			tp._$input.val("2:28:34");
+			tp._handleInputChange();
+
+			//assert
+			assert.equal(tp.getValue(), '2:28:34', "getValue is correct");
+
+			tp.destroy();
+		});
+
 		QUnit.test("change event fires when the value is reset", function(assert) {
 			var oTpFocusDomRef = jQuery(this.oTp.getFocusDomRef());
 
