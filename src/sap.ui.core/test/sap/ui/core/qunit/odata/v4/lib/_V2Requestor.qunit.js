@@ -63,8 +63,8 @@ sap.ui.require([
 		bIsCollection : true,
 		oResponsePayload : {
 			"d" : {
-				"__count": "3",
-				"__next": "...?$skiptoken=12",
+				"__count" : "3",
+				"__next" : "...?$skiptoken=12",
 				"results" : [{"String" : "foo"}, {"Boolean" : true}]
 			}
 		},
@@ -76,9 +76,13 @@ sap.ui.require([
 	}, {
 		bIsCollection : false,
 		oResponsePayload : {
-			"d" : {"String" : "foo"}
+			"d" : {
+				"__metadata" : {},
+				"String" : "foo"
+			}
 		},
-		oExpectedResult : {"String" : "foo"}
+		//TODO "__metadata" : {} is actually unexpected here, in real life
+		oExpectedResult : {"__metadata" : {}, "String" : "foo"}
 	}, {
 		bIsCollection : false,
 		oResponsePayload : {
@@ -104,6 +108,63 @@ sap.ui.require([
 			// code under test
 			assert.deepEqual(oRequestor.doConvertResponse(oFixture.oResponsePayload),
 				oFixture.oExpectedResult);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("doConvertResponse, 2.2.7.2.3 RetrieveComplexType Request", function (assert) {
+		var oPayload = {},
+			oRequestor = {},
+			oResponsePayload = {
+				// /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
+				// FlightCollection(carrid='...',connid='...',fldate=datetime'...')/flightDetails
+				"d" : {
+					"flightDetails" : {
+						"__metadata" : {
+							"type" : "RMTSAMPLEFLIGHT.FlightDetails"
+						}
+					}
+				}
+			};
+
+		asV2Requestor(oRequestor);
+		this.mock(oRequestor).expects("convertNonPrimitive")
+			.withExactArgs(sinon.match.same(oResponsePayload.d.flightDetails))
+			.returns(oPayload);
+
+		// code under test
+		assert.strictEqual(oRequestor.doConvertResponse(oResponsePayload), oPayload);
+	});
+
+	//*********************************************************************************************
+	[{
+		"d" : {
+			// "An optional "__metadata" name/value pair..."
+			"readMe1st" : {}
+		}
+	}, {
+		"d" : {
+			// "An optional "__metadata" name/value pair..."
+			"readMe1st" : null
+		}
+	}, {
+		"d" : {
+			// "An optional "__metadata" name/value pair..."
+			"ID" : 0,
+			"Name" : "Food"
+		}
+	}].forEach(function (oResponsePayload, i) {
+		QUnit.test("doConvertResponse, not 2.2.7.2.3 RetrieveComplexType: " + i, function (assert) {
+			var oPayload = {},
+				oRequestor = {};
+
+			asV2Requestor(oRequestor);
+			this.mock(oRequestor).expects("convertNonPrimitive")
+				.withExactArgs(sinon.match.same(oResponsePayload.d))
+				.returns(oPayload);
+
+			// code under test
+			assert.strictEqual(oRequestor.doConvertResponse(oResponsePayload), oPayload);
 		});
 	});
 
@@ -233,8 +294,8 @@ sap.ui.require([
 
 			// code under test
 			assert.throws(function () {
-				oRequestor.convertNonPrimitive(oObject, {});
-			}, new Error("Cannot convert complex value without type information in "
+				oRequestor.convertNonPrimitive(oObject);
+			}, new Error("Cannot convert structured value without type information in "
 					+ "__metadata.type: " + JSON.stringify(oObject)));
 		});
 	});
