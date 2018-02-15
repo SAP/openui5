@@ -345,7 +345,9 @@ sap.ui.define([
 	 * binding's path; the aggregated query options initially hold the binding's local query
 	 * options with the entity type's key properties added to $select.
 	 *
-	 * @param {sap.ui.model.Context} oContext The child binding's context
+	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 *   The child binding's context, must not be <code>null</code> or <code>undefined</code>. See
+	 *   <code>sap.ui.model.odata.v4.ODataBinding#fetchQueryOptionsForOwnCache</code>.
 	 * @param {string} sChildPath The child binding's binding path
 	 * @param {sap.ui.base.SyncPromise} oChildQueryOptionsPromise Promise resolving with the child
 	 *   binding's (aggregated) query options
@@ -394,13 +396,9 @@ sap.ui.define([
 			});
 		}
 
-		if (this.isSuspended() || this.oOperation || sChildPath === "$count"
-				|| sChildPath.slice(-7) === "/$count" || sChildPath[0] === "@") {
+		if (this.oOperation || sChildPath === "$count" || sChildPath.slice(-7) === "/$count"
+				|| sChildPath[0] === "@" || this.getRootBinding().isSuspended()) {
 			return SyncPromise.resolve(true);
-		}
-
-		if (!oContext) {
-			return SyncPromise.resolve(false);
 		}
 
 		// Note: this.oCachePromise exists for all bindings except operation bindings
@@ -520,15 +518,16 @@ sap.ui.define([
 
 	/**
 	 * Initializes the OData list binding: Fires a 'change' event in case the binding has a
-	 * resolved path and it is not suspended.
+	 * resolved path and its root binding is not suspended.
 	 *
 	 * @protected
 	 * @see sap.ui.model.Binding#initialize
+	 * @see #getRootBinding
 	 * @since 1.37.0
 	 */
 	// @override sap.ui.model.Binding#initialize
 	ODataParentBinding.prototype.initialize = function () {
-		if ((!this.bRelative || this.oContext) && !this.isSuspended()) {
+		if ((!this.bRelative || this.oContext) && !this.getRootBinding().isSuspended()) {
 			this._fireChange({reason : ChangeReason.Change});
 		}
 	};
@@ -642,15 +641,16 @@ sap.ui.define([
 	/**
 	 * Resumes this binding. The binding can again fire change events and trigger data service
 	 * requests.
+	 * Before 1.53.0, this method was not supported and threw an error.
 	 *
 	 * @throws {Error}
 	 *   If this binding is relative to a {@link sap.ui.model.odata.v4.Context} or if it is an
-	 *   operation binding
+	 *   operation binding or if it is not suspended
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#resume
 	 * @see #suspend
-	 * @since 1.53.0
+	 * @since 1.37.0
 	 */
 	// @override sap.ui.model.Binding#resume
 	ODataParentBinding.prototype.resume = function () {
@@ -662,16 +662,15 @@ sap.ui.define([
 		if (this.bRelative && (!this.oContext || this.oContext.fetchValue)) {
 			throw new Error("Cannot resume a relative binding: " + this);
 		}
-
 		if (!this.bSuspended) {
-			return;
+			throw new Error("Cannot resume a not suspended binding: " + this);
 		}
 
 		this.bSuspended = false;
 		// dependent bindings are only removed in a *new task* in ManagedObject#updateBindings
 		// => must only resume in prerendering task
 		sap.ui.getCore().addPrerenderingTask(function () {
-			that.resumeInternal();
+			that.resumeInternal(true);
 		});
 	};
 
@@ -701,15 +700,18 @@ sap.ui.define([
 	/**
 	 * Suspends this binding. A suspended binding does not fire change events nor does it trigger
 	 * data service requests. Call {@link #resume} to resume the binding.
+	 * Before 1.53.0, this method was not supported and threw an error.
 	 *
 	 * @throws {Error}
 	 *   If this binding is relative to a {@link sap.ui.model.odata.v4.Context} or if it is an
-	 *   operation binding
+	 *   operation binding or if it is already suspended or if it has pending changes
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#suspend
+	 * @see sap.ui.model.odata.v4.ODataContextBinding#hasPendingChanges
+	 * @see sap.ui.model.odata.v4.ODataListBinding#hasPendingChanges
 	 * @see #resume
-	 * @since 1.53.0
+	 * @since 1.37.0
 	 */
 	// @override sap.ui.model.Binding#suspend
 	ODataParentBinding.prototype.suspend = function () {
@@ -718,6 +720,12 @@ sap.ui.define([
 		}
 		if (this.bRelative && (!this.oContext || this.oContext.fetchValue)) {
 			throw new Error("Cannot suspend a relative binding: " + this);
+		}
+		if (this.bSuspended) {
+			throw new Error("Cannot suspend a suspended binding: " + this);
+		}
+		if (this.hasPendingChanges()) {
+			throw new Error("Cannot suspend a binding with pending changes: " + this);
 		}
 
 		this.bSuspended = true;

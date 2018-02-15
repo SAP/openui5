@@ -49,6 +49,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.37.0
 	 * @version ${version}
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#getRootBinding as #getRootBinding
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#refresh as #refresh
@@ -513,16 +514,22 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resumes this binding and checks for updates.
+	 * Resumes this binding and checks for updates if the parameter <code>bCheckUpdate</code> is
+	 * set.
+	 *
+	 * @param {boolean} bCheckUpdate
+	 *   Whether this property binding shall call <code>checkUpdate</code>
 	 *
 	 * @private
 	 */
-	ODataPropertyBinding.prototype.resumeInternal = function () {
+	ODataPropertyBinding.prototype.resumeInternal = function (bCheckUpdate) {
 		this.fetchCache(this.oContext);
-		this.checkUpdate();
+		if (bCheckUpdate) {
+			this.checkUpdate();
+		}
 	};
 
-		/**
+	/**
 	 * Sets the (base) context if the binding path is relative. Triggers (@link #fetchCache) to
 	 * create a cache and {@link #checkUpdate} to check for the current value if the
 	 * context has changed. In case of absolute bindings nothing is done.
@@ -649,18 +656,6 @@ sap.ui.define([
 	// @override sap.ui.model.Binding#suspend
 	ODataPropertyBinding.prototype.suspend = function () {
 		throw new Error("Unsupported operation: suspend");
-	};
-
-	/**
-	 * Returns a string representation of this object including the binding path. If the binding is
-	 * relative, the parent path is also given, separated by a '|'.
-	 *
-	 * @return {string} A string description of this binding
-	 * @public
-	 * @since 1.37.0
-	 */
-	ODataPropertyBinding.prototype.toString = function () {
-		return sClassName + ": " + (this.bRelative ? this.oContext + "|" : "") + this.sPath;
 	};
 
 	return ODataPropertyBinding;

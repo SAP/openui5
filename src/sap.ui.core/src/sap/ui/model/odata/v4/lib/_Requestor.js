@@ -71,7 +71,7 @@ sap.ui.define([
 	 *   container is fully available, or rejected with an error.
 	 * @param {function} oModelInterface.fnFetchMetadata
 	 *   A function that returns a SyncPromise which resolves with the metadata instance for a
-	 *   given absolute model path (it is automatically converted to a metapath)
+	 *   given meta path
 	 * @param {function} oModelInterface.fnGetGroupProperty
 	 *   A function called with parameters <code>sGroupId</code> and <code>sPropertyName</code>
 	 *   returning the property value in question. Only 'submit' is supported for <code>
@@ -157,8 +157,8 @@ sap.ui.define([
 	 * options, all other OData system query options are rejected; with
 	 * <code>bDropSystemQueryOptions</code> they are dropped altogether.
 	 *
-	 * @param {string} sResourcePath
-	 *   The resource path (allows metadata access, but does not become part of the result)
+	 * @param {string} sMetaPath
+	 *   The meta path corresponding to the resource path
 	 * @param {object} mQueryOptions
 	 *   A map of key-value pairs representing the query string
 	 * @param {boolean} [bDropSystemQueryOptions=false]
@@ -187,10 +187,10 @@ sap.ui.define([
 	 *		"sap-client" : "003"
 	 *	}
 	 */
-	Requestor.prototype.buildQueryString = function (sResourcePath, mQueryOptions,
+	Requestor.prototype.buildQueryString = function (sMetaPath, mQueryOptions,
 			bDropSystemQueryOptions, bSortExpandSelect) {
 		return _Helper.buildQuery(
-			this.convertQueryOptions(sResourcePath, mQueryOptions, bDropSystemQueryOptions,
+			this.convertQueryOptions(sMetaPath, mQueryOptions, bDropSystemQueryOptions,
 				bSortExpandSelect));
 	};
 
@@ -340,8 +340,8 @@ sap.ui.define([
 	 * strings, so that the result can be used for _Helper.buildQuery; with
 	 * <code>bDropSystemQueryOptions</code> they are dropped altogether.
 	 *
-	 * @param {string} sResourcePath
-	 *   The resource path (allows metadata access, but does not become part of the result)
+	 * @param {string} sMetaPath
+	 *   The meta path corresponding to the resource path
 	 * @param {object} mQueryOptions The query options
 	 * @param {boolean} [bDropSystemQueryOptions=false]
 	 *   Whether all system query options are dropped (useful for non-GET requests)
@@ -349,14 +349,14 @@ sap.ui.define([
 	 *   Whether the paths in $expand and $select shall be sorted in the query string
 	 * @returns {object} The converted query options
 	 */
-	Requestor.prototype.convertQueryOptions = function (sResourcePath, mQueryOptions,
+	Requestor.prototype.convertQueryOptions = function (sMetaPath, mQueryOptions,
 			bDropSystemQueryOptions, bSortExpandSelect) {
 		var mConvertedQueryOptions = {};
 
 		if (!mQueryOptions) {
 			return undefined;
 		}
-		this.doConvertSystemQueryOptions(sResourcePath, mQueryOptions, function (sKey, vValue) {
+		this.doConvertSystemQueryOptions(sMetaPath, mQueryOptions, function (sKey, vValue) {
 			mConvertedQueryOptions[sKey] = vValue;
 		}, bDropSystemQueryOptions, bSortExpandSelect);
 		return mConvertedQueryOptions;
@@ -397,8 +397,8 @@ sap.ui.define([
 	 * other parameters are simply passed through.
 	 * May be overwritten for other OData service versions.
 	 *
-	 * @param {string} sResourcePath
-	 *   The resource path (allows metadata access, but does not become part of the result)
+	 * @param {string} sMetaPath
+	 *   The meta path corresponding to the resource path
 	 * @param {object} mQueryOptions The query options
 	 * @param {function(string,any)} fnResultHandler
 	 *   The function to process the converted options getting the name and the value
@@ -407,7 +407,7 @@ sap.ui.define([
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the query string
 	 */
-	Requestor.prototype.doConvertSystemQueryOptions = function (sResourcePath, mQueryOptions,
+	Requestor.prototype.doConvertSystemQueryOptions = function (sMetaPath, mQueryOptions,
 			fnResultHandler, bDropSystemQueryOptions, bSortExpandSelect) {
 		var that = this;
 
@@ -449,23 +449,19 @@ sap.ui.define([
 	};
 
 	/**
-	 * Fetches the type of the given model path from the metadata.
+	 * Fetches the type of the given meta path from the metadata.
 	 *
-	 * @param {string} sPath
-	 *   The resource path, e.g. SalesOrderList('4711')/SO_2_BP
+	 * @param {string} sMetaPath
+	 *   The meta path, e.g. SalesOrderList/SO_2_BP
 	 * @param {boolean} [bAsName]
 	 *   If <code>true</code>, the name of the type is delivered instead of the type itself. This
 	 *   must be used when asking for a property type to avoid that the function logs an error
 	 *   because there are no objects for primitive types like "Edm.Stream".
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise that is resolved with the type of the object at the given path or its name.
+	 *   A promise that is resolved with the type at the given path or its name.
 	 */
-	Requestor.prototype.fetchTypeForPath = function (sPath, bAsName) {
-		sPath = "/" + sPath + "/";
-		if (bAsName) {
-			sPath += "$Type";
-		}
-		return this.oModelInterface.fnFetchMetadata(sPath);
+	Requestor.prototype.fetchTypeForPath = function (sMetaPath, bAsName) {
+		return this.oModelInterface.fnFetchMetadata(sMetaPath + (bAsName ? "/$Type" : "/"));
 	};
 
 	/**
@@ -558,7 +554,8 @@ sap.ui.define([
 	 * @param {object} oOperationMetadata
 	 *   The operation's metadata
 	 * @param {object} mParameters
-	 *   A copy of the map of key-values pairs representing the operation's actual parameters
+	 *   A copy of the map of key-values pairs representing the operation's actual parameters;
+	 *   invalid keys are removed for actions
 	 * @returns {string}
 	 *   The new path without leading slash and ellipsis
 	 * @throws {Error}
@@ -569,24 +566,35 @@ sap.ui.define([
 	Requestor.prototype.getPathAndAddQueryOptions = function (sPath, oOperationMetadata,
 		mParameters) {
 		var aArguments = [],
+			sName,
+			mName2Parameter = {}, // maps valid names to parameter metadata
+			oParameter,
 			that = this;
 
 		sPath = sPath.slice(1, -5);
+		if (oOperationMetadata.$Parameter) {
+			oOperationMetadata.$Parameter.forEach(function (oParameter) {
+				mName2Parameter[oParameter.$Name] = oParameter;
+			});
+		}
 		if (oOperationMetadata.$kind === "Function") {
-			if (oOperationMetadata.$Parameter) {
-				oOperationMetadata.$Parameter.forEach(function (oParameter) {
-					var sName = oParameter.$Name;
-
-					if (sName in mParameters) {
-						if (oParameter.$IsCollection) {
-							throw new Error("Unsupported collection-valued parameter: " + sName);
-						}
-						aArguments.push(encodeURIComponent(sName) + "=" + encodeURIComponent(
-							that.formatPropertyAsLiteral(mParameters[sName], oParameter)));
+			for (sName in mParameters) {
+				oParameter = mName2Parameter[sName];
+				if (oParameter) {
+					if (oParameter.$IsCollection) {
+						throw new Error("Unsupported collection-valued parameter: " + sName);
 					}
-				});
+					aArguments.push(encodeURIComponent(sName) + "=" + encodeURIComponent(
+						that.formatPropertyAsLiteral(mParameters[sName], oParameter)));
+				}
 			}
 			sPath += "(" + aArguments.join(",") + ")";
+		} else { // Action
+			for (sName in mParameters) {
+				if (!(sName in mName2Parameter)) {
+					delete mParameters[sName]; // remove invalid parameter
+				}
+			}
 		}
 		return sPath;
 	};
@@ -1167,7 +1175,7 @@ sap.ui.define([
 		 *   container is fully available, or rejected with an error.
 		 * @param {function} oModelInterface.fnFetchMetadata
 		 *   A function that returns a SyncPromise which resolves with the metadata instance for a
-		 *   given absolute model path (it is automatically converted to a metapath)
+		 *   given meta path
 		 * @param {function} oModelInterface.fnGetGroupProperty
 		 *   A function called with parameters <code>sGroupId</code> and <code>sPropertyName</code>
 		 *   returning the property value in question. Only 'submit' is supported for <code>

@@ -167,27 +167,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("toString", function (assert) {
-		var oBinding = this.oModel.bindProperty("/EMPLOYEES(ID='1')/Name"),
-			oContext = {
-				toString : function () {return "/EMPLOYEES(ID='1')";},
-				getPath : function () {return "/EMPLOYEES(ID='1')";}
-			};
-
-		assert.strictEqual(oBinding.toString(), sClassName + ": /EMPLOYEES(ID='1')/Name",
-			"absolute");
-
-		oBinding = this.oModel.bindProperty("Name");
-		assert.strictEqual(oBinding.toString(), sClassName + ": undefined|Name",
-			"relative, unresolved");
-
-		oBinding = this.oModel.bindProperty("Name", oContext);
-
-		assert.strictEqual(oBinding.toString(), sClassName
-			+ ": /EMPLOYEES(ID='1')|Name", "relative, resolved");
-	});
-
-	//*********************************************************************************************
 	["/EMPLOYEES(ID='1')/Name", "Name"].forEach(function (sPath) {
 		QUnit.test("bindProperty, sPath = '" + sPath + "'", function (assert) {
 			var bAbsolute = sPath[0] === "/",
@@ -1777,16 +1756,18 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("resumeInternal", function (assert) {
-		var oContext = Context.create(this.oModel, {}, "/ProductList('42')"),
-			oBinding = this.oModel.bindProperty("Category", oContext),
-			oBindingMock = this.mock(oBinding);
+	[true, false].forEach(function (bCheckUpdate) {
+		QUnit.test("resumeInternal: bCheckUpdate=" + bCheckUpdate, function (assert) {
+			var oContext = Context.create(this.oModel, {}, "/ProductList('42')"),
+				oBinding = this.oModel.bindProperty("Category", oContext),
+				oBindingMock = this.mock(oBinding);
 
-		oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext));
-		oBindingMock.expects("checkUpdate").withExactArgs();
+			oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext));
+			oBindingMock.expects("checkUpdate").exactly(bCheckUpdate ? 1 : 0).withExactArgs();
 
-		// code under test
-		oBinding.resumeInternal();
+			// code under test
+			oBinding.resumeInternal(bCheckUpdate);
+		});
 	});
 
 	//*********************************************************************************************

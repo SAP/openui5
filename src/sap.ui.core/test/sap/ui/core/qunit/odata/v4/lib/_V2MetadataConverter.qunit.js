@@ -540,10 +540,10 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	["GET", "POST"].forEach(function (sMethod) {
-		QUnit.test("convert: FunctionImport, Method=" + sMethod, function (assert) {
-			var sWhat = sMethod === "POST" ? "Action" : "Function",
-				sMethodAttribute = sMethod ? ' m:HttpMethod="' + sMethod + '"' : "",
+	["DELETE", "GET", "MERGE", "PATCH", "POST", "PUT"].forEach(function (sHttpMethod) {
+		QUnit.test("convert: FunctionImport, Method=" + sHttpMethod, function (assert) {
+			var sWhat = sHttpMethod !== "GET" ? "Action" : "Function",
+				sMethodAttribute = sHttpMethod ? ' m:HttpMethod="' + sHttpMethod + '"' : "",
 				sXml = '\
 					<Schema Namespace="foo" Alias="f">\
 						<EntityContainer Name="Container">\
@@ -555,7 +555,7 @@ sap.ui.require([
 							</FunctionImport>\
 						</EntityContainer>\
 					</Schema>',
-				sExpected = {
+				oExpected = {
 					"$EntityContainer" : "foo.Container",
 					"foo." : {
 						"$kind" : "Schema"
@@ -587,8 +587,12 @@ sap.ui.require([
 					}]
 				};
 
-			sExpected["foo.Container"]["Baz"]["$" + sWhat] = "foo.Baz";
-			testConversion(assert, sXml, sExpected);
+			oExpected["foo.Container"]["Baz"]["$" + sWhat] = "foo.Baz";
+			if (sHttpMethod !== "GET" && sHttpMethod !== "POST") {
+				// remember V2 m:HttpMethod only if needed
+				oExpected["foo.Baz"][0].$v2HttpMethod = sHttpMethod;
+			}
+			testConversion(assert, sXml, oExpected);
 		});
 	});
 
@@ -726,9 +730,9 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[undefined, "DELETE", "MERGE", "PATCH", "PUT"].forEach(function (sMethod) {
-		QUnit.test("convert: FunctionImport w/ m:HttpMethod = " + sMethod, function (assert) {
-			var sMethodAttribute = sMethod ? ' m:HttpMethod="' + sMethod + '"' : "";
+	[undefined, "FOO"].forEach(function (sHttpMethod) {
+		QUnit.test("convert: FunctionImport w/ m:HttpMethod = " + sHttpMethod, function (assert) {
+			var sMethodAttribute = sHttpMethod ? ' m:HttpMethod="' + sHttpMethod + '"' : "";
 
 			this.oLogMock.expects("warning")
 				.withExactArgs("Unsupported HttpMethod at FunctionImport 'Baz',"
