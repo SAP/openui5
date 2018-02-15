@@ -1012,7 +1012,7 @@ sap.ui.define([
 							if (Array.isArray(vResult)) { // overloads of Action or Function
 								vResult = vResult.filter(isRightOverload);
 								if (sSegment === "@$ui5.overload") {
-									return false;
+									return true;
 								}
 								if (vResult.length !== 1) {
 									return log(WARNING, "Unsupported overloads");
