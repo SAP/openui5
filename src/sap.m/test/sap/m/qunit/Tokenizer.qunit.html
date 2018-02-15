@@ -260,7 +260,10 @@
 			count++;
 		});
 
-		this.tokenizer._addUniqueToken(token1, function() {return true});
+		this.tokenizer._addValidateToken({
+			token : token1,
+			validationCallback : function() {return true}
+		});
 		assert.strictEqual(eventType, sap.m.Tokenizer.TokenUpdateType.Added, "tokenUpdate event raised when token added");
 		assert.strictEqual(count, 1, "tokenUpdate event fired once upon adding unique token");
 
