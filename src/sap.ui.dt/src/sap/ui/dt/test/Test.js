@@ -16,6 +16,7 @@ function(jQuery, ManagedObject) {
 	 * @param {string} [sId] id for the new object, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new object
 	 *
+	 * @abstract
 	 * @class
 	 * The Test class allows to create design time tests.
 	 * @extends sap.ui.base.ManagedObject

@@ -127,6 +127,7 @@ sap.ui.define([
 	 *      When a scope object is given, <code>mSettings</code> cannot be omitted, at least <code>null</code> or an empty object literal must be given.
 	 *
 	 *
+	 * @abstract
 	 * @class Base Class that introduces some basic concepts like state management or databinding.
 	 *
 	 * New subclasses of ManagedObject are created with a call to {@link #.extend ManagedObject.extend} and can make use

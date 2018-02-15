@@ -11,6 +11,7 @@ sap.ui.define(['jquery.sap.global', './Binding', './SimpleType','./DataState'],
 	/**
 	 * Constructor for PropertyBinding
 	 *
+	 * @abstract
 	 * @class
 	 * The PropertyBinding is used to access single data values in the data model.
 	 *
