@@ -84,6 +84,8 @@
 			//Check if table has been added to dom tree
 			assert.ok(sut.$().length > 0, "Table in DOM tree");
 
+			assert.ok(sut.$().find("th").hasClass("sapMTableTH"), ".sapMTableTH added to 'th' elements");
+
 			assert.ok(!sut.$().children().hasClass("sapMTableOverlay"), "Table overlay is not rendered as showOverlay=false");
 			sut.setShowOverlay(true);
 			sap.ui.getCore().applyChanges();
@@ -661,21 +663,129 @@
 			sut1.destroy();
 		});
 
-		QUnit.test("Sticky Column Headers", function(assert) {
+		QUnit.test("Sticky Column Headers property check", function(assert) {
 			var sut = createSUT("idStickyColHdr", true);
 			sut.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			assert.ok(sut.$().find("th").hasClass("sapMTableTH"), ".sapMTableTH added to 'th' elements");
-
 			assert.equal(sut.getSticky(), "None", "Default value set correctly");
-			assert.equal(sut.$().find(".sapMListTblStickyColHdr").length, 0, "Sticky column header style class not rendered");
+			assert.equal(sut.$().find(".sapMTableStickyColHdrTR").length, 0, "Sticky column header style class not rendered");
+			assert.equal(sut.$().find(".sapMTableStickyColHdrTH").length, 0, "Sticky column header style class not rendered");
+
 			sut.setSticky("ColumnHeaders");
 			sap.ui.getCore().applyChanges();
 			assert.equal(sut.getSticky(), "ColumnHeaders", "Property set to ColumnHeaders correctly");
-			assert.equal(sut.$().find(".sapMListTblStickyColHdr").length, 1, "Sticky column header style class not rendered");
 
 			sut.destroy();
+		});
+
+		QUnit.test("Sticky Column Headers in Chrome browser", function(assert) {
+			// stub for chrome and edge browsers, sticky support on TH element
+			this.stub(sap.ui.Device, "browser", {"chrome": true});
+			var sut = createSUT("idStickyColHdr", true);
+			sut.placeAt("qunit-fixture");
+			sut.setSticky("ColumnHeaders");
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(sut.$().find(".sapMTableStickyColHdrTH").length > 0, "Sticky column header style class added for th element");
+
+			sut.destroy();
+		});
+
+		QUnit.test("Sticky Column Headers in Edge browser", function(assert) {
+			// stub for chrome and edge browsers, sticky support on TH element
+			this.stub(sap.ui.Device, "browser", {"edge": true, "version": 16});
+			var sut = createSUT("idStickyColHdr", true);
+			sut.placeAt("qunit-fixture");
+			sut.setSticky("ColumnHeaders");
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(sut.$().find(".sapMTableStickyColHdrTH").length > 0, "Sticky column header style class added for th element");
+
+			sut.destroy();
+		});
+
+		QUnit.test("Sticky Column Headers in Safari browser", function(assert) {
+			// stub for chrome and edge browsers, sticky support on TH element
+			this.stub(sap.ui.Device, "browser", {"safari": true});
+			var sut = createSUT("idStickyColHdr", true);
+			sut.placeAt("qunit-fixture");
+			sut.setSticky("ColumnHeaders");
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(sut.$().find(".sapMTableStickyColHdrTR").length > 0, "Sticky column header style class added for th element");
+
+			sut.destroy();
+		});
+
+		QUnit.test("Sticky Column Headers in Firefox browser", function(assert) {
+			// stub for chrome and edge browsers, sticky support on TH element
+			this.stub(sap.ui.Device, "browser", {"firefox": true, "version": 59});
+			var sut = createSUT("idStickyColHdr", true);
+			sut.placeAt("qunit-fixture");
+			sut.setSticky("ColumnHeaders");
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(sut.$().find(".sapMTableStickyColHdrTR").length > 0, "Sticky column header style class added for th element");
+
+			sut.destroy();
+		});
+
+		QUnit.test("Focus and scroll handling with sticky column headers", function(assert) {
+			this.stub(sap.ui.Device.system, "desktop", false);
+			this.stub(sap.ui.Device, "browser", {"chrome": true});
+			this.clock = sinon.useFakeTimers();
+
+			var sut = createSUT("idStickyColHdr", true);
+			var oScrollContainer = new sap.m.ScrollContainer({
+				vertical: true,
+				content: sut
+			});
+			sut.setSticky("ColumnHeaders");
+			oScrollContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var fnGetDomRef = sut.getDomRef;
+			this.stub(sut, "getDomRef", function() {
+				return {
+					parentElement : {
+						getBoundingClientRect : function() {
+							return {
+								top: 10
+							}
+						}
+					},
+					firstChild: {
+						getBoundingClientRect : function() {
+							return {
+								top: 20,
+								height: 48,
+								bottom: 68
+							}
+						}
+					}
+				}
+			});
+
+			var oFocusedItem = sut.getItems()[2];
+			var oFocusedItemDomRef = oFocusedItem.getDomRef();
+			var fnScrollToElementSpy = sinon.spy(sap.ui.core.delegate.ScrollEnablement.prototype, "scrollToElement");
+
+			this.stub(window, "requestAnimationFrame", window.setTimeout);
+			this.stub(oFocusedItemDomRef, "getBoundingClientRect", function() {
+				return {
+					top: 50
+				}
+			});
+
+			oFocusedItemDomRef.focus();
+			this.clock.tick(0);
+			assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -48]), "scrollToElement function called");
+
+			// restore getDomRef() to avoid error caused when oScrollContainer is destroyed
+			sut.getDomRef = fnGetDomRef;
+
+			oScrollContainer.destroy();
 		});
 		</script>
 	</head>

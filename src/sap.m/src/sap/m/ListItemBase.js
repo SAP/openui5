@@ -1120,8 +1120,9 @@ function(
 			return;
 		}
 
+		this.informList("FocusIn", oEvent.srcControl);
+
 		if (oEvent.srcControl === this) {
-			oList.onItemFocusIn(this);
 			return;
 		}
 
