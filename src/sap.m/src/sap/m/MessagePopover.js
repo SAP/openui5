@@ -50,7 +50,7 @@ function(
 		 * <li> If the message cannot be fully displayed or includes a long description, the message popover provides navigation to the detailed description.</li>
 		 * </ul>
 		 * <h3>Structure</h3>
-		 * The message popover stores all messages in an association of type {@link sap.m.MessageItem} named <code>items</code>.
+		 * The message popover stores all messages in an aggregation of type {@link sap.m.MessageItem} named <code>items</code>.
 		 *
 		 * A set of properties determines how the items are rendered:
 		 * <ul>
