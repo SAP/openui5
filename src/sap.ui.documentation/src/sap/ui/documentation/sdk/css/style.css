@@ -80,7 +80,7 @@ html:not(.sapUiMedia-StdExt-Phone) .sapUiDocumentationFooter {
 }
 
 .sapUiDocumentationSearch .sapMSF {
-	width: initial;
+	width: auto;
 	flex-grow: 1;
 
 	max-width: 10%;
