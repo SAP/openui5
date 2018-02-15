@@ -423,8 +423,8 @@ function(
 
 			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
 
-			return this.oAppVariantManager.copyUnsavedChangesToLREP("AppVariantId", true).then(function(bSuccess) {
-				assert.ok(bSuccess, "then the promise is resolved");
+			return this.oAppVariantManager.copyUnsavedChangesToLREP("AppVariantId", true).then(function() {
+				assert.ok("then the promise is resolved");
 			});
 		});
 
@@ -586,8 +586,8 @@ function(
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			}).then(function(oDescriptor) {
-				return this.oAppVariantManager.showSuccessMessageAndTriggerActionFlow(oDescriptor, true).then(function(bSuccess) {
-					assert.ok(bSuccess, "then the app is navigated to FLP Homepage and the promise is resolved");
+				return this.oAppVariantManager.showSuccessMessageAndTriggerActionFlow(oDescriptor, true).then(function() {
+					assert.ok("then the promise is resolved and app is navigated to FLP Homepage");
 					sap.ushell = originalUShell;
 					delete window.bUShellNavigationTriggered;
 					done();
@@ -641,8 +641,8 @@ function(
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			}).then(function(oDescriptor) {
-				return this.oAppVariantManager.showSuccessMessageAndTriggerActionFlow(oDescriptor, true).then(function(bSuccess) {
-					assert.ok(bSuccess, "then the app is navigated to FLP Homepage and the promise is resolved");
+				return this.oAppVariantManager.showSuccessMessageAndTriggerActionFlow(oDescriptor, true).then(function() {
+					assert.ok("then the promise is resolved and app is navigated to FLP Homepage");
 					sap.ushell = originalUShell;
 					delete window.bUShellNavigationTriggered;
 					done();
