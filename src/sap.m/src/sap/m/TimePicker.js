@@ -432,7 +432,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 
 			if (oDate) {
 				// get the value in valueFormat
-				sValue = this._formatValue(oDate, true);
+				sThatValue = sValue = this._formatValue(oDate, true);
 			}
 
 			this.setProperty("value", sThatValue, true); // no rerendering
