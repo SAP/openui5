@@ -94,18 +94,28 @@ describe("sap.tnt.InfoLabel", function () {
 		expect(takeScreenshot(infoLabel15)).toLookAs("16_displayOnly_true");
 	});
 
-	it("should vizualize InfoLabel with numeric content and renderMode: narrow", function () {
+	it("should vizualize InfoLabel with property displayOnly true and truncation", function () {
 		var infoLabel16 = element(by.css("#vb1 .sapMFlexItem:nth-of-type(16) .sapTntInfoLabel"));
-		expect(takeScreenshot(infoLabel16)).toLookAs("17_renderMode_narrow");
+		expect(takeScreenshot(infoLabel16)).toLookAs("17_displayOnly_truncation");
+	});
+
+	it("should vizualize InfoLabel with property displayOnly true, truncation and width", function () {
+		var infoLabel17 = element(by.css("#vb1 .sapMFlexItem:nth-of-type(17) .sapTntInfoLabel"));
+		expect(takeScreenshot(infoLabel17)).toLookAs("18_displayOnly_truncation_width");
+	});
+
+	it("should vizualize InfoLabel with numeric content and renderMode: narrow", function () {
+		var infoLabel18 = element(by.css("#vb1 .sapMFlexItem:nth-of-type(18) .sapTntInfoLabel"));
+		expect(takeScreenshot(infoLabel18)).toLookAs("19_renderMode_narrow");
 	});
 
 	it("should vizualize InfoLabel with numeric content, renderMode: narrow and truncation", function () {
-		var infoLabel20 = element(by.css("#vb1 .sapMFlexItem:nth-of-type(20) .sapTntInfoLabel"));
-		expect(takeScreenshot(infoLabel20)).toLookAs("18_renderMode_narrow_and_truncation");
+		var infoLabel22 = element(by.css("#vb1 .sapMFlexItem:nth-of-type(22) .sapTntInfoLabel"));
+		expect(takeScreenshot(infoLabel22)).toLookAs("20_renderMode_narrow_and_truncation");
 	});
 
 	it("should vizualize InfoLabel with no text", function () {
-		var infoLabel22 = element(by.css("#vb1 .sapMFlexItem:nth-of-type(22) .sapTntInfoLabel"));
-		expect(takeScreenshot(infoLabel22)).toLookAs("19_no_text");
+		var infoLabel24 = element(by.css("#vb1 .sapMFlexItem:nth-of-type(24) .sapTntInfoLabel"));
+		expect(takeScreenshot(infoLabel24)).toLookAs("21_no_text");
 	});
 });
