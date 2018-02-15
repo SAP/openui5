@@ -13,8 +13,9 @@ sap.ui.define([
 	return sap.ui.controller("sap.ui.core.sample.odata.v4.SalesOrdersRTATest.Main", {
 
 		onInit : function () {
-			var oAdaptSalesOrdersButton = new Button({
-					enabled : TestUtils.isRealOData(),
+			var bRealOData = TestUtils.isRealOData(),
+				oAdaptSalesOrdersButton = new Button({
+					enabled : bRealOData,
 					icon : "sap-icon://settings",
 					press : this.onAdaptSalesOrders.bind(this)
 				});
@@ -23,12 +24,12 @@ sap.ui.define([
 				"sap.ui.core.sample.odata.v4.SalesOrdersRTATest.AdaptDialog", this));
 			this.byId("SalesOrdersToolbar").addContent(oAdaptSalesOrdersButton);
 			this.byId("SalesOrderDetailsToolbar").addContent(new Button({
-				enabled : false,
+				enabled : bRealOData,
 				icon : "sap-icon://settings",
 				press : this.onAdaptSODetails.bind(this)
 			}));
 			this.byId("BusinessPartnerToolbar").addContent(new Button({
-				enabled : false,
+				enabled : bRealOData,
 				icon : "sap-icon://settings",
 				press : this.onAdaptBusinessPartner.bind(this)
 			}));
@@ -46,15 +47,19 @@ sap.ui.define([
 				aProperties = [],
 				sPropertyName,
 				oView = this.getView(),
-				bIsTable = oControl.getBinding("items"),
-				oBinding = bIsTable ? oControl.getBinding("items") : oControl.getObjectBinding(),
+				oItemsBinding = oControl.getBinding("items"),
+				oBinding = oItemsBinding // list binding
+					|| oControl.getObjectBinding() // context binding
+					|| oControl.getBindingContext().getBinding(), // parent binding
 				sMetaPath,
-				oModel = oBinding.getModel();
+				oModel,
+				oRootBinding = oBinding.getRootBinding();
 
+			oModel = oBinding.getModel();
 			sMetaPath = oModel.getMetaModel().getMetaPath(
 				oModel.resolve(oBinding.getPath(), oBinding.getContext()));
 			oEntityType = oModel.getMetaModel().getObject(sMetaPath + "/");
-			aContainedControls = bIsTable
+			aContainedControls = oItemsBinding
 				? oControl.getBindingInfo("items").template.getCells()
 				: oControl.getContent();
 			this.aDisplayedProperties = aContainedControls.reduce(
@@ -83,8 +88,10 @@ sap.ui.define([
 			// number of removed (negative) or added (positive) controls: compute correct index
 			//   of contained controls in container control aggregation (items or content)
 			this.iControlDelta = 0;
-			if (!bIsTable) { // element binding is not recreated
-				oBinding.suspend();
+			// absolute list bindings need to be recreated; for others their root needs to be
+			// suspended if not yet done
+			if ((!oItemsBinding || oItemsBinding !== oRootBinding) && !oRootBinding.isSuspended()) {
+				oRootBinding.suspend();
 			}
 			sap.ui.getCore().byId("AdaptDialog").open();
 		},
@@ -97,7 +104,7 @@ sap.ui.define([
 			var oChangedProperty = this.getView().getModel("ui").getProperty(
 					oEvent.getSource().getBinding("text").getContext().getPath()),
 				oControl = this.oAdaptationControl,
-				bIsTable = !!oControl.getBinding("items"),
+				oItemsBinding = oControl.getBinding("items"),
 				that = this;
 
 			// It is not possible to modify the aggregation's template on an existing binding.
@@ -109,7 +116,8 @@ sap.ui.define([
 				// ensure template is not shared between old and new binding
 				delete oBindingInfo.template;
 				oControl.bindItems(jQuery.extend({}, oBindingInfo, {
-					suspended : true,
+					// a root binding needs to be suspended initially
+					suspended : oItemsBinding === oItemsBinding.getRootBinding(),
 					template : oTemplate
 				}));
 				// Note: after re-creation of the binding, one has to set the new header context
@@ -125,7 +133,7 @@ sap.ui.define([
 						text : "{" + sPropertyPath + "}"
 					});
 
-				if (bIsTable) {
+				if (oItemsBinding) {
 					//TODO clarify: How to access template in change handler, there is no API?
 					oControl.getBindingInfo("items").template.addCell(oText);
 					oControl.addColumn((new Column()).setHeader(new Text({text : sPropertyPath})));
@@ -143,7 +151,7 @@ sap.ui.define([
 				if (iIndex < 0) {
 					return;
 				}
-				if (bIsTable) {
+				if (oItemsBinding) {
 					oControl.getBindingInfo("items").template.removeCell(iIndex);
 					oControl.removeColumn(iIndex);
 					recreateBinding();
@@ -164,6 +172,7 @@ sap.ui.define([
 
 		onAdaptSalesOrders : function () {
 			this.adaptControl(this.byId("SalesOrders"));
+			this.getView().getModel("ui").setProperty("/bSalesOrderSelected", false);
 		},
 
 		onAdaptSalesOrderItems : function () {
@@ -176,10 +185,14 @@ sap.ui.define([
 
 		onApplyChanges : function () {
 			var oControl = this.oAdaptationControl,
-				bIsTable = !!oControl.getBinding("items"),
-				oBinding = bIsTable ? oControl.getBinding("items") : oControl.getObjectBinding();
+				oBinding = oControl.getBinding("items") // list binding
+					|| oControl.getObjectBinding() // context binding
+					|| oControl.getBindingContext().getBinding(), // parent binding
+				oRootBinding = oBinding.getRootBinding();
 
-			oBinding.resume();
+			if (oRootBinding.isSuspended()) {
+				oRootBinding.resume();
+			}
 			sap.ui.getCore().byId("AdaptDialog").close();
 		}
 	});

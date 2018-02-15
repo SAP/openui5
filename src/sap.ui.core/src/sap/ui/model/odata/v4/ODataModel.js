@@ -238,10 +238,7 @@ sap.ui.define([
 					this.oRequestor = _Requestor.create(this.sServiceUrl, {
 							fnFetchEntityContainer :
 								this.oMetaModel.fetchEntityContainer.bind(this.oMetaModel),
-							fnFetchMetadata : function (sPath) {
-								return that.oMetaModel.fetchObject(
-									that.oMetaModel.getMetaPath(sPath));
-							},
+							fnFetchMetadata : this.oMetaModel.fetchObject.bind(this.oMetaModel),
 							fnGetGroupProperty : this.getGroupProperty.bind(this),
 							fnOnCreateGroup : function (sGroupId) {
 								if (that.isAutoGroup(sGroupId)) {

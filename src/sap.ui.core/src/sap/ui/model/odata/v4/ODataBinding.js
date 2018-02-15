@@ -237,6 +237,23 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the root binding of this binding's hierarchy, see binding
+	 * {@link topic:54e0ddf695af4a6c978472cecb01c64d Initialization and Read Requests}.
+	 *
+	 * @returns {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding|sap.ui.model.odata.v4.ODataPropertyBinding}
+	 *   The root binding or <code>undefined</code> if this binding is not yet resolved.
+	 *
+	 * @public
+	 * @since 1.53.0
+	 */
+	ODataBinding.prototype.getRootBinding = function () {
+		if (this.bRelative && this.oContext && this.oContext.getBinding) {
+			return this.oContext.getBinding().getRootBinding();
+		}
+		return this.bRelative && !this.oContext ? undefined : this;
+	};
+
+	/**
 	 * Returns the group ID of the binding that is used for update requests.
 	 *
 	 * @returns {string}
@@ -336,7 +353,7 @@ sap.ui.define([
 
 	/**
 	 * Checks whether the binding can be refreshed. Only bindings which are not relative to a V4
-	 * context can be refreshed.
+	 * context and whose root binding is not suspended can be refreshed.
 	 *
 	 * @returns {boolean}
 	 *   <code>true</code> if the binding can be refreshed
@@ -344,30 +361,16 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.isRefreshable = function () {
-		return !this.bRelative || this.oContext && !this.oContext.getBinding;
-	};
-
-	/**
-	 * Returns whether the binding is suspended.
-	 *
-	 * @returns {boolean} Whether the binding is suspended
-	 * @public
-	 */
-	// @override sap.ui.model.Binding#isSuspended
-	ODataBinding.prototype.isSuspended = function () {
-		if (this.bRelative && this.oContext && this.oContext.getBinding) {
-			return this.oContext.getBinding().isSuspended();
-		}
-		return this.bSuspended;
+		return (!this.bRelative || this.oContext && !this.oContext.getBinding)
+			&& !this.isSuspended();
 	};
 
 	/**
 	 * Refreshes the binding. Prompts the model to retrieve data from the server using the given
-	 * group ID and notifies the control that new data is available. The method does nothing for a
-	 * suspended binding.
+	 * group ID and notifies the control that new data is available.
 	 *
 	 * Refresh is supported for bindings which are not relative to a
-	 * {@link sap.ui.model.odata.v4.Context}.
+	 * {@link sap.ui.model.odata.v4.Context} and whose root binding is not suspended.
 	 *
 	 * Note: When calling {@link #refresh} multiple times, the result of the request triggered by
 	 * the last call determines the binding's data; it is <b>independent</b> of the order of calls
@@ -386,15 +389,15 @@ sap.ui.define([
 	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
 	 *   specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @throws {Error}
-	 *   If the given group ID is invalid, the binding has pending changes or refresh on this
-	 *   binding is not supported.
+	 *   If the given group ID is invalid, the binding has pending changes, its root binding is
+	 *   suspended or refresh on this binding is not supported.
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
-	 * @see sap.ui.model.odata.v4.ODataContextBinding#suspend
-	 * @see sap.ui.model.odata.v4.ODataListBinding#suspend
+	 * @see #getRootBinding
 	 * @see #hasPendingChanges
 	 * @see #resetChanges
+	 * @see #suspend
 	 * @since 1.37.0
 	 */
 	// @override sap.ui.model.Binding#refresh
@@ -406,9 +409,6 @@ sap.ui.define([
 			throw new Error("Cannot refresh due to pending changes");
 		}
 		this.oModel.checkGroupId(sGroupId);
-		if (this.isSuspended()) {
-			return;
-		}
 
 		// The actual refresh is specific to the binding and is implemented in each binding class.
 		this.refreshInternal(sGroupId, true);
@@ -510,6 +510,19 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.resetInvalidDataState = function () {
+	};
+
+	/**
+	 * Returns a string representation of this object including the binding path. If the binding is
+	 * relative, the parent path is also given, separated by a '|'.
+	 *
+	 * @returns {string} A string description of this binding
+	 * @public
+	 * @since 1.37.0
+	 */
+	ODataBinding.prototype.toString = function () {
+		return this.getMetadata().getName() + ": " + (this.bRelative  ? this.oContext + "|" : "")
+			+ this.sPath;
 	};
 
 	/**

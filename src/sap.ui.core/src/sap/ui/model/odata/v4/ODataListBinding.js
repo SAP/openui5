@@ -59,6 +59,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.37.0
 	 * @version ${version}
+	 * @borrows sap.ui.model.odata.v4.ODataBinding#getRootBinding as #getRootBinding
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
 	 * @borrows sap.ui.model.odata.v4.ODataBinding#refresh as #refresh
@@ -1408,13 +1409,18 @@ sap.ui.define([
 	/**
 	 * Resumes this binding and all dependent bindings and fires a change event afterwards.
 	 *
+	 * @param {boolean} bCheckUpdate
+	 *   Parameter is ignored; dependent property bindings of a list binding never call checkUpdate
+	 *
 	 * @private
 	 */
 	ODataListBinding.prototype.resumeInternal = function () {
 		this.reset();
 		this.fetchCache(this.oContext);
 		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
-			oDependentBinding.resumeInternal();
+			// do not call checkUpdate in dependent property bindings because the cache of this
+			// binding is reset and the binding has not yet fired a change event
+			oDependentBinding.resumeInternal(false);
 		});
 		this._fireChange({reason : ChangeReason.Change});
 	};
@@ -1506,18 +1512,6 @@ sap.ui.define([
 		this.fetchCache(this.oContext);
 		this.reset(ChangeReason.Sort);
 		return this;
-	};
-
-	/**
-	 * Returns a string representation of this object including the binding path. If the binding is
-	 * relative, the parent path is also given, separated by a '|'.
-	 *
-	 * @return {string} A string description of this binding
-	 * @public
-	 * @since 1.37.0
-	 */
-	ODataListBinding.prototype.toString = function () {
-		return sClassName + ": " + (this.bRelative ? this.oContext + "|" : "") + this.sPath;
 	};
 
 	/**

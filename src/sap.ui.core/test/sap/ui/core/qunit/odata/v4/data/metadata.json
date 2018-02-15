@@ -457,6 +457,49 @@
 			"$Nullable" : false
 		}
 	}],
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcOverload": [{
+		"$kind": "Action",
+		"$IsBound": true,
+		"$Parameter": [{
+			"$Name": "_it",
+			"$Nullable": false,
+			"$Type": "com.sap.gateway.default.iwbep.tea_busi.v0001.Worker"
+		}, {
+			"$Name": "Message",
+			"$Type": "Edm.String"
+		}],
+		"$ReturnType": {
+			"$Type": "com.sap.gateway.default.iwbep.tea_busi.v0001.Worker"
+		}
+	}, {
+		"$kind": "Action",
+		"$IsBound": true,
+		"$Parameter": [{
+			"$Name": "_it",
+			"$Nullable": false,
+			"$Type": "com.sap.gateway.default.iwbep.tea_busi.v0001.EQUIPMENT"
+		}, {
+			"$Name": "Message",
+			"$Type": "Edm.String"
+		}],
+		"$ReturnType": {
+			"$Type": "com.sap.gateway.default.iwbep.tea_busi.v0001.EQUIPMENT"
+		}
+	}, {
+		"$kind": "Action",
+		"$IsBound": true,
+		"$Parameter": [{
+			"$Name": "_it",
+			"$Nullable": false,
+			"$Type": "com.sap.gateway.default.iwbep.tea_busi.v0001.MANAGER"
+		}, {
+			"$Name": "Message",
+			"$Type": "Edm.String"
+		}],
+		"$ReturnType": {
+			"$Type": "com.sap.gateway.default.iwbep.tea_busi.v0001.MANAGER"
+		}
+	}],
 	"com.sap.gateway.default.iwbep.tea_busi.v0001.FuGetEmployeeAges" : [{
 		"$kind" : "Function",
 		"$ReturnType" : {

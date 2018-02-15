@@ -89,6 +89,7 @@ sap.ui.define([
 	function Cache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect) {
 		this.bActive = true;
 		this.mChangeListeners = {}; // map from path to an array of change listeners
+		this.sMetaPath = _Helper.getMetaPath("/" + sResourcePath);
 		this.mPatchRequests = {}; // map from path to an array of (PATCH) promises
 		this.mPostRequests = {}; // map from path to an array of entity data (POST bodies)
 		this.oRequestor = oRequestor;
@@ -140,8 +141,7 @@ sap.ui.define([
 			}
 			oEntity["$ui5.deleting"] = true;
 			mHeaders = {"If-Match" : oEntity["@odata.etag"]};
-			sEditUrl += that.oRequestor.buildQueryString(that.sResourcePath, that.mQueryOptions,
-				true);
+			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
 			return that.oRequestor.request("DELETE", sEditUrl, sGroupId, mHeaders)
 				["catch"](function (oError) {
 					if (oError.status !== 404) {
@@ -255,7 +255,7 @@ sap.ui.define([
 			});
 		}
 
-		visitInstance(oRootInstance, _Helper.getMetaPath(this.sResourcePath));
+		visitInstance(oRootInstance, this.sMetaPath);
 	};
 
 	/**
@@ -310,46 +310,43 @@ sap.ui.define([
 			oEntityData["@$ui5.transient"] = true;
 		}
 
-		function request(sPostGroupId) {
+		function request(sPostPath, sPostGroupId) {
 			oEntityData["@$ui5.transient"] = sPostGroupId; // mark as transient (again)
-			return SyncPromise.resolve(vPostPath).then(function (sPostPath) {
-				sPostPath += that.oRequestor.buildQueryString(that.sResourcePath,
-					that.mQueryOptions, true);
-				that.addByPath(that.mPostRequests, sPath, oEntityData);
-				return that.oRequestor.request("POST", sPostPath, sPostGroupId, null, oEntityData,
-						setCreatePending, cleanUp)
-					.then(function (oResult) {
-						delete oEntityData["@$ui5.transient"];
-						// now the server has one more element
-						addToCount(that.mChangeListeners, sPath, aCollection, 1);
-						that.removeByPath(that.mPostRequests, sPath, oEntityData);
-						// update the cache with the POST response
-						_Helper.updateCacheAfterPost(that.mChangeListeners,
-							_Helper.buildPath(sPath, "-1"), oEntityData, oResult,
-							_Helper.getSelectForPath(that.mQueryOptions, sPath));
-						// determine and save the key predicate
-						that.fetchTypes().then(function (mTypeForMetaPath) {
-							oEntityData["@$ui5.predicate"] = that.oRequestor.getKeyPredicate(
-								oEntityData,
-								_Helper.getMetaPath(_Helper.buildPath(that.sResourcePath, sPath)),
-								mTypeForMetaPath);
-						});
-					}, function (oError) {
-						if (oError.canceled) {
-							// for cancellation no error is reported via fnErrorCallback
-							throw oError;
-						}
-						if (fnErrorCallback) {
-							fnErrorCallback(oError);
-						}
-						return request(that.oRequestor.getGroupSubmitMode(sPostGroupId) === "API" ?
+			that.addByPath(that.mPostRequests, sPath, oEntityData);
+			return that.oRequestor.request("POST", sPostPath, sPostGroupId, null, oEntityData,
+					setCreatePending, cleanUp)
+				.then(function (oResult) {
+					delete oEntityData["@$ui5.transient"];
+					// now the server has one more element
+					addToCount(that.mChangeListeners, sPath, aCollection, 1);
+					that.removeByPath(that.mPostRequests, sPath, oEntityData);
+					// update the cache with the POST response
+					_Helper.updateCacheAfterPost(that.mChangeListeners,
+						_Helper.buildPath(sPath, "-1"), oEntityData, oResult,
+						_Helper.getSelectForPath(that.mQueryOptions, sPath));
+					// determine and save the key predicate
+					that.fetchTypes().then(function (mTypeForMetaPath) {
+						oEntityData["@$ui5.predicate"] = that.oRequestor.getKeyPredicate(
+							oEntityData,
+							_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sPath)),
+							mTypeForMetaPath);
+					});
+				}, function (oError) {
+					if (oError.canceled) {
+						// for cancellation no error is reported via fnErrorCallback
+						throw oError;
+					}
+					if (fnErrorCallback) {
+						fnErrorCallback(oError);
+					}
+					return request(sPostPath,
+						that.oRequestor.getGroupSubmitMode(sPostGroupId) === "API" ?
 							sPostGroupId : "$parked." + sPostGroupId);
-				});
 			});
 		}
 
 		// clone data to avoid modifications outside the cache
-		oEntityData = oEntityData ? JSON.parse(JSON.stringify(oEntityData)) : {};
+		oEntityData = jQuery.extend(true, {}, oEntityData);
 
 		aCollection = this.fetchValue("$cached", sPath).getResult();
 		if (!Array.isArray(aCollection)) {
@@ -358,7 +355,10 @@ sap.ui.define([
 		}
 		aCollection[-1] = oEntityData;
 
-		return request(sGroupId);
+		return SyncPromise.resolve(vPostPath).then(function (sPostPath) {
+			sPostPath += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
+			return request(sPostPath, sGroupId);
+		});
 	};
 
 	/**
@@ -377,8 +377,7 @@ sap.ui.define([
 	 * Drills down into the given object according to <code>sPath</code>. Logs an error if the path
 	 * leads into void. Paths may contain key predicates like "TEAM_2_EMPLOYEES('42')/Name". The
 	 * initial segment in a collection cache may even start with a key predicate, for example a path
-	 * could be "('42')/Name". Paths containing a not-expanded navigation property having an
-	 * <code>@odata.bind</code> annotation result in <code>undefined</code> without an error log.
+	 * could be "('42')/Name".
 	 *
 	 * @param {object} oData
 	 *   The result from a read or cache lookup
@@ -399,7 +398,7 @@ sap.ui.define([
 		// Determine the implicit value if the value is missing in the cache. Report an invalid
 		// segment if there is no implicit value.
 		function missingValue(oValue, sSegment, iPathLength) {
-			var sPropertyPath = that.sResourcePath,
+			var sPropertyPath = "",
 				sPropertyType,
 				sReadLink,
 				sServiceUrl;
@@ -408,17 +407,16 @@ sap.ui.define([
 				sPropertyPath += "/";
 			}
 			sPropertyPath += sPath.split("/").slice(0, iPathLength).join("/");
-			sPropertyType = that.oRequestor.fetchTypeForPath(sPropertyPath, true).getResult();
+			sPropertyType = that.oRequestor
+				.fetchTypeForPath(that.sMetaPath + _Helper.getMetaPath(sPropertyPath), true)
+				.getResult();
 			if (sPropertyType === "Edm.Stream") {
 				sReadLink = oValue[sSegment + "@odata.mediaReadLink"];
 				sServiceUrl = that.oRequestor.getServiceUrl();
 				if (sReadLink) {
 					return _Helper.makeAbsolute(sReadLink, sServiceUrl);
 				}
-				return sServiceUrl + sPropertyPath;
-			}
-			if (oValue[sSegment + "@odata.bind"] !== undefined) {
-				return undefined;
+				return sServiceUrl + that.sResourcePath + sPropertyPath;
 			}
 			return invalidSegment(sSegment);
 		}
@@ -461,14 +459,14 @@ sap.ui.define([
 
 	/**
 	 * Fetches the type from the metadata for the root entity plus all types for $expand and puts
-	 * them into a map from type to meta path. Checks the types' key properties and puts their types
+	 * them into a map from meta path to type. Checks the types' key properties and puts their types
 	 * into the map, too, if they are complex.
 	 *
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that is resolved with a map from resource path + entity path to the type
 	 */
 	Cache.prototype.fetchTypes = function () {
-		var sMetaPath, aPromises, mTypeForMetaPath, that = this;
+		var aPromises, mTypeForMetaPath, that = this;
 
 		/*
 		 * Recursively calls fetchType for all (sub)paths in $expand.
@@ -516,11 +514,10 @@ sap.ui.define([
 		}
 
 		if (!this.oTypePromise) {
-			sMetaPath = _Helper.getMetaPath(this.sResourcePath);
 			aPromises = [];
 			mTypeForMetaPath = {};
-			fetchType(sMetaPath);
-			fetchExpandedTypes(sMetaPath, this.mQueryOptions);
+			fetchType(this.sMetaPath);
+			fetchExpandedTypes(this.sMetaPath, this.mQueryOptions);
 			this.oTypePromise = SyncPromise.all(aPromises).then(function () {
 				return mTypeForMetaPath;
 			});
@@ -649,9 +646,8 @@ sap.ui.define([
 		}
 
 		this.mQueryOptions = mQueryOptions;
-		// sResourcePath is only used for metadata access, it does not contribute to the result
-		this.sQueryString = this.oRequestor.buildQueryString(this.sResourcePath, mQueryOptions,
-			false, this.bSortExpandSelect);
+		this.sQueryString = this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false,
+			this.bSortExpandSelect);
 	};
 
 	/**
@@ -778,8 +774,7 @@ sap.ui.define([
 				return Promise.resolve({});
 			}
 			// send and register the PATCH request
-			sEditUrl += that.oRequestor.buildQueryString(that.sResourcePath, that.mQueryOptions,
-				true);
+			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
 			return patch();
 		});
 	};
@@ -1141,7 +1136,7 @@ sap.ui.define([
 		delete mQueryOptions["$count"];
 		delete mQueryOptions["$filter"];
 		delete mQueryOptions["$sort"];
-		sReadUrl += this.oRequestor.buildQueryString(this.sResourcePath, mQueryOptions, false,
+		sReadUrl += this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false,
 			this.bSortExpandSelect);
 
 		oPromise = SyncPromise.all([
@@ -1269,10 +1264,14 @@ sap.ui.define([
 	 *   Whether the cache uses POST requests. If <code>true</code>, only {@link #post} may lead to
 	 *   a request, {@link #read} may only read from the cache; otherwise {@link #post} throws an
 	 *   error.
+	 * @param {string} [sMetaPath]
+	 *   Optional meta path in case it cannot be derived from the given resource path
 	 */
-	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost) {
+	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost,
+			sMetaPath) {
 		Cache.apply(this, arguments);
 
+		this.sMetaPath = sMetaPath || this.sMetaPath; // overrides Cache c'tor
 		this.bPost = bPost;
 		this.bPosting = false;
 		this.oPromise = null;
@@ -1342,7 +1341,8 @@ sap.ui.define([
 	 *   ID of the group to associate the request with;
 	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {object} [oData]
-	 *   The data to be sent with the POST request
+	 *   A copy of the data to be sent with the POST request; may be used to tunnel a different
+	 *   HTTP method via a property "X-HTTP-Method" (which is removed)
 	 * @param {string} [sETag]
 	 *   The ETag to be sent as "If-Match" header with the POST request.
 	 * @returns {sap.ui.base.SyncPromise}
@@ -1351,7 +1351,8 @@ sap.ui.define([
 	 *   If the cache does not allow POST or another POST is still being processed.
 	 */
 	SingleCache.prototype.post = function (sGroupId, oData, sETag) {
-		var that = this;
+		var sHttpMethod = "POST",
+			that = this;
 
 		if (!this.bPost) {
 			throw new Error("POST request not allowed");
@@ -1362,12 +1363,16 @@ sap.ui.define([
 		if (this.bPosting) {
 			throw new Error("Parallel POST requests not allowed");
 		}
-		if (this.oRequestor.isActionBodyOptional() && !Object.keys(oData).length) {
-			oData = undefined;
+		if (oData) {
+			sHttpMethod = oData["X-HTTP-Method"] || sHttpMethod;
+			delete oData["X-HTTP-Method"];
+			if (this.oRequestor.isActionBodyOptional() && !Object.keys(oData).length) {
+				oData = undefined;
+			}
 		}
 		this.oPromise = SyncPromise.resolve(
 			this.oRequestor
-				.request("POST", this.sResourcePath + this.sQueryString, sGroupId,
+				.request(sHttpMethod, this.sResourcePath + this.sQueryString, sGroupId,
 					{"If-Match" : sETag}, oData)
 				.then(function (oResult) {
 					that.bPosting = false;
@@ -1453,12 +1458,15 @@ sap.ui.define([
 	 *   Whether the cache uses POST requests. If <code>true</code>, only {@link #post} may
 	 *   lead to a request, {@link #read} may only read from the cache; otherwise {@link #post}
 	 *   throws an error.
+	 * @param {string} [sMetaPath]
+	 *   Optional meta path in case it cannot be derived from the given resource path
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 */
 	Cache.createSingle = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			bPost) {
-		return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost);
+			bPost, sMetaPath) {
+		return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost,
+			sMetaPath);
 	};
 
 	/**
