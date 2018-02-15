@@ -6,6 +6,17 @@
 		id="orderCompletedPage"
 		title="{i18n>orderCompletedTitle}"
 		class="sapUiContentPadding">
+		<landmarkInfo>
+			<PageAccessibleLandmarkInfo
+				rootRole="Region"
+				rootLabel="{i18n>OrderCompleted_rootLabel}"
+				contentRole="Main"
+				contentLabel="{i18n>OrderCompleted_contentLabel}"
+				headerRole="Region"
+				headerLabel="{i18n>OrderCompleted_headerLabel}"
+				footerRole="Region"
+				footerLabel="{i18n>OrderCompleted_footerLabel}" />
+		</landmarkInfo>
 		<content>
 			<FormattedText htmlText="{i18n>orderCompletedText}" />
 		</content>

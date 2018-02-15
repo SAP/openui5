@@ -11,6 +11,15 @@
 			<Page
 				id="wizardContentPage"
 				title="{i18n>checkoutTitle}">
+				<landmarkInfo>
+					<PageAccessibleLandmarkInfo
+						rootRole="Region"
+						rootLabel="{i18n>Checkout_rootLabel}"
+						contentRole="Main"
+						contentLabel="{i18n>Checkout_contentLabel}"
+						footerRole="Region"
+						footerLabel="{i18n>Checkout_footerLabel}" />
+				</landmarkInfo>
 				<headerContent>
 					<Button
 						id="returnToShopButton"
@@ -664,19 +673,26 @@
 			<Page
 				id="summaryPage"
 				showHeader="false">
+				<landmarkInfo>
+					<PageAccessibleLandmarkInfo
+							rootRole="Region" rootLabel="{i18n>Checkout_rootLabel}"
+							contentRole="Main" contentLabel="{i18n>Checkout_summaryContentLabel}"
+							footerRole="Banner" footerLabel="{i18n>Checkout_footerLabel}" />
+				</landmarkInfo>
 				<content>
 					<Panel>
 						<headerToolbar>
 							<Toolbar id="toolbarProductList">
 								<Title
-										id="checkoutItems"
-										text="{i18n>checkoutSummaryTitle1}"
-										level="H4"
-										titleStyle="H4" />
+									id="checkoutItems"
+									text="{i18n>checkoutSummaryTitle1}"
+									level="H2"
+									titleStyle="H4" />
 								<ToolbarSpacer />
 								<Button
 									id="backtoList"
 									icon="sap-icon://edit"
+									tooltip="{i18n>backToWizard}"
 									type="Emphasized"
 									press="_navBackToStep">
 									<customData>
@@ -737,7 +753,7 @@
 								<ToolbarSpacer />
 								<Title
 									id="totalPriceTitle"
-									level="H4"
+									level="H3"
 									titleStyle="H4"
 									text="{
 										path : 'cartProducts>/cartEntries',
@@ -756,12 +772,13 @@
 								<Title
 									id="toolbarPaymentTitle"
 									text="{i18n>checkoutSummaryTitle2}"
-									level="H4"
+									level="H2"
 									titleStyle="H4" />
 								<ToolbarSpacer />
 								<Button
 									id="backToPaymentType"
 									icon="sap-icon://edit"
+									tooltip="{i18n>backToWizard}"
 									type="Emphasized"
 									press="_navBackToStep">
 									<customData>
@@ -786,12 +803,13 @@
 								<Title
 									id="creditCardPaymentTitle"
 									text="{i18n>checkoutSummaryTitle3cc}"
-									level="H4"
+									level="H2"
 									titleStyle="H4" />
 								<ToolbarSpacer />
 								<Button
 									id="backToCreditCard"
 									icon="sap-icon://edit"
+									tooltip="{i18n>backToWizard}"
 									type="Emphasized"
 									press="_navBackToStep">
 									<customData>
@@ -842,12 +860,13 @@
 								<Title
 									id="cashOnDeliveryTitle"
 									text="{i18n>checkoutSummaryTitle3cod}"
-									level="H4"
+									level="H2"
 									titleStyle="H4" />
 								<ToolbarSpacer />
 								<Button
 									id="backToCashOnDelivery"
 									icon="sap-icon://edit"
+									tooltip="{i18n>backToWizard}"
 									type="Emphasized"
 									press="_navBackToStep">
 									<customData>
@@ -877,12 +896,13 @@
 								<Title
 									id="invoiceAddressTitle"
 									text="{i18n>checkoutSummaryTitle4}"
-									level="H4"
+									level="H2"
 									titleStyle="H4" />
 								<ToolbarSpacer />
 								<Button
 									id="backToInvoiceAddress"
 									icon="sap-icon://edit"
+									tooltip="{i18n>backToWizard}"
 									type="Emphasized"
 									press="_navBackToStep">
 									<customData>
@@ -914,12 +934,13 @@
 								<Title
 									id="deliveryTypeTitle"
 									text="{i18n>checkoutSummaryTitle5}"
-									level="H4"
+									level="H2"
 									titleStyle="H4" />
 								<ToolbarSpacer />
 								<Button
 									id="backToDeliveryType"
 									icon="sap-icon://edit"
+									tooltip="{i18n>backToWizard}"
 									type="Emphasized"
 									press="_navBackToStep">
 									<customData>
@@ -943,12 +964,13 @@
 								<Title
 									id="shippingAddressTitle1"
 									text="{i18n>checkoutDeliveryAddressTitle}"
-									level="H4"
+									level="H2"
 									titleStyle="H4" />
 								<ToolbarSpacer />
 								<Button
 									id="backToDeliveryAddress"
 									icon="sap-icon://edit"
+									tooltip="{i18n>backToWizard}"
 									type="Emphasized"
 									press="_navBackToStep">
 									<customData>
@@ -980,12 +1002,13 @@
 								<Title
 									id="shippingAddressTitle2"
 									text="{i18n>checkoutDeliveryAddressTitle}"
-									level="H4"
+									level="H2"
 									titleStyle="H4" />
 								<ToolbarSpacer />
 								<Button
 									id="backToDifferentDeliveryAddress"
 									icon="sap-icon://edit"
+									tooltip="{i18n>backToWizard}"
 									type="Emphasized"
 									press="_navBackToStep">
 									<customData>
