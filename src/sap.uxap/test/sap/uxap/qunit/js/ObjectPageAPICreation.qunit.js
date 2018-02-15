@@ -1628,7 +1628,7 @@
 
 		assert.expect(3);
 
-		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
 			// Arrange: save current scroll position and suppress scroll
 			oObjectPage._suppressScroll();
 
@@ -1643,8 +1643,8 @@
 			assert.strictEqual(oObjectPage._$opWrapper.scrollTop(), iUpdatedScrollTop, "scroll top is correct");
 
 			// Check that the state is correctly preserved even of the page is meanwhile invalidated and rerendered
-			oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
-				setTimeout(function() {
+			oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
+				setTimeout(function () {
 					assert.strictEqual(oObjectPage._$opWrapper.scrollTop(), iUpdatedScrollTop, "scroll top is correct");
 					done();
 				}, 0);
@@ -1708,6 +1708,51 @@
 
 		// Assert
 		assert.strictEqual(oGetBoundingClientRectSpy.callCount, 1, "Exact height is acquired using getBoundingClientRect");
+	});
+
+	QUnit.module("First visible section", {
+
+		beforeEach: function () {
+			this.oObjectPage = helpers.generateObjectPageWithSubSectionContent(oFactory, 5, 2);
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+		}
+	});
+
+	QUnit.test("iconTabBar mode selected section", function (assert) {
+		this.oObjectPage.setUseIconTabBar(true);
+
+		var oSectionToSelect = this.oObjectPage.getSections()[1];
+		this.oObjectPage.setSelectedSection(oSectionToSelect);
+
+		helpers.renderObject(this.oObjectPage);
+
+		assert.ok(this.oObjectPage._isFirstVisibleSectionBase(oSectionToSelect), "the selected section is the first visible one");
+	});
+
+	QUnit.test("iconTabBar mode selected section first subSection", function (assert) {
+		this.oObjectPage.setUseIconTabBar(true);
+
+		var oSectionToSelect = this.oObjectPage.getSections()[1],
+			oSectionToSelectFirstSubSection = oSectionToSelect.getSubSections()[0];
+		this.oObjectPage.setSelectedSection(oSectionToSelect);
+
+		helpers.renderObject(this.oObjectPage);
+
+		assert.ok(this.oObjectPage._isFirstVisibleSectionBase(oSectionToSelectFirstSubSection), "the first visible subSection is correct");
+	});
+
+	QUnit.test("iconTabBar mode selected section non-first subSection", function (assert) {
+		this.oObjectPage.setUseIconTabBar(true);
+
+		var oSectionToSelect = this.oObjectPage.getSections()[1],
+			oSectionToSelectSecondSubSection = oSectionToSelect.getSubSections()[1];
+		this.oObjectPage.setSelectedSection(oSectionToSelect);
+
+		helpers.renderObject(this.oObjectPage);
+
+		assert.ok(!this.oObjectPage._isFirstVisibleSectionBase(oSectionToSelectSecondSubSection), "the first visible subSection is correct");
 	});
 
 	function checkObjectExists(sSelector) {
