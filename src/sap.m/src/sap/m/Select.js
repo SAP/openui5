@@ -968,6 +968,10 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 					return;
 				}
 
+				if (Device.system.phone) {
+					this.focus();
+				}
+
 				this.open();
 			}
 
