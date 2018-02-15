@@ -13,6 +13,7 @@ sap.ui.define(['../Element', '../library', './DragAndDrop'],
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
+	 * @abstract
 	 * @class
 	 * Provides the base class for all drag-and-drop configurations.
 	 * This feature enables a native HTML5 drag-and-drop API for the controls, therefore it is limited to browser support.

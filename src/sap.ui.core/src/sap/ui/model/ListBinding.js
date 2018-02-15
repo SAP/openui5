@@ -12,6 +12,7 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	/**
 	 * Constructor for ListBinding.
 	 *
+	 * @abstract
 	 * @class
 	 * ListBinding is a specific binding for lists in the model, which can be used
 	 * to populate Tables or ItemLists.

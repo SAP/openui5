@@ -14,6 +14,7 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	 * This constructor should only be called by subclasses or model implementations, not by application or control code.
 	 * Such code should use {@link sap.ui.model.Model#bindTree Model#bindTree} on the corresponding model instead.
 	 *
+	 * @abstract
 	 * @class
 	 * The TreeBinding is a specific binding for trees in the model, which can be used
 	 * to populate Trees.
