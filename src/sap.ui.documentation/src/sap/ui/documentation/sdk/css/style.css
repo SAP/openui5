@@ -1861,7 +1861,8 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 }
 
 .sapUiMedia-Std-Desktop .sapUiDocLightTable.sapUiDocumentationParamsTable .cell:last-child,
-.sapUiMedia-Std-Desktop .sapUiDocLightTable.sapUiDocumentationReturnsTable .cell:last-child {
+.sapUiMedia-Std-Desktop .sapUiDocLightTable.sapUiDocumentationReturnsTable .cell:last-child,
+.sapUiMedia-Std-Desktop .sapUiDocLightTable.sapUiDocumentationSpecialSettingsTable .cell:last-child {
 	width: 50%;
 }
 
