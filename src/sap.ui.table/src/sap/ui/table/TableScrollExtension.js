@@ -1523,8 +1523,9 @@ sap.ui.define([
 	 */
 	TableScrollExtension.prototype.updateInnerVerticalScrollPosition = function() {
 		var oTable = this.getTable();
+		var oContentDomRef = oTable == null ? null : oTable.getDomRef("tableCCnt");
 
-		if (oTable == null || VerticalScrollingHelper.isUpdatePending(oTable)) {
+		if (oContentDomRef == null || VerticalScrollingHelper.isUpdatePending(oTable)) {
 			return;
 		}
 
@@ -1536,7 +1537,7 @@ sap.ui.define([
 			// position should be reset.
 
 			jQuery.sap.log.debug("sap.ui.table.TableScrollExtension", "updateInnerVerticalScrollPosition: 0", oTable);
-			oTable.getDomRef("tableCCnt").scrollTop = 0;
+			oContentDomRef.scrollTop = 0;
 			return;
 		}
 
@@ -1613,7 +1614,7 @@ sap.ui.define([
 			"updateInnerVerticalScrollPosition: " + iInnerScrollPosition + " of " + iInnerScrollRange + " (" + (nInnerScrollPercentage * 100) + "%)"
 			+ " (in buffer: " + bScrollPositionInBuffer + ")", oTable);
 
-		oTable.getDomRef("tableCCnt").scrollTop = iInnerScrollPosition;
+		oContentDomRef.scrollTop = iInnerScrollPosition;
 	};
 
 	/**
