@@ -828,6 +828,21 @@ sap.ui.require([
 			}, new SyntaxError(oFixture.error + ": " + oFixture.string));
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("parseKeyPredicate", function (assert) {
+		["false", "true", "3.14", "2016-04-23", "2016-01-13T14:08:31Z", "-1", "'foo'", "'foo''bar'",
+			"'foo/bar'", "F050568D-393C-1ED4-9D97-E65F0F3FCC23"
+		].forEach(function (sValue) {
+			var sPredicate = "(" + sValue + ")";
+			assert.deepEqual(_Parser.parseKeyPredicate(sPredicate), {"" : sValue}, sPredicate);
+			sPredicate = "(foo=" + sValue + ")";
+			assert.deepEqual(_Parser.parseKeyPredicate(sPredicate), {"foo" : sValue}, sPredicate);
+			sPredicate = "(foo=" + sValue + ",bar='baz')";
+			assert.deepEqual(_Parser.parseKeyPredicate(sPredicate), {"foo" : sValue, bar : "'baz'"},
+				sPredicate);
+		});
+	});
 });
 // TODO unicode character classes not supported by ECMAscript 5
 //   rWord = /[\p{L}\p{Nl}_][\p{L}\p{Nl}\p{Nd}\p{Mn}\p{Mc}\p{Pc}\p{Cf}]*/
