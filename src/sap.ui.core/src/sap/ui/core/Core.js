@@ -857,11 +857,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	// this function is also used by "sap.ui.core.ThemeCheck" to load a fallback theme for a single library
 	Core.prototype._updateThemeUrl = function(oLink, sThemeName, bSuppressFOUC) {
 		var sLibName = oLink.id.slice(13), // length of "sap-ui-theme-"
-		    sLibFileName = oLink.href.slice(oLink.href.lastIndexOf("/") + 1),
+		    iQueryIndex = oLink.href.search(/[?#]/),
+		    sLibFileName,
+		    sQuery,
 		    sStandardLibFilePrefix = "library",
 		    sRTL = this.oConfiguration.getRTL() ? "-RTL" : "",
 		    sHref,
 		    pos;
+
+		if (iQueryIndex > -1) {
+			// Split href on query and/or fragment to check for the standard lib file prefix
+			sLibFileName = oLink.href.substring(0, iQueryIndex);
+			sQuery = oLink.href.substring(iQueryIndex);
+		} else {
+			sLibFileName = oLink.href;
+			sQuery = "";
+		}
+
+		// Get basename of stylesheet (e.g. "library.css")
+		sLibFileName = sLibFileName.substring(sLibFileName.lastIndexOf("/") + 1);
 
 		// handle 'variants'
 		if ((pos = sLibName.indexOf("-[")) > 0) { // assumes that "-[" does not occur as part of a library name
@@ -874,7 +888,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			sLibFileName = sStandardLibFilePrefix + sRTL + ".css";
 		}
 
-		sHref = this._getThemePath(sLibName, sThemeName) + sLibFileName;
+		sHref = this._getThemePath(sLibName, sThemeName) + sLibFileName + sQuery;
 		if ( sHref != oLink.href ) {
 			// jQuery.sap.includeStyleSheet has a special FOUC handling
 			// which enables once the attribute data-sap-ui-foucmarker is
