@@ -200,7 +200,7 @@
 												<m:Link text="{type}"
 														href="#/api/{= ${type}.replace('[]', '') }"
 														enabled="{= !!${linkEnabled} }"/>
-												<m:Text text="{defaultValue}" wrapping="false"/>
+												<m:Text text="{defaultValue}"/>
 												<layout:VerticalLayout width="100%">
 													<core:HTML content="{description}"/>
 													<m:ObjectStatus text="Visibility: {visibility}" state="{= ${visibility} === 'public' ? 'Success' : 'Warning'}"/>
