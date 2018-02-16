@@ -708,9 +708,9 @@ QUnit.test("Restore tree state: adapt server node sections - remove", function(a
 	});
 
 	var aExpectedSections = [
-		{ iSkip:0, iTop:11 },
-		{ iSkip:71, iTop:10 },
-		{ iSkip:124, iTop:29 }
+		{ iSkip:0, iTop:13 },
+		{ iSkip:71, iTop:13 },
+		{ iSkip:124, iTop:34 }
 	];
 
 	assert.deepEqual(aSections, aExpectedSections, "The server sections are correctly adapted");
@@ -762,7 +762,7 @@ QUnit.test("Restore tree state: adapt deep node sections - remove", function(ass
 	assert.deepEqual(aSections, aExpectedSections, "The deep sections are correctly adapted");
 });
 
-QUnit.test("Restore tree state: after delete server index nodes", function(assert) {
+QUnit.test("Restore tree state: after delete server index nodes (UC5)", function(assert) {
 	var done = assert.async();
 
 	createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='9999')/Results", null, [], {
@@ -822,6 +822,48 @@ QUnit.test("Restore tree state: after delete server index nodes", function(asser
 		done();
 	}
 
+	oBinding.attachChange(handler1);
+	oBinding.getContexts(0, 20, 100);
+});
+
+QUnit.test("Restore tree state: Delete server index node w/ generated server index node (UCx2)", function(assert) {
+	var done = assert.async();
+	var iOldLength, sOldLastNodeKey;
+	var oContext1;
+	createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='0x2')/Results", null, [], {
+		threshold: 10,
+		countMode: "Inline",
+		operationMode: "Server",
+		numberOfExpandedLevels: 3,
+		restoreTreeStateAfterChange: true
+	});
+
+	function handler1() {
+		oBinding.detachChange(handler1);
+		iOldLength = oBinding.getLength();
+		sOldLastNodeKey = oBinding.findNode(iOldLength - 1).key;
+
+		var oNode = oBinding.findNode(17);
+		oBinding.removeContext(oNode.context);
+
+		oBinding.attachRefresh(handler2);
+		oBinding.submitChanges();
+	}
+
+	function handler2() {
+		oBinding.detachRefresh(handler2);
+
+		var iNewLength = oBinding.getLength();
+		assert.equal(iNewLength, iOldLength, "New binding length is equal to old length (a generated node replaced the removed node)");
+
+		if (iNewLength === 0) {
+			assert.notOk(true, "No data loaded");
+		}  else {
+			var sNewLastNodeKey = oBinding.findNode(iNewLength - 1).key;
+			assert.equal(sNewLastNodeKey, sOldLastNodeKey, "Last node in binding is still the same");
+		}
+		done();
+	}
 	oBinding.attachChange(handler1);
 	oBinding.getContexts(0, 20, 100);
 });
@@ -1385,57 +1427,54 @@ QUnit.test("Restore tree state: insert server index node w/ generated deep node 
 	oBinding.getContexts(0, 20, 100);
 });
 
-// commentted out because the implementation for handling the automatically generated nodes from the backend
-// is not in the scope of the current sprint
+QUnit.test("Restore tree state: insert server index node w/ generated server index node (UCx4)", function(assert) {
+	var done = assert.async();
+	var iOldLength, sOldLastNodeKey;
+	var oContext1;
+	createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='0x4')/Results", null, [], {
+		threshold: 10,
+		countMode: "Inline",
+		operationMode: "Server",
+		numberOfExpandedLevels: 3,
+		restoreTreeStateAfterChange: true
+	});
 
-// QUnit.test("Restore tree state: insert server index node w/ generated server index node (UCx4)", function(assert) {
-// 	var done = assert.async();
-// 	var iOldLength, sOldLastNodeKey;
-// 	var oContext1;
-// 	createTreeBinding("/ZTJ_G4_C_GLHIER(P_CHARTOFACCOUNTS='CACN',P_FINANCIALSTATEMENTVARIANT='0x4')/Results", null, [], {
-// 		threshold: 10,
-// 		countMode: "Inline",
-// 		operationMode: "Server",
-// 		numberOfExpandedLevels: 3,
-// 		restoreTreeStateAfterChange: true
-// 	});
+	function handler1() {
+		oBinding.detachChange(handler1);
+		iOldLength = oBinding.getLength();
+		sOldLastNodeKey = oBinding.findNode(iOldLength - 1).key;
 
-// 	function handler1() {
-// 		oBinding.detachChange(handler1);
-// 		iOldLength = oBinding.getLength();
-// 		sOldLastNodeKey = oBinding.findNode(iOldLength - 1).key;
+		var oParent = oBinding.findNode(1);
+		var oContext1 = oBinding.createEntry({
+			urlParameters: {
+				"hierarchy_fake_node_id": "NODE000001"
+			}
+		});
+		oBinding.addContexts(oParent.context, [oContext1])
 
-// 		var oParent = oBinding.findNode(1);
-// 		var oContext1 = oBinding.createEntry({
-// 			urlParameters: {
-// 				"hierarchy_fake_node_id": "NODE000001"
-// 			}
-// 		});
-// 		oBinding.addContexts(oParent.context, [oContext1])
+		oBinding.attachRefresh(handler2);
+		oBinding.submitChanges();
+	}
 
-// 		oBinding.attachRefresh(handler2);
-// 		oBinding.submitChanges();
-// 	}
+	function handler2() {
+		oBinding.detachRefresh(handler2);
 
-// 	function handler2() {
-// 		oBinding.detachRefresh(handler2);
+		var iNewLength = oBinding.getLength();
+		assert.equal(iNewLength, iOldLength + 2, "New binding length is old length plus two (server side generated node)");
 
-// 		var iNewLength = oBinding.getLength();
-// 		assert.equal(iNewLength, iOldLength + 2, "New binding length is old length plus two (server side generated node)");
+		// TODO check for generated node
 
-// 		// TODO check for generated node
-
-// 		if (iNewLength === 0) {
-// 			assert.notOk(true, "No data loaded");
-// 		}  else {
-// 			var sNewLastNodeKey = oBinding.findNode(iNewLength - 1).key;
-// 			assert.equal(sNewLastNodeKey, sOldLastNodeKey, "Last node in binding is still the same");
-// 		}
-// 		done();
-// 	}
-// 	oBinding.attachChange(handler1);
-// 	oBinding.getContexts(0, 20, 100);
-// });
+		if (iNewLength === 0) {
+			assert.notOk(true, "No data loaded");
+		}  else {
+			var sNewLastNodeKey = oBinding.findNode(iNewLength - 1).key;
+			assert.equal(sNewLastNodeKey, sOldLastNodeKey, "Last node in binding is still the same");
+		}
+		done();
+	}
+	oBinding.attachChange(handler1);
+	oBinding.getContexts(0, 20, 100);
+});
 
 QUnit.module("ODataTreeBindingFlat - Tree State: Move", {
 	beforeEach: function() {
@@ -1504,12 +1543,12 @@ QUnit.test("Restore tree state: adapt server node sections - move nodes", functi
 	});
 
 	var aExpectedSections = [
-		{ iSkip: 0, iTop: 16 },
-		{ iSkip: 40, iTop: 2 },
-		{ iSkip: 78, iTop: 10 },
-		{ iSkip: 87, iTop: 1 },
+		{ iSkip: 0, iTop: 18 },
+		{ iSkip: 40, iTop: 2 }, // New section does not need to calculate in potentially generated server index nodes. Position is already provided by service
+		{ iSkip: 78, iTop: 13 },
+		{ iSkip: 87, iTop: 4 },
 		{ iSkip: 100, iTop: 1 },
-		{ iSkip: 108, iTop: 40 }, // Was section { iSkip: 200, iTop: 40 }
+		{ iSkip: 108, iTop: 44 }, // Was section { iSkip: 200, iTop: 40 }
 		{ iSkip: 300, iTop: 1 }
 	];
 
