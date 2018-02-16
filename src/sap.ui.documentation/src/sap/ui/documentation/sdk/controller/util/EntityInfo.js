@@ -269,7 +269,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/thirdparty/jsanaly
 						module: oEntity.module,
 						name: oEntity.name,
 						since: oEntity.since,
-						values: oEntity.properties
+						values: oEntity.properties,
+						uxGuidelinesLink: oEntity.uxGuidelinesLink,
+						uxGuidelinesLinkText: oEntity.uxGuidelinesLinkText,
+						docuLink: oEntity.docuLink,
+						docuLinkText: oEntity.docuLinkText
 					};
 
 					oPackageInfo.__noSource = true;

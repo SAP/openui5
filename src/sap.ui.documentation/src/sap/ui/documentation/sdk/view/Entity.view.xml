@@ -40,7 +40,12 @@
 
 					<m:HBox visible="{/show/introLink}" class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom">
 						<m:Label design="Bold" text="Documentation:"/>
-						<m:Link emphasized="true" text="{/baseName}" enabled="true" href="{/docuLink}"/>
+						<m:Link emphasized="true" text="{/docuLinkText}" enabled="true" href="{/docuLink}"/>
+					</m:HBox>
+
+					<m:HBox visible="{=!!${/uxGuidelinesLink}}" class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom">
+						<m:Label design="Bold" text="UX Guidelines:"/>
+						<m:Link emphasized="true" text="{/uxGuidelinesLinkText}" enabled="true" href="{/uxGuidelinesLink}" target="_blank"/>
 					</m:HBox>
 
 					<m:HBox class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom">
