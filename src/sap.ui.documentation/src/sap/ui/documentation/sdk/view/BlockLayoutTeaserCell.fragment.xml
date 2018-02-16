@@ -52,7 +52,6 @@
 						path: 'lib',
 						formatter: '.formatter.libraryLinkEnabled'
 					}"
-					class="namespaceLink"
 					emphasized="true"/>
 			</l:HorizontalLayout>
 		</l:VerticalLayout>
