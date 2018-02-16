@@ -394,7 +394,7 @@ sap.ui.define([
 			oModel = this._getVariantModel(oRenamedElement),
 			sErrorText,
 			sVariantManagementReference = oOverlay.getVariantManagement(),
-			iDuplicateCount = oModel._getVariantLabelCount(sText, sVariantManagementReference),
+			iDuplicateCount = oModel._getVariantTitleCount(sText, sVariantManagementReference),
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 
 		//Remove border

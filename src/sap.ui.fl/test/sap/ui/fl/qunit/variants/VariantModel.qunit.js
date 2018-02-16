@@ -18,6 +18,10 @@ sap.ui.require([
 		openManagementDialog: sandbox.stub()
 	};
 
+	var checkTitle = function(assert, sExpectedTitle, sTitleToBeCopied) {
+		assert.strictEqual(this.oModel._getVariantTitleForCopy(sTitleToBeCopied, "variantMgmtId1"), sExpectedTitle, "then correct title returned for duplicate");
+	};
+
 	QUnit.module("Given an instance of VariantModel", {
 		beforeEach: function(assert) {
 			this.oData = {
@@ -413,17 +417,16 @@ sap.ui.require([
 		var mPropertyBag = {
 			newVariantReference: "newVariant",
 			sourceVariantReference: "variant0",
+			variantManagementReference: "variantMgmtId1",
 			layer: "CUSTOMER"
 		};
 
-		var fnGetVariantTitleStub = sandbox.stub(this.oModel, "getVariantTitle").returns("Variant B");
 		var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
-		oSourceVariantCopy.content.content.title = "Variant B" + " Copy";
+		oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
 		oSourceVariantCopy.content.fileName = "newVariant";
 		sandbox.stub(Utils, "isLayerAboveCurrentLayer").returns(0);
 		sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
 		var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
-		assert.ok(fnGetVariantTitleStub.calledOnce, "'GetVariantTitle' is called");
 		assert.deepEqual(oDuplicateVariant, oSourceVariantCopy);
 	});
 
@@ -448,6 +451,7 @@ sap.ui.require([
 		var mPropertyBag = {
 			newVariantReference: "newVariant",
 			sourceVariantReference: "variant0",
+			variantManagementReference: "variantMgmtId1",
 			layer: "VENDOR"
 		};
 
@@ -484,6 +488,7 @@ sap.ui.require([
 		var mPropertyBag = {
 			newVariantReference: "newVariant",
 			sourceVariantReference: "variant0",
+			variantManagementReference: "variantMgmtId1",
 			layer: "VENDOR"
 		};
 
@@ -528,6 +533,7 @@ sap.ui.require([
 		var mPropertyBag = {
 			newVariantReference: "newVariant",
 			sourceVariantReference: "variant0",
+			variantManagementReference: "variantMgmtId1",
 			layer: "CUSTOMER"
 		};
 
@@ -566,6 +572,7 @@ sap.ui.require([
 		var mPropertyBag = {
 			newVariantReference: "newVariant",
 			sourceVariantReference: "variant0",
+			variantManagementReference: "variantMgmtId1",
 			layer: "CUSTOMER"
 		};
 
@@ -670,7 +677,9 @@ sap.ui.require([
 		sandbox.stub(BaseTreeModifier, "getSelector").returns({id: "variantMgmtId1"});
 		sandbox.stub(this.oModel.oFlexController._oChangePersistence, "addDirtyChange");
 
-		var mPropertyBag = {};
+		var mPropertyBag = {
+			variantManagementReference: "variantMgmtId1"
+		};
 		return this.oModel._copyVariant(mPropertyBag).then( function (oVariant) {
 			assert.ok(fnAddVariantToControllerStub.calledOnce, "then function to add variant to VariantController called");
 			assert.equal(this.oModel.oData["variantMgmtId1"].variants[3].key, oVariantData.content.fileName, "then variant added to VariantModel");
@@ -903,6 +912,90 @@ sap.ui.require([
 			oVariantManagement.destroy();
 			done();
 		}.bind(this));
+	});
+
+	QUnit.test("when calling '_getVariantTitleForCopy' with a title containing -> no copy pattern, no counter, no previous existence", function(assert) {
+		checkTitle.call(this, assert, "SampleTitle Copy", "SampleTitle");
+	});
+
+	QUnit.test("when calling '_getVariantTitleForCopy' with a title containing -> copy pattern, no counter, no previous existence", function(assert) {
+		checkTitle.call(this, assert, "SampleTitle Copy", "SampleTitle Copy");
+	});
+
+	QUnit.test("when calling '_getVariantTitleForCopy' with a title containing -> copy pattern, no counter, previous existence without counter", function(assert) {
+		this.oModel.oData["variantMgmtId1"].variants.push({
+			title: "SampleTitle Copy",
+			visible: true
+		});
+		checkTitle.call(this, assert, "SampleTitle Copy(1)", "SampleTitle Copy");
+		this.oModel.oData["variantMgmtId1"].variants.splice(3, 1);
+	});
+
+	QUnit.test("when calling '_getVariantTitleForCopy' with a title containing -> no copy pattern, no counter, previous existence with counter", function(assert) {
+		this.oModel.oData["variantMgmtId1"].variants.push({
+			title: "SampleTitle Copy(5)",
+			visible: true
+		});
+		checkTitle.call(this, assert, "SampleTitle Copy(6)", "SampleTitle");
+		this.oModel.oData["variantMgmtId1"].variants.splice(3, 1);
+	});
+
+	QUnit.test("when calling '_getVariantTitleForCopy' with a title containing -> copy pattern, counter, previous existence with counter", function(assert) {
+		this.oModel.oData["variantMgmtId1"].variants.push({
+			title: "SampleTitle Copy(5)",
+			visible: true
+		}, {
+			title: "SampleTitle Copy(8)",
+			visible: true
+		});
+		checkTitle.call(this, assert, "SampleTitle Copy(9)", "SampleTitle Copy(5)");
+		this.oModel.oData["variantMgmtId1"].variants.splice(3, 2);
+	});
+
+	QUnit.test("when calling '_getVariantTitleForCopy' with a title containing -> copy pattern, counter, previous existence without counter and a different base title", function(assert) {
+		this.oModel.oData["variantMgmtId1"].variants.push({
+			title: "TitleSample",
+			visible: true
+		}, {
+			title: "SampleTitle Copy(1)",
+			visible: true
+		});
+		checkTitle.call(this, assert, "TitleSample Copy", "TitleSample");
+		this.oModel.oData["variantMgmtId1"].variants.splice(3, 2);
+	});
+
+	QUnit.test("when calling '_getVariantTitleForCopy' with a title containing -> copy pattern, counter, no previous existence and a different resource bundle pattern", function(assert) {
+		sandbox.stub(this.oModel._oResourceBundle, "getText", function(sText, aArguments){
+			if (sText === "VARIANT_COPY_SINGLE_TEXT") {
+				return "{0} Copy";
+			} else if (sText === "VARIANT_COPY_MULTIPLE_TEXT") {
+				if (!aArguments) {
+					return "({1}) {0} Copy";
+				}
+				return "(" + aArguments[1] + ") " + aArguments[0] + " Copy";
+			}
+		});
+		this.oModel.oData["variantMgmtId1"].variants.push({
+			title: "SampleTitle Copy",
+			visible: true
+		}, {
+			title: "SampleTitle Copy(8)",
+			visible: true
+		});
+		checkTitle.call(this, assert, "(1) SampleTitle Copy", "SampleTitle Copy(5)");
+		this.oModel.oData["variantMgmtId1"].variants.splice(3, 2);
+	});
+
+	QUnit.test("when calling '_getVariantTitleCount' with a title having 2 occurrences", function(assert) {
+		this.oModel.oData["variantMgmtId1"].variants.push({
+			title: "SampleTitle Copy(5)",
+			visible: true
+		}, {
+			title: "SampleTitle Copy(5)",
+			visible: true
+		});
+		assert.strictEqual(this.oModel._getVariantTitleCount("SampleTitle Copy(5)", "variantMgmtId1"), 2, "then 2 occurrences returned");
+		this.oModel.oData["variantMgmtId1"].variants.splice(3, 1);
 	});
 
 	QUnit.module("Given an empty VariantModel and a VariantManagement control", {
