@@ -24,7 +24,11 @@ sap.ui.define([
 		return BaseController.extend("sap.ui.documentation.sdk.controller.SubApiDetail", {
 
 			NOT_AVAILABLE: 'N/A',
-			NOT_FOUND: 'Not found',
+			SECTION_MAP: {
+				"properties": "controlProperties",
+				"fields": "properties",
+				"special settings": "specialsettings"
+			},
 
 			onInit: function () {
 				this._objectPage = this.byId("apiDetailObjectPage");
@@ -182,12 +186,7 @@ sap.ui.define([
 				var sSection = oSection.getTitle().toLowerCase(),
 					sSubSection = (oSubSection && oSubSection.getTitle() !== 'Overview') ? oSubSection.getTitle() : '';
 
-				if (sSection === 'properties') {
-					sSection = 'controlProperties';
-				}
-				if (sSection === 'fields') {
-					sSection = 'properties';
-				}
+				sSection = this.SECTION_MAP[sSection] || sSection;
 
 				this._navigateRouter(sSection, sSubSection, bShouldStoreToHistory);
 			},
