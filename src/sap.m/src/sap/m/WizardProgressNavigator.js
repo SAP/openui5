@@ -191,26 +191,28 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery) {
 
 	/**
 	 * Moves the selection backwards by one step.
+	 * @param {boolean} suppressEvent - Suppress the stepChanged event.
 	 * @returns {sap.m.WizardProgressNavigator} Pointer to the control instance for chaining.
 	 * @public
 	 */
-	WizardProgressNavigator.prototype.previousStep = function () {
+	WizardProgressNavigator.prototype.previousStep = function (suppressEvent) {
 		var currentStep = this.getCurrentStep();
 
 		if (currentStep < 2) {
 			return this;
 		}
 
-		return this._moveToStep(currentStep - 1);
+		return this._moveToStep(currentStep - 1, suppressEvent);
 	};
 
 	/**
 	 * Moves the selection forwards by one step.
+	 * @param {boolean} suppressEvent - Suppress the stepChanged event.
 	 * @returns {sap.m.WizardProgressNavigator} Pointer to the control instance for chaining.
 	 * @public
 	 */
-	WizardProgressNavigator.prototype.nextStep = function () {
-		return this._moveToStep(this.getCurrentStep() + 1);
+	WizardProgressNavigator.prototype.nextStep = function (suppressEvent) {
+		return this._moveToStep(this.getCurrentStep() + 1, suppressEvent);
 	};
 
 	/**
@@ -234,15 +236,16 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery) {
 	/**
 	 * Discards all input done after the step which is being edited.
 	 * @param {number} index - The index after which all input will be discarded. One-based.
+	 * @param {boolean} suppressEvent - Suppress the stepChanged event.
 	 * @returns {void}
 	 * @public
 	 */
-	WizardProgressNavigator.prototype.discardProgress = function (index) {
+	WizardProgressNavigator.prototype.discardProgress = function (index, suppressEvent) {
 		if (index <= 0 || index > this._activeStep) {
 			return this;
 		}
 
-		this._updateCurrentStep(index, this._currentStep);
+		this._updateCurrentStep(index, this._currentStep, suppressEvent);
 
 		this._updateStepActiveAttribute(index - 1, this._activeStep - 1);
 		this._addAnchorAriaDisabledAttribute(index - 1);
@@ -457,10 +460,11 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery) {
 	/**
 	 * Move to the specified step while updating the current step and active step.
 	 * @param {number} newStep The step number to which current step will be set. Non zero-based.
+	 * @param {boolean} suppressEvent - Suppress the stepChanged event.
 	 * @returns {sap.m.WizardProgressNavigator} Pointer to the control instance for chaining.
 	 * @private
 	 */
-	WizardProgressNavigator.prototype._moveToStep = function (newStep) {
+	WizardProgressNavigator.prototype._moveToStep = function (newStep, suppressEvent) {
 		var	stepCount = this.getStepCount(),
 			oldStep = this.getCurrentStep();
 
@@ -472,7 +476,7 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery) {
 			this._updateActiveStep(newStep);
 		}
 
-		return this._updateCurrentStep(newStep, oldStep);
+		return this._updateCurrentStep(newStep, oldStep, suppressEvent);
 	};
 
 	/**
@@ -498,10 +502,11 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery) {
 	 * Updates the current step in the control instance as well as the DOM structure.
 	 * @param {number} newStep The step number to which current step will be set. Non zero-based.
 	 * @param {number} oldStep The step number to which current step was set. Non zero-based.
+	 * @param {boolean} suppressEvent - Suppress the stepChanged event.
 	 * @returns {sap.m.WizardProgressNavigator} Pointer to the control instance for chaining.
 	 * @private
 	 */
-	WizardProgressNavigator.prototype._updateCurrentStep = function (newStep, oldStep) {
+	WizardProgressNavigator.prototype._updateCurrentStep = function (newStep, oldStep, suppressEvent) {
 		var zeroBasedNewStep = newStep - 1,
 			zeroBasedOldStep = (oldStep || this.getCurrentStep()) - 1;
 
@@ -511,10 +516,14 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery) {
 		this._updateStepCurrentAttribute(zeroBasedNewStep, zeroBasedOldStep);
 		this._updateAnchorAriaLabelAttribute(zeroBasedNewStep, zeroBasedOldStep);
 
-		return this.fireStepChanged({
-			previous: oldStep,
-			current: newStep
-		});
+		if (!suppressEvent) {
+			return this.fireStepChanged({
+				previous: oldStep,
+				current: newStep
+			});
+		}
+
+		return this;
 	};
 
 	/**
