@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.App.
-sap.ui.define(['jquery.sap.global', './NavContainer', './library'],
-	function(jQuery, NavContainer, library) {
+sap.ui.define(['jquery.sap.global', './NavContainer', './library', './AppRenderer'],
+	function(jQuery, NavContainer, library, AppRenderer) {
 	"use strict";
 
 

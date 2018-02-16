@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ActionListItem.
-sap.ui.define(['./ListItemBase', './library'],
-	function(ListItemBase, library) {
+sap.ui.define(['./ListItemBase', './library', './ActionListItemRenderer'],
+	function(ListItemBase, library, ActionListItemRenderer) {
 	"use strict";
 
 

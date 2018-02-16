@@ -3,8 +3,26 @@
  */
 
 // Provides control sap.m.Label
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/LabelEnablement', "sap/m/OverflowToolbar", "sap/m/OverflowToolbarLayoutData", 'sap/ui/core/library'],
-	function(jQuery, library, Control, LabelEnablement, OverflowToolbar, OverflowToolbarLayoutData, coreLibrary) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/LabelEnablement',
+	'sap/m/OverflowToolbar',
+	'sap/m/OverflowToolbarLayoutData',
+	'sap/ui/core/library',
+	'./LabelRenderer'
+],
+function(
+	jQuery,
+	library,
+	Control,
+	LabelEnablement,
+	OverflowToolbar,
+	OverflowToolbarLayoutData,
+	coreLibrary,
+	LabelRenderer
+	) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection

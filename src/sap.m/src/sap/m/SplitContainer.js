@@ -3,10 +3,32 @@
  */
 
 // Provides control sap.m.SplitContainer.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool',
-	'sap/m/semantic/SemanticPage', 'sap/ui/core/InvisibleText', 'sap/ui/Device', 'sap/ui/base/ManagedObject', 'sap/m/NavContainer', 'sap/m/Popover'],
-	function(jQuery, library, Control, IconPool,
-		SemanticPage, InvisibleText, Device, ManagedObject, NavContainer, Popover) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/IconPool',
+	'sap/m/semantic/SemanticPage',
+	'sap/ui/core/InvisibleText',
+	'sap/ui/Device',
+	'sap/ui/base/ManagedObject',
+	'sap/m/NavContainer',
+	'sap/m/Popover',
+	'./SplitContainerRenderer'
+],
+function(
+	jQuery,
+	library,
+	Control,
+	IconPool,
+	SemanticPage,
+	InvisibleText,
+	Device,
+	ManagedObject,
+	NavContainer,
+	Popover,
+	SplitContainerRenderer
+	) {
 	"use strict";
 
 

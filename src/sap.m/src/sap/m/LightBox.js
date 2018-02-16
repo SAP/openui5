@@ -2,12 +2,38 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/Popup', 'sap/m/Text',
-		'sap/m/Button', 'sap/ui/core/ResizeHandler', 'sap/ui/Device',
-		'sap/ui/core/Icon', 'sap/ui/layout/VerticalLayout', './InstanceManager', 'sap/ui/core/InvisibleText', 'sap/ui/core/library'],
-	function(jQuery, library, Control, Popup, Text,
-			Button, ResizeHandler, Device,
-			Icon, VerticalLayout, InstanceManager, InvisibleText, coreLibrary) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/Popup',
+	'sap/m/Text',
+	'sap/m/Button',
+	'sap/ui/core/ResizeHandler',
+	'sap/ui/Device',
+	'sap/ui/core/Icon',
+	'sap/ui/layout/VerticalLayout',
+	'./InstanceManager',
+	'sap/ui/core/InvisibleText',
+	'sap/ui/core/library',
+	'./LightBoxRenderer'
+],
+	function(
+		jQuery,
+		library,
+		Control,
+		Popup,
+		Text,
+		Button,
+		ResizeHandler,
+		Device,
+		Icon,
+		VerticalLayout,
+		InstanceManager,
+		InvisibleText,
+		coreLibrary,
+		LightBoxRenderer
+	) {
 
 		'use strict';
 

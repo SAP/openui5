@@ -2,12 +2,47 @@
  * ${copyright}
  */
 // Provides control sap.m.ViewSettingsPopover.
-sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolbar", "./ToolbarSpacer", "./Bar", "./List",
-		"./StandardListItem", "./library", "sap/ui/core/Control", "sap/ui/core/IconPool",
-		"./SegmentedButton", "./Page", "./NavContainer", "./ViewSettingsItem", "sap/ui/base/ManagedObject", "sap/ui/Device", "sap/ui/core/InvisibleText"],
-
-	function (jQuery, ResponsivePopover, Button, Toolbar, ToolbarSpacer, Bar, List, StandardListItem, library, Control,
-			  IconPool, SegmentedButton, Page, NavContainer, ViewSettingsItem, ManagedObject, Device, InvisibleText) {
+sap.ui.define([
+	"jquery.sap.global",
+	"./ResponsivePopover",
+	"./Button",
+	"./Toolbar",
+	"./ToolbarSpacer",
+	"./Bar",
+	"./List",
+	"./StandardListItem",
+	"./library",
+	"sap/ui/core/Control",
+	"sap/ui/core/IconPool",
+	"./SegmentedButton",
+	"./Page",
+	"./NavContainer",
+	"./ViewSettingsItem",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/Device",
+	"sap/ui/core/InvisibleText",
+	"./ViewSettingsPopoverRenderer"
+], function(
+	jQuery,
+	ResponsivePopover,
+	Button,
+	Toolbar,
+	ToolbarSpacer,
+	Bar,
+	List,
+	StandardListItem,
+	library,
+	Control,
+	IconPool,
+	SegmentedButton,
+	Page,
+	NavContainer,
+	ViewSettingsItem,
+	ManagedObject,
+	Device,
+	InvisibleText,
+	ViewSettingsPopoverRenderer
+	) {
 		"use strict";
 
 		// shortcut for sap.m.VerticalPlacementType

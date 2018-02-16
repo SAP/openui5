@@ -3,9 +3,30 @@
  */
 
 // Provides control sap.m.DateTimeInput.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/model/type/Date', 'sap/ui/model/type/Time',
-	'sap/ui/model/type/DateTime', 'sap/ui/model/odata/type/ODataType', 'sap/ui/core/library', 'sap/ui/Device'],
-	function(jQuery, Control, library, Date1, Time, DateTime, ODataType, coreLibrary, Device) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Control',
+	'./library',
+	'sap/ui/model/type/Date',
+	'sap/ui/model/type/Time',
+	'sap/ui/model/type/DateTime',
+	'sap/ui/model/odata/type/ODataType',
+	'sap/ui/core/library',
+	'sap/ui/Device',
+	'./DateTimeInputRenderer'
+],
+function(
+	jQuery,
+	Control,
+	library,
+	Date1,
+	Time,
+	DateTime,
+	ODataType,
+	coreLibrary,
+	Device,
+	DateTimeInputRenderer
+	) {
 	"use strict";
 
 	// shortcut for sap.m.DateTimeInputType

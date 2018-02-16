@@ -2,8 +2,18 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/GenericTile', 'sap/ui/Device', 'sap/ui/core/Icon', 'jquery.sap.events', 'jquery.sap.keycodes'],
-	function(jQuery, library, Control, GenericTile, Device, Icon) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/m/GenericTile',
+	'sap/ui/Device',
+	'sap/ui/core/Icon',
+	'./SlideTileRenderer',
+	'jquery.sap.events',
+	'jquery.sap.keycodes'
+],
+	function(jQuery, library, Control, GenericTile, Device, Icon, SlideTileRenderer) {
 	"use strict";
 
 	/**

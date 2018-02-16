@@ -3,8 +3,26 @@
  */
 
 // Provides control sap.m.ObjectHeader.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/library', 'sap/ui/Device', 'sap/m/Text'],
-	function(jQuery, library, Control, IconPool, coreLibrary, Device, Text) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/IconPool',
+	'sap/ui/core/library',
+	'sap/ui/Device',
+	'sap/m/Text',
+	'./ObjectHeaderRenderer'
+],
+	function(
+	jQuery,
+	library,
+	Control,
+	IconPool,
+	coreLibrary,
+	Device,
+	Text,
+	ObjectHeaderRenderer
+	) {
 	"use strict";
 
 

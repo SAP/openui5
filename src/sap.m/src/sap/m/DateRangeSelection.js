@@ -3,8 +3,24 @@
  */
 
 // Provides control sap.m.DateRangeSelection.
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library', 'sap/ui/core/LocaleData', 'sap/ui/core/format/DateFormat'],
-	function(jQuery, Device, DatePicker, library, LocaleData, DateFormat) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/Device',
+	'./DatePicker',
+	'./library',
+	'sap/ui/core/LocaleData',
+	'sap/ui/core/format/DateFormat',
+	'./DateRangeSelectionRenderer'
+],
+	function(
+	jQuery,
+	Device,
+	DatePicker,
+	library,
+	LocaleData,
+	DateFormat,
+	DateRangeSelectionRenderer
+	) {
 	"use strict";
 
 	/**

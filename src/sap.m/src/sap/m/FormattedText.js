@@ -3,8 +3,20 @@
  */
 
 // Provides control sap.m.FormattedText.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './FormattedTextAnchorGenerator'],
-	function (jQuery, library, Control, FormattedTextAnchorGenerator) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'./FormattedTextAnchorGenerator',
+	'./FormattedTextRenderer'
+],
+function(
+	jQuery,
+	library,
+	Control,
+	FormattedTextAnchorGenerator,
+	FormattedTextRenderer
+	) {
 		"use strict";
 
 

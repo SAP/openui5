@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.List.
-sap.ui.define(['./ListBase', './library'],
-	function(ListBase, library) {
+sap.ui.define(['./ListBase', './library', './ListRenderer'],
+	function(ListBase, library, ListRenderer) {
 	"use strict";
 
 

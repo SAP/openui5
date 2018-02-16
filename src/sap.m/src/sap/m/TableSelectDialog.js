@@ -3,8 +3,38 @@
  */
 
 // Provides control sap.m.TableSelectDialog.
-sap.ui.define(['./Button', './Dialog', './SearchField', './Table', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/base/ManagedObject', 'sap/m/Toolbar', 'sap/m/Label', 'sap/m/BusyIndicator', 'sap/m/Bar', 'sap/ui/core/theming/Parameters'],
-	function(Button, Dialog, SearchField, Table, library, Control, Device, ManagedObject, Toolbar, Label, BusyIndicator, Bar, Parameters) {
+sap.ui.define([
+	'./Button',
+	'./Dialog',
+	'./SearchField',
+	'./Table',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/Device',
+	'sap/ui/base/ManagedObject',
+	'sap/m/Toolbar',
+	'sap/m/Label',
+	'sap/m/BusyIndicator',
+	'sap/m/Bar',
+	'sap/ui/core/theming/Parameters',
+	'./TableSelectDialogRenderer'
+],
+	function(
+		 Button,
+		Dialog,
+		SearchField,
+		Table,
+		library,
+		Control,
+		Device,
+		ManagedObject,
+		Toolbar,
+		Label,
+		BusyIndicator,
+		Bar,
+		Parameters,
+		TableSelectDialogRenderer
+	) {
 	"use strict";
 
 

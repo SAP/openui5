@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.CustomTile.
-sap.ui.define(['./Tile', './library'],
-	function(Tile, library) {
+sap.ui.define(['./Tile', './library', './CustomTileRenderer'],
+	function(Tile, library, CustomTileRenderer) {
 	"use strict";
 
 

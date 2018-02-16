@@ -2,8 +2,26 @@
  * ${copyright}
  */
 // Provides control sap.m.SelectionDetails.
-sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Button', 'sap/ui/base/Interface', 'sap/ui/Device', 'sap/ui/core/library' ],
-	function(jQuery, library, Control, Button, Interface, Device, CoreLibrary) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/m/Button',
+	'sap/ui/base/Interface',
+	'sap/ui/Device',
+	'sap/ui/core/library',
+	'./SelectionDetailsRenderer'
+],
+function(
+	jQuery,
+	library,
+	Control,
+	Button,
+	Interface,
+	Device,
+	CoreLibrary,
+	SelectionDetailsRenderer
+	) {
 	"use strict";
 
 	/**

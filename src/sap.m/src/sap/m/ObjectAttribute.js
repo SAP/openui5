@@ -9,7 +9,7 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/library',
 	'sap/m/Text',
-	"./ObjectAttributeRenderer"
+	'./ObjectAttributeRenderer'
 ],
 function(jQuery, library, Control, coreLibrary, Text, ObjectAttributeRenderer) {
 	"use strict";

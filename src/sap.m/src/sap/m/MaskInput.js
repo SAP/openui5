@@ -3,10 +3,7 @@
  */
 
 // Provides control sap.m.MaskInput.
-sap.ui.define([
-	'./InputBase',
-	'./MaskEnabler'
-], function(InputBase, MaskEnabler) {
+sap.ui.define(['./InputBase', './MaskEnabler', './MaskInputRenderer'], function(InputBase, MaskEnabler, MaskInputRenderer) {
 	"use strict";
 
 

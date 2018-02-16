@@ -2,8 +2,44 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/m/semantic/SegmentedContainer', 'sap/m/semantic/SemanticConfiguration', 'sap/m/Button', 'sap/m/Title', 'sap/m/Page', 'sap/m/OverflowToolbar', 'sap/m/ToolbarSpacer', 'sap/m/Bar', 'sap/ui/core/CustomData', 'sap/ui/base/ManagedObject', 'sap/m/PageAccessibleLandmarkInfo', 'sap/ui/base/ManagedObjectObserver', 'sap/ui/core/Control', 'sap/ui/core/library', 'sap/m/library'],
-function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Page, OverflowToolbar, ToolbarSpacer, Bar, CustomData, ManagedObject, PageAccessibleLandmarkInfo, ManagedObjectObserver, Control, coreLibrary, library) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/m/semantic/SegmentedContainer',
+	'sap/m/semantic/SemanticConfiguration',
+	'sap/m/Button',
+	'sap/m/Title',
+	'sap/m/Page',
+	'sap/m/OverflowToolbar',
+	'sap/m/ToolbarSpacer',
+	'sap/m/Bar',
+	'sap/ui/core/CustomData',
+	'sap/ui/base/ManagedObject',
+	'sap/m/PageAccessibleLandmarkInfo',
+	'sap/ui/base/ManagedObjectObserver',
+	'sap/ui/core/Control',
+	'sap/ui/core/library',
+	'sap/m/library',
+	"./SemanticPageRenderer"
+],
+function(
+    jQuery,
+	SegmentedContainer,
+	SemanticConfiguration,
+	Button,
+	Title,
+	Page,
+	OverflowToolbar,
+	ToolbarSpacer,
+	Bar,
+	CustomData,
+	ManagedObject,
+	PageAccessibleLandmarkInfo,
+	ManagedObjectObserver,
+	Control,
+	coreLibrary,
+	library,
+	SemanticPageRenderer
+) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType

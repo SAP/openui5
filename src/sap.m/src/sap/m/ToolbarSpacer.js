@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ToolbarSpacer.
-sap.ui.define(['./library', 'sap/ui/core/Control', "./ToolbarSpacerRenderer"],
-	function(library, Control /*, ToolbarSpacerRenderer*/) {
+sap.ui.define(['./library', 'sap/ui/core/Control', './ToolbarSpacerRenderer'],
+	function(library, Control, ToolbarSpacerRenderer) {
 	"use strict";
 
 	/**

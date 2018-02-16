@@ -3,8 +3,24 @@
  */
 
 // Provides control sap.m.TileContainer.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/Device', 'sap/ui/core/ResizeHandler'],
-	function(jQuery, library, Control, IconPool, Device, ResizeHandler) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/IconPool',
+	'sap/ui/Device',
+	'sap/ui/core/ResizeHandler',
+	'./TileContainerRenderer'
+],
+function(
+	jQuery,
+	library,
+	Control,
+	IconPool,
+	Device,
+	ResizeHandler,
+	TileContainerRenderer
+	) {
 	"use strict";
 
 

@@ -10,8 +10,18 @@ sap.ui.define([
 	'./InputBase',
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/library',
-	'sap/ui/core/format/DateFormat'
-], function (jQuery, SimpleDateType, ODataType, InputBase, LocaleData, coreLibrary, DateFormat) {
+	'sap/ui/core/format/DateFormat',
+	'./DateTimeFieldRenderer'
+], function(
+	jQuery,
+	SimpleDateType,
+	ODataType,
+	InputBase,
+	LocaleData,
+	coreLibrary,
+	DateFormat,
+	DateTimeFieldRenderer
+) {
 	"use strict";
 
 	// shortcut for sap.ui.core.CalendarType

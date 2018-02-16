@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.m.Table.
-sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library', 'sap/ui/Device'],
-	function(jQuery, ListBase, ListItemBase, library, Device) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./ListBase',
+	'./ListItemBase',
+	'./library',
+	'sap/ui/Device',
+	'./TableRenderer'
+],
+	function(jQuery, ListBase, ListItemBase, library, Device, TableRenderer) {
 	"use strict";
 
 

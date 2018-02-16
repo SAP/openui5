@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.m.Tile.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/InvisibleText', 'sap/ui/core/Control', 'sap/ui/Device'],
-	function(jQuery, library, InvisibleText, Control, Device) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/InvisibleText',
+	'sap/ui/core/Control',
+	'sap/ui/Device',
+	'./TileRenderer'
+],
+	function(jQuery, library, InvisibleText, Control, Device, TileRenderer) {
 	"use strict";
 
 
