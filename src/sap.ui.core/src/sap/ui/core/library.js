@@ -71,7 +71,8 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 			"sap.ui.core.IContextMenu",
 			"sap.ui.core.IFormContent",
 			"sap.ui.core.dnd.IDragInfo",
-			"sap.ui.core.dnd.IDropInfo"
+			"sap.ui.core.dnd.IDropInfo",
+			"sap.ui.core.IDScope"
 		],
 		controls: [
 			"sap.ui.core.ComponentContainer",
@@ -1527,6 +1528,16 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 	 * @name sap.ui.core.dnd.IDropInfo
 	 * @interface
 	 * @public
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+	/**
+	 * Marker interface to flag controls that provide access to substructures from a byId method.
+	 *
+	 * @since 1.56.0
+	 * @name sap.ui.core.IDScope
+	 * @interface
+	 * @private
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
