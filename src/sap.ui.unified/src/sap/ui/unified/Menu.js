@@ -16,8 +16,7 @@ sap.ui.define([
 	'jquery.sap.script',
 	'jquery.sap.keycodes',
 	'jquery.sap.events'
-],
-function(
+], function(
 	jQuery,
 	Element,
 	Control,

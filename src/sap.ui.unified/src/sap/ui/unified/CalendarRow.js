@@ -3,9 +3,33 @@
  */
 
 //Provides control sap.ui.unified.Calendar.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/LocaleData', 'sap/ui/unified/calendar/CalendarUtils',
-			   'sap/ui/core/date/UniversalDate', './library', 'sap/ui/core/InvisibleText', 'sap/ui/core/format/DateFormat', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Locale'],
-			   function(jQuery, Control, Device, LocaleData, CalendarUtils, UniversalDate, library, InvisibleText, DateFormat, ResizeHandler, Locale) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Control',
+	'sap/ui/Device',
+	'sap/ui/core/LocaleData',
+	'sap/ui/unified/calendar/CalendarUtils',
+	'sap/ui/core/date/UniversalDate',
+	'./library',
+	'sap/ui/core/InvisibleText',
+	'sap/ui/core/format/DateFormat',
+	'sap/ui/core/ResizeHandler',
+	'sap/ui/core/Locale',
+	"./CalendarRowRenderer"
+], function(
+	jQuery,
+	Control,
+	Device,
+	LocaleData,
+	CalendarUtils,
+	UniversalDate,
+	library,
+	InvisibleText,
+	DateFormat,
+	ResizeHandler,
+	Locale,
+	CalendarRowRenderer
+) {
 	"use strict";
 
 	// shortcut for sap.ui.unified.CalendarDayType

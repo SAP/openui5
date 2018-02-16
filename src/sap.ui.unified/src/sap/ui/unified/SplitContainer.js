@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.unified.SplitContainer.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/Parameters', './library', 'sap/ui/core/library'],
-	function(jQuery, Control, Parameters, library, coreLibrary) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Control',
+	'sap/ui/core/theming/Parameters',
+	'./library',
+	'sap/ui/core/library',
+	"./SplitContainerRenderer"
+], function(jQuery, Control, Parameters, library, coreLibrary, SplitContainerRenderer) {
 	"use strict";
 
 
