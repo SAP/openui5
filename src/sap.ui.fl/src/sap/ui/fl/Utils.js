@@ -872,36 +872,45 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the values of a certain technical parameter or undefined if the parameter is invalid
+		 * Returns technical parameters for the passed component.
+		 *
 		 * @param  {object} oComponent Component instance used to get the technical parameters
-		 * @param {string} sParameterName The name of the parameter (e.g. "sap-ui-fl-control-variant-id")
-		 * @return {string[]|undefined} Returns the array of parameter values found in the URL or undefined if none found
+		 * @returns {object|undefined} Returns the technical parameters object or undefined if unavailable
 		 */
-		getTechnicalURLParameterValues : function(oComponent, sParameterName){
-			var mTechnicalParameters = oComponent && oComponent.getComponentData
-				&& oComponent.getComponentData() && oComponent.getComponentData().technicalParameters;
-			return (mTechnicalParameters && mTechnicalParameters[sParameterName]) || [];
+		getTechnicalParametersForComponent : function(oComponent){
+			return oComponent
+				&& oComponent.getComponentData
+				&& oComponent.getComponentData()
+				&& oComponent.getComponentData().technicalParameters;
 		},
 
 		/**
-		 * Sets the values of the URL technical parameters without triggering a navigation
+		 * Sets the values for url hash and technical parameters for the component data.
+		 * Deactivates hash based navigation while performing the operations, which is then re-activated upon completion.
+		 * If the passed doesn't exist in the url hash or technical parameters, then a new object is added respectively.
+		 *
+		 * @param  {object} oComponent Component instance used to get the technical parameters
 		 * @param {string} sParameterName Name of the parameter (e.g. "sap-ui-fl-control-variant-id")
 		 * @param {string[]} aValues Array of values for the technical parameter
 		 */
-		setTechnicalURLParameterValues: function (sParameterName, aValues) {
+		setTechnicalURLParameterValues: function (oComponent, sParameterName, aValues) {
 			if (Utils.getUshellContainer()) {
 				hasher.changed.active = false; //disable changed signal
 
 				var oURLParser = sap.ushell.Container.getService("URLParsing");
 				var oParsedHash = oURLParser.parseShellHash(oURLParser.getHash(window.location.href));
 				var mParams = oParsedHash.params;
-
+				var mTechnicalParameters = Utils.getTechnicalParametersForComponent(oComponent);
+				if (!mTechnicalParameters) {
+					this.log.error("Component instance not provided, so technical parameters in component data would remain unchanged");
+				}
 				if (aValues.length === 0) {
 					delete mParams[sParameterName];
+					mTechnicalParameters && delete mTechnicalParameters[sParameterName];// Case when ControlVariantsAPI.clearVariantParameterInURL is called with a parameter
 				} else {
 					mParams[sParameterName] = aValues;
+					mTechnicalParameters && (mTechnicalParameters[sParameterName] = aValues); // Technical parameters need to be in sync with the URL hash
 				}
-
 				hasher.setHash(oURLParser.constructShellHash(oParsedHash)); //set hash without dispatching changed signal
 				hasher.changed.active = true; //re-enable signal
 			}
