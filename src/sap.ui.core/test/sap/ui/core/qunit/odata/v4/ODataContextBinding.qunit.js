@@ -1643,6 +1643,25 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	[undefined, false, true].forEach(function (bAction) {
+		QUnit.test("resumeInternal: operation binding, bAction=" + bAction, function (assert) {
+			var oContext = Context.create(this.oModel, {}, "/TEAMS('42')"),
+				oBinding = this.oModel.bindContext("name.space.Operation(...)", oContext),
+				oBindingMock = this.mock(oBinding);
+
+			oBinding.oOperation.bAction = bAction;
+
+			oBindingMock.expects("fetchCache").never();
+			this.mock(this.oModel).expects("getDependentBindings").never();
+			oBindingMock.expects("_fireChange").never();
+			oBindingMock.expects("execute").exactly(bAction === false ? 1 : 0).withExactArgs();
+
+			// code under test
+			oBinding.resumeInternal();
+		});
+	});
+
+	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		//*****************************************************************************************
 		QUnit.test("Action import on navigation property", function (assert) {

@@ -603,13 +603,18 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.resumeInternal = function (bCheckUpdate) {
-		this.mAggregatedQueryOptions = {};
-		this.mCacheByContext = undefined;
-		this.fetchCache(this.oContext);
-		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
-			oDependentBinding.resumeInternal(bCheckUpdate);
-		});
-		this._fireChange({reason : ChangeReason.Change});
+		if (!this.oOperation) {
+			this.mAggregatedQueryOptions = {};
+			this.mCacheByContext = undefined;
+			this.fetchCache(this.oContext);
+			this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+				oDependentBinding.resumeInternal(bCheckUpdate);
+			});
+			this._fireChange({reason : ChangeReason.Change});
+		} else if (this.oOperation.bAction === false) {
+			// ignore returned promise, error handling takes place in execute
+			this.execute();
+		}
 	};
 
 	/**
