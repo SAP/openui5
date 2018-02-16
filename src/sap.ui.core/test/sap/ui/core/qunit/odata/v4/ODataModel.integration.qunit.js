@@ -2059,13 +2059,14 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	// Scenario: overloaded bound action
+	// Note: there are 3 binding types for __FAKE__AcOverload, but only Worker has Is_Manager
 	QUnit.test("Bound action w/ overloading", function (assert) {
 		var sView = '\
 <VBox binding="{/EMPLOYEES(\'1\')}">\
 	<Text id="name" text="{Name}" />\
 	<VBox id="action" \
 			binding="{com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcOverload(...)}">\
-		<Text id="resultingName" text="{Name}" />\
+		<Text id="isManager" text="{Is_Manager}" />\
 	</VBox>\
 </VBox>',
 			that = this;
@@ -2075,7 +2076,7 @@ sap.ui.require([
 				"@odata.etag" : "eTag"
 			})
 			.expectChange("name", "Jonathan Smith")
-			.expectChange("resultingName", null); //TODO unexpected change
+			.expectChange("isManager", null); //TODO unexpected change
 
 		return this.createView(assert, sView).then(function () {
 			that.expectRequest({
@@ -2087,9 +2088,9 @@ sap.ui.require([
 						"Message" : "The quick brown fox jumps over the lazy dog"
 					}
 				}, {
-					"Name" : "J. Smith"
+					"Is_Manager" : true
 				})
-				.expectChange("resultingName", "J. Smith");
+				.expectChange("isManager", "Yes");
 
 			that.oView.byId("action").getObjectBinding()
 				.setParameter("Message", "The quick brown fox jumps over the lazy dog")
