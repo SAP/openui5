@@ -251,6 +251,59 @@
 			assert.ok(jQuery(this.navigationList.$().children()[2].children[1]).hasClass('sapTntNavLIHiddenGroupItems'), "sapTntNavLIHiddenGroupItems class is set");
 		});
 
+		QUnit.module("Tab navigation and ARIA settings", {
+			beforeEach: function () {
+				this.navigationList = getNavigationList();
+				oPage.addContent(this.navigationList);
+
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.navigationList.destroy();
+				this.navigationList = null;
+			}
+		});
+
+		QUnit.test('Tab navigation', function (assert) {
+
+			this.navigationList.$().find('li:not(.sapTntNavLIGroupItem)').each(function (index, item) {
+				assert.ok(item.getAttribute('tabIndex') === null, 'first level "li" element does not have a tab index.');
+			});
+
+			this.navigationList.$().find('div.sapTntNavLIGroup:not(.sapTntNavLIItemDisabled)').each(function (index, item) {
+				assert.equal(item.getAttribute('tabIndex'), '-1', jQuery(item).text() + ' has a tab index.');
+			});
+
+			this.navigationList.$().find('div.sapTntNavLIGroup.sapTntNavLIItemDisabled').each(function (index, item) {
+				assert.ok(item.getAttribute('tabIndex') == null, jQuery(item).text() + ' does not have a tab index');
+			});
+
+			this.navigationList.$().find('li.sapTntNavLIGroupItem:not(.sapTntNavLIItemDisabled)').each(function (index, item) {
+				assert.equal(item.getAttribute('tabIndex'), '-1', jQuery(item).text() + ' has a tab index.');
+			});
+
+			this.navigationList.$().find('li.sapTntNavLIGroupItem.sapTntNavLIItemDisabled').each(function (index, item) {
+				assert.ok(item.getAttribute('tabIndex') === null, 'Disabled ' + jQuery(item).text() + ' does not have a tab index.');
+			});
+		});
+
+		QUnit.test('ARIA', function (assert) {
+
+			this.navigationList.$().find('li:not(.sapTntNavLIGroupItem)').each(function (index, item) {
+				assert.ok(item.getAttribute('aria-level') === null, 'first level "li" element does not have ARIA attributes.');
+			});
+
+			this.navigationList.$().find('div.sapTntNavLIGroup').each(function (index, item) {
+				assert.equal(item.getAttribute('aria-level'), '1', jQuery(item).text() + ' has  ARIA attributes.');
+			});
+
+
+			this.navigationList.$().find('li.sapTntNavLIGroupItem').each(function (index, item) {
+				assert.equal(item.getAttribute('aria-level'), '2', jQuery(item).text() + ' has ARIA attributes.');
+			});
+
+		});
+
 		QUnit.module('SelectedItem association', {
 		    beforeEach: function() {
 		        this.navigationList = getNavigationList();
