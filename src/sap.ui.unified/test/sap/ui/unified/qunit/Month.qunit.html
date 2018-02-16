@@ -462,7 +462,150 @@
 					//clean
 					oMonth.destroy();
 				});
+
+				QUnit.module("_getDateTypes function", {
+					beforeEach: function () {
+						this.oM = new Month({date: new Date(2017, 1, 1)}).placeAt("qunit-fixture");
+						sap.ui.getCore().applyChanges();
+					},
+					afterEach: function () {
+						this.oM.destroy();
+						this.oM = null;
+					}
+				});
+
+				QUnit.test("_getDateTypes when Type01 and NonWorking types are set", function (assert) {
+					var aDayTypes,
+						oDate = new Date(2017, 1, 20),
+						oSpecialDate1 = new sap.ui.unified.DateTypeRange({
+							type: sap.ui.unified.CalendarDayType.Type01,
+							startDate: oDate
+						}),
+						oSpecialDate2 = new sap.ui.unified.DateTypeRange({
+							type: sap.ui.unified.CalendarDayType.NonWorking,
+							startDate: oDate
+						});
+
+					this.oM.addSpecialDate(oSpecialDate1);
+					this.oM.addSpecialDate(oSpecialDate2);
+
+					aDayTypes = this.oM._getDateTypes(createCalendarDate(2017, 1, 20, true));
+
+					// Assert
+					assert.equal(aDayTypes.length, 2, "Two types are returned");
+					assert.equal(aDayTypes[0].type, "Type01", "Type01 is returned");
+					assert.equal(aDayTypes[1].type, "NonWorking", "NonWorking type is returned");
+				});
+
+				QUnit.test("_getDateTypes when NonWorking and Type01 types are set", function (assert) {
+					var aDayTypes,
+						oDate = new Date(2017, 1, 20),
+						oSpecialDate1 = new sap.ui.unified.DateTypeRange({
+							type: sap.ui.unified.CalendarDayType.NonWorking,
+							startDate: oDate
+						}),
+						oSpecialDate2 = new sap.ui.unified.DateTypeRange({
+							type: sap.ui.unified.CalendarDayType.Type01,
+							startDate: oDate
+						});
+
+					this.oM.addSpecialDate(oSpecialDate1);
+					this.oM.addSpecialDate(oSpecialDate2);
+
+					aDayTypes = this.oM._getDateTypes(createCalendarDate(2017, 1, 20, true));
+
+					// Assert
+					assert.equal(aDayTypes.length, 2, "Two types are returned");
+					assert.equal(aDayTypes[0].type, "NonWorking", "NonWorking type is returned");
+					assert.equal(aDayTypes[1].type, "Type01", "Type01 is returned");
+				});
+
+				QUnit.test("_getDateTypes when Type01, NonWorking and Type03 types are set", function (assert) {
+					var aDayTypes,
+						oDate = new Date(2017, 1, 20),
+						oSpecialDate1 = new sap.ui.unified.DateTypeRange({
+							type: sap.ui.unified.CalendarDayType.Type01,
+							startDate: oDate
+						}),
+						oSpecialDate2 = new sap.ui.unified.DateTypeRange({
+							type: sap.ui.unified.CalendarDayType.NonWorking,
+							startDate: oDate
+						}),
+						oSpecialDate3 = new sap.ui.unified.DateTypeRange({
+							type: sap.ui.unified.CalendarDayType.Type03,
+							startDate: oDate
+						});
+
+					this.oM.addSpecialDate(oSpecialDate1);
+					this.oM.addSpecialDate(oSpecialDate2);
+					this.oM.addSpecialDate(oSpecialDate3);
+
+					aDayTypes = this.oM._getDateTypes(createCalendarDate(2017, 1, 20, true));
+
+					// Assert
+					assert.equal(aDayTypes.length, 2, "Two types are returned");
+					assert.equal(aDayTypes[0].type, "Type01", "Type01 is returned since it was set first");
+					assert.equal(aDayTypes[1].type, "NonWorking", "NonWorking type is returned");
+				});
+
+				QUnit.test("_getDateTypes when Type02 and Type01 types are set", function (assert) {
+					var aDayTypes,
+						oDate = new Date(2017, 1, 20),
+						oSpecialDate1 = new sap.ui.unified.DateTypeRange({
+							type: sap.ui.unified.CalendarDayType.Type02,
+							startDate: oDate
+						}),
+						oSpecialDate2 = new sap.ui.unified.DateTypeRange({
+							type: sap.ui.unified.CalendarDayType.Type01,
+							startDate: oDate
+						});
+
+					this.oM.addSpecialDate(oSpecialDate1);
+					this.oM.addSpecialDate(oSpecialDate2);
+
+					aDayTypes = this.oM._getDateTypes(createCalendarDate(2017, 1, 20, true));
+
+					// Assert
+					assert.equal(aDayTypes.length, 1, "Only one type is returned");
+					assert.equal(aDayTypes[0].type, "Type02", "Type02 is returned since it was set first");
+				});
+
+				QUnit.test("_getDateTypes when only Type01 is set", function (assert) {
+					var aDayTypes,
+						oDate = new Date(2017, 1, 20),
+						oSpecialDate1 = new sap.ui.unified.DateTypeRange({
+							type: sap.ui.unified.CalendarDayType.Type01,
+							startDate: oDate
+						});
+
+					this.oM.addSpecialDate(oSpecialDate1);
+
+					aDayTypes = this.oM._getDateTypes(createCalendarDate(2017, 1, 20, true));
+
+					// Assert
+					assert.equal(aDayTypes.length, 1, "Only one type is returned");
+					assert.equal(aDayTypes[0].type, "Type01", "Type01 is returned");
+				});
+
+				QUnit.test("_getDateTypes when only NonWorking is set", function (assert) {
+					var aDayTypes,
+						oDate = new Date(2017, 1, 20),
+						oSpecialDate1 = new sap.ui.unified.DateTypeRange({
+							type: sap.ui.unified.CalendarDayType.NonWorking,
+							startDate: oDate
+						});
+
+					this.oM.addSpecialDate(oSpecialDate1);
+
+					aDayTypes = this.oM._getDateTypes(createCalendarDate(2017, 1, 20, true));
+
+					// Assert
+					assert.equal(aDayTypes.length, 1, "Only one type is returned");
+					assert.equal(aDayTypes[0].type, "NonWorking", "NonWorking is returned");
+				});
+
 			})();
+
 
 		</script>
 
