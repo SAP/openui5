@@ -525,9 +525,13 @@ sap.ui.require([
 			var oModel = new VariantModel(oModelData, oFlexController, oMockedAppComponent);
 
 			var sOldVariantTitle = "Old Variant Title";
+			this.oControlVariantPlugin._$editableField = {
+				text : function(){
+					return "New Variant Title  ";
+				}
+			};
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
-			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns("New Variant Title");
 
 			this.oVariantManagementControl.setModel(oModel, "$FlexVariants");
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
@@ -540,6 +544,7 @@ sap.ui.require([
 
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
 				assert.ok(oEvent.getParameter("command") instanceof ControlVariantSetTitle, "then an set title Variant event is received with a setTitle command");
+				assert.equal(oEvent.getParameter("command").getNewText(), "New Variant Title", "then the new title is trimmed for ending spaces");
 				done();
 			});
 
