@@ -16,9 +16,17 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 			/**
 			 * Provides easier methods to create sap.m.Dialog with type sap.m.DialogType.Message, such as standard alerts,
 			 * confirmation dialogs, or arbitrary message dialogs.
-			 *
+             *
 			 * As <code>MessageBox</code> is a static class, a <code>jQuery.sap.require("sap.m.MessageBox");</code> statement
-			 * must be explicitly executed before the class can be used. Example:
+			 * must be explicitly executed before the class can be used.
+			 * MessageBox provides several functions.
+			 * <ul>
+			 * <li>show() - open a generic MessageBox. You can customize its contents thought the options described below in function option section.</li>
+			 * <li>alert(), confirm(), error(), information(), success() and warning() - predefined templates of MessageBoxes of the corresponding type with predefined action buttons and icon.
+			 * Only the recommended options are documented for those functions.
+			 * </ul>
+			 * <b>NOTE:</b> All options of show() are available for the other template functions as well, but it is recommended to use show() only in more specific scenarios.
+			 * Example:
 			 * <pre>
 			 *   jQuery.sap.require("sap.m.MessageBox");
 			 *   sap.m.MessageBox.show(
