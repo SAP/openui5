@@ -396,21 +396,19 @@ function(
 	//_applyPopupPatch
 	QUnit.test("when _applyPopupPatch is called", function(assert) {
 		var done = assert.async();
-
 		sandbox.stub(this.oRta.getPopupManager(), "getRta").returns(this.oRta);
 		sandbox.stub(this.oRta, "getMode").returns("adaptation");
 		var fnDefaultOnAfterRendering = this.oPopover.oPopup.onAfterRendering;
 		var oPopup = this.oPopover.oPopup;
 		this.oPopover.attachAfterOpen(function() {
-			var oPopoverOverlay = fnFindOverlay(this.oPopover, this.oRta._oDesignTime);
-			var oOverlayContainer = Overlay.getOverlayContainer(oPopoverOverlay);
+			var oOverlayContainerDomRef = Overlay.getOverlayContainer().get(0);
 			this.oRta.getPopupManager().addAutoCloseArea(new Button("autoCloseButton"));
 			this.oRta.getPopupManager()._applyPopupPatch(this.oPopover);
 			assert.strictEqual(this.fnRemovePopupListeners.callCount, 1, "then popup event listeners removed");
-			assert.ok(oPopup._aAutoCloseAreas.some(function(mArea) { return mArea.id === this.oRta.getToolbar().getId(); }, this), "Toolbar added as an autoClose area");
-			assert.ok(oPopup._aAutoCloseAreas.some(function(mArea) { return mArea.id === this.oPopover.getId(); }, this), "Popover added as an autoClose area");
-			assert.ok(oPopup._aAutoCloseAreas.some(function(mArea) { return mArea.id === oOverlayContainer.id; }), "OverlayContainer added as an autoClose area");
-			assert.ok(oPopup._aAutoCloseAreas.some(function(mArea) { return mArea.id === "autoCloseButton"; }), "then custom autoClose area added as an autoClose area");
+			assert.ok(oPopup._aAutoCloseAreas.some(function(mArea) { return mArea.id && mArea.id === this.oRta.getToolbar().getId(); }, this), "Toolbar added as an autoClose area");
+			assert.ok(oPopup._aAutoCloseAreas.some(function(mArea) { return mArea.id && mArea.id === this.oPopover.getId(); }, this), "Popover added as an autoClose area");
+			assert.ok(oPopup._aAutoCloseAreas.some(function(mArea) { return mArea.id && mArea.id === oOverlayContainerDomRef.id; }), "OverlayContainer added as an autoClose area");
+			assert.ok(oPopup._aAutoCloseAreas.some(function(mArea) { return mArea.id && mArea.id === "autoCloseButton"; }), "then custom autoClose area added as an autoClose area");
 			assert.notEqual(oPopup.onAfterRendering, fnDefaultOnAfterRendering, "then onAfterRendering was overwritten");
 			done();
 		}.bind(this));
