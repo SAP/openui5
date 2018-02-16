@@ -243,10 +243,14 @@ sap.ui.require([
 	//*********************************************************************************************
 	[{value : 42}, undefined].forEach(function (oData) {
 		QUnit.test("requestObject " + JSON.stringify(oData), function (assert) {
-			var oContext = Context.create(null, null, "/foo"),
+			var oBinding = {
+					checkSuspended : function () {}
+				},
+				oContext = Context.create(null, oBinding, "/foo"),
 				oPromise,
 				oSyncPromise = SyncPromise.resolve(Promise.resolve(oData));
 
+			this.mock(oBinding).expects("checkSuspended").withExactArgs();
 			this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 				.returns(oSyncPromise);
 
@@ -393,9 +397,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	[42, null].forEach(function (vResult) {
 		QUnit.test("requestProperty: primitive result " + vResult, function (assert) {
-			var oContext = Context.create(null, null, "/foo"),
+			var oBinding = {
+					checkSuspended : function () {}
+				},
+				oContext = Context.create(null, oBinding, "/foo"),
 				oSyncPromise = SyncPromise.resolve(Promise.resolve(vResult));
 
+			this.mock(oBinding).expects("checkSuspended").withExactArgs();
 			this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 				.returns(oSyncPromise);
 
@@ -408,7 +416,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("requestProperty: structured result", function (assert) {
-		var oContext = Context.create(null, null, "/foo", 1),
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oContext = Context.create(null, oBinding, "/foo", 1),
 			oSyncPromise = SyncPromise.resolve(Promise.resolve({}));
 
 		this.mock(oContext).expects("fetchValue").withExactArgs("bar")
@@ -424,7 +435,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("requestProperty: external", function (assert) {
-		var oMetaModel = {
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oMetaModel = {
 				fetchUI5Type : function () {}
 			},
 			oModel = {
@@ -435,7 +449,7 @@ sap.ui.require([
 			oType = {
 				formatValue : function () {}
 			},
-			oContext = Context.create(oModel, null, "/foo", 42),
+			oContext = Context.create(oModel, oBinding, "/foo", 42),
 			oSyncPromiseType = SyncPromise.resolve(Promise.resolve(oType)),
 			oSyncPromiseValue = SyncPromise.resolve(1234);
 
@@ -575,11 +589,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("delete: success", function (assert) {
 		var oBinding = {
-				_delete : function () {}
+				_delete : function () {},
+				checkSuspended : function () {}
 			},
 			oModel = {},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
 
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("fetchCanonicalPath")
 			.withExactArgs().returns(SyncPromise.resolve("/EMPLOYEES('1')"));
 		this.mock(oBinding).expects("_delete")
@@ -597,7 +613,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("delete: transient", function (assert) {
 		var oBinding = {
-				_delete : function () {}
+				_delete : function () {},
+				checkSuspended : function () {}
 			},
 			oModel = {},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/-1", -1,
@@ -618,7 +635,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("delete: failure", function (assert) {
 		var oBinding = {
-				_delete : function () {}
+				_delete : function () {},
+				checkSuspended : function () {}
 			},
 			oError = new Error(),
 			oModel = {},
@@ -644,8 +662,11 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("delete: failure in fetchCanonicalPath", function (assert) {
-		var oError = new Error(),
-			oContext = Context.create(null, null, "/EMPLOYEES/42", 42);
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oError = new Error(),
+			oContext = Context.create(null, oBinding, "/EMPLOYEES/42", 42);
 
 		this.mock(oContext).expects("fetchCanonicalPath")
 			.withExactArgs().returns(SyncPromise.reject(oError));
