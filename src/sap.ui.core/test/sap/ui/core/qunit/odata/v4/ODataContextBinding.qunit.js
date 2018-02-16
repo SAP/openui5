@@ -495,7 +495,7 @@ sap.ui.require([
 
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", "EMPLOYEES(ID='1')?sap-client=111", "$direct", undefined,
-				undefined, sinon.match.func)
+				undefined, sinon.match.func, undefined, "/EMPLOYEES")
 			.callsArg(5)
 			.returns(Promise.resolve({"ID" : "1"}));
 		this.mock(this.oModel).expects("reportError").withExactArgs(
@@ -1165,7 +1165,7 @@ sap.ui.require([
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
 				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect), false,
-				"/FunctionImport")
+				"/FunctionImport/@$ui5.overload/0/$ReturnType")
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("fetchValue").withExactArgs("group").returns(oPromise);
 
@@ -1209,7 +1209,7 @@ sap.ui.require([
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
 				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect), false,
-				"/Entity/navigation/bound.Function")
+				"/Entity/navigation/bound.Function/@$ui5.overload/0/$ReturnType")
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("fetchValue").withExactArgs("group").returns(oPromise);
 
@@ -1252,7 +1252,7 @@ sap.ui.require([
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
 				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect), true,
-				"/ActionImport")
+				"/ActionImport/@$ui5.overload/0/$ReturnType")
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("post")
 			.withExactArgs("group", sinon.match.same(mParameters), undefined)
@@ -1301,7 +1301,7 @@ sap.ui.require([
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
 				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect), true,
-				"/Entity/navigation/bound.Action")
+				"/Entity/navigation/bound.Action/@$ui5.overload/0/$ReturnType")
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("post")
 			.withExactArgs("group", sinon.match.same(mParameters), "ETag")

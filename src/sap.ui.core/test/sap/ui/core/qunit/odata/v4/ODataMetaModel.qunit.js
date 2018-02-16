@@ -1022,17 +1022,23 @@ sap.ui.require([
 			: mScope["name.space.DerivedPrimitiveFunction"][0].$ReturnType,
 		"/ChangeManagerOfTeam/value" : oTeamData.value,
 		// action overloads -----------------------------------------------------------------------
+		//TODO @$ui5.overload: support for split segments? etc.
 		"/OverloadedAction/@$ui5.overload" : sinon.match.array.deepEquals([aOverloadedAction[2]]),
+		"/OverloadedAction/@$ui5.overload/0" : aOverloadedAction[2],
+		// Note: trailing slash does not make a difference in "JSON" drill-down
+		"/OverloadedAction/@$ui5.overload/0/$ReturnType/" : aOverloadedAction[2].$ReturnType,
+		"/OverloadedAction/@$ui5.overload/0/$ReturnType/$Type" : "tea_busi.ComplexType_Salary",
+		"/OverloadedAction/" : mScope["tea_busi.ComplexType_Salary"],
 		"/name.space.OverloadedAction" : aOverloadedAction,
 		"/T€AMS/NotFound/name.space.OverloadedAction" : aOverloadedAction,
 		"/name.space.OverloadedAction/1" : aOverloadedAction[1],
 		"/OverloadedAction/$Action/1" : aOverloadedAction[1],
+		"/OverloadedAction/@$ui5.overload/AMOUNT" : mScope["tea_busi.ComplexType_Salary"].AMOUNT,
 		"/OverloadedAction/AMOUNT" : mScope["tea_busi.ComplexType_Salary"].AMOUNT,
 		"/T€AMS/name.space.OverloadedAction/Team_Id" : oTeamData.Team_Id,
 		"/T€AMS/name.space.OverloadedAction/@$ui5.overload"
 			: sinon.match.array.deepEquals([aOverloadedAction[1]]),
 		"/name.space.OverloadedAction/@$ui5.overload" : sinon.match.array.deepEquals([]),
-		//TODO allow path to continue after @$ui5.overload? support for split segments? etc.
 		// only "Action" and "Function" is expected as $kind, but others are not filtered out!
 		"/name.space.BrokenOverloads"
 			: sinon.match.array.deepEquals(mScope["name.space.BrokenOverloads"]),

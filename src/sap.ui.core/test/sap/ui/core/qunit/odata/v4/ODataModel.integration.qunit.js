@@ -434,7 +434,8 @@ sap.ui.require([
 			 * Stub function for _Requestor#request. Checks that the expected request arrived and
 			 * returns a promise for its response.
 			 */
-			function checkRequest(sMethod, sUrl, sGroupId, mHeaders, oPayload) {
+			function checkRequest(sMethod, sUrl, sGroupId, mHeaders, oPayload, fnSubmit,
+					fnCancel, sMetaPath, bIsFreshToken) {
 				var oActualRequest = {
 						groupId : sGroupId,
 						method : sMethod,
@@ -453,7 +454,7 @@ sap.ui.require([
 					oResponse = oExpectedRequest.response;
 					delete oExpectedRequest.response;
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
-					oResponse = that.oModel.oRequestor.doConvertResponse(oResponse);
+					oResponse = that.oModel.oRequestor.doConvertResponse(oResponse, sMetaPath);
 				}
 
 				if (!that.aRequests.length) { // waiting may be over after promise has been handled
@@ -3734,21 +3735,21 @@ sap.ui.require([
 						},
 						"carrid" : "AA",
 						"connid" : "0017",
-						"fldate" : "\/Date(1502323200000)\/"
+						"fldate" : "/Date(1502323200000)/"
 					}, {
 						"__metadata" : {
 							"type":"RMTSAMPLEFLIGHT.Flight"
 						},
 						"carrid" : "DL",
 						"connid" : "1699",
-						"fldate" : "\/Date(1502323200000)\/"
+						"fldate" : "/Date(1502323200000)/"
 					}, {
 						"__metadata" : {
 							"type":"RMTSAMPLEFLIGHT.Flight"
 						},
 						"carrid" : "UA",
 						"connid" : "3517",
-						"fldate" : "\/Date(1502323200000)\/"
+						"fldate" : "/Date(1502323200000)/"
 					}]
 				}
 			});
@@ -3775,6 +3776,50 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: <FunctionImport m:HttpMethod="GET" ReturnType="Edm.DateTime"> in V2 Adapter
+	QUnit.test("V2 Adapter: bound function returns primitive", function (assert) {
+		var oModel = this.createModelForV2FlightService(),
+			sView = '\
+<FlexBox binding="{/NotificationCollection(\'foo\')}">\
+	<Text id="updated" text="{updated}" />\
+	<FlexBox id="function" binding="{RMTSAMPLEFLIGHT.__FAKE__FunctionImport(...)}">\
+		<Text id="value" text="{value}" />\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("NotificationCollection('foo')", {
+				"d" : {
+					"__metadata" : {
+						"type":"RMTSAMPLEFLIGHT.Notification"
+					},
+					"ID" : "foo",
+					"updated" : "/Date(1502323200000)/"
+				}
+			})
+			.expectChange("updated", "Aug 10, 2017, 2:00:00 AM") //TODO unexpected change
+			.expectChange("updated", "Aug 10, 2017, 2:00:00 AM")
+			.expectChange("value", null); //TODO unexpected change
+
+
+		// code under test
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("__FAKE__FunctionImport?ID='foo'", {
+					"d" : { // Note: DataServiceVersion : 1.0
+						"__FAKE__FunctionImport" : "/Date(1502323200000)/"
+					}
+				})
+				.expectChange("value", "Aug 10, 2017, 2:00:00 AM");
+
+			that.oView.byId("function").getObjectBinding().execute();
+			return that.waitForChanges(assert);
+		});
+	});
+	//TODO support also "version 2.0 JSON representation of a property"?
+	//TODO support "version 2.0 JSON representation of a collection of EDMSimpleType values"!
+
+
+	//*********************************************************************************************
 	// Scenario: <FunctionImport m:HttpMethod="GET" sap:action-for="..."> in V2 Adapter
 	// Usage of service: /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
 	//TODO $metadata of <FunctionImport> is broken, key properties and parameters do not match!
@@ -3799,7 +3844,7 @@ sap.ui.require([
 					},
 					"carrid" : "AA",
 					"connid" : "0017",
-					"fldate" : "\/Date(1502323200000)\/"
+					"fldate" : "/Date(1502323200000)/"
 				}
 			})
 			.expectChange("carrid", "AA")
@@ -3840,7 +3885,6 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	// Scenario: <FunctionImport m:HttpMethod="POST"> in V2 Adapter
-	// Usage of service: /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
 	QUnit.test("V2 Adapter: ActionImport", function (assert) {
 		var oModel = this.createModelForV2FlightService(),
 			that = this;
@@ -3864,7 +3908,7 @@ sap.ui.require([
 						},
 						"carrid" : "AA",
 						"connid" : "0017",
-						"fldate" : "\/Date(1502323200000)\/",
+						"fldate" : "/Date(1502323200000)/",
 						"PRICE" : "2222.00",
 						"SEATSMAX" : 320
 					}
@@ -3934,7 +3978,7 @@ sap.ui.require([
 							"type" : "GWSAMPLE_BASIC.SalesOrder"
 						},
 						"SalesOrderID" : "08/15",
-						"CreatedAt" : "\/Date(1502323200000)\/"
+						"CreatedAt" : "/Date(1502323200000)/"
 					}
 				})
 				.expectChange("id0", "0815") //TODO unexpected change
