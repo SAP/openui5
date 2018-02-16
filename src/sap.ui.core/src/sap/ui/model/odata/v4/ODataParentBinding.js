@@ -424,10 +424,7 @@ sap.ui.define([
 				mLocalQueryOptions = aResult[0],
 				oProperty = aResult[1];
 
-			if (!that.oOperation) {
-				// Note: Operation bindings do not support auto-$expand/$select yet
-				that.selectKeyProperties(mLocalQueryOptions, sBaseMetaPath);
-			}
+			that.selectKeyProperties(mLocalQueryOptions, sBaseMetaPath);
 			// this.mAggregatedQueryOptions contains the aggregated query options of all child
 			// bindings which can use the cache of this binding or an ancestor binding merged
 			// with this binding's local query options
@@ -447,6 +444,9 @@ sap.ui.define([
 					return that.aggregateQueryOptions(mWrappedChildQueryOptions, bCacheImmutable);
 				}
 				return false;
+			}
+			if (sChildMetaPath === "value") { // symbolic name for operation result
+				return that.aggregateQueryOptions(mChildQueryOptions, bCacheImmutable);
 			}
 			jQuery.sap.log.error("Failed to enhance query options for "
 					+ "auto-$expand/$select as the path '"
