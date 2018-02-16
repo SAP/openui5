@@ -370,7 +370,6 @@ sap.ui.require([
 							{
 								"content": {
 									"fileName":"variantMgmtId1",
-									"layer":"VENDOR",
 									"support":{
 										"user":"SAP"
 									},
@@ -416,7 +415,6 @@ sap.ui.require([
 					"favorite": true,
 					"visible": true,
 					"key": "variantMgmtId1",
-					"layer": "VENDOR",
 					"title": "Standard"
 				},
 				{
@@ -470,7 +468,6 @@ sap.ui.require([
 							{
 								"content": {
 									"fileName":"variantMgmtId1",
-									"layer":"VENDOR",
 									"support":{
 										"user":"SAP"
 									},
@@ -496,7 +493,6 @@ sap.ui.require([
 					"favorite": true,
 					"visible": true,
 					"key": "variantMgmtId1",
-					"layer": "VENDOR",
 					"title": "Standard"
 				},
 				{

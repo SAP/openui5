@@ -635,30 +635,30 @@ sap.ui.require([
 		var oVariantData = {
 			"content": {
 				"fileName":"variant0",
-					"fileType":"ctrl_variant",
-					"variantManagementReference":"variantMgmtId1",
-					"variantReference":"",
-					"reference":"Dummy.Component",
-					"packageName":"$TMP",
-					"content":{
-						"title":"variant A"
-					},
+				"fileType":"ctrl_variant",
+				"variantManagementReference":"variantMgmtId1",
+				"variantReference":"",
+				"reference":"Dummy.Component",
+				"packageName":"$TMP",
+				"content":{
+					"title":"variant A"
+				},
 				"selector":{},
 				"layer":"CUSTOMER",
-					"texts":{
+				"texts":{
 					"TextDemo": {
 						"value": "Text for TextDemo",
-							"type": "myTextType"
+						"type": "myTextType"
 					}
 				},
 				"namespace":"Dummy.Component",
-					"creation":"",
-					"originalLanguage":"EN",
-					"conditions":{},
+				"creation":"",
+				"originalLanguage":"EN",
+				"conditions":{},
 				"support":{
 					"generator":"Change.createInitialFileContent",
-						"service":"",
-						"user":""
+					"service":"",
+					"user":""
 				}
 			},
 			"controlChanges": []
