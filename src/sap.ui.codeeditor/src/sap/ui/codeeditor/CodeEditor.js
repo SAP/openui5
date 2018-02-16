@@ -376,6 +376,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * @private
+	 */
+	CodeEditor.prototype.onfocusin = function() {
+		if (!this.getEditable()) {
+			document.activeElement.blur(); // prevent virtual keyboard from opening when control is not editable
+		}
+	};
+
+	/**
 	 * Sets <code>maxLines</code> property.
 	 * @param {int} iMaxLines Maximum number of lines the editor should display
 	 * @override
