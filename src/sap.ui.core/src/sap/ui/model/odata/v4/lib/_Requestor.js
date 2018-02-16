@@ -363,6 +363,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Converts the resource path if needed. For OData V4 requests no conversion is done.
+	 * May be overwritten for other OData service versions.
+	 *
+	 * @param {string} sResourcePath The V4 resource path
+	 * @returns {string} The resource path as required for the server
+	 */
+	Requestor.prototype.convertResourcePath = function (sResourcePath) {
+		return sResourcePath;
+	};
+
+	/**
 	 * Checks whether the "OData-Version" header is set to "4.0" otherwise an error is thrown.
 	 *
 	 * @param {function} fnGetHeader
@@ -800,7 +811,7 @@ sap.ui.define([
 				var sCurrentCSRFToken = that.mHeaders["X-CSRF-Token"];
 				// Adding query parameters could have been the responsibility of submitBatch,
 				// but doing it here makes the $batch recognition easier.
-				jQuery.ajax(that.sServiceUrl + sResourcePath
+				jQuery.ajax(that.sServiceUrl + that.convertResourcePath(sResourcePath)
 						+ (bIsBatch ? that.sQueryParams : ""), {
 					data : sPayload,
 					headers : jQuery.extend({},
@@ -867,7 +878,7 @@ sap.ui.define([
 					}
 					oRequest = {
 						method : sMethod,
-						url : sResourcePath,
+						url : that.convertResourcePath(sResourcePath),
 						headers : jQuery.extend({},
 							that.mPredefinedPartHeaders,
 							that.mHeaders,

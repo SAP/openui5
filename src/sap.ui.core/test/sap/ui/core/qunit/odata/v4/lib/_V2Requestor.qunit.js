@@ -6,9 +6,12 @@ sap.ui.require([
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/model/odata/v4/lib/_V2Requestor"
-], function (jQuery, SyncPromise, DateFormat, ODataUtils, _Requestor, asV2Requestor) {
+], function (jQuery, SyncPromise, DateFormat, ODataUtils, _Helper, _Parser, _Requestor,
+		asV2Requestor) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -1372,5 +1375,120 @@ sap.ui.require([
 		var oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
 
 		assert.strictEqual(oRequestor.isActionBodyOptional(), true);
+	});
+
+	//*****************************************************************************************
+	QUnit.test("convertKeyPredicate: simple string predicate", function (assert) {
+		var oEntityType = {
+				$Key : ["KeyProperty"],
+				KeyProperty : {$Type : "Edm.String"}
+			},
+			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+
+		this.mock(_Helper).expects("getMetaPath")
+			.withExactArgs("/my/path('foo')").returns("/my/path");
+		this.mock(oRequestor).expects("fetchTypeForPath").withExactArgs("/my/path")
+			.returns(SyncPromise.resolve(oEntityType));
+		this.mock(_Parser).expects("parseKeyPredicate").withExactArgs("('foo')")
+			.returns({"" : "'foo'"});
+
+		assert.strictEqual(oRequestor.convertKeyPredicate("('foo')", "/my/path('foo')"), "('foo')");
+	});
+
+	//*****************************************************************************************
+	QUnit.test("convertKeyPredicate: simple non-string predicate", function (assert) {
+		var oEntityType = {
+				$Key : ["KeyProperty"],
+				KeyProperty : {$Type : "Edm.Foo"}
+			},
+			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+
+		this.mock(_Helper).expects("getMetaPath")
+			.withExactArgs("/my/path(42)").returns("/my/path");
+		this.mock(oRequestor).expects("fetchTypeForPath").withExactArgs("/my/path")
+			.returns(SyncPromise.resolve(oEntityType));
+		this.mock(_Parser).expects("parseKeyPredicate").withExactArgs("(42)").returns({"" : "42"});
+		this.mock(_Helper).expects("parseLiteral").withExactArgs("42", "Edm.Foo", "/my/path(42)")
+			.returns(42);
+		this.mock(oRequestor).expects("formatPropertyAsLiteral")
+			.withExactArgs(42, sinon.match.same(oEntityType.KeyProperty)).returns("~42~");
+
+		assert.strictEqual(oRequestor.convertKeyPredicate("(42)", "/my/path(42)"), "(~42~)");
+	});
+
+	//*****************************************************************************************
+	QUnit.test("convertKeyPredicate: named non-string predicate, encoded", function (assert) {
+		var oEntityType = {
+				$Key : ["føø"],
+				"føø" : {$Type : "Edm.Foo"}
+			},
+			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+
+		this.mock(_Helper).expects("getMetaPath")
+			.withExactArgs("/my/path(f%C3%B8%C3%B8=42)").returns("/my/path");
+		this.mock(oRequestor).expects("fetchTypeForPath").withExactArgs("/my/path")
+			.returns(SyncPromise.resolve(oEntityType));
+		this.mock(_Parser).expects("parseKeyPredicate").withExactArgs("(føø=42)")
+			.returns({"føø" : "42"});
+		this.mock(_Helper).expects("parseLiteral")
+			.withExactArgs("42", "Edm.Foo", "/my/path(f%C3%B8%C3%B8=42)")
+			.returns(42);
+		this.mock(oRequestor).expects("formatPropertyAsLiteral")
+			.withExactArgs(42, sinon.match.same(oEntityType["føø"])).returns("~bãr~");
+
+		assert.strictEqual(
+			oRequestor.convertKeyPredicate("(f%C3%B8%C3%B8=42)", "/my/path(f%C3%B8%C3%B8=42)"),
+			"(f%C3%B8%C3%B8=~b%C3%A3r~)");
+	});
+
+	//*****************************************************************************************
+	QUnit.test("convertKeyPredicate: compound predicate", function (assert) {
+		var oEntityType = {
+				$Key : ["p1", "p2", "p3"],
+				p1 : {$Type : "Edm.Double"},
+				p2 : {$Type : "Edm.String"},
+				p3 : {$Type : "Edm.Double"},
+			},
+			oHelperMock = this.mock(_Helper),
+			oParserMock = this.mock(_Parser),
+			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0"),
+			oRequestorMock = this.mock(oRequestor);
+
+		this.mock(_Helper).expects("getMetaPath")
+			.withExactArgs("/my/path(p1=1,p2='2',p3=3)").returns("/my/path");
+		oRequestorMock.expects("fetchTypeForPath").withExactArgs("/my/path")
+			.returns(SyncPromise.resolve(oEntityType));
+		oParserMock.expects("parseKeyPredicate").withExactArgs("(p1=1,p2='2',p3=3)")
+			.returns({"p1" : "1", "p2" : "'2'", "p3" : "3"});
+		oHelperMock.expects("parseLiteral")
+			.withExactArgs("1", "Edm.Double", "/my/path(p1=1,p2='2',p3=3)").returns(1);
+		oRequestorMock.expects("formatPropertyAsLiteral")
+			.withExactArgs(1, sinon.match.same(oEntityType.p1)).returns("1d");
+		oHelperMock.expects("parseLiteral")
+			.withExactArgs("3", "Edm.Double", "/my/path(p1=1,p2='2',p3=3)").returns(3);
+		oRequestorMock.expects("formatPropertyAsLiteral")
+			.withExactArgs(3, sinon.match.same(oEntityType.p3)).returns("3d");
+
+		assert.strictEqual(
+			oRequestor.convertKeyPredicate("(p1=1,p2='2',p3=3)", "/my/path(p1=1,p2='2',p3=3)"),
+			"(p1=1d,p2='2',p3=3d)");
+	});
+
+	//*****************************************************************************************
+	["", "?$select=*"].forEach(function (sQuery) {
+		QUnit.test("convertResourcePath: query=" + sQuery, function (assert) {
+			var oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0"),
+				oRequestorMock = this.mock(oRequestor);
+
+			oRequestorMock.expects("convertKeyPredicate")
+				.withExactArgs("(42)", "/Foo/Bar(42)")
+				.returns("(~42~)");
+			oRequestorMock.expects("convertKeyPredicate")
+				.withExactArgs("(23)", "/Foo/Bar(42)/Baz/Qux(23)")
+				.returns("(~23~)");
+
+			assert.strictEqual(oRequestor.convertResourcePath("Foo/Bar(42)/Baz/Qux(23)" + sQuery),
+				"Foo/Bar(~42~)/Baz/Qux(~23~)" + sQuery);
+		});
 	});
 });

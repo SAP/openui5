@@ -438,7 +438,7 @@ sap.ui.require([
 				var oActualRequest = {
 						groupId : sGroupId,
 						method : sMethod,
-						url : sUrl,
+						url : that.oModel.oRequestor.convertResourcePath(sUrl),
 						headers : mHeaders,
 						payload : oPayload
 					},
@@ -3781,9 +3781,8 @@ sap.ui.require([
 	// --> server expects GetFlightDetails?airlineid='AA'&connectionid='0017'&fldate=datetime'...'
 	QUnit.test("V2 Adapter: bound function", function (assert) {
 		var oModel = this.createModelForV2FlightService(),
-			//TODO key predicate MUST use V4 literal form! fldate=\'2017-08-10T00:00:00Z\'
 			sView = '\
-<FlexBox binding="{/FlightCollection(carrid=\'AA\'&amp;connid=\'0017\'&amp;fldate=datetime\'2017-08-10T00:00:00\')}">\
+<FlexBox binding="{/FlightCollection(carrid=\'AA\',connid=\'0017\',fldate=2017-08-10T00:00:00Z)}">\
 	<Text id="carrid" text="{carrid}" />\
 	<FlexBox id="function" binding="{RMTSAMPLEFLIGHT.GetFlightDetails(...)}">\
 		<Text id="distance" text="{distance}" />\
@@ -3791,15 +3790,15 @@ sap.ui.require([
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("FlightCollection(carrid='AA'&connid='0017'"
-			+ "&fldate=datetime'2017-08-10T00:00:00')", {
+		this.expectRequest("FlightCollection(carrid='AA',connid='0017'"
+			+ ",fldate=datetime'2017-08-10T00%3A00%3A00')", {
 				"d" : {
 					"__metadata" : {
 						"type":"RMTSAMPLEFLIGHT.Flight"
 					},
 					"carrid" : "AA",
 					"connid" : "0017",
-					"fldate" : "\/Date(1502323200000)\/"
+					"fldate" : "/Date(1502323200000)/"
 				}
 			})
 			.expectChange("carrid", "AA")
