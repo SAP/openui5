@@ -288,6 +288,40 @@
 										   title="Events"
 										   titleUppercase="false">
 							<subSections>
+								<custom:ObjectPageSubSection title="{= ${data>/hasEvents} &amp;&amp; !${data>/hasOwnEvents} ? 'Events' : 'Summary'}">
+									<custom:blocks>
+										<layout:VerticalLayout width="100%">
+											<template:if test="{data>/hasOwnEvents}">
+												<custom:LightTable
+														columnCount="2"
+														columnTitles="Event,Description">
+													<template:repeat list="{data>/events}" var="event">
+														<custom:Row>
+															<custom:ParamText text="{event>name}"
+																		href="#/api/{data>/name}/events/{event>name}"
+																		deprecated="{= ${event>deprecated} !== undefined }"
+																		press="scrollToEvent"/>
+															<core:HTML content="{event>description}"/>
+														</custom:Row>
+													</template:repeat>
+												</custom:LightTable>
+											</template:if>
+											<template:if test="{= ${data>/borrowed/events/}.length > 0 }">
+												<m:Title text="Borrowed from:" class="sapUiSmallMarginTop sapUiDocumentationBorrowedTitle"/>
+												<layout:VerticalLayout width="100%" content="{path: '/borrowed/events/', templateShareable: 'false'}">
+														<m:Panel class="borrowedListPanel"
+																expandable="true"
+																expanded="true"
+																headerText="{name}"
+																width="100%">
+															<custom:BorrowedList list="{events}"/>
+														</m:Panel>
+												</layout:VerticalLayout>
+											</template:if>
+										</layout:VerticalLayout>
+									</custom:blocks>
+								</custom:ObjectPageSubSection>
+
 								<template:repeat list="{data>/events}" var="event">
 									<custom:ObjectPageSubSection title="{event>name}">
 										<custom:blocks>
@@ -346,6 +380,40 @@
 									   titleUppercase="false"
 									   class="APIDetailMethodsSection">
 							<subSections>
+
+								<custom:ObjectPageSubSection title="{= ${data>/hasMethods} &amp;&amp; !${data>/hasOwnMethods} ? 'Methods' : 'Summary'}">
+									<custom:blocks>
+										<layout:VerticalLayout width="100%">
+											<template:if test="{data>/hasOwnMethods}">
+												<custom:LightTable
+														columnCount="2"
+														columnTitles="Method,Description">
+													<template:repeat list="{data>/methods}" var="method">
+														<custom:Row>
+															<custom:ParamText text="{method>name}"
+																		href="#/api/{data>/name}/methods/{method>name}"
+																		deprecated="{= ${method>deprecated} !== undefined }"
+																		press="scrollToMethod"/>
+															<core:HTML content="{path: 'method>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+														</custom:Row>
+													</template:repeat>
+												</custom:LightTable>
+											</template:if>
+											<template:if test="{= ${data>/borrowed/methods/}.length > 0 }">
+												<m:Title text="Borrowed from:" class="sapUiSmallMarginTop sapUiDocumentationBorrowedTitle"/>
+												<layout:VerticalLayout width="100%" content="{path: '/borrowed/methods/', templateShareable: 'false'}">
+														<m:Panel class="borrowedListPanel"
+																expandable="true"
+																expanded="true"
+																headerText="{name}"
+																width="100%">
+															<custom:BorrowedList list="{methods}"/>
+														</m:Panel>
+												</layout:VerticalLayout>
+											</template:if>
+										</layout:VerticalLayout>
+									</custom:blocks>
+								</custom:ObjectPageSubSection>
 
 								<template:repeat list="{data>/methods}" var="method">
 									<custom:ObjectPageSubSection title="{method>name}" id="{= ${method>name}.replace('$', '') }_method">
@@ -484,26 +552,44 @@
 					<template:if test="{data>/hasAnnotations}">
 						<ObjectPageSection id="annotations"
 										   title="Annotations"
-										   subSections="{ path : '/ui5-metadata/annotations'}"
 										   titleUppercase="false">
 							<subSections>
-								<custom:ObjectPageSubSection title="{= ${annotation} !== 'undefined' ? ${annotation} : '(' + ${namespaceText} + ')' }">
+								<custom:ObjectPageSubSection title="Summary">
 									<custom:blocks>
-										<layout:VerticalLayout width="100%">
-
-											<core:HTML content="{description}"/>
-
-											<custom:LightTable columnTitles="Namespace,Target Type,Applies To" columnCount="3">
-											<custom:Row>
-												<core:HTML content="{namespace}"/>
-												<core:HTML content="{target'}"/>
-												<core:HTML content="{appliesTo}"/>
-											</custom:Row>
+										<custom:LightTable
+												columnCount="2"
+												columnTitles="Annotation,Description">
+											<template:repeat list="{data>/ui5-metadata/annotations}" var="annotation">
+												<custom:Row>
+													<m:Link text="{= ${annotation>annotation} !== 'undefined' ? ${annotation>annotation} : '(' + ${annotation>namespaceText} + ')' }"
+															press="scrollToAnnotation"
+															wrapping="false"/>
+													<core:HTML content="{annotation>description}"/>
+												</custom:Row>
+											</template:repeat>
 										</custom:LightTable>
-
-										</layout:VerticalLayout>
 									</custom:blocks>
 								</custom:ObjectPageSubSection>
+
+								<template:repeat list="{data>/ui5-metadata/annotations}" var="annotation">
+									<custom:ObjectPageSubSection title="{= ${annotation>annotation} !== 'undefined' ? ${annotation>annotation} : '(' + ${annotation>namespaceText} + ')' }">
+										<custom:blocks>
+											<layout:VerticalLayout width="100%">
+
+												<core:HTML content="{annotation>description}"/>
+
+												<custom:LightTable columnTitles="Namespace,Target Type,Applies To" columnCount="3">
+													<custom:Row>
+														<core:HTML content="{annotation>namespace}"/>
+														<core:HTML content="{annotation>target}"/>
+														<core:HTML content="{annotation>appliesTo}"/>
+													</custom:Row>
+												</custom:LightTable>
+
+											</layout:VerticalLayout>
+										</custom:blocks>
+									</custom:ObjectPageSubSection>
+								</template:repeat>
 							</subSections>
 						</ObjectPageSection>
 					</template:if>
