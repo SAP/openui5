@@ -398,6 +398,7 @@ sap.ui.define([
 
 		if (this.oOperation || sChildPath === "$count" || sChildPath.slice(-7) === "/$count"
 				|| sChildPath[0] === "@" || this.getRootBinding().isSuspended()) {
+			// Note: Operation bindings do not support auto-$expand/$select yet
 			return SyncPromise.resolve(true);
 		}
 
@@ -423,10 +424,7 @@ sap.ui.define([
 				mLocalQueryOptions = aResult[0],
 				oProperty = aResult[1];
 
-			if (!that.oOperation) {
-				// Note: Operation bindings do not support auto-$expand/$select yet
-				that.selectKeyProperties(mLocalQueryOptions, sBaseMetaPath);
-			}
+			that.selectKeyProperties(mLocalQueryOptions, sBaseMetaPath);
 			// this.mAggregatedQueryOptions contains the aggregated query options of all child
 			// bindings which can use the cache of this binding or an ancestor binding merged
 			// with this binding's local query options
@@ -604,21 +602,21 @@ sap.ui.define([
 				return true;
 			}
 
-			mExpandValue = mQueryOptions && mQueryOptions.$expand;
+			mExpandValue = mQueryOptions.$expand;
 			if (mExpandValue) {
 				mAggregatedQueryOptions.$expand = mAggregatedQueryOptions.$expand || {};
 				if (!Object.keys(mExpandValue).every(mergeExpandPath)) {
 					return false;
 				}
 			}
-			aSelectValue = mQueryOptions && mQueryOptions.$select;
+			aSelectValue = mQueryOptions.$select;
 			if (aSelectValue) {
 				mAggregatedQueryOptions.$select = mAggregatedQueryOptions.$select || [];
 				if (!aSelectValue.every(mergeSelectPath)) {
 					return false;
 				}
 			}
-			if (mQueryOptions && mQueryOptions.$count) {
+			if (mQueryOptions.$count) {
 				mAggregatedQueryOptions.$count = true;
 			}
 			return Object.keys(mQueryOptions).concat(Object.keys(mAggregatedQueryOptions))
