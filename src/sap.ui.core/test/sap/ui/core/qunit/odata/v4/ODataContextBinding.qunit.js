@@ -1163,7 +1163,8 @@ sap.ui.require([
 			.returns(sResourcePath);
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
-				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect), false)
+				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect), false,
+				"/FunctionImport")
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("fetchValue").withExactArgs("group").returns(oPromise);
 
@@ -1206,7 +1207,8 @@ sap.ui.require([
 			.returns(sResourcePath);
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
-				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect), false)
+				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect), false,
+				"/Entity/navigation/bound.Function")
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("fetchValue").withExactArgs("group").returns(oPromise);
 
@@ -1248,7 +1250,8 @@ sap.ui.require([
 			.returns(sResourcePath);
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
-				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect), true)
+				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect), true,
+				"/ActionImport")
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("post")
 			.withExactArgs("group", sinon.match.same(mParameters), undefined)
@@ -1296,7 +1299,8 @@ sap.ui.require([
 			.returns(sResourcePath);
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
-				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect), true)
+				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect), true,
+				"/Entity/navigation/bound.Action")
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("post")
 			.withExactArgs("group", sinon.match.same(mParameters), "ETag")
