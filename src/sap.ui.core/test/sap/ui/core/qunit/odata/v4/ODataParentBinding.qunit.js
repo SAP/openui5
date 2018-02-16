@@ -992,12 +992,12 @@ sap.ui.require([
 						.returns("/EMPLOYEES");
 					oMetaModelMock.expects("getMetaPath")
 						.withExactArgs("/childPath")
-						.returns("/childMetaPath");
+						.returns("/value");
 					oBindingMock.expects("doFetchQueryOptions")
 						.withExactArgs(sinon.match.same(oBinding.oContext))
 						.returns(SyncPromise.resolve(mLocalQueryOptions));
 					oMetaModelMock.expects("fetchObject")
-						.withExactArgs("/EMPLOYEES/childMetaPath")
+						.withExactArgs("/EMPLOYEES/value")
 						.returns(SyncPromise.resolve({$kind : oFixture.$kind}));
 					this.mock(jQuery).expects("extend")
 						.exactly(oFixture.initial ? 1 : 0)
@@ -1006,7 +1006,7 @@ sap.ui.require([
 					if (oFixture.$kind === "NavigationProperty") {
 						oBindingMock.expects("selectKeyProperties").never();
 						oMetaModelMock.expects("fetchObject")
-							.withExactArgs("/EMPLOYEES/childMetaPath/")
+							.withExactArgs("/EMPLOYEES/value/")
 							.returns(Promise.resolve().then(function () {
 								oBindingMock.expects("selectKeyProperties")
 									.exactly(oFixture.initial ? 1 : 0)
@@ -1019,7 +1019,7 @@ sap.ui.require([
 							.withExactArgs(sinon.match.same(mLocalQueryOptions), "/EMPLOYEES");
 					}
 					oBindingMock.expects("wrapChildQueryOptions")
-						.withExactArgs("/EMPLOYEES", "childMetaPath",
+						.withExactArgs("/EMPLOYEES", "value",
 							sinon.match.same(mChildLocalQueryOptions))
 						.returns(mChildQueryOptions);
 					oBindingMock.expects("aggregateQueryOptions")
@@ -1365,6 +1365,51 @@ sap.ui.require([
 		assert.strictEqual(
 			oBinding.fetchIfChildCanUseCache(/*arguments do not matter*/).getResult(),
 			true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchIfChildCanUseCache: non-deferred function and 'value'", function (assert) {
+		var oMetaModel = {
+				fetchObject : function () {},
+				getMetaPath : function (sPath) {
+					return _Helper.getMetaPath(sPath);
+				}
+			},
+			oBinding = new ODataParentBinding({
+				mAggregatedQueryOptions : {},
+				bAggregatedQueryOptionsInitial : true,
+				// cache will be created, waiting for child bindings
+				oCachePromise : SyncPromise.resolve(Promise.resolve()),
+				doFetchQueryOptions : function () {},
+				oModel : {getMetaModel : function () {return oMetaModel;}},
+				aChildCanUseCachePromises : [],
+				bRelative : false
+			}),
+			oBindingMock = this.mock(oBinding),
+			sChildPath = "value",
+			mChildQueryOptions = {},
+			oContext = Context.create(this.oModel, oBinding, "/Function(foo=42)"),
+			mLocalQueryOptions = {},
+			oPromise,
+			bUseCache = {/*false or true*/};
+
+		this.mock(oMetaModel).expects("fetchObject").withExactArgs("/Function/value")
+			.returns(SyncPromise.resolve({$IsCollection : true, $Type : "some.EntityType"}));
+		oBindingMock.expects("doFetchQueryOptions").withExactArgs(undefined)
+			.returns(SyncPromise.resolve(mLocalQueryOptions));
+		oBindingMock.expects("selectKeyProperties")
+			.withExactArgs(sinon.match.object, "/Function"); // Note: w/o $Key nothing happens
+		oBindingMock.expects("aggregateQueryOptions")
+			.withExactArgs(sinon.match.same(mChildQueryOptions), false)
+			.returns(bUseCache);
+
+		// code under test
+		oPromise = oBinding.fetchIfChildCanUseCache(oContext, sChildPath,
+			SyncPromise.resolve(mChildQueryOptions));
+
+		return oPromise.then(function (bUseCache0) {
+			assert.strictEqual(bUseCache0, bUseCache);
+		});
 	});
 
 	//*********************************************************************************************
