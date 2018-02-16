@@ -944,7 +944,7 @@ sap.ui.define([
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._deleteChanges = function() {
-		this._getFlexController().resetChanges(this.getLayer(), "Change.createInitialFileContent").then(function() {
+		return this._getFlexController().resetChanges(this.getLayer(), "Change.createInitialFileContent").then(function() {
 			this._reloadPage();
 		}.bind(this))["catch"](function(oError) {
 			return Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
