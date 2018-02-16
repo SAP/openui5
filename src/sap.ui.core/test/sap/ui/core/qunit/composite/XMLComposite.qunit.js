@@ -34,6 +34,7 @@ sap.ui.require([
 	jQuery.sap.require("composites.TextToggleButtonForwarded");
 	jQuery.sap.require("composites.LabelButtonTemplate");
 	jQuery.sap.require("composites.LabelButtonsTemplate");
+	jQuery.sap.require("composites.WrapperLayouter");
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.XMLComposite: Simple Text XMLComposite Control", {
@@ -800,5 +801,66 @@ sap.ui.require([
 
 		oXMLComposite.destroy();
 		oClone.destroy();
+	});
+
+	//*********************************************************************************************
+	QUnit.module("sap.ui.core.XMLComposite: Wrapper default properties", {
+		beforeEach: function() {
+			var Wrapper = sap.ui.core.XMLComposite.extend("Wrapper", {
+				constructor: function (sId, mSettings) {
+					sap.ui.core.XMLComposite.apply(this, arguments);
+				},
+				fragment: "composites.wrapper",
+				renderer: "sap.ui.core.XMLCompositeRenderer"
+			});
+			this.oWrapper = new Wrapper("layout");
+			this.oWrapper.placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oWrapper.destroy();
+		}
+	});
+	//*********************************************************************************************
+
+	QUnit.test("default properties", function(assert) {
+		assert.strictEqual(this.oWrapper.getHeight(), "", "Default height is undefined");
+		assert.strictEqual(this.oWrapper.getWidth(), "100%", "Default width is 100%");
+		assert.strictEqual(this.oWrapper.getDisplayBlock(), true, "Default displayBlock is true");
+	});
+
+	//*********************************************************************************************
+	QUnit.module("sap.ui.core.XMLComposite: Wrapper properties", {
+		beforeEach: function() {
+			var Wrapper = sap.ui.core.XMLComposite.extend("Wrapper", {
+				constructor: function (sId, mSettings) {
+					sap.ui.core.XMLComposite.apply(this, arguments);
+				},
+				fragment: "composites.wrapper",
+				renderer: "sap.ui.core.XMLCompositeRenderer"
+			});
+			this.oWrapper = new Wrapper("layout");
+			this.oWrapper.placeAt("content");
+			this.oWrapper.setHeight("100%");
+			this.oWrapper.setWidth("200px");
+			this.oWrapper.setDisplayBlock(false);
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oWrapper.destroy();
+		}
+	});
+	//*********************************************************************************************
+
+	QUnit.test("properties", function(assert) {
+		assert.strictEqual(this.oWrapper.getHeight(), "100%", "Height is 100%");
+		assert.strictEqual(this.oWrapper.getWidth(), "200px", "Width is 200px");
+		assert.strictEqual(this.oWrapper.getDisplayBlock(), false, "DisplayBlock is false");
+
+		this.oWrapper.rerender();
+
+		assert.strictEqual(this.oWrapper.getHeight(), "100%", "Height is 100%");
+		assert.strictEqual(this.oWrapper.getWidth(), "200px", "Width is 200px");
+		assert.strictEqual(this.oWrapper.getDisplayBlock(), false, "DisplayBlock is false");
 	});
 });
