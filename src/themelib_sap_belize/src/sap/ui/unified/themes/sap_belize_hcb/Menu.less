@@ -27,3 +27,13 @@
 .sapUiSizeCompact .sapUiMnuDiv {
   	height: 0.125rem;
 }
+
+.sapUiMnuItm:focus {
+	outline: 2px dotted @sapUiContentFocusColor;
+}
+
+html[data-sap-ui-browser*='ie'] {
+	.sapUiMnuItm:focus::before {
+		border: 2px dashed @sapUiContentFocusColor;
+	}
+}
