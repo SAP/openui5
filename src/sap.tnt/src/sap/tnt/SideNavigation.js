@@ -261,7 +261,9 @@ sap.ui.define([
 
 			if (selectedInFlexibleList) {
 				navigationList.setSelectedItem(listItemToSelect, suppressInvalidate);
-				fixedNavigationList.setSelectedItem(null, true);
+				if (fixedNavigationList) {
+					fixedNavigationList.setSelectedItem(null, true);
+				}
 			}
 
 			if (selectedInFixedList) {
