@@ -38,7 +38,7 @@ function(
 	 */
 	OverlayUtil.isInTargetZoneAggregation = function(oElementOverlay) {
 		var oAggregationOverlay = oElementOverlay.getParent();
-		return oAggregationOverlay && oAggregationOverlay.isTargetZone && oAggregationOverlay.isTargetZone();
+		return !!oAggregationOverlay && oAggregationOverlay.isTargetZone();
 	};
 
 	/**
@@ -137,40 +137,6 @@ function(
 				visible : true
 			};
 		}
-	};
-
-	/**
-	 * Get the closest overlay to an overlay (moving up the tree) for a particular element type.
-	 * @param  {string} sType The element type being searched
-	 * @param  {sap.ui.dt.ElementOverlay} oOverlay The source overlay
-	 * @return {sap.ui.dt.ElementOverlay} Returns the overlay for that element type that was found first
-	 * @private
-	 */
-	OverlayUtil.getClosestOverlayForType = function(sType, oOverlay) {
-		while (oOverlay && !ElementUtil.isInstanceOf(oOverlay.getElement(), sType)) {
-			oOverlay = oOverlay.getParentElementOverlay();
-		}
-
-		return oOverlay;
-	};
-
-	/**
-	 * Get the closest overlay (moving up the tree) that is scrollable.
-	 * @param  {sap.ui.dt.ElementOverlay} oOverlay The source overlay
-	 * @return {sap.ui.dt.ElementOverlay} Returns the scrollable overlay that was found first
-	 * @private
-	 */
-	OverlayUtil.getClosestScrollable = function(oOverlay) {
-		if (!oOverlay) {
-			return undefined;
-		}
-
-		oOverlay = oOverlay.getParent();
-		while (oOverlay && oOverlay.isScrollable && !oOverlay.isScrollable()) {
-			oOverlay = oOverlay.getParent();
-		}
-
-		return oOverlay && oOverlay.isScrollable ? oOverlay : null;
 	};
 
 	/**
@@ -375,21 +341,6 @@ function(
 	};
 
 	/**
-	 * Returns the root overlay of an overlay.
-	 * @param  {sap.ui.dt.Overlay} oOverlay The source overlay
-	 * @return {sap.ui.dt.Overlay} Returns the root overlay
-	 */
-	OverlayUtil.getRootOverlay = function(oOverlay) {
-		var oParentOverlay = oOverlay;
-		do {
-			oOverlay = oParentOverlay;
-			oParentOverlay = oOverlay.getParentElementOverlay();
-		} while (oParentOverlay);
-
-		return oOverlay;
-	};
-
-	/**
 	 * Applies a function to every element in an overlay's element tree.
 	 * @param  {sap.ui.dt.ElementOverlay} oElementOverlay The source overlay
 	 * @param  {function} fnCallback The function to be applied
@@ -406,51 +357,8 @@ function(
 	};
 
 	/**
-	 * Applies a function to every 'aggregation-like' children (e.g. associations).
-	 * @param  {sap.ui.dt.ElementOverlay} oElementOverlay  The source overlay
-	 * @param  {string} sAggregationName The name of the aggregation
-	 * @param  {function} fnCallback The function to be applied
-	 * @private
-	 */
-	OverlayUtil.iterateOverAggregationLikeChildren = function(oElementOverlay, sAggregationName, fnCallback) {
-		var oElement = oElementOverlay.getElement();
-		var vChildren;
-		if (oElementOverlay.getAggregationOverlay(sAggregationName).isAssociation()){
-			vChildren = ElementUtil.getAssociationInstances(oElement, sAggregationName);
-		} else {
-			vChildren = ElementUtil.getAggregation(oElement, sAggregationName);
-		}
-		ElementUtil.iterateOverElements(vChildren, fnCallback);
-	};
-
-	/**
-	 * Applies a function to every overlay in the tree (going down the tree).
-	 * @param  {sap.ui.dt.Overlay} oOverlay The source overlay
-	 * @param  {function} fnCallback The function to be applied
-	 * @private
-	 */
-	OverlayUtil.iterateOverlayTree = function(oOverlay, fnCallback) {
-		fnCallback(oOverlay);
-
-		oOverlay.getChildren().forEach(function(oChildOverlay) {
-			this.iterateOverlayTree(oChildOverlay, fnCallback);
-		}, this);
-	};
-
-
-	/**
-	 * Checks if a DOM node is part of an overlay container.
-	 * @param  {any}  oNode The node to be checked
-	 * @return {boolean} Returns true if the node is part of an overlay container
-	 * @private
-	 */
-	OverlayUtil.isInOverlayContainer = function(oNode) {
-		return oNode && jQuery(oNode).closest(".sapUiDtOverlay, #overlay-container").length > 0;
-	};
-
-	/**
 	 * Returns the closest overlay to a given node.
-	 * @param  {any} oNode The source node
+	 * @param  {HTMLElement} oNode The source node
 	 * @return {sap.ui.dt.Overlay} Returns the closest overlay
 	 * @private
 	 */
