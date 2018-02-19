@@ -4,8 +4,8 @@
 
 // Provides helper sap.ui.table.TableDragAndDropExtension.
 sap.ui.define([
-	"./TableExtension", "sap/ui/table/TableUtils"
-], function(TableExtension, TableUtils) {
+	"./TableExtension", "sap/ui/table/TableUtils", "sap/ui/core/dnd/DropPosition"
+], function(TableExtension, TableUtils, DropPosition) {
 	"use strict";
 
 	var SESSION_DATA_KEY_NAMESPACE = "sap.ui.table";
@@ -117,29 +117,39 @@ sap.ui.define([
 				/*
 				 * Rows which must not be droppable:
 				 * - Itself // TODO: Should this be possible, e.g. for copying a row/node next to or into itself?
-				 * - Empty rows (rows without context), except all rows are empty
+				 * - Empty rows (rows without context), if the drop position is "On"
 				 * - Group header rows
 				 * - Sum rows
 				 */
 				var oDraggedRowContext = oSessionData.draggedRowContext;
 				var oDropRowContext = this.getContextByIndex(oDropControl.getIndex());
 				var oDropRowDomRef = oDropControl.getDomRef();
-				var bAllRowsAreEmpty = this._getTotalRowCount() === 0;
+				var sDropPosition = oDragSession.getDropInfo().getDropPosition();
 
-				if ((oDropRowContext == null && !bAllRowsAreEmpty) // Empty row
+				if ((oDropRowContext == null && sDropPosition === DropPosition.On && TableUtils.hasData(this)) // On empty row, table has data
 					|| (oDraggedRowContext != null && oDraggedRowContext === oDropRowContext) // The dragged row itself
 					|| oDropRowDomRef.classList.contains("sapUiTableGroupHeader") // Group header row
 					|| oDropRowDomRef.classList.contains("sapUiAnalyticalTableSum")) { // Sum row
 					oEvent.setMarked("NonDroppable");
 				} else {
-					// Because the vertical scrollbar can appear after expanding rows on "longdragover",
-					// the dimensions of the drop indicator always need to be updated.
-					var bVerticalScrollbarVisible = this._getScrollExtension().isVerticalScrollbarVisible();
-					var mTableCntRect = this.getDomRef("sapUiTableCnt").getBoundingClientRect();
-					oDragSession.setIndicatorConfig({
-						width: mTableCntRect.width - (bVerticalScrollbarVisible ? 16 : 0),
-						left: mTableCntRect.left + (this._bRtlMode && bVerticalScrollbarVisible ? 16 : 0)
-					});
+					// If dragging over an empty row with a drop position other than "On", the drop control should be the first non-empty row. If
+					// all rows are empty, the drop target should be the table to perform a drop in aggregation.
+					if (oDropRowContext == null) {
+						var oLastNonEmptyRow = this.getRows()[TableUtils.getNonEmptyVisibleRowCount(this) - 1];
+						oDragSession.setDropControl(oLastNonEmptyRow || this);
+					}
+
+					// Because the vertical scrollbar can appear after expanding rows on "longdragover", the dimensions of the drop indicator
+					// always need to be updated. The only exception is when all rows are empty. In this case a "drop in aggregation" will be
+					// performed, for which no indicator adjustment is necessary.
+					if (oDragSession.getDropControl() !== this) {
+						var bVerticalScrollbarVisible = this._getScrollExtension().isVerticalScrollbarVisible();
+						var mTableCntRect = this.getDomRef("sapUiTableCnt").getBoundingClientRect();
+						oDragSession.setIndicatorConfig({
+							width: mTableCntRect.width - (bVerticalScrollbarVisible ? 16 : 0),
+							left: mTableCntRect.left + (this._bRtlMode && bVerticalScrollbarVisible ? 16 : 0)
+						});
+					}
 				}
 			} else if (TableUtils.isInstanceOf(oDropControl, "sap/ui/table/Column")) {
 				oEvent.setMarked("NonDroppable");
