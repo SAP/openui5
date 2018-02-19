@@ -21,5 +21,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.7": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "958fc79106a83d1273498a7c3540d12071e6ae8c",
+        "type": "FIX",
+        "text": " sap.m.NavigationList: Tab navigation is now correct",
+        "references": []
+      }
+    ]
   }
 }

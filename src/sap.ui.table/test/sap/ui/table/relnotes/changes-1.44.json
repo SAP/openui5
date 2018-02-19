@@ -810,5 +810,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.27": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "bb9e007c97524a06d5f8f194a0daf74cde88e20d",
+        "type": "FIX",
+        "text": " Control: refactor fnHandleInteraction",
+        "references": []
+      }
+    ]
   }
 }

@@ -396,5 +396,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.27": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "3e1601aaf487a515f881728cc6a5743d79de8b16",
+        "type": "FIX",
+        "text": " sap.m.Popover: correct header, subheader and footer DOM structure",
+        "references": []
+      }
+    ]
   }
 }

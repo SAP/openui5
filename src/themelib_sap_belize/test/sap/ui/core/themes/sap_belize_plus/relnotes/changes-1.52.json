@@ -233,5 +233,22 @@
         "references": []
       }
     ]
+  },
+  "1.52.7": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "a6137757cd60a1194b30183b31913b861eee639f",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Fix tile border",
+        "references": []
+      },
+      {
+        "id": "2227c7803a66def36c5f0bc411f4646fcbc4bc79",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: appointments have correct legend colors now",
+        "references": []
+      }
+    ]
   }
 }

@@ -717,5 +717,34 @@
         "references": []
       }
     ]
+  },
+  "1.52.7": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "d33bcc6c7f2914317c1a320f048f35357157df2e",
+        "type": "FIX",
+        "text": " AppCacheBuster: take \u003cbase\u003e tag into account when resolving URLs",
+        "references": []
+      },
+      {
+        "id": "4c5606338495a5ae185d0f62a057c103c3595531",
+        "type": "FIX",
+        "text": " ThemeCheck: Fix Cross-Origin issues in theme fallback",
+        "references": []
+      },
+      {
+        "id": "2f074cbd00c83764792e2e57506050c81ea04c8f",
+        "type": "FIX",
+        "text": " Update theme URLs with query parameters on RTL change",
+        "references": []
+      },
+      {
+        "id": "c30defced60c6a9be9dea94f8e51da518d695388",
+        "type": "FIX",
+        "text": " core.IconPool: register lazy stub for IconPool methods",
+        "references": []
+      }
+    ]
   }
 }

@@ -120,5 +120,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.7": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "5e8261b616cb1cd09ff7fcefb921fde81ce081dd",
+        "type": "FIX",
+        "text": " sap.ui.layout: MoveSimpleForm and AddSimpleFormGroup ChangeHandler",
+        "references": []
+      }
+    ]
   }
 }
