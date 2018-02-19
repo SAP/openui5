@@ -543,5 +543,11 @@ function(
 		return bIsManagedObject;
 	};
 
+	ElementUtil.getParent = function (oElement) {
+		return this.isInstanceOf(oElement, 'sap.ui.core.Component')
+			? oElement.oContainer
+			: oElement.getParent();
+	};
+
 	return ElementUtil;
 }, /* bExport= */true);
