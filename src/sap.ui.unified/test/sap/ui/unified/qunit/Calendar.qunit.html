@@ -71,6 +71,8 @@
 								new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "5"), type: sap.ui.unified.CalendarDayType.Type04}),
 								new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "6"),
 									endDate: new Date("2011", "0", "10"), type: sap.ui.unified.CalendarDayType.NonWorking}),
+								new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "6"),
+										endDate: new Date("2011", "0", "6"), type: sap.ui.unified.CalendarDayType.Type01}),
 								new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "21"), type:
 									sap.ui.unified.CalendarDayType.NonWorking})
 				],
@@ -301,6 +303,8 @@
 
 				assert.ok(jQuery("#Cal2--Month0-20110106").hasClass("sapUiCalItemWeekEnd"),
 						"20110106 is date of type 'NonWorking' as part of a date range");
+				assert.ok(jQuery("#Cal2--Month0-20110106").hasClass("sapUiCalItemType01") && jQuery("#Cal2--Month0-20110106").hasClass("sapUiCalItemWeekEnd"),
+				"20110106 is date of type 'Type0' and type 'NonWorking'");
 				assert.ok(jQuery("#Cal2--Month0-20110108").hasClass("sapUiCalItemWeekEnd"),
 						"20110108 is date of type 'NonWorking' as part of a date range");
 				assert.ok(jQuery("#Cal2--Month0-20110110").hasClass("sapUiCalItemWeekEnd"),
