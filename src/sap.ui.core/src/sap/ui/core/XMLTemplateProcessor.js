@@ -542,8 +542,10 @@ function(jQuery, DataType, ManagedObject, CustomData, View, ExtensionPoint, Stas
 					// they are skipped as well as their potentially overwritten default content.
 					return SyncPromise.resolve([]);
 				} else {
-					// if oView is an XMLView created from an html node there is no sViewName, hence we use the _oContainingView
-					return SyncPromise.resolve(ExtensionPoint(oView._oContainingView, node.getAttribute("name"), function() {
+					// for Views the containing View's name is required to retrieve the according extension configuration,
+					// whereas for Fragments the actual Fragment's name is required - oView can be either View or Fragment
+					var oContainer = oView instanceof View ? oView._oContainingView : oView;
+					return SyncPromise.resolve(ExtensionPoint(oContainer, node.getAttribute("name"), function() {
 						// create extensionpoint with callback function for defaultContent - will only be executed if there is no customizing configured or if customizing is disabled
 						var pChild = SyncPromise.resolve();
 						var aChildControlPromises = [];
