@@ -2577,6 +2577,18 @@ sap.ui.require([
 				oContextCopy = this.oMetaModel.getMetaContext("/EMPLOYEES"),
 				oNewContext = this.oMetaModel.getMetaContext("/T€AMS");
 
+			// without context
+			oBinding = this.oMetaModel.bindContext(sPath, null);
+
+			assert.ok(oBinding instanceof ContextBinding);
+			assert.strictEqual(oBinding.getModel(), this.oMetaModel);
+			assert.strictEqual(oBinding.getPath(), sPath);
+			assert.strictEqual(oBinding.getContext(), null);
+
+			assert.strictEqual(oBinding.isInitial(), true);
+			assert.strictEqual(oBinding.getBoundContext(), null);
+
+			// with context
 			oBinding = this.oMetaModel.bindContext(sPath, oContextCopy);
 
 			assert.ok(oBinding instanceof ContextBinding);
@@ -2610,6 +2622,12 @@ sap.ui.require([
 			assert.strictEqual(oBoundContext.getModel(), this.oMetaModel);
 			assert.strictEqual(oBoundContext.getPath(),
 				bAbsolutePath ? sPath : oContext.getPath() + "/" + sPath);
+
+			// code under test - same context
+			oBinding.setContext(oContext);
+
+			assert.strictEqual(iChangeCount, 1, "context unchanged");
+			assert.strictEqual(oBinding.getBoundContext(), oBoundContext);
 
 			// code under test
 			oBinding.setContext(oContextCopy);
