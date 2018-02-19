@@ -71,6 +71,8 @@ sap.ui.require([
 			warning : "Illegal precision: -1"},
 		{i : {precision : 0, scale : 3}, o : {scale : 3},
 			warning : "Illegal precision: 0"},
+		{i : {precision : true}, o : undefined,
+			warning : "Illegal precision: true"},
 		{i : {precision : 2, scale : 3}, o : {precision : 2, scale : Infinity},
 			warning : "Illegal scale: must be less than precision (precision=2, scale=3)"},
 		{i : {minimum : "foo"}, o : undefined,
