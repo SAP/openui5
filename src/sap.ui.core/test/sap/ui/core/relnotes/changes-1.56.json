@@ -37,6 +37,48 @@
         "type": "FIX",
         "text": " Types: Improve validation message",
         "references": []
+      },
+      {
+        "id": "607d3d28d71afe3ba32c2e47184f027de06cf73f",
+        "type": "FEATURE",
+        "text": " sap.ui.core: support for \u003cbase\u003e tag",
+        "references": []
+      },
+      {
+        "id": "8266819817e5f732a8607734c8eed9163868c64f",
+        "type": "FIX",
+        "text": " core.IconPool: register lazy stub for IconPool methods",
+        "references": []
+      },
+      {
+        "id": "ca3ed47295a98f61bc9275d6a3538edb5dd48edd",
+        "type": "FIX",
+        "text": " core/XMLTemplateProcessor: pass correct container to ExtensionPoint",
+        "references": []
+      },
+      {
+        "id": "d95671162c8ad20b92c02bfb84d67950f13d0a41",
+        "type": "FIX",
+        "text": " format.DateFormat: Make relative work with date before year 100",
+        "references": []
+      },
+      {
+        "id": "f1a0eaeada5e5f09a09ddc223f2dd3da082e7759",
+        "type": "FIX",
+        "text": " jquery.sap.global: configure ui5loader for debug mode",
+        "references": []
+      },
+      {
+        "id": "ce7eb1e0820a447e1d0dc6a6813eb6d1fe4f2dee",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataModel: support bound action overloads",
+        "references": []
+      },
+      {
+        "id": "6692bfd3d18fefb3715f5e5001f186c161415794",
+        "type": "FIX",
+        "text": " v2.oDataContextBinding: Null check for empty context",
+        "references": []
       }
     ]
   }

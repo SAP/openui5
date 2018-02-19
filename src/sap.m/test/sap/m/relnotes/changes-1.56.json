@@ -61,6 +61,60 @@
         "type": "FIX",
         "text": " sap.m.TabContainer: Scrolling issue in RTL on Safari corrected",
         "references": []
+      },
+      {
+        "id": "0af6bced78e611e7c2285cf265c2e82668cf4520",
+        "type": "FIX",
+        "text": " sap.m.BusyDialog: StyleClass methods are now forwarded to the inner Dialog",
+        "references": []
+      },
+      {
+        "id": "7738af1b94cc40b0dc8922ac9d91b80c068eea81",
+        "type": "FIX",
+        "text": " sap.m.DatePicker- change of displayFormat updates the placeholder",
+        "references": []
+      },
+      {
+        "id": "9b764cfa92bd4980a759bf2530577f90af94fbec",
+        "type": "FIX",
+        "text": " sap.m.MessageBox: improve documentation",
+        "references": []
+      },
+      {
+        "id": "3873e04c75abf33d192d5463a98e8003b81e08e9",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Reset cached sizes on control reset",
+        "references": []
+      },
+      {
+        "id": "d77050250cd60be10c307176b0f949a0556af4df",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Custom appointments sorter",
+        "references": []
+      },
+      {
+        "id": "d5fb02cda239b60c4fb94d6750050fe56b6821af",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: appointments have correct legend colors now",
+        "references": []
+      },
+      {
+        "id": "fbeab16be4eaf0a7c6ba8da3f35fc995e5fc546e",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Value is set correctly on change.",
+        "references": []
+      },
+      {
+        "id": "bb98066ac39dda4abe47113a56643164c1d14e5c",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Next button improved accessibility",
+        "references": []
+      },
+      {
+        "id": "775bc74085a36133b7d6cc678fec077154e77157",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: nonWorkingDays now can have another type when set using specialDates aggregation",
+        "references": []
       }
     ]
   }

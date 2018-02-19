@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " QUnit Designtime Library tests in Firefox",
         "references": []
+      },
+      {
+        "id": "46f645da39e7e180c55822dbd4b2825a0750d76e",
+        "type": "FEATURE",
+        "text": " sap.f.DynamicPage: Added class for content alignment",
+        "references": []
       }
     ]
   }

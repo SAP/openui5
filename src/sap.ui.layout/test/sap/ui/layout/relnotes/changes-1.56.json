@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " QUnit Designtime Library tests in Firefox",
         "references": []
+      },
+      {
+        "id": "dc7d64f01f180ae73fe93175b1f0021234626cc5",
+        "type": "FIX",
+        "text": " sap.ui.layout: MoveSimpleForm and AddSimpleFormGroup ChangeHandler",
+        "references": []
       }
     ]
   }
