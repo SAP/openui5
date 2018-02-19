@@ -16,7 +16,9 @@
 			 */
 			function suite() {
 				var suite = new parent.jsUnitTestSuite(),
-				    contextPath = "/" + window.location.pathname.split("/")[1];
+					contextPath = "/" + window.location.pathname.split("/")[1];
+
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/codeeditor/qunit/CodeEditor.qunit.html");
 
 				return suite;
 			}
