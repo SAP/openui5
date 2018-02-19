@@ -162,7 +162,7 @@ sap.ui.define([
 		}
 
 		// (quasi-)absolute binding
-		if (!that.bRelative || oContext && !oContext.fetchValue) {
+		if (!this.bRelative || !oContext.fetchValue) {
 			return oQueryOptionsPromise;
 		}
 
