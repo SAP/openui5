@@ -265,6 +265,7 @@ sap.ui.require([
 				oTypePrecision.validateValue(sValue);
 			});
 		oType.validateValue("23:59:59");
+		oType.validateValue(null);
 	});
 
 	//*********************************************************************************************
