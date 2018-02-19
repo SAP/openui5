@@ -608,9 +608,7 @@ sap.ui.define([
 				aEntities = that.mPostRequests[sRequestPath];
 				for (i = aEntities.length - 1; i >= 0; i--) {
 					sTransientGroup = aEntities[i]["@$ui5.transient"];
-					if (sTransientGroup) {
-						that.oRequestor.removePost(sTransientGroup, aEntities[i]);
-					}
+					that.oRequestor.removePost(sTransientGroup, aEntities[i]);
 				}
 				delete that.mPostRequests[sRequestPath];
 			}
