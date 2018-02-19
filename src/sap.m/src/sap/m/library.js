@@ -3395,7 +3395,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * @since 1.12
 		 * @name sap.m#BaseFontSize
 		 */
-		oLib.BaseFontSize = jQuery(document.documentElement).css("font-size");
+		oLib.BaseFontSize = jQuery(document.documentElement).css("font-size") || "16px";
 
 		/**
 		 * Hide the soft keyboard.
