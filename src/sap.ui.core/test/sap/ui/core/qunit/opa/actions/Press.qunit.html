@@ -44,11 +44,16 @@
 			"sap/m/StandardTile",
 			"sap/m/SearchField",
 			"sap/m/Page",
+			"sap/m/App",
 			"sap/m/semantic/FullscreenPage",
 			"sap/m/semantic/DetailPage",
 			"sap/m/CheckBox",
 			"sap/m/ComboBox",
 			"sap/m/OverflowToolbar",
+			"sap/m/ToolbarSpacer",
+			"sap/m/OverflowToolbarPriority",
+			"sap/m/OverflowToolbarLayoutData",
+			"sap/m/ButtonType",
 			"sap/ui/test/Opa5",
 			"sap/ui/test/opaQunit",
 			"sap/ui/thirdparty/hasher",
@@ -76,11 +81,16 @@
 				 StandardTile,
 				 SearchField,
 				 Page,
+				 App,
 				 FullscreenPage,
 				 DetailPage,
 				 CheckBox,
 				 ComboBox,
 				 OverflowToolbar,
+				 ToolbarSpacer,
+				 OverflowToolbarPriority,
+				 OverflowToolbarLayoutData,
+				 ButtonType,
 				 Opa5,
 				 opaTest,
 				 hasher,
@@ -677,8 +687,130 @@
                             done();
 						}
 					});
-                });
-                
+				});
+
+				opaTest("Should synchronize with resizing overflow toolbar when resizing the app", function (oOpa) {
+					var done = Opa5.assert.async();
+
+					var toolbarContent1 = [
+						new Label({
+							text : "Priority Toolbar"
+						}),
+						new ToolbarSpacer(),
+						new Button({
+							text : "Always 1",
+							layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.AlwaysOverflow}),
+							width: "125px"
+						}),
+						new Button({
+							text : "Always 2",
+							layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.AlwaysOverflow}),
+							width: "125px"
+						}),
+						new Button({
+							text : "High 1",
+							type : ButtonType.Accept,
+							layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.High}),
+							width: "125px"
+						}),
+						new Button({
+							text : "Low 1",
+							type : ButtonType.Emphasized,
+							layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.Low}),
+							width: "125px"
+						}),
+						new Button({
+							text : "Never 1",
+							type : ButtonType.Reject,
+							layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.NeverOverflow}),
+							width: "125px"
+						}),
+						new Button({
+							text : "Never 2",
+							type : ButtonType.Reject,
+							layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.NeverOverflow}),
+							width: "125px"
+						}),
+						new Button({
+							text : "Low 2",
+							type : ButtonType.Emphasized,
+							layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.Low}),
+							width: "125px"
+						}),
+						new Button({
+							text : "Disappear",
+							layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.Disappear}),
+							width: "125px"
+						}),
+						new Button({
+							text : "High 2",
+							type : ButtonType.Accept,
+							layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.High}),
+							width: "125px",
+							press: function () {
+								Opa5.assert.ok(true, "Fired the press event on button with text High 2");
+							}
+						})
+					];
+
+					var oOverflowToolbar1 = new sap.m.OverflowToolbar("otb1", {
+						width: 'auto',
+						content : toolbarContent1
+					});
+
+					var oPage = new Page("toolbar-page", {
+						title : "Overflow Toolbar - the buttons that do not fit go to an action sheet",
+						enableScrolling : true,
+						content: [
+							oOverflowToolbar1
+						]
+					});
+
+					var oApp = new App();
+					oApp.addPage(oPage).placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+
+					oOpa.extendConfig({autoWait: true});
+
+					// cause overflow re-rendering
+                    oOpa.waitFor({
+                        success: function() {
+							$("#toolbar-page").width("480px");
+							console.debug("Set smaller width to cause overflow");
+                        }
+					});
+
+					// should be clicking the toggle button only after overflow re-rendering is complete
+                    oOpa.waitFor({
+                        controlType: "sap.m.ToggleButton",
+                        errorMessage: "Did not find the popover area toggle button",
+						actions: new Press(),
+						success: function() {
+							console.debug("Clicked the overflow button");
+                        }
+					});
+
+					// should be clicking the toggle button only after overflow re-rendering is complete
+                    oOpa.waitFor({
+						controlType: "sap.m.Button",
+						matchers: new PropertyStrictEquals({name: "text", value: "High 2"}),
+                        errorMessage: "Did not find the High 2 button",
+						actions: new Press(),
+						success: function() {
+							console.debug("Closed the overflow popup");
+                        }
+					});
+
+					// should destry the toolbar only after everything is settled
+					oOpa.waitFor({
+						success: function() {
+							console.debug("Destroy the app");
+							oApp.destroy();
+                            done();
+						}
+					});
+				});
+
 			})();
 
 			QUnit.start();
@@ -689,7 +821,7 @@
 
 <body>
 <div id="qunit"></div>
-<div id="qunit-fixture"></div>
+<div id="qunit-fixture" style="position:static;"></div>
 </body>
 
 </html>

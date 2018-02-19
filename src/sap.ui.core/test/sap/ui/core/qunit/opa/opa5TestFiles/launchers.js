@@ -316,7 +316,7 @@ sap.ui.define([
 			});
 
 			oOpa5.emptyQueue().fail(fnSpy);
-			this.clock.tick(500);
+			this.clock.tick(1200);
 			assert.ok(fnSpy.calledOnce, "Teardown exception should also be handled by the queue's fail callback");
 		});
 	});

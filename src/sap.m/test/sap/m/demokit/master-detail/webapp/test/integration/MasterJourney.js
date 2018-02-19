@@ -29,12 +29,12 @@ sap.ui.define([
 		Then.onTheMasterPage.theListShowsOnlyObjectsWithTheSearchStringInTheirTitle();
 	});
 
-	opaTest("Entering something that cannot be found into search field and pressing search field's refresh should leave the list as it was", function (Given, When, Then) {
+	opaTest("Entering something that cannot be found into search field and pressing search field's refresh should show empty list", function (Given, When, Then) {
 		//Actions
-		When.onTheMasterPage.iTypeSomethingInTheSearchThatCannotBeFoundAndTriggerRefresh();
+		When.onTheMasterPage.iSearchForSomethingWithNoResults();
 
 		// Assertions
-		Then.onTheMasterPage.theListHasEntries();
+		Then.onTheMasterPage.theListHasNoEntries();
 	});
 
 	opaTest("Entering something that cannot be found into search field and pressing 'search' should display the list's 'not found' message", function (Given, When, Then) {

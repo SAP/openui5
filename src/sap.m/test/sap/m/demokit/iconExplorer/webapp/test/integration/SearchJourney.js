@@ -8,9 +8,12 @@ sap.ui.define([
 	QUnit.module("Search");
 
 	opaTest("Search for the First object should deliver results that contain the firstObject in the name", function (Given, When, Then) {
+
+		// Arrangements
+		Given.iStartMyAppOnTheDetailsTab();
+
 		//Actions
-		When.onTheOverviewPage.iPressOnTheTabWithTheKey("details").
-		and.iSearchForTheFirstObject();
+		When.onTheOverviewPage.iSearchForTheFirstObject();
 
 		// Assertions
 		Then.onTheOverviewPage.theTableShowsOnlyObjectsWithTheSearchStringInTheirTitle();
@@ -18,8 +21,7 @@ sap.ui.define([
 
 	opaTest("Search for the First object and confirming with enter should deliver results that contain the name of the first object", function (Given, When, Then) {
 		//Actions
-		When.onTheOverviewPage.iClearTheSearch().
-		and.iSearchForTheFirstObject(true);
+		When.onTheOverviewPage.iSearchForTheFirstObject(true);
 
 		// Assertions
 		Then.onTheOverviewPage.theTableShowsOnlyObjectsWithTheSearchStringInTheirTitle();
@@ -27,19 +29,18 @@ sap.ui.define([
 
 	opaTest("Search for the 'copy' icon by its unicode should result in the 'copy' icon being displayed in the table", function (Given, When, Then) {
 		//Actions
-		When.onTheOverviewPage.iClearTheSearch().
-		and.iSearchForValueWithEnter("xe245");
+		When.onTheOverviewPage.iSearchForValueWithEnter("xe245");
 
 		// Assertions
 		Then.onTheOverviewPage.theTableContainsOnlyTheIcon("copy");
 	});
 
-	opaTest("Entering something that cannot be found into search field and pressing search field's refresh should leave the list as it was", function (Given, When, Then) {
+	opaTest("Entering something that cannot be found into search field and pressing search field's refresh should show empty list", function (Given, When, Then) {
 		//Actions
-		When.onTheOverviewPage.iTypeSomethingInTheSearchThatCannotBeFoundAndTriggerRefresh();
+		When.onTheOverviewPage.iSearchForSomethingWithNoResults();
 
 		// Assertions
-		Then.onTheOverviewPage.theTableHasEntries();
+		Then.onTheOverviewPage.theTableHasNoEntries();
 	});
 
 	opaTest("Clearing the search shows all items again", function (Given, When, Then) {
@@ -47,7 +48,7 @@ sap.ui.define([
 		When.onTheOverviewPage.iClearTheSearch();
 
 		// Assertions
-		Then.onTheOverviewPage.theTableShouldHaveAllEntries().
-			and.iTeardownMyApp();
+		Then.onTheOverviewPage.theTableShouldHaveAllEntries();
+		Then.iTeardownMyApp();
 	});
 });

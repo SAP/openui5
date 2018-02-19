@@ -28,19 +28,19 @@ sap.ui.define([
 		Then.onTheWorklistPage.theTableShowsOnlyObjectsWithTheSearchStringInTheirTitle();
 	});
 
-	opaTest("Entering something that cannot be found into search field and pressing search field's refresh should leave the list as it was", function (Given, When, Then) {
+	opaTest("Entering something that cannot be found into search field and pressing search field's refresh should show empty list", function (Given, When, Then) {
 		//Actions
-		When.onTheWorklistPage.iTypeSomethingInTheSearchThatCannotBeFoundAndTriggerRefresh();
+		When.onTheWorklistPage.iSearchForSomethingWithNoResults();
 
 		// Assertions
-		Then.onTheWorklistPage.theTableHasEntries().
+		Then.onTheWorklistPage.theTableHasNoEntries().
 			and.iTeardownMyAppFrame();
 	});
 
 	opaTest("Should see the busy indicator on app view while worklist view metadata is loaded", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartMyApp({
-			delay: 10000
+			delay: 5000
 		});
 
 		//Actions
