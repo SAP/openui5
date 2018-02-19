@@ -530,15 +530,20 @@ sap.ui.define([
 					throw new Error("Unsupported binding parameter: " + sKey);
 				}
 
-				if (sKey === "$$groupId" || sKey === "$$updateGroupId") {
-					that.checkGroupId(sValue, false,
-						"Unsupported value for binding parameter '" + sKey + "': ");
-				} else if (sKey === "$$operationMode") {
-					if (sValue !== OperationMode.Server) {
-						throw new Error("Unsupported operation mode: " + sValue);
-					}
+				switch (sKey) {
+					case "$$groupId":
+					case "$$updateGroupId":
+						that.checkGroupId(sValue, false,
+							"Unsupported value for binding parameter '" + sKey + "': ");
+						break;
+					case "$$operationMode":
+						if (sValue !== OperationMode.Server) {
+							throw new Error("Unsupported operation mode: " + sValue);
+						}
+						break;
+					default:
+						throw new Error("Unknown binding-specific parameter: " + sKey);
 				}
-
 				mResult[sKey] = sValue;
 			});
 		}

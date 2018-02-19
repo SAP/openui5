@@ -1118,6 +1118,16 @@ sap.ui.require([
 		}, new Error("Unsupported value for binding parameter '$$updateGroupId': ~invalid"));
 	});
 
+	//*********************************************************************************************
+	QUnit.test("buildBindingParameters, unknown $$-parameter", function (assert) {
+		var oModel = createModel();
+
+		assert.throws(function () {
+			oModel.buildBindingParameters({$$someName : "~"}, ["$$someName"]);
+		}, new Error("Unknown binding-specific parameter: $$someName"));
+	});
+
+	//*********************************************************************************************
 	[{
 		mParameters : {
 			"$expand" : {
