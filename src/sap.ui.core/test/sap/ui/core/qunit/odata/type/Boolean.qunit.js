@@ -189,5 +189,8 @@ sap.ui.require([
 
 		oType = new BooleanType({}, {nullable : "foo"});
 		assert.strictEqual(oType.oConstraints, undefined, "illegal nullable -> ignored");
+
+		oType = new BooleanType({}, {});
+		assert.strictEqual(oType.oConstraints, undefined, "empty constraints");
 	});
 });
