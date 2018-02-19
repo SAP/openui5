@@ -43,7 +43,7 @@ sap.ui.require([
 			values : ["+1.1"]},
 
 		{constant : undefined, type : "Edm.Double",
-			values : [3.1415926535]},
+			values : [3.1415926535, Infinity, -Infinity, NaN]},
 		{constant : "$Float", type : "Edm.Double",
 			values : ["INF", "-INF", "NaN"]},
 
