@@ -51,5 +51,27 @@
         "references": []
       }
     ]
+  },
+  "1.48.6": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "3a7965bea2de5675ecc46bf0a163335482d13adc",
+        "type": "FIX",
+        "text": " sap.ui.commons.RichTooltip: Remove randomly failing qunit test.",
+        "references": []
+      }
+    ]
+  },
+  "1.48.9": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "4396e3b7b08e660212aa87ab51999bf83f14d3b8",
+        "type": "FIX",
+        "text": " sap.ui.commons.TextField - paste of text with line endings on IE works.",
+        "references": []
+      }
+    ]
   }
 }

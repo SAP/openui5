@@ -489,5 +489,398 @@
         "references": []
       }
     ]
+  },
+  "1.50.1": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "c80edd46d4d5364d82919deedcb30941f9a47ba6",
+        "type": "FIX",
+        "text": " core.ClientTreeBinding: Fix for relative treebinding",
+        "references": []
+      },
+      {
+        "id": "a9e80ac252021e044d3c8ac02b44c8d21eee13b9",
+        "type": "FIX",
+        "text": " core.ThemeCheck: Null handling of getComputedStyle in Firefox",
+        "references": []
+      },
+      {
+        "id": "0ca2ae2902673b0fd025558df4d7be204f0ce7cb",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.AnnotationParser#getPropertyValues: Improve the assert message",
+        "references": []
+      },
+      {
+        "id": "773834f4ce86a0b062966c3504146fe91c447e72",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.type.DateTime(Offset): allow UTC",
+        "references": []
+      },
+      {
+        "id": "e791a43cc236498b6481f5a07cdc741fd11aa708",
+        "type": "FIX",
+        "text": " ODataListBinding: Improve client mode handling",
+        "references": []
+      },
+      {
+        "id": "7036e108a222e193a6fdce52857a41fedf29a8a3",
+        "type": "FIX",
+        "text": " changes are applied on recreation in initial app startup",
+        "references": []
+      }
+    ]
+  },
+  "1.50.2": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "7f60750743dabd5ac7a073d014d5616e2ff3b12b",
+        "type": "FIX",
+        "text": " V2ODataModel.qunit",
+        "references": []
+      },
+      {
+        "id": "79f3337d0a5ec2e16baa9f6c3ce4c165a38064af",
+        "type": "FIX",
+        "text": " model.type: enable Interval Types to run with OData Types",
+        "references": []
+      },
+      {
+        "id": "d1956f07e531f6502ecd902bb29029f8dd83e8e7",
+        "type": "FIX",
+        "text": " sap.ui.support.TechnicalInfo: Failing opa test on firefox is now fixed.",
+        "references": []
+      },
+      {
+        "id": "d09a7c0f0eac9b9af2eae5ba9f2750f3f3dcd864",
+        "type": "FIX",
+        "text": " v2.ODataModel: function import parameter handling",
+        "references": []
+      },
+      {
+        "id": "5f1cab0ae4bf7ceed12cc7710bd34d47e9313bff",
+        "type": "FIX",
+        "text": " ODataTreeBindingAdapter: Encode slashes in property values when calculation group IDs",
+        "references": []
+      }
+    ]
+  },
+  "1.50.3": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "ad0e7e97e58af45a944b7b3fc273799a2da90f75",
+        "type": "FIX",
+        "text": " AnalyticalBinding: no duplicate unit column in spread sheet export",
+        "references": []
+      },
+      {
+        "id": "072d33fa5d0598b6ab304746b70aba8390cc7d2f",
+        "type": "FIX",
+        "text": " Browser incompability in _Cache.js",
+        "references": []
+      },
+      {
+        "id": "48c71a7b6395ac4ea59e919df348e496c6c7e319",
+        "type": "FIX",
+        "text": " ODataTreeBinding: Delay dataReceived event until bindings got updated",
+        "references": []
+      },
+      {
+        "id": "5b3d442a26ccbf44f39df85dcb036aaac3194b51",
+        "type": "FIX",
+        "text": " core.Popup: autoclose works under both blur and touch/mouse event",
+        "references": []
+      },
+      {
+        "id": "21190068c34e969f4ffb98819591d5341f8c0e19",
+        "type": "FIX",
+        "text": " core.Popup: use the \u0027deactivate\u0027 event on autoclose area in IE",
+        "references": []
+      },
+      {
+        "id": "954035c02476da64cd6c9f8775f3c4837f24b6c7",
+        "type": "FIX",
+        "text": " jQuery.sap.loadResource: Use preloaded resources by fixing URL to name guessing",
+        "references": []
+      },
+      {
+        "id": "cfd1601b1628363c4cb007715a12fa15a19b4649",
+        "type": "FIX",
+        "text": " sap.m.Label: Label is rendered as span when used decorative",
+        "references": []
+      },
+      {
+        "id": "4feded1a87752b9aabbf2e628ccaa75cc49ed660",
+        "type": "FIX",
+        "text": " sap.m.Panel: avoid showing duplicate icon focus outlines",
+        "references": []
+      },
+      {
+        "id": "f29b3fe8b6efab024a598c8a847c3115abebe0b3",
+        "type": "FIX",
+        "text": " sap.ui.core.DateFormat: year is correctly parsed when 0000 is passed",
+        "references": []
+      },
+      {
+        "id": "824686c6a39e141c7f0e1b58b26be680a68875dc",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: getGroupName: avoid cannot read property \u0027formatter\u0027 of undefined",
+        "references": []
+      },
+      {
+        "id": "188f35b986e5ce153b221d4ee1b91a0b58e6ff67",
+        "type": "FIX",
+        "text": " sap.ui.support.TechnicalInfo: Open sap-ui-version.json in new window is now fixed.",
+        "references": []
+      },
+      {
+        "id": "ca4d1ebf5fee1843d20bc18820187f00be1ebfbe",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: isReloadNeeded not parameterized correctly",
+        "references": []
+      }
+    ]
+  },
+  "1.50.4": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "601f0dd5b7c677758d2682c222ffdfbe394382e8",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.AnnotationParser.enrichFromPropertyValueAttributes: do not call on string values",
+        "references": []
+      },
+      {
+        "id": "9f3d1dac2d47b46f75a77c30d11946c982bf7d33",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Clientside sorting and filtering of Edm types",
+        "references": []
+      },
+      {
+        "id": "0ccaa6574a1ca25b7466d74aa50fffce57c4b4f8",
+        "type": "FIX",
+        "text": " v4.ODataModel: auto-$expand/$select with sap.ui.table.Table and visibleRowCountMode\u003d\"Auto\" sends single requests for table cells",
+        "references": []
+      },
+      {
+        "id": "7489c9ac4c0679765d1de1424f4ed400577d8016",
+        "type": "FIX",
+        "text": " core.Popup: autoclose should only work with touch/mouse event when touch is supported",
+        "references": []
+      },
+      {
+        "id": "205cb443a3f4c7b235f2d9cc7885be3ef2bc45c8",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Better handling of incomplete list data",
+        "references": []
+      }
+    ]
+  },
+  "1.50.5": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "3335356d620e0f49bc15eff1275db2dfeac936ba",
+        "type": "FIX",
+        "text": " sap.core.Scrollbar - fix for vertical scrollbar in RTL mode in Safari om Mac OS.",
+        "references": []
+      },
+      {
+        "id": "8a2a5b58b6fa2fad3ee223bd28c3a5b4959b7286",
+        "type": "FIX",
+        "text": " sap.m.Panel: fix focus outline in IE",
+        "references": []
+      },
+      {
+        "id": "ce78966621c27b03af7207e7c3b3c2b253cf39e5",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataPropertyBinding: setValue(null)",
+        "references": []
+      }
+    ]
+  },
+  "1.50.6": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "a67718180236f78e090d2aa8b4aef41cd54994db",
+        "type": "FIX",
+        "text": " AppCacheBuster: disable when no browser support for defineProperty",
+        "references": []
+      },
+      {
+        "id": "506b94b82af659ccd9949b19763c74d516de8904",
+        "type": "FIX",
+        "text": " Configuration: Consider sap-locale over sap-language",
+        "references": []
+      },
+      {
+        "id": "bf89d3657ab5cf88c2fa63c9e582d2c00bdf6113",
+        "type": "FIX",
+        "text": " FilterProcessor: Normalization issues on IE and Edge",
+        "references": []
+      },
+      {
+        "id": "20093b9042af4edc90b9498a714180eaa08087bd",
+        "type": "FIX",
+        "text": " Message handling createEntry",
+        "references": []
+      },
+      {
+        "id": "3f003b6e1305ce55a3cd0e3ddadab169113c5e6e",
+        "type": "FIX",
+        "text": " NumberFormat: currency short format under RTL locales",
+        "references": []
+      },
+      {
+        "id": "e500b6badd8d9e8208a623420b7a7c467f78238b",
+        "type": "FIX",
+        "text": " core.LocaleData: add default \"narrow\" and \"short\" relative patterns",
+        "references": []
+      },
+      {
+        "id": "97d0caa6e7047bedb7bd652f5e11630612d24e36",
+        "type": "FIX",
+        "text": " core.LocaleData: provide currency spacing for unknown locale",
+        "references": []
+      },
+      {
+        "id": "5bf36b7eb44a42840f7e176f05510044aed9f676",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Rendering in Fiori app is now correct",
+        "references": []
+      }
+    ]
+  },
+  "1.50.7": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "6cd59e7302c49439dbe2f20d7b2971aad27ab71c",
+        "type": "FIX",
+        "text": " mvc/XMLView: apply settings correctly for async views",
+        "references": []
+      },
+      {
+        "id": "5f10127ffe9ab514c7a83ba370e218ea7ad6492b",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: filter for edm types with numbers",
+        "references": []
+      }
+    ]
+  },
+  "1.50.8": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "2d7f189e0183bf9e3caf5fb7b8a6741d4a43edb8",
+        "type": "FIX",
+        "text": " Component/Manifest: Remove css resources on destroy",
+        "references": []
+      },
+      {
+        "id": "5cec9b3d29a8f56b642387562bfc84a6e6d15a98",
+        "type": "FIX",
+        "text": " Fallback for libraries without custom theme",
+        "references": []
+      },
+      {
+        "id": "b7109c712b91a9fbf2d13d8b018c547028446e21",
+        "type": "FIX",
+        "text": " Filter/Sorter: Get comparator methods right",
+        "references": []
+      },
+      {
+        "id": "271110e1ba56c95c99a741a40fa1a8f113ac3bbc",
+        "type": "FIX",
+        "text": " Icon Font: No right-to-left mirroring of text-align icons",
+        "references": []
+      },
+      {
+        "id": "8c1a0c34abf73adf16cb00ae72d4c94ff6f40618",
+        "type": "FIX",
+        "text": " Opa: fix action focus when IE11 browser is not focused",
+        "references": []
+      },
+      {
+        "id": "7755ceeca100ae6b06e3e7cce3963178e54a2759",
+        "type": "FIX",
+        "text": " core/XMLTemplateProcessor: pass correct container to ExtensionPoint",
+        "references": []
+      },
+      {
+        "id": "a74902cb170edd8e86691185ce20530501cbe36a",
+        "type": "FIX",
+        "text": " sap.m.Label: Label is now read by JAWS when focus sap.m.Select",
+        "references": []
+      },
+      {
+        "id": "c0367d3273cc21b3a1ddca4c12b612e36eae8183",
+        "type": "FIX",
+        "text": " v2.ODataModel delete Entry messages",
+        "references": []
+      }
+    ]
+  },
+  "1.50.9": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "7763929205e0aaa068b50057f589fe938fdd61de",
+        "type": "FIX",
+        "text": " ClientTreeBinding: Incorrect filtering when using \"arrayNames\" constrain",
+        "references": []
+      },
+      {
+        "id": "a5f1895a371f4009136fdcfa1f900842f0f0ce13",
+        "type": "FIX",
+        "text": " ComponentContainer: component must be loaded only once",
+        "references": []
+      },
+      {
+        "id": "f39587ac145889d8cc2bf912cc1795d1dd21729d",
+        "type": "FIX",
+        "text": " Control: BusyIndicator animation default",
+        "references": []
+      },
+      {
+        "id": "8edacc9136469f2d261839161aebb511d8af4392",
+        "type": "FIX",
+        "text": " Control: refactor fnHandleInteraction",
+        "references": []
+      },
+      {
+        "id": "3b87170ad06795d05ac6f429846a6a7edf0df84b",
+        "type": "FIX",
+        "text": " Core#applyTheme: avoid flash of unstyled content (FOUC)",
+        "references": []
+      },
+      {
+        "id": "d1797035780e9d3604e8c79d6bcd23958f11a733",
+        "type": "FIX",
+        "text": " ODataListBinding: Change detection in combination with filtering",
+        "references": []
+      },
+      {
+        "id": "b39522da792d829037cb671775f4ff7261e4a50b",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Tab navigation is now correct",
+        "references": []
+      },
+      {
+        "id": "f429637b081fac86819dd214d4881a259a793fef",
+        "type": "FIX",
+        "text": " sap.ui.model.FilterProcessor: null check parameters",
+        "references": []
+      },
+      {
+        "id": "0b05e471fe82a090c6e2cf06a7a22e4200be9d58",
+        "type": "FIX",
+        "text": " v2.ODataModel: createCustomParams",
+        "references": []
+      }
+    ]
   }
 }

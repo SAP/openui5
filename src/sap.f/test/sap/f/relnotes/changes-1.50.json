@@ -33,5 +33,22 @@
         "references": []
       }
     ]
+  },
+  "1.50.1": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "de7f7cfd74bf3495ffbd24aba007fbc94bb3de1e",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: corrected width of the footer with custom sap.m.Bar",
+        "references": []
+      },
+      {
+        "id": "0627575f9208abcf1dd7c8edca51869d8b922986",
+        "type": "FIX",
+        "text": " sap.f.dynamicPage: fixed ScrollContainer in Designtime",
+        "references": []
+      }
+    ]
   }
 }

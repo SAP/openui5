@@ -39,5 +39,16 @@
         "references": []
       }
     ]
+  },
+  "1.54.1": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "93fcd7e925871d312a24cfb953bd7557b6bf4099",
+        "type": "FIX",
+        "text": " sap.m.Dialog: correct padding of the subheader when Toolbar is used",
+        "references": []
+      }
+    ]
   }
 }

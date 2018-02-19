@@ -597,5 +597,569 @@
         "references": []
       }
     ]
+  },
+  "1.48.1": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "1da0cbf2e52515c0c074b9f97b5da05cab50b2b3",
+        "type": "FEATURE",
+        "text": " Filter: Support for Any and All",
+        "references": []
+      },
+      {
+        "id": "5cc4c942eea1f7fcc196de68e2185780c1b455e8",
+        "type": "FEATURE",
+        "text": " sap.ui.debug.TechnicalInfo - New implementation for the Technical Info Dialog",
+        "references": []
+      },
+      {
+        "id": "d489180807a20b7581dc670f3bfe6c8bf8e9c3f8",
+        "type": "FEATURE",
+        "text": " sap.ui.debug.TechnicalInfo - Select Debug Packages Redesign",
+        "references": []
+      },
+      {
+        "id": "42e05748d3219c736ee72febfcc34a67279709c5",
+        "type": "FIX",
+        "text": " Messaging: normalization of message targets",
+        "references": []
+      },
+      {
+        "id": "3e1543ab6dbd303f49d9f767215fa826f9cf9255",
+        "type": "FIX",
+        "text": " core.DateFormat: make format capable of parsing AM/PM variants",
+        "references": []
+      },
+      {
+        "id": "3460b7982d02547b2cc51b079a439f15b8d56958",
+        "type": "FIX",
+        "text": " core.Icon: avoid the same aria label read twice",
+        "references": []
+      },
+      {
+        "id": "e6fd842b6ddf76fc09525ad8e684d711c3ea1ea4",
+        "type": "FIX",
+        "text": " core.routing: execute view processing within 0 timeout for IE/Edge",
+        "references": []
+      },
+      {
+        "id": "35407c84b65ab6e2d5f8c014ba963884a239a9ea",
+        "type": "FIX",
+        "text": " handlebars: ensure proper context stacking in compat mode",
+        "references": []
+      }
+    ]
+  },
+  "1.48.2": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "493f1a86783234a773d549be0cdb6bc833605ab6",
+        "type": "FEATURE",
+        "text": " sap.m.RatingIndicator: Density mode implementation",
+        "references": []
+      },
+      {
+        "id": "77c1c90811410a8e61abcf8a2266c74623906df7",
+        "type": "FEATURE",
+        "text": " sap.ui.support: OPA test example added",
+        "references": []
+      },
+      {
+        "id": "9ae21d0ccf19ee64ba57a82939a9cc512a652e40",
+        "type": "FIX",
+        "text": " ExtensionPoint: allow specifying the ID of a View replacement",
+        "references": []
+      },
+      {
+        "id": "6c0e53e79449a7219c0956ad1c92cd88c884e0f9",
+        "type": "FIX",
+        "text": " LocalBusyIndicator: Control still blocked when busy set to \"false\"",
+        "references": []
+      },
+      {
+        "id": "8122a4a3591036927cae0f44b29a7755142cd8e7",
+        "type": "FIX",
+        "text": " ScrollEnablement: inform growing when scrollTo method is called.",
+        "references": []
+      },
+      {
+        "id": "f9951b351bc287263bad3195cc3f0edb43a6ad36",
+        "type": "FIX",
+        "text": " core.Icon: make the focus outline stay within the DOM area",
+        "references": []
+      },
+      {
+        "id": "4b79afcd7111c44c46ce6ea5bc9525a768736856",
+        "type": "FIX",
+        "text": " jquery.sap.trace: FESR - new field for app_id in optional header",
+        "references": []
+      },
+      {
+        "id": "e37d4c8855d8b292a11c9c2e598d3a0a51f0b159",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Touch events inside the control are now propagated correctly",
+        "references": []
+      },
+      {
+        "id": "f1648150a9d12959d07a8fd22d024288fc018e5b",
+        "type": "FIX",
+        "text": " ComponentContainer: Model propagation",
+        "references": []
+      }
+    ]
+  },
+  "1.48.3": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "28653edbea404189bfa1f37299482e08b429bd99",
+        "type": "FIX",
+        "text": " AppCacheBuster: support for async Component preload",
+        "references": []
+      },
+      {
+        "id": "e25878472c94b009974adbf26977105858e2e834",
+        "type": "FIX",
+        "text": " core.Icon: mark the tap/click event when icon has a press handler",
+        "references": []
+      },
+      {
+        "id": "3fafc9f163bd70d244d1f49bfbbc6bbd4c3bdf32",
+        "type": "FIX",
+        "text": " core.IconPool: Use local SAP-icons font as fallback only",
+        "references": []
+      },
+      {
+        "id": "62fef2e43cbd73f70366c3246f85cff28f97120a",
+        "type": "FIX",
+        "text": " jQuery.sap.includeStyleSheet: ignore id\u003dnull parameter",
+        "references": []
+      },
+      {
+        "id": "eaa4a3d45ba06b883480004bfc97644153d9934c",
+        "type": "FIX",
+        "text": " jquery.sap.trace.js: remove TerminalID from SAP Passport",
+        "references": []
+      },
+      {
+        "id": "e7440fc518b4341a836ffb6ad307979c4ebe19d3",
+        "type": "FIX",
+        "text": " odata.v4.SalesOrders sample: Fix errors on (relative) create",
+        "references": []
+      },
+      {
+        "id": "62a2e7ae7ade67738b02f5e644c1b2e840c63af9",
+        "type": "FIX",
+        "text": " odata4analytics: allow $orderby for a property which is not included in $select",
+        "references": []
+      },
+      {
+        "id": "3471ecbbfa7a0726ef18ff47c62a6147871c7346",
+        "type": "FIX",
+        "text": " odata4analytics: allow $orderby for a property which is not included in $select",
+        "references": []
+      },
+      {
+        "id": "c38c017b6c3e76cac6c650fb179210900096d272",
+        "type": "FIX",
+        "text": " sap.ui.core.demokit.sample.odata.v4.SalesOrdersTemplate: avoid more button in currency value help",
+        "references": []
+      },
+      {
+        "id": "77bad10117c649f62bc43d128f81cc1b403a4025",
+        "type": "FIX",
+        "text": " sap.ui.core.support.TechnicalInfo: Generating default bootstrap url problem fixed.",
+        "references": []
+      },
+      {
+        "id": "d01670b8efe6c0e234cbbbeb75ce1119170dc214",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._Helper: Handle empty PATCH response (204: No Content)",
+        "references": []
+      },
+      {
+        "id": "a9b1b2ea365b0da52a5b39b80f77a595279506c4",
+        "type": "FIX",
+        "text": " test.sap.ui.core.demokit.sample.ViewTemplate.scenario.Main.view.xml: Provided labels for Entity Set and Entity selection",
+        "references": []
+      }
+    ]
+  },
+  "1.48.5": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "c5fac81998a0252780a7eb084fc1a3fe93b5d146",
+        "type": "FIX",
+        "text": " core.ComponentContainer: Propagate all models/listener",
+        "references": []
+      },
+      {
+        "id": "048ee5f270a25952dff94e0215c4ec2f90de05e1",
+        "type": "FIX",
+        "text": " jquery: prevent auto-detection of content type",
+        "references": []
+      },
+      {
+        "id": "3330439fb426d7a45d1b1ef02b90a021b748a862",
+        "type": "FIX",
+        "text": " sap.ui.core.support.Support: Diagnostics tool loading in IE fixed",
+        "references": []
+      },
+      {
+        "id": "d94dfe26b6ca5f13295aa2e00d10d1286ea4dbd3",
+        "type": "FIX",
+        "text": " sap.ui.core.util.File.save JSDoc: Update browser limitations (Safari)",
+        "references": []
+      },
+      {
+        "id": "ed08094c7d54d6840362c08af6b7d2b86dbefc7c",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataMetaModel#getODataEntityContainer: support simple case w/o IsDefaultEntityContainer flag",
+        "references": []
+      }
+    ]
+  },
+  "1.48.6": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "cff3021e459f26e41d99ebef35adb5868b93b49f",
+        "type": "FEATURE",
+        "text": "[TEST] Opa: add test lib config support",
+        "references": []
+      },
+      {
+        "id": "69929d8e1db831fed08853a88618a5a707203a18",
+        "type": "FIX",
+        "text": " ODataListBinding: Improve client mode handling",
+        "references": []
+      },
+      {
+        "id": "e1d64e5d66df5ad7605bde3d01c6c59db686a4a1",
+        "type": "FIX",
+        "text": " V2ODataModel.qunit",
+        "references": []
+      },
+      {
+        "id": "3b4c09045bb81cefb2c9319f16c8b055a9c601be",
+        "type": "FIX",
+        "text": " changes are applied on recreation in initial app startup",
+        "references": []
+      },
+      {
+        "id": "79ebbc4c60c6dd633c4ffc756db02d169d1748cf",
+        "type": "FIX",
+        "text": " core.ClientTreeBinding: Fix for relative treebinding",
+        "references": []
+      },
+      {
+        "id": "586acf428239e88d5ddb9e8862573e3e2dbe959e",
+        "type": "FIX",
+        "text": " core.Icon: simulate focus outline with negative offset for IE and Edge",
+        "references": []
+      },
+      {
+        "id": "8ddb28f6c647b3afa1631e850df06b4012b82599",
+        "type": "FIX",
+        "text": " core.ThemeCheck: Null handling of getComputedStyle in Firefox",
+        "references": []
+      }
+    ]
+  },
+  "1.48.7": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "a7ee6ebcf2b0d3a9c7b81db2ad72936c64048882",
+        "type": "FIX",
+        "text": " core.Popup: autoclose works under both blur and touch/mouse event",
+        "references": []
+      }
+    ]
+  },
+  "1.48.8": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "2ee65071324038e53e8012c2e4125aaaf145a7d1",
+        "type": "FIX",
+        "text": " jQuery.sap.loadResource: Use preloaded resources by fixing URL to name guessing",
+        "references": []
+      }
+    ]
+  },
+  "1.48.9": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "e3f678777f2ffa16452da762e7d8f6620be15a53",
+        "type": "FIX",
+        "text": " Browser incompability in _Cache.js",
+        "references": []
+      },
+      {
+        "id": "32b7456624f9877633afa25804fdbff742852c78",
+        "type": "FIX",
+        "text": " core.Popup: use the \u0027deactivate\u0027 event on autoclose area in IE",
+        "references": []
+      },
+      {
+        "id": "d67603270b98359df6786cf44de62e12df886a56",
+        "type": "FIX",
+        "text": " sap.m.Panel: avoid showing duplicate icon focus outlines",
+        "references": []
+      },
+      {
+        "id": "de38ceb4c2e3f1c434f18e64ad224deef7c22dc9",
+        "type": "FIX",
+        "text": " sap.ui.support.TechnicalInfo: Open sap-ui-version.json in new window is now fixed.",
+        "references": []
+      },
+      {
+        "id": "827d7e9e90ae775773209c41dcb3ac9ed52671cf",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: isReloadNeeded not parameterized correctly",
+        "references": []
+      }
+    ]
+  },
+  "1.48.10": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "9a7d2e7f6295f487bd88ec5e8863c514b2d1ea9e",
+        "type": "FEATURE",
+        "text": " troubleshooting tutorial demo app",
+        "references": []
+      },
+      {
+        "id": "75273342b13cabf5084c46e74e3635ea4d743688",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.AnnotationParser.enrichFromPropertyValueAttributes: do not call on string values",
+        "references": []
+      },
+      {
+        "id": "741864a93e2ee0403df15cbb27a6c79554f3b70a",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Clientside sorting and filtering of Edm types",
+        "references": []
+      },
+      {
+        "id": "2ec1102b747690a6cf5b3264731bd2177010c187",
+        "type": "FIX",
+        "text": " v4.ODataModel: auto-$expand/$select with sap.ui.table.Table and visibleRowCountMode\u003d\"Auto\" sends single requests for table cells",
+        "references": []
+      }
+    ]
+  },
+  "1.48.11": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "0abd81cc5127b6352ae03e08f19d987556547b12",
+        "type": "FIX",
+        "text": " core.Popup: autoclose should only work with touch/mouse event when touch is supported",
+        "references": []
+      },
+      {
+        "id": "8ddf21897efb1386192df1c90f095aecf24e14b4",
+        "type": "FIX",
+        "text": " sap.core.Scrollbar - vertical scrollbar in Safari in RTL mode",
+        "references": []
+      },
+      {
+        "id": "0ebe2ab0fc155ba748691f8946e66e6a16e10672",
+        "type": "FIX",
+        "text": " sap.m.Panel: fix focus outline in IE",
+        "references": []
+      },
+      {
+        "id": "5bc6d2af33789da5f16740a385dbc8bf751be798",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataPropertyBinding: setValue(null)",
+        "references": []
+      }
+    ]
+  },
+  "1.48.12": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "6813b5a1f59226dfe459c6986d779e147ee31da3",
+        "type": "FIX",
+        "text": " FilterProcessor: Normalization issues on IE and Edge",
+        "references": []
+      }
+    ]
+  },
+  "1.48.13": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "7666e6828e606ba2aecd7f350576c31a42e342cb",
+        "type": "FIX",
+        "text": " AppCacheBuster: disable when no browser support for defineProperty",
+        "references": []
+      },
+      {
+        "id": "849f2532f4767c68a437397782ecb8af21bd9f31",
+        "type": "FIX",
+        "text": " Configuration: Consider sap-locale over sap-language",
+        "references": []
+      },
+      {
+        "id": "1bf0e08bade280636ce52936dd1dbb6d34837813",
+        "type": "FIX",
+        "text": " core.LocaleData: provide currency spacing for unknown locale",
+        "references": []
+      },
+      {
+        "id": "bbf190cc0c2df84387909d4436511721bb157e53",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Rendering in Fiori app is now correct",
+        "references": []
+      },
+      {
+        "id": "5e9253aee855a469d3952835a04bc1065ff4689a",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Check for expanded data in checkUpdate",
+        "references": []
+      }
+    ]
+  },
+  "1.48.14": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "f5e26aa3abcb6f7ee23294ebbc0002cbbff74ece",
+        "type": "FIX",
+        "text": " Message handling createEntry",
+        "references": []
+      },
+      {
+        "id": "2ed851203074677d883710189c6f917129b9f9fd",
+        "type": "FIX",
+        "text": " Opa: fix action focus when IE11 browser is not focused",
+        "references": []
+      },
+      {
+        "id": "8393a5808c4f75cba9eab89ad218e9574720ea14",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: filter for edm types with numbers",
+        "references": []
+      }
+    ]
+  },
+  "1.48.15": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "2069c2eba3e9a7fe470ec49bb03aa78b71688d6e",
+        "type": "FIX",
+        "text": " mvc/XMLView: apply settings correctly for async views",
+        "references": []
+      }
+    ]
+  },
+  "1.48.16": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "33556b4f67dd9b9da78b903e75e0cea32ce4a2b2",
+        "type": "FIX",
+        "text": " Component/Manifest: Remove css resources on destroy",
+        "references": []
+      },
+      {
+        "id": "3b45510b0dcc806da6d5b4ba038ebd66c8df8c81",
+        "type": "FIX",
+        "text": " Fallback for libraries without custom theme",
+        "references": []
+      },
+      {
+        "id": "5e459a245ab8df8d47fbc5db051cf8ad9deb982d",
+        "type": "FIX",
+        "text": " Filter/Sorter: Get comparator methods right",
+        "references": []
+      },
+      {
+        "id": "c625a16d6883a9d1ee0e9a9f07effd3d1ac31791",
+        "type": "FIX",
+        "text": " Icon Font: No right-to-left mirroring of text-align icons",
+        "references": []
+      },
+      {
+        "id": "d754f655ff03a1e96219928ab6c58efa2c69df90",
+        "type": "FIX",
+        "text": " core/XMLTemplateProcessor: pass correct container to ExtensionPoint",
+        "references": []
+      },
+      {
+        "id": "c635754e97cbc43b06d174bad5b177a31550aded",
+        "type": "FIX",
+        "text": " v2.ODataModel delete Entry messages",
+        "references": []
+      }
+    ]
+  },
+  "1.48.17": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "5cde739e8ab8155553d2e157e8f53906fd1125bf",
+        "type": "FIX",
+        "text": " ClientTreeBinding: Incorrect filtering when using \"arrayNames\" constrain",
+        "references": []
+      }
+    ]
+  },
+  "1.48.18": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "b44bf8602e9f22eb139e0a66399f38ec67417cbf",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Tab navigation is now correct",
+        "references": []
+      }
+    ]
+  },
+  "1.48.19": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "064538124f7c59f151e5d4ab32bdfcd4d0ccf6b7",
+        "type": "FIX",
+        "text": " Control: BusyIndicator animation default",
+        "references": []
+      },
+      {
+        "id": "f0e209f44375e1c6fc3bc93456fb3cbee2aeb455",
+        "type": "FIX",
+        "text": " Control: refactor fnHandleInteraction",
+        "references": []
+      },
+      {
+        "id": "3ead433a8813d70ca3f58ed34ed14b95612e4221",
+        "type": "FIX",
+        "text": " Sorter: Make null sorted last in ascending order again",
+        "references": []
+      },
+      {
+        "id": "f852e5ad50a3e907dc0574d68157b16ddf880056",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: avoid duplicate \u0027tap\u0027 event (continued)",
+        "references": []
+      },
+      {
+        "id": "574f47ff0de4b1801c12cf4278bf2e93ba39d02f",
+        "type": "FIX",
+        "text": " v2.ODataModel: createCustomParams",
+        "references": []
+      }
+    ]
   }
 }

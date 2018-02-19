@@ -1227,5 +1227,52 @@
         "references": []
       }
     ]
+  },
+  "1.54.1": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "c7e11b718c7e385daa17d5553d32e1b0203ab1e9",
+        "type": "FIX",
+        "text": " QUnit Designtime Library tests in Firefox",
+        "references": []
+      },
+      {
+        "id": "93fcd7e925871d312a24cfb953bd7557b6bf4099",
+        "type": "FIX",
+        "text": " sap.m.Dialog: correct padding of the subheader when Toolbar is used",
+        "references": []
+      },
+      {
+        "id": "8603aa06965cc706886a52c8cb0a3225fa8535d2",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: Invisible text for the ValueState updated correctly on setState",
+        "references": []
+      },
+      {
+        "id": "3203955670bd8a7b1ea444b71e6ab6ce24efe14a",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: appointments have correct legend colors now",
+        "references": []
+      },
+      {
+        "id": "e5a79b99a02bb604a7f5521a5cde1f6925cc612c",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: native browser focus outline removed",
+        "references": []
+      },
+      {
+        "id": "287718d762ae8183de4313efa31039fa6e0f8180",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Scrolling issue in RTL on Safari corrected",
+        "references": []
+      },
+      {
+        "id": "5b8e3fdfb82654ca874b12de5d13a93dd05b8a58",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Value is set correctly on change.",
+        "references": []
+      }
+    ]
   }
 }

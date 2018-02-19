@@ -15,5 +15,49 @@
         "references": []
       }
     ]
+  },
+  "1.48.2": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "d9774c6c169d63906dab5a0ae5bd640ad45f823c",
+        "type": "FIX",
+        "text": " Selector not set for FlexCommand \u0026 destroyed element change save problem",
+        "references": []
+      }
+    ]
+  },
+  "1.48.4": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "7dd05cf57020fe114c876cc962c10eff0851812c",
+        "type": "FIX",
+        "text": " sap.ui.fl changeHandler needs to store dependencies",
+        "references": []
+      }
+    ]
+  },
+  "1.48.6": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "3b4c09045bb81cefb2c9319f16c8b055a9c601be",
+        "type": "FIX",
+        "text": " changes are applied on recreation in initial app startup",
+        "references": []
+      }
+    ]
+  },
+  "1.48.11": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "94df32f91e1eacf9887954ad8887a5bde7d3ed89",
+        "type": "FIX",
+        "text": " sap.ui.fl Correctly apply changes on xml views",
+        "references": []
+      }
+    ]
   }
 }

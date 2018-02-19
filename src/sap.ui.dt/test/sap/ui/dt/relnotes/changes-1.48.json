@@ -105,5 +105,78 @@
         "references": []
       }
     ]
+  },
+  "1.48.1": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "3377fd5d932ce772a0bc2e6c220bab948717abb4",
+        "type": "FIX",
+        "text": " sap.ui.dt: Delete actions in aggregations",
+        "references": []
+      },
+      {
+        "id": "b4a6c5b050e56c812ed533ceb3c5e346946c4d4b",
+        "type": "FIX",
+        "text": " sap.ui.dt: checks for empty aggregations in DT metadata",
+        "references": []
+      },
+      {
+        "id": "6d3a125905540bcea3ade2b98637972d03442d56",
+        "type": "FIX",
+        "text": ": DT - only add scrollbar if overflow scroll or auto",
+        "references": []
+      }
+    ]
+  },
+  "1.48.2": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "607cf4f00cc985b5edd58b2259a9287639451f30",
+        "type": "FIX",
+        "text": " Prevent calling unobserve() more than once and eslint fixes",
+        "references": []
+      },
+      {
+        "id": "3cec496f2e80fa888125dc7eec2b1234b8542e76",
+        "type": "FIX",
+        "text": " simpleform getIndex",
+        "references": []
+      }
+    ]
+  },
+  "1.48.3": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "4b80ca567f0ade902e12b5e9d959c202d7626b4a",
+        "type": "FIX",
+        "text": " call aggregation overlay registration for plugins",
+        "references": []
+      }
+    ]
+  },
+  "1.48.4": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "ef73c6ad7c9f2dbd823a3c812eb5838ee8758c16",
+        "type": "FIX",
+        "text": " Revise ElementUtil.isValidForAggregation",
+        "references": []
+      }
+    ]
+  },
+  "1.48.6": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "c833ae3db0e201dbfc9eecd15af8958ac6ec7792",
+        "type": "FIX",
+        "text": " sap.ui.rta: Paste without cut doesn\u0027t cause an error anymore",
+        "references": []
+      }
+    ]
   }
 }

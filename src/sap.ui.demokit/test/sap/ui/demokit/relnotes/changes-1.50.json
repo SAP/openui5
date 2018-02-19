@@ -15,5 +15,16 @@
         "references": []
       }
     ]
+  },
+  "1.50.2": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "bc64641121d3dc21af32490688dea3e3bb5746cd",
+        "type": "FIX",
+        "text": " developerMode for RTA in exploredApp",
+        "references": []
+      }
+    ]
   }
 }

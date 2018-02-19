@@ -75,5 +75,38 @@
         "references": []
       }
     ]
+  },
+  "1.52.1": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "dcbb25d6ea2517f9f5c592d2cad9b7e5814c4abe",
+        "type": "FIX",
+        "text": " sap.ui.fl: checkTargetAndApplyChange small fix on applied changes",
+        "references": []
+      }
+    ]
+  },
+  "1.52.2": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "4daa771f5108c563b5439dea4cc875ed59f9045d",
+        "type": "FIX",
+        "text": " Opening file in LREP browser lasts long",
+        "references": []
+      }
+    ]
+  },
+  "1.52.5": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "807e0f5c570cc60554ee27d9a5b2cfba8c605bf4",
+        "type": "FIX",
+        "text": " sap.ui.fl - controlDependencies check bugfix",
+        "references": []
+      }
+    ]
   }
 }

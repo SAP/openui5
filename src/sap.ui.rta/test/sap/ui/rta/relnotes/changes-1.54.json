@@ -249,5 +249,34 @@
         "references": []
       }
     ]
+  },
+  "1.54.1": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "4f872471bec2c90923497f45374f54a184d9f21a",
+        "type": "FIX",
+        "text": " sap.ui.rta: Adjust overlay container in PopupManager._applyPopupPatch to new dt implementation",
+        "references": []
+      },
+      {
+        "id": "59cd232b3f318561cb1d381e32fbcc4e5825878f",
+        "type": "FIX",
+        "text": " sap.ui.rta: Support the layer switch for app variants from",
+        "references": []
+      },
+      {
+        "id": "38b13c4b083560ea54d9f6841f700efcd747cb8c",
+        "type": "FIX",
+        "text": "sap.ui.rta - Aggregation binding Overlay movable when not editable",
+        "references": []
+      },
+      {
+        "id": "4733088bc521802541e9e4ee1d383395da39dba9",
+        "type": "FIX",
+        "text": "sap.ui.rta - Handling of sync failed event + overlay creation error",
+        "references": []
+      }
+    ]
   }
 }

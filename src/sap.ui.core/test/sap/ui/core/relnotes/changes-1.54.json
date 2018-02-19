@@ -669,5 +669,52 @@
         "references": []
       }
     ]
+  },
+  "1.54.1": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "e13a28decfd87abe4305749ff6dc5af59983dc9a",
+        "type": "FIX",
+        "text": " Binding: Forward bForceUpdate when _refresh is called",
+        "references": []
+      },
+      {
+        "id": "c7e11b718c7e385daa17d5553d32e1b0203ab1e9",
+        "type": "FIX",
+        "text": " QUnit Designtime Library tests in Firefox",
+        "references": []
+      },
+      {
+        "id": "ac88fce7cc472a90bf212a8987d6313e6fe09c29",
+        "type": "FIX",
+        "text": " ThemeCheck: Fix Cross-Origin issues in theme fallback",
+        "references": []
+      },
+      {
+        "id": "68de5afd29b53fbb3e704a82265536502238b821",
+        "type": "FIX",
+        "text": " core.IconPool: register lazy stub for IconPool methods",
+        "references": []
+      },
+      {
+        "id": "ba6259e542dec78b125f79426f777e62fc229f54",
+        "type": "FIX",
+        "text": " jquery.sap.global: configure ui5loader for debug mode",
+        "references": []
+      },
+      {
+        "id": "945c5c03d9e53296b7cf5d0cb0c0edda12706b60",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataModel: support bound action overloads",
+        "references": []
+      },
+      {
+        "id": "e824ddca1159c27ff8c40492c30b39972ea8727d",
+        "type": "FIX",
+        "text": " v2.oDataContextBinding: Null check for empty context",
+        "references": []
+      }
+    ]
   }
 }
