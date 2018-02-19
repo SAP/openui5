@@ -1448,7 +1448,7 @@ sap.ui.define([
 				// Keep the header context even if we lose the parent context, so that the header
 				// context remains unchanged if the parent context is temporarily dropped during a
 				// refresh.
-				if (this.aContexts && this.aContexts[-1] && this.aContexts[-1].isTransient()) {
+				if (this.aContexts[-1] && this.aContexts[-1].isTransient()) {
 					// to allow switching the context for new created entities (transient or not)
 					// we first have to implement a store/restore mechanism for the -1 entry
 					throw new Error("setContext on relative binding is forbidden if a transient " +
