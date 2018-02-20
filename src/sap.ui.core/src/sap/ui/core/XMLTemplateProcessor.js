@@ -326,8 +326,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 
 				if (localName(node) === "ExtensionPoint" && node.namespaceURI === "sap.ui.core") {
 					// create extensionpoint with callback function for defaultContent - will only be executed if there is no customizing configured or if customizing is disabled
-					// if oView is an XMLView created from an html node there is no sViewName, hence we use the _oContainingView
-					return ExtensionPoint(oView._oContainingView, node.getAttribute("name"), function () {
+					// for Views the containing View's name is required to retrieve the according extension configuration,
+					// whereas for Fragments the actual Fragment's name is required - oView can be either View or Fragment
+					var oContainer = oView instanceof View ? oView._oContainingView : oView;
+					return ExtensionPoint(oContainer, node.getAttribute("name"), function() {
 						var children = node.childNodes;
 						var oDefaultContent = [];
 						for (var i = 0; i < children.length; i++) {
