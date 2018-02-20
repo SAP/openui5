@@ -1093,5 +1093,14 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Required by the {@link sap.uxap.IHeaderTitle} interface
+	 * @param {boolean} bFocusable
+	 * @private
+	 */
+	ObjectPageHeader.prototype._toggleFocusableState = function (bFocusable) {
+
+	};
+
 	return ObjectPageHeader;
 });
