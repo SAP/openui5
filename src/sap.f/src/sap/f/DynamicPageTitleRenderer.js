@@ -22,7 +22,9 @@ sap.ui.define([
 
 		// DynamicPageTitle Root DOM Element.
 		oRm.write("<div");
-		oRm.writeAttribute("tabindex", 0);
+		if (oDynamicPageTitleState.isFocusable) {
+			oRm.writeAttribute("tabindex", 0);
+		}
 		oRm.writeControlData(oDynamicPageTitle);
 		oRm.writeAccessibilityState({role: "heading", level: 2});
 		oRm.addClass("sapFDynamicPageTitle");

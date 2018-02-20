@@ -921,6 +921,17 @@
 		assert.strictEqual(checkObjectExists("#objectPageViewSample--newHeader"), true);
 	});
 
+	QUnit.test("Should call ObjectPageHeader _toggleFocusableState", function (assert) {
+		var oObjectPage = this.oSampleView.byId("objectPage13"),
+			oHeader = oObjectPage.getHeaderTitle(),
+			oHeaderSpy = this.spy(oHeader, "_toggleFocusableState");
+
+		// act
+		oObjectPage.setToggleHeaderOnTitleClick(false);
+
+		// assert
+		assert.strictEqual(oHeaderSpy.callCount, 1, "ObjectPageHeader _toggleFocusableState is called");
+	});
 
 	QUnit.module("ObjectPage API", {
 		beforeEach: function () {
