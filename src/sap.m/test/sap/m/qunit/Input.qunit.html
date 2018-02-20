@@ -2851,7 +2851,31 @@
 		assert.equal(fnSuggestionItemSelectedCallback.callCount, 1, "suggestionItemSelected event is fired once");
 		assert.equal(fnChangeCallback.calledAfter(fnSuggestionItemSelectedCallback), true, "change event is called after suggestionItemSelected event");
 
+		oInput.destroy();
+	});
 
+	QUnit.test("Tabular Suggestions - Set selection on focus out", function(assert) {
+		var oInput = createInputWithTabularSuggestions(),
+				fnChangeCallback = this.spy(),
+				fnSuggestionItemSelectedCallback = this.spy();
+
+		oInput.attachChange(fnChangeCallback);
+		oInput.attachSuggestionItemSelected(fnSuggestionItemSelectedCallback);
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput._$input.focus().val("Au").trigger("input");
+		this.clock.tick(300);
+
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, "40"); // bottom (arrow)
+
+		// simulate focus out
+		oInput._oSuggestionPopup.close();
+
+		assert.equal(fnChangeCallback.callCount, 1, "change event is fired once");
+		assert.equal(fnSuggestionItemSelectedCallback.callCount, 1, "suggestionItemSelected event is fired once");
+		assert.equal(fnChangeCallback.calledAfter(fnSuggestionItemSelectedCallback), true, "change event is called after suggestionItemSelected event");
 
 		oInput.destroy();
 	});
