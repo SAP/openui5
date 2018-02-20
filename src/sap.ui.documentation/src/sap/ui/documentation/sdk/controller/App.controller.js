@@ -68,9 +68,6 @@ sap.ui.define([
 				this.oRouter.attachRouteMatched(this.onRouteChange.bind(this));
 				this.oRouter.attachBypassed(this.onRouteNotFound.bind(this));
 
-				this.getRouter().getRoute("topicIdLegacyRoute").attachPatternMatched(this._onTopicOldRouteMatched, this);
-				this.getRouter().getRoute("apiIdLegacyRoute").attachPatternMatched(this._onApiOldRouteMatched, this);
-
 				this.oRouter.getRoute("entitySamplesLegacyRoute").attachPatternMatched(this._onEntityOldRouteMatched, this);
 				this.oRouter.getRoute("entityAboutLegacyRoute").attachPatternMatched(this._onEntityOldRouteMatched, this);
 				this.oRouter.getRoute("entityPropertiesLegacyRoute").attachPatternMatched({entityType: "properties"}, this._forwardToAPIRef, this);
@@ -105,19 +102,16 @@ sap.ui.define([
 				Device.orientation.detachHandler(this._onOrientationChange, this);
 			},
 
-			_onTopicOldRouteMatched: function(oEvent) {
-
-				var sId = oEvent.getParameter("arguments").id;
+			_onTopicOldRouteMatched: function(sId) {
 				if (sId) {
 					sId = this._trimOldDocSuffix(sId);
 				}
 				this.getRouter().navTo("topicId", {id: sId});
 			},
 
-			_onApiOldRouteMatched: function(oEvent) {
+			_onApiOldRouteMatched: function(sId) {
 
-				var sId = oEvent.getParameter("arguments").id,
-					sEntityType,
+				var sEntityType,
 					sEntityId,
 					aSplit;
 
