@@ -23,7 +23,7 @@
 	var oCfg = window['sap-ui-config'],
 		sBaseUrl, bNojQuery,
 		aScripts, rBootScripts, i,
-		oBootstrapScript, bNoConflict = false;
+		oBootstrapScript, bNoConflict = true;
 
 	function findBaseUrl(oScript, rUrlPattern) {
 		var sUrl = oScript && oScript.getAttribute("src"),
