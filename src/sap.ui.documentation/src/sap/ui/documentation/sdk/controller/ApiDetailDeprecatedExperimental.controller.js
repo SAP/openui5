@@ -111,11 +111,7 @@ sap.ui.define([
 			},
 
 			formatTitle: function (sTitle) {
-				if (sTitle === "Without Version") {
-					return sTitle;
-				} else {
-					return "As of " + sTitle;
-				}
+				return sTitle ? "As of " + sTitle : "Version N/A";
 			},
 
 			formatDescription: function (sText, sSince) {
