@@ -110,31 +110,31 @@
 					enabled="{ui>/bRealOData}" icon="{sort>/Employees/Name/icon}" iconFirst="false"
 					press="onSort" text="Employee Name" />
 			</Column>
-			<Column>
+			<Column minScreenWidth="Medium" demandPopin="true">
 				<Text text="Employee ID"/>
 			</Column>
-			<Column>
+			<Column minScreenWidth="Large" demandPopin="true">
 				<Text text="Is Manager"/>
 			</Column>
-			<Column>
+			<Column minScreenWidth="Small" demandPopin="true">
 				<Button app:sorterPath="AGE" app:sorterControlId="Employees"
 					enabled="{ui>/bRealOData}" icon="{sort>/Employees/AGE/icon}" iconFirst="false"
 					press="onSort" text="Age" />
 			</Column>
-			<Column>
+			<Column minScreenWidth="Medium" demandPopin="true">
 				<Button enabled="false" icon="sap-icon://sort-ascending" iconFirst="false"
 					press="onSort" text="City" />
 			</Column>
-			<Column>
+			<Column minScreenWidth="Large" demandPopin="true">
 				<Text text="Entry Date"/>
 			</Column>
-			<Column>
+			<Column minScreenWidth="XXLarge" demandPopin="true">
 				<Text text="ETag"/>
 			</Column>
-			<Column>
+			<Column minScreenWidth="XXLarge" demandPopin="true">
 				<Text text="Delete"/>
 			</Column>
-			<Column>
+			<Column minScreenWidth="XXLarge" demandPopin="true">
 				<Text text="Update" tooltip="Make ETag look outdated"/>
 			</Column>
 		</columns>
