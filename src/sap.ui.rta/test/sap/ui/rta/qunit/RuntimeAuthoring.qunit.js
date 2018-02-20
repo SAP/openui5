@@ -903,7 +903,12 @@ function(
 				}
 			});
 			sandbox.stub(BusyIndicator, "show");
-			this.oChangePersistence = this.oRta._getFlexController()._oChangePersistence;
+			this.oChangePersistence = {
+				transportAllUIChanges: function() {}
+			};
+			sandbox.stub(this.oRta, "_getFlexController").returns({
+				_oChangePersistence: this.oChangePersistence
+			});
 		},
 		afterEach : function(assert) {
 			this.oRta.destroy();
