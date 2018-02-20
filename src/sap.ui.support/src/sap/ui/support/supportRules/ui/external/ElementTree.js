@@ -246,7 +246,7 @@ sap.ui.define(["jquery.sap.global"],
 				return;
 			}
 
-			selectedElement = this._ElementTreeContainer.querySelector("[data-id=" + elementID + "]");
+			selectedElement = this._ElementTreeContainer.querySelector("[data-id='" + elementID + "']");
 
 			if (selectedElement === null) {
 				jQuery.sap.log.warning("The selected element is not a child of the ElementTree");
