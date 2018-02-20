@@ -488,16 +488,17 @@ sap.ui.define(["./Measurement", "./ResourceTimings", "./XHRInterceptor", "sap/ba
 			}
 		},
 
-		// @evo-todo should actually be part of Interaction.js as busyDuration is a member there
 		/**
 		 * @param {float} iDuration Increase busy duration of pending interaction by this value
 		 * @private
 		 */
 		addBusyDuration : function (iDuration) {
-			if (!oPendingInteraction.busyDuration) {
-				oPendingInteraction.busyDuration = 0;
+			if (bInteractionActive && oPendingInteraction) {
+				if (!oPendingInteraction.busyDuration) {
+					oPendingInteraction.busyDuration = 0;
+				}
+				oPendingInteraction.busyDuration += iDuration;
 			}
-			oPendingInteraction.busyDuration += iDuration;
 		}
 	};
 
