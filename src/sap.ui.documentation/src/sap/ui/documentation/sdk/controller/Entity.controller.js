@@ -55,10 +55,6 @@ sap.ui.define([
 				}, true);
 			},
 
-			onNavBack: function (oEvt) {
-				this.router.myNavBack("home", {});
-			},
-
 			onNavToSample: function (oEvt) {
 				var sPath = oEvt.getSource().getBindingContext().getPath();
 				var oSample = this.getView().getModel().getProperty(sPath);
