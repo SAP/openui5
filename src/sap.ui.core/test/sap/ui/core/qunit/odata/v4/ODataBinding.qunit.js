@@ -49,83 +49,93 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("getGroupId: own group", function (assert) {
 		var oBinding = new ODataBinding({
-				sGroupId : "foo"
+				sGroupId : "group"
 			});
 
-		assert.strictEqual(oBinding.getGroupId(), "foo");
+		assert.strictEqual(oBinding.getGroupId(), "group");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getGroupId: relative, inherits group", function (assert) {
+	QUnit.test("getGroupId: relative, inherits group from context", function (assert) {
 		var oBinding = new ODataBinding({
-				oContext : {},
-				oModel : {
+				oContext : {
 					getGroupId : function () {}
 				},
 				bRelative : true
-			}),
-			oContext = {
-				getGroupId : function () {}
-			},
-			oContextMock = this.mock(oContext);
+			});
 
-		this.mock(oBinding.oModel).expects("getGroupId").twice()
-			.withExactArgs().returns("fromModel");
+		this.mock(oBinding.oContext).expects("getGroupId").withExactArgs().returns("group");
 
 		// code under test
-		assert.strictEqual(oBinding.getGroupId(), "fromModel");
+		assert.strictEqual(oBinding.getGroupId(), "group");
+	});
 
-		oBinding.oContext = oContext;
-		oContextMock.expects("getGroupId").withExactArgs().returns(undefined);
+	//*********************************************************************************************
+	[
+		{bRelative : false}, // absolute
+		{bRelative : true}, // relative, unresolved
+		{bRelative : true, oContext : {/*not a v4.Context*/}} // quasi-absolute
+	].forEach(function (oFixture, i) {
+		QUnit.test("getGroupId: inherits group from model, " + i, function (assert) {
+			var oBinding = new ODataBinding({
+					oContext : oFixture.oContext,
+					oModel : {
+						getGroupId : function () {}
+					},
+					bRelative : oFixture.bRelative
+				});
 
-		// code under test
-		assert.strictEqual(oBinding.getGroupId(), "fromModel");
+			this.mock(oBinding.oModel).expects("getGroupId").withExactArgs().returns("group");
 
-		oContextMock.expects("getGroupId").withExactArgs().returns("fromContext");
-
-		// code under test
-		assert.strictEqual(oBinding.getGroupId(), "fromContext");
+			// code under test
+			assert.strictEqual(oBinding.getGroupId(), "group");
+		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("getUpdateGroupId: own group", function (assert) {
 		var oBinding = new ODataBinding({
-				sUpdateGroupId : "foo"
+				sUpdateGroupId : "group"
 			});
 
-		assert.strictEqual(oBinding.getUpdateGroupId(), "foo");
+		assert.strictEqual(oBinding.getUpdateGroupId(), "group");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getUpdateGroupId: relative, inherits group", function (assert) {
+	QUnit.test("getUpdateGroupId: relative, inherits group from context", function (assert) {
 		var oBinding = new ODataBinding({
-				oContext : {},
-				oModel : {
+				oContext : {
 					getUpdateGroupId : function () {}
 				},
 				bRelative : true
-			}),
-			oContext = {
-				getUpdateGroupId : function () {}
-			},
-			oContextMock = this.mock(oContext);
+			});
 
-		this.mock(oBinding.oModel).expects("getUpdateGroupId").twice()
-			.withExactArgs().returns("fromModel");
+		this.mock(oBinding.oContext).expects("getUpdateGroupId").withExactArgs().returns("group");
 
 		// code under test
-		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
+		assert.strictEqual(oBinding.getUpdateGroupId(), "group");
+	});
 
-		oBinding.oContext = oContext;
-		oContextMock.expects("getUpdateGroupId").withExactArgs().returns(undefined);
+	//*********************************************************************************************
+	[
+		{bRelative : false}, // absolute
+		{bRelative : true}, // relative, unresolved
+		{bRelative : true, oContext : {/*not a v4.Context*/}} // quasi-absolute
+	].forEach(function (oFixture, i) {
+		QUnit.test("getUpdateGroupId: inherits group from model, " + i, function (assert) {
+			var oBinding = new ODataBinding({
+					oContext : oFixture.oContext,
+					oModel : {
+						getUpdateGroupId : function () {}
+					},
+					bRelative : oFixture.bRelative
+				});
 
-		// code under test
-		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
+			this.mock(oBinding.oModel).expects("getUpdateGroupId").withExactArgs().returns("group");
 
-		oContextMock.expects("getUpdateGroupId").withExactArgs().returns("fromContext");
-
-		// code under test
-		assert.strictEqual(oBinding.getUpdateGroupId(), "fromContext");
+			// code under test
+			assert.strictEqual(oBinding.getUpdateGroupId(), "group");
+		});
 	});
 
 	//*********************************************************************************************
