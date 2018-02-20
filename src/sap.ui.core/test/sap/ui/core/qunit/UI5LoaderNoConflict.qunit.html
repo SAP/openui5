@@ -53,6 +53,7 @@
 
 			function useUi5Loader() {
 				sap.ui._ui5loader.config({
+					noConflict: false,
 					baseUrl: "./"
 				});
 				require(['testdata/modules/basic/ui5Module'], function(ui5LoadedModule) {
