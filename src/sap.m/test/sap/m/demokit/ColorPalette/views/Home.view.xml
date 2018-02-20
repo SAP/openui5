@@ -1,0 +1,52 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	controllerName="cp.opa.test.app.controllers.Home"
+	xmlns="sap.m">
+	<Table id="samplesTable" headerText="{path: 'i18n>appTitle'}" class="sapUiLargeMarginBottom">
+		<columns>
+			<Column>
+				<Text text="Description"/>
+			</Column>
+			<Column width="20%">
+				<Text text="Action"/>
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem>
+				<cells>
+					<Label text='Simple scenario, control defaults'/>
+					<Button id="open-simple-control-defaults-sample" press="openSimpleControlDefaultsSample" icon="sap-icon://text-color"/>
+				</cells>
+			</ColumnListItem>
+			<ColumnListItem>
+				<cells>
+					<Label text='Simple scenario, custom colors'/>
+					<Button id="open-simple-custom-colors-sample" press="openSimpleCustomColorsSample" icon="sap-icon://palette"/>
+				</cells>
+			</ColumnListItem>
+			<ColumnListItem>
+				<cells>
+					<Label text='Complex scenario, control defaults'/>
+					<Button id="open-complex-control-defaults-sample" press="openComplexControlDefaultsSample" icon="sap-icon://color-fill"/>
+				</cells>
+			</ColumnListItem>
+			<ColumnListItem>
+				<cells>
+					<Label text='Complex scenario, custom colors, "Default color" shown, "More colors..." shown'/>
+					<Button id="open-complex-custom-colors-sample" press="openComplexCustomColorsSample" icon="sap-icon://color-fill"/>
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+	<Panel
+		headerText="The content of this panel is a test surrounding rather than part of the SUT">
+		<Label
+			text="Color select event was fired with the following parameters"
+			labelFor="colorSelectEventInput"
+			/>
+		<Input
+			id="colorSelectEventInput"
+			placeholder="colorSelect event parameters"
+			text=""/>
+	</Panel>
+</mvc:View>
