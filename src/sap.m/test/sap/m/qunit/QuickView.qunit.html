@@ -553,22 +553,77 @@
 		});
 
 		QUnit.test("Test navOrigin parameter", function (assert) {
-			// arrange
-			var fnNavigate = this.spy();
+			this.oQuickView._setNavOrigin(this.oQuickView);
 
-			this.oQuickView.attachNavigate(fnNavigate);
+			assert.ok(this.oQuickView._navOrigin, "Setting the navOrigin parameter for QuickView.");
+		});
 
-			// act
+		QUnit.module("Updating", {
+			beforeEach: function () {
+				this.oQuickView = getQuickView();
+
+				this.oQuickView.setModel(oModel);
+				var that = this;
+				this.oButton = new sap.m.Button({
+					text: "Open",
+					press: function () {
+						that.oQuickView.openBy(this);
+					}
+				});
+
+				oPage.addContent(this.oButton);
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.oButton.destroy();
+				this.oButton = null;
+
+				this.oQuickView.destroy();
+				this.oQuickView = null;
+			}
+		});
+
+		QUnit.test("Invalidation", function (assert) {
+
+			var fnQuickViewInvalidate = sinon.spy(this.oQuickView, "invalidate");
+			var fnQuickViewPopoverInvalidate = sinon.spy(this.oQuickView._oPopover, "invalidate");
+
 			this.oButton.firePress();
 
-			this.clock.tick(500);
+			var data = this.oQuickView.getModel().getData();
+			data.pages.push({
+				pageId: "newPageId",
+				header: "New Page",
+				title: "Page",
+				icon: "",
+				description: "Department Manager1",
+				groups: [
+					{
+						heading: "Job",
+						elements: [
+							{
+								label: "Company",
+								value: "SAP AG",
+								url: "http://sap.com",
+								elementType: sap.m.QuickViewGroupElementType.pageLink,
+								pageLinkId: "customPageId4"
+							},
+							{
+								label: "Company address",
+								value: "Sofia, Boris III, 136A"
+							}
+						]
+					}
+				]
+			});
 
-			var navigateLinkId = jQuery("a:contains('SAP AG')").click();
+			var newData = {};
+			jQuery.extend(true, newData, data);
 
-			this.clock.tick(500);
+			this.oQuickView.getModel().setData(newData);
 
-			// assert
-			assert.ok(this.oQuickView._navOrigin, "navigate event is fired with navOrigin parameter");
+			assert.strictEqual(fnQuickViewInvalidate.callCount, 0, "QuickView.invalidate should not be called");
+			assert.strictEqual(fnQuickViewPopoverInvalidate.callCount, 0, "QuickView.Popover.invalidate should not be called");
 		});
 
 	</script>
