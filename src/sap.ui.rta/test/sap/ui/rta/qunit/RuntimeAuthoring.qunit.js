@@ -896,6 +896,14 @@ function(
 		});
 	});
 
+	QUnit.test("When transport function is called and transportAllUIChanges returns Promise.resolve() with 'Cancel' as parameter", function(assert) {
+		sandbox.stub(this.oChangePersistence, "transportAllUIChanges").returns(Promise.resolve('Cancel'));
+		var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
+		return this.oRta.transport().then(function() {
+			assert.equal(oMessageToastStub.callCount, 0, "then the messageToast was not shown");
+		});
+	});
+
 	QUnit.test("When restore function is called in the CUSTOMER layer", function(assert) {
 		var done = assert.async();
 		sandbox.stub(MessageBox, "confirm", function(sMessage, mParameters) {

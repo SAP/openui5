@@ -191,6 +191,9 @@ sap.ui.define([
 					&& Object.keys(oWrappedChangeFileContent.changes.variantSection).length !== 0
 					&& Object.keys(this._oVariantController._getChangeFileContent()).length === 0 ) {
 				this._oVariantController._setChangeFileContent(oWrappedChangeFileContent, oComponent);
+			}
+
+			if (Object.keys(this._oVariantController._getChangeFileContent()).length > 0) {
 				var aVariantChanges = this._oVariantController.loadInitialChanges();
 				aChanges = aChanges.concat(aVariantChanges);
 			}
@@ -954,6 +957,8 @@ sap.ui.define([
 									BusyIndicator.hide();
 								});
 						}.bind(this));
+				} else {
+					return "Cancel";
 				}
 			}.bind(this))
 			['catch'](fnHandleAllErrors);

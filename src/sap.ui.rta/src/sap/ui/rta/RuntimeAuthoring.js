@@ -930,8 +930,8 @@ sap.ui.define([
 		return this._serializeToLrep().then(function () {
 			BusyIndicator.hide();
 			return this._getFlexController()._oChangePersistence.transportAllUIChanges(this._oRootControl, Utils.getRtaStyleClassName(), this.getLayer())
-				.then(function(sError) {
-					if (sError !== "Error") {
+				.then(function(sResponse) {
+					if (sResponse !== "Error" && sResponse !== "Cancel") {
 						this._showMessageToast("MSG_TRANSPORT_SUCCESS");
 					}
 				}.bind(this));
