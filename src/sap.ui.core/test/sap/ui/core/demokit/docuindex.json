@@ -79,7 +79,7 @@
 				"name" : "View",
 				"category" : "Display",
 				"formFactors" : "-",
-				"since" : "\"The Elders may know...\"",
+				"since" : "1.30",
 				"samples" : [
 					"sap.ui.core.sample.View.async",
 					"sap.ui.core.sample.View.preprocessor"
