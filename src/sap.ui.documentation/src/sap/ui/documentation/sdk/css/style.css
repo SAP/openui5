@@ -601,6 +601,10 @@ code {
 	display: inline;
 }
 
+.sapUiJSD a {
+	font-family: "72", Arial, Helvetica, sans-serif;
+}
+
 .sapUiJSD pre {
 	white-space: pre-wrap;
 }
