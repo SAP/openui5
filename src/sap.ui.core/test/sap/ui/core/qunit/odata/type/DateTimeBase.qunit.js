@@ -545,6 +545,7 @@ sap.ui.require([
 
 		oDateTimeOffset0.validateValue("2000-01-01T16:00:00Z");
 		throws(oDateTimeOffset0, "2000-01-01T16:00:00.0Z");
+		throws(oDateTimeOffset0, undefined);
 
 		// @see _AnnotationHelperExpression.qunit.js
 		[
