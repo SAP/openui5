@@ -4486,5 +4486,72 @@ sap.ui.require([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Operation binding for a function, first it is deferred, later is has been executed.
+	//   Show interaction of execute() and suspend()/resume(); setParameter() has been tested
+	//   for refresh() already, see test "Function binding: setParameter, execute and refresh".
+	QUnit.test("Function binding: execute and suspend/resume", function (assert) {
+		var sFunctionName = "com.sap.gateway.default.iwbep.tea_busi.v0001"
+				+ ".FuGetEmployeeSalaryForecast",
+			sView = '\
+<FlexBox id="employee" binding="{/EMPLOYEES(\'2\')}">\
+	<Text id="salary" text="{SALARY/YEARLY_BONUS_AMOUNT}" />\
+	<FlexBox id="function" binding="{' + sFunctionName + '(...)}">\
+		<Text id="forecastSalary" text="{SALARY/YEARLY_BONUS_AMOUNT}" />\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('2')", {
+				"SALARY": {
+					"YEARLY_BONUS_AMOUNT": 100
+				}
+			})
+			.expectChange("salary", "100")
+			.expectChange("forecastSalary", null); //TODO unexpected change
+		return this.createView(assert, sView).then(function () {
+			var oEmployeeBinding = that.oView.byId("employee").getObjectBinding();
+
+			that.expectRequest("EMPLOYEES('2')", {
+					"SALARY": {
+						"YEARLY_BONUS_AMOUNT": 100
+					}
+				});
+
+			oEmployeeBinding.suspend();
+			oEmployeeBinding.resume(); // MUST NOT trigger a request for the bound function!
+
+			return that.waitForChanges(assert).then(function () {
+				var oFunctionBinding = that.oView.byId("function").getObjectBinding();
+
+				that.expectRequest("EMPLOYEES('2')/" + sFunctionName + "()", {
+						"SALARY": {
+							"YEARLY_BONUS_AMOUNT": 142
+						}
+					})
+					.expectChange("forecastSalary", "142");
+				oFunctionBinding.execute();
+
+				return that.waitForChanges(assert).then(function () {
+					that.expectRequest("EMPLOYEES('2')", {
+							"SALARY": {
+								"YEARLY_BONUS_AMOUNT": 110
+							}
+						})
+						.expectRequest("EMPLOYEES('2')/" + sFunctionName + "()", {
+							"SALARY": {
+								"YEARLY_BONUS_AMOUNT": 150
+							}
+						})
+						.expectChange("salary", "110")
+						.expectChange("forecastSalary", "150");
+
+					oEmployeeBinding.suspend();
+					oEmployeeBinding.resume();
+				});
+			});
+		});
+	});
 });
 //TODO test delete
