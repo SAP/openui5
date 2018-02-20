@@ -235,10 +235,12 @@ sap.ui.require([
 			oResult = {},
 			fnSubmit = this.spy();
 
+		this.mock(oRequestor).expects("convertResourcePath").withExactArgs("Employees?foo=bar")
+			.returns("~Employees~?foo=bar");
 		this.mock(_Requestor).expects("cleanPayload")
 			.withExactArgs(sinon.match.same(oPayload)).returns(oChangedPayload);
 		this.mock(jQuery).expects("ajax")
-			.withExactArgs(sServiceUrl + "Employees?foo=bar", {
+			.withExactArgs(sServiceUrl + "~Employees~?foo=bar", {
 				data : JSON.stringify(oChangedPayload),
 				headers : sinon.match({
 					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
@@ -834,13 +836,15 @@ sap.ui.require([
 				.exactly(bSuccess || o.bReadFails ? 0 : 1)
 				.withExactArgs(sinon.match.same(oTokenRequiredResponse))
 				.returns(oError);
+			this.mock(oRequestor).expects("convertResourcePath").atLeast(1)
+				.withExactArgs("foo").returns("~foo~");
 
 			// With <code>bRequestSucceeds === false</code>, "request" always fails,
 			// with <code>bRequestSucceeds === true</code>, "request" always succeeds,
 			// else "request" first fails due to missing CSRF token which can be fetched via
 			// "ODataModel#refreshSecurityToken".
 			this.mock(jQuery).expects("ajax").atLeast(1)
-				.withExactArgs("/Service/foo", sinon.match({
+				.withExactArgs("/Service/~foo~", sinon.match({
 					data : JSON.stringify(oRequestPayload),
 					headers : {"foo" : "bar"},
 					method : "FOO"
@@ -1053,7 +1057,7 @@ sap.ui.require([
 	QUnit.test("submitBatch(...): success", function (assert) {
 		var aExpectedRequests = [[{
 				method : "POST",
-				url : "Customers",
+				url : "~Customers",
 				headers : {
 					"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 					"Accept-Language" : "ab-CD",
@@ -1069,7 +1073,7 @@ sap.ui.require([
 				$submit : undefined
 			}, {
 				method : "DELETE",
-				url : "SalesOrders('42')",
+				url : "~SalesOrders('42')",
 				headers : {
 					"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 					"Accept-Language" : "ab-CD",
@@ -1084,7 +1088,7 @@ sap.ui.require([
 				$submit : undefined
 			}], {
 				method : "GET",
-				url : "Products",
+				url : "~Products",
 				headers : {
 					"Accept" : "application/json;odata.metadata=full",
 					"Accept-Language" : "ab-CD",
@@ -1108,8 +1112,11 @@ sap.ui.require([
 				{responseText : JSON.stringify(aResults[0])}
 			],
 			oRequestor = _Requestor.create("/Service/", oModelInterface,
-				{"Accept-Language" : "ab-CD"});
+				{"Accept-Language" : "ab-CD"}),
+			oRequestorMock = this.mock(oRequestor);
 
+		oRequestorMock.expects("convertResourcePath").withExactArgs("Products")
+			.returns("~Products");
 		aPromises.push(oRequestor.request("GET", "Products", "group1", {
 			Foo : "bar",
 			Accept : "application/json;odata.metadata=full"
@@ -1117,6 +1124,8 @@ sap.ui.require([
 			assert.deepEqual(oResult, aResults[0]);
 			aResults[0] = null;
 		}));
+		oRequestorMock.expects("convertResourcePath").withExactArgs("Customers")
+			.returns("~Customers");
 		aPromises.push(oRequestor.request("POST", "Customers", "group1", {
 			Foo : "baz"
 		}, {
@@ -1125,11 +1134,15 @@ sap.ui.require([
 			assert.deepEqual(oResult, aResults[1]);
 			aResults[1] = null;
 		}));
+		oRequestorMock.expects("convertResourcePath").withExactArgs("SalesOrders('42')")
+			.returns("~SalesOrders('42')");
 		aPromises.push(oRequestor.request("DELETE", "SalesOrders('42')", "group1")
 			.then(function (oResult) {
 				assert.deepEqual(oResult, aResults[2]);
 				aResults[2] = null;
 			}));
+		oRequestorMock.expects("convertResourcePath").withExactArgs("SalesOrders")
+			.returns("~SalesOrders");
 		oRequestor.request("GET", "SalesOrders", "group2");
 
 		this.mock(oRequestor).expects("request")
@@ -1146,7 +1159,7 @@ sap.ui.require([
 		assert.strictEqual(oRequestor.mBatchQueue.group1, undefined);
 		TestUtils.deepContains(oRequestor.mBatchQueue.group2, [[/*change set*/], {
 			method : "GET",
-			url : "SalesOrders"
+			url : "~SalesOrders"
 		}]);
 
 		return Promise.all(aPromises);
@@ -2044,6 +2057,15 @@ sap.ui.require([
 
 		// code under test
 		assert.strictEqual(oRequestor.doConvertResponse(oPayload), oPayload);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("convertResourcePath (V4)", function (assert) {
+		var sResourcePath = {},
+			oRequestor = _Requestor.create("/");
+
+		// code under test
+		assert.strictEqual(oRequestor.convertResourcePath(sResourcePath), sResourcePath);
 	});
 
 	//*********************************************************************************************

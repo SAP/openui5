@@ -20,6 +20,7 @@ sap.ui.define([
 		oDateTimeOffsetParser =
 			DateFormat.getDateTimeInstance({pattern: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"}),
 		rPlus = /\+/g,
+		rSegmentWithPredicate = /^([^(]+)(\(.+\))$/,
 		rSlash = /\//g,
 		// Example: "PT11H33M55S",
 		// PT followed by optional hours, optional minutes, optional seconds with optional fractions
@@ -266,6 +267,78 @@ sap.ui.define([
 
 		visitNode(oFilterTree);
 		return _Parser.buildFilterString(oFilterTree);
+	};
+
+	/**
+	 * Converts an OData V4 key predicate for the given type to OData V2.
+	 *
+	 * @param {string} sV4KeyPredicate
+	 *   The OData V4 key predicate
+	 * @param {string} sPath
+	 *   The path of the entity described by the key predicate
+	 * @returns {string}
+	 *   The corresponding OData V2 key predicate
+	 */
+	_V2Requestor.prototype.convertKeyPredicate = function (sV4KeyPredicate, sPath) {
+		// Note: metadata can be fetched synchronously because ready() ensured that it's loaded
+		var oEntityType = this.fetchTypeForPath(_Helper.getMetaPath(sPath)).getResult(),
+			mKeyToValue = _Parser.parseKeyPredicate(decodeURIComponent(sV4KeyPredicate)),
+			that = this;
+
+		/*
+		 * Converts the literal to V2 syntax.
+		 * @param {string} sPropertyName The name of the property in the metadata
+		 * @param {string} sValue The value in the key predicate in V4 syntax
+		 * @returns {string} The value in V2 syntax
+		 */
+		function convertLiteral(sPropertyName, sValue) {
+			var oPropertyMetadata = oEntityType[sPropertyName];
+
+			if (oPropertyMetadata.$Type !== "Edm.String") {
+				sValue = that.formatPropertyAsLiteral(
+					_Helper.parseLiteral(sValue, oPropertyMetadata.$Type, sPath),
+					oPropertyMetadata);
+			}
+			return encodeURIComponent(sValue);
+		}
+
+		if ("" in mKeyToValue) {
+			return "(" + convertLiteral(oEntityType.$Key[0], mKeyToValue[""]) + ")";
+		}
+		return "(" + oEntityType.$Key.map(function (sPropertyName) {
+			return encodeURIComponent(sPropertyName) + "="
+				+ convertLiteral(sPropertyName, mKeyToValue[sPropertyName]);
+		}).join(",") + ")";
+	};
+
+	/**
+	 * Converts the resource path. Transforms literals in key predicates from V4 to V2 syntax.
+	 *
+	 * @param {string} sResourcePath The V4 resource path
+	 * @returns {string} The resource path as required for V2
+	 */
+	_V2Requestor.prototype.convertResourcePath = function (sResourcePath) {
+		var iIndex = sResourcePath.indexOf("?"),
+			sQueryString = "",
+			aSegments,
+			iSubPathLength = -1,
+			that = this;
+
+		if (iIndex > 0) {
+			sQueryString = sResourcePath.slice(iIndex);
+			sResourcePath = sResourcePath.slice(0, iIndex);
+		}
+		aSegments = sResourcePath.split("/");
+		return aSegments.map(function (sSegment, i) {
+			var aMatches = rSegmentWithPredicate.exec(sSegment);
+
+			iSubPathLength += sSegment.length + 1;
+			if (aMatches) {
+				sSegment = aMatches[1] + that.convertKeyPredicate(aMatches[2],
+					"/" + sResourcePath.slice(0, iSubPathLength));
+			}
+			return sSegment;
+		}).join("/") + sQueryString;
 	};
 
 	/**
