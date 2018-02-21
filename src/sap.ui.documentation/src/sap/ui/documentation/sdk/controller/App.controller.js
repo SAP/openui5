@@ -256,6 +256,8 @@ sap.ui.define([
 				if (!this._oAboutDialog) {
 					this._oAboutDialog = new sap.ui.xmlfragment("aboutDialogFragment", "sap.ui.documentation.sdk.view.AboutDialog", this);
 					this._oView.addDependent(this._oAboutDialog);
+				} else {
+					this._oAboutDialog.getContent()[0].backToTop(); // reset the nav container to the first page
 				}
 				this._oAboutDialog.open();
 			},
