@@ -97,6 +97,8 @@
 		mode="SingleSelectMaster" selectionChange="onEmployeeSelect">
 		<headerToolbar>
 			<Toolbar>
+				<Title text="Employees"/>
+				<ToolbarSpacer/>
 				<Button icon="sap-icon://sys-cancel-2" text="Cancel"
 					press="onCancel"/>
 				<Button enabled="{ui>/bRealOData}" icon="sap-icon://save" text="Save"
