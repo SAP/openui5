@@ -298,6 +298,13 @@ sap.ui.require([
 	}
 
 	//*********************************************************************************************
+	QUnit.test("DateTimeBase constraints undefined", function (assert) {
+		var oType = new DateTimeBase({}, undefined);
+
+		assert.deepEqual(oType.oConstraints, undefined);
+	});
+
+	//*********************************************************************************************
 	//*********************************************************************************************
 	module("sap.ui.model.odata.type.DateTime");
 
