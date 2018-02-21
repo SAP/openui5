@@ -46,17 +46,32 @@ sap.ui.define(["./Measurement", "./ResourceTimings", "./XHRInterceptor", "sap/ba
 	}
 
 	/**
-	 * Valid timings are all timings which are complete and not responded from browser cache.
+	 * Valid timings are all timings which are completed, not empty and not responded from browser cache.
+	 *
+	 * Note: Currently only Chrome and FF support size related properties (body size and transfer size),
+	 * hence the requests of others not supporting them are counted as complete (in dubio pro reo), as
+	 * before.
 	 *
 	 * @param {object} oRequestTiming
 	 * @private
 	 */
 	function isValidRoundtrip(oRequestTiming) {
-		var bComplete = oRequestTiming.startTime > 0 &&
+		var bComplete, bEmpty, bCached;
+
+		// if the request has been completed it has complete timing figures)
+		bComplete = oRequestTiming.startTime > 0 &&
 			oRequestTiming.startTime <= oRequestTiming.requestStart &&
 			oRequestTiming.requestStart <= oRequestTiming.responseEnd;
-		var bCached = oRequestTiming.transferSize < oRequestTiming.encodedBodySize;
-		return bComplete && !bCached;
+
+		// encodedBodySize and transferSize info are not available in all browsers
+		if (oRequestTiming.encodedBodySize !== undefined && oRequestTiming.transferSize !== undefined) {
+			// if the body is empty a script tag responded from cache is assumed
+			bEmpty = oRequestTiming.encodedBodySize ===  0;
+			// if transfer size is smaller than body an xhr responded from cache is assumed
+			bCached = oRequestTiming.transferSize < oRequestTiming.encodedBodySize;
+		}
+
+		return bComplete && !bEmpty && !bCached;
 	}
 
 	function aggregateRequestTiming(oRequest) {

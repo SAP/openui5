@@ -1,8 +1,9 @@
 /*global QUnit */
-sap.ui.define(['sap/ui/performance/Interaction'], function(Interaction) {
+sap.ui.define(['sap/ui/performance/Interaction', 'sap/ui/performance/ResourceTimings'],
+	function(Interaction, ResourceTimings) {
 	"use strict";
 
-	QUnit.module("Interaction", {
+	QUnit.module("Interaction API", {
 		before: function() {
 			Interaction.setActive(true);
 		},
@@ -67,6 +68,53 @@ sap.ui.define(['sap/ui/performance/Interaction'], function(Interaction) {
 		}
 		assert.strictEqual(sComponentName, "foo", "no additional duration is added");
 
+	});
+
+	QUnit.module("InteractionMeasurement", {
+		beforeEach: function() {
+			this.requests = [{
+				startTime: 1,
+				requestStart: 2,
+				responseEnd: 3,
+				transferSize: 10, // okay
+				encodedBodySize: 10
+			}, {
+				startTime: 4,
+				requestStart: 5,
+				responseEnd: 6,
+				transferSize: 0, // xhr from cache
+				encodedBodySize: 10
+			}, {
+				startTime: 7,
+				requestStart: 8,
+				responseEnd: 9,
+				transferSize: 10, // script from cache
+				encodedBodySize: 0
+			}, {
+				startTime: 10,
+				requestStart: 11,
+				responseEnd: 12 // undefined properties (Edge, IE, Safari...)
+			}];
+
+			// stub the foreign API call
+			this.getRequestTimings = ResourceTimings.getRequestTimings;
+			ResourceTimings.getRequestTimings = function() {
+				return this.requests;
+			}.bind(this);
+
+			// produce a dummy interaction
+			Interaction.start();
+			Interaction.end(true);
+			this.interaction = Interaction.getAll().pop();
+		},
+		afterEach: function() {
+			ResourceTimings.getRequestTimings = this.getRequestTimings;
+		}
+	});
+
+	QUnit.test("retrieved requests", function(assert) {
+		assert.strictEqual(this.interaction.requests, this.requests, "requests are added to interaction");
+		assert.strictEqual(this.interaction.completeRoundtrips, 2, "only complete requests are counted");
 	});
 
 });
