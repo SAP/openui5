@@ -89,38 +89,15 @@
 				<h3><a name="coding"></a>Start Coding</h3>
 				<p><a href="https://plnkr.co/edit/QZbR9nSKBf17VpECaixx?p=preview" target="_blank" alt="Try it out yourself">Try it out yourself - modify and extend this basic "Hello World!" example as you wish!</a></p>  
 				Now it is time to build your first OpenUI5 app! To start simple, we load OpenUI5 from our <a href="https://openui5.hana.ondemand.com/#/topic/2d3eb2f322ea4a82983c1c62a33ec4ae" target="_blank">CDN</a> and place UI5 controls into the HTML body, as you can see in the example below. An explanation of the code can be found after the code section.
-				</p>	
-				<pre class="codeblock">
-<span class="shTag">&lt;html&gt;</span>
-	<span class="shTag">&lt;head&gt;</span>
-		<span class="shTag">&lt;title&gt;</span>Hello World<span class="shTag">&lt;/title&gt;</span>
-
-		<span class="shTag">&lt;script src=<span class="shString">'https://openui5.hana.ondemand.com/resources/sap-ui-core.js'</span> 
-   		<span class="shAttr">id</span>=<span class="shString">'sap-ui-bootstrap'</span>
-    		<span class="shAttr">data-sap-ui-theme</span>=<span class="shString">'sap_belize'</span>
-    		<span class="shAttr">data-sap-ui-libs</span>=<span class="shString">'sap.m'&gt;</span>
-
-		<span class="shTag">&lt;script&gt;</span>
-			var app = new sap.m.App("HelloWorldApp"); 
-			var page = new sap.m.Page("HelloWorldPage", {
-				title: "Hello World Page",
-				content : new sap.m.Button({
-					text : "Say Hello",
-					press : function() {
-						alert("Hello World!");	
-					}
-				})
-			});
-			app.addPage(page);
-			app.placeAt('content');
-
-		<span class="shTag">&lt;/script&gt;</span>
-	<span class="shTag">&lt;/head&gt;</span>
-		
-		<span class="shTag">&lt;body</span> <span class="shAttr">class</span>=<span class="shString">'sapUiBody'</span> <span class="shAttr">id</span>=<span class="shString">'content'</span><span class="shTag">&gt;</span>
-	<span class="shTag">&lt;/body&gt;</span>
-<span class="shTag">&lt;/html&gt;</span></pre>
-						</p>
+				</p>
+				<div class="corset"> <!-- for Ipad -->
+					<iframe style="width: 100%; height: 400px" src="https://embed.plnkr.co/vy2AbmC9CMjkef2aRBad/" frameborder="0" allowfullscren="allowfullscren" class="plunkerEmbedded"></iframe>
+				</div>
+				<div class="resultIE">
+					<p>
+						Your browser doesn't support Cross-Origin Resource Sharing (CORS). Thus, you cannot see the result of the above sample here.
+					</p>
+				</div>
 
 				<p>This is what the code above does:</p>The “script src” tag loads UI5 and sets the bootstrap ID, theme and main library. Variables for new app, page and button produce the respective objects and set title, text and event handler.  The “placeAt” tag inserts the button at the indicated position with given ID into the HTML document.</p>
 				<h3><a name="deeper"></a>Dig Deeper</h3>
