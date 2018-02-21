@@ -11,11 +11,11 @@ sap.ui.define([
 	"use strict";
 
 	var // Example: "/Date(1395705600000)/", matching group: ticks in milliseconds
-		rDate = /^\/Date\((\d+)\)\/$/,
+		rDate = /^\/Date\((-?\d+)\)\/$/,
 		oDateFormatter = DateFormat.getDateInstance({pattern: "yyyy-MM-dd", UTC : true}),
 		// Example "/Date(1420529121547+0530)/", the offset ("+0530") is optional
 		// matches: 1 = ticks in milliseconds, 2 = offset sign, 3 = offset hours, 4 = offset minutes
-		rDateTimeOffset = /^\/Date\((\d+)(?:([-+])(\d\d)(\d\d))?\)\/$/,
+		rDateTimeOffset = /^\/Date\((-?\d+)(?:([-+])(\d\d)(\d\d))?\)\/$/,
 		mPattern2Formatter = {},
 		oDateTimeOffsetParser =
 			DateFormat.getDateTimeInstance({pattern: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"}),
