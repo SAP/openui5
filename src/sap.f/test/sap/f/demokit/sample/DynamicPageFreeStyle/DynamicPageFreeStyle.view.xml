@@ -105,7 +105,9 @@
 							sorter: {
 								path: 'Name'
 							}
-						}">
+						}"
+					   class="sapFDynamicPageAlignContent"
+					   width="auto">
 					<headerToolbar>
 						<Toolbar>
 							<Title text="Products" level="H2"/>
