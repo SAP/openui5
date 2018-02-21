@@ -1553,17 +1553,6 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDemoA
 	}
 }
 
-/* Landing pages aspect ratio */
-html:not(.sapUiMedia-Std-Phone) .sapUiDemokit .sapUiDemokitLandingImageCell:not(.welcomeImageCell) {
-	padding-bottom: 24.6%;
-}
-html:not(.sapUiMedia-Std-Phone) .sapUiDemokit .sapUiDemokitLandingImageCell.toolsImageCell {
-	padding-bottom: 19.5%;
-}
-html:not(.sapUiMedia-Std-Phone) .sapUiDemokit .landingImage {
-	position: absolute;
-	max-height: 50%;
-}
 /* FireFox does not handle aspect ratio optimization so this must be disabled for it only by resetting the element position */
 html[data-sap-ui-browser^="ff"] .sapUiDemokit .landingImage {
 	position: relative;
