@@ -454,10 +454,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 			if (sEventType === "dragstart") {
 				if (oEvent.isDefaultPrevented() || !aCurrentDragInfos) {
 					aCurrentDragInfos = [];
-				} else {
-					aCurrentDragInfos = aCurrentDragInfos.filter(isDraggable.bind(undefined, oDragControl, oEvent));
+					closeDragSession();
+					return;
 				}
 
+				aCurrentDragInfos = aCurrentDragInfos.filter(isDraggable.bind(undefined, oDragControl, oEvent));
 				if (aCurrentDragInfos.length === 0) {
 					oEvent.preventDefault();
 					closeDragSession();
