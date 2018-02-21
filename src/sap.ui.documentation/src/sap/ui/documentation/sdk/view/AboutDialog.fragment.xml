@@ -8,7 +8,7 @@
 			resizable="true"
 			draggable="true"
 			title="About"
-			contentWidth="36rem"
+			contentWidth="42rem"
 			contentHeight="50rem"
 			showHeader="false"
 			stretch="{appView>/bPhoneSize}">
@@ -52,7 +52,7 @@
 							<core:Title text="{appView>library}"/>
 						</f:title>
 						<f:layout>
-							<f:GridLayout/>
+							<f:ResponsiveGridLayout/>
 						</f:layout>
 						<f:formContainers>
 							<f:FormContainer>
