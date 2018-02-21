@@ -263,56 +263,84 @@ function(
 	});
 
 	QUnit.test("when RTA is started in the customer layer", function(assert) {
+		var done = assert.async();
 		var oFlexController = this.oRta._getFlexController();
 		sandbox.stub(oFlexController, "getComponentChanges").returns(Promise.resolve([]));
 
-		return this.oRta.start().then(function () {
+		Promise.all([
+			new Promise(function (fnResolve) {
+				this.oRta.attachStart(fnResolve);
+			}.bind(this)),
+			this.oRta.start()
+		]).then(function() {
 			assert.equal(this.oRta.getToolbar().getControl('restore').getEnabled(), false, "then the Restore Button is disabled");
 			assert.equal(this.oRta.getToolbar().getControl('manageApps').getVisible(), false, "then the 'AppVariant Overview' Icon Button is not visible");
 			assert.equal(this.oRta.getToolbar().getControl('appVariantOverview').getVisible(), false, "then the 'AppVariant Overview' Menu Button is not visible");
 			assert.equal(this.oRta.getToolbar().getControl('manageApps').getEnabled(), false, "then the 'AppVariant Overview' Icon Button is not enabled");
 			assert.equal(this.oRta.getToolbar().getControl('appVariantOverview').getEnabled(), false, "then the 'AppVariant Overview' Menu Button is not enabled");
+			done();
 		}.bind(this));
 	});
 
 	QUnit.test("when RTA is started in the user layer", function(assert) {
+		var done = assert.async();
 		var oFlexController = this.oRta._getFlexController();
 		sandbox.stub(oFlexController, "getComponentChanges").returns(Promise.resolve([this.oUserChange]));
 
 		this.oRta.setFlexSettings({layer: "USER"});
-		return this.oRta.start().then(function () {
+		Promise.all([
+			new Promise(function (fnResolve) {
+				this.oRta.attachStart(fnResolve);
+			}.bind(this)),
+			this.oRta.start()
+		]).then(function() {
 			assert.equal(this.oRta.getToolbar().getControl('restore').getEnabled(), true, "then the Restore Button is enabled");
+			done();
 		}.bind(this));
 	});
 
 	QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the manifest of an app is not supported", function(assert) {
+		var done = assert.async();
 		var oFlexController = this.oRta._getFlexController();
 		sandbox.stub(oFlexController, "getComponentChanges").returns(Promise.resolve([]));
 
 		sandbox.stub(this.oRta, '_getPublishAndAppVariantSupportVisibility').returns(Promise.resolve([true, true]));
-		return this.oRta.start().then(function () {
+		Promise.all([
+			new Promise(function (fnResolve) {
+				this.oRta.attachStart(fnResolve);
+			}.bind(this)),
+			this.oRta.start()
+		]).then(function() {
 			assert.equal(this.oRta.getToolbar().getControl('manageApps').getVisible(), true, "then the 'AppVariant Overview' Icon Button is visible");
 			assert.equal(this.oRta.getToolbar().getControl('manageApps').getEnabled(), false, "then the 'AppVariant Overview' Icon Button is not enabled");
 			assert.equal(this.oRta.getToolbar().getControl('appVariantOverview').getVisible(), false, "then the 'AppVariant Overview' Menu Button is not visible");
 			assert.equal(this.oRta.getToolbar().getControl('appVariantOverview').getEnabled(), false, "then the 'AppVariant Overview' Menu Button is not enabled");
 			assert.equal(this.oRta.getToolbar().getControl('saveAs').getVisible(), true, "then the 'Save As' Button is visible");
 			assert.equal(this.oRta.getToolbar().getControl('manageApps').getEnabled(), false, "then the 'Save As' Button is not enabled");
+			done();
 		}.bind(this));
 	});
 
 	QUnit.test("when RTA is started in the customer layer, app variant feature is available for an (SAP developer) but the manifest of an app is not supported", function(assert) {
+		var done = assert.async();
 		var oFlexController = this.oRta._getFlexController();
 		sandbox.stub(oFlexController, "getComponentChanges").returns(Promise.resolve([]));
 
 		sandbox.stub(this.oRta, '_getPublishAndAppVariantSupportVisibility').returns(Promise.resolve([true, true]));
 		sandbox.stub(RtaAppVariantFeature, "isOverviewExtended").returns(true);
-		return this.oRta.start().then(function () {
+		Promise.all([
+			new Promise(function (fnResolve) {
+				this.oRta.attachStart(fnResolve);
+			}.bind(this)),
+			this.oRta.start()
+		]).then(function() {
 			assert.equal(this.oRta.getToolbar().getControl('manageApps').getVisible(), false, "then the 'AppVariant Overview' Icon Button is not visible");
 			assert.equal(this.oRta.getToolbar().getControl('manageApps').getEnabled(), false, "then the 'AppVariant Overview' Icon Button is not enabled");
 			assert.equal(this.oRta.getToolbar().getControl('appVariantOverview').getVisible(), true, "then the 'AppVariant Overview' Menu Button is visible");
 			assert.equal(this.oRta.getToolbar().getControl('appVariantOverview').getEnabled(), false, "then the 'AppVariant Overview' Menu Button is not enabled");
 			assert.equal(this.oRta.getToolbar().getControl('saveAs').getVisible(), true, "then the 'Save As' Button is visible");
 			assert.equal(this.oRta.getToolbar().getControl('manageApps').getEnabled(), false, "then the 'Save As' Button is not enabled");
+			done();
 		}.bind(this));
 	});
 
