@@ -799,6 +799,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 	});
 
+	//error cases
 	QUnit.test("ListBinding Client Mode - Error in Initial Request", function(assert){
 		var done = assert.async();
 		var oBinding = oModel.bindList("/CategoriesError", null, null, null, {
@@ -819,6 +820,49 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oBinding.attachChange(handler);
 			oBinding.getContexts();
 		});
+
+	});
+
+	QUnit.test("ListBinding Client Mode - Error - bind single entity to list", function(assert){
+		var done = assert.async();
+		var oSpy = sinon.spy(oModel, "_request");
+		var oBinding = oModel.bindContext("/Categories(1)", null, {expand: "Products"});
+
+		//invalid Binding to empty path
+		var oListBinding = oModel.bindList("", null, null,  null, {
+			operationMode: sap.ui.model.odata.OperationMode.Client
+		});
+		var handler = function() {
+			assert.ok(oSpy.calledOnce, "Request sent for entity with expand");
+			oSpy.reset();
+			//Timeout needed to avoid checkUpdate of context binding request to update the listbinding
+			setTimeout(function() {
+				oListBinding.initialize();
+				oBinding.detachChange(handler);
+				oListBinding.attachRefresh(function() {oListBinding.getContexts();});
+				oListBinding.attachChange(listhandler);
+				oListBinding.setContext(oBinding.getBoundContext());
+			}, 0);
+		};
+		var iCalls = 0;
+		var aExpandRefs;
+		var listhandler = function(oEvent) {
+
+			iCalls++;
+			assert.equal(oEvent.sId, "change");
+
+			if (iCalls === 1) {
+				var aContexts = oListBinding.getContexts();
+				assert.equal(aContexts.length, 0, "1 entry contained");
+				aExpandRefs = jQuery.extend({}, oListBinding.aExpandRefs);
+			} else if (iCalls === 2) {
+				var aNewExpandRefs = jQuery.extend({}, oListBinding.aExpandRefs);
+				assert.deepEqual(aNewExpandRefs, aExpandRefs, "must not be modified");
+				oListBinding.detachChange(listhandler);
+				done();
+			}
+		};
+		oBinding.attachChange(handler);
 
 	});
 
