@@ -87,7 +87,7 @@
 
 
 				<h3><a name="coding"></a>Start Coding</h3>  
-				<p>Now it is time to build your first OpenUI5 app! To start simple, we load OpenUI5 from our <a href="https://openui5.hana.ondemand.com/#/topic/2d3eb2f322ea4a82983c1c62a33ec4ae" target="_blank">CDN</a> and place UI5 controls into the HTML body.
+				<p>Now it is time to build your first OpenUI5 app! To start simple, we load OpenUI5 from our <a href="https://openui5.hana.ondemand.com/#/topic/2d3eb2f322ea4a82983c1c62a33ec4ae" target="_blank">CDN</a> and place UI5 controls into the HTML body:
 				</p>
 				<div class="corset"> <!-- for Ipad -->
 					<iframe style="width: 100%; height: 400px" src="https://embed.plnkr.co/vy2AbmC9CMjkef2aRBad/" frameborder="0" allowfullscren="allowfullscren" class="plunkerEmbedded"></iframe>
@@ -98,7 +98,18 @@
 					</p>
 				</div>
 
-				<p>In the left panel you can see three files: index.html, app.controller.js and app.view.xml. The reason is that code handling the presentation of data is placed in its own xml file and code responsible for responding to the user input and perform interactions should be in its own controller.js file. The index.html file is just the entry point.  
+				<p>In OpenUI5 we follow the <a href="https://openui5.hana.ondemand.com/#/topic/91f233476f4d1014b6dd926db0e91070" target="_blank">Model View Controller (MVC)</a> paradigm. Thus, in the example above, you can see three files: 
+				<ul>
+					<li><b>index.html</b><br>
+					The entry point for our app that loads UI5 and places the view into the html body.
+					</li>
+				<li><b>app.view.xml</b><br>
+					The view is written in XML and contains presentation logic to display a page and a button control.
+					</li>
+					<li><b>app.controller.js</b><br>
+					The controller defines an event handler for responding to the user action and displays a message toast when called.
+					</li>
+				</ul>			
 				</p>
 				<p>The code in the middle panel displays the code. The “src” tag loads UI5 and sets the bootstrap ID, theme and main library. The “placeAt” method inserts the button at the indicated position with given ID. The controller file contains the event handler of the button press event.
 				</p>
