@@ -206,7 +206,12 @@ sap.ui.define([
 					var sParameterPath = oParameter.ValueListProperty;
 
 					// TODO use Label annotation
-					oTable.addColumn(new Column({header : new Text({text : sParameterPath})}));
+					oTable.addColumn(new Column({
+						header : new Text({
+							text : sParameterPath,
+							wrapping : false
+						})
+					}));
 					oColumnListItem.addCell(new Text({text : "{" + sParameterPath + "}"}));
 				});
 				oTable.attachSelectionChange(onSelectionChange);
