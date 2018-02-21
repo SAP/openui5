@@ -701,6 +701,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		StepInput.prototype.onsappageup = function (oEvent) {
 			this._applyValue(this._calculateNewValue(this.getLargerStep(), true).displayValue);
 			this._verifyValue();
+			// prevent document scrolling when page up key is pressed
+			oEvent.preventDefault();
 		};
 
 		/**
@@ -711,6 +713,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		StepInput.prototype.onsappagedown = function (oEvent) {
 			this._applyValue(this._calculateNewValue(this.getLargerStep(), false).displayValue);
 			this._verifyValue();
+			// prevent document scrolling when page down key is pressed
+			oEvent.preventDefault();
 		};
 
 		/**
