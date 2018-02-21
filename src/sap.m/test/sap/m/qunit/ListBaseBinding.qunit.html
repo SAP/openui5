@@ -588,7 +588,7 @@
 					assert.ok($GrowingButton.parent().next().get(0) === oList.getDomRef("before"), "Growing button is inserted before the first item.");
 					assert.ok(oList.getItems().pop().getDomRef() === oNavigationRoot.children[0], "Last aggregation DOM is the first child of the list");
 
-					if (document.hasFocus()) {
+					if (document.hasFocus() && oList.getItemNavigation()) {
 						oList.focus();
 						assert.ok(document.activeElement === oNavigationRoot.children[iThreshold - 1], "First focus jumps to last item");
 					}
