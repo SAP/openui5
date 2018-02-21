@@ -3,8 +3,7 @@
 }
 
 .aboutLink {
-	vertical-align: text-bottom;
-	margin-left: 0.25rem;
+	vertical-align: bottom;
 }
 
 .rateButton.sapMBtn span {
@@ -599,6 +598,10 @@ code {
 .sapUiJSD {
 	font-size: 0.875rem;
 	display: inline;
+}
+
+.aboutDialog .sapUiJSD {
+    display: inline-block;
 }
 
 .sapUiJSD a {
