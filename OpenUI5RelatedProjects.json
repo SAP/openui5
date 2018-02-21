@@ -184,7 +184,7 @@
 			"description": "Neovim deoplete sap-icon plugin", 
 			"githubLink": "https://github.com/Trulsaa/deoplete-sap-icon", 
 			"documentationLink": "https://github.com/Trulsaa/deoplete-sap-icon", 
-			"owner": "Truls Aagaard", 
+			"owner": "Trulsaa", 
 			"license": "MIT License", 
 			"type": "nvim plugin" 
 		},
