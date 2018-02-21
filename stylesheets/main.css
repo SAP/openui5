@@ -587,7 +587,8 @@ padding-right: 10px;
 }
 
 .indented {
-	text-indent: 50px;
+  position: relative;
+  left: 30px;
 }	
 
 /*******************************************************************************
