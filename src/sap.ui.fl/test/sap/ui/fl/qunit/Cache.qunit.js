@@ -96,7 +96,6 @@ jQuery.sap.require("sap.ui.fl.Utils");
 				changes: {
 					changes: [],
 					contexts: [],
-					settings: {},
 					ui2personalization: {},
 					variantSection: {}
 				}
@@ -565,8 +564,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 				changes : [],
 				contexts : [],
 				variantSection : {},
-				ui2personalization : {},
-				settings : {}
+				ui2personalization : {}
 			},
 			componentClassName: sTestComponentName
 		};

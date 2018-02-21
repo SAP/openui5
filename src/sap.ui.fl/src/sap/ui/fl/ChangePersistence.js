@@ -166,7 +166,7 @@ sap.ui.define([
 				Settings._storeInstance(oWrappedChangeFileContent.changes.settings);
 			}
 
-			if (!oWrappedChangeFileContent.changes || !oWrappedChangeFileContent.changes.changes) {
+			if (!oWrappedChangeFileContent.changes || !oWrappedChangeFileContent.changes.changes || oWrappedChangeFileContent.changes.changes.length == 0) {
 				return [];
 			}
 
