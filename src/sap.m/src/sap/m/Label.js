@@ -67,7 +67,7 @@ function(
 	 * @constructor
 	 * @public
 	 * @alias sap.m.Label
-	 * @see {@link https://experience.sap.com/fiori-design-web/label/ UX Guidelines for sap.m.Label}
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/label/ Label}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Label = Control.extend("sap.m.Label", /** @lends sap.m.Label.prototype */ { metadata : {

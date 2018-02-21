@@ -68,6 +68,7 @@ function(
 	 * @alias sap.m.FlexBox
 	 * @see https://www.w3.org/TR/css-flexbox-1/
 	 * @see https://www.w3schools.com/css/css3_flexbox.asp
+	 * @see {@link topic:674890e6d8534eaba2eaf63242e077eb Flex Box}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FlexBox = Control.extend("sap.m.FlexBox", /** @lends sap.m.FlexBox.prototype */ { metadata : {

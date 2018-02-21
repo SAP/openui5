@@ -89,6 +89,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.16
 	 * @alias sap.m.TableSelectDialog
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/table-select-dialog/ Table Select Dialog}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TableSelectDialog = Control.extend("sap.m.TableSelectDialog", /** @lends sap.m.TableSelectDialog.prototype */ { metadata : {

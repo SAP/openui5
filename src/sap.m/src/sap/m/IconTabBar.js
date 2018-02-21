@@ -88,6 +88,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @alias sap.m.IconTabBar
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/icontabbar/ Icon Tab Bar}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var IconTabBar = Control.extend("sap.m.IconTabBar", /** @lends sap.m.IconTabBar.prototype */ { metadata : {
