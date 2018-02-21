@@ -729,11 +729,17 @@ sap.ui.define([
 					oConstraints.displayFormat = oProperty["sap:display-format"];
 					break;
 				case "Edm.Decimal":
-					oConstraints.precision = oProperty.precision;
-					oConstraints.scale = oProperty.scale;
+					if (oProperty.precision) {
+						oConstraints.precision = oProperty.precision;
+					}
+					if (oProperty.scale) {
+						oConstraints.scale = oProperty.scale;
+					}
 					oMinMaxAnnotation = oProperty["Org.OData.Validation.V1.Minimum"];
-					if (oMinMaxAnnotation && oMinMaxAnnotation.String) {
-						oConstraints.minimum = oMinMaxAnnotation.String;
+					if (oMinMaxAnnotation
+							&& (oMinMaxAnnotation.Decimal || oMinMaxAnnotation.String)) {
+						oConstraints.minimum =
+							oMinMaxAnnotation.Decimal || oMinMaxAnnotation.String;
 						oExclusiveAnnotation =
 							oMinMaxAnnotation["Org.OData.Validation.V1.Exclusive"];
 						if (oExclusiveAnnotation) {
@@ -741,8 +747,10 @@ sap.ui.define([
 						}
 					}
 					oMinMaxAnnotation = oProperty["Org.OData.Validation.V1.Maximum"];
-					if (oMinMaxAnnotation && oMinMaxAnnotation.String) {
-						oConstraints.maximum = oMinMaxAnnotation.String;
+					if (oMinMaxAnnotation
+							&& (oMinMaxAnnotation.Decimal || oMinMaxAnnotation.String)) {
+						oConstraints.maximum =
+							oMinMaxAnnotation.Decimal || oMinMaxAnnotation.String;
 						oExclusiveAnnotation =
 							oMinMaxAnnotation["Org.OData.Validation.V1.Exclusive"];
 						if (oExclusiveAnnotation) {
