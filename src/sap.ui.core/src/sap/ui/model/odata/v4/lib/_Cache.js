@@ -206,7 +206,6 @@ sap.ui.define([
 	 *   {@link #fetchTypes})
 	 */
 	Cache.prototype.calculateKeyPredicates = function (oRootInstance, mTypeForMetaPath) {
-		var oRequestor = this.oRequestor;
 
 		/**
 		 * Adds predicates to all entities in the given collection and creates the map $byPredicate
@@ -240,7 +239,7 @@ sap.ui.define([
 
 			if (oType && oType.$Key) {
 				oInstance["@$ui5.predicate"] =
-					oRequestor.getKeyPredicate(oInstance, sMetaPath, mTypeForMetaPath);
+					_Helper.getKeyPredicate(oInstance, sMetaPath, mTypeForMetaPath);
 			}
 
 			Object.keys(oInstance).forEach(function (sProperty) {
@@ -326,7 +325,7 @@ sap.ui.define([
 						_Helper.getSelectForPath(that.mQueryOptions, sPath));
 					// determine and save the key predicate
 					that.fetchTypes().then(function (mTypeForMetaPath) {
-						oEntityData["@$ui5.predicate"] = that.oRequestor.getKeyPredicate(
+						oEntityData["@$ui5.predicate"] = _Helper.getKeyPredicate(
 							oEntityData,
 							_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sPath)),
 							mTypeForMetaPath);

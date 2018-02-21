@@ -647,6 +647,137 @@ sap.ui.require([
 	}
 
 	//*********************************************************************************************
+	[{
+		sKeyPredicate : "('42')",
+		oEntityInstance : {"ID" : "42"},
+		oEntityType : {
+			"$Key" : ["ID"],
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}, {
+		sKeyPredicate : "('Walter%22s%20Win''s')",
+		oEntityInstance : {"ID" : "Walter\"s Win's"},
+		oEntityType : {
+			"$Key" : ["ID"],
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}, {
+		sKeyPredicate : "(Sector='DevOps',ID='42')",
+		oEntityInstance : {"ID" : "42", "Sector" : "DevOps"},
+		oEntityType : {
+			"$Key" : ["Sector", "ID"],
+			"Sector" : {
+				"$Type" : "Edm.String"
+			},
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}, {
+		sKeyPredicate : "(Bar=42,Fo%3Do='Walter%22s%20Win''s')",
+		oEntityInstance : {
+			"Bar" : 42,
+			"Fo=o" : "Walter\"s Win's"
+		},
+		oEntityType : {
+			"$Key" : ["Bar", "Fo=o"],
+			"Bar" : {
+				"$Type" : "Edm.Int16"
+			},
+			"Fo=o" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}].forEach(function (oFixture) {
+		QUnit.test("getKeyPredicate: " + oFixture.sKeyPredicate, function (assert) {
+			this.spy(_Helper, "formatLiteral");
+
+			assert.strictEqual(
+				_Helper.getKeyPredicate(oFixture.oEntityInstance, "~path~", {
+					"~path~" : oFixture.oEntityType
+				}),
+				oFixture.sKeyPredicate);
+
+			// check that formatPropertyAsLiteral() is called for each key property
+			oFixture.oEntityType.$Key.forEach(function (sProperty) {
+				sinon.assert.calledWithExactly(_Helper.formatLiteral,
+					sinon.match.same(oFixture.oEntityInstance[sProperty]),
+					sinon.match.same(oFixture.oEntityType[sProperty].$Type));
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getKeyPredicate: key with alias", function (assert) {
+		var oComplexType = {
+				"baz" : {
+					"$kind" : "Property",
+					"$Type" : "Edm.Int16"
+				}
+			},
+			oEntityInstance = {},
+			oEntityType = {
+				"$Key" : ["qux", {"foo" : "bar/baz"}],
+				"qux" : {
+					"$kind" : "Property",
+					"$Type" : "Edm.String"
+				}
+			},
+			oHelperMock = this.mock(_Helper);
+
+		oHelperMock.expects("drillDown")
+			.withExactArgs(oEntityInstance, ["qux"]).returns("v1");
+		oHelperMock.expects("drillDown")
+			.withExactArgs(oEntityInstance, ["bar", "baz"]).returns("v2");
+		oHelperMock.expects("formatLiteral")
+			.withExactArgs("v1", "Edm.String").returns("~1");
+		oHelperMock.expects("formatLiteral")
+			.withExactArgs("v2", "Edm.Int16").returns("~2");
+
+		assert.strictEqual(_Helper.getKeyPredicate(oEntityInstance, "~path~", {
+				"~path~" : oEntityType,
+				"~path~/bar" : oComplexType
+			}),
+			"(qux=~1,foo=~2)");
+	});
+
+	//*********************************************************************************************
+	[{
+		sDescription : "one key property",
+		oEntityInstance : {},
+		oEntityType : {
+			"$Key" : ["ID"],
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}, {
+		sDescription : "multiple key properties",
+		oEntityInstance : {"Sector" : "DevOps"},
+		oEntityType : {
+			"$Key" : ["Sector", "ID"],
+			"Sector" : {
+				"$Type" : "Edm.String"
+			},
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}].forEach(function (oFixture) {
+		QUnit.test("getKeyPredicate: missing key, " + oFixture.sDescription, function (assert) {
+			assert.strictEqual(
+				_Helper.getKeyPredicate(oFixture.oEntityInstance, "~path~", {
+					"~path~" : oFixture.oEntityType
+				}),
+				undefined);
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("namespace", function (assert) {
 		assert.strictEqual(_Helper.namespace("Products"), "");
 		assert.strictEqual(_Helper.namespace("zui5_epm_sample.Products"), "zui5_epm_sample");
