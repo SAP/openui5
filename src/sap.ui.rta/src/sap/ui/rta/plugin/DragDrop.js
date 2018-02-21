@@ -86,11 +86,7 @@ function(
 	 * @override
 	 */
 	DragDrop.prototype._isEditable = function(oOverlay, mPropertyBag) {
-		var bMovable = this.getElementMover().isEditable(oOverlay, mPropertyBag.onRegistration);
-		if (bMovable) {
-			this._attachMovableBrowserEvents(oOverlay);
-		}
-		return bMovable;
+		return this.getElementMover().isEditable(oOverlay, mPropertyBag.onRegistration);
 	};
 
 	/**
