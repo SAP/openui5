@@ -1,0 +1,67 @@
+<mvc:View
+	controllerName="sap.m.sample.TableDnD.AvailableProducts"
+	xmlns:dnd="sap.ui.core.dnd"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:c="sap.ui.core"
+	xmlns="sap.m"
+	height="100%">
+	<Table
+		id="table"
+		mode="SingleSelectMaster"
+		growing="true"
+		growingThreshold="10"
+		beforeOpenContextMenu="onBeforeOpenContextMenu"
+		items="{
+			path: '/ProductCollection',
+			filters: {path: 'Rank', operator: 'EQ', value1: '0'}
+		}">
+		<contextMenu>
+			<Menu>
+				<MenuItem text="Move to Selected Products" press="moveToSelectedProductsTable" />
+			</Menu>
+		</contextMenu>
+		<headerToolbar>
+			<Toolbar>
+				<Title text="Available Products" />
+			</Toolbar>
+		</headerToolbar>
+		<columns>
+			<Column
+				sortProperty="Name"
+				filterProperty="Name">
+				<Text text="Product Name" />
+			</Column>
+			<Column
+				sortProperty="Category"
+				filterProperty="Category">
+				<Text text="Category" />
+			</Column>
+			<Column
+				hAlign="End"
+				width="6rem"
+				sortProperty="Quantity">
+				<Text text="Quantity" />
+			</Column>
+		</columns>
+		<dragDropConfig>
+			<dnd:DragInfo
+				groupName="available2selected"
+				sourceAggregation="items" />
+			<dnd:DropInfo
+				groupName="selected2available"
+				drop="onDropAvailableProductsTable" />
+		</dragDropConfig>
+		<items>
+			<ColumnListItem>
+				<cells>
+					<Text text="{Name}" wrapping="false" />
+					<Text text="{Category}" wrapping="false" />
+					<Text text="{
+						path: 'Quantity',
+						type: 'sap.ui.model.type.Integer'
+					}" />
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</mvc:View>
