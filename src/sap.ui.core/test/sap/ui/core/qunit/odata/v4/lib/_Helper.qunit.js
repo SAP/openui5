@@ -334,6 +334,21 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("fireChanges: null value", function (assert) {
+		var mChangeListeners = {
+			"path/to/property/Foo" : [{onChange : function () {}}]
+		};
+
+		this.mock(mChangeListeners["path/to/property/Foo"][0]).expects("onChange")
+			.withExactArgs(null);
+
+		// code under test
+		_Helper.fireChanges(mChangeListeners, "path/to/property", {
+				Foo : null
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("formatLiteral", function (assert) {
 		assert.throws(function () {
 			_Helper.formatLiteral();
@@ -455,6 +470,7 @@ sap.ui.require([
 				"SO_2_SOITEM/AnotherNote" : [{onChange : function () {}}]
 			},
 			oCacheData = {
+				DeliveryDate : null,
 				SalesOrderItemID : "000100",
 				Note : "old",
 				AnotherNote : "oldAnotherNote"
@@ -467,12 +483,14 @@ sap.ui.require([
 
 		// code under test
 		_Helper.updateCache(mChangeListeners, "SO_2_SOITEM", oCacheData, {
+			DeliveryDate : null,
 			Note : "new",
 			Foo : "bar",
 			AnotherNote :"newAnotherNote"
 		});
 
 		assert.deepEqual(oCacheData, {
+			DeliveryDate : null,
 			SalesOrderItemID : "000100",
 			Note : "new",
 			AnotherNote : "newAnotherNote"
