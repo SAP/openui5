@@ -235,9 +235,9 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 					oMeasurement.duration = oMeasurement.pause - oMeasurement.start;
 				}
 			}
-			log.info("Performance measurement pause: " + sId + " on " + iTime + " duration: " + oMeasurement.duration);
 
 			if (oMeasurement) {
+				log.info("Performance measurement pause: " + sId + " on " + iTime + " duration: " + oMeasurement.duration);
 				return this.getMeasurement(oMeasurement.id);
 			} else {
 				return false;
@@ -260,7 +260,6 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 
 			var iTime = now();
 			var oMeasurement = mMeasurements[sId];
-			log.info("Performance measurement resume: " + sId + " on " + iTime + " duration: " + oMeasurement.duration);
 
 			if (oMeasurement && oMeasurement.pause > 0) {
 				// already paused
@@ -269,6 +268,7 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 			}
 
 			if (oMeasurement) {
+				log.info("Performance measurement resume: " + sId + " on " + iTime + " duration: " + oMeasurement.duration);
 				return this.getMeasurement(oMeasurement.id);
 			} else {
 				return false;
