@@ -13,7 +13,31 @@ sap.ui.define(["./Measurement", "./ResourceTimings", "./XHRInterceptor", "sap/ba
 
 	var INTERACTION = "INTERACTION",
 		aInteractions = [],
-		oPendingInteraction = {};
+		oPendingInteraction = createMeasurement();
+
+	function createMeasurement() {
+		return {
+			event: "startup", // event which triggered interaction - default is startup interaction
+			trigger: "undetermined", // control which triggered interaction
+			component: "undetermined", // component or app identifier
+			appVersion: "undetermined", // application version as from app descriptor
+			start : 0, // interaction start
+			end: 0, // interaction end
+			navigation: 0, // sum over all navigation times
+			roundtrip: 0, // time from first request sent to last received response end - without gaps and ignored overlap
+			processing: 0, // client processing time
+			duration: 0, // interaction duration
+			requests: [], // Performance API requests during interaction
+			measurements: [], // Measurements
+			sapStatistics: [], // SAP Statistics for OData
+			requestTime: 0, // summ over all requests in the interaction (oPendingInteraction.requests[0].responseEnd-oPendingInteraction.requests[0].requestStart)
+			networkTime: 0, // request time minus server time from the header
+			bytesSent: 0, // sum over all requests bytes
+			bytesReceived: 0, // sum over all response bytes
+			requestCompression: undefined, // true if all responses have been sent gzipped
+			busyDuration : 0 // summed GlobalBusyIndicator duration during this interaction
+		};
+	}
 
 	function isCompleteMeasurement(oMeasurement) {
 		if (oMeasurement.start > oPendingInteraction.start && oMeasurement.end < oPendingInteraction.end) {
@@ -306,27 +330,14 @@ sap.ui.define(["./Measurement", "./ResourceTimings", "./XHRInterceptor", "sap/ba
 			var oComponentInfo = createOwnerComponentInfo(oSrcElement);
 
 			// setup new pending interaction
-			oPendingInteraction = {
-				event: sType, // event which triggered interaction
-				trigger: oSrcElement && oSrcElement.getId ? oSrcElement.getId() : "undetermined", // control which triggered interaction
-				component: oComponentInfo.id, // component or app identifier
-				appVersion: oComponentInfo.version, // application version as from app descriptor
-				start : iTime, // interaction start
-				end: 0, // interaction end
-				navigation: 0, // sum over all navigation times
-				roundtrip: 0, // time from first request sent to last received response end - without gaps and ignored overlap
-				processing: 0, // client processing time
-				duration: 0, // interaction duration
-				requests: [], // Performance API requests during interaction
-				measurements: [], // Measurements
-				sapStatistics: [], // SAP Statistics for OData
-				requestTime: 0, // summ over all requests in the interaction (oPendingInteraction.requests[0].responseEnd-oPendingInteraction.requests[0].requestStart)
-				networkTime: 0, // request time minus server time from the header
-				bytesSent: 0, // sum over all requests bytes
-				bytesReceived: 0, // sum over all response bytes
-				requestCompression: undefined, // true if all responses have been sent gzipped
-				busyDuration : 0 // summed GlobalBusyIndicator duration during this interaction
-			};
+			oPendingInteraction = createMeasurement();
+			oPendingInteraction.event = sType;
+			oPendingInteraction.component = oComponentInfo.id;
+			oPendingInteraction.appVersion = oComponentInfo.version;
+			oPendingInteraction.start = iTime;
+			if (oSrcElement && oSrcElement.getId) {
+				oPendingInteraction.trigger = oSrcElement.getId();
+			}
 			log.info("Interaction step started: trigger: " + oPendingInteraction.trigger + "; type: " + oPendingInteraction.event, "Interaction.js");
 		},
 
@@ -483,7 +494,7 @@ sap.ui.define(["./Measurement", "./ResourceTimings", "./XHRInterceptor", "sap/ba
 		 * @private
 		 */
 		setStepComponent : function(sComponentName) {
-			if (bInteractionActive && sComponentName) {
+			if (bInteractionActive && oPendingInteraction && sComponentName) {
 				oPendingInteraction.component = sComponentName;
 			}
 		},
