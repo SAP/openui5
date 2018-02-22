@@ -29,6 +29,16 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 	var sURI = "http://services.odata.org/V3/Northwind/Northwind.svc/";
 		sURI = "../../../../../proxy/http/" + sURI.replace("http://","");
 
+	var oLogChecker = {
+		init: function(){
+			this.iLastLog = jQuery.sap.log.getLogEntries().length;
+		},
+
+		getLogs: function(){
+			return jQuery.sap.log.getLogEntries().slice(this.iLastLog);
+		}
+	};
+
 	function removeSharedMetadata() {
 		var sServiceURI = sURI.replace(/\/$/, "");
 		if (sap.ui.model.odata.v2.ODataModel.mServiceData
@@ -825,6 +835,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 	QUnit.test("ListBinding Client Mode - Error - bind single entity to list", function(assert){
 		var done = assert.async();
+		oLogChecker.init();
 		var oSpy = sinon.spy(oModel, "_request");
 		var oBinding = oModel.bindContext("/Categories(1)", null, {expand: "Products"});
 
@@ -859,6 +870,12 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 				var aNewExpandRefs = jQuery.extend({}, oListBinding.aExpandRefs);
 				assert.deepEqual(aNewExpandRefs, aExpandRefs, "must not be modified");
 				oListBinding.detachChange(listhandler);
+
+				var aFiltered = oLogChecker.getLogs().filter(function(oLogEntry){
+					return oLogEntry.message === "List Binding is not bound against a list for /Categories(1)";
+				});
+				assert.ok(aFiltered.length > 0, "there should be type errors since it's a single entity within the list")
+				
 				done();
 			}
 		};

@@ -391,6 +391,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Filter
 
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 
+			if (!this._checkPathType()) {
+				jQuery.sap.log.error("List Binding is not bound against a list for " + sResolvedPath);
+			}
+
+
 			// If path does not resolve or parent context is created, reset current list
 			if (!sResolvedPath || bCreated) {
 				if (this.aAllKeys || this.aKeys.length > 0 || this.iLength > 0) {
@@ -865,6 +870,51 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Filter
 	};
 
 	/**
+	 * Retrieves the type from the path and checks whether or not the resolved path relates to a list type
+	 * (multiplicity * or if it matches an entityset)
+	 *
+	 * @returns {boolean} whether or not the type matches a list
+	 * @private
+	 */
+	ODataListBinding.prototype._checkPathType = function () {
+		var sPath = this.oModel.resolve(this.sPath, this.oContext);
+
+		if (sPath) {
+			if (!this._mPathType || !this._mPathType[sPath]) {
+				this._mPathType = {};
+
+				var iIndex = sPath.lastIndexOf("/");
+				var oTypeSet, oEntityType;
+				if (iIndex > 1) {
+					oEntityType = this.oModel.oMetadata._getEntityTypeByPath(sPath.substring(0, iIndex));
+					oTypeSet = this.oModel.oMetadata._getEntityAssociationEnd(oEntityType, sPath.substring(iIndex + 1));
+					//multiplicity can only be one of the following:
+					// 0..1 at most one
+					// 1    exactly one
+					// *    one or more
+					if (oTypeSet && oTypeSet.multiplicity === "*") {
+						this._mPathType[sPath] = true;
+
+					}
+				} else if (iIndex === 0) {
+					var oMatchingSet, sName = sPath.substring(1);
+					this.oModel.oMetadata._iterateEntitySets(function(oEntitySet) {
+						if (oEntitySet.name === sName) {
+							oMatchingSet = oEntitySet;
+							return false;
+						}
+					});
+					if (oMatchingSet) {
+						this._mPathType[sPath] = true;
+					}
+				}
+			}
+			return this._mPathType[sPath];
+		}
+		return true;
+	};
+
+	/**
 	 * Initialize binding.
 	 *
 	 * Fires a change if data is already available ($expand) or a refresh.
@@ -877,6 +927,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Filter
 	ODataListBinding.prototype.initialize = function() {
 		var bCreatedRelative = this.isRelative() && this.oContext && this.oContext.bCreated;
 		if (this.oModel.oMetadata && this.oModel.oMetadata.isLoaded() && this.bInitial && !bCreatedRelative) {
+
+
+			if (!this._checkPathType()) {
+				jQuery.sap.log.error("List Binding is not bound against a list for " + this.oModel.resolve(this.sPath, this.oContext));
+			}
+
+
 			this.bInitial = false;
 			this._initSortersFilters();
 			if (!this.bSuspended) {
