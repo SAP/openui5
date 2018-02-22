@@ -180,6 +180,13 @@ function(
 			if (iIndex > -1) {
 				// mPropertyBag.sourceAggregation should always be used when available
 				sSourceAggregation = mPropertyBag.sourceAggregation || oModifier.getParentAggregationName(oMovedElement, oSourceParent);
+
+				// if iIndex === iInserIndex the operation was already performed
+				// in this case we need the sourceIndex that is saved in the change in order to revert it to the correct index
+				if (iIndex === iInsertIndex) {
+					iIndex = mMovedElement.sourceIndex;
+				}
+
 				aRevertData.unshift({
 					index: iIndex,
 					aggregation: sSourceAggregation,
