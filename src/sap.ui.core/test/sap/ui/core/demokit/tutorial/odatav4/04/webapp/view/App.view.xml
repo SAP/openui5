@@ -16,8 +16,7 @@
 							parameters: {
 								$count: true
 							}
-						}"
-						mode="SingleSelectMaster">
+						}">
 						<headerToolbar>
 							<OverflowToolbar>
 								<content>

@@ -13,8 +13,7 @@
 						growingThreshold="10"
 						items="{
 							path: '/People'
-						}"
-						mode="SingleSelectMaster">
+						}">
 						<columns>
 							<Column id="userNameColumn">
 								<Text text="{i18n>userNameLabelText}"/>

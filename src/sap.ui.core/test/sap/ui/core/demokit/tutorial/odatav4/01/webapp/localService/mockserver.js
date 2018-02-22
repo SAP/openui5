@@ -27,11 +27,12 @@ sap.ui.define([
 			// Register the requests for which responses should be faked.
 			oSandbox.server.respondWith(rBaseUrl, handleAllRequests);
 
-			// Apply a filter to the fake XmlHttpRequest. Otherwise, ALL requests (e.g. our component, views etc.) would be intercepted.
+			// Apply a filter to the fake XmlHttpRequest.
+			// Otherwise, ALL requests (e.g. for the component, views etc.) would be intercepted.
 			sinon.FakeXMLHttpRequest.useFilters = true;
 			sinon.FakeXMLHttpRequest.addFilter(function (sMethod, sUrl) {
 				// If the filter returns true, the request will NOT be faked.
-				// We only want to fake requests that go to 'our' service.
+				// We only want to fake requests that go to the intended service.
 				return !rBaseUrl.test(sUrl);
 			});
 
@@ -68,7 +69,7 @@ sap.ui.define([
 	/**
 	 * Looks for a user with a given user name and returns its index in the user array.
 	 * @param {string} sUserName - the user name to look for.
-	 * @returns {int} index of that user in the array, or undefined.
+	 * @returns {int} index of that user in the array, or -1 if the user was not found.
 	 */
 	function findUserIndex(sUserName) {
 		for (var i = 0; i < aUsers.length; i++) {
@@ -76,6 +77,7 @@ sap.ui.define([
 				return i;
 			}
 		}
+		return -1;
 	}
 
 	/**
@@ -97,11 +99,56 @@ sap.ui.define([
 	 * @returns {string} the user name.
 	 */
 	function getUserKeyFromUrl(sUrl) {
-		var aMatches = sUrl.match(/People\('(.+)'\)/);
+		var aMatches = sUrl.match(/People\('(.*)'\)/);
 		if (!Array.isArray(aMatches) || aMatches.length !== 2) {
 			throw new Error("Could not find a user key in " + sUrl);
 		}
 		return aMatches[1];
+	}
+
+	/**
+	 * Checks if a given UserName is unique or already used
+	 * @param {string} sUserName - the UserName to be checked
+	 * @returns {boolean} True if the UserName is unique (not used), false otherwise
+	 */
+	function isUnique(sUserName) {
+		return findUserIndex(sUserName) < 0;
+	}
+
+	/**
+	 * Returns a proper HTTP response body for "duplicate key" errors
+	 * @param {string} sKey - the duplicate key
+	 * @returns {string} the proper response body
+	 */
+	function duplicateKeyError(sKey) {
+		return JSON.stringify({
+			error : {
+				code : "409",
+				message : "There is already a user with user name '" + sKey + "'.",
+				target : "UserName"
+			}
+		});
+	}
+
+	function invalidKeyError(sKey) {
+		return JSON.stringify({
+			error : {
+				code : "404",
+				message : "There is no user with user name '" + sKey + "'.",
+				target : "UserName"
+			}
+		});
+	}
+
+	function getSuccessResponse(sResponseBody) {
+		return [
+			200,
+			{
+				"Content-Type" : "application/json; odata.metadata=minimal",
+				"OData-Version" : "4.0"
+			},
+			sResponseBody
+		];
 	}
 
 	/**
@@ -245,14 +292,7 @@ sap.ui.define([
 	 * @returns {Array} an array with the response information needed by Sinon's respond() function
 	 */
 	function handleGetCountRequests() {
-		return [
-			200,
-			{
-				"Content-Type" : "text/plain;charset=UTF-8;IEEE754Compatible=true",
-				"OData-Version" : "4.0"
-			},
-			aUsers.length.toString()
-		];
+		return getSuccessResponse(aUsers.length.toString());
 	}
 
 	/**
@@ -263,33 +303,51 @@ sap.ui.define([
 	 */
 	function handleGetUserRequests(oXhr, bCount) {
 		var iCount,
+			sKey,
+			iIndex,
 			sCount = "",
 			aResult,
-			sResponse;
+			sResponseBody;
 
-		// Get the data filtered, sorted and reduced according to skip + top
-		aResult = applyFilter(oXhr, aUsers);
-		iCount = aResult.length; // the total no. of people found, after filtering
-		aResult = applySort(oXhr, aResult);
-		aResult = applySkipTop(oXhr, aResult);
+		// Check if an individual user or a user range is requested
+		try {
+			sKey = getUserKeyFromUrl(oXhr.url); // If this throws an error, then a user range was requested
 
-		if (bCount) {
-			sCount = '"@odata.count": ' + iCount + ',';
+			iIndex = findUserIndex(sKey);
+			if (iIndex > -1) {
+				sResponseBody = '{"@odata.context": "' + getBaseUrl(oXhr.url) +
+					'$metadata#People(Age,FirstName,LastName,UserName)/$entity",' +
+					JSON.stringify(aUsers[iIndex]).slice(1);
+				return getSuccessResponse(sResponseBody);
+			} else {
+				sResponseBody = invalidKeyError(sKey);
+				return [
+					400,
+					{
+						"Content-Type" : "application/json; charset=utf-8"
+					},
+					sResponseBody
+				];
+			}
+		} catch (oException) {
+			// If getUserKeyFromUrl throws an error, then a user range was requested
+			// Get the data filtered, sorted and reduced according to skip + top
+			aResult = applyFilter(oXhr, aUsers);
+			iCount = aResult.length; // the total no. of people found, after filtering
+			aResult = applySort(oXhr, aResult);
+			aResult = applySkipTop(oXhr, aResult);
+
+			if (bCount) {
+				sCount = '"@odata.count": ' + iCount + ',';
+			}
+
+			sResponseBody = '{"@odata.context": "' + getBaseUrl(oXhr.url) +
+				'$metadata#People(Age,FirstName,LastName,UserName)",' +
+				sCount +
+				'"value": ' + JSON.stringify(aResult) +
+				"}";
+			return getSuccessResponse(sResponseBody);
 		}
-
-		sResponse = '{"@odata.context": "' + getBaseUrl(oXhr.url) + '$metadata#People(Age,FirstName,LastName,UserName)",' +
-			sCount +
-			'"value": ' + JSON.stringify(aResult) +
-			"}";
-
-		return [
-			200,
-			{
-				"Content-Type" : "application/json; odata.metadata=minimal",
-				"OData-Version" : "4.0"
-			},
-			sResponse
-		];
 	}
 
 	/**
@@ -301,7 +359,8 @@ sap.ui.define([
 	function handlePatchUserRequests(oXhr) {
 		var sKey,
 			oUser,
-			oChanges;
+			oChanges,
+			sResponseBody;
 
 		// Get the key of the person to change
 		sKey = getUserKeyFromUrl(oXhr.url);
@@ -309,20 +368,36 @@ sap.ui.define([
 		// Get the list of changes
 		oChanges = getUserDataFromRequestBody(oXhr.requestBody);
 
-		// Now make the change(s)
-		oUser = aUsers[findUserIndex(sKey)];
-		for (var sFieldName in oChanges) {
-			oUser[sFieldName] = oChanges[sFieldName];
-		}
+		// Check if the UserName is changed to a duplicate.
+		// If the UserName is "changed" to its current value, that is not an error.
+		if (oChanges.hasOwnProperty("UserName") && oChanges.UserName !== sKey && !isUnique(oChanges.UserName)) {
+			// Error
+			sResponseBody = duplicateKeyError(oChanges.UserName);
+			return [
+				400,
+				{
+					"Content-Type" : "application/json; charset=utf-8"
+				},
+				sResponseBody
+			];
+		} else {
+			// No error: make the change(s)
+			oUser = aUsers[findUserIndex(sKey)];
+			for (var sFieldName in oChanges) {
+				if (oChanges.hasOwnProperty(sFieldName)) {
+					oUser[sFieldName] = oChanges[sFieldName];
+				}
+			}
 
-		// The response to PATCH requests is always http 204 (No Content)
-		return [
-			204,
-			{
-				"Content-Type" : "application/json; odata.metadata=minimal",
-				"OData-Version" : "4.0"
-			},
-			null];
+			// The response to PATCH requests is always http 204 (No Content)
+			sResponseBody = null;
+			return [
+				204,
+				{
+					"OData-Version" : "4.0"
+				},
+				sResponseBody];
+		}
 	}
 
 	/**
@@ -356,23 +431,37 @@ sap.ui.define([
 	 */
 	function handlePostUserRequests(oXhr) {
 		var oUser,
-			sResponse;
+			sResponseBody;
 
 		oUser = getUserDataFromRequestBody(oXhr.requestBody);
-		aUsers.push(oUser);
 
-		sResponse = '{"@odata.context": "' + getBaseUrl(oXhr.url) + '$metadata#People/$entity",';
-		sResponse += JSON.stringify(oUser).slice(1);
+		// Check if that user already exists
+		if (isUnique(oUser.UserName)) {
+			aUsers.push(oUser);
 
-		// The response to POST requests is http 201 (Created)
-		return [
-			201,
-			{
-				"Content-Type" : "application/json; odata.metadata=minimal",
-				"OData-Version" : "4.0"
-			},
-			sResponse
-		];
+			sResponseBody = '{"@odata.context": "' + getBaseUrl(oXhr.url) + '$metadata#People/$entity",';
+			sResponseBody += JSON.stringify(oUser).slice(1);
+
+			// The response to POST requests is http 201 (Created)
+			return [
+				201,
+				{
+					"Content-Type" : "application/json; odata.metadata=minimal",
+					"OData-Version" : "4.0"
+				},
+				sResponseBody
+			];
+		} else {
+			// Error
+			sResponseBody = duplicateKeyError(oUser.UserName);
+			return [
+				400,
+				{
+					"Content-Type" : "application/json; charset=utf-8"
+				},
+				sResponseBody
+			];
+		}
 	}
 
 	/**
@@ -408,7 +497,7 @@ sap.ui.define([
 					aResponse = handleGetMetadataRequests();
 				} else if (/\/\$count/.test(oXhr.url)) {
 					aResponse = handleGetCountRequests();
-				} else if (/People\?/.test(oXhr.url)) {
+				} else if (/People.*\?/.test(oXhr.url)) {
 					aResponse = handleGetUserRequests(oXhr, /\$count=true/.test(oXhr.url));
 				}
 				break;
@@ -463,7 +552,7 @@ sap.ui.define([
 			aParts = aOuterParts;
 		}
 
-		// If this request has several change sets, then our response must start with the outer boundary and
+		// If this request has several change sets, then the response must start with the outer boundary and
 		// content header
 		if (sInnerBoundary) {
 			sPartBoundary = "--" + sInnerBoundary;
@@ -492,7 +581,9 @@ sap.ui.define([
 			// Add any headers from the request - unless this response is 204 (no content)
 			if (aPartResponse[1] && aPartResponse[0] !== 204) {
 				for (var sHeader in aPartResponse[1]) {
-					sResponseBody += sHeader + ": " + aPartResponse[1][sHeader] + "\r\n";
+					if (aPartResponse[1].hasOwnProperty(sHeader)) {
+						sResponseBody += sHeader + ": " + aPartResponse[1][sHeader] + "\r\n";
+					}
 				}
 			}
 			sResponseBody += "\r\n";
@@ -535,7 +626,7 @@ sap.ui.define([
 		// Log the request
 		jQuery.sap.log.info(
 			"Mockserver: Received " + oXhr.method + " request to URL " + oXhr.url,
-			( oXhr.requestBody ? "Request body is:\n" + oXhr.requestBody : "No request body." ) + "\n",
+			(oXhr.requestBody ? "Request body is:\n" + oXhr.requestBody : "No request body.") + "\n",
 			sLogComponent);
 
 		if (oXhr.method === "POST" && /\$batch$/.test(oXhr.url)) {
@@ -549,7 +640,7 @@ sap.ui.define([
 		// Log the response
 		jQuery.sap.log.info(
 			"Mockserver: Sent response with return code " + aResponse[0],
-			( "Response headers: " + JSON.stringify(aResponse[1]) + "\n\nResponse body:\n" + aResponse[2] ) + "\n",
+			("Response headers: " + JSON.stringify(aResponse[1]) + "\n\nResponse body:\n" + aResponse[2]) + "\n",
 			sLogComponent);
 	}
 });

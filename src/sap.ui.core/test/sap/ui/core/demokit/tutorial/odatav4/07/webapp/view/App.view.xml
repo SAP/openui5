@@ -18,7 +18,7 @@
 								$$updateGroupId : 'peopleGroup'
 							}
 						}"
-						mode="SingleSelectMaster">
+						mode="SingleSelectLeft">
 						<headerToolbar>
 							<OverflowToolbar>
 								<content>
@@ -83,6 +83,7 @@
 								<cells>
 									<Input
 										value="{UserName}"
+										valueLiveUpdate="true"
 										liveChange="onInputChange"/>
 								</cells>
 								<cells>
@@ -98,6 +99,7 @@
 								<cells>
 									<Input
 										value="{Age}"
+										valueLiveUpdate="true"
 										liveChange="onInputChange"/>
 								</cells>
 							</ColumnListItem>
@@ -111,6 +113,7 @@
 							id="saveButton"
 							type="Emphasized"
 							text="{i18n>saveButtonText}"
+							enabled="{= ${message>/}.length === 0 &amp;&amp; ${appView>/usernameEmpty} === false }"
 							press="onSave"/>
 						<Button
 							id="doneButton"
