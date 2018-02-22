@@ -90,15 +90,17 @@
 			</div>
 		</script>
 	</div>
-    
+	
 		<p>
 			The <span class="strong">Runtime</span> package contains everything needed to run a UI5 application.<br>
 			The <span class="strong">SDK</span> package also contains the complete documentation and samples as a web page to deploy on your own server. It is a copy of our <a href="https://openui5.hana.ondemand.com">public online SDK</a>.<br>
 		</p>
 		Other packages and versions are available <a href="#versionList">below</a>. For an overview of the current maintenance state of the different OpenUI5 versions, please check the <a href="https://openui5.hana.ondemand.com/versionoverview.html">version overview page</a>.
 
-		<h3>Latest unstable development build:</h3>
-		Currently there is no newer preview release available. It will be added, as 1.50 development progresses.
+		<div id="noUnstableVersion" style="display: none">
+			<h3>Latest unstable development build:</h3>
+			Currently there is no newer preview release available. It will be added, as {{versionNext}} development progresses.
+		</div>
 
 		<div id="unstableVersion">
 			<script type="text/template" id="unstableVersionTemplate">
@@ -106,23 +108,23 @@
 					Caution: this is a preview release, do not use for productive applications!
 				<div class="downloadbuttons">
 					<a
-						href="https://openui5beta.hana.ondemand.com/downloads/openui5-runtime-{{versionFull}}.zip"
+						href="https://openui5.hana.ondemand.com/downloads/openui5-runtime-{{versionFull}}.zip"
 						class="downloadbutton beta">
 						Download UNSTABLE Runtime
 					</a>
 					<a
-						href="https://openui5beta.hana.ondemand.com/downloads/openui5-sdk-{{versionFull}}.zip"
+						href="https://openui5.hana.ondemand.com/downloads/openui5-sdk-{{versionFull}}.zip"
 						class="downloadbutton beta">
 						Download UNSTABLE SDK
 					</a><br>
 					<a
-						href="https://openui5beta.hana.ondemand.com/#releasenotes.html"
+						href="https://openui5.hana.ondemand.com/1.52.2/#/releasenotes.html"
 						target="_blank">
 						Change Log
 					</a><br>
-					The online SDK of this preview release can be accessed <a href="https://openui5beta.hana.ondemand.com">here</a>.
+					The online SDK of this preview release can be accessed <a href="https://openui5.hana.ondemand.com/1.52.2/#/topic/a09dd79a24c041d288402768558a1d1a">here</a>.
 				</div>
-            </script>
+			</script>
 		</div>
 		<a name="cdn"></a><h3>Content Delivery Network (use OpenUI5 without downloading)</h3>
 		There is a network of distributed servers that automatically provides OpenUI5 from the closest location to the user. In your app you can simply load UI5 by referring to:
@@ -134,7 +136,7 @@
 		<br>
 		In case this is not clear yet, see <a href="http://jsbin.com/sodigo/1/edit?html,output">this simple example</a> for using the CDN.
 
-		<a id="allAvailableDownloadVersions"name="versionList"></a><h3>All Available Download Versions</h3>
+		<a id="allAvailableDownloadVersions" name="versionList"></a><h3>All Available Download Versions</h3>
 		Note: the <span class="strong">Runtime Mobile</span> download is a stripped-down package, containing only what is typically used in mobile apps, optimized for use in hybrid containers.
 
 		<div id="availableVersions">

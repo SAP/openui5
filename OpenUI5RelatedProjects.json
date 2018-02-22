@@ -81,11 +81,11 @@
 			"type": "Tool"
 		},
 		"ui5-CRUDModel": {
-			"name": "OpenUI5-SAPUI5-CRUDModel",
-			"description": "OpenUI5/SAPUI5 Model implementation for mevdschee/php-crud-api and mevdschee/php-api-auth",
-			"githubLink": "https://github.com/VyseExhale/OpenUI5-SAPUI5-CRUDModel",
-			"documentationLink": "https://github.com/VyseExhale/OpenUI5-SAPUI5-CRUDModel",
-			"owner": "VyseExhale",
+			"name": "UI5 CRUDModel for php data services",
+			"description": "UI5 Model implementation which allows you to use a php Web server as a data service",
+			"githubLink": "https://github.com/BarryDam/OpenUI5-SAPUI5-CRUDModel",
+			"documentationLink": "https://github.com/BarryDam/OpenUI5-SAPUI5-CRUDModel",
+			"owner": "BarryDam",
 			"license": "MIT",
 			"type": "Model"
 		},
@@ -115,7 +115,7 @@
 			"owner": "jonathanbaker7",
 			"license": "Apache 2.0",
 			"type": "JS Library"
-	  },
+		},
 		"openui5-password": {
 			"name": "OpenUI5 Password",
 			"description": "An OpenUI5 Control which checks your password strength and validates it.",
@@ -143,7 +143,7 @@
 			"license": "MIT",
 			"type": "JS Library"
 		},
-    "grunt-nwabap-ui5uploader": {
+		"grunt-nwabap-ui5uploader": {
 			"name": "grunt-nwabap-ui5uploader",
 			"description": "A Grunt plugin to upload UI5 sources to a SAP NetWeaver ABAP system.",
 			"githubLink": "https://github.com/pfefferf/grunt-nwabap-ui5uploader",
@@ -155,10 +155,55 @@
 		"UI5Lab": {
 			"name": "ui5lab",
 			"description": "UI5Lab is a community driven project to establish a repository for UI5 Custom Control Libraries. It is meant to enable everyone to use UI5 Custom Controls easily.",
-			"githubLink": "https://github.com/ui5lab-central",
+			"githubLink": "https://github.com/ui5lab/ui5lab-central",
 			"documentationLink": "https://ui5lab.io",
 			"owner": "ui5lab",
 			"license": "Apache 2.0",
 			"type": "Tool"
+		},
+		"ui5-codecompletion": {
+			"name": "ui5-codecompletion",
+			"description": "node module (CLI) to configure WebStorm with UI5 code completion in *.js files",
+			"githubLink": "https://github.com/vobujs/ui5-codecompletion",
+			"documentationLink": "https://github.com/vobujs/ui5-codecompletion",
+			"owner": "vobu",
+			"license": "WTFPL",
+			"type": "Tool"
+		},
+		"yii2-openui5": {
+			"name": "yii2-openui5",
+			"description": "Yii2-openui5 is extension for Yii2 Framework to integrate with OpenUI5.",
+			"githubLink": "https://github.com/rockman84/yii2-openui5",
+			"documentationLink": "https://rockman84.github.io/yii2-openui5/",
+			"owner": "Wong Hansen",
+			"license": "Apache 2.0",
+			"type": "Yii2 Extension"
+		},
+		"openui5-parallax": {
+			"name": "OpenUI5 Parallax",
+			"description": "A library wrapping parallax.js in UI5 controls to create stunning layered effects",
+			"githubLink": "https://github.com/Michadelic/openui5-parallax",
+			"documentationLink": "http://ui5lab.io/browser/#/Samples/openui5.parallax",
+			"owner": "michadelic",
+			"license": "Apache 2.0",
+			"type": "Control"
+		},
+		"deoplete-sap-icon": { 
+			"name": "Deoplete sap-icon",
+			"description": "Neovim deoplete sap-icon plugin", 
+			"githubLink": "https://github.com/Trulsaa/deoplete-sap-icon", 
+			"documentationLink": "https://github.com/Trulsaa/deoplete-sap-icon", 
+			"owner": "Trulsaa", 
+			"license": "MIT License", 
+			"type": "nvim plugin" 
+		},
+		"expressui5": { 
+			"name": "Express UI5",
+			"description": "CLI tool to create ui5 projects quickly from developer maintained templates.", 
+			"githubLink": "https://github.com/handy-man/Expressui5", 
+			"documentationLink": "https://github.com/handy-man/Expressui5#README", 
+			"owner": "handy-man", 
+			"license": "Apache 2.0", 
+			"type": "Tool" 
 		}
 	}

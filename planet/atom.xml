@@ -5,7 +5,7 @@
 	<link rel="self" href="http://openui5.org/atom.xml"/>
 	<link href="http://openui5.org/"/>
 	<id>http://openui5.org/atom.xml</id>
-	<updated>2017-08-30T08:00:12+00:00</updated>
+	<updated>2018-02-22T08:00:16+00:00</updated>
 	<generator uri="http://www.planetplanet.org/">Planet/2.0 +http://www.planetplanet.org</generator>
 
 	<entry>
@@ -13,7 +13,7 @@
 		<link href="http://openui5picks.tumblr.com/post/142348967605"/>
 		<id>http://openui5picks.tumblr.com/post/142348967605</id>
 		<updated>2016-04-01T16:56:26+00:00</updated>
-		<content type="html">&lt;img src=&quot;http://68.media.tumblr.com/ffb0308bd5d8e342a6c248fb154e0b44/tumblr_inline_o57skyTa2w1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;
+		<content type="html">&lt;img src=&quot;http://78.media.tumblr.com/ffb0308bd5d8e342a6c248fb154e0b44/tumblr_inline_o57skyTa2w1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;
 
 A while back, I sent this twitter message into the Twitter-verse, with the intention to blog shortly after that on how I got UI5 running on an ESP8266. I’m afraid this blog was conceived a bit...</content>
 		<author>
@@ -24,7 +24,7 @@ A while back, I sent this twitter message into the Twitter-verse, with the inten
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2017-08-30T08:00:11+00:00</updated>
+			<updated>2018-02-22T08:00:15+00:00</updated>
 		</source>
 	</entry>
 
@@ -33,7 +33,7 @@ A while back, I sent this twitter message into the Twitter-verse, with the inten
 		<link href="http://openui5picks.tumblr.com/post/141605949215"/>
 		<id>http://openui5picks.tumblr.com/post/141605949215</id>
 		<updated>2016-03-24T15:11:39+00:00</updated>
-		<content type="html">&lt;img src=&quot;http://68.media.tumblr.com/1a48790feea1c791065747cd6db1bcd4/tumblr_inline_o4ju70rYNi1sb8vfp_540.jpg&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;This sample OpenUI5 web app demonstrated custom UI controls that act as wrapper for charting libraries. It shows you how to integrate simple charts into OpenUI5 apps. </content>
+		<content type="html">&lt;img src=&quot;http://78.media.tumblr.com/1a48790feea1c791065747cd6db1bcd4/tumblr_inline_o4ju70rYNi1sb8vfp_540.jpg&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;This sample OpenUI5 web app demonstrated custom UI controls that act as wrapper for charting libraries. It shows you how to integrate simple charts into OpenUI5 apps. </content>
 		<author>
 			<name>Demos</name>
 			<uri>http://openui5picks.tumblr.com/</uri>
@@ -42,7 +42,7 @@ A while back, I sent this twitter message into the Twitter-verse, with the inten
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2017-08-30T08:00:11+00:00</updated>
+			<updated>2018-02-22T08:00:15+00:00</updated>
 		</source>
 	</entry>
 
@@ -51,7 +51,7 @@ A while back, I sent this twitter message into the Twitter-verse, with the inten
 		<link href="http://openui5picks.tumblr.com/post/137623135285"/>
 		<id>http://openui5picks.tumblr.com/post/137623135285</id>
 		<updated>2016-01-08T21:57:54+00:00</updated>
-		<content type="html">&lt;img src=&quot;http://68.media.tumblr.com/fa8614bea3d00cf8aff78c24af2e783d/tumblr_inline_o17hl6UvPp1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;At NCDEVCON - North Carolinas Premier Web  Mobile Conference - Alex shows how to build instant prototypes with UI5 in this recording. Watch how to build UI5 apps with just very few steps.</content>
+		<content type="html">&lt;img src=&quot;http://78.media.tumblr.com/fa8614bea3d00cf8aff78c24af2e783d/tumblr_inline_o17hl6UvPp1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;At NCDEVCON - North Carolinas Premier Web  Mobile Conference - Alex shows how to build instant prototypes with UI5 in this recording. Watch how to build UI5 apps with just very few steps.</content>
 		<author>
 			<name>Demos</name>
 			<uri>http://openui5picks.tumblr.com/</uri>
@@ -60,7 +60,7 @@ A while back, I sent this twitter message into the Twitter-verse, with the inten
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2017-08-30T08:00:11+00:00</updated>
+			<updated>2018-02-22T08:00:15+00:00</updated>
 		</source>
 	</entry>
 
@@ -69,7 +69,7 @@ A while back, I sent this twitter message into the Twitter-verse, with the inten
 		<link href="http://openui5picks.tumblr.com/post/134911941785"/>
 		<id>http://openui5picks.tumblr.com/post/134911941785</id>
 		<updated>2015-08-29T21:20:26+00:00</updated>
-		<content type="html">&lt;img src=&quot;http://68.media.tumblr.com/19acd17bb61739ee11aaaeaac970f780/tumblr_inline_nz4yibwTG51sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;
+		<content type="html">&lt;img src=&quot;http://78.media.tumblr.com/19acd17bb61739ee11aaaeaac970f780/tumblr_inline_nz4yibwTG51sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;
 
 As the UI5 community is growing every day I have experienced that people new to UI5 find it hard to create simple demos demonstrating their issues. I have seem many questions onStackoverflow and...</content>
 		<author>
@@ -80,7 +80,7 @@ As the UI5 community is growing every day I have experienced that people new to 
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2017-08-30T08:00:11+00:00</updated>
+			<updated>2018-02-22T08:00:15+00:00</updated>
 		</source>
 	</entry>
 
@@ -89,7 +89,7 @@ As the UI5 community is growing every day I have experienced that people new to 
 		<link href="http://openui5picks.tumblr.com/post/126093935815"/>
 		<id>http://openui5picks.tumblr.com/post/126093935815</id>
 		<updated>2015-07-28T21:20:26+00:00</updated>
-		<content type="html">&lt;img src=&quot;http://68.media.tumblr.com/ee418a251b5ba1231676aa417cbe8a0b/tumblr_inline_nsps6hJVSG1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;As we had several inquiries about how to build up a OpenUI5 application in a Windows Phone hybrid app recently, we have investigated a bit in that area. You may have heard that there is a problem...</content>
+		<content type="html">&lt;img src=&quot;http://78.media.tumblr.com/ee418a251b5ba1231676aa417cbe8a0b/tumblr_inline_nsps6hJVSG1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;As we had several inquiries about how to build up a OpenUI5 application in a Windows Phone hybrid app recently, we have investigated a bit in that area. You may have heard that there is a problem...</content>
 		<author>
 			<name>Demos</name>
 			<uri>http://openui5picks.tumblr.com/</uri>
@@ -98,7 +98,7 @@ As the UI5 community is growing every day I have experienced that people new to 
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2017-08-30T08:00:11+00:00</updated>
+			<updated>2018-02-22T08:00:15+00:00</updated>
 		</source>
 	</entry>
 
@@ -107,7 +107,7 @@ As the UI5 community is growing every day I have experienced that people new to 
 		<link href="http://openui5picks.tumblr.com/post/126093309405"/>
 		<id>http://openui5picks.tumblr.com/post/126093309405</id>
 		<updated>2015-07-05T08:27:26+00:00</updated>
-		<content type="html">&lt;img src=&quot;http://68.media.tumblr.com/fd1baf0e04b27c18bd02ba43f9b59911/tumblr_inline_nsprugXuUb1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;I have recently worked on a UI5 project where we built an event-driven service-based architecture. We followed the TDD principles for most parts, so naturally, we ended up having lots of fake and mock...</content>
+		<content type="html">&lt;img src=&quot;http://78.media.tumblr.com/fd1baf0e04b27c18bd02ba43f9b59911/tumblr_inline_nsprugXuUb1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;I have recently worked on a UI5 project where we built an event-driven service-based architecture. We followed the TDD principles for most parts, so naturally, we ended up having lots of fake and mock...</content>
 		<author>
 			<name>Demos</name>
 			<uri>http://openui5picks.tumblr.com/</uri>
@@ -116,7 +116,7 @@ As the UI5 community is growing every day I have experienced that people new to 
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2017-08-30T08:00:11+00:00</updated>
+			<updated>2018-02-22T08:00:15+00:00</updated>
 		</source>
 	</entry>
 
@@ -125,7 +125,7 @@ As the UI5 community is growing every day I have experienced that people new to 
 		<link href="http://openui5picks.tumblr.com/post/121254537550"/>
 		<id>http://openui5picks.tumblr.com/post/121254537550</id>
 		<updated>2015-05-31T11:36:00+00:00</updated>
-		<content type="html">&lt;img src=&quot;http://68.media.tumblr.com/6b1db0873385eb413a1fa522a212aecb/tumblr_inline_nprphnCYtc1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Recently a colleague reviewed some of my SAPUI5 tutorials. He pointed out that declaring and initializing private properties directly on the prototype object can lead to issues. This could especially...</content>
+		<content type="html">&lt;img src=&quot;http://78.media.tumblr.com/6b1db0873385eb413a1fa522a212aecb/tumblr_inline_nprphnCYtc1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Recently a colleague reviewed some of my SAPUI5 tutorials. He pointed out that declaring and initializing private properties directly on the prototype object can lead to issues. This could especially...</content>
 		<author>
 			<name>Demos</name>
 			<uri>http://openui5picks.tumblr.com/</uri>
@@ -134,7 +134,7 @@ As the UI5 community is growing every day I have experienced that people new to 
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2017-08-30T08:00:11+00:00</updated>
+			<updated>2018-02-22T08:00:15+00:00</updated>
 		</source>
 	</entry>
 
@@ -143,7 +143,7 @@ As the UI5 community is growing every day I have experienced that people new to 
 		<link href="http://openui5picks.tumblr.com/post/116631893405"/>
 		<id>http://openui5picks.tumblr.com/post/116631893405</id>
 		<updated>2015-03-27T11:36:00+00:00</updated>
-		<content type="html">&lt;img src=&quot;http://68.media.tumblr.com/36551487bd811e98d767e6643d797d67/tumblr_inline_nmy30caJXf1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Ive been working with OpenUI5 for a few months now and I grew tired of the sharp tiles provided by the standard library. Good thing OpenUI5 allows the inheritance between components so that we can...</content>
+		<content type="html">&lt;img src=&quot;http://78.media.tumblr.com/36551487bd811e98d767e6643d797d67/tumblr_inline_nmy30caJXf1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Ive been working with OpenUI5 for a few months now and I grew tired of the sharp tiles provided by the standard library. Good thing OpenUI5 allows the inheritance between components so that we can...</content>
 		<author>
 			<name>Demos</name>
 			<uri>http://openui5picks.tumblr.com/</uri>
@@ -152,7 +152,7 @@ As the UI5 community is growing every day I have experienced that people new to 
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2017-08-30T08:00:11+00:00</updated>
+			<updated>2018-02-22T08:00:15+00:00</updated>
 		</source>
 	</entry>
 
@@ -170,7 +170,7 @@ As the UI5 community is growing every day I have experienced that people new to 
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2017-08-30T08:00:11+00:00</updated>
+			<updated>2018-02-22T08:00:15+00:00</updated>
 		</source>
 	</entry>
 
@@ -179,7 +179,7 @@ As the UI5 community is growing every day I have experienced that people new to 
 		<link href="http://openui5picks.tumblr.com/post/105856162090"/>
 		<id>http://openui5picks.tumblr.com/post/105856162090</id>
 		<updated>2014-12-17T11:23:00+00:00</updated>
-		<content type="html">&lt;img src=&quot;http://68.media.tumblr.com/b000e44e51cca2b907b7df8f7c37c33d/tumblr_inline_ngz7kp8eJ21sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Before Ill answer the question, let me step back and set the stage for my arguments! I was invited by Leigh Jin, an associate professor at the San Francisco State University, to give a guest lecture...</content>
+		<content type="html">&lt;img src=&quot;http://78.media.tumblr.com/b000e44e51cca2b907b7df8f7c37c33d/tumblr_inline_ngz7kp8eJ21sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Before Ill answer the question, let me step back and set the stage for my arguments! I was invited by Leigh Jin, an associate professor at the San Francisco State University, to give a guest lecture...</content>
 		<author>
 			<name>Demos</name>
 			<uri>http://openui5picks.tumblr.com/</uri>
@@ -188,7 +188,7 @@ As the UI5 community is growing every day I have experienced that people new to 
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2017-08-30T08:00:11+00:00</updated>
+			<updated>2018-02-22T08:00:15+00:00</updated>
 		</source>
 	</entry>
 
@@ -208,7 +208,7 @@ This blog demonstrates how to load, transform and analyse UK road traffic accide
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2017-08-30T08:00:11+00:00</updated>
+			<updated>2018-02-22T08:00:15+00:00</updated>
 		</source>
 	</entry>
 
