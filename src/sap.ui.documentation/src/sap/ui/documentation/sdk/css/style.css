@@ -91,48 +91,48 @@ html:not(.sapUiMedia-StdExt-Phone) .sapUiDocumentationFooter {
 }
 
 /* ActionButton */
-.sapUiDemokit .actionButton {
+.sapUiDemokit .sapMBtn.actionButton {
 	padding-top: 0;
 	height: 2.375rem;
 }
 
-.sapUiDemokit .actionButton .sapMBtnInner {
+.sapUiDemokit .sapMBtn.actionButton .sapMBtnInner {
 	padding-left: 0.875rem;
 	padding-right: 0.875rem;
 	height: 2.375rem;
 }
 
-.sapUiDemokit .actionButton .sapMBtnInner.sapMBtnIconFirst {
+.sapUiDemokit .sapMBtn.actionButton .sapMBtnInner.sapMBtnIconFirst {
 	padding-left: 2.1875rem;
 }
 
-.sapUiDemokit .actionButton .sapMBtnContent,
-.sapUiDemokit .actionButton .sapMBtnIcon  {
+.sapUiDemokit .sapMBtn.actionButton .sapMBtnContent,
+.sapUiDemokit .sapMBtn.actionButton .sapMBtnIcon  {
 	line-height: 2.375rem;
 	font-size: 1.1rem;
 }
 
 @media (min-width: 64rem) {
-	.sapUiDemokit .actionButton {
+	.sapUiDemokit .sapMBtn.actionButton {
 		padding-top: 0;
 		height: 3.25rem;
 	}
 
-	.sapUiDemokit .actionButton .sapMBtnInner {
+	.sapUiDemokit .sapMBtn.actionButton .sapMBtnInner {
 		height: 3.250rem;
 	}
 
-	.sapUiDemokit .actionButton .sapMBtnInner.sapMBtnIconFirst {
+	.sapUiDemokit .sapMBtn.actionButton .sapMBtnInner.sapMBtnIconFirst {
 		padding-left: 2.5rem;
 	}
 
-	.sapUiDemokit .actionButton .sapMBtnIcon {
+	.sapUiDemokit .sapMBtn.actionButton .sapMBtnIcon {
 		margin-left: 0.6rem;
 		margin-right: 0.6rem;
 	}
 
-	.sapUiDemokit .actionButton .sapMBtnContent,
-	.sapUiDemokit .actionButton .sapMBtnIcon {
+	.sapUiDemokit .sapMBtn.actionButton .sapMBtnContent,
+	.sapUiDemokit .sapMBtn.actionButton .sapMBtnIcon {
 		line-height: 3.25rem;
 		font-size: 1.375rem;
 	}
@@ -1446,7 +1446,7 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDemoA
 	width: calc(100% - 4rem);
 }
 
-.headerButton {
+.sapMBtn.headerButton {
 	margin-top: 2rem;
 }
 
@@ -1464,7 +1464,7 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDemoA
 	object-fit: cover;
 }
 
-.headerText {
+.sapMText.headerText {
 	width: 100%;
 	padding-top: 0.5rem;
 	font-size: 3rem;
@@ -1484,7 +1484,7 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDemoA
 /*SMALL*/
 
 @media (max-width: 1024px) {
-	.headerButton {
+	.sapMBtn.headerButton {
 		margin-top: 1rem;
 	}
 	.headerGrid {
@@ -1492,7 +1492,7 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDemoA
 		padding-left: 1rem;
 		width: calc(100% - 2rem);
 	}
-	.headerText {
+	.sapMText.headerText {
 		font-size: 1.25rem;
 		margin-left: -0.0625rem;
 	}
@@ -1509,13 +1509,13 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDemoA
 		padding-left: 3rem;
 		width: calc(100% - 6rem);
 	}
-	.headerText {
+	.sapMText.headerText {
 		font-size: 4rem;
 	}
 	.headerSubText {
 		font-size: 2rem;
 	}
-	.headerButton {
+	.sapMBtn.headerButton {
 		margin-top: 2rem;
 	}
 }
