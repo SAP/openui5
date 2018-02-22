@@ -876,15 +876,16 @@ sap.ui.require([
 
 	QUnit.test("Expression binding with embedded composite binding", function (assert) {
 		var sBinding
-			= "{:= ${parts:[{path:'/foo'},{path:'/bar'}],formatter:'Global.joiningFormatter'} }",
-			oModel = new JSONModel({"foo" : 0, "bar" : 1}),
-			oIcon = new Icon({models : oModel});
+			= "{:= ${parts:['m2>/foo',{path:'/bar'}],formatter:'Global.joiningFormatter'} }",
+			oModel = new JSONModel({"bar" : 1}),
+			oModel2 = new JSONModel({"foo" : 0}),
+			oIcon = new Icon({models : {undefined : oModel, "m2" : oModel2}});
 
 		// code under test
 		oIcon.bindProperty("color", parse(sBinding));
 
 		assert.strictEqual(oIcon.getColor(), "0,1");
-		oModel.setProperty("/foo", 42);
+		oModel.setProperty("/bar", 42);
 		assert.strictEqual(oIcon.getColor(), "0,1", "one time binding -> value unchanged");
 	});
 
