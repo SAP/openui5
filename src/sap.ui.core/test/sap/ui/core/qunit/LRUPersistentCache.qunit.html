@@ -47,13 +47,14 @@
 					bSupportedBrowserName = oSuppportedEnv.browserName === sap.ui.Device.browser.name,
 					bSupportedBrowserVersion = sap.ui.Device.browser.version >= oSuppportedEnv.browserVersion;
 
-			return bSupportedSystem && bSupportedBrowserName && bSupportedBrowserVersion;
+			return bSupportedSystem && bSupportedBrowserName && bSupportedBrowserVersion && window.indexedDB;
 		});
 
 		if (!bSupportedEnv) {
 			QUnit.start();
 			QUnit.test("All tests are skipped, as the CacheManager is not supported on the underlying environment (see assert)", function (assert) {
-				assert.ok(true, "Environment: system [" + JSON.stringify(sap.ui.Device.system) + "],  browser: " + JSON.stringify(sap.ui.Device.browser));
+				assert.ok(true, "Environment: system [" + JSON.stringify(sap.ui.Device.system) + "],  browser: " +
+						JSON.stringify(sap.ui.Device.browser) + ", window.indexedDB: " + window.indexedDB);
 			});
 		} else {
 			sap.ui.require(["sap/ui/core/cache/LRUPersistentCache"], function (classCacheManager) {
