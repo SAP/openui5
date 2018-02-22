@@ -26,7 +26,7 @@ sap.ui.define([
 	"sap/base/util/extend", "sap/base/assert", "sap/base/log",
 
 	// new sap/ui/* modules
-	"sap/ui/bootstrap/Info", "sap/ui/Configuration", "sap/ui/dom/appendHead", "sap/ui/dom/computedStylePolyfill", "sap/ui/dom/includeScript",
+	"sap/ui/Configuration", "sap/ui/dom/appendHead", "sap/ui/dom/computedStylePolyfill", "sap/ui/dom/includeScript",
 	"sap/ui/dom/includeStylesheet", "sap/ui/initjQuerySupport", "sap/ui/initSupportHooks", "sap/ui/initjQueryBrowser",
 	"sap/ui/security/FrameOptions", "sap/ui/performance/Measurement", "sap/ui/performance/Interaction", "sap/ui/performance/ResourceTimings",
 	"sap/ui/bootstrap/StoredConfig", "sap/ui/SyncPoint", "sap/ui/XHRProxy",
@@ -39,7 +39,7 @@ sap.ui.define([
 	"ui5loader-autoconfig"
 ], function(now, getObject, getter, Version, extend, assert, log,
 
-     BootstrapInfo, Configuration, appendHead, computedStylePolyfill, includeScript,
+     Configuration, appendHead, computedStylePolyfill, includeScript,
      includeStylesheet, initjQuerySupport, initSupportHooks, initjQueryBrowser,
      FrameOptions, Measurement, Interaction, ResourceTimings,
      StoredConfig, SyncPoint, XHRProxy,
@@ -125,99 +125,6 @@ sap.ui.define([
 	if ( Device.browser.firefox && window.Proxy ) {
 		XHRProxy();
 	}
-
-	/**
-	 * Find the script URL where the SAPUI5 is loaded from and return an object which
-	 * contains the identified script-tag and resource root
-	 */
-	var _oBootstrap = BootstrapInfo;
-
-	/**
-	 * Determine whether to use debug sources depending on URL parameter, local storage
-	 * and script tag attribute.
-	 * If full debug mode is required, restart with a debug version of the bootstrap.
-	 */
-	(function() {
-		// check URI param
-		var mUrlMatch = /(?:^|\?|&)sap-ui-debug=([^&]*)(?:&|$)/.exec(location.search),
-			vDebugInfo = (mUrlMatch && decodeURIComponent(mUrlMatch[1])) || '';
-
-		// check local storage
-		try {
-			vDebugInfo = vDebugInfo || window.localStorage.getItem("sap-ui-debug");
-		} catch (e) {
-			// happens in FF when cookies are deactivated
-		}
-		vDebugInfo = vDebugInfo || (_oBootstrap.tag && _oBootstrap.tag.getAttribute("data-sap-ui-debug"));
-
-		// normalize
-		if ( /^(?:false|true|x|X)$/.test(vDebugInfo) ) {
-			vDebugInfo = vDebugInfo !== 'false';
-		}
-
-		window["sap-ui-debug"] = vDebugInfo;
-
-		// if bootstrap URL already contains -dbg URL, just set sap-ui-loaddbg
-		if (/-dbg\.js([?#]|$)/.test(_oBootstrap.url)) {
-			window["sap-ui-loaddbg"] = true;
-			window["sap-ui-debug"] = vDebugInfo = vDebugInfo || true;
-		}
-
-		if ( window["sap-ui-optimized"] && vDebugInfo ) {
-			// if current sources are optimized and any debug sources should be used, enable the "-dbg" suffix
-			window["sap-ui-loaddbg"] = true;
-			// if debug sources should be used in general, restart with debug URL
-			if ( vDebugInfo === true ) {
-				var sDebugUrl = _oBootstrap.url.replace(/\/(?:sap-ui-cachebuster\/)?([^\/]+)\.js/, "/$1-dbg.js");
-				window["sap-ui-optimized"] = false;
-				document.write("<script type=\"text/javascript\" src=\"" + sDebugUrl + "\"></script>");
-				var oRestart = new Error("This is not a real error. Aborting UI5 bootstrap and restarting from: " + sDebugUrl);
-				oRestart.name = "Restart";
-				throw oRestart;
-			}
-		}
-
-		function makeRegExp(sGlobPattern) {
-			if (!/\/\*\*\/$/.test(sGlobPattern)) {
-				sGlobPattern = sGlobPattern.replace(/\/$/, '/**/');
-			}
-			return sGlobPattern.replace(/\*\*\/|\*|[[\]{}()+?.\\^$|]/g, function(sMatch) {
-				switch (sMatch) {
-					case '**/': return '(?:[^/]+/)*';
-					case '*': return '[^/]*';
-					default: return '\\' + sMatch;
-				}
-			});
-		}
-
-		var fnIgnorePreload;
-
-		if (typeof vDebugInfo === 'string') {
-			var sPattern = "^(?:" + vDebugInfo.split(/,/).map(makeRegExp).join("|") + ")",
-				rFilter = new RegExp(sPattern);
-
-			fnIgnorePreload = function(sModuleName) {
-				return rFilter.test(sModuleName);
-			};
-
-			_earlyLog("debug", "Modules that should be excluded from preload: '" + sPattern + "'");
-
-		} else if (vDebugInfo === true) {
-
-			fnIgnorePreload = function() {
-				return true;
-			};
-
-			_earlyLog("debug", "All modules should be excluded from preload");
-
-		}
-
-		_ui5loader.config({
-			debugSources: !!window["sap-ui-loaddbg"],
-			ignoreBundledResources: fnIgnorePreload
-		});
-
-	})();
 
 	/*
 	 * Merged, raw (un-interpreted) configuration data from the following sources
