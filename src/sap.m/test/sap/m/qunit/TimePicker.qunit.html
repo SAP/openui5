@@ -2439,6 +2439,25 @@
 			equals(oSpyDestroy.callCount, 1, "When initMask is called, the old instance of semanticmask helper is destroyed");
 		});
 
+		QUnit.test("In IE when both focusin + setValue(''), the order of their calling is reversed and that caused" +
+				"missing first symbol in the mask", function(assert) {
+			//prepare
+			var oTp = new sap.m.TimePicker({
+				value: "000000",
+				placeholder: "Enter Value"
+			});
+
+			oTp.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			//act
+			oTp.setValue("");
+			oTp.focus();
+
+			//assert
+			assert.equal(oTp._oTempValue.toString(), "--:--:-- --", "the mask is the correct one");
+
+		});
 
 		module("events and event handlers", {
 			beforeEach: function () {
