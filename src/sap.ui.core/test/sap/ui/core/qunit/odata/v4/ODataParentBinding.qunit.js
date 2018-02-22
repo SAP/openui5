@@ -936,48 +936,48 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
-		aggregatedQueryOptions : {},
 		canMergeQueryOptions : true,
 		hasChildQueryOptions : true,
+		initial : true,
 		$kind : "Property"
 	}, {
-		aggregatedQueryOptions : {$select : "foo"},
 		canMergeQueryOptions : true,
 		hasChildQueryOptions : true,
+		initial : false,
 		$kind : "Property"
 	}, {
-		aggregatedQueryOptions : {},
 		canMergeQueryOptions : true,
 		hasChildQueryOptions : true,
+		initial : true,
 		$kind : "NavigationProperty"
 	}, {
-		aggregatedQueryOptions : {$select : "foo"},
 		canMergeQueryOptions : true,
 		hasChildQueryOptions : true,
+		initial : false,
 		$kind : "NavigationProperty"
 	}, {
-		aggregatedQueryOptions : {},
 		canMergeQueryOptions : true,
 		hasChildQueryOptions : false, // child path has segments which are no properties
+		initial : true,
 		$kind : "Property"
 	}, {
-		aggregatedQueryOptions : {},
 		canMergeQueryOptions : false,
 		hasChildQueryOptions : true,
+		initial : true,
 		$kind : "NavigationProperty"
-	}].forEach(function (oFixture) {
+	}].forEach(function (oFixture, i) {
 		[true, false].forEach(function (bCacheCreationPending) {
 			QUnit.test("fetchIfChildCanUseCache, multiple calls aggregate query options, "
-					+ (bCacheCreationPending ? "no cache yet: " : "use parent's cache: ")
-					+ JSON.stringify(oFixture),
+					+ (bCacheCreationPending ? "no cache yet: " : "use parent's cache: ") + i,
 				function (assert) {
-					var mAggregatedQueryOptions = oFixture.aggregatedQueryOptions || {},
+					var mAggregatedQueryOptions = {},
 						oMetaModel = {
 							fetchObject : function () {},
 							getMetaPath : function () {}
 						},
 						oBinding = new ODataParentBinding({
-							mAggregatedQueryOptions : oFixture.aggregatedQueryOptions,
+							bAggregatedQueryOptionsInitial : oFixture.initial,
+							mAggregatedQueryOptions : mAggregatedQueryOptions,
 							oCachePromise : bCacheCreationPending
 								? SyncPromise.resolve(Promise.resolve())
 								: SyncPromise.resolve(undefined),
@@ -990,6 +990,7 @@ sap.ui.require([
 						mChildLocalQueryOptions = {},
 						mChildQueryOptions = oFixture.hasChildQueryOptions ? {} : undefined,
 						oContext = Context.create(this.oModel, oBinding, "/EMPLOYEES('2')"),
+						mExtendResult = {},
 						mLocalQueryOptions = {},
 						oMetaModelMock = this.mock(oMetaModel),
 						oPromise;
@@ -1007,20 +1008,22 @@ sap.ui.require([
 						.withExactArgs("/EMPLOYEES/childMetaPath")
 						.returns(SyncPromise.resolve({$kind : oFixture.$kind}));
 					this.mock(jQuery).expects("extend")
-						.exactly(Object.keys(oFixture.aggregatedQueryOptions).length ? 0 : 1)
+						.exactly(oFixture.initial ? 1 : 0)
 						.withExactArgs(true, {}, sinon.match.same(mLocalQueryOptions))
-						.returns(mAggregatedQueryOptions);
+						.returns(mExtendResult);
 					if (oFixture.$kind === "NavigationProperty") {
 						oBindingMock.expects("selectKeyProperties").never();
 						oMetaModelMock.expects("fetchObject")
 							.withExactArgs("/EMPLOYEES/childMetaPath/")
 							.returns(Promise.resolve().then(function () {
 								oBindingMock.expects("selectKeyProperties")
+									.exactly(oFixture.initial ? 1 : 0)
 									.withExactArgs(sinon.match.same(mLocalQueryOptions),
 										"/EMPLOYEES");
 							}));
 					} else {
 						oBindingMock.expects("selectKeyProperties")
+							.exactly(oFixture.initial ? 1 : 0)
 							.withExactArgs(sinon.match.same(mLocalQueryOptions), "/EMPLOYEES");
 					}
 					oBindingMock.expects("wrapChildQueryOptions")
@@ -1042,7 +1045,8 @@ sap.ui.require([
 							oFixture.hasChildQueryOptions && oFixture.canMergeQueryOptions);
 						assert.strictEqual(oBinding.aChildCanUseCachePromises[0], oPromise);
 						assert.strictEqual(oBinding.mAggregatedQueryOptions,
-							mAggregatedQueryOptions);
+							oFixture.initial ? mExtendResult : mAggregatedQueryOptions);
+						assert.strictEqual(oBinding.bAggregatedQueryOptionsInitial, false);
 					});
 				}
 			);
@@ -1091,7 +1095,6 @@ sap.ui.require([
 					.returns(SyncPromise.resolve({}));
 				oMetaModelMock.expects("fetchObject")
 					.returns(SyncPromise.resolve({$kind : "Property"}));
-				oBindingMock.expects("selectKeyProperties");
 				oBindingMock.expects("wrapChildQueryOptions")
 					.returns({});
 				oBindingMock.expects("aggregateQueryOptions")
@@ -1159,7 +1162,6 @@ sap.ui.require([
 				.returns(SyncPromise.resolve({}));
 			oMetaModelMock.expects("fetchObject")
 				.returns(SyncPromise.resolve(Promise.resolve({$kind : "Property"})));
-			oBindingMock.expects("selectKeyProperties");
 			oBindingMock.expects("wrapChildQueryOptions")
 				.returns({});
 			oBindingMock.expects("aggregateQueryOptions")
@@ -1194,6 +1196,7 @@ sap.ui.require([
 			},
 			oBinding = new ODataParentBinding({
 				mAggregatedQueryOptions : {},
+				bAggregatedQueryOptionsInitial : true,
 				oCachePromise : SyncPromise.resolve(Promise.resolve()),
 				aChildCanUseCachePromises : [],
 				oContext : {},
@@ -1275,8 +1278,6 @@ sap.ui.require([
 			oMetaModelMock.expects("fetchObject")
 				.withExactArgs("/EMPLOYEES" + sPath)
 				.returns(SyncPromise.resolve(oFixture.oProperty));
-			this.mock(oBinding).expects("selectKeyProperties")
-				.withExactArgs(sinon.match.object, "/EMPLOYEES");
 			this.oLogMock.expects("error").withExactArgs(
 				"Failed to enhance query options for auto-$expand/$select as the path "
 					+ "'/EMPLOYEES" + sPath
@@ -1327,8 +1328,6 @@ sap.ui.require([
 		oMetaModelMock.expects("fetchObject")
 			.withExactArgs("/EMPLOYEES/")
 			.returns(SyncPromise.resolve());
-		this.mock(oBinding).expects("selectKeyProperties")
-			.withExactArgs(sinon.match.object, "/EMPLOYEES");
 
 		// code under test
 		oPromise = oBinding.fetchIfChildCanUseCache(oContext, sPath.slice(1));

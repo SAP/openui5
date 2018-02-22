@@ -77,6 +77,7 @@ sap.ui.define([
 					throw new Error("Invalid path: " + sPath);
 				}
 				this.mAggregatedQueryOptions = {};
+				this.bAggregatedQueryOptionsInitial = true;
 				this.aApplicationFilters = _Helper.toArray(vFilters);
 				this.oCachePromise = SyncPromise.resolve();
 				this.sChangeReason = oModel.bAutoExpandSelect ? "AddVirtualContext" : undefined;
