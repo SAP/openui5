@@ -29,7 +29,7 @@ sap.ui.define([],
 					}
 				},
 				actions: {
-					domRef: ":sap-domref .sapFDynamicPageTitleActionsBar",
+					domRef: ":sap-domref .sapFDynamicPageTitleMainActions",
 					actions: {
 						split: {
 							changeType: "splitMenuButton"
@@ -71,7 +71,7 @@ sap.ui.define([],
 					}
 				},
 				navigationActions: {
-					domRef: ":sap-domref .sapFDynamicPageTitleActionsBar"
+					ignore: true
 				},
 				breadcrumbs: {
 					ignore: true
