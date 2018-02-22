@@ -186,6 +186,15 @@ sap.ui.define([
 				press: {
 					type: "object",
 					defaultValue: null
+				},
+                /**
+                 * Defines additional information of the link.
+                 *
+                 * @since 1.56.0
+                 */
+                description: {
+                    type: "string",
+                    defaultValue: null
 				}
 			}
 		}
