@@ -134,6 +134,15 @@
 			"license": "MIT",
 			"type": "JS Library"
 		},
+		"openui5-tour": {
+			"name": "OpenUI5 Tour",
+			"description": "OpenUI5 Tour enables an user-friendly way to showcase products and features in your website.",
+			"githubLink": "https://github.com/mauriciolauffer/openui5-tour",
+			"documentationLink": "https://github.com/mauriciolauffer/openui5-tour",
+			"owner": "mauriciolauffer",
+			"license": "MIT",
+			"type": "JS Library"
+		},
 		"grunt-nwabap-ui5uploader": {
 			"name": "grunt-nwabap-ui5uploader",
 			"description": "A Grunt plugin to upload UI5 sources to a SAP NetWeaver ABAP system.",
