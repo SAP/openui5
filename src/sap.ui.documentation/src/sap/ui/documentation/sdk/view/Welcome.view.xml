@@ -268,7 +268,8 @@
 					<l:VerticalLayout
 							width="100%">
 						<custom:TitleLink
-								href="#/topic/91f346786f4d1014b6dd926db0e91070"
+								href="https://sapui5.hana.ondemand.com/#/topic/91f346786f4d1014b6dd926db0e91070"
+								target="_blank"
 								text="SAPUI5 On-Premise"
 								titleStyle="H2"
 								class="sapUiSmallMarginBottom"/>
