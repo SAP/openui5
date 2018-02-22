@@ -714,28 +714,37 @@ sap.ui.require([
 			}
 		}
 	}, { // test nested $expand structure
+		// def at root and baz in foo are complex properties for which two nested simple properties
+		// are selected in V4  -> In V2 these complex properties have to be selected once
 		expectedResultHandlerCalls : [
 			{key : "$expand", value : "foo,foo/bar,baz"},
 			{key : "$orderby", value : "foo,bar"},
-			{key : "$select", value : "foo/xyz,foo/bar/*,baz/*,abc"}
+			{key : "$select", value : "foo/xyz,foo/baz,foo/bar/*,baz/*,abc,def"}
 		],
 		expectedResultHandlerCallsSorted : [
 			{key : "$expand", value : "baz,foo,foo/bar"},
 			{key : "$orderby", value : "foo,bar"},
-			{key : "$select", value : "abc,baz/*,foo/bar/*,foo/xyz"}
+			{key : "$select", value : "abc,baz/*,def,foo/bar/*,foo/baz,foo/xyz"}
 		],
 		queryOptions : {
 			"$expand" : {
 				"foo" : {
-					"$select" : "xyz",
+					"$select" : ["xyz", "baz/qux", "baz/quux"],
 					"$expand" : {
 						"bar" : true
 					}
 				},
 				"baz" : true
 			},
-			"$select" : "abc",
+			"$select" : "abc,def/ghi,def/jkl",
 			"$orderby" : "foo,bar"
+		}
+	}, { // garbage in, garbage out - do not touch if there is a type cast
+		expectedResultHandlerCalls : [
+			{key : "$select", value : "foo/name.space.OtherType"}
+		],
+		queryOptions : {
+			"$select" : "foo/name.space.OtherType"
 		}
 	}].forEach(function (oFixture, i) {
 		var sTitle = "doConvertSystemQueryOptions (V2): " + i + ", mQueryOptions"
