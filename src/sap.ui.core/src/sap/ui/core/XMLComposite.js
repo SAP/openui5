@@ -247,6 +247,43 @@ sap.ui.define([
 		return oSettings;
 	}
 
+	function templateAggregations(oParent, oMetadata, oContextVisitor) {
+		var aAggregationFragments = oMetadata._aggregationFragments,
+			sLibrary = oMetadata.getLibraryName(),
+			bCheckMultiple;
+		if (aAggregationFragments) {
+			Object.keys(aAggregationFragments).forEach(function(sAggregationName) {
+				var oAggregation = oMetadata.getAggregation(sAggregationName);
+
+				if (!oAggregation) {
+					return true;
+				}
+				//check if there are user defined aggregations
+				var oAggregationRoot = oParent.getElementsByTagNameNS(sLibrary, sAggregationName)[0];
+				if (!oAggregationRoot) {
+					oAggregationRoot = document.createElementNS(sLibrary, sAggregationName);
+					oParent.appendChild(oAggregationRoot);
+					bCheckMultiple = false;
+				} else {
+					bCheckMultiple = true;
+				}
+
+				if (bCheckMultiple && !oAggregation.multiple) {
+					return true;// in case the user defined own content this shall win
+				}
+
+				var oAggregationFragment = aAggregationFragments[sAggregationName];
+				// resolve templating in composite aggregation fragment
+				oContextVisitor.visitChildNodes(oAggregationFragment);
+
+				// add the templated content
+				for (var j = oAggregationFragment.childElementCount; j > 0; j--) {
+					oAggregationRoot.appendChild(oAggregationFragment.children[0]);
+				}
+			});
+		}
+	}
+
 	/**
 	 * XMLComposite is the base class for composite controls that use a XML fragment representation
 	 * for their visual parts. From a user perspective such controls appear as any other control, but internally the
@@ -823,10 +860,10 @@ sap.ui.define([
 		addMetadataContexts(mContexts, oVisitor, oElement.getAttribute("metadataContexts"), sDefaultMetadataContexts, oImpl.prototype.defaultMetaModel);
 		addAttributesContext(mContexts, oImpl.prototype.alias, oElement, oImpl, oVisitor);
 		var oContextVisitor = oVisitor["with"](mContexts, true);
-		var mMetadata = oImpl.getMetadata();
+		templateAggregations(oElement, oMetadata, oContextVisitor);
 		// resolve templating
 		oContextVisitor.visitChildNodes(oFragment);
-		var oNode = oFragment.ownerDocument.createElementNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.xmlcomposite/1", mMetadata.getCompositeAggregationName());
+		var oNode = oFragment.ownerDocument.createElementNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.xmlcomposite/1", oMetadata.getCompositeAggregationName());
 		oNode.appendChild(oFragment);
 		oElement.appendChild(oNode);
 	};
