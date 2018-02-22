@@ -340,7 +340,7 @@ function(
 		assert.strictEqual(XmlTreeModifier.findIndexInParentAggregation(oText), 1, "The function returned the correct index.");
 	});
 
-	QUnit.test("_getParentAggregationName returns the correct name: ", function (assert) {
+	QUnit.test("getParentAggregationName returns the correct name: ", function (assert) {
 		var oVBox = XmlTreeModifier._children(this.oXmlView)[0],
 			oLabel = XmlTreeModifier._children(oVBox)[1];
 
@@ -352,11 +352,11 @@ function(
 			oButton = oDynamicPageTitle.childNodes[0].childNodes[0],
 			oText2 = oDynamicPageTitle.childNodes[1].childNodes[0];
 
-		assert.strictEqual(XmlTreeModifier._getParentAggregationName(oVBox, oLabel), "items", "The function returned the correct name - 'items'.");
-		assert.strictEqual(XmlTreeModifier._getParentAggregationName(oHBox, oTooltip), "tooltip", "The function returned the correct name - 'tooltip'.");
-		assert.strictEqual(XmlTreeModifier._getParentAggregationName(oHBox, oText), "items", "The function returned the correct name - 'items'.");
-		assert.strictEqual(XmlTreeModifier._getParentAggregationName(oDynamicPageTitle, oButton), "actions", "The function returned the correct name - 'actions'.");
-		assert.strictEqual(XmlTreeModifier._getParentAggregationName(oDynamicPageTitle, oText2), "snappedContent", "The function returned the correct name - 'snappedContent'.");
+		assert.strictEqual(XmlTreeModifier.getParentAggregationName(oLabel, oVBox), "items", "The function returned the correct name - 'items'.");
+		assert.strictEqual(XmlTreeModifier.getParentAggregationName(oTooltip, oHBox), "tooltip", "The function returned the correct name - 'tooltip'.");
+		assert.strictEqual(XmlTreeModifier.getParentAggregationName(oText, oHBox), "items", "The function returned the correct name - 'items'.");
+		assert.strictEqual(XmlTreeModifier.getParentAggregationName(oButton, oDynamicPageTitle), "actions", "The function returned the correct name - 'actions'.");
+		assert.strictEqual(XmlTreeModifier.getParentAggregationName(oText2, oDynamicPageTitle), "snappedContent", "The function returned the correct name - 'snappedContent'.");
 	});
 
 	QUnit.test("when getChangeHandlerModule is called for control instance on which changeHandler is defined", function (assert) {
