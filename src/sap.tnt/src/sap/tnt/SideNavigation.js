@@ -46,6 +46,7 @@ sap.ui.define([
 		 * @public
 		 * @since 1.34
 		 * @alias sap.tnt.SideNavigation
+		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/side-navigation/ Side Navigation}
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var SideNavigation = Control.extend('sap.tnt.SideNavigation', /** @lends sap.t.SideNavigation.prototype */ {
