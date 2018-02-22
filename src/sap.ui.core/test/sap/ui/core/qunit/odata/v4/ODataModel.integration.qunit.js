@@ -3720,16 +3720,18 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	// Scenario: master/detail with V2 adapter where the detail URI must be adjusted for V2
+	// Additionally properties of a contained complex type are used with auto-$expand/$select
 	QUnit.test("V2 adapter: master/detail", function (assert) {
 		var oModel = this.createModelForV2FlightService({autoExpandSelect : true}),
 			sView = '\
 <Table id="master" items="{/FlightCollection}">\
 	<ColumnListItem>\
-		<Text id="text0" text="{carrid}" />\
+		<Text id="carrid" text="{carrid}" />\
 	</ColumnListItem>\
 </Table>\
 <FlexBox id="detail" binding="{}">\
-	<Text id="text1" text="{PLANETYPE}" />\
+	<Text id="cityFrom" text="{flightDetails/cityFrom}" />\
+	<Text id="cityTo" text="{flightDetails/cityTo}" />\
 </FlexBox>',
 			that = this;
 
@@ -3745,14 +3747,15 @@ sap.ui.require([
 					}]
 				}
 			})
-			.expectChange("text0", ["AA"])
-			.expectChange("text1"); // expect a later change
+			.expectChange("carrid", ["AA"])
+			.expectChange("cityFrom") // expect a later change
+			.expectChange("cityTo"); // expect a later change
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oContext = that.oView.byId("master").getItems()[0].getBindingContext();
 
 			that.expectRequest("FlightCollection(carrid='AA',connid='0017',fldate="
-				+ "datetime'2017-08-10T00%3A00%3A00')?$select=PLANETYPE,carrid,connid,fldate", {
+				+ "datetime'2017-08-10T00%3A00%3A00')?$select=carrid,connid,fldate,flightDetails", {
 					"d": {
 						"__metadata": {
 							"type": "RMTSAMPLEFLIGHT.Flight"
@@ -3760,10 +3763,17 @@ sap.ui.require([
 						"carrid": "AA",
 						"connid": "0017",
 						"fldate": "/Date(1502323200000)/",
-						"PLANETYPE": "747-400"
+						"flightDetails" : {
+							"__metadata" : {
+								"type" : "RMTSAMPLEFLIGHT.FlightDetails"
+							},
+							"cityFrom" : "New York",
+							"cityTo" : "Los Angeles"
+						}
 					}
 				})
-				.expectChange("text1", "747-400");
+				.expectChange("cityFrom", "New York")
+				.expectChange("cityTo", "Los Angeles");
 
 			that.oView.byId("detail").setBindingContext(oContext);
 

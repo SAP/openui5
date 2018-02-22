@@ -581,8 +581,32 @@ sap.ui.define([
 	 */
 	_V2Requestor.prototype.doConvertSystemQueryOptions = function (sMetaPath, mQueryOptions,
 			fnResultHandler, bDropSystemQueryOptions, bSortExpandSelect) {
-		var aSelects = [],
+		var aSelects,
+			mSelects = {},
 			that = this;
+
+		/**
+		 * Strips all selects to their first segment and adds them to mSelects.
+		 *
+		 * @param {string|string[]} vSelects The selects for the given expand path as
+		 *   comma-separated list or array
+		 * @param {string} [sExpandPath] The expand path
+		 */
+		function addSelects(vSelects, sExpandPath) {
+			if (!Array.isArray(vSelects)) {
+				vSelects = vSelects.split(",");
+			}
+			vSelects.forEach(function (sSelect) {
+				var iIndex = sSelect.indexOf("/");
+
+				if (iIndex >= 0 && sSelect.indexOf(".") < 0) {
+					// only strip if there is no type cast and no bound action (avoid "correcting"
+					// unsupported selects in V2)
+					sSelect = sSelect.slice(0, iIndex);
+				}
+				mSelects[_Helper.buildPath(sExpandPath, sSelect)] = true;
+			});
+		}
 
 		/**
 		 * Converts the V4 $expand options to flat V2 $expand and $select structure.
@@ -602,8 +626,7 @@ sap.ui.define([
 
 			Object.keys(mExpandItem).forEach(function (sExpandPath) {
 				var sAbsoluteExpandPath = _Helper.buildPath(sPathPrefix, sExpandPath),
-					vExpandOptions = mExpandItem[sExpandPath], // an object or true
-					vSelectsInExpand;
+					vExpandOptions = mExpandItem[sExpandPath]; // an object or true
 
 				aExpands.push(sAbsoluteExpandPath);
 
@@ -617,13 +640,7 @@ sap.ui.define([
 								break;
 							case "$select":
 								// process nested selects
-								vSelectsInExpand = vExpandOptions.$select;
-								if (!Array.isArray(vSelectsInExpand)) {
-									vSelectsInExpand = vSelectsInExpand.split(",");
-								}
-								vSelectsInExpand.forEach(function (sSelect) {
-									aSelects.push(_Helper.buildPath(sAbsoluteExpandPath, sSelect));
-								});
+								addSelects(vExpandOptions.$select, sAbsoluteExpandPath);
 								break;
 							default:
 								throw new Error("Unsupported query option in $expand: "
@@ -632,7 +649,7 @@ sap.ui.define([
 					});
 				}
 				if (!vExpandOptions.$select) {
-					aSelects.push(sAbsoluteExpandPath + "/*");
+					mSelects[sAbsoluteExpandPath + "/*"] = true;
 				}
 			});
 			return aExpands;
@@ -658,8 +675,7 @@ sap.ui.define([
 				case "$orderby":
 					break;
 				case "$select":
-					aSelects.push.apply(aSelects,
-						Array.isArray(vValue) ? vValue : vValue.split(","));
+					addSelects(vValue);
 					return; // don't call fnResultHandler; this is done later
 				case "$filter":
 					vValue = that.convertFilter(vValue, sMetaPath);
@@ -673,6 +689,7 @@ sap.ui.define([
 		});
 
 		// only if all (nested) query options are processed, all selects are known
+		aSelects = Object.keys(mSelects);
 		if (aSelects.length > 0) {
 			if (!mQueryOptions.$select) {
 				aSelects.push("*");
