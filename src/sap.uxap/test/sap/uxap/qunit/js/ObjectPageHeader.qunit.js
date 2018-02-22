@@ -224,6 +224,32 @@
 		oObjectPageWithHeaderOnly.destroy();
 	});
 
+	QUnit.module("Private API", {
+		beforeEach: function() {
+			var sViewXML = '<core:View xmlns:core="sap.ui.core" xmlns="sap.uxap" xmlns:layout="sap.ui.layout" xmlns:m="sap.m" height="100%">' +
+							'<m:App>' +
+								'<ObjectPageLayout id="objectPageLayout" subSectionLayout="TitleOnLeft">' +
+									'<headerTitle>' +
+										'<ObjectPageHeader id = "applicationHeader" objectTitle="My Pastube">' +
+											'<actions>' +
+												'<m:CheckBox id="testCheckBox" text="Test"/>' +
+												'<ObjectPageHeaderActionButton id="installButton" text="Install" hideIcon="true" hideText="false" type="Emphasized"/>' +
+											'</actions>' +
+										'</ObjectPageHeader>' +
+									'</headerTitle>' +
+								'</ObjectPageLayout>' +
+							'</m:App>' +
+							'</core:View>';
+
+			this.myView = sap.ui.xmlview({ viewContent: sViewXML });
+			this.myView.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.myView.destroy();
+		}
+	});
+
 	QUnit.test("_adaptActions", function (assert) {
 		var oHeader = core.byId("UxAP-ObjectPageHeader--header"),
 			$overflowButton = oHeader._oOverflowButton.$();
@@ -233,6 +259,47 @@
 		oHeader._adaptActions(1000);
 
 		assert.strictEqual($overflowButton.css("display"), "none", "OverflowButton is hidden");
+	});
+
+	QUnit.test("_adaptLayoutForDomElement", function (assert) {
+		this.stub(sap.ui.Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		this.stub(sap.ui.Device, "orientation", {
+			portrait: true,
+			landscape: false
+		});
+
+		// assert
+		assert.strictEqual(this.myView.byId("installButton").$().css("visibility"), "visible", "Button is visible");
+
+		this.myView.byId("applicationHeader")._adaptLayoutForDomElement();
+
+		// assert
+		assert.strictEqual(this.myView.byId("installButton").$().css("visibility"), "visible", "Button is visible");
+	});
+
+	QUnit.test("_getActionsWidth", function (assert) {
+		this.stub(sap.ui.Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		this.stub(sap.ui.Device, "orientation", {
+			portrait: true,
+			landscape: false
+		});
+
+		// act
+		this.myView.byId("applicationHeader")._getActionsWidth();
+
+		// assert
+		assert.strictEqual(this.myView.byId("testCheckBox").$().css("visibility"), "visible", "sap.m.CheckBox is visible");
+		assert.strictEqual(this.myView.byId("installButton").$().css("visibility"), "hidden", "ObjectPageHeaderActionButton is hidden");
 	});
 
 	QUnit.module("Action buttons", {
