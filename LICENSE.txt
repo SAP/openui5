@@ -398,7 +398,7 @@ License: MIT License
 
 Component: JUnit Reporter for QUnit
 Licensor: jQuery Foundation and other contributors
-Website: https://github.com/jquery/qunit-reporter-junit
+Website: https://github.com/JamesMGreene/qunit-reporter-junit
 License: MIT License
 
 Component: klay.js 0.4.1
