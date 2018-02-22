@@ -20,10 +20,11 @@
 	/*global console, document, jQuery, sap, window */
 	"use strict";
 
-	var oCfg = window['sap-ui-config'],
+	var _ui5loader = window.sap && window.sap.ui && window.sap.ui._ui5loader,
+		oCfg = window['sap-ui-config'],
 		sBaseUrl, bNojQuery,
 		aScripts, rBootScripts, i,
-		oBootstrapScript, bNoConflict = false;
+		oBootstrapScript, sBootstrapUrl, bNoConflict = false;
 
 	function findBaseUrl(oScript, rUrlPattern) {
 		var sUrl = oScript && oScript.getAttribute("src"),
@@ -31,9 +32,18 @@
 		if ( oMatch ) {
 			sBaseUrl = oMatch[1] || "";
 			oBootstrapScript = oScript;
+			sBootstrapUrl = sUrl;
 			bNojQuery = /sap-ui-core-nojQuery\.js(?:\?|#|$)/.test(sUrl);
 			return true;
 		}
+	}
+
+	function ensureSlash(path) {
+		return path && path[path.length] !== '/' ? path + '/' : path;
+	}
+
+	if (_ui5loader == null) {
+		throw new Error("ui5loader-autoconfig.js: ui5loader is needed, but could not be found");
 	}
 
 	// Prefer script tags which have the sap-ui-bootstrap ID
@@ -42,7 +52,7 @@
 	if ( !findBaseUrl(document.querySelector('SCRIPT[src][id=sap-ui-bootstrap]'), /^((?:.*\/)?resources\/)/ ) ) {
 
 		// only when there's no such script tag, check all script tags
-		rBootScripts = /^(.*\/)?(?:sap-ui-(?:core|custom|boot|merged)(?:-\w*)?|jquery.sap.global|ui5loader-autoconfig)\.js(?:[?#]|$)/;
+		rBootScripts = /^(.*\/)?(?:sap-ui-(?:core|custom|boot|merged)(?:-\w*)?|jquery.sap.global|ui5loader(?:-autoconfig)?)\.js(?:[?#]|$)/;
 		aScripts = document.scripts;
 		for ( i = 0; i < aScripts.length; i++ ) {
 			if ( findBaseUrl(aScripts[i], rBootScripts) ) {
@@ -71,7 +81,103 @@
 		throw new Error("ui5loader-autoconfig.js: could not determine base URL. No known script tag and no configuration found!");
 	}
 
-	sap.ui._ui5loader.config({
+	/**
+	 * Determine whether to use debug sources depending on URL parameter, local storage
+	 * and script tag attribute.
+	 * If full debug mode is required, restart with a debug version of the bootstrap.
+	 */
+	(function() {
+		// check URI param
+		var mUrlMatch = /(?:^|\?|&)sap-ui-debug=([^&]*)(?:&|$)/.exec(window.location.search),
+			vDebugInfo = (mUrlMatch && decodeURIComponent(mUrlMatch[1])) || '';
+
+		// check local storage
+		try {
+			vDebugInfo = vDebugInfo || window.localStorage.getItem("sap-ui-debug");
+		} catch (e) {
+			// happens in FF when cookies are deactivated
+		}
+		vDebugInfo = vDebugInfo || (oBootstrapScript && oBootstrapScript.getAttribute("data-sap-ui-debug"));
+
+		// normalize
+		if ( /^(?:false|true|x|X)$/.test(vDebugInfo) ) {
+			vDebugInfo = vDebugInfo !== 'false';
+		}
+
+		// if bootstrap URL already contains -dbg URL, just set sap-ui-loaddbg
+		if (/-dbg\.js([?#]|$)/.test(sBootstrapUrl)) {
+			window['sap-ui-loaddbg'] = true;
+			vDebugInfo = vDebugInfo || true;
+		}
+
+		// export resulting debug mode under legacy property
+		window["sap-ui-debug"] = vDebugInfo;
+
+		if ( window["sap-ui-optimized"] && vDebugInfo ) {
+			// if current sources are optimized and any debug sources should be used, enable the "-dbg" suffix
+			window['sap-ui-loaddbg'] = true;
+			// if debug sources should be used in general, restart with debug URL
+			if ( vDebugInfo === true ) {
+				var sDebugUrl;
+				if ( sBootstrapUrl != null ) {
+					sDebugUrl = sBootstrapUrl.replace(/\/(?:sap-ui-cachebuster\/)?([^\/]+)\.js/, "/$1-dbg.js");
+				} else {
+					// when no boot script could be identified, we can't derive the name of the
+					// debug boot script from it, so fall back to a default debug boot script
+					sDebugUrl = ensureSlash(sBaseUrl) + 'sap-ui-core.js';
+				}
+				window["sap-ui-optimized"] = false;
+				document.write("<script src=\"" + sDebugUrl + "\"></script>");
+				var oRestart = new Error("This is not a real error. Aborting UI5 bootstrap and restarting from: " + sDebugUrl);
+				oRestart.name = "Restart";
+				throw oRestart;
+			}
+		}
+
+		function makeRegExp(sGlobPattern) {
+			if (!/\/\*\*\/$/.test(sGlobPattern)) {
+				sGlobPattern = sGlobPattern.replace(/\/$/, '/**/');
+			}
+			return sGlobPattern.replace(/\*\*\/|\*|[[\]{}()+?.\\^$|]/g, function(sMatch) {
+				switch (sMatch) {
+					case '**/': return '(?:[^/]+/)*';
+					case '*': return '[^/]*';
+					default: return '\\' + sMatch;
+				}
+			});
+		}
+
+		var fnIgnorePreload;
+
+		if (typeof vDebugInfo === 'string') {
+			var sPattern = "^(?:" + vDebugInfo.split(/,/).map(makeRegExp).join("|") + ")",
+				rFilter = new RegExp(sPattern);
+
+			fnIgnorePreload = function(sModuleName) {
+				return rFilter.test(sModuleName);
+			};
+
+			_ui5loader.logger.debug("Modules that should be excluded from preload: '" + sPattern + "'");
+
+		} else if (vDebugInfo === true) {
+
+			fnIgnorePreload = function() {
+				return true;
+			};
+
+			_ui5loader.logger.debug("All modules should be excluded from preload");
+
+		}
+
+		_ui5loader.config({
+			debugSources: !!window['sap-ui-loaddbg'],
+			ignoreBundledResources: fnIgnorePreload
+		});
+
+	})();
+
+
+	_ui5loader.config({
 		baseUrl: sBaseUrl,
 
 		noConflict: bNoConflict,
