@@ -595,10 +595,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				if (!iItemsLength || !this._iLimit ||
 					(bLengthFinal && this._iLimit >= iBindingLength) ||
 					(bHasScrollToLoad && this._getHasScrollbars())) {
-					oControl.$("triggerList").css("display", "none");
 					if (document.activeElement === oTrigger.getDomRef()) {
-						oControl.$("after").focus();
+						oControl.forwardTab(true);
 					}
+					oControl.$("triggerList").css("display", "none");
 				} else {
 					if (bLengthFinal) {
 						oControl.$("triggerInfo").css("display", "block").text(this._getListItemInfo());
