@@ -217,6 +217,7 @@ sap.ui.define([
 				this.byId("SalesOrderLineItems").getItems()[oContext.getIndex()]);
 			this._setSalesOrderLineItemBindingContext(oContext);
 			oUiModel.setProperty("/bCreateItemPending", true);
+			this.byId("SalesOrderLineItems").getItems()[0].focus();
 
 			// Note: this promise fails only if the transient entity is deleted
 			this.oSalesOrderLineItemCreated = oContext.created().then(function () {
