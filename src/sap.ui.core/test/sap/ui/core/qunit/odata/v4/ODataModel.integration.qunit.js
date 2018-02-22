@@ -3126,9 +3126,12 @@ sap.ui.require([
 	// after rendering (via setTimeout). This must not lead to separate requests for each table
 	// cell resp. console errors due to data access via virtual context.
 	// BCP 1770367083
+	// Also tests that key properties are $select'ed for a sap.ui.table.Table with query options
+	// different from $expand and $select in the binding parameters of the rows aggregation.
 	QUnit.test("sap.ui.table.Table with VisibleRowCountMode='Auto'", function (assert) {
 		var sView = '\
-<t:Table id="table" rows="{/EMPLOYEES}" visibleRowCountMode="Auto">\
+<t:Table id="table" rows="{path : \'/EMPLOYEES\', parameters : {$filter : \'AGE gt 42\'}}"\
+		visibleRowCountMode="Auto">\
 	<t:Column>\
 		<t:label>\
 			<Label text="Name"/>\
@@ -3145,7 +3148,7 @@ sap.ui.require([
 		return this.createView(assert, sView, oModel).then(function () {
 			// table.Table must render to call getContexts on its row aggregation's list binding
 			that.oView.placeAt("qunit-fixture");
-			that.expectRequest("EMPLOYEES?$select=ID,Name&$skip=0&$top=105", {
+			that.expectRequest("EMPLOYEES?$filter=AGE%20gt%2042&$select=ID,Name&$skip=0&$top=105", {
 					"value" : [
 						{"Name" : "Frederic Fall"},
 						{"Name" : "Jonathan Smith"}
