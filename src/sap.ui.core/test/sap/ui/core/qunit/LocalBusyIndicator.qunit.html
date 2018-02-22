@@ -438,6 +438,51 @@
 			}
 		});
 
+		QUnit.test("OnBeforeRendering", function(assert) {
+			var done = assert.async(),
+				oControl, oBusyIndicator;
+
+			this.oButton.setBusyIndicatorDelay(0);
+
+			this.oButton.placeAt("target1");
+			this.oButton.setBusy(true);
+
+			sap.ui.getCore().applyChanges();
+
+			this.oButton.addDelegate({
+				onBeforeRendering: function() {
+					oControl = this.getDomRef();
+					oBusyIndicator = this.getDomRef("busyIndicator");
+
+					assert.equal(oControl.previousElementSibling.nodeName.toLowerCase(), "span", "<span> before is available.");
+					assert.equal(oControl.previousElementSibling.getAttribute("tabindex"), 0, "Previous <span> has tabindex 0.")
+					assert.ok(oBusyIndicator, "BusyIndicator DOM is still available.");
+					assert.equal(oControl.nextElementSibling.nodeName.toLowerCase(), "span", "<span> after is available.");
+					assert.equal(oControl.previousElementSibling.getAttribute("tabindex"), 0, "Next <span> has tabindex 0.")
+				}
+			}, true, this.oButton);
+
+			this.oButton.addDelegate({
+				onBeforeRendering: function() {
+					oControl = this.getDomRef();
+					oBusyIndicator = this.getDomRef("busyIndicator");
+
+					// check if prev & next sibilings are either not existant or not a <span tabindex='0'> element
+					oTabSpan = oControl.previousElementSibling;
+					assert.ok(oTabSpan === null || (oTabSpan.getAttribute("tabindex") !== "0" && oTabSpan.nodeName !== "SPAN"), "Previous tabbable span shouldn't be available.")
+
+					assert.notOk(oBusyIndicator, "BusyIndicator DOM is now removed");
+
+					oTabSpan = oControl.nextElementSibling;
+					assert.ok(oTabSpan === null || (oTabSpan.getAttribute("tabindex") !== "0" && oTabSpan.nodeName !== "SPAN"), "Previous tabbable span shouldn't be available.")
+
+					done();
+				}
+			}, false, this.oButton);
+
+			this.oButton.rerender();
+		});
+
 		QUnit.test("OnAfterRendering", function(assert) {
 			var done = assert.async();
 			assert.expect(4);
