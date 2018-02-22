@@ -2019,7 +2019,17 @@ sap.ui.define([
 
 			$Ref.on("webkitTransitionEnd transitionend", fnTransitionEnd);
 
-			vTimeout = setTimeout(fnTransitionEnd, 300);
+			vTimeout = setTimeout(fnTransitionEnd, this._getAnimationDuration());
+		};
+
+
+		/**
+		 * Returns the duration for the Popover's closing animation
+		 * @sap-restricted sap.ui.dt.plugin.MiniMenu
+		 * @private
+		 */
+		Popover.prototype._getAnimationDuration = function () {
+			return 300;
 		};
 
 		Popover.prototype._openAnimation = function ($Ref, iRealDuration, fnOpened) {
