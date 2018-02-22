@@ -490,6 +490,12 @@ sap.ui.define([
 
 		this._resetToolbar();
 
+		for (var iControlSize in this._aControlSizes) {
+			if (this._aControlSizes.hasOwnProperty(iControlSize)) {
+				this._aControlSizes[iControlSize] = 0; // reset saved control sizes
+			}
+		}
+
 		this._bControlsInfoCached = false;
 		this._bNestedInAPopover = null;
 		this._iPreviousToolbarWidth = null;
