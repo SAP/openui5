@@ -12,7 +12,8 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 			},
 			dependencies : {
 				libs : [
-					"sap.ui.unified"
+					"sap.ui.unified",
+					"sap.m"
 				]
 			},
 			config : {

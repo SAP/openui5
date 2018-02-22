@@ -1,6 +1,12 @@
 <mvc:View
+	height="100%"
 	xmlns="sap.ui.unified"
-	xmlns:mvc="sap.ui.core.mvc"
-	height="100%">
-	<ColorPicker class="sapUiMediumMargin"/>
+	xmlns:m="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+
+	<m:Page showHeader="false" class="sapUiContentPadding" showNavButton="false">
+		<m:content>
+			<ColorPicker mode="HSL"/>
+		</m:content>
+	</m:Page>
 </mvc:View>
