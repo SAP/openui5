@@ -8,7 +8,8 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 			rootView : "sap.ui.unified.sample.ColorPicker.View",
 			dependencies : {
 				libs : [
-					"sap.ui.unified"
+					"sap.ui.unified",
+					"sap.m"
 				]
 			},
 			config : {
