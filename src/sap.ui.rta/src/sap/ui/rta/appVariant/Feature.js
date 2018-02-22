@@ -130,11 +130,9 @@ sap.ui.define([
 		 * @param {object} oLrepSerializer
 		 * @returns {boolean} returns a boolean value
 		 * @description App variant functionality is only supported in S/4 Hana Cloud Platform & S/4 Hana (On Premise)
-		 * with 'sap-ui-xx-rta-save-as=true' (toggle feature switch) as a part of url;
 		 * App variant functionality should be available if folowing conditions are met:
-		 * When an app is not a scaffolding app;
-		 * When it is not an FLP app;
-		 * When the current layer is not 'CUSTOMER';
+		 * When it is an FLP app;
+		 * When the current layer is 'CUSTOMER';
 		 * When it is not a standalone app runing on NEO Cloud;
 		 */
 		isPlatFormEnabled : function(oRootControl, sCurrentLayer, oLrepSerializer) {
@@ -145,20 +143,16 @@ sap.ui.define([
 
 			if (oDescriptor["sap.app"] && oDescriptor["sap.app"].id) {
 				if (RtaUtils.getUshellContainer() && !AppVariantUtils.isStandAloneApp() && sCurrentLayer === "CUSTOMER") {
-					var oUriParams = jQuery.sap.getUriParameters();
-					var aUriLayer = oUriParams.mParams["sap-ui-xx-rta-save-as"];
+					var oInboundInfo;
 
-					if (aUriLayer && aUriLayer.length) {
-						var oInboundInfo;
-						if (oDescriptor["sap.app"].crossNavigation && oDescriptor["sap.app"].crossNavigation.inbounds) {
-							oInboundInfo = AppVariantUtils.getInboundInfo(oDescriptor["sap.app"].crossNavigation.inbounds);
-						} else {
-							oInboundInfo = AppVariantUtils.getInboundInfo();
-						}
+					if (oDescriptor["sap.app"].crossNavigation && oDescriptor["sap.app"].crossNavigation.inbounds) {
+						oInboundInfo = AppVariantUtils.getInboundInfo(oDescriptor["sap.app"].crossNavigation.inbounds);
+					} else {
+						oInboundInfo = AppVariantUtils.getInboundInfo();
+					}
 
-						if (oInboundInfo) {
-							return aUriLayer[0] === 'true';
-						}
+					if (oInboundInfo) {
+						return true;
 					}
 				}
 			}
