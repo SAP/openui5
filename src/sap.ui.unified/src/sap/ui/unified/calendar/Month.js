@@ -971,6 +971,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 		} else if (Device.support.touch
 			&& this._isValueInThreshold(this._oMousedownPosition.clientX, oEvent.clientX, 10)
 			&& this._isValueInThreshold(this._oMousedownPosition.clientY, oEvent.clientY, 10)
+			&& oEvent.target.classList.contains("sapUiCalItemText")
 		) {
 			var oSelectedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(jQuery(oEvent.target).parent().attr("data-sap-day")), this.getPrimaryCalendarType());
 			_selectDay.call(this, oSelectedDate, false, false);
