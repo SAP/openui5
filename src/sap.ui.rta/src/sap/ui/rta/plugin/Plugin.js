@@ -106,10 +106,11 @@ function(
 		};
 
 		oOverlay.attachElementModified(_onElementModified, this);
+
+		// the control can be set to visible, but still the control has no size when we do the check.
+		// that's why we also attach go 'geometryChanged' and check if the overlay has a size
 		if (!oOverlay.getElement().getDomRef()) {
 			oOverlay.attachEvent('geometryChanged', fnGeometryChangedCallback, this);
-		} else {
-			this.evaluateEditable([oOverlay], {onRegistration: true});
 		}
 	};
 
