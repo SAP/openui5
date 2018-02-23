@@ -3838,9 +3838,9 @@ sap.ui.require([
 		var oModel = this.createModelForV2FlightService(),
 			sView = '\
 <FlexBox binding="{/NotificationCollection(\'foo\')}">\
-	<Text id="updated" text="{updated}" />\
+	<Text id="updated" text="{= %{updated} }" />\
 	<FlexBox id="function" binding="{RMTSAMPLEFLIGHT.__FAKE__FunctionImport(...)}">\
-		<Text id="value" text="{value}" />\
+		<Text id="value" text="{= %{value} }" />\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
@@ -3854,9 +3854,9 @@ sap.ui.require([
 					"updated" : "/Date(1502323200000)/"
 				}
 			})
-			.expectChange("updated", "Aug 10, 2017, 2:00:00 AM") //TODO unexpected change
-			.expectChange("updated", "Aug 10, 2017, 2:00:00 AM")
-			.expectChange("value", null); //TODO unexpected change
+			.expectChange("updated", "2017-08-10T00:00:00Z") //TODO unexpected change
+			.expectChange("updated", "2017-08-10T00:00:00Z")
+			.expectChange("value", undefined); //TODO unexpected change
 
 
 		// code under test
@@ -3866,7 +3866,7 @@ sap.ui.require([
 						"__FAKE__FunctionImport" : "/Date(1502323200000)/"
 					}
 				})
-				.expectChange("value", "Aug 10, 2017, 2:00:00 AM");
+				.expectChange("value", "2017-08-10T00:00:00Z");
 
 			that.oView.byId("function").getObjectBinding().execute();
 			return that.waitForChanges(assert);
@@ -4177,9 +4177,9 @@ sap.ui.require([
 	// Scenario: Minimal test for an absolute ODataPropertyBinding. This scenario is comparable with
 	// "FavoriteProduct" in the SalesOrders application.
 	testViewStart("V2 Adapter: Absolute ODataPropertyBinding",
-		'<Text id="text" text="{/ProductSet(\'HT-1000\')/CreatedAt}" />',
+		'<Text id="text" text="{= %{/ProductSet(\'HT-1000\')/CreatedAt} }" />',
 		{"ProductSet('HT-1000')/CreatedAt" : {"d" : {"CreatedAt" : "/Date(1502323200000)/"}}},
-		{"text" : "Aug 10, 2017, 2:00:00 AM"},
+		{"text" : "2017-08-10T00:00:00.0000000Z"},
 		"createModelForV2SalesOrderService"
 	);
 
