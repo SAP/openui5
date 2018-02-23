@@ -535,6 +535,20 @@
 			"$Nullable" : false
 		}
 	}],
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__FuGetEmployeesByManager" : [{
+		"$kind" : "Function",
+		"$IsBound" : true,
+		"$Parameter" : [{
+			"$Name" : "_it",
+			"$Nullable" : false,
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.MANAGER"
+		}],
+		"$ReturnType" : {
+			"$Nullable" : false,
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.Worker",
+			"$isCollection" : true
+		}
+	}],
 	"com.sap.gateway.default.iwbep.tea_busi.v0001.FuGetEmployeeLocationByEmployeeID" : [{
 		"$kind" : "Function",
 		"$Parameter" : [{
