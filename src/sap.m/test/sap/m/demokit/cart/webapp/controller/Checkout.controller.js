@@ -9,7 +9,7 @@ sap.ui.define([
 	'sap/m/Link',
 	'sap/m/MessagePopover',
 	'sap/m/MessagePopoverItem',
-	'sap/ui/demo/cart/model/EmailType'
+	'sap/ui/demo/cart/model/emailType'
 ], function (
 	BaseController,
 	cart,
