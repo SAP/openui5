@@ -434,6 +434,9 @@ sap.ui.require([
 
 		// code under test
 		assert.strictEqual(oRequestor.convertDate("\/Date(1395705600000)\/"), "2014-03-25");
+
+		// code under test
+		assert.strictEqual(oRequestor.convertDate("\/Date(-327628800000)\/"), "1959-08-15");
 	});
 
 	//*********************************************************************************************
@@ -490,6 +493,9 @@ sap.ui.require([
 	}, {
 		input : "/Date(1395752399000)/", // DateTime in V2
 		output : "2014-03-25T12:59:59Z"  // must be interpreted as UTC
+	}, {
+		input : "/Date(-327628800000)/", // DateTime in V2 before 1970
+		output : "1959-08-15T00:00:00Z"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("convertDateTimeOffset, success " + i, function (assert) {
 			var oRequestor = {};
