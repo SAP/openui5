@@ -277,6 +277,25 @@ function(
 		fnAssertInitialState.call(this, assert);
 	});
 
+	QUnit.test("When applying the single move change, that was already performed on the UI, on jsControlTree with local id and reverting it afterwards, Then", function(assert) {
+		var oChange = new Change({
+			selector : this.mSelectorWithLocalId,
+			content : this.mSingleMoveChangeContentWithLocalId
+		});
+
+		sandbox.stub(JsControlTreeModifier, "findIndexInParentAggregation").returns(2);
+		assert.ok(MoveControlsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier, appComponent: oComponent}));
+
+		assert.equal(this.oObjectHeader.getAttributes().length, 1, "object attribute is removed from the header");
+		assert.equal(this.oObjectHeader.getAttributes()[0].getId(), this.oObjectAttribute2.getId(), "object attribute 2 is still in the header");
+		assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header is still at 1. position");
+		assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is still at 2. position");
+		assert.equal(this.oLayout.getContent()[2].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 3. position");
+
+		assert.ok(MoveControlsHandler.revertChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier, appComponent: oComponent}));
+		fnAssertInitialState.call(this, assert);
+	});
+
 	QUnit.test("When applying the single move change on jsControlTree with global id and reverting it afterwards, Then", function(assert) {
 		var oChange = new Change({
 			selector : this.mSelectorWithGlobalId,
