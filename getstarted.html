@@ -97,13 +97,13 @@
 					</p>
 				</div>	
 					
-				<p>The index.html file is the entry point for our app. It bootstraps OpenUI5 with common configuration settings and places the view and the text element into the HTML body.</p>
-				
-				<h3><a name="app"></a>Create an App</h3> 
-				<p>If this was fun, we have another, slightly advanced "Hello World" example for you. This time, we'll create a button that displays a "Hello World" message:
+				<p>We bootstrap OpenUI5 with common configuration settings. Then we create a text control and place it directly into the HTML body.</p>
+
+				<h3><a name="app"></a>Create an App</h3>
+				<p>If this was fun, we have another, slightly advanced "Hello World" example for you. Let's create an app with a button and a message toast:
 				</p>
 				<div class="corset"> <!-- for Ipad -->
-					<iframe style="width: 100%; height: 400px" src="https://embed.plnkr.co/zSnY0e/" frameborder="0" allowfullscren="allowfullscren" class="plunkerEmbedded"></iframe>
+					<iframe style="width: 100%; height: 400px" src="https://embed.plnkr.co/zSnY0e" frameborder="0" allowfullscren="allowfullscren" class="plunkerEmbedded"></iframe>
 				</div>
 				<div class="resultIE">
 					<p>
@@ -111,81 +111,34 @@
 					</p>
 				</div>
 
-				<p>In OpenUI5 we follow the <a href="https://openui5.hana.ondemand.com/#/topic/91f233476f4d1014b6dd926db0e91070" target="_blank">Model View Controller (MVC)</a> paradigm. Thus, in the example above, you can see three files:</p> 
-				
-				<span class="indented">
-  					<p><strong>index.html</strong><br />
-						The entry point for our app bootstraps OpenUI5 with common configuration settings and places the view into the HTML body.</p>
-  					<p><strong>App.view.xml</strong><br />
-						The view is written in XML and contains presentation logic to display a page and a button control.</p>
-  					<p><strong>App.controller.js</strong><br />
-						The controller defines an event handler for responding to the user action and displays a message toast when called.</p>
-				</span>
+				<p>As our project grows, we'll follow the <a href="https://openui5.hana.ondemand.com/#/topic/91f233476f4d1014b6dd926db0e91070" target="_blank">Model View Controller (MVC)</a> approach. Thus, in the example above, you can see three files:</p>
 
-				To start simple, we skip defining a model in this example. Feel free to modify and extend it as you need!
+				<ul class="noBullets">
+					<li><p><strong>index.html</strong><br />
+						The entry point for our app bootstraps OpenUI5 as above and places the view into the HTML body.</p></li>
+					<li><p><strong>App.view.xml</strong><br />
+						The view is written in XML, JavaScript, or JSON and contains presentation logic to display a page and a button control.</p></li>
+					<li><p><strong>App.controller.js</strong><br />
+						The controller defines an event handler for responding to the user action and displays a message toast when called.</p></li>
+				</ul>
+
+				To keep things simple, we skip defining a model in this example. Feel free to modify and extend it as you need!
 				</p>
-			
+
 				<h3><a name="deeper"></a>Dig Deeper</h3>
-				Have a look at our tutorials and demo apps in the OpenUI5 documentation:
+				Have a look at our tutorials, samples, and demo apps in the OpenUI5 documentation:
 				<div class="downloadbuttons" style="padding-bottom: 0">
 					<a href="https://openui5.hana.ondemand.com/#/topic/8b49fc198bf04b2d9800fc37fecbb218" class="downloadbuttonsmall" target="_blank">Learn OpenUI5</a>
 				</div>
 				<h4>Want more?</h4>
 				<ul>
 					<li>Try our free openSAP course <a href="https://open.sap.com/courses/ui51">Developing Web Apps with SAPUI5</a> - also applicable for OpenUI5.</li>
-					<li>Engage on <a href="http://stackoverflow.com/questions/tagged/sapui5">stackoverflow.com</a>, the <a href="https://www.sap.com/community/tag.html?id=500983881501772639608291559920477">SAP Community forum</a>, and <a href="http://slackui5invite.herokuapp.com/">Slack</a>.</li>
-					<li>Watch videos on <a href="https://www.youtube.com/channel/UCOlLpeus2uAJhmxjKHHGTgA">YouTube</a></li>
-					<li>Check out many <a href="https://openui5.hana.ondemand.com/#/controls" target="_blank">Samples</a></li>
+					<li>Engage with the community on <a href="http://stackoverflow.com/questions/tagged/sapui5">stackoverflow.com</a>, the <a href="https://www.sap.com/community/tag.html?id=500983881501772639608291559920477">SAP Community forum</a>, and <a href="http://slackui5invite.herokuapp.com/">Slack</a>.</li>
+					<li>Watch learning videos on <a href="https://www.youtube.com/channel/UCOlLpeus2uAJhmxjKHHGTgA">YouTube</a></li>
 				</ul>
 			</div> <!-- closes main_content -->
-			
-			<p id="twitter_section" class="inner">
-					<a href="https://twitter.com/OpenUI5" class="twitter-follow-button" data-show-count="false" data-dnt="true">Follow @OpenUI5</a>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-			</p>
-		</div>
 
-		<p>We bootstrap OpenUI5 with common configuration settings. Then we create a text control and place it directly into the HTML body.</p>
-
-		<h3><a name="app"></a>Create an App</h3>
-		<p>If this was fun, we have another, slightly advanced "Hello World" example for you. Let's create an app with a button and a message toast:
-		</p>
-		<div class="corset"> <!-- for Ipad -->
-			<iframe style="width: 100%; height: 400px" src="https://embed.plnkr.co/zSnY0e" frameborder="0" allowfullscren="allowfullscren" class="plunkerEmbedded"></iframe>
-		</div>
-		<div class="resultIE">
-			<p>
-				Your browser doesn't support Cross-Origin Resource Sharing (CORS). Thus, you cannot see the result of the above sample here.
-			</p>
-		</div>
-
-		<p>As our project grows, we'll follow the <a href="https://openui5.hana.ondemand.com/#/topic/91f233476f4d1014b6dd926db0e91070" target="_blank">Model View Controller (MVC)</a> approach. Thus, in the example above, you can see three files:</p>
-
-		<ul class="noBullets">
-			<li><p><strong>index.html</strong><br />
-				The entry point for our app bootstraps OpenUI5 as above and places the view into the HTML body.</p></li>
-			<li><p><strong>App.view.xml</strong><br />
-				The view is written in XML, JavaScript, or JSON and contains presentation logic to display a page and a button control.</p></li>
-			<li><p><strong>App.controller.js</strong><br />
-				The controller defines an event handler for responding to the user action and displays a message toast when called.</p></li>
-		</ul>
-
-		To keep things simple, we skip defining a model in this example. Feel free to modify and extend it as you need!
-		</p>
-
-		<h3><a name="deeper"></a>Dig Deeper</h3>
-		Have a look at our tutorials, samples, and demo apps in the OpenUI5 documentation:
-		<div class="downloadbuttons" style="padding-bottom: 0">
-			<a href="https://openui5.hana.ondemand.com/#/topic/8b49fc198bf04b2d9800fc37fecbb218" class="downloadbuttonsmall" target="_blank">Learn OpenUI5</a>
-		</div>
-		<h4>Want more?</h4>
-		<ul>
-			<li>Try our free openSAP course <a href="https://open.sap.com/courses/ui51">Developing Web Apps with SAPUI5</a> - also applicable for OpenUI5.</li>
-			<li>Engage with the community on <a href="http://stackoverflow.com/questions/tagged/sapui5">stackoverflow.com</a>, the <a href="https://www.sap.com/community/tag.html?id=500983881501772639608291559920477">SAP Community forum</a>, and <a href="http://slackui5invite.herokuapp.com/">Slack</a>.</li>
-			<li>Watch learning videos on <a href="https://www.youtube.com/channel/UCOlLpeus2uAJhmxjKHHGTgA">YouTube</a></li>
-		</ul>
-	</div> <!-- closes main_content -->
-
+				
 	<p id="twitter_section" class="inner">
 		<a href="https://twitter.com/OpenUI5" class="twitter-follow-button" data-show-count="false" data-dnt="true">Follow @OpenUI5</a>
 		<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
