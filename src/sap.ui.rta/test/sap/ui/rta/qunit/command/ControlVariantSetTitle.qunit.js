@@ -134,7 +134,6 @@ function(
 		var sNewText = "Test";
 
 		var oControlVariantSetTitleCommand = CommandFactory.getCommandFor(this.oVariantManagement, "setTitle", {
-			renamedElement : this.oVariantManagement,
 			newText : sNewText
 		}, oDesignTimeMetadata, mFlexSettings);
 
