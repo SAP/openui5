@@ -199,14 +199,6 @@ function(
 						error: oError
 					});
 				}.bind(this));
-
-			// Attach stored browser events
-			this.attachEvent('afterRendering', function (oEvent) {
-				var $DomRef = jQuery(oEvent.getParameter('domRef'));
-				this._aBindParameters.forEach(function (mBrowserEvent) {
-					$DomRef.bind(mBrowserEvent.sEventType, mBrowserEvent.fnProxy);
-				});
-			}, this);
 		},
 
 		/**

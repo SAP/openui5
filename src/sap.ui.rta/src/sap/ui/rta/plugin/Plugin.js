@@ -98,7 +98,17 @@ function(
 	};
 
 	BasePlugin.prototype._attachReevaluationEditable = function(oOverlay) {
+		var fnGeometryChangedCallback = function(oEvent) {
+			if (oEvent.getSource().getGeometry() && oEvent.getSource().getGeometry().visible) {
+				this.evaluateEditable([oOverlay], {onRegistration: true});
+				oOverlay.detachEvent('geometryChanged', fnGeometryChangedCallback, this);
+			}
+		};
+
 		oOverlay.attachElementModified(_onElementModified, this);
+		if (!oOverlay.getElement().getDomRef()) {
+			oOverlay.attachEvent('geometryChanged', fnGeometryChangedCallback, this);
+		}
 	};
 
 	BasePlugin.prototype._getRelevantOverlays = function(oOverlay, sAggregationName) {
