@@ -1383,6 +1383,7 @@ sap.ui.require([
 			},
 			oBinding = new ODataParentBinding({
 				mAggregatedQueryOptions : {},
+				bAggregatedQueryOptionsInitial : true,
 				// cache will be created, waiting for child bindings
 				oCachePromise : SyncPromise.resolve(Promise.resolve()),
 				doFetchQueryOptions : function () {},
