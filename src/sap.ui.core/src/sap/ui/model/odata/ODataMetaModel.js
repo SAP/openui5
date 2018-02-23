@@ -275,8 +275,8 @@ sap.ui.define([
 				try {
 					oResult = BindingParser.parseExpression(sResolvedPath, 1);
 					iEnd = oResult.at;
-					if (iEnd >= 0 && (sResolvedPath.length === iEnd + 1
-							|| sResolvedPath.charAt(iEnd + 1) === '/')) {
+					if (sResolvedPath.length === iEnd + 1
+							|| sResolvedPath.charAt(iEnd + 1) === '/') {
 						oBinding = oResult.result;
 						vPart = sResolvedPath.slice(0, iEnd + 1);
 						sResolvedPath = sResolvedPath.slice(iEnd + 2);
@@ -866,9 +866,8 @@ sap.ui.define([
 					resolve : function (oResponse) {
 						// enhance property by annotations from response to get value lists
 						jQuery.extend(oProperty,
-							((oResponse.annotations.propertyAnnotations || {})
-								[sQualifiedTypeName] || {})
-									[oProperty.name]
+							(oResponse.annotations.propertyAnnotations[sQualifiedTypeName] || {})
+								[oProperty.name]
 						);
 						mValueLists = Utils.getValueLists(oProperty);
 						if (jQuery.isEmptyObject(mValueLists)) {
