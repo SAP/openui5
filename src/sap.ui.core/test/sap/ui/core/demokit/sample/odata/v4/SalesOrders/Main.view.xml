@@ -59,7 +59,8 @@
 						<Button id="confirmCreateSalesOrder" text="OK"
 							press="onCloseSalesOrderDialog" type="Accept"/>
 					</buttons>
-					<form:SimpleForm editable="true" layout="ResponsiveGridLayout">
+					<form:SimpleForm editable="true" layout="ResponsiveGridLayout"
+						ariaLabelledBy="CreateSalesOrderDialog">
 						<Label labelFor="NewBuyerID" text="Buyer ID"/>
 						<!-- TODO Q: derive maxLength from type's constraints?! A: SmartField?! -->
 						<Input id="NewBuyerID"
@@ -198,7 +199,7 @@
 					}
 				}">
 			<Toolbar design="Transparent">
-				<Title text="Sales Order Details" titleStyle="H2"/>
+				<Title id="ObjectPageTitle" text="Sales Order Details" titleStyle="H2"/>
 				<!--Button icon="sap-icon://refresh"
 					press="onRefreshSalesOrderDetails"/-->
 				<Button icon="sap-icon://calendar" id="showSalesOrderSchedules"
@@ -247,47 +248,37 @@
 					</Dialog>
 				</dependents>
 			</Toolbar>
-			<form:SimpleForm layout="ResponsiveGridLayout">
-				<form:SimpleForm backgroundDesign="Transparent" editable="true"
-					id="SalesOrderDetails" labelSpanM="4" layout="ResponsiveGridLayout">
-					<form:toolbar>
-						<Toolbar design="Transparent" id="SalesOrderDetailsToolbar">
-							<Title text="Sales Order"/>
-						</Toolbar>
-					</form:toolbar>
-					<Label text="Sales Order ID" />
-					<Text id="Details_SalesOrderID" text="{SalesOrderID}" />
-					<Label text="Created At" />
-					<Text text="{CreatedAt}" />
-					<Label text="Changed At" />
-					<Text text="{ChangedAt}" />
-					<Label text="Lifecycle Status Desc" />
-					<Text text="{LifecycleStatusDesc}" />
-					<Label labelFor="Note" text="Note" />
-					<Input id="Note" value="{Note}" editable="{= %{LifecycleStatus} === 'N'}"/>
-				</form:SimpleForm>
-				<form:SimpleForm backgroundDesign="Transparent" binding="{SO_2_BP}"
-					editable="true" id="BusinessPartner" labelSpanM="4"
-					layout="ResponsiveGridLayout">
-					<form:toolbar>
-						<Toolbar design="Transparent" id="BusinessPartnerToolbar">
-							<Title text="Business Partner"/>
-							<Button enabled="{:= !${ui>/bRealOData} }" icon="sap-icon://delete"
-								id="deleteBusinessPartner" press="onDeleteBusinessPartner"
-								tooltip="Delete business partner"/>
-						</Toolbar>
-					</form:toolbar>
-					<Label text="Business Partner ID" />
-					<Text text="{BusinessPartnerID}" />
-					<Label text="CompanyName" />
-					<Text text="{CompanyName}" />
-					<Label labelFor="BPPhoneNumber" text="PhoneNumber" />
-					<Input id="BPPhoneNumber" value="{PhoneNumber}" />
-					<Label labelFor="BPCity" text="City" />
-					<Input id="BPCity" value="{Address/City}"/>
-					<Label labelFor="BPPostalCode" text="Postal Code" />
-					<Input id="BPPostalCode" value="{Address/PostalCode}"/>
-				</form:SimpleForm>
+			<form:SimpleForm ariaLabelledBy="ObjectPageTitle" backgroundDesign="Transparent"
+				editable="true" id="SalesOrderDetails" labelSpanM="4" layout="ResponsiveGridLayout">
+				<Toolbar design="Transparent" id="SalesOrderDetailsToolbar">
+					<Title text="Sales Order"/>
+				</Toolbar>
+				<Label text="Sales Order ID" />
+				<Text id="Details_SalesOrderID" text="{SalesOrderID}" />
+				<Label text="Created At" />
+				<Text text="{CreatedAt}" />
+				<Label text="Changed At" />
+				<Text text="{ChangedAt}" />
+				<Label text="Lifecycle Status Desc" />
+				<Text text="{LifecycleStatusDesc}" />
+				<Label labelFor="Note" text="Note" />
+				<Input id="Note" value="{Note}" editable="{= %{LifecycleStatus} === 'N'}"/>
+				<Toolbar design="Transparent" id="BusinessPartner" binding="{SO_2_BP}">
+					<Title text="Business Partner"/>
+					<Button enabled="{:= !${ui>/bRealOData} }" icon="sap-icon://delete"
+						id="deleteBusinessPartner" press="onDeleteBusinessPartner"
+						tooltip="Delete business partner"/>
+				</Toolbar>
+				<Label text="Business Partner ID" />
+				<Text text="{SO_2_BP/BusinessPartnerID}" />
+				<Label text="CompanyName" />
+				<Text text="{SO_2_BP/CompanyName}" />
+				<Label labelFor="BPPhoneNumber" text="PhoneNumber" />
+				<Input id="BPPhoneNumber" value="{SO_2_BP/PhoneNumber}" />
+				<Label labelFor="BPCity" text="City" />
+				<Input id="BPCity" value="{SO_2_BP/Address/City}"/>
+				<Label labelFor="BPPostalCode" text="Postal Code" />
+				<Input id="BPPostalCode" value="{SO_2_BP/Address/PostalCode}"/>
 			</form:SimpleForm>
 			<Table id="SalesOrderLineItems"
 				items="{
@@ -399,10 +390,11 @@
 		</VBox>
 		<VBox visible="{ui>/bLineItemSelected}">
 			<Toolbar design="Transparent">
-				<Title text="Supplier Details" titleStyle="H2"/>
+				<Title id="SupplierDetailsTitle" text="Supplier Details" titleStyle="H2"/>
 			</Toolbar>
-			<form:SimpleForm binding="{SOITEM_2_PRODUCT/PRODUCT_2_BP}"
-				id="SupplierDetailsForm" layout="ResponsiveGridLayout">
+			<form:SimpleForm ariaLabelledBy="SupplierDetailsTitle"
+				binding="{SOITEM_2_PRODUCT/PRODUCT_2_BP}" editable="true" id="SupplierDetailsForm"
+				layout="ResponsiveGridLayout">
 				<Label text="Supplier" />
 				<Text text="{CompanyName} {LegalForm}" />
 				<Label labelFor="PhoneNumber" text="Phone Number" />
