@@ -382,14 +382,13 @@ sap.ui.define([
 			oTotal.branches.missed += oFileSummary.branches.missed;
 		}
 
-		if (aTestedFiles) {
-			aTestedFiles.filter(function (sFile) {
-				return sFile in oCoverageData.files;
-			}).forEach(summarize);
+		if (aTestedFiles
+				&& aTestedFiles.every(function (sFile) {return sFile in oCoverageData.files;})) {
 			oTotal.filterThreshold = false;
 		} else {
-			Object.keys(oCoverageData.files).sort().forEach(summarize);
+			aTestedFiles = Object.keys(oCoverageData.files);
 		}
+		aTestedFiles.sort().forEach(summarize);
 
 		oTotal.linesOfContext = iLinesOfContext;
 		oTotal.threshold = iThreshold;
