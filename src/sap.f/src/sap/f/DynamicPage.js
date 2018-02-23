@@ -141,8 +141,8 @@ sap.ui.define([
 				 * when expanding/collapsing the <code>DynamicPageHeader</code>.
 				 *
 				 * <b>Note:</b> It is recommended to use this property when displaying content
-				 * of adaptive controls that stretch to fill the available space,
-				 * such as {@link sap.ui.table.Table} and  {@link sap.ui.table.AnalyticalTable}.
+				 * of adaptive controls that stretch to fill the available space. Such controls may be
+				 * {@link sap.ui.table.Table} and {@link sap.ui.table.AnalyticalTable} depending on their settings.
 				 */
 				fitContent: {type: "boolean", group: "Behavior", defaultValue: false}
 			},
