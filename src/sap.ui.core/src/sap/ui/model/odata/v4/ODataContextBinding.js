@@ -103,6 +103,7 @@ sap.ui.define([
 				}
 
 				this.mAggregatedQueryOptions = {};
+				this.bAggregatedQueryOptionsInitial = true;
 				this.oCachePromise = SyncPromise.resolve();
 				this.mCacheByContext = undefined;
 				this.sGroupId = undefined;
@@ -605,6 +606,7 @@ sap.ui.define([
 	ODataContextBinding.prototype.resumeInternal = function (bCheckUpdate) {
 		if (!this.oOperation) {
 			this.mAggregatedQueryOptions = {};
+			this.bAggregatedQueryOptionsInitial = true;
 			this.mCacheByContext = undefined;
 			this.fetchCache(this.oContext);
 			this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
