@@ -1792,6 +1792,32 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("createInCache: cache without $canonicalPath", function (assert) {
+		var oCache = {
+				create : function () {}
+			},
+			oBinding = new ODataParentBinding({
+				mCacheByContext : undefined,
+				oCachePromise : SyncPromise.resolve(oCache)
+			}),
+			oCreateResult = {},
+			oCreatePromise = SyncPromise.resolve(oCreateResult),
+			fnCancel = function () {},
+			oInitialData = {};
+
+		this.mock(oCache).expects("create")
+			.withExactArgs("updateGroupId", "EMPLOYEES", "", sinon.match.same(oInitialData),
+				sinon.match.same(fnCancel), /*fnErrorCallback*/sinon.match.func)
+			.returns(oCreatePromise);
+
+		// code under test
+		return oBinding.createInCache("updateGroupId", "EMPLOYEES", "", oInitialData, fnCancel)
+			.then(function (oResult) {
+				assert.strictEqual(oResult, oCreateResult);
+			});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("createInCache: binding w/o cache", function (assert) {
 		var oParentBinding = {
 				createInCache : function () {}
