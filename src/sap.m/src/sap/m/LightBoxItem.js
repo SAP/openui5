@@ -164,7 +164,7 @@ sap.ui.define([
 
             this._imageState = LightBoxLoadingStates.Loading;
 
-            if (oLightBox && oLightBox._oPopup.getOpenState() === OpenState.OPEN) {
+            if (oLightBox && oLightBox._oPopup.getOpenState() !== OpenState.OPEN) {
                 this._oImage.src = sImageSrc;
             }
 
