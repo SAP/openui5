@@ -2,23 +2,14 @@
 		xmlns="sap.f"
 		xmlns:m="sap.m">
 
-	<DynamicPage>
+	<DynamicPage toggleHeaderOnTitleClick="false">
 		<title>
 			<DynamicPageTitle>
-				<expandedHeading>
+				<heading>
 					<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">
 						<m:Title text="{products>text}" wrapping="true" class="sapUiTinyMarginEnd"/>
 					</m:FlexBox>
-				</expandedHeading>
-
-				<snappedHeading>
-					<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">
-						<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
-							<Avatar src="sap-icon://supplier" displaySize="S"/>
-							<m:Title text="{products>text}" wrapping="true" class="sapUiTinyMarginEnd"/>
-						</m:FlexBox>
-					</m:FlexBox>
-				</snappedHeading>
+				</heading>
 
 				<navigationActions>
 					<m:OverflowToolbarButton type="Transparent" icon="sap-icon://full-screen" press="handleFullScreen" tooltip="Enter Full Screen Mode" visible="{= ${/actionButtonsInfo/endColumn/fullScreen} !== null }"/>
@@ -28,15 +19,8 @@
 
 			</DynamicPageTitle>
 		</title>
-		<header>
-			<DynamicPageHeader>
-				<content>
-					<Avatar src="sap-icon://supplier" displaySize="L"/>
-				</content>
-			</DynamicPageHeader>
-		</header>
 		<content>
-			<m:Button text="About" press="handleAboutPress" />
+			<m:Link text="Navigate to next page…" press="handleAboutPress" />
 		</content>
 	</DynamicPage>
 </m:View>
