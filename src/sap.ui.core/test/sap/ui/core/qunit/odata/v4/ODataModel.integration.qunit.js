@@ -3719,6 +3719,59 @@ sap.ui.require([
 	);
 
 	//*********************************************************************************************
+	// Scenario: master/detail with V2 adapter where the detail URI must be adjusted for V2
+	QUnit.test("V2 adapter: master/detail", function (assert) {
+		var oModel = this.createModelForV2FlightService({autoExpandSelect : true}),
+			sView = '\
+<Table id="master" items="{/FlightCollection}">\
+	<ColumnListItem>\
+		<Text id="text0" text="{carrid}" />\
+	</ColumnListItem>\
+</Table>\
+<FlexBox id="detail" binding="{}">\
+	<Text id="text1" text="{PLANETYPE}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("FlightCollection?$select=carrid,connid,fldate&$skip=0&$top=100", {
+				"d" : {
+					"results" : [{
+						"__metadata" : {
+							"type" : "RMTSAMPLEFLIGHT.Flight"
+						},
+						"carrid" : "AA",
+						"connid" : "0017",
+						"fldate" : "/Date(1502323200000)/"
+					}]
+				}
+			})
+			.expectChange("text0", ["AA"])
+			.expectChange("text1"); // expect a later change
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("master").getItems()[0].getBindingContext();
+
+			that.expectRequest("FlightCollection(carrid='AA',connid='0017',fldate="
+				+ "datetime'2017-08-10T00%3A00%3A00')?$select=PLANETYPE,carrid,connid,fldate", {
+					"d": {
+						"__metadata": {
+							"type": "RMTSAMPLEFLIGHT.Flight"
+						},
+						"carrid": "AA",
+						"connid": "0017",
+						"fldate": "/Date(1502323200000)/",
+						"PLANETYPE": "747-400"
+					}
+				})
+				.expectChange("text1", "747-400");
+
+			that.oView.byId("detail").setBindingContext(oContext);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: <FunctionImport m:HttpMethod="GET"> in V2 Adapter
 	// Usage of service: /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
 	QUnit.test("V2 Adapter: FunctionImport", function (assert) {
