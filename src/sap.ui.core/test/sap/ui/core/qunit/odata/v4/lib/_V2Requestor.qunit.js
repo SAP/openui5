@@ -77,6 +77,16 @@ sap.ui.require([
 			"value" : [{"String" : "foo"}, {"Boolean" : true}]
 		}
 	}, {
+		bIsCollection : true,
+		oResponsePayload : {
+			"d" : {
+				"results" : [{"String" : "foo"}, {"Boolean" : true}]
+			}
+		},
+		oExpectedResult : {
+			"value" : [{"String" : "foo"}, {"Boolean" : true}]
+		}
+	}, {
 		bIsCollection : false,
 		oResponsePayload : {
 			"d" : {
