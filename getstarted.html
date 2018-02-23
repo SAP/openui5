@@ -1,161 +1,167 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
-		<style>
-			.resultIE {
-				display:none;
-			}
-			.smaller {
-				font-size:70%;
-			}
-		</style>
-		<!--[if lt IE 10]>
-			<style>
-				.result {
-					display:none;
-				}
-				.resultIE {
-					display:block;
-				}
-			</style>
-		<![endif]-->
-		<link rel="stylesheet" type="text/css" media="screen" href="stylesheets/main.css">
-		<link rel="icon"
-			type="image/png"
-			href="images/favicon.ico">
-		<title>OpenUI5 - Get Started</title>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+	<style>
+		.resultIE {
+			display:none;
+		}
+		.smaller {
+			font-size:70%;
+		}
+	</style>
+	<!--[if lt IE 10]>
+	<style>
+		.result {
+			display:none;
+		}
+		.resultIE {
+			display:block;
+		}
+	</style>
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" media="screen" href="stylesheets/main.css">
+	<link rel="icon"
+	      type="image/png"
+	      href="images/favicon.ico">
+	<title>OpenUI5 - Get Started</title>
 
-		<script>
-			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	<script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+				(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-			ga('create', 'UA-50072417-1', 'sap.github.io');
-			ga('set', 'anonymizeIp', true);
-			ga('send', 'pageview');
-		</script>
-	</head>
-	<body>
-		<!-- HEADER -->
-		<div id="header_wrap" class="outer">
-			<div class="wrap_ie9">
-				<div class="inner">
-					<img src="./images/OpenUI5_new_big_side.png" class="ui5logo" alt="OpenUI5 Logo">
-					<h1 id="project_title">
-						<span class="header_headline">Code once.</span><br>
-						<span class="header_headline">Run on any device.</span>
-					</h1>
-					<h2 id="project_tagline">
-						<span class="headertitle"><a href="index.html">Intro</a></span>
-						
-						<span class="headertitle"><a href="features.html">Key Features</a></span>
-						
-						<span class="headertitle">Get Started</span>
-						
-						<span class="headertitle"><a href="download.html">Download</a></span>
-						
-						<span class="headertitle"><a href="http://openui5.tumblr.com/">Blog</a></span>
-						
-						<span class="headertitle"><a href="planet/">Feed</a></span>
-						
-						<span class="headertitle"><a href="faq.html">FAQ</a></span>
-						
-						<span class="headertitle"><a href="whoUsesUI5.html">Who Uses UI5?</a></span>
-						
-						<span class="headertitle"><a href="relatedProjects.html">Related Projects</a></span>
-					</h2>
-				</div>
-			</div>
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+		ga('create', 'UA-50072417-1', 'sap.github.io');
+		ga('set', 'anonymizeIp', true);
+		ga('send', 'pageview');
+	</script>
+</head>
+<body>
+<!-- HEADER -->
+<div id="header_wrap" class="outer">
+	<div class="wrap_ie9">
+		<div class="inner">
+			<img src="./images/OpenUI5_new_big_side.png" class="ui5logo" alt="OpenUI5 Logo">
+			<h1 id="project_title">
+				<span class="header_headline">Code once.</span><br>
+				<span class="header_headline">Run on any device.</span>
+			</h1>
+			<h2 id="project_tagline">
+				<span class="headertitle"><a href="index.html">Intro</a></span>
+
+				<span class="headertitle"><a href="features.html">Key Features</a></span>
+
+				<span class="headertitle">Get Started</span>
+
+				<span class="headertitle"><a href="download.html">Download</a></span>
+
+				<span class="headertitle"><a href="http://openui5.tumblr.com/">Blog</a></span>
+
+				<span class="headertitle"><a href="planet/">Feed</a></span>
+
+				<span class="headertitle"><a href="faq.html">FAQ</a></span>
+
+				<span class="headertitle"><a href="whoUsesUI5.html">Who Uses UI5?</a></span>
+
+				<span class="headertitle"><a href="relatedProjects.html">Related Projects</a></span>
+			</h2>
 		</div>
+	</div>
+</div>
 
-		<!-- Fork me on GitHub -->
-		<a href="https://github.com/SAP/openui5/"><img style="position: absolute; top: 0; right: 0; border: 0;" src="images/forkme_fiori.png" alt="Fork me on GitHub"></a>
+<!-- Fork me on GitHub -->
+<a href="https://github.com/SAP/openui5/"><img style="position: absolute; top: 0; right: 0; border: 0;" src="images/forkme_fiori.png" alt="Fork me on GitHub"></a>
 
-		<!-- MAIN CONTENT -->
-		<div id="main_content_wrap" class="outer">
-			<div id="main_content" class="inner">
-				<h3><a name="ready"></a>Get Ready</h3>
-				<p>
-					All you need to develop Web apps with OpenUI5 is a development environment and a browser. Chose between
-					SAP Web IDE in the cloud for maximum convenience or set up your local development environment or maximum flexibility.
-				</p>
-				<p>Both options are described in our <a href="https://openui5.hana.ondemand.com/#/topic/7bb04e05f9484e1b95b38a2e48ecef4f" target="_blank">documentation</a>.</p>
+<!-- MAIN CONTENT -->
+<div id="main_content_wrap" class="outer">
+	<div id="main_content" class="inner">
+		<h3><a name="ready"></a>Get Ready</h3>
+		<p>
+			All you need to develop Web apps with OpenUI5 is a development environment and a browser. Choose between
+			SAP Web IDE in the cloud for maximum convenience or set up your local development environment for maximum flexibility.
+		</p>
+		<p>Both <a href="https://openui5.hana.ondemand.com/#/topic/7bb04e05f9484e1b95b38a2e48ecef4f" target="_blank">development environment</a> options and more details are described in our documentation.</p>
 
 
-				<h3><a name="coding"></a>Start Coding</h3>
-				<p>Now it is time to build your first OpenUI5 app. To start simple, we load OpenUI5 from our <a href="https://openui5.hana.ondemand.com/#/topic/2d3eb2f322ea4a82983c1c62a33ec4ae" target="_blank">CDN</a> and place a sap.m.Text into the HTML body:
-
-				<pre class="codeblock">
-<span class="shTag">&lt;html&gt;</span>
-<span class="shTag">&lt;head&gt;</span>
-<span class="shTag">&lt;title&gt;</span>Hello World<span class="shTag">&lt;/title&gt;</span>
-
-<span class="shTag">&lt;script</span> <span class="shAttr">id</span>=<span class="shString">'sap-ui-bootstrap'</span>
-    <span class="shAttr">src</span>=<span class="shString">'https://openui5.hana.ondemand.com/resources/sap-ui-core.js'</span>
-    <span class="shAttr">data-sap-ui-theme</span>=<span class="shString">'sap_belize'</span>
-    <span class="shAttr">data-sap-ui-libs</span>=<span class="shString">'sap.m'</span>
-    <span class="shAttr">data-sap-ui-compatVersion</span>=<span class="shString">'edge'</span>
-    <span class="shAttr">data-sap-ui-preload</span>=<span class="shString">'async'</span><span class="shTag">&gt;</span>
-<span class="shTag">&lt;/script&gt;</span>
-
-<span class="shTag">&lt;script&gt;</span>
-    sap.ui.getCore().attachInit(<span class="sh-js-keyword">function</span> () {
-        <span class="sh-js-keyword">new</span> sap.m.Text({
-            <span class="shAttr">text</span>: <span class="shString">&quot;Hello World&quot;</span>
-        }).placeAt(<span class="shString">&quot;content&quot;</span>);
-    });
-<span class="shTag">&lt;/script&gt;</span>
-
-<span class="shTag">&lt;/head&gt;</span>
-<span class="shTag">&lt;body</span> <span class="shAttr">class</span>=<span class="shString">'sapUiBody'</span> <span class="shAttr">id</span>=<span class="shString">'content'</span><span class="shTag">&gt;</span>
-<span class="shTag">&lt;/body&gt;</span>
-<span class="shTag">&lt;/html&gt;</span></pre>
-
-				<p>
-					<a href="https://plnkr.co/edit/pypWW9?p=info" class="plunkerEmbedded" target="_blank">Try it out yourself - modify and extend this basic "Hello World!" example as you wish!</a>
-				</p>
-			
-				<h3><a name="deeper"></a>Dig Deeper</h3>
-				Have a look at our tutorials and demo apps in the OpenUI5 Demo Kit:
-				<div class="downloadbuttons" style="padding-bottom: 0">
-					<a href="https://openui5.hana.ondemand.com/#/topic/8b49fc198bf04b2d9800fc37fecbb218" class="downloadbutton" target="_blank">Learn OpenUI5</a>
-				</div>
-				<h4>Want more?</h4>
-				<ul>
-					<li>Try our free openSAP course <a href="https://open.sap.com/courses/ui51">Developing Web Apps with SAPUI5</a> - also applicable for OpenUI5.</li>
-					<li>Engage on <a href="http://stackoverflow.com/questions/tagged/sapui5">stackoverflow.com</a>, the <a href="https://www.sap.com/community/tag.html?id=500983881501772639608291559920477">SAP Community forum</a>, and <a href="http://slackui5invite.herokuapp.com/">Slack</a>.</li>
-					<li>Watch videos on <a href="https://www.youtube.com/channel/UCOlLpeus2uAJhmxjKHHGTgA">YouTube</a></li>
-					<li>Check out many <a href="https://openui5.hana.ondemand.com/#/controls" target="_blank">Samples</a></li>
-				</ul>
-			</div> <!-- closes main_content -->
-			
-			<p id="twitter_section" class="inner">
-					<a href="https://twitter.com/OpenUI5" class="twitter-follow-button" data-show-count="false" data-dnt="true">Follow @OpenUI5</a>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+		<h3><a name="coding"></a>Start Coding</h3>
+		<p>Now it is time to build our first OpenUI5 example! We load OpenUI5 from the <a href="https://openui5.hana.ondemand.com/#/topic/2d3eb2f322ea4a82983c1c62a33ec4ae" target="_blank">CDN</a> and create a text that displays "Hello World":
+		<div class="corset"> <!-- for Ipad -->
+			<iframe style="width: 100%; height: 400px" src="https://embed.plnkr.co/cgTh4SAzZHCIqOUqzDuF" frameborder="0" allowfullscren="allowfullscren" class="plunkerEmbedded"></iframe>
+		</div>
+		<div class="resultIE">
+			<p>
+				Your browser doesn't support Cross-Origin Resource Sharing (CORS). Thus, you cannot see the result of the above sample here.
 			</p>
-
-		</div> <!-- closes main_content_wrap -->
-		<!-- FOOTER  -->
-		<div id="footer_wrap" class="outer">
-			<div class="wrap_ie9">
-				<div class="inner">
-					<p class="copyright">&copy; SAP SE, made available under Apache License 2.0</p>
-					<script>
-						var ref = encodeURIComponent(document.referrer);
-						document.write('<img class="counter" src="https://openui5.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=getstarted&ref=' + ref + '" style="width:1px;height:1px" alt="counter">');
-					</script>
-					<noscript><img class="counter" src="https://openui5.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=getstarted" style="width:1px;height:1px" alt="counter"></noscript>
-					<a class="legal" href="impressum.html">Legal Disclosure / Impressum</a>
-					<a class="legal" href="http://global.sap.com/corporate-en/legal/privacy.epx">Privacy</a>
-					<a class="legal" href="http://www.sap.com/germany/about/legal/privacy.html">Datenschutz</a>
-					<a class="legal" href="ga_disclaimer.html">Google Analytics Disclaimer</a>
-					<a class="legal" href="logo.html">Logo Guidelines</a>
-				</div>
-			</div>
 		</div>
-	</body>
+
+		<p>We bootstrap OpenUI5 with common configuration settings. Then we create a text control and place it directly into the HTML body.</p>
+
+		<h3><a name="app"></a>Create an App</h3>
+		<p>If this was fun, we have another, slightly advanced "Hello World" example for you. Let's create an app with a button and a message toast:
+		</p>
+		<div class="corset"> <!-- for Ipad -->
+			<iframe style="width: 100%; height: 400px" src="https://embed.plnkr.co/zSnY0e" frameborder="0" allowfullscren="allowfullscren" class="plunkerEmbedded"></iframe>
+		</div>
+		<div class="resultIE">
+			<p>
+				Your browser doesn't support Cross-Origin Resource Sharing (CORS). Thus, you cannot see the result of the above sample here.
+			</p>
+		</div>
+
+		<p>As our project grows, we'll follow the <a href="https://openui5.hana.ondemand.com/#/topic/91f233476f4d1014b6dd926db0e91070" target="_blank">Model View Controller (MVC)</a> approach. Thus, in the example above, you can see three files:</p>
+
+		<ul class="noBullets">
+			<li><p><strong>index.html</strong><br />
+				The entry point for our app bootstraps OpenUI5 as above and places the view into the HTML body.</p></li>
+			<li><p><strong>App.view.xml</strong><br />
+				The view is written in XML, JavaScript, or JSON and contains presentation logic to display a page and a button control.</p></li>
+			<li><p><strong>App.controller.js</strong><br />
+				The controller defines an event handler for responding to the user action and displays a message toast when called.</p></li>
+		</ul>
+
+		To keep things simple, we skip defining a model in this example. Feel free to modify and extend it as you need!
+		</p>
+
+		<h3><a name="deeper"></a>Dig Deeper</h3>
+		Have a look at our tutorials and demo apps in the OpenUI5 documentation:
+		<div class="downloadbuttons" style="padding-bottom: 0">
+			<a href="https://openui5.hana.ondemand.com/#/topic/8b49fc198bf04b2d9800fc37fecbb218" class="downloadbuttonsmall" target="_blank">Learn OpenUI5</a>
+		</div>
+		<h4>Want more?</h4>
+		<ul>
+			<li>Try our free openSAP course <a href="https://open.sap.com/courses/ui51">Developing Web Apps with SAPUI5</a> - also applicable for OpenUI5.</li>
+			<li>Engage on <a href="http://stackoverflow.com/questions/tagged/sapui5">stackoverflow.com</a>, the <a href="https://www.sap.com/community/tag.html?id=500983881501772639608291559920477">SAP Community forum</a>, and <a href="http://slackui5invite.herokuapp.com/">Slack</a>.</li>
+			<li>Watch videos on <a href="https://www.youtube.com/channel/UCOlLpeus2uAJhmxjKHHGTgA">YouTube</a></li>
+			<li>Check out many <a href="https://openui5.hana.ondemand.com/#/controls" target="_blank">Samples</a></li>
+		</ul>
+	</div> <!-- closes main_content -->
+
+	<p id="twitter_section" class="inner">
+		<a href="https://twitter.com/OpenUI5" class="twitter-follow-button" data-show-count="false" data-dnt="true">Follow @OpenUI5</a>
+		<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+	</p>
+
+</div> <!-- closes main_content_wrap -->
+<!-- FOOTER  -->
+<div id="footer_wrap" class="outer">
+	<div class="wrap_ie9">
+		<div class="inner">
+			<p class="copyright">&copy; SAP SE, made available under Apache License 2.0</p>
+			<script>
+				var ref = encodeURIComponent(document.referrer);
+				document.write('<img class="counter" src="https://openui5.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=getstarted&ref=' + ref + '" style="width:1px;height:1px" alt="counter">');
+			</script>
+			<noscript><img class="counter" src="https://openui5.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=getstarted" style="width:1px;height:1px" alt="counter"></noscript>
+			<a class="legal" href="impressum.html">Legal Disclosure / Impressum</a>
+			<a class="legal" href="http://global.sap.com/corporate-en/legal/privacy.epx">Privacy</a>
+			<a class="legal" href="http://www.sap.com/germany/about/legal/privacy.html">Datenschutz</a>
+			<a class="legal" href="ga_disclaimer.html">Google Analytics Disclaimer</a>
+			<a class="legal" href="logo.html">Logo Guidelines</a>
+		</div>
+	</div>
+</div>
+</body>
 </html>
