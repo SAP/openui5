@@ -24,6 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 	 * to a set of format options.
 	 *
 	 * @public
+	 * @hideconstructor
 	 * @param {object} [oFormatOptions] The option object which support the following parameters. If no options is given, default values according to the type and locale settings are used.
 	 * @param {int} [oFormatOptions.minIntegerDigits] defines minimal number of non-decimal digits
 	 * @param {int} [oFormatOptions.maxIntegerDigits] defines maximum number of non-decimal digits
