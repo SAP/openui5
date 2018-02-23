@@ -590,11 +590,6 @@ Common Styles
   padding-right: 10px;
 }
 
-.indented {
-  position: relative;
-  left: 30px;
-}
-
 /*******************************************************************************
 Download links and page
 *******************************************************************************/
@@ -613,6 +608,18 @@ Download links and page
   font-weight: bold;
   transition-property: background-color;
   transition-duration: 0.2s;
+}
+
+.downloadbuttonsmall {
+	display: inline-block;
+	border-radius: 2px;
+	color: white;
+	padding: 8px 17px;
+	margin: 0 17px 8px 0;
+	background-color: #009DE0;
+	font-weight: bold;
+	transition-property: background-color;
+	transition-duration: 0.2s;
 }
 
 .downloadbutton {
