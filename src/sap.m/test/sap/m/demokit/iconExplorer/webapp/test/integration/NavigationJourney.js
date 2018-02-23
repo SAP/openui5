@@ -11,7 +11,7 @@ sap.ui.define([
 
 		// Arrangements
 		Given.iStartMyApp({
-			delay: 2000 // to really see the busy indicator
+			delay: 10000 // to really see the busy indicator
 		});
 
 		//Actions
