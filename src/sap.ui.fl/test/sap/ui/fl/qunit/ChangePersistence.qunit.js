@@ -74,6 +74,14 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		});
 	});
 
+	QUnit.test("when getChangesForComponent is called with no change cacheKey", function (assert) {
+		var oSettingsStoreInstanceStub = this.stub(Settings, "_storeInstance");
+		return this.oChangePersistence.getChangesForComponent({cacheKey : "<NO CHANGES>"}).then(function (aChanges) {
+			assert.equal(aChanges.length, 0, "then empty array is returned");
+			assert.equal(oSettingsStoreInstanceStub.callCount, 0 , "the _storeInstance function of the fl.Settings was not called.");
+		});
+	});
+
 	QUnit.test("when getChangesForComponent is called with a variantSection", function (assert) {
 		var oMockedWrappedContent = {
 			"changes" : {
