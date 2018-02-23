@@ -110,6 +110,7 @@ function(
 		* @constructor
 		* @public
 		* @alias sap.m.Dialog
+		* @see {@link fiori:https://experience.sap.com/fiori-design-web/dialog/ Dialog}
 		* @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		*/
 		var Dialog = Control.extend("sap.m.Dialog", /** @lends sap.m.Dialog.prototype */ {

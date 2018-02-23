@@ -127,6 +127,7 @@ function(
 	 * @constructor
 	 * @public
 	 * @alias sap.m.Input
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/input-field/ Input}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Input = InputBase.extend("sap.m.Input", /** @lends sap.m.Input.prototype */ { metadata : {

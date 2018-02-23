@@ -67,6 +67,7 @@ sap.ui.define([
 	* @constructor
 	* @public
 	* @alias sap.m.SearchField
+	* @see {@link fiori:https://experience.sap.com/fiori-design-web/search/ Search Field}
 	* @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	*/
 	var SearchField = Control.extend("sap.m.SearchField", /** @lends sap.m.SearchField.prototype */ { metadata : {
