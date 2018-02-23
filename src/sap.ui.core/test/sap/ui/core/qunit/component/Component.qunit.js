@@ -931,4 +931,109 @@ sap.ui.define([
 
 	});
 
+	QUnit.module("Models", {
+		beforeEach : function() {
+
+			//setup fake server
+			var oManifest = this.oManifest = {
+				"sap.app" : {
+					"id" : "samples.components.button"
+				}, 
+				"sap.ui5": {
+					"models": {
+						"i18n-component": {
+							"type": "sap.ui.model.resource.ResourceModel",
+							"settings": {
+								"bundleUrl": "i18n/i18n.properties",
+								"enhanceWith": [
+									{
+										"bundleUrl": "custom/i18n.properties"
+									},
+									{
+										"bundleUrl": "other/i18n.properties",
+										"bundleUrlRelativeTo": "manifest"
+									}
+								]
+							}
+						},
+						"i18n-manifest": {
+							"type": "sap.ui.model.resource.ResourceModel",
+							"settings": {
+								"bundleUrl": "i18n/i18n.properties",
+								"enhanceWith": [
+									{
+										"bundleUrl": "custom/i18n.properties",
+										"bundleUrlRelativeTo": "manifest"
+									},
+									{
+										"bundleUrl": "other/i18n.properties"
+									}
+								]
+							}
+						}
+					}
+				}
+			};
+
+			// workaround sinon gh #1534
+			this._oSandbox.serverPrototype = null;
+			var oServer = this.oServer = this._oSandbox.useFakeServer();
+
+			oServer.xhr.useFilters = true;
+			oServer.xhr.filters = [];
+			oServer.xhr.addFilter(function(method, url) {
+				return (
+					url !== "/anylocation/manifest.json?sap-language=EN" &&
+					!/\.properties(\?.*)?$/.test(url)
+				);
+			});
+
+			oServer.autoRespond = true;
+			oServer.respondWith("GET", "/anylocation/manifest.json?sap-language=EN", [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oManifest)
+			]);
+			oServer.respondWith("GET", /\.properties(\?.*)?$/, [
+				200,
+				{
+					"Content-Type": "text/plain"
+				},
+				""
+			]);
+
+		},
+		afterEach : function() {}
+	});
+
+
+	QUnit.test("Relative URLs for ResourceModel (enhanceWith)", function(assert) {
+
+		var oServer = this.oServer, oManifest = this.oManifest;
+
+		var oModelConfigSpy = sinon.spy(Component, "_createManifestModelConfigurations");
+
+		// load the test component
+		var oComponent = sap.ui.component({
+			manifestUrl : "/anylocation/manifest.json"
+		});
+
+		var oBaseUri = new URI("/anylocation/manifest.json").absoluteTo(new URI(document.baseURI).search(""));
+
+		var aI18NCmpEnhanceWith = oModelConfigSpy.returnValues[0]["i18n-component"].settings[0].enhanceWith;
+		assert.strictEqual(aI18NCmpEnhanceWith[0].bundleUrl, "../../samples/components/button/custom/i18n.properties", "Bundle URL of enhancing model must not be modified!");
+		assert.strictEqual(aI18NCmpEnhanceWith[1].bundleUrlRelativeTo, "manifest", "Bundle URL should be relative to manifest!");
+		assert.strictEqual(aI18NCmpEnhanceWith[1].bundleUrl, "../../../../../../../anylocation/other/i18n.properties", "Bundle URL of enhancing model must not be modified!");
+
+		var aI18NMFEnhanceWith = oModelConfigSpy.returnValues[0]["i18n-manifest"].settings[0].enhanceWith;
+		assert.strictEqual(aI18NMFEnhanceWith[0].bundleUrlRelativeTo, "manifest", "Bundle URL should be relative to manifest!");
+		assert.strictEqual(aI18NMFEnhanceWith[0].bundleUrl, "../../../../../../../anylocation/custom/i18n.properties", "Bundle URL of enhancing model must be adopted relative to manifest!");
+		assert.strictEqual(aI18NMFEnhanceWith[1].bundleUrl, "../../samples/components/button/other/i18n.properties", "Bundle URL of enhancing model must not be modified!");
+
+		oModelConfigSpy.restore();
+
+	});
+
 });
