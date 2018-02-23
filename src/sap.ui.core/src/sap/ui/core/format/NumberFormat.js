@@ -43,11 +43,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 	 * @param {int} [oFormatOptions.groupingSize] defines the grouping size in digits, the default is three
 	 * @param {int} [oFormatOptions.groupingBaseSize] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the used decimal separator
-	 * @param {string} [oFormatOptions.customUnits] defines a set of custom units, e.g. {"my-unit": {
-				"displayName": "mine",
-				"unitPattern-count-one": "{0} mine",
-				"unitPattern-count-other": "{0} mine",
-				"perUnitPattern": "{0}/mine"
+	 * @param {string} [oFormatOptions.customUnits] defines a set of custom units, e.g. {"electric-inductance": {
+				"displayName": "henry",
+				"unitPattern-count-one": "{0} H",
+				"unitPattern-count-other": "{0} H",
+				"perUnitPattern": "{0}/H"
 			}}
 	 * @param {array} [oFormatOptions.allowedUnits] defines the allowed units for formatting and parsing, e.g. ["size-meter", "volume-liter", ...]
 	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
@@ -380,7 +380,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 	};
 
 	/**
-	 * Get a unit instance of the NumberFormat, which can be used for formatting.
+	 * Get a unit instance of the NumberFormat, which can be used for formatting units.
 	 *
 	 * If no locale is given, the currently configured
 	 * {@link sap.ui.core.Configuration.FormatSettings#getFormatLocale formatLocale} will be used.
@@ -393,7 +393,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 	 *
 	 * @param {object} [oFormatOptions] Object which defines the format options
 	 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
-	 * @returns {sap.ui.core.format.NumberFormat} unit instance of the NumberFormat
+	 * @return {sap.ui.core.format.NumberFormat} unit instance of the NumberFormat
+	 * @static
+	 * @public
 	 */
 	NumberFormat.getUnitInstance = function(oFormatOptions, oLocale) {
 		var oFormat = this.createInstance(oFormatOptions, oLocale),
