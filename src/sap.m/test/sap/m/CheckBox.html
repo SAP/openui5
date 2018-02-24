@@ -110,9 +110,8 @@
 						visible: true,
 						selected: true,
 						enabled: true,
-						width:"100px",
 						textDirection:"RTL",
-						text: "Text direcrtion RTL"
+						text: "Text direction RTL"
 					}),
 					new sap.m.CheckBox({
 						id:"cb_warning_deselected",
@@ -162,6 +161,7 @@
 					}),
 					oToolbar,
 					new sap.ui.layout.form.SimpleForm({
+						title: "Form containing a CheckBox",
 						editable : true,
 						content : [
 							new sap.m.Label({text:"CheckBox in a Form"}),
