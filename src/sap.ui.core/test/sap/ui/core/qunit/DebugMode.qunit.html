@@ -43,6 +43,16 @@
 				bDebugModules = true;
 			}
 		});
+		// check whether code base has preload bundles available
+		var bHasPreloadBundles = false; 
+		jQuery.ajax({
+			url: '../../../../../resources/sap/m/library-preload.js',
+			method: 'HEAD',
+			async: false,
+			success: function(data, xhr) {
+				bPreloadBundles = true;
+			}
+		});
 
 
 		/*
@@ -218,11 +228,17 @@
 
 		QUnit[off]("Control Code", function(assert) {
 			var done = assert.async();
-			assert.ok(jQuery.sap.isResourceLoaded('sap/m/Table.js'), "Table resource should have been (pre)loaded");
+
+			var preloadActive = bPreloadBundles && hasRequest('sap/m/library-preload.js');
+			if ( preloadActive ) {
+				assert.ok(jQuery.sap.isResourceLoaded('sap/m/Table.js'), "Table resource should be in status 'loaded' (as preloads are active)");
+			}
 			assert.ok(sap.ui.require('sap/m/Table') === undefined, "Table must not have been required yet");
 			sap.ui.require(['sap/m/Table'], function(Table) {
-				assert.ok(!!Table, "Table module should have been required (from preload)");
-				assert.ok(!hasRequest('sap/m/Table'), "table should not have been requested as individual resource");
+				assert.ok(!!Table, "Table module should have been required");
+				if ( preloadActive ) {
+					assert.ok(!hasRequest('sap/m/Table'), "table should not have been requested as individual resource (as preloads are active)");
+				}
 				done();
 			});
 		});
