@@ -11,9 +11,16 @@ sap.ui.define(["./Measurement", "./ResourceTimings", "./XHRInterceptor", "sap/ba
 	"use strict";
 
 
-	var INTERACTION = "INTERACTION",
+	var HOST = window.location.host, // static per session
+		INTERACTION = "INTERACTION",
 		aInteractions = [],
 		oPendingInteraction = createMeasurement();
+
+	function isCORSRequest(sUrl) {
+		var sHost = new URI(sUrl).host();
+		// url is relative or with same host
+		return sHost && sHost !== HOST;
+	}
 
 	function createMeasurement() {
 		return {
@@ -211,7 +218,10 @@ sap.ui.define(["./Measurement", "./ResourceTimings", "./XHRInterceptor", "sap/ba
 
 		// register the response handler for data collection
 		XHRInterceptor.register(INTERACTION, "open", function () {
-			this.addEventListener("readystatechange", handleResponse);
+			// only use Interaction for non CORS requests
+			if (!isCORSRequest(arguments[1])) {
+				this.addEventListener("readystatechange", handleResponse);
+			}
 			// assign the current interaction to the xhr for later response header retrieval.
 			this.pendingInteraction = oPendingInteraction;
 		});
