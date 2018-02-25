@@ -3472,7 +3472,7 @@
 						// Note: sourcemap annotations URLs in eval'ed sources are resolved relative to the page, not relative to the source
 						if (sScript ) {
 							oMatch = /\/\/[#@] source(Mapping)?URL=(.*)$/.exec(sScript);
-							if ( oMatch && oMatch[1] && /[^/]+\.js\.map$/.test(oMatch[2]) ) {
+							if ( oMatch && oMatch[1] && /^(?!data:)[^/]+\.js\.map$/.test(oMatch[2]) ) {
 								// found a sourcemap annotation with a typical UI5 generated relative URL
 								sScript = sScript.slice(0, oMatch.index) + oMatch[0].slice(0, -oMatch[2].length) + URI(oMatch[2]).absoluteTo(oModule.url);
 							} else if ( !oMatch ) {
