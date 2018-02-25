@@ -683,7 +683,6 @@ sap.ui.require([
 
 		sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns(sNewVariantTitle);
 		this.oControlVariantPlugin.setOldValue(sOldVariantTitle);
-		this.oControlVariantPlugin._$oEditableControlDomRef.text(sOldVariantTitle);
 		sap.ui.getCore().applyChanges();
 
 		this.oControlVariantPlugin.attachElementModified(function(oEvent) {
@@ -780,6 +779,40 @@ sap.ui.require([
 			assert.equal(typeof this.oVariantManagementOverlay.getDomRefForValueStateMessage, "function", "then getValueStateText function set for VariantManagement control overlay");
 			done();
 		}.bind(this));
+	});
+
+	QUnit.test("when variant rename is stopped and _emitLabelChangeEvent is called with the an existing variant title text", function(assert) {
+		var done = assert.async(),
+			fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve()),
+			fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
+
+		this.oModel.setData({
+			"varMgtKey" : {
+				variants: [
+					{
+						title: "Existing Variant Title",
+						visible: true
+					}
+				]
+			}
+		});
+
+		sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns("Existing Variant Title");
+		this.oControlVariantPlugin.setOldValue("Source Variant Title");
+		sap.ui.getCore().applyChanges();
+
+		sandbox.stub(this.oControlVariantPlugin, "startEdit", function() {
+			assert.ok(this.oVariantManagementOverlay.hasStyleClass("sapUiRtaErrorBg"), "then error border added to VariantManagement control overlay");
+			assert.ok(this.oControlVariantPlugin._oValueStateMessage instanceof ValueStateMessage, "then value state message intitialized for plugin");
+			assert.ok(fnMessageBoxShowStub.calledOnce, "then RtaUtils._showMessageBox called once");
+			assert.ok(fnValueStateMessageOpenStub.calledOnce, "then ValueStateMessage.open called once");
+			assert.equal(typeof this.oVariantManagementOverlay.getValueState, "function", "then getValueState function set for VariantManagement control overlay");
+			assert.equal(typeof this.oVariantManagementOverlay.getValueStateText, "function", "then getValueStateText function set for VariantManagement control overlay");
+			assert.equal(typeof this.oVariantManagementOverlay.getDomRefForValueStateMessage, "function", "then getValueStateText function set for VariantManagement control overlay");
+			done();
+		}.bind(this));
+
+		this.oControlVariantPlugin._emitLabelChangeEvent();
 	});
 
 	QUnit.test("when variant rename is stopped and _emitLabelChangeEvent is called with a new variant title and no previous existence", function(assert) {
@@ -1055,7 +1088,7 @@ sap.ui.require([
 		$oControl.css("visibility", "hidden");
 		this.oControlVariantPlugin.stopEdit();
 
-		assert.strictEqual(this.oControlVariantPlugin.getOldValue(), "Title Old", "then old value is not reset");
+		assert.notOk(this.oControlVariantPlugin.getOldValue(), "then old value is reset");
 		assert.ok(this.oVariantManagementOverlay._triggerDuplicate, "then Overlay._triggerDuplicate property still set");
 		assert.ok($oControl.css("visibility"), "visible", "then control visibility set back to visible");
 		assert.notOk(this._$oEditableControlDomRef);

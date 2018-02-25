@@ -367,10 +367,7 @@ sap.ui.define([
 				this._getVariantModel(oVariantManagementControl).getData()
 			);
 
-			// Old value stored before changing value, if not set
-			if (!this.getOldValue()) {
-				this.setOldValue(sPreviousText);
-			}
+			this.setOldValue(sPreviousText);
 			oVariantManagementControl.getTitle().setText(this.sCustomTextForDuplicate);
 
 			oOverlay.attachEventOnce("geometryChanged", function() {
@@ -382,12 +379,13 @@ sap.ui.define([
 	};
 
 	ControlVariant.prototype.stopEdit = function (bRestoreFocus) {
+		this.setOldValue("");
+
 		if (this._oEditedOverlay._triggerDuplicate) {
+			this._oEditedOverlay.getElementInstance().getTitle().getBinding("text").refresh(true);
 			delete this.sCustomTextForDuplicate;
 			if (!this._oEditedOverlay.hasStyleClass("sapUiRtaErrorBg")) {
-				this._oEditedOverlay.getElementInstance().getTitle().getBinding("text").refresh(true);
 				delete this._oEditedOverlay._triggerDuplicate;
-				this.setOldValue("");
 			}
 		}
 
@@ -418,7 +416,10 @@ sap.ui.define([
 			sErrorText,
 			oCommand,
 			sVariantManagementReference = oOverlay.getVariantManagement(),
-			iDuplicateCount = oModel._getVariantTitleCount(sText, sVariantManagementReference),
+			bTextChanged = this.getOldValue() !== sText,
+			iDuplicateCount = bTextChanged || oOverlay._triggerDuplicate
+				? oModel._getVariantTitleCount(sText, sVariantManagementReference)
+				: 0,
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta"),
 			sCurrentVariantReference = oModel.getCurrentVariantReference(sVariantManagementReference);
 
@@ -436,9 +437,9 @@ sap.ui.define([
 		//Check for real change before creating a command and pass if warning text already set
 		if (sText === '\xa0') { //Empty string
 			sErrorText = "BLANK_ERROR_TEXT";
-		} else if (iDuplicateCount > 0 && oOverlay._triggerDuplicate) {
+		} else if (iDuplicateCount > 0) {
 			sErrorText = "DUPLICATE_ERROR_TEXT";
-		} else if (this.getOldValue() !== sText) {
+		} else if (bTextChanged) {
 
 			var oSetTitleCommand = this._createSetTitleCommand({
 				text: sText,
@@ -469,6 +470,8 @@ sap.ui.define([
 				"command": oCommand
 			});
 			return oCommand;
+		} else {
+			jQuery.sap.log.info("Control Variant title unchanged");
 		}
 
 
