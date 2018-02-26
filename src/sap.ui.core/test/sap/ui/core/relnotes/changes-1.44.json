@@ -1304,5 +1304,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.28": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "64f9d55fc2c3237408c4fdf57cafe6d469dad02a",
+        "type": "FIX",
+        "text": " ThemeCheck: Fix Cross-Origin issues in theme fallback",
+        "references": []
+      }
+    ]
   }
 }

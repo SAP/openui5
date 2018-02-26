@@ -132,5 +132,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.28": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "533af265dcc5bfac73c15c62a9a11cf376c4014c",
+        "type": "FIX",
+        "text": " sap.ui.commons.MatrixLayout: Render calculations corrected for Edge",
+        "references": []
+      }
+    ]
   }
 }
