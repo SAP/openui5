@@ -434,7 +434,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Filter
 			return false;
 		} else {
 			this.bUseExpandedList = true;
-			this.aExpandRefs = oRef;
 			if (Array.isArray(oRef)) {
 				// For performance, only check first and last entry, whether reload is needed
 				if (!bSkipReloadNeeded && (this.oModel._isReloadNeeded("/" + oRef[0], this.mParameters) || this.oModel._isReloadNeeded("/" + oRef[oRef.length - 1], this.mParameters))) {
@@ -442,6 +441,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Filter
 					this.aExpandRefs = undefined;
 					return false;
 				}
+				this.aExpandRefs = oRef;
 				this.aAllKeys = oRef;
 				this.iLength = oRef.length;
 				this.bLengthFinal = true;
@@ -449,6 +449,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Filter
 				this.applyFilter();
 				this.applySort();
 			} else { // means that expanded data has no data available e.g. for 0..n relations
+				this.aExpandRefs = undefined;
 				this.aAllKeys = null;
 				this.aKeys = [];
 				this.iLength = 0;
@@ -460,7 +461,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Filter
 	};
 
 	/**
-	 * In case the list is cucrently based on expanded data, update the original data array
+	 * In case the list is currently based on expanded data, update the original data array
 	 * if new data has been loaded
 	 *
 	 * @private
@@ -468,6 +469,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Filter
 	 */
 	ODataListBinding.prototype.updateExpandedList = function(aKeys) {
 		if (this.aExpandRefs) {
+			// update each entity within the array to update the model data
 			for (var i = 0; i < aKeys.length; i++) {
 				this.aExpandRefs[i] = aKeys[i];
 			}
