@@ -30,7 +30,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		oRm.writeControlData(oControl);
 		oRm.addStyle("width", oControl.getWidth());
 		oRm.writeStyles();
+		oRm.writeClasses();
 		oRm.write(">");
+
 		oRm.write("<div");
 		oRm.writeAttribute("id", oControl.getId() + "-container");
 		oRm.addStyle("left", "0%");
