@@ -276,6 +276,18 @@
         "type": "FIX",
         "text": "sap.ui.rta - Handling of sync failed event + overlay creation error",
         "references": []
+      },
+      {
+        "id": "0e864484cf4a9edaaa857b68120fd51d7446d674",
+        "type": "FIX",
+        "text": " Fix several issues in variant management control",
+        "references": []
+      },
+      {
+        "id": "720f460d91a89db6e848a65b53063a2abff19581",
+        "type": "FIX",
+        "text": " sap.ui.rta: RuntimeAurthoring test fix for IE11",
+        "references": []
       }
     ]
   }

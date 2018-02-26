@@ -714,6 +714,36 @@
         "type": "FIX",
         "text": " v2.oDataContextBinding: Null check for empty context",
         "references": []
+      },
+      {
+        "id": "e9d694c1bbd8fb78a65c5dc479d344e0e5ce8a0d",
+        "type": "FIX",
+        "text": " odata.v2.ODataContextBinding: Add Null Check for Preliminary Context",
+        "references": []
+      },
+      {
+        "id": "08c0ee71131a99a11263ef37813862564c5c88c9",
+        "type": "FIX",
+        "text": " performance/Interaction: unsafe access to interaction",
+        "references": []
+      },
+      {
+        "id": "5a783569e7e402a2bf2dba3b1c690a05a4a3fe20",
+        "type": "FIX",
+        "text": " performance/Measurement: do not log for undefined measurements",
+        "references": []
+      },
+      {
+        "id": "53876cc23d8f4aa36e2c70127999ca8298ca2dca",
+        "type": "FIX",
+        "text": " sap.ui.core.cache.CacheManager: IE in privacy mode is disabled.",
+        "references": []
+      },
+      {
+        "id": "24bf28a85c0d68c6f9eb833df2ce187ca31c2d7b",
+        "type": "FIX",
+        "text": " sap.ui.core.dnd: Conflict with jquery-ui-draggable",
+        "references": []
       }
     ]
   }
