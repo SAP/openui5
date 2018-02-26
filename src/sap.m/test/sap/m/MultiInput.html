@@ -1005,10 +1005,11 @@
 		});
 
 	   //******************************************
-	   			var oSimpleForm = new sap.ui.layout.form.SimpleForm("simpoleFrom", {
-				title : "MultiInput in simple form",
+				var oSimpleForm = new sap.ui.layout.form.SimpleForm("simpleFrom", {
+				editable: true,
+				title : "MultiInput in SimpleForm",
 				content: [
-					new sap.m.Label({labelFor: oMultiInput7.getId(), text:"Street/ Number"}),
+					new sap.m.Label({text:"Street/ Number"}),
 					oMultiInput7
 				]
 			});
