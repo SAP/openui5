@@ -51,6 +51,7 @@ sap.ui.define([
 		 * @constructor
 		 * @public
 		 * @alias sap.m.MenuButton
+		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/menu-button/ Menu Button}
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var MenuButton = Control.extend("sap.m.MenuButton", /** @lends sap.m.MenuButton.prototype */ { metadata : {

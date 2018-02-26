@@ -105,6 +105,7 @@ function(
 	 * @public
 	 * @since 1.16
 	 * @alias sap.m.ViewSettingsDialog
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/view-settings-dialog/ View Settings Dialog}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ViewSettingsDialog = Control.extend("sap.m.ViewSettingsDialog", /** @lends sap.m.ViewSettingsDialog.prototype */ { metadata : {

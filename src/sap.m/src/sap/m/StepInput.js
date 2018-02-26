@@ -104,6 +104,7 @@ function(
 		 * @public
 		 * @since 1.40
 		 * @alias sap.m.StepInput
+		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/step-input/ Step Input}
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var StepInput = Control.extend("sap.m.StepInput", /** @lends sap.m.StepInput.prototype */ {

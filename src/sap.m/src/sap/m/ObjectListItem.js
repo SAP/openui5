@@ -57,6 +57,7 @@ function(
 		 * @public
 		 * @since 1.12
 		 * @alias sap.m.ObjectListItem
+		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/object-list-item/ Object List Item}
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var ObjectListItem = ListItemBase.extend("sap.m.ObjectListItem", /** @lends sap.m.ObjectListItem.prototype */ { metadata : {
