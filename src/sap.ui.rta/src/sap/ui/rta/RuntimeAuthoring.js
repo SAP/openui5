@@ -944,11 +944,12 @@ sap.ui.define([
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._deleteChanges = function() {
-		return this._getFlexController().resetChanges(this.getLayer(), "Change.createInitialFileContent").then(function() {
-			this._reloadPage();
-		}.bind(this))["catch"](function(oError) {
-			return Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
-		});
+		return this._getFlexController().resetChanges(this.getLayer(), "Change.createInitialFileContent", FlexUtils.getAppComponentForControl(this._oRootControl || sap.ui.getCore().byId(this.getRootControl())))
+			.then(function() {
+				this._reloadPage();
+			}.bind(this))["catch"](function(oError) {
+				return Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
+			});
 	};
 
 	/**
