@@ -13,7 +13,8 @@
 					  preserveHeaderStateOnScroll="false"
 					  headerContentPinnable="true"
 					  isChildPage="true"
-					  enableLazyLoading="false">
+					  enableLazyLoading="false"
+					  upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageDynamicHeaderTitle primaryArea="Left">
 				<breadcrumbs>
@@ -43,13 +44,15 @@
 				</snappedContent>
 
 				<actions>
-					<ObjectPageHeaderActionButton type="Transparent" text="Delete" icon="sap-icon://delete" hideText="false" hideIcon="false" importance="Medium"></ObjectPageHeaderActionButton>
-					<ObjectPageHeaderActionButton type="Transparent" text="Add" icon="sap-icon://add" hideText="false" hideIcon="true" importance="High"></ObjectPageHeaderActionButton>
-					<ObjectPageHeaderActionButton type="Transparent" text="Copy" icon="sap-icon://copy" hideText="false" hideIcon="true" importance="Low"></ObjectPageHeaderActionButton>
+					<ObjectPageHeaderActionButton text="Edit" type="Emphasized" hideText="false"/>
+					<ObjectPageHeaderActionButton type="Transparent" text="Delete" hideText="false" hideIcon="true"/>
+					<ObjectPageHeaderActionButton type="Transparent" text="Copy" hideText="false" hideIcon="true"/>
+					<ObjectPageHeaderActionButton type="Transparent" text="Add" hideText="false" hideIcon="true"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://action" type="Transparent" text="Share"/>
 				</actions>
 				<navigationActions>
-					<ObjectPageHeaderActionButton text="Edit1" type="Emphasized" hideText="false" importance="Medium"/>
-					<ObjectPageHeaderActionButton icon="sap-icon://action" type="Transparent" text="Share" importance="Medium"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://slim-arrow-up" type="Transparent"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://slim-arrow-down" type="Transparent"/>
 				</navigationActions>
 
 			</ObjectPageDynamicHeaderTitle>
