@@ -144,6 +144,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 
 		// Template for list inside the dialog - 1 item per column
 		this._oColumnItemTemplate = new InputListItem(this.getId() + "-li", {
+			type: "Active",
 			label: "{Personalization>text}",
 			content: new CheckBox(this.getId() + "-cb", {
 				selected: "{Personalization>visible}",
@@ -275,12 +276,26 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			that._oScrollContainer.$().attr('tabindex', '-1');
 		};
 
+		// Selects or deselects the sap.m.Checkbox when the ListItem is pressed and
+		// triggers the select event.
+		this._fnListItemPressed = jQuery.proxy(function(oEvent) {
+			var oCheckBox = oEvent.getParameter("listItem").getContent()[0];
+			if (oCheckBox.getMetadata().getName() === "sap.m.CheckBox") {
+				var bSelected = !oCheckBox.getSelected();
+				oCheckBox.setSelected(bSelected);
+				oCheckBox.fireSelect({
+					selected: bSelected
+				});
+			}
+		}, this);
+
 		this._oList =  new List(this.getId() + "-colList",{
 			includeItemInSelection: true,
 			noDataText: this._oRb.getText('PERSODIALOG_NO_DATA'),
 			mode: ListMode.SingleSelectMaster,
 			selectionChange: function(){ this._fnUpdateArrowButtons.call(this); }.bind(this),
-			updateFinished: this._fnListUpdateFinished
+			updateFinished: this._fnListUpdateFinished,
+			itemPress: this._fnListItemPressed
 		});
 
 		this._oList.addDelegate({onAfterRendering : this._fnListUpdateFinished});
