@@ -926,5 +926,7 @@ sap.ui.require([
 		assert.deepEqual(BindingParser.simpleParser("{/some/random/path}"), {
 			"path": "/some/random/path"
 		});
+		assert.deepEqual(BindingParser.simpleParser("/some/random/path}"), undefined);
+		assert.deepEqual(BindingParser.simpleParser("{/some/random/path"), undefined);
 	});
 });
