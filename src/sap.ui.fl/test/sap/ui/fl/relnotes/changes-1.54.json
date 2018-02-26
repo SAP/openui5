@@ -114,6 +114,18 @@
         "type": "FIX",
         "text": " QUnit Designtime Library tests in Firefox",
         "references": []
+      },
+      {
+        "id": "0e864484cf4a9edaaa857b68120fd51d7446d674",
+        "type": "FIX",
+        "text": " Fix several issues in variant management control",
+        "references": []
+      },
+      {
+        "id": "14313fb06d2d9b933f23c82a32535b70d9a717c3",
+        "type": "FIX",
+        "text": " sap.ui.fl: MoveControls now reverts to the correct position",
+        "references": []
       }
     ]
   }

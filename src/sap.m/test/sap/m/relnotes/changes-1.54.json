@@ -1272,6 +1272,18 @@
         "type": "FIX",
         "text": " sap.m.TimePicker: Value is set correctly on change.",
         "references": []
+      },
+      {
+        "id": "e39f646e45ef493772e0e412e98317e1cefa4221",
+        "type": "FIX",
+        "text": " sap.m.GrowingEnablement: Focus shouldn\u0027t jump out of the control.",
+        "references": []
+      },
+      {
+        "id": "730a234b32acda63001c50736e9947105c738b38",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Auto closing is now fixed",
+        "references": []
       }
     ]
   }
