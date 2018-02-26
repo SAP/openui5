@@ -496,6 +496,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 			return;
 		}
 
+		// firefox needs data set to allow dragging
+		if (Device.browser.firefox && oEvent.originalEvent.dataTransfer.types.length === 0) {
+			oEvent.originalEvent.dataTransfer.setData("ui5/dummyDataForFirefox", "data");
+		}
+
 		// create the drag session object and attach to the event
 		oEvent.dragSession = oDragSession = createDragSession(oEvent);
 	};

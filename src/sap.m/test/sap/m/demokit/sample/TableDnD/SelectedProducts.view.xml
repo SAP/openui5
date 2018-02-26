@@ -1,0 +1,82 @@
+<mvc:View
+	controllerName="sap.m.sample.TableDnD.SelectedProducts"
+	xmlns:dnd="sap.ui.core.dnd"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:c="sap.ui.core"
+	xmlns="sap.m"
+	height="100%">
+	<Table
+		id="table"
+		mode="SingleSelectMaster"
+		growing="true"
+		growingThreshold="10"
+		beforeOpenContextMenu="onBeforeOpenContextMenu"
+		items="{
+			path: '/ProductCollection',
+			filters: {path: 'Rank', operator: 'GT', value1: '0'},
+			sorter: {path: 'Rank', descending: true}
+		}"
+		noData="Please drag-and-drop products here.">
+		<contextMenu>
+			<Menu>
+				<MenuItem text="Move to Available Products" press="moveToAvailableProductsTable" />
+				<MenuItem text="Move up" press="moveUp" />
+				<MenuItem text="Move down" press="moveDown" />
+			</Menu>
+		</contextMenu>
+		<headerToolbar>
+			<Toolbar>
+				<Title text="Selected Products" />
+				<ToolbarSpacer/>
+				<Button
+					icon="sap-icon://navigation-up-arrow"
+					tooltip="Move up"
+					press="moveUp"/>
+				<Button
+					icon="sap-icon://navigation-down-arrow"
+					tooltip="Move down"
+					press="moveDown"/>
+			</Toolbar>
+		</headerToolbar>
+		<columns>
+			<Column>
+				<Text text="Product Name" />
+			</Column>
+			<Column>
+				<Text text="Category" />
+			</Column>
+			<Column
+				hAlign="End"
+				width="6rem">
+				<Text text="Quantity" />
+			</Column>
+		</columns>
+		<dragDropConfig>
+			<dnd:DragInfo 
+				groupName="selected2available"
+				sourceAggregation="items" />
+			<dnd:DropInfo
+				groupName="available2selected"
+				targetAggregation="items"
+				dropPosition="Between"
+				drop="onDropSelectedProductsTable" />
+			<dnd:DragDropInfo
+				sourceAggregation="items"
+				targetAggregation="items"
+				dropPosition="Between"
+				drop="onDropSelectedProductsTable"/>
+		</dragDropConfig>
+		<items>
+			<ColumnListItem>
+				<cells>
+					<Text text="{Name}" wrapping="false" />
+					<Text text="{Category}" wrapping="false" />
+					<Text text="{
+						path: 'Quantity',
+						type: 'sap.ui.model.type.Integer'
+					}" />
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</mvc:View>

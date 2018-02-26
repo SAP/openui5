@@ -16,7 +16,12 @@ sap.ui.define([
 					stretch : true,
 					files : [
 						"View.view.xml",
-						"Controller.controller.js"
+						"Controller.controller.js",
+						"AvailableProducts.view.xml",
+						"AvailableProducts.controller.js",
+						"SelectedProducts.view.xml",
+						"SelectedProducts.controller.js",
+						"Utils.js"
 					]
 				}
 			}

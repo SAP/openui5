@@ -11,150 +11,19 @@
 		class="sapUiContentPadding">
 		<content>
 			<HBox renderType="Bare">
-				<Table
-					id="table1"
-					mode="SingleSelectMaster"
-					growing="true"
-					growingThreshold="10"
-					beforeOpenContextMenu="onBeforeOpenContextMenu"
-					items="{
-						path: '/ProductCollection',
-						filters: {path: 'Rank', operator: 'EQ', value1: '0'}
-					}">
-					<contextMenu>
-						<Menu>
-							<MenuItem text="Move to Selected Products" press="moveToTable2" />
-						</Menu>
-					</contextMenu>
-					<headerToolbar>
-						<Toolbar>
-							<Title text="Available Products" />
-						</Toolbar>
-					</headerToolbar>
-					<columns>
-						<Column
-							sortProperty="Name"
-							filterProperty="Name">
-							<Text text="Product Name" />
-						</Column>
-						<Column
-							sortProperty="Category"
-							filterProperty="Category">
-							<Text text="Category" />
-						</Column>
-						<Column
-							hAlign="End"
-							width="6rem"
-							sortProperty="Quantity">
-							<Text text="Quantity" />
-						</Column>
-					</columns>
-					<dragDropConfig>
-						<dnd:DragInfo
-							groupName="moveToTable2"
-							sourceAggregation="items" />
-						<dnd:DropInfo
-							groupName="moveToTable1"
-							drop="onDropTable1" />
-					</dragDropConfig>
-					<items>
-						<ColumnListItem>
-							<cells>
-								<Text text="{Name}" wrapping="false" />
-								<Text text="{Category}" wrapping="false" />
-								<Text text="{
-									path: 'Quantity',
-									type: 'sap.ui.model.type.Integer'
-								}" />
-							</cells>
-						</ColumnListItem>
-					</items>
-				</Table>
+				<mvc:XMLView id="availableProducts" viewName="sap.m.sample.TableDnD.AvailableProducts" />
 				<VBox justifyContent="Center" class="sapUiTinyMarginBeginEnd">
 					<Button
 						class="sapUiTinyMarginBottom"
 						icon="sap-icon://navigation-right-arrow"
 						tooltip="Move to selected"
-						press="moveToTable2"/>
+						press="moveToSelectedProductsTable"/>
 					<Button
 						icon="sap-icon://navigation-left-arrow"
 						tooltip="Move to available"
-						press="moveToTable1"/>
+						press="moveToAvailableProductsTable"/>
 				</VBox>
-				<Table
-					id="table2"
-					mode="SingleSelectMaster"
-					growing="true"
-					growingThreshold="10"
-					beforeOpenContextMenu="onBeforeOpenContextMenu"
-					items="{
-						path: '/ProductCollection',
-						filters: {path: 'Rank', operator: 'GT', value1: '0'},
-						sorter: {path: 'Rank', descending: true}
-					}"
-					noData="Please drag-and-drop products here.">
-					<contextMenu>
-						<Menu>
-							<MenuItem text="Move to Available Products" press="moveToTable1" />
-							<MenuItem text="Move up" press="moveUp" />
-							<MenuItem text="Move down" press="moveDown" />
-						</Menu>
-					</contextMenu>
-					<headerToolbar>
-						<Toolbar>
-							<Title text="Selected Products" />
-							<ToolbarSpacer/>
-							<Button
-								icon="sap-icon://navigation-up-arrow"
-								tooltip="Move up"
-								press="moveUp"/>
-							<Button
-								icon="sap-icon://navigation-down-arrow"
-								tooltip="Move down"
-								press="moveDown"/>
-						</Toolbar>
-					</headerToolbar>
-					<columns>
-						<Column>
-							<Text text="Product Name" />
-						</Column>
-						<Column>
-							<Text text="Category" />
-						</Column>
-						<Column
-							hAlign="End"
-							width="6rem">
-							<Text text="Quantity" />
-						</Column>
-					</columns>
-					<dragDropConfig>
-						<dnd:DragInfo 
-							groupName="moveToTable1"
-							sourceAggregation="items" />
-						<dnd:DropInfo
-							groupName="moveToTable2"
-							targetAggregation="items"
-							dropPosition="Between"
-							drop="onDropTable2" />
-						<dnd:DragDropInfo
-							sourceAggregation="items"
-							targetAggregation="items"
-							dropPosition="Between"
-							drop="onDropTable2"/>
-					</dragDropConfig>
-					<items>
-						<ColumnListItem>
-							<cells>
-								<Text text="{Name}" wrapping="false" />
-								<Text text="{Category}" wrapping="false" />
-								<Text text="{
-									path: 'Quantity',
-									type: 'sap.ui.model.type.Integer'
-								}" />
-							</cells>
-						</ColumnListItem>
-					</items>
-				</Table>
+				<mvc:XMLView id="selectedProducts" viewName="sap.m.sample.TableDnD.SelectedProducts" />
 			</HBox>
 		</content>
 	</Page>
