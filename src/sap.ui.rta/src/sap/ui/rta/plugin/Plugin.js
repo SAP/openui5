@@ -106,7 +106,7 @@ function(
 		};
 
 		oOverlay.attachElementModified(_onElementModified, this);
-		if (!oOverlay.getElement().getDomRef()) {
+		if (!oOverlay.getGeometry() || !oOverlay.getGeometry().visible) {
 			oOverlay.attachEvent('geometryChanged', fnGeometryChangedCallback, this);
 		}
 	};
