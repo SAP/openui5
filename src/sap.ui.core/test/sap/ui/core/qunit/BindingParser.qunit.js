@@ -814,7 +814,7 @@ sap.ui.require([
 			oResult = {};
 
 		this.mock(ExpressionParser).expects("parse")
-			.withExactArgs(sinon.match.func, sInput, iStart).returns(oResult);
+			.withExactArgs(sinon.match.func, sInput, iStart, undefined).returns(oResult);
 
 		assert.strictEqual(BindingParser.parseExpression(sInput, iStart), oResult);
 	});
