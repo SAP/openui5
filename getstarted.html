@@ -100,7 +100,7 @@
 				<p>We bootstrap OpenUI5 with common configuration settings. Then we create a button control and place it directly into the HTML body.</p>
 
 				<h3><a name="app"></a>App Using the MVC Pattern</h3>
-				<p>We have another, slightly advanced "Hello World" app for you. Let's create an app with a button and a message toast:
+				<p>Let's build an app and introduce the MVC pattern. The app is similar to the example above but the structure is different:  
 				</p>
 				<div class="corset"> <!-- for Ipad -->
 					<iframe style="width: 100%; height: 400px" src="https://embed.plnkr.co/zSnY0e" frameborder="0" allowfullscren="allowfullscren" class="plunkerEmbedded"></iframe>
@@ -111,18 +111,16 @@
 					</p>
 				</div>
 
-				<p>As our project grows, we'll follow the <a href="https://openui5.hana.ondemand.com/#/topic/91f233476f4d1014b6dd926db0e91070" target="_blank">Model View Controller (MVC)</a> approach. In this example, our project now contains three files:</p>
+				<p>The structure of the app reflects the <a href="https://openui5.hana.ondemand.com/#/topic/91f233476f4d1014b6dd926db0e91070" target="_blank">MVC paradigm</a>. In addition to the index.hml, the entry point for our app bootstraping OpenUI5, you can see the following files:</p>
 
 				<ul class="noBullets">
-					<li><p><strong>index.html</strong><br />
-						The entry point for our app bootstraps OpenUI5 as above and places the view into the HTML body.</p></li>
 					<li><p><strong>App.view.xml</strong><br />
-						The view is written in XML (could also be JavaScript or JSON) and contains presentation logic to display a page and a button control.</p></li>
+						The <strong>view</strong> is written in XML (could also be JavaScript or JSON) and contains presentation logic to display a page and a button control.</p></li>
 					<li><p><strong>App.controller.js</strong><br />
-						The controller defines an event handler for responding to user actions by displaying a message toast.</p></li>
+						The <strong>controller</strong> defines an event handler for responding to user actions by displaying a message toast.</p></li>
 				</ul>
 
-				To keep things simple, we don’t use a model in this example. Feel free to modify and extend it as you need!
+				To keep things simple, we don’t use a <strong>model</strong> in this example. Feel free to modify and extend it as you need!
 				</p>
 
 				<h3><a name="deeper"></a>Dig Deeper</h3>
