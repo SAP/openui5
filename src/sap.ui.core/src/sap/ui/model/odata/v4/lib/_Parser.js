@@ -294,17 +294,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks that all tokens have been consumed and returns the result.
+	 * Checks that all tokens have been consumed.
 	 *
-	 * @param {object} oResult The result to return
-	 * @returns {object} The result
 	 * @throws {SyntaxError} If there are unconsumed tokens
 	 */
-	Parser.prototype.finish = function (oResult) {
+	Parser.prototype.finish = function () {
 		if (this.iCurrentToken < this.aTokens.length) {
 			this.expected("end of input", this.aTokens[this.iCurrentToken]);
 		}
-		return oResult;
 	};
 
 	/**
@@ -391,8 +388,12 @@ sap.ui.define([
 	 * @throws {SyntaxError} If there is a syntax error
 	 */
 	FilterParser.prototype.parse = function (sFilter) {
+		var oResult;
+
 		this.init(sFilter);
-		return this.finish(this.expression(0));
+		oResult = this.expression(0);
+		this.finish();
+		return oResult;
 	};
 
 	//*****************************************************************************************
@@ -451,8 +452,12 @@ sap.ui.define([
 	 * @throws {SyntaxError} If there is a syntax error
 	 */
 	SystemQueryOptionParser.prototype.parse = function (sOption) {
+		var oResult;
+
 		this.init(sOption);
-		return this.finish(this.parseSystemQueryOption());
+		oResult = this.parseSystemQueryOption();
+		this.finish();
+		return oResult;
 	};
 
 	/**
@@ -820,7 +825,7 @@ sap.ui.define([
 
 		/**
 		 * Parses a key predicate into an object containing name/value pairs. A predicate in the
-		 * form "('42')" is returned as <code>{"" : "'42'")</code>.
+		 * form "('42')" is returned as {"" : "'42'"}.
 		 *
 		 * @param {string} sKeyPredicate The key predicate
 		 * @returns {object} The name/value pairs
