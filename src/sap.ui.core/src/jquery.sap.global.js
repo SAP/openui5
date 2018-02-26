@@ -847,30 +847,23 @@ sap.ui.define([
 	 * @static
 	 */
 	jQuery.sap.getObject = function(sName, iNoCreates, oContext) {
+		var oObject = oContext || window,
+			aNames = (sName || "").split("."),
+			l = aNames.length,
+			iEndCreate = isNaN(iNoCreates) ? 0 : l - iNoCreates,
+			i;
 
 		if ( syncCallBehavior && oContext === window ) {
-			log.error("[nosync] getObject called to retrieve global name '" + sName + "'");
+			jQuery.sap.log.error("[nosync] getObject called to retrieve global name '" + sName + "'");
 		}
 
-		var oObject;
-
-		oContext = oContext || window;
-		sName = sName || "";
-
-		if (iNoCreates === 0 || iNoCreates === null ) {
-			oObject = getObject(oContext, sName, true);
-		} else if (isNaN(iNoCreates)) {
-			oObject = getObject(oContext, sName, false);
-		} else {
-			var aNames = sName.split(".");
-			if ( aNames.length - iNoCreates > 0 ) {
-				getObject(oContext, aNames.slice(0, -iNoCreates).join("."), true);
+		for (i = 0; oObject && i < l; i++) {
+			if (!oObject[aNames[i]] && i < iEndCreate ) {
+				oObject[aNames[i]] = {};
 			}
-			return getObject(oContext, sName, false);
+			oObject = oObject[aNames[i]];
 		}
-
 		return oObject;
-
 	};
 
 	/**
