@@ -31,6 +31,12 @@
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: nonWorkingDays now can have another type when set using specialDates aggregation",
         "references": []
+      },
+      {
+        "id": "c576ff2eadee2c6129be4fb41f1cf28aa252191a",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: Sample is now scrollable on mobile",
+        "references": []
       }
     ]
   }

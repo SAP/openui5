@@ -13,6 +13,18 @@
         "type": "FIX",
         "text": " Always return a Promise for ControllerExtensions",
         "references": []
+      },
+      {
+        "id": "c941314f3d3bde2b8a43a8e699c107555a30f537",
+        "type": "FIX",
+        "text": " Fix several issues in variant management control",
+        "references": []
+      },
+      {
+        "id": "05ef3a73b62f976301efb7c9ef6e5b64130b7e1b",
+        "type": "FIX",
+        "text": " sap.ui.fl: MoveControls now reverts to the correct position",
+        "references": []
       }
     ]
   }

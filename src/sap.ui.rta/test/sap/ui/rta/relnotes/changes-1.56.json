@@ -43,6 +43,30 @@
         "type": "FIX",
         "text": "sap.ui.rta - Handling of sync failed event + overlay creation error",
         "references": []
+      },
+      {
+        "id": "c941314f3d3bde2b8a43a8e699c107555a30f537",
+        "type": "FIX",
+        "text": " Fix several issues in variant management control",
+        "references": []
+      },
+      {
+        "id": "81365b124839a91ceb909835c5c5a9f864573159",
+        "type": "FIX",
+        "text": " sap.ui.rta: Getting rid of the feature toggle parameter.",
+        "references": []
+      },
+      {
+        "id": "37e85c891ed99e12402ab626974119243dfed3aa",
+        "type": "FIX",
+        "text": " sap.ui.rta: RuntimeAuthoring test fix for IE11",
+        "references": []
+      },
+      {
+        "id": "0fc252d4cb24580ec97f06f02d3fbf6293cde8b5",
+        "type": "FIX",
+        "text": " sap.ui.rta: fixed tests running out of stack space in IE11",
+        "references": []
       }
     ]
   }

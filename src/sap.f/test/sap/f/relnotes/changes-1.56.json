@@ -13,6 +13,18 @@
         "type": "FEATURE",
         "text": " sap.f.DynamicPage: Added class for content alignment",
         "references": []
+      },
+      {
+        "id": "ce322d086b774416f38ca94cf2f1451843e92445",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Inactive focusable header title fixed",
+        "references": []
+      },
+      {
+        "id": "edcadd1fde1d5ccfe0692306e313963f49baa06a",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Enable main actions moving in RTA",
+        "references": []
       }
     ]
   }

@@ -79,6 +79,42 @@
         "type": "FIX",
         "text": " v2.oDataContextBinding: Null check for empty context",
         "references": []
+      },
+      {
+        "id": "c50ec335908a24349c14a66f57effc4c1edda41c",
+        "type": "FEATURE",
+        "text": " XMLComposite: Aggregation Fragments",
+        "references": []
+      },
+      {
+        "id": "3f1a5739f506e490cc55250fdd1efa08add113c6",
+        "type": "FIX",
+        "text": " odata.v2.ODataContextBinding: Add Null Check for Preliminary Context",
+        "references": []
+      },
+      {
+        "id": "036d1de741e569cdc390f738fb63605958b584d2",
+        "type": "FIX",
+        "text": " performance/Interaction: do not count cached requests",
+        "references": []
+      },
+      {
+        "id": "3cb809dee7d7bf654d5e6d838e1ac5e2b20d24d0",
+        "type": "FIX",
+        "text": " performance/Interaction: unsafe access to interaction",
+        "references": []
+      },
+      {
+        "id": "3d25a861e0f7fbd16f8223370efc076112d348aa",
+        "type": "FIX",
+        "text": " performance/Measurement: do not log for undefined measurements",
+        "references": []
+      },
+      {
+        "id": "19611dee3768208c07758c19afee3a83731cb7af",
+        "type": "FIX",
+        "text": " sap.ui.core.cache.CacheManager: IE in privacy mode is disabled.",
+        "references": []
       }
     ]
   }
