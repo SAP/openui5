@@ -314,7 +314,6 @@ sap.ui.define([
 			var oBlockLayout, bProcessAccentCells;
 
 			if (!aCells || !aCells.length) {
-				jQuery.sap.log.warning("No accent cells were set");
 				return this;
 			}
 
@@ -362,7 +361,6 @@ sap.ui.define([
 				aAccentCellsCopy = Array.prototype.slice.call(aAccentCells);
 
 			if (!aAccentCells || !aAccentCells.length) {
-				jQuery.sap.log.warning("No accent cells were set");
 				return this;
 			}
 
