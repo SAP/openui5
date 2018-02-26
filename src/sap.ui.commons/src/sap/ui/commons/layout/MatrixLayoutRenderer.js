@@ -39,6 +39,7 @@ sap.ui.define(['jquery.sap.global'],
 		var oRowHeight;
 		var sSpanHeight;
 		var sVAlign;
+		var bBrowserIEorEdge;
 
 		//ARIA
 		rm.write("<TABLE role=\"presentation\"");
@@ -138,7 +139,9 @@ sap.ui.define(['jquery.sap.global'],
 				rm.writeAttributeEscaped('title', oMatrixLayoutRow.getTooltip_AsString());
 			}
 
-			if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version >= 9 && sRowHeight) {
+			bBrowserIEorEdge = sap.ui.Device.browser.edge || sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version >= 9;
+
+			if (bBrowserIEorEdge && sRowHeight) {
 				// for IE9 and IE10 in some cases the height is needed on TR, so it's added here.
 				// Other browsers don't need it here
 				// TD must have the same height even it looks wrong
