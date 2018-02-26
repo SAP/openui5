@@ -569,19 +569,16 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			componentClassName: sTestComponentName
 		};
 
-		sinon.stub(Cache, '_getChangesFromBundle').returns(Promise.resolve([]));
-		sinon.stub(LrepConnector.prototype, 'loadChanges');
+		var oStubLoadBundle = this.stub(Cache, '_getChangesFromBundle').returns(Promise.resolve([]));
+		var oStubLoadChanges = this.stub(LrepConnector.prototype, 'loadChanges');
 
 		return Cache.getChangesFillingCache(this.oLrepConnector, oComponent, mPropertyBag).then(function(oResult) {
-			sinon.assert.calledOnce(Cache._getChangesFromBundle, "then load changes from bundle");
-			sinon.assert.notCalled(LrepConnector.prototype.loadChanges, "instead of back end request");
+			assert.ok(oStubLoadBundle, "then load changes from bundle");
+			assert.ok(oStubLoadChanges.notCalled, "instead of back end request");
 			assert.deepEqual(oResult, oEntry, "and return correct entry");
-			//GetCacheKey in case of no change does not trigger back end request but returns NOTAG
-			return Cache.getCacheKey(oComponent).then(function(oResult) {
-				sinon.assert.notCalled(LrepConnector.prototype.loadChanges , "getCacheKey does not trigger back end request");
-				assert.equal(oResult, Cache.NOTAG, "but no tag for cache key is return");
-				LrepConnector.prototype.loadChanges.restore();
-			});
+		}).then(Cache.getCacheKey.bind(Cache, oComponent)).then(function(oResult) {
+			assert.ok(oStubLoadChanges.notCalled, "getCacheKey does not trigger back end request");
+			assert.equal(oResult, Cache.NOTAG, "but no tag for cache key is return");
 		});
 	});
 
