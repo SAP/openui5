@@ -524,6 +524,24 @@ function (
 		assert.ok(oRemoveChangeStub.calledOnce, "then model's _removeChange is called as VariantManagement Change is detected and deleted");
 	});
 
+	QUnit.test("resetChanges shall call ChangePersistance.resetChanges() and reset control variant URL parameters", function(assert) {
+		var oComp = {
+			name: "testComp"
+		};
+		var sLayer = "testLayer";
+		var sGenerator = "test.Generator";
+		sandbox.stub(Utils, "setTechnicalURLParameterValues");
+		sandbox.stub(this.oFlexController._oChangePersistence, "resetChanges", function() {
+			assert.strictEqual(arguments[0], sLayer, "then correct layer passed");
+			assert.strictEqual(arguments[1], sGenerator, "then correct generator passed");
+			return Promise.resolve();
+		});
+		return this.oFlexController.resetChanges(sLayer, sGenerator, oComp)
+			.then( function(){
+				assert.ok(Utils.setTechnicalURLParameterValues.calledWith(oComp, FlexController.variantTechnicalParameterName, []), "then Utils.setTechnicalURLParameterValues with the correct parameters");
+			});
+	});
+
 	QUnit.test("addChange shall add a change and contain the applicationVersion in the connector", function(assert) {
 		var oControl = new Control();
 
