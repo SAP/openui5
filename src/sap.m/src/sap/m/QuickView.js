@@ -205,7 +205,7 @@ sap.ui.define([
 
 		var oPopupControl = this._oPopover.getAggregation("_popup");
 		oPopupControl.addEventDelegate({
-			onBeforeRendering: this.onBeforeRenderingPopover,
+			onBeforeRendering: this._initializeQuickView,
 			onAfterRendering: this._setLinkWidth,
 			onkeydown: this._onPopupKeyDown
 		}, this);
@@ -226,7 +226,11 @@ sap.ui.define([
 		this._oPopover.addStyleClass("sapMQuickView");
 	};
 
-	QuickView.prototype.onBeforeRenderingPopover = function() {
+	/**
+	 * Initialize the QuickView.
+	 * @private
+	 */
+	QuickView.prototype._initializeQuickView = function() {
 
 		this._bRendered = true;
 
@@ -307,7 +311,7 @@ sap.ui.define([
 		);
 
 		oPage.addStyleClass('sapMQuickViewPage');
-		this._oNavContainer.addPage(oPage);
+		this._oNavContainer.addAggregation('pages', oPage, true);
 	};
 
 	QuickView.prototype._clearContainerHeight = function() {
@@ -420,7 +424,16 @@ sap.ui.define([
 		"removeAggregation", "removeAllAggregation", "destroyAggregation"].forEach(function (sFuncName) {
 			QuickView.prototype["_" + sFuncName + "Old"] = QuickView.prototype[sFuncName];
 			QuickView.prototype[sFuncName] = function () {
-				var result = QuickView.prototype["_" + sFuncName + "Old"].apply(this, arguments);
+				var newArgs,
+					result;
+
+				if (["removeAggregation", "removeAllAggregation", "destroyAggregation"].indexOf(sFuncName) !== -1) {
+					newArgs = [arguments[0], true];
+				} else {
+					newArgs = [arguments[0], arguments[1], true];
+				}
+
+				result = QuickView.prototype["_" + sFuncName + "Old"].apply(this, newArgs);
 
 				// Marks items aggregation as changed and invalidate popover to trigger rendering
 				this._bItemsChanged = true;
@@ -431,7 +444,7 @@ sap.ui.define([
 					}
 
 					if (this._bRendered) {
-						this._oPopover.invalidate();
+						this._initializeQuickView();
 					}
 				}
 
