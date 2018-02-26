@@ -51,7 +51,8 @@ sap.ui.define([], function () {
 
 		oRm.write("<nav");
 		oRm.writeControlData(oControl);
-		oRm.writeAttribute("class", CLASSES.NAVIGATION + " sapContrastPlus");
+		oRm.addClass(CLASSES.NAVIGATION + " sapContrastPlus");
+		oRm.writeClasses();
 		oRm.writeAttribute(ATTRIBUTES.STEP_COUNT, oControl.getStepCount());
 		oRm.writeAccessibilityState({
 			"role": "navigation",
