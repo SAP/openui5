@@ -332,19 +332,21 @@ sap.ui.define([
 	 * @public
 	 */
 	VariantController.prototype.getChangesForVariantSwitch = function(sVariantManagementReference, sCurrentVariant, sNewVariant, mChanges) {
-		var aCurrentChangeKeys = this.getVariantChanges(sVariantManagementReference, sCurrentVariant).map(function(oChangeContent) {
-			return new Change(oChangeContent).getId();
+		var aCurrentVariantChanges = this.getVariantChanges(sVariantManagementReference, sCurrentVariant);
+		var aMapChanges = [], aChangeKeysFromMap = [];
+		Object.keys(mChanges).forEach(function(sControlId) {
+			mChanges[sControlId].forEach(function(oMapChange) {
+				aMapChanges = aMapChanges.concat(oMapChange);
+				aChangeKeysFromMap = aChangeKeysFromMap.concat(oMapChange.getId());
+			});
 		});
 
-		var aCurrentVariantChanges = Object.keys(mChanges).reduce(function(aChanges, sControlId) {
-			var aCurrentFilteredChanges = [];
-			mChanges[sControlId].forEach(function(oChange) {
-				var iChangeIndex = aCurrentChangeKeys.indexOf(oChange.getId());
-				if (iChangeIndex !== -1) {
-					aCurrentFilteredChanges.push(oChange);
-				}
-			});
-			return aChanges.concat(aCurrentFilteredChanges);
+		aCurrentVariantChanges = aCurrentVariantChanges.reduce(function(aFilteredChanges, oChangeContent, index) {
+			var iMapIndex = aChangeKeysFromMap.indexOf(oChangeContent.fileName);
+			if (iMapIndex > -1) {
+				aFilteredChanges = aFilteredChanges.concat(aMapChanges[iMapIndex]);
+			}
+			return aFilteredChanges;
 		}, []);
 
 		var aNewChanges = this.getVariantChanges(sVariantManagementReference, sNewVariant).map(function(oChangeContent) {

@@ -986,7 +986,7 @@ sap.ui.define([
 								"&appVersion=" + this._mComponent.appVersion +
 								"&layer=" + sLayer +
 								"&generator=" + sGenerator;
-							if (aChanges[0].getRequest().length > 0) {
+							if (aChanges.length > 0) {
 								sUriOptions = sUriOptions + "&changelist=" + aChanges[0].getRequest();
 							}
 
