@@ -421,6 +421,7 @@ sap.ui.require([
 			oRequestorMock = this.mock(oRequestor),
 			mResponse = {
 				headers : {
+					"Content-Length" : "42",
 					"OData-Version" : "foo"
 				},
 				responseText : JSON.stringify({d : {foo : "bar"}})
