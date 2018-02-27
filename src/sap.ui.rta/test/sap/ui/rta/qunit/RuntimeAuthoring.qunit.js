@@ -978,8 +978,11 @@ function(
 	QUnit.test("when calling '_deleteChanges' successfully, ", function(assert) {
 		this.oDeleteChangesStub.restore();
 		sandbox.stub(this.oFlexController, "resetChanges", function() {
+			assert.strictEqual(arguments[0], this.oRta.getLayer(), "then correct layer parameter passed");
+			assert.strictEqual(arguments[1], "Change.createInitialFileContent", "then correct generator parameter passed");
+			assert.deepEqual(arguments[2], Utils.getAppComponentForControl(this.oRootControl), "then correct component parameter passed");
 			return Promise.resolve();
-		});
+		}.bind(this));
 
 		return this.oRta._deleteChanges().then(function() {
 			assert.ok(this.oReloadPageStub.callCount, 1, "then page reload is triggered");
