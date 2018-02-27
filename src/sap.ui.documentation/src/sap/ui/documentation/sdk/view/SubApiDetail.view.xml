@@ -564,7 +564,7 @@
 													<m:Link text="{= ${annotation>annotation} !== 'undefined' ? ${annotation>annotation} : '(' + ${annotation>namespaceText} + ')' }"
 															press="scrollToAnnotation"
 															wrapping="false"/>
-													<custom:JSDocText text="{annotation>description}"/>
+													<custom:JSDocText text="{path: 'annotation>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 												</custom:Row>
 											</template:repeat>
 										</custom:LightTable>
@@ -576,7 +576,7 @@
 										<custom:blocks>
 											<layout:VerticalLayout width="100%">
 
-												<custom:JSDocText text="{annotation>description}"/>
+												<custom:JSDocText text="{path: 'annotation>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 
 												<custom:LightTable columnTitles="Namespace,Target Type,Applies To" columnCount="3">
 													<custom:Row>
