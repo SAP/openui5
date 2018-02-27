@@ -560,7 +560,7 @@ function(
 				}
 
 			} else {
-				// TODO: real use case?
+				this.$().css("display", "none");
 			}
 		} else {
 			this.$().css("display", "none");
