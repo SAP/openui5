@@ -730,6 +730,15 @@ sap.ui.define([
 				sPlaceholderSymbol = this.getPlaceholderSymbol(),
 				bCharMatched;
 
+			//when setValue & focusin on the same time:
+			//IE: 1) setValue 2) focusin
+			//Chrome: 1) focusin 2) setValue
+			//Therefore sValue could contain the mask if there's no value set. This leads to replacing the first symbol
+			//of the mask in the oTempValue with the " " symbol (coming from before the am/pm part )in IE and other
+			//inconsistencies. There's no need of the logic in the for if both oTempValue & sInput are containing the mask symbols.
+			if (this._oTempValue.toString() === sInput) {
+				return;
+			}
 			for (iMaskIndex = 0; iMaskIndex < this._iMaskLength; iMaskIndex++) {
 				if (this._oRules.hasRuleAt(iMaskIndex)) {
 					this._oTempValue.setCharAt(sPlaceholderSymbol, iMaskIndex);
@@ -999,7 +1008,8 @@ sap.ui.define([
 
 			bTempValueDiffersFromOriginal = this._oTempValue.differsFromOriginal();
 			sValue = bTempValueDiffersFromOriginal ? this._oTempValue.toString() : "";
-			bEmptyPreviousDomValue = !this._sOldInputValue;
+			//the getValue check is needed for a special case in IE when focus and setValue an empty string on a same time
+			bEmptyPreviousDomValue = !this._sOldInputValue || !this.getValue();
 			bEmptyNewDomValue = !sNewMaskInputValue;
 
 			if (bEmptyPreviousDomValue && (bEmptyNewDomValue || !bTempValueDiffersFromOriginal)){
