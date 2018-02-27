@@ -311,7 +311,7 @@ sap.ui.define([
 		);
 
 		oPage.addStyleClass('sapMQuickViewPage');
-		this._oNavContainer.addAggregation('pages', oPage, true);
+		this._oNavContainer.addPage(oPage);
 	};
 
 	QuickView.prototype._clearContainerHeight = function() {
