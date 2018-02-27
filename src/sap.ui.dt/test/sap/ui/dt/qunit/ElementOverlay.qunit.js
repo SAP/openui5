@@ -25,6 +25,7 @@ sap.ui.require([
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/uxap/ObjectPageHeader",
+	"sap/ui/Device",
 	"dt/control/SimpleScrollControl",
 	"sap/ui/thirdparty/sinon"
 ],
@@ -51,6 +52,7 @@ function(
 	ObjectPageSection,
 	ObjectPageSubSection,
 	ObjectPageHeader,
+	Device,
 	SimpleScrollControl,
 	sinon
 ) {
@@ -692,10 +694,16 @@ function(
 			var oInitialControlOffset = oContent1.$().offset();
 			var oInitialOverlayOffset = oContent1Overlay.$().offset();
 
-			// var oApplyStylesSpy = sandbox.spy(Overlay.prototype, "applyStyles");
+			if (!Device.browser.msie) {
+				var oApplyStylesSpy = sandbox.spy(oContent1Overlay, "applyStyles");
+			}
 
-			this.oSimpleScrollControlOverlay.getScrollContainerByIndex(0).scroll(function() {
-				// assert.equal(oApplyStylesSpy.callCount, 0,  "then the applyStyles Method is not called"); // due workaround for scroll event it's not true ATM
+			this.oSimpleScrollControlOverlay.attachEventOnce('scrollSynced', function() {
+				if (!Device.browser.msie) {
+					assert.equal(oApplyStylesSpy.callCount, 0,  "then the applyStyles Method is not called");
+				} else {
+					oContent1Overlay.applyStyles();
+				}
 				assert.equal(oContent1.$().offset().top, sInitialOffsetTop - 100, "Then the top offset is 100px lower");
 				assert.deepEqual(oContent1.$().offset(), oContent1Overlay.$().offset(), "Then the offset is still equal");
 				assert.deepEqual(oInitialControlOffset, oInitialOverlayOffset, "Then the offset is still equal");
@@ -712,10 +720,16 @@ function(
 			var oInitialControlOffset = oContent1.$().offset();
 			var oInitialOverlayOffset = oContent1Overlay.$().offset();
 
-			// var oApplyStylesSpy = sandbox.spy(Overlay.prototype, "applyStyles");
+			if (!Device.browser.msie) {
+				var oApplyStylesSpy = sandbox.spy(Overlay.prototype, "applyStyles");
+			}
 
 			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").scroll(function() {
-				// assert.equal(oApplyStylesSpy.callCount, 0,  "then the applyStyles Method is not called"); // see above
+				if (!Device.browser.msie) {
+					assert.equal(oApplyStylesSpy.callCount, 0,  "then the applyStyles Method is not called");
+				} else {
+					oContent1Overlay.applyStyles();
+				}
 				assert.equal(oContent1.$().offset().top, sInitialOffsetTop - 100, "Then the top offset is 100px lower");
 				assert.deepEqual(oContent1.$().offset(), oContent1Overlay.$().offset(), "Then the offset is still equal");
 				assert.deepEqual(oInitialControlOffset, oInitialOverlayOffset, "Then the offset is still equal");
