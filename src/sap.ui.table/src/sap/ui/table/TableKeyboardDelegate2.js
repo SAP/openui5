@@ -137,7 +137,7 @@ sap.ui.define([
 	 * On Mac systems the Meta key will be checked instead of the Ctrl key.
 	 *
 	 * @param {jQuery.Event} oEvent The keyboard event object.
-	 * @param {int|string|null} key The key code integer, or character string, of the key which should have been pressed.
+	 * @param {int|string|null} vKey The key code integer, or character string, of the key which should have been pressed.
 	 *                              If an <code>integer</code> is passed, the value will be compared with the <code>keyCode</code> value.
 	 *                              If a <code>string</code> is passed, the value will be compared with the string representation of the
 	 *                              <code>charCode</code>.
@@ -152,19 +152,19 @@ sap.ui.define([
 	 * @private
 	 * @static
 	 */
-	TableKeyboardDelegate._isKeyCombination = function(oEvent, key, modifierKeyMask) {
+	TableKeyboardDelegate._isKeyCombination = function(oEvent, vKey, modifierKeyMask) {
 		if (modifierKeyMask == null) {
 			modifierKeyMask = 0;
 		}
 
-		var eventKey = typeof key === "string" ? String.fromCharCode(oEvent.charCode) : oEvent.keyCode;
+		var eventKey = typeof vKey === "string" ? String.fromCharCode(oEvent.charCode) : oEvent.keyCode;
 		var eventModifierKeyMask = 0;
 
-		eventModifierKeyMask |= (Device.os.macintosh ? oEvent.metaKey : oEvent.ctrlKey) && key !== jQuery.sap.KeyCodes.CONTROL ? ModKey.CTRL : 0;
-		eventModifierKeyMask |= oEvent.shiftKey && key !== jQuery.sap.KeyCodes.SHIFT ? ModKey.SHIFT : 0;
-		eventModifierKeyMask |= oEvent.altKey && key !== jQuery.sap.KeyCodes.ALT ? ModKey.ALT : 0;
+		eventModifierKeyMask |= (Device.os.macintosh ? oEvent.metaKey : oEvent.ctrlKey) && vKey !== jQuery.sap.KeyCodes.CONTROL ? ModKey.CTRL : 0;
+		eventModifierKeyMask |= oEvent.shiftKey && vKey !== jQuery.sap.KeyCodes.SHIFT ? ModKey.SHIFT : 0;
+		eventModifierKeyMask |= oEvent.altKey && vKey !== jQuery.sap.KeyCodes.ALT ? ModKey.ALT : 0;
 
-		var bValidKey = key == null || eventKey === key;
+		var bValidKey = vKey == null || eventKey === vKey;
 		var bValidModifierKeys = modifierKeyMask === eventModifierKeyMask;
 
 		return bValidKey && bValidModifierKeys;
@@ -211,7 +211,7 @@ sap.ui.define([
 
 			if (bEnterActionMode) {
 				var $InteractiveElements = TableKeyboardDelegate._getInteractiveElements(oEvent.target);
-				if ($InteractiveElements !== null) {
+				if ($InteractiveElements) {
 					oTable._getKeyboardExtension().setActionMode(true);
 				}
 			}
@@ -292,7 +292,7 @@ sap.ui.define([
 	 * @static
 	 */
 	TableKeyboardDelegate._focusElement = function(oTable, oElement, bSilentFocus) {
-		if (oTable == null || oElement == null) {
+		if (!oTable || !oElement) {
 			return;
 		}
 		if (bSilentFocus == null) {
@@ -334,7 +334,7 @@ sap.ui.define([
 	 * @static
 	 */
 	TableKeyboardDelegate._focusCell = function(oTable, iCellType, iRowIndex, iColumnIndex, bFirstInteractiveElement) {
-		if (oTable == null
+		if (!oTable
 			|| iCellType == null
 			|| iRowIndex == null || iRowIndex < 0 || iRowIndex >= oTable.getRows().length) {
 			return;
@@ -357,14 +357,14 @@ sap.ui.define([
 			}
 		}
 
-		if (oCell == null) {
+		if (!oCell) {
 			return;
 		}
 
 		if (bFirstInteractiveElement) {
 			var $InteractiveElements = TableKeyboardDelegate._getInteractiveElements(oCell);
 
-			if ($InteractiveElements != null) {
+			if ($InteractiveElements) {
 				TableKeyboardDelegate._focusElement(oTable, $InteractiveElements[0]);
 				return;
 			}
@@ -405,7 +405,7 @@ sap.ui.define([
 
 			// If only the up or down key was pressed while the table is in navigation mode, and a non-interactive element inside a cell is focused,
 			// set the focus to the cell this element is inside.
-			if (!bActionModeNavigation && $ParentCell != null) {
+			if (!bActionModeNavigation && $ParentCell) {
 				$ParentCell.focus();
 				return;
 			}
@@ -435,14 +435,14 @@ sap.ui.define([
 				preventItemNavigation(oEvent, oCellInfo.isOfType(CellType.ROWACTION) || bActionModeNavigation);
 
 				// Leave the action mode when trying to navigate up on the first row.
-				if (!bActionMode && $ParentCell != null) {
+				if (!bActionMode && $ParentCell) {
 					$ParentCell.focus(); // A non-interactive element inside a cell is focused, focus the cell this element is inside.
 				} else {
 					oKeyboardExtension.setActionMode(false);
 				}
 			} else if (sDirection === NavigationDirection.DOWN && oCellInfo.rowIndex === oTable.getVisibleRowCount() - 1) {
 				// Leave the action mode when trying to navigate down on the last row.
-				if (!bActionMode && $ParentCell != null) {
+				if (!bActionMode && $ParentCell) {
 					$ParentCell.focus(); // A non-interactive element inside a cell is focused, focus the cell this element is inside.
 				} else {
 					oKeyboardExtension.setActionMode(false);
@@ -503,8 +503,8 @@ sap.ui.define([
 		return TableUtils.Grouping.isInGroupingRow(oElement)
 			   || (TableUtils.Grouping.isTreeMode(oTable)
 				   && oElement.classList.contains("sapUiTableTdFirst")
-				   && (oElement.querySelector(".sapUiTableTreeIconNodeOpen") != null
-					   || oElement.querySelector(".sapUiTableTreeIconNodeClosed") != null))
+				   && (oElement.querySelector(".sapUiTableTreeIconNodeOpen")
+					   || oElement.querySelector(".sapUiTableTreeIconNodeClosed")))
 			   || oElement.classList.contains("sapUiTableTreeIconNodeOpen")
 			   || oElement.classList.contains("sapUiTableTreeIconNodeClosed");
 	};
@@ -518,7 +518,7 @@ sap.ui.define([
 	 * @static
 	 */
 	TableKeyboardDelegate._isElementInteractive = function(oElement) {
-		if (oElement == null) {
+		if (!oElement) {
 			return false;
 		}
 
@@ -533,7 +533,7 @@ sap.ui.define([
 	 * @static
 	 */
 	TableKeyboardDelegate._getInteractiveElements = function(oCell) {
-		if (oCell == null) {
+		if (!oCell) {
 			return null;
 		}
 
@@ -559,7 +559,7 @@ sap.ui.define([
 	 * @static
 	 */
 	TableKeyboardDelegate._getFirstInteractiveElement = function(oRow) {
-		if (oRow == null) {
+		if (!oRow) {
 			return null;
 		}
 
@@ -576,7 +576,7 @@ sap.ui.define([
 			$Cell = TableUtils.getParentCell(oTable, aCells[i].getDomRef());
 			$InteractiveElements = this._getInteractiveElements($Cell);
 
-			if ($InteractiveElements !== null) {
+			if ($InteractiveElements) {
 				return $InteractiveElements.first();
 			}
 		}
@@ -593,7 +593,7 @@ sap.ui.define([
 	 * @static
 	 */
 	TableKeyboardDelegate._getLastInteractiveElement = function(oRow) {
-		if (oRow == null) {
+		if (!oRow) {
 			return null;
 		}
 
@@ -610,7 +610,7 @@ sap.ui.define([
 			$Cell = TableUtils.getParentCell(oTable, aCells[i].getDomRef());
 			$InteractiveElements = this._getInteractiveElements($Cell);
 
-			if ($InteractiveElements !== null) {
+			if ($InteractiveElements) {
 				return $InteractiveElements.last();
 			}
 		}
@@ -629,7 +629,7 @@ sap.ui.define([
 	 * @static
 	 */
 	TableKeyboardDelegate._getPreviousInteractiveElement = function(oTable, oElement) {
-		if (oTable == null || oElement == null) {
+		if (!oTable || !oElement) {
 			return null;
 		}
 
@@ -672,7 +672,7 @@ sap.ui.define([
 			$Cell = TableUtils.getParentCell(oTable, oCellContent);
 			$InteractiveElements = this._getInteractiveElements($Cell);
 
-			if ($InteractiveElements !== null) {
+			if ($InteractiveElements) {
 				return $InteractiveElements.last();
 			}
 		}
@@ -691,7 +691,7 @@ sap.ui.define([
 	 * @static
 	 */
 	TableKeyboardDelegate._getNextInteractiveElement = function(oTable, oElement) {
-		if (oTable == null || oElement == null) {
+		if (!oTable || !oElement) {
 			return null;
 		}
 
@@ -733,7 +733,7 @@ sap.ui.define([
 			$Cell = TableUtils.getParentCell(oTable, oCellContent);
 			$InteractiveElements = this._getInteractiveElements($Cell);
 
-			if ($InteractiveElements !== null) {
+			if ($InteractiveElements) {
 				return $InteractiveElements.first();
 			}
 		}
@@ -765,13 +765,13 @@ sap.ui.define([
 		var $InteractiveElements = TableKeyboardDelegate._getInteractiveElements(oActiveElement);
 		var $Cell = TableUtils.getParentCell(this, oActiveElement);
 
-		if ($InteractiveElements !== null) {
+		if ($InteractiveElements) {
 			// Target is a data cell with interactive elements inside. Focus the first interactive element in the data cell.
 			oKeyboardExtension._suspendItemNavigation();
 			oActiveElement.tabIndex = -1;
 			TableKeyboardDelegate._focusElement(this, $InteractiveElements[0], true);
 			return true;
-		} else if ($Cell !== null) {
+		} else if ($Cell) {
 			// Target is an interactive element inside a data cell.
 			this._getKeyboardExtension()._suspendItemNavigation();
 			return true;
@@ -796,7 +796,7 @@ sap.ui.define([
 		oKeyboardExtension._resumeItemNavigation();
 
 		if (bAdjustFocus) {
-			if ($Cell !== null) {
+			if ($Cell) {
 				TableKeyboardDelegate._focusElement(this, $Cell[0], true);
 			} else {
 				oKeyboardExtension._setSilentFocus(oActiveElement);
@@ -873,7 +873,7 @@ sap.ui.define([
 			var bIsInActionMode = oKeyboardExtension.isInActionMode();
 			var $ParentCell = TableUtils.getParentCell(this, oEvent.target);
 
-			if (!bIsInActionMode && $ParentCell != null) {
+			if (!bIsInActionMode && $ParentCell) {
 				$ParentCell.focus(); // A non-interactive element inside a cell is focused, focus the cell this element is inside.
 			} else {
 				oKeyboardExtension.setActionMode(!bIsInActionMode);
@@ -1041,7 +1041,7 @@ sap.ui.define([
 			$Cell = TableUtils.getCell(this, oEvent.target);
 			oCellInfo = TableUtils.getCellInfo($Cell);
 
-			if ($Cell === null) {
+			if (!$Cell) {
 				return; // Not a table cell or an element inside a table cell.
 			}
 
@@ -1121,10 +1121,10 @@ sap.ui.define([
 		} else if (oEvent.target === this.getDomRef("overlay")) {
 			oKeyboardExtension._setSilentFocus(this.$().find(".sapUiTableOuterAfter"));
 
-		} else if (oCellInfo.cell === null) {
+		} else if (!oCellInfo.cell) {
 			$Cell = TableUtils.getParentCell(this, oEvent.target);
 
-			if ($Cell !== null) {
+			if ($Cell) {
 				// The target is a non-interactive element inside a data cell. We are not in action mode, so focus the cell.
 				oEvent.preventDefault();
 				$Cell.focus();
@@ -1142,7 +1142,7 @@ sap.ui.define([
 			$Cell = TableUtils.getCell(this, oEvent.target);
 			oCellInfo = TableUtils.getCellInfo($Cell);
 
-			if ($Cell === null) {
+			if (!$Cell) {
 				return; // Not a table cell or an element inside a table cell.
 			}
 
@@ -1219,10 +1219,10 @@ sap.ui.define([
 		} else if (oEvent.target === this.getDomRef("overlay")) {
 			this._getKeyboardExtension()._setSilentFocus(this.$().find(".sapUiTableOuterBefore"));
 
-		} else if (oCellInfo.cell === null) {
+		} else if (!oCellInfo.cell) {
 			$Cell = TableUtils.getParentCell(this, oEvent.target);
 
-			if ($Cell !== null) {
+			if ($Cell) {
 				// The target is a non-interactive element inside a data cell. We are not in action mode, so focus the cell.
 				oEvent.preventDefault();
 				$Cell.focus();

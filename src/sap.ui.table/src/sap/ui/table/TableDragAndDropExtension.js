@@ -60,7 +60,7 @@ sap.ui.define([
 		ondragstart: function(oEvent) {
 			var oDragSession = oEvent.dragSession;
 
-			if (oDragSession == null || oDragSession.getDragControl() == null) {
+			if (!oDragSession || !oDragSession.getDragControl()) {
 				return;
 			}
 
@@ -77,7 +77,7 @@ sap.ui.define([
 				var oDraggedRowContext = this.getContextByIndex(oDraggedControl.getIndex());
 				var oDraggedRowDomRef = oDraggedControl.getDomRef();
 
-				if (oDraggedRowContext == null // Empty row
+				if (!oDraggedRowContext // Empty row
 					|| oDraggedRowDomRef.classList.contains("sapUiTableGroupHeader") // Group header row
 					|| oDraggedRowDomRef.classList.contains("sapUiAnalyticalTableSum")) { // Sum row
 
@@ -101,7 +101,7 @@ sap.ui.define([
 		ondragenter: function(oEvent) {
 			var oDragSession = oEvent.dragSession;
 
-			if (oDragSession == null || oDragSession.getDropControl() == null) {
+			if (!oDragSession || !oDragSession.getDropControl()) {
 				return;
 			}
 
@@ -109,7 +109,7 @@ sap.ui.define([
 			var oDraggedControl = oDragSession.getDragControl();
 			var oDropControl = oDragSession.getDropControl();
 
-			if (oSessionData == null) {
+			if (!oSessionData) {
 				oSessionData = {};
 			}
 
@@ -126,15 +126,15 @@ sap.ui.define([
 				var oDropRowDomRef = oDropControl.getDomRef();
 				var sDropPosition = oDragSession.getDropInfo().getDropPosition();
 
-				if ((oDropRowContext == null && sDropPosition === DropPosition.On && TableUtils.hasData(this)) // On empty row, table has data
-					|| (oDraggedRowContext != null && oDraggedRowContext === oDropRowContext) // The dragged row itself
+				if ((!oDropRowContext && sDropPosition === DropPosition.On && TableUtils.hasData(this)) // On empty row, table has data
+					|| (oDraggedRowContext && oDraggedRowContext === oDropRowContext) // The dragged row itself
 					|| oDropRowDomRef.classList.contains("sapUiTableGroupHeader") // Group header row
 					|| oDropRowDomRef.classList.contains("sapUiAnalyticalTableSum")) { // Sum row
 					oEvent.setMarked("NonDroppable");
 				} else {
 					// If dragging over an empty row with a drop position other than "On", the drop control should be the first non-empty row. If
 					// all rows are empty, the drop target should be the table to perform a drop in aggregation.
-					if (oDropRowContext == null) {
+					if (!oDropRowContext) {
 						var oLastNonEmptyRow = this.getRows()[TableUtils.getNonEmptyVisibleRowCount(this) - 1];
 						oDragSession.setDropControl(oLastNonEmptyRow || this);
 					}
@@ -167,7 +167,7 @@ sap.ui.define([
 
 			// It is unlikely, that during a drag&drop action the horizontal scrollbar appears or disappears,
 			// therefore the vertical scroll edge only needs to be set once.
-			if (oSessionData.verticalScrollEdge == null) {
+			if (!oSessionData.verticalScrollEdge) {
 				var iPageYOffset = window.pageYOffset;
 				var mVerticalScrollRect = this.getDomRef("table").getBoundingClientRect();
 				oSessionData.verticalScrollEdge = {
@@ -191,13 +191,13 @@ sap.ui.define([
 		ondragover: function(oEvent) {
 			var oDragSession = oEvent.dragSession;
 
-			if (oDragSession == null) {
+			if (!oDragSession) {
 				return;
 			}
 
 			var oSessionData = ExtensionHelper.getInstanceSessionData(oDragSession, this);
 
-			if (oSessionData == null) {
+			if (!oSessionData) {
 				return;
 			}
 
@@ -210,7 +210,7 @@ sap.ui.define([
 			var oVerticalScrollEdge = oSessionData.verticalScrollEdge;
 			var oHorizontalScrollEdge = oSessionData.horizontalScrollEdge;
 
-			if (oVerticalScrollEdge != null && oVerticalScrollbar != null && oDropControl !== this) {
+			if (oVerticalScrollEdge && oVerticalScrollbar && oDropControl !== this) {
 				var iPageY = oEvent.pageY;
 
 				if (iPageY >= oVerticalScrollEdge.top - iThreshold && iPageY <= oVerticalScrollEdge.top + iThreshold) {
@@ -220,7 +220,7 @@ sap.ui.define([
 				}
 			}
 
-			if (oHorizontalScrollEdge != null && oHorizontalScrollbar != null && oDropControl !== this) {
+			if (oHorizontalScrollEdge && oHorizontalScrollbar && oDropControl !== this) {
 				var iPageX = oEvent.pageX;
 
 				if (iPageX >= oHorizontalScrollEdge.left - iThreshold && iPageX <= oHorizontalScrollEdge.left + iThreshold) {
@@ -234,7 +234,7 @@ sap.ui.define([
 		onlongdragover: function(oEvent) {
 			var oDragSession = oEvent.dragSession;
 
-			if (oDragSession == null) {
+			if (!oDragSession) {
 				return;
 			}
 
@@ -243,7 +243,7 @@ sap.ui.define([
 			var oRow = iRowIndex == null ? null : this.getRows()[iRowIndex];
 			var oDropControl = oDragSession.getDropControl();
 
-			if (oRow != null && (oDropControl == oRow || oDropControl == null)) {
+			if (oRow && (oDropControl == oRow || !oDropControl)) {
 				TableUtils.Grouping.toggleGroupHeader(this, oRow.getIndex(), true);
 			}
 		}

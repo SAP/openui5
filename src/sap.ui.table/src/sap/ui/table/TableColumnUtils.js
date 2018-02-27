@@ -550,7 +550,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './library'],
 			 * @private
 			 */
 			resizeColumn: function(oTable, iColumnIndex, iWidth, bFireEvent, iColumnSpan) {
-				if (oTable == null ||
+				if (!oTable ||
 					iColumnIndex == null || iColumnIndex < 0 ||
 					iWidth == null || iWidth <= 0) {
 					return false;
@@ -673,7 +673,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './library'],
 			 * @private
 			 */
 			getColumnWidth: function(oTable, iColumnIndex) {
-				if (oTable == null ||
+				if (!oTable ||
 					iColumnIndex == null || iColumnIndex < 0) {
 					return null;
 				}
@@ -690,7 +690,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './library'],
 				if (sColumnWidth === "" || sColumnWidth === "auto" || sColumnWidth.match(/%$/)) {
 					if (oColumn.getVisible()) {
 						var oColumnElement = oColumn.getDomRef();
-						return oColumnElement != null ? oColumnElement.offsetWidth : 0;
+						return oColumnElement ? oColumnElement.offsetWidth : 0;
 					} else {
 						return 0;
 					}

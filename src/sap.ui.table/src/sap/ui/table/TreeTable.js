@@ -117,8 +117,8 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/ClientTreeBindingAd
 	TreeTable.prototype.bindRows = function(oBindingInfo) {
 		oBindingInfo = Table._getSanitizedBindingInfo(arguments);
 
-		if (oBindingInfo != null) {
-			if (oBindingInfo.parameters == null) {
+		if (oBindingInfo) {
+			if (!oBindingInfo.parameters) {
 				oBindingInfo.parameters = {};
 			}
 
@@ -144,7 +144,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/ClientTreeBindingAd
 
 		var oBinding = this.getBinding("rows");
 
-		if (sName === "rows" && oBinding != null) {
+		if (sName === "rows" && oBinding) {
 			// Table._addBindingListener can not be used here, as the selectionChanged event will be added by an adapter applied in #getBinding.
 			oBinding.attachEvents({
 				selectionChanged: this._onSelectionChanged.bind(this)
