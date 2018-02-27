@@ -297,7 +297,7 @@ sap.ui.define([
 				oQuickViewPage.setNavContext(mNavContext);
 
 				var oPage = this._createPage(oQuickViewPage);
-				this._oNavContainer.addAggregation('pages', oPage, true);
+				this._oNavContainer.addPage(oPage);
 			}
 		};
 
