@@ -199,6 +199,9 @@
 								text: 'Child 3'
 							})
 						]
+					}),
+					new sap.tnt.NavigationListItem({
+						text: 'Root 4 - no child items'
 					})
 				]
 			});
@@ -227,7 +230,7 @@
 
 		QUnit.test("contains elements and classes", function (assert) {
 			assert.ok(this.navigationList.$().hasClass('sapTntNavLI'), "sapTntNavLI class is set");
-			assert.ok(this.navigationList.$().children().length == 4, "groups number is correct");
+			assert.ok(this.navigationList.$().children().length == 5, "groups number is correct");
 			assert.ok(this.navigationList.$().children()[0].children[1].children.length == 3, "first group children are ok");
 		});
 
@@ -287,8 +290,9 @@
 			});
 		});
 
-		QUnit.test('ARIA', function (assert) {
+		QUnit.test('ARIA attributes', function (assert) {
 
+			// aria-level
 			this.navigationList.$().find('li:not(.sapTntNavLIGroupItem)').each(function (index, item) {
 				assert.ok(item.getAttribute('aria-level') === null, 'first level "li" element does not have ARIA attributes.');
 			});
@@ -302,6 +306,22 @@
 				assert.equal(item.getAttribute('aria-level'), '2', jQuery(item).text() + ' has ARIA attributes.');
 			});
 
+			//aria-expanded
+			var currentItem = this.navigationList.$().find('div.sapTntNavLIGroup')[0];
+			assert.equal(currentItem.getAttribute('aria-expanded'), 'true', jQuery(currentItem).text() + ' has ARIA attribute expanded true.');
+
+			this.navigationList.getItems()[0].setExpanded(false);
+			sap.ui.getCore().applyChanges();
+			currentItem = this.navigationList.$().find('div.sapTntNavLIGroup')[0];
+			assert.equal(currentItem.getAttribute('aria-expanded'), 'false', jQuery(currentItem).text() + ' has ARIA attribute expanded false.');
+
+			var currentItemNoChildren = this.navigationList.$().find('div.sapTntNavLIGroup')[4];
+			assert.notOk(currentItemNoChildren.getAttribute('aria-expanded'), jQuery(currentItemNoChildren).text() + ' has no ARIA attribute expanded.');
+
+			this.navigationList.setExpanded(false);
+			sap.ui.getCore().applyChanges();
+			var currentItemCollapsed = this.navigationList.$().find('div.sapTntNavLIGroup')[2];
+			assert.notOk(currentItemCollapsed.getAttribute('aria-expanded'), 'Root 2 has no ARIA attribute expanded when NavigationList is collapsed.');
 		});
 
 		QUnit.module('SelectedItem association', {
