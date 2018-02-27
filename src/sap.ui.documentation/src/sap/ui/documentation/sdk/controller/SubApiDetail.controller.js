@@ -446,7 +446,11 @@ sap.ui.define([
 			 * @param {object} oEntityData additional data object source
 			 */
 			_buildHeaderLayout: function (oControlData, oEntityData) {
-				var aHeaderControls = [[], [], []],
+				var FIRST_COLUMN = 0,
+					SECOND_COLUMN = 1,
+					THIRD_COLUMN = 2,
+					ENTITIES_PER_COLUMN = 3,
+					aHeaderControls = [[], [], []],
 					oHeaderLayoutUtil = this._getHeaderLayoutUtil(),
 					aSubClasses = oEntityData.extendedBy || oEntityData.implementedBy || [],
 					aHeaderBlocksInfo = [
@@ -467,12 +471,12 @@ sap.ui.define([
 							iIndexToAdd,
 							fnGetIndexToAdd = function (iControlsAdded) {
 								// determines the column(1st, 2nd or 3rd), the next entity data key-value should be added to.
-								if (iControlsAdded <= 3) {
-									return 0;
-								} else if (iControlsAdded <= 6) {
-									return 1;
+								if (iControlsAdded <= ENTITIES_PER_COLUMN) {
+									return FIRST_COLUMN;
+								} else if (iControlsAdded <= ENTITIES_PER_COLUMN * 2) {
+									return SECOND_COLUMN;
 								}
-								return 2;
+								return THIRD_COLUMN;
 							};
 
 						aHeaderBlocksInfo.forEach(function (oHeaderBlockInfo) {
