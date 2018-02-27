@@ -444,6 +444,9 @@ sap.ui.define([
 				}
 				return false;
 			}
+			if (sChildMetaPath === "value") { // symbolic name for operation result
+				return that.aggregateQueryOptions(mChildQueryOptions, bCacheImmutable);
+			}
 			jQuery.sap.log.error("Failed to enhance query options for "
 					+ "auto-$expand/$select as the path '"
 					+ sFullMetaPath

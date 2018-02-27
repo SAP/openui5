@@ -61,7 +61,7 @@ sap.ui.require([
 	}
 
 	/**
-	 * Creates a V4 OData model for <code>GWSAMPLE_BASIC</code>.
+	 * Creates a V4 OData model for <code>zui5_epm_sample</code>.
 	 *
 	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
 	 *   potentially overwrite the parameters groupId, operationMode, serviceUrl,
@@ -4609,5 +4609,158 @@ sap.ui.require([
 			});
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Deferred operation binding returns a collection. A nested list binding for "value"
+	// with auto-$expand/$select displays the result.
+	QUnit.test("Deferred operation returns collection, auto-$expand/$select", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/GetSOContactList(...)}" id="function">\
+	<Table items="{value}">\
+		<items>\
+			<ColumnListItem>\
+				<Text id="id" text="{ContactGUID}" />\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("id", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("GetSOContactList(SalesOrderID='0500000001')", {
+					value : [{
+						"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"
+					}, {
+						"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"
+					}, {
+						"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
+					}]
+				})
+				.expectChange("id", [
+					"fa163e7a-d4f1-1ee8-84ac-11f9c591d177",
+					"fa163e7a-d4f1-1ee8-84ac-11f9c591f177",
+					"fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
+				]);
+
+			that.oView.byId("function").getObjectBinding()
+				.setParameter("SalesOrderID", "0500000001")
+				.execute();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: List binding for non-deferred function call which returns a collection, with
+	// auto-$expand/$select.
+	QUnit.test("List: function returns collection, auto-$expand/$select", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table items="{/GetSOContactList(SalesOrderID=\'0500000001\')}">\
+	<items>\
+		<ColumnListItem>\
+			<Text id="id" text="{ContactGUID}" />\
+		</ColumnListItem>\
+	</items>\
+</Table>';
+
+		this.expectRequest("GetSOContactList(SalesOrderID='0500000001')?$select=ContactGUID"
+				+ "&$skip=0&$top=100", {
+			value : [{
+				"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"
+			}, {
+				"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"
+			}, {
+				"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
+			}]
+		})
+		.expectChange("id", [
+			"fa163e7a-d4f1-1ee8-84ac-11f9c591d177",
+			"fa163e7a-d4f1-1ee8-84ac-11f9c591f177",
+			"fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
+		]);
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: ODataContextBinding for non-deferred function call which returns a collection. A
+	// nested list binding for "value" with auto-$expand/$select displays the result.
+	// github.com/SAP/openui5/issues/1727
+	QUnit.test("Context: function returns collection, auto-$expand/$select", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/GetSOContactList(SalesOrderID=\'0500000001\')}" id="function">\
+	<Table items="{value}">\
+		<items>\
+			<ColumnListItem>\
+				<Text id="id" text="{ContactGUID}" />\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>';
+
+		this.expectChange("id", false);
+
+		this.expectRequest("GetSOContactList(SalesOrderID='0500000001')?$select=ContactGUID", {
+			value : [{
+				"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"
+			}, {
+				"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"
+			}, {
+				"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
+			}]
+		})
+		.expectChange("id", [
+			"fa163e7a-d4f1-1ee8-84ac-11f9c591d177",
+			"fa163e7a-d4f1-1ee8-84ac-11f9c591f177",
+			"fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
+		]);
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: ODataContextBinding for non-deferred bound function call which returns a
+	// collection. A nested list binding for "value" with auto-$expand/$select displays the result.
+	QUnit.test("Context: bound function returns coll., auto-$expand/$select", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sFunctionName = "com.sap.gateway.default.iwbep.tea_busi.v0001"
+				+ ".__FAKE__FuGetEmployeesByManager",
+			sView = '\
+<FlexBox binding="{/MANAGERS(\'1\')/' + sFunctionName + '()}" id="function">\
+	<Table items="{value}">\
+		<items>\
+			<ColumnListItem>\
+				<Text id="id" text="{ID}" />\
+				<Text id="name" text="{Name}" />\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>';
+
+		this.expectRequest("MANAGERS('1')/" + sFunctionName + "()?$select=ID,Name", {
+			value : [{
+				"ID" : "3",
+				"Name": "Jonathan Smith"
+			}, {
+				"ID" : "6",
+				"Name": "Susan Bay"
+			}]
+		})
+		.expectChange("id", ["3", "6"])
+		.expectChange("name", ["Jonathan Smith", "Susan Bay"]);
+
+		return this.createView(assert, sView, oModel);
+	});
+	//TODO Gateway says "Expand/Select not supported for functions"!
+	//TODO Gateway says "System query options not supported for functions"!
+	// --> TripPinRESTierService is OK with both!
+	// http://services.odata.org/TripPinRESTierService/(S(...))/People('russellwhyte')/Trips(1)/
+	// Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetInvolvedPeople()
+	// ?$count=true&$select=UserName&$skip=1
 });
 //TODO test delete
