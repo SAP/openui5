@@ -415,31 +415,22 @@ sap.ui.define([
 			};
 		}
 
-		var fnPropagateOwner = function(fn, bAsync) {
-			jQuery.sap.assert(typeof fn === "function", "fn must be a function");
+		var fnPropagateOwner = function(fnCallback, bAsync) {
+			jQuery.sap.assert(typeof fnCallback === "function", "fn must be a function");
 
 			var Component = sap.ui.require("sap/ui/core/Component");
 			var oOwnerComponent = Component && Component.getOwnerComponentFor(that);
 			if (oOwnerComponent) {
-				if (!bAsync) {
-					return oOwnerComponent.runAsOwner(fn);
+				if (bAsync) {
+					// special treatment when component loading is async but instance creation is sync
+					that.fnScopedRunWithOwner = that.fnScopedRunWithOwner || function(fnCallbackToBeScoped) {
+						return oOwnerComponent.runAsOwner(fnCallbackToBeScoped);
+					};
 				}
-
-				// create a function, which scopes the instance creation of a class with the corresponding owner ID
-				// XMLView special logic for asynchronous template parsing,
-				// when component loading is async but instance creation is sync.
-				that.fnScopedRunWithOwner = that.fnScopedRunWithOwner || function(fnCallbackToBeScoped) {
-					return oOwnerComponent.runAsOwner(fnCallbackToBeScoped);
-				};
-
-				//for non-XMLViews wrap the existing behaviour with a promise
-				return Promise.resolve(oOwnerComponent.runAsOwner(fn));
-			} else {
-				if (!bAsync) {
-					return fn.call();
-				}
-				return Promise.resolve(fn.call());
+				return oOwnerComponent.runAsOwner(fnCallback);
 			}
+
+			return fnCallback();
 		};
 
 		var fnAttachControllerToViewEvents = function(oView) {
