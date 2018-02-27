@@ -793,6 +793,16 @@
 				oTable.invalidate();
 			}
 		},
+		COLUMNFREEZE: {
+			text: "Column freeze",
+			value: function(oTable) {
+				return oTable.getEnableColumnFreeze();
+			},
+			input: "boolean",
+			action: function(oTable, bValue) {
+				oTable.setEnableColumnFreeze(bValue);
+			}
+		},
 		EVENTS: {
 			text: "Events",
 			group: {
