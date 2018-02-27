@@ -510,57 +510,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the key predicate (see "4.3.1 Canonical URL") for the given entity using the given
-	 * meta data.
-	 *
-	 * @param {object} oInstance
-	 *   Entity instance runtime data
-	 * @param {string} sMetaPath
-	 *   The meta path of the entity in the cache incl. the cache's resource path
-	 * @param {object} mTypeForMetaPath
-	 *   Maps meta paths to the corresponding (entity or complex) types
-	 * @returns {string}
-	 *   The key predicate, e.g. "(Sector='DevOps',ID='42')" or "('42')" or undefined if one
-	 *   key property is undefined
-	 *
-	 * @private
-	 */
-	Requestor.prototype.getKeyPredicate = function (oInstance, sMetaPath, mTypeForMetaPath) {
-		var bFailed,
-			aKey = mTypeForMetaPath[sMetaPath].$Key,
-			aKeyProperties = [],
-			bSingleKey = aKey.length === 1,
-			that = this;
-
-		bFailed = aKey.some(function (vKey) {
-			var sAlias, sKeyPath, aPath, sPropertyName, oType, vValue;
-
-			if (typeof vKey === "string") {
-				sAlias = sKeyPath = vKey;
-			} else {
-				sAlias = Object.keys(vKey)[0];
-				sKeyPath = vKey[sAlias];
-			}
-			aPath = sKeyPath.split("/");
-
-			vValue = _Helper.drillDown(oInstance, aPath);
-			if (vValue === undefined) {
-				return true;
-			}
-
-			// the last path segment is the name of the simple property
-			sPropertyName = aPath.pop();
-			// find the type containing the simple property
-			oType = mTypeForMetaPath[_Helper.buildPath(sMetaPath, aPath.join("/"))];
-
-			vValue = encodeURIComponent(that.formatPropertyAsLiteral(vValue, oType[sPropertyName]));
-			aKeyProperties.push(bSingleKey ? vValue : encodeURIComponent(sAlias) + "=" + vValue);
-		});
-
-		return bFailed ? undefined : "(" + aKeyProperties.join(",") + ")";
-	};
-
-	/**
 	 * Returns the resource path relative to the service URL, including function arguments.
 	 *
 	 * @param {string} sPath
