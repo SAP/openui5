@@ -439,6 +439,7 @@ sap.ui.require([
 				var oActualRequest = {
 						groupId : sGroupId,
 						method : sMethod,
+						// This conversion would be done by the requestor code that is mocked away
 						url : that.oModel.oRequestor.convertResourcePath(sUrl),
 						headers : mHeaders,
 						payload : oPayload
@@ -454,6 +455,7 @@ sap.ui.require([
 					oResponse = oExpectedRequest.response;
 					delete oExpectedRequest.response;
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
+					// This conversion would be done by the requestor code that is mocked away
 					oResponse = that.oModel.oRequestor.doConvertResponse(oResponse, sMetaPath);
 				}
 

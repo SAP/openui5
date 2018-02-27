@@ -275,7 +275,7 @@ sap.ui.define([
 	 * @param {string} sV4KeyPredicate
 	 *   The OData V4 key predicate
 	 * @param {string} sPath
-	 *   The path of the entity described by the key predicate
+	 *   The binding path of the entity described by the key predicate
 	 * @returns {string}
 	 *   The corresponding OData V2 key predicate
 	 */
