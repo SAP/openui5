@@ -334,6 +334,10 @@ sap.ui.require([
 
 			assert.strictEqual(oBinding.oCachePromise.getResult(),
 				oFixture.sTarget === "base" ? oCache : undefined);
+
+			// code under test
+			// #deregisterChange is not called again, if #setContext is called with the same context
+			oBinding.setContext(oTargetContext);
 		});
 	});
 	//TODO cache promise is NOT always fulfilled
