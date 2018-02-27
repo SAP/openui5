@@ -36,6 +36,59 @@ sap.ui.define([
 	};
 	asyncTestsuite("XMLView Factory", oConfig);
 
+	QUnit.module("Additional tests");
+
+	// error
+	QUnit.test("Error in template - no default aggregation defined", function(assert) {
+		var sXml = [
+				'<core:View xmlns:core="sap.ui.core" xmlns:m="sap.m" xmlns="http://www.w3.org/1999/xhtml">',
+				'	<m:Button>',
+				'		<m:Error/>',
+				'	</m:Button>',
+				'</core:View>'
+			].join(''),
+			sError = "Cannot add direct child without default aggregation defined for control sap.m.Button",
+			view;
+
+		return sap.ui.xmlview("erroneous_view_1", {async:true, viewContent:sXml}).loaded().catch(function(error) {
+			assert.equal(error.message, sError, "Must reject with an error");
+		});
+	});
+
+	QUnit.test("Error in template - text in aggregation", function(assert) {
+		var sXml = [
+			'<core:View xmlns:core="sap.ui.core" xmlns:m="sap.m" xmlns="http://www.w3.org/1999/xhtml">',
+			'	<m:Button>',
+			'		Error',
+			'	</m:Button>',
+			'</core:View>'
+			].join(''),
+			sError = "Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed: Error",
+			view;
+
+		return sap.ui.xmlview("erroneous_view_2", {async:true, viewContent:sXml}).loaded().catch(function(error) {
+			assert.equal(error.message, sError, "Must reject with an error");
+		});
+	});
+
+	QUnit.test("Error in controller", function() {
+		var sXml = [
+				'<core:View controllerName="example.mvc.test.error" xmlns:core="sap.ui.core">',
+				'</core:View>'
+			].join(''),
+			view;
+		// define erroneous controller
+		sap.ui.controller("example.mvc.test.error", {
+			onInit: function() {
+				throw new Error("Controller error");
+			}
+		});
+		return sap.ui.xmlview("erroneous_view_3", {async:true, viewContent:sXml}).loaded().catch(function(error) {
+			assert.equal(error.message, "Controller error", "Must reject with an error");
+		});
+	});
+
+
 	// ==== Cache-relevant test cases ===================================================
 
 	function viewFactory(mCacheSettings, mPreprocessors) {
