@@ -257,6 +257,11 @@ html.sap-desktop .sapUiCalItem:focus{
 	background-color: darken(@sapUiContentForegroundColor,5);
 }
 
+html[data-sap-ui-browser^="ed"].sap-desktop .sapUiCalItem:focus,
+html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalItem:focus {
+	border-style: dashed;
+}
+
 .sapUiCalMonthView .sapUiCalFirstWDay{
 	clear: both;
 	margin-left: 12.5%;
