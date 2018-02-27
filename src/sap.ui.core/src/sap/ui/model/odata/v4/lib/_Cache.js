@@ -168,7 +168,9 @@ sap.ui.define([
 						fnCallback(Number(vDeleteProperty), vCacheData);
 					} else {
 						if (vDeleteProperty) {
-							vCacheData[vDeleteProperty] = null;
+							// set to null and notify listeners
+							_Helper.updateCache(that.mChangeListeners, sParentPath, vCacheData,
+								Cache.makeUpdateData([vDeleteProperty], null));
 						} else { // deleting at root level
 							oEntity["$ui5.deleted"] = true;
 						}

@@ -41,6 +41,14 @@ sap.ui.define([
 			Then.onTheMainPage.checkSalesOrderLineItemNote(0,
 				"EPM DG: SO ID 0500000000 Item 0000000010");
 
+			// select the first Sales Order and delete Business Partner
+			When.onTheMainPage.selectFirstSalesOrder();
+			When.onTheMainPage.pressDeleteBusinessPartnerButton();
+			When.onTheSuccessInfo.confirm();
+			Then.onTheMainPage.checkInputValue("BPPhoneNumber", "");
+			Then.onTheMainPage.checkInputValue("BPCity", "");
+			Then.onTheMainPage.checkInputValue("BPPostalCode", "");
+
 			Then.onAnyPage.checkLog();
 		}
 	};
