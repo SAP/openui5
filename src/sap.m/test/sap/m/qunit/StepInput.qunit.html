@@ -997,11 +997,14 @@
 		});
 
 		QUnit.test("pageup and pagedown increases/decreases the value with a larger step", function (assert) {
+			var oSpyPageUp = this.spy(this.stepInput, "onsappageup"),
+				oSpyPageDown = this.spy(this.stepInput, "onsappagedown");
 			//act
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
 			this.clock.tick(1000);
 
 			//assert
+			assert.equal(oSpyPageUp.callCount, 1, "page up is called once");
 			equal(this.stepInput.getAggregation("_input")._getInputValue(), 6, "The input's value is increasing with step=step*2 after pageup");
 
 			//act
@@ -1009,6 +1012,7 @@
 			this.clock.tick(1000);
 
 			//assert
+			assert.equal(oSpyPageDown.callCount, 1, "page down is called once");
 			equal(this.stepInput.getAggregation("_input")._getInputValue(), 4,
 				"The input's value is decreasing with step=step*2 after pagedown");
 
@@ -1019,6 +1023,7 @@
 			this.clock.tick(1000);
 
 			//assert
+			assert.equal(oSpyPageUp.callCount, 2, "page up is called second time");
 			equal(Number(this.stepInput.getAggregation("_input")._getInputValue()) + this.stepInput.getValue(), 14,
 				"The input's value is decreasing with step=step*2 after pageup");
 		});
