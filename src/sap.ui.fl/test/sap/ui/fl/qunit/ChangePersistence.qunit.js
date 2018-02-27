@@ -74,7 +74,15 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		});
 	});
 
-	QUnit.test("when getChangesForComponent is called with a variantSection", function (assert) {
+	QUnit.test("when getChangesForComponent is called with no change cacheKey", function (assert) {
+		var oSettingsStoreInstanceStub = this.stub(Settings, "_storeInstance");
+		return this.oChangePersistence.getChangesForComponent({cacheKey : "<NO CHANGES>"}).then(function (aChanges) {
+			assert.equal(aChanges.length, 0, "then empty array is returned");
+			assert.equal(oSettingsStoreInstanceStub.callCount, 0 , "the _storeInstance function of the fl.Settings was not called.");
+		});
+	});
+
+	QUnit.test("when getChangesForComponent is called with a variantSection when changes section is not empty", function (assert) {
 		var oMockedWrappedContent = {
 			"changes" : {
 				"changes": [{
@@ -83,6 +91,55 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 						id: "controlId"
 					}
 				}],
+				"variantSection" : {
+					"variantManagementId" : {
+						"variants" : [{
+							"content" : {
+								"content" : {
+									"title": "variant 0"
+								},
+								"fileName": "variant0"
+							},
+							"controlChanges" : [],
+							"variantChanges" : {}
+						},
+							{
+								"content" : {
+									"content" : {
+										"title": "variant 1"
+									},
+									"fileName": "variant1"
+								},
+								"controlChanges" : [],
+								"variantChanges" : {}
+							}]
+					}
+				}
+			}
+		};
+
+		var fnSetChangeFileContentSpy = this.spy(this.oChangePersistence._oVariantController, "_setChangeFileContent");
+		var fnLoadInitialChangesStub = this.stub(this.oChangePersistence._oVariantController, "loadInitialChanges").returns([]);
+		var fnApplyChangesOnVariantManagementStub = this.stub(this.oChangePersistence._oVariantController, "_applyChangesOnVariantManagement");
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+
+		return this.oChangePersistence.getChangesForComponent().then(function () {
+			assert.ok(fnSetChangeFileContentSpy.calledOnce, "then _setChangeFileContent of VariantManagement called once as file content is not set");
+			assert.ok(fnLoadInitialChangesStub.calledOnce, "then loadDefaultChanges of VariantManagement called for the first time");
+			assert.ok(fnApplyChangesOnVariantManagementStub.calledOnce, "then applyChangesOnVariantManagement called once for one variant management reference, as file content is not set");
+		}).then(function () {
+			this.oChangePersistence.getChangesForComponent().then(function () {
+				assert.ok(fnSetChangeFileContentSpy.calledOnce, "then _setChangeFileContent of VariantManagement not called again as file content is set");
+				assert.ok(fnLoadInitialChangesStub.calledTwice, "then loadDefaultChanges of VariantManagement called again");
+				assert.ok(fnApplyChangesOnVariantManagementStub.calledOnce, "then applyChangesOnVariantManagement not called again as file content is set\"");
+			});
+		}.bind(this));
+	});
+
+	QUnit.test("when getChangesForComponent is called with a variantSection and changes section is empty", function (assert) {
+		var oMockedWrappedContent = {
+			"changes" : {
+				"changes": [],
 				"variantSection" : {
 					"variantManagementId" : {
 						"variants" : [{
@@ -286,14 +343,21 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		});
 	});
 
-	QUnit.test("getChangesForComponent shall return the changes for the component", function(assert) {
+	QUnit.test("getChangesForComponent shall return the changes for the component when variantSection is empty", function(assert) {
 
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [{
-			fileType: "change",
-			selector: {
-				id: "controlId"
-			}
-		}]}}));
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(
+			{
+				changes: {
+					changes: [
+						{
+							fileType: "change",
+							selector: {
+								id: "controlId"
+							}
+						}]
+				},
+				variantSection : {}
+			}));
 
 		return this.oChangePersistence.getChangesForComponent().then(function(changes) {
 			assert.strictEqual(changes.length, 1, "Changes is an array of length one");
