@@ -3250,7 +3250,7 @@ sap.ui.require([
 				"same.target" : {
 					"@Common.Description" : "",
 					"@Common.Label" : {
-						"new" : true // Note: no aggregation of properties here!
+						"old" : true // Note: no aggregation of properties here!
 					},
 					"@Common.Text" : ""
 				},
@@ -3275,7 +3275,7 @@ sap.ui.require([
 					"$Annotations" : {
 						"same.target" : {
 							"@Common.Description" : "",
-							"@Common.Label" : {
+							"@Common.Label" : { // illegal overwrite within $metadata, ignored!
 								"new" : true
 							}
 						},
@@ -3404,6 +3404,13 @@ sap.ui.require([
 	QUnit.test("_mergeAnnotations: with annotation files", function (assert) {
 		var mScope0 = {
 				"$EntityContainer" : "tea_busi.DefaultContainer",
+				"$Reference" : {
+					"../../../../default/iwbep/tea_busi_foo/0001/$metadata" : {
+						"$Include" : [
+							"tea_busi_foo.v0001."
+						]
+					}
+				},
 				"$Version" : "4.0",
 				"tea_busi." : {
 					"$kind" : "Schema",
@@ -3431,6 +3438,24 @@ sap.ui.require([
 				},
 				"tea_busi.Worker" : {
 					"$kind" : "EntityType"
+				}
+			},
+			mScope1 = {
+				"$Version" : "4.0",
+				"tea_busi_foo.v0001." : {
+					"$kind" : "Schema",
+					"$Annotations" : {
+						"tea_busi_foo.v0001.Product/Name" : {
+							"@Common.Label" : "from $metadata"
+						}
+					}
+				},
+				"tea_busi_foo.v0001.Product" : {
+					"$kind" : "EntityType",
+					"Name" : {
+						"$kind" : "Property",
+						"$Type" : "Edm.String"
+					}
 				}
 			},
 			mAnnotationScope1 = {
@@ -3475,6 +3500,9 @@ sap.ui.require([
 								"$Type" : "some.Record",
 								"Value" : "from annotation #2"
 							}
+						},
+						"tea_busi_foo.v0001.Product/Name" : {
+							"@Common.Label" : "from annotation #2"
 						}
 					}
 				}
@@ -3501,9 +3529,19 @@ sap.ui.require([
 							"Value" : "from annotation #2"
 						},
 						"@From.Annotation1" : "from annotation #1"
+					},
+					"tea_busi_foo.v0001.Product/Name" : {
+						"@Common.Label" : "from annotation #2"
 					}
 				},
 				"$EntityContainer" : "tea_busi.DefaultContainer",
+				"$Reference" : {
+					"../../../../default/iwbep/tea_busi_foo/0001/$metadata" : {
+						"$Include" : [
+							"tea_busi_foo.v0001."
+						]
+					}
+				},
 				"$Version" : "4.0",
 				"bar." : {
 					"$kind" : "Schema"
@@ -3549,6 +3587,24 @@ sap.ui.require([
 			"foo." : "/URI/1",
 			"tea_busi." : this.oMetaModel.sUrl
 		});
+
+		// prepare to load "cross-service reference"
+		this.oMetaModel.mSchema2MetadataUrl["tea_busi_foo.v0001."]
+			= "/a/default/iwbep/tea_busi_foo/0001/$metadata"; // simulate #validate of mScope0
+		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
+			.returns(SyncPromise.resolve(mScope0));
+		this.mock(this.oMetaModel.oRequestor).expects("read")
+			.withExactArgs("/a/default/iwbep/tea_busi_foo/0001/$metadata")
+			.returns(Promise.resolve(mScope1));
+		this.oMetaModelMock.expects("validate")
+			.withExactArgs("/a/default/iwbep/tea_busi_foo/0001/$metadata", mScope1)
+			.returns(mScope1);
+
+		// code under test
+		return this.oMetaModel.fetchObject("/tea_busi_foo.v0001.Product/Name@Common.Label")
+			.then(function (sLabel) {
+				assert.strictEqual(sLabel, "from annotation #2", "not overwritten by $metadata");
+			});
 	});
 
 	//*********************************************************************************************
