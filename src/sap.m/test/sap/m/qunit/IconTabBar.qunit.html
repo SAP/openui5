@@ -2842,9 +2842,7 @@
 					this.returnMockEvent = function(iKeyCode, sId) {
 						var oMockEventTest = {
 							keyCode: iKeyCode,
-							target: {
-								id: sId
-							}
+							srcControl: sap.ui.getCore().byId(sId)
 						};
 
 						return oMockEventTest;
@@ -2866,7 +2864,7 @@
 			QUnit.test("Drag&Drop initializing" , function(assert) {
 				// Assert
 				assert.strictEqual(this.oIconTabHeader.getEnableTabReordering(), true, 'IconTabBar is enabled for reordering"');
-				assert.strictEqual(this.oIconTabHeader.getAggregation("dragDropConfig").length, 1, 'Drag&Drop aggregation configuration should be added');
+				assert.strictEqual(this.oIconTabHeader.getAggregation("dragDropConfig").length, 2, 'Drag&Drop aggregation configuration should be added');
 				assert.strictEqual(this.oIconTabHeader1.getEnableTabReordering(), false, 'IconTabBar is not enabled for reordering"');
 				assert.strictEqual(this.oIconTabHeader1.getAggregation("dragDropConfig").length, 0, 'Drag&Drop aggregation configuration should be empty');
 			});
@@ -3101,9 +3099,7 @@
 					 this.returnMockEvent = function(iKeyCode, sId) {
 						var oMockEventTest = {
 							keyCode: iKeyCode,
-							target: {
-								id: sId
-							}
+							srcControl: sap.ui.getCore().byId(sId)
 						};
 
 						return oMockEventTest;
@@ -3278,9 +3274,7 @@
 					this.returnMockEvent = function(iKeyCode, sId) {
 						var oMockEventTest = {
 							keyCode: iKeyCode,
-							target: {
-								id: sId
-							}
+							srcControl: sap.ui.getCore().byId(sId)
 						};
 
 						return oMockEventTest;
@@ -3295,22 +3289,21 @@
 					this.oMockEvent = null;
 					this.oMockEvent2 = null;
 					this.oSelectList = null;
-					this.getSelectListId = null;
 				}
 			});
 
 			QUnit.test("Drag&Drop dropPosition: 'After'", function(assert) {
 				// Assert
-				assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "Tab 0", 'First Tab is "First Tab"');
-				assert.strictEqual(this.oSelectList.getItems()[0].getText(), "Tab 0", 'First Tab is "First Tab"');
+				assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "Tab 0", 'First Tab is "Tab 0"');
+				assert.strictEqual(this.oSelectList.getItems()[0].getText(), "Tab 0", 'First Tab is "Tab 0"');
 
 				// Act
 				this.oSelectList._handleDragAndDrop(this.oMockEvent);
 				// Assert
-				assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "Tab 1", "In 'First tab' position is 'Second tab'");
-				assert.strictEqual(this.oSelectList.getItems()[0].getText(), "Tab 1", "In 'First tab' position is 'Second tab'");
-				assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "Tab 0", "'Firs tab' is at last position");
-				assert.strictEqual(this.oSelectList.getItems()[2].getText(), "Tab 0", "'Firs tab' is at last position");
+				assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "Tab 1", "In 'First tab' position is 'Tab 1'");
+				assert.strictEqual(this.oSelectList.getItems()[0].getText(), "Tab 1", "In 'First tab' position is 'Tab 1'");
+				assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "Tab 0", "'Tab 0' is at third position");
+				assert.strictEqual(this.oSelectList.getItems()[2].getText(), "Tab 0", "'Tab 0' is at third position");
 			});
 			QUnit.test("Drag&Drop dropPosition: 'Before'", function(assert) {
 				// Assert
@@ -3324,6 +3317,174 @@
 				assert.strictEqual(this.oIconTabBar.getItems()[1].getText(), "Tab 0", "'Firs tab' is at third position");
 				assert.strictEqual(this.oSelectList.getItems()[1].getText(), "Tab 0", "'Firs tab' is at third position");
 			});
+
+            QUnit.module("Drag&Drop: Between IconTabHeader and overflow list", {
+                beforeEach: function() {
+                    this.oIconTabBar = getIconTabBarWithOverflowList();
+
+                    sap.ui.getCore().applyChanges();
+                    this.oIconTabHeader = this.oIconTabBar.getAggregation("_header");
+                    this.oSelectList = this.oIconTabHeader._getSelectList();
+                    this.oIconTabHeader._overflowButtonPress();
+                    var selectListItems = this.oSelectList.getAggregation("items");
+
+
+                    function getSelectListId (iElement) {
+                        return  selectListItems[iElement].sId;
+                    };
+
+                    this.oIconTabBar.placeAt('qunit-fixture');
+                    this.oMockEvent = {
+                        getParameter: function(parameter) {
+                            switch(parameter) {
+                                case "dropPosition" :
+                                    return "After";
+                                    break;
+                                case "draggedControl" :
+                                    return  sap.ui.getCore().byId(getSelectListId(0));
+                                    break;
+                                case "droppedControl" :
+                                    return sap.ui.getCore().byId("idTab3");
+                                    break;
+                            }
+                        }
+                    };
+
+                    this.oMockEvent2 = {
+                        getParameter: function(parameter) {
+                            switch(parameter) {
+                                case "dropPosition" :
+                                    return "Before";
+                                    break;
+                                case "draggedControl" :
+                                    return  sap.ui.getCore().byId(getSelectListId(0));
+                                    break;
+                                case "droppedControl" :
+                                    return sap.ui.getCore().byId("idTab3");
+                                    break;
+                            }
+                        }
+                    };
+                },
+                afterEach: function() {
+                    this.oIconTabBar.destroy();
+                    this.oIconTabHeader.destroy();
+                    this.oMockEvent = null;
+                    this.oMockEvent2 = null;
+                    this.oSelectList = null;
+                }
+            });
+
+            QUnit.test("Drag&Drop dropPosition: 'After'", function(assert) {
+                // Assert
+                assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "Tab 0", 'First Tab is "Tab 0"');
+                assert.strictEqual(this.oSelectList.getItems()[0].getText(), "Tab 0", 'First Tab is "Tab 0"');
+
+                // Act
+                this.oIconTabHeader._handleDragAndDrop(this.oMockEvent);
+                // Assert
+                assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "Tab 1", "In 'First tab' position is 'Tab 1'");
+                assert.strictEqual(this.oSelectList.getItems()[0].getText(), "Tab 1", "In 'First tab' position is 'Tab 1'");
+                assert.strictEqual(this.oIconTabBar.getItems()[3].getText(), "Tab 0", "'Tab 0' is at last position");
+                assert.strictEqual(this.oSelectList.getItems()[3].getText(), "Tab 0", "'Tab 0' is at last position");
+            });
+            QUnit.test("Drag&Drop dropPosition: 'Before'", function(assert) {
+                // Assert
+                assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "Tab 0", 'First Tab is "Tab 0"');
+                assert.strictEqual(this.oSelectList.getItems()[0].getText(), "Tab 0", 'First Tab is "Tab 0"');
+                // Act
+                this.oIconTabHeader._handleDragAndDrop(this.oMockEvent2);
+                // Assert
+                assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "Tab 1", "In 'Tab 0' position is 'Tab 1'");
+                assert.strictEqual(this.oSelectList.getItems()[0].getText(), "Tab 1", "In 'Tab ' position is 'Tab 1'");
+                assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "Tab 0", "'Tab 0' is at third position");
+                assert.strictEqual(this.oSelectList.getItems()[2].getText(), "Tab 0", "'Tab 0' is at third position");
+            });
+
+            QUnit.module("Drag&Drop: Between overflow list and IconTabHeader", {
+                beforeEach: function() {
+                    this.oIconTabBar = getIconTabBarWithOverflowList();
+
+                    sap.ui.getCore().applyChanges();
+                    this.oIconTabHeader = this.oIconTabBar.getAggregation("_header");
+                    this.oSelectList = this.oIconTabHeader._getSelectList();
+                    this.oIconTabHeader._overflowButtonPress();
+                    var selectListItems = this.oSelectList.getAggregation("items");
+
+
+                    function getSelectListId (iElement) {
+                        return  selectListItems[iElement].sId;
+                    };
+
+                    this.oIconTabBar.placeAt('qunit-fixture');
+                    this.oMockEvent = {
+                        getParameter: function(parameter) {
+                            switch(parameter) {
+                                case "dropPosition" :
+                                    return "After";
+                                    break;
+                                case "draggedControl" :
+                                    return  sap.ui.getCore().byId("idTab0");
+                                    break;
+                                case "droppedControl" :
+                                    return sap.ui.getCore().byId(getSelectListId(3));
+                                    break;
+                            }
+                        }
+                    };
+
+                    this.oMockEvent2 = {
+                        getParameter: function(parameter) {
+                            switch(parameter) {
+                                case "dropPosition" :
+                                    return "Before";
+                                    break;
+                                case "draggedControl" :
+                                    return  sap.ui.getCore().byId("idTab0");
+                                    break;
+                                case "droppedControl" :
+                                    return sap.ui.getCore().byId(getSelectListId(3));
+                                    break;
+                            }
+                        }
+                    };
+
+
+                },
+                afterEach: function() {
+                    this.oIconTabBar.destroy();
+                    this.oIconTabHeader.destroy();
+                    this.oMockEvent = null;
+                    this.oMockEvent2 = null;
+                    this.oSelectList = null;
+                }
+            });
+
+            QUnit.test("Drag&Drop dropPosition: 'After'", function(assert) {
+                // Assert
+                assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "Tab 0", 'First Tab is "Tab 0"');
+                assert.strictEqual(this.oSelectList.getItems()[0].getText(), "Tab 0", 'First Tab is "Tab 0"');
+
+                // Act
+                this.oSelectList._handleDragAndDrop(this.oMockEvent);
+                // Assert
+                assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "Tab 1", "In 'First tab' position is 'Tab 1'");
+                assert.strictEqual(this.oSelectList.getItems()[0].getText(), "Tab 1", "In 'First tab' position is 'Tab 1'");
+                assert.strictEqual(this.oIconTabBar.getItems()[3].getText(), "Tab 0", "'Tab 0' is at forth position");
+                assert.strictEqual(this.oSelectList.getItems()[3].getText(), "Tab 0", "'Tab 0' is at forth position");
+            });
+            QUnit.test("Drag&Drop dropPosition: 'Before'", function(assert) {
+                // Assert
+                assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "Tab 0", 'First Tab is "Tab 0"');
+                assert.strictEqual(this.oSelectList.getItems()[0].getText(), "Tab 0", 'First Tab is "Tab 0"');
+                // Act
+                this.oSelectList._handleDragAndDrop(this.oMockEvent2);
+                // Assert
+                assert.strictEqual(this.oIconTabBar.getItems()[0].getText(), "Tab 1", "In 'First tab' position is 'Tab 1'");
+                assert.strictEqual(this.oSelectList.getItems()[0].getText(), "Tab 1", "In 'First tab' position is 'Tab 1'");
+                assert.strictEqual(this.oIconTabBar.getItems()[2].getText(), "Tab 0", "'Tab 0' is at third position");
+                assert.strictEqual(this.oSelectList.getItems()[2].getText(), "Tab 0", "'Tab 0' is at third position");
+            });
 		</script>
 
 	</head>

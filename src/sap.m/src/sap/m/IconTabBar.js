@@ -189,6 +189,8 @@ sap.ui.define([
 
 			/**
 			 * Specifies whether tab reordering is enabled. Relevant only for desktop devices.
+			 * The {@link sap.m.IconTabSeparator sap.m.IconTabSeparator} cannot be dragged  and dropped
+			 * Items can be moved around {@link sap.m.IconTabSeparator sap.m.IconTabSeparator}
 			 * @since 1.46
 			 */
 			enableTabReordering : {type : "boolean", group : "Behavior", defaultValue : false}

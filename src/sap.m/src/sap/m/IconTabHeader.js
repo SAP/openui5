@@ -19,8 +19,9 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/Icon',
-	'sap/ui/core/dnd/DragDropInfo',
 	'./IconTabBarDragAndDropUtil',
+	'sap/ui/core/dnd/DragInfo',
+	'sap/ui/core/dnd/DropInfo',
 	'./IconTabHeaderRenderer'
 ],
 function(
@@ -38,8 +39,9 @@ function(
 	Device,
 	ResizeHandler,
 	Icon,
-	DragDropInfo,
 	IconTabBarDragAndDropUtil,
+	DragInfo,
+	DropInfo,
 	IconTabHeaderRenderer
 ) {
 	"use strict";
@@ -137,6 +139,8 @@ function(
 
 			/**
 			 * Specifies whether tab reordering is enabled. Relevant only for desktop devices.
+			 * The {@link sap.m.IconTabSeparator sap.m.IconTabSeparator} cannot be dragged  and dropped
+			 * Items can be moved around {@link sap.m.IconTabSeparator sap.m.IconTabSeparator}
 			 * @since 1.46
 			 */
 			enableTabReordering : {type : "boolean", group : "Behavior", defaultValue : false}
@@ -151,9 +155,9 @@ function(
 			/**
 			 * Defines the drag-and-drop configuration via {@link sap.ui.core.dnd.DragDropInfo}
 			 * This configuration is set internally by the control
-			 * @private
+			 * FOR INTERNAL USE ONLY
 			 */
-			dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropInfo", multiple : true}
+			dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true}
 		},
 		events : {
 
@@ -475,8 +479,38 @@ function(
 		}
 
 		if (this._oOverflowButton) {
+			this._oOverflowButton.removeEventDelegate(this._onDragOverEventDelegate);
 			this._oOverflowButton.destroy();
 			this._oOverflowButton = null;
+		}
+	};
+
+	/**
+	 * Handles onDragOver of overflow button.
+	 * @private
+	 */
+	IconTabHeader.prototype._handlesOnDragOver = function() {
+		if (!this._oPopover || !this._oPopover.isOpen()) {
+			this._overflowButtonPress();
+		}
+	};
+
+	/**
+	 * Sets or remove Drag and Drop configurations.
+	 * @private
+	 */
+	IconTabHeader.prototype._setsDragAndDropConfigurations = function() {
+		var oOverflowButton = this._getOverflowButton();
+
+		if (!this.getEnableTabReordering() && this.getDragDropConfig().length) {
+			//Destroying Drag&Drop aggregation
+			this.destroyDragDropConfig();
+		} else if (this.getEnableTabReordering() && !this.getDragDropConfig().length) {
+
+			//open select list when drag element is over it
+			oOverflowButton.addEventDelegate(this._onDragOverEventDelegate);
+			//Adding Drag&Drop configuration to the dragDropConfig aggregation if needed
+			IconTabBarDragAndDropUtil.setDragDropAggregations(this, DragInfo, DropInfo, "Horizontal");
 		}
 	};
 
@@ -488,6 +522,9 @@ function(
 			bIsParentIconTabBar = oParent instanceof sap.m.IconTabBar,
 			bIsParentToolHeader = oParent && oParent.getMetadata().getName() == 'sap.tnt.ToolHeader';
 			this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
+			this._onDragOverEventDelegate = {
+				ondragover: this._handlesOnDragOver.bind(this)
+			};
 
 		if (this._sResizeListenerId) {
 			ResizeHandler.deregister(this._sResizeListenerId);
@@ -535,21 +572,7 @@ function(
 		this._isTouchScrollingDisabled = this.isTouchScrollingDisabled();
 		this._oScroller.setHorizontal(!this._isTouchScrollingDisabled && (!this.getEnableTabReordering() || !Device.system.desktop));
 
-
-		if (!this.getEnableTabReordering() && this.getDragDropConfig().length) {
-			//Destroying Drag&Drop aggregation
-			this.destroyDragDropConfig();
-		} else if (this.getEnableTabReordering() && !this.getDragDropConfig().length) {
-			//Adding Drag&Drop configuration to the dragDropConfig aggregation if needed
-			var oDragDropInfo = new DragDropInfo({
-				sourceAggregation: "items",
-				targetAggregation: "items",
-				dropPosition: "Between",
-				dropLayout: "Horizontal",
-				drop: this._handleDragAndDrop.bind(this)
-			});
-			this.addAggregation("dragDropConfig", oDragDropInfo, true);
-		}
+		this._setsDragAndDropConfigurations();
 
 		// Deregister resize event before re-rendering
 		if (this._sResizeListenerNoFlexboxSupportId) {
@@ -1601,20 +1624,45 @@ function(
 	/* =========================================================== */
 
 	/**
-	 * Handles drop event for drag &  drop functionality
+	 * Handles drop event for drag &  drop functionality in sap.m.IconTabHeader
 	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	IconTabHeader.prototype._handleDragAndDrop = function (oEvent) {
-		var oDropPosition = oEvent.getParameter("dropPosition"),
+		var sDropPosition = oEvent.getParameter("dropPosition"),
 			oDraggedControl = oEvent.getParameter("draggedControl"),
-			oDroppedControl = oEvent.getParameter("droppedControl");
+			oDroppedControl = oEvent.getParameter("droppedControl"),
+			isParentSelectList = oDraggedControl.getParent().getMetadata().getName() === "sap.m.IconTabBarSelectList";
 
-		IconTabBarDragAndDropUtil.handleDrop.call(this, oDropPosition, oDraggedControl, oDroppedControl);
+		//drag and drop is between overflow list and header
+		if (isParentSelectList) {
+			this._handleDragAndDropBetweenHeaderAndList(sDropPosition, oDroppedControl, oDraggedControl);
+		} else {
+			IconTabBarDragAndDropUtil.handleDrop(this, sDropPosition, oDraggedControl, oDroppedControl, false);
+		}
+
 		this._initItemNavigation();
 		oDraggedControl.$().focus();
 	};
 
+	/**
+	 * Handles drop event for drag &  drop between sap.m.IconTabHeader and sap.m.IconTabBarSelectList.
+	 * @param {string} sDropPosition position where the control will be dropped (e.g. Before/After)
+	 * @param {object} oDraggedControl item that is dragged
+	 * @param {object} oDroppedControl item that the dragged control will be dropped on
+	 * @private
+	 */
+	IconTabHeader.prototype._handleDragAndDropBetweenHeaderAndList = function (sDropPosition, oDroppedControl, oDraggedControl) {
+		var oSelectList = this._getSelectList(),
+			oDraggedAndDroppedItemFromSelectList = IconTabBarDragAndDropUtil.getDraggedDroppedItemsFromList(oSelectList.getAggregation("items"), oDraggedControl, oDroppedControl);
+			if (!oDraggedAndDroppedItemFromSelectList) {
+
+				return;
+			}
+			IconTabBarDragAndDropUtil.handleDrop(this, sDropPosition, oDraggedControl._tabFilter, oDroppedControl, false);
+			IconTabBarDragAndDropUtil.handleDrop(oSelectList, sDropPosition, oDraggedControl, oDraggedAndDroppedItemFromSelectList.oDroppedControlFromList, false);
+			oSelectList._initItemNavigation();
+	};
 	/* =========================================================== */
 	/*           end: tab drag-drop		                           */
 	/* =========================================================== */
@@ -1627,7 +1675,7 @@ function(
 	 * Moves a tab by a specific key code
 	 *
 	 * @param {object} oTab The event object
-	 * @param {int} iKeyCode The key code
+	 * @param {number} iKeyCode Key code
 	 * @private
 	 */
 	IconTabHeader.prototype._moveTab = function (oTab, iKeyCode) {
@@ -1649,7 +1697,7 @@ function(
 			return;
 		}
 
-		var oTab = sap.ui.getCore().byId(oEvent.target.id);
+		var oTab = oEvent.srcControl;
 		this._moveTab(oTab, oEvent.keyCode);
 		oTab.$().focus();
 	};

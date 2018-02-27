@@ -8,11 +8,12 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/delegate/ItemNavigation',
-	'sap/ui/core/dnd/DragDropInfo',
 	'./IconTabBarDragAndDropUtil',
-	'./IconTabBarSelectListRenderer'
+	'./IconTabBarSelectListRenderer',
+	'sap/ui/core/dnd/DragInfo',
+	'sap/ui/core/dnd/DropInfo'
 ],
-	function(jQuery, library, Control, ItemNavigation, DragDropInfo, IconTabBarDragAndDropUtil, IconTabBarSelectListRenderer) {
+	function(jQuery, library, Control, ItemNavigation, IconTabBarDragAndDropUtil, IconTabBarSelectListRenderer, DragInfo, DropInfo) {
 		"use strict";
 
 		/**
@@ -46,9 +47,9 @@ sap.ui.define([
 					/**
 					 * Defines the drag-and-drop configuration via {@link sap.ui.core.dnd.DragDropInfo}
 					 * This configuration is set internally by the control
-					 * @private
+					 * FOR INTERNAL USE ONLY
 					 */
-					dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropInfo", multiple : true}
+					dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true}
 				},
 				events: {
 					/**
@@ -103,6 +104,19 @@ sap.ui.define([
 		};
 
 		/**
+		 * Sets or remove Drag and Drop configuration.
+		 * @private
+		 */
+		IconTabBarSelectList.prototype._setsDragAndConfiguration = function() {
+			if (!this._iconTabHeader.getEnableTabReordering() && this.getDragDropConfig().length) {
+				//Destroying Drag&Drop aggregation
+				this.destroyDragDropConfig();
+			} else if (this._iconTabHeader.getEnableTabReordering() && !this.getDragDropConfig().length) {
+				IconTabBarDragAndDropUtil.setDragDropAggregations(this, DragInfo, DropInfo, "Vertical");
+			}
+		};
+
+		/**
 		 * Called before the control is rendered.
 		 *
 		 * @private
@@ -112,20 +126,7 @@ sap.ui.define([
 				return;
 			}
 
-			if (!this._iconTabHeader.getEnableTabReordering() && this.getDragDropConfig().length) {
-				//Destroying Drag&Drop aggregation
-				this.destroyDragDropConfig();
-			} else if (this._iconTabHeader.getEnableTabReordering() && !this.getDragDropConfig().length) {
-				//Adding Drag&Drop configuration to the dragDropConfig aggregation if needed
-				var oDragDropInfo = new DragDropInfo({
-					sourceAggregation: "items",
-					targetAggregation: "items",
-					dropPosition: "Between",
-					dragEnter: this._visualizeIndicator.bind(this),
-					drop: this._handleDragAndDrop.bind(this)
-				});
-				this.addAggregation("dragDropConfig", oDragDropInfo, true);
-			}
+			this._setsDragAndConfiguration();
 		};
 
 		/**
@@ -272,29 +273,32 @@ sap.ui.define([
 		IconTabBarSelectList.prototype._handleDragAndDrop = function (oEvent) {
 			var oDropPosition = oEvent.getParameter("dropPosition"),
 				oDraggedControl = oEvent.getParameter("draggedControl"),
-				oDroppedControl = oEvent.getParameter("droppedControl");
+				oDroppedControl = oEvent.getParameter("droppedControl"),
+				bDraggedHeaderItem = oDraggedControl.getParent().getMetadata().getName() === "sap.m.IconTabHeader",
+				oDragDropItemsFromList;
 
-			//Handle Drop event for sap.m.IconTabHeader
-			IconTabBarDragAndDropUtil.handleDrop.call(this._iconTabHeader, oDropPosition, oDraggedControl._tabFilter, oDroppedControl._tabFilter);
-			this._iconTabHeader._initItemNavigation();
+				if (bDraggedHeaderItem) {
+					oDragDropItemsFromList = IconTabBarDragAndDropUtil.getDraggedDroppedItemsFromList(this.getAggregation("items"), oDraggedControl, oDroppedControl);
+					this._handleDropOfListAndHeaderItems(oDropPosition, oDragDropItemsFromList.oDraggedControlFromList, oDragDropItemsFromList.oDroppedControlFromList, oDraggedControl, oDroppedControl._tabFilter);
+				} else {
+					this._handleDropOfListAndHeaderItems(oDropPosition,oDraggedControl, oDroppedControl, oDraggedControl._tabFilter, oDroppedControl._tabFilter);
+				}
 
-			//Handle Drop event for sap.m.IconTabBarSelectList
-			IconTabBarDragAndDropUtil.handleDrop.call(this, oDropPosition, oDraggedControl, oDroppedControl);
 			this._initItemNavigation();
 			oDraggedControl.$().focus();
 		};
 
 		/**
-		 * Visualizing drag indicator
-		 * @param {jQuery.Event} oEvent
+		 * Handle drag and drop in overflow list and header
 		 * @private
 		 */
-		IconTabBarSelectList.prototype._visualizeIndicator = function (oEvent) {
-			var oIndicator = oEvent.getParameter("dragSession").getIndicator();
-			//IconTabBarSelectList is in a pop up, indicator needs a bigger z-index
-			if (oIndicator) {
-				oIndicator.style.zIndex = 100;
-			}
+		IconTabBarSelectList.prototype._handleDropOfListAndHeaderItems = function (oDropPosition, oDraggedControl, oDroppedControl, oDragControlHeader, oDropControlHeader, bIgnoreRTL) {
+			//Handle Drop event for sap.m.IconTabBarSelectList
+			IconTabBarDragAndDropUtil.handleDrop(this, oDropPosition, oDraggedControl, oDroppedControl, true);
+
+			//Handle Drop event for sap.m.IconTabHeader
+			IconTabBarDragAndDropUtil.handleDrop(this._iconTabHeader, oDropPosition, oDragControlHeader, oDropControlHeader, true);
+			this._iconTabHeader._initItemNavigation();
 		};
 
 		/* =========================================================== */
@@ -311,7 +315,7 @@ sap.ui.define([
 			if (!this._iconTabHeader.getEnableTabReordering()) {
 				return;
 			}
-			var oTabToBeMoved = sap.ui.getCore().byId(oEvent.target.id),
+			var oTabToBeMoved = oEvent.srcControl,
 				iKeyCode = oEvent.keyCode;
 
 			IconTabBarDragAndDropUtil.moveItem.call(this, oTabToBeMoved, iKeyCode);
