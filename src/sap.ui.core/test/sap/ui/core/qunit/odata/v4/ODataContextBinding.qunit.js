@@ -68,6 +68,7 @@ sap.ui.require([
 		assert.ok(oBinding.hasOwnProperty("sUpdateGroupId"));
 
 		assert.deepEqual(oBinding.mAggregatedQueryOptions, {});
+		assert.strictEqual(oBinding.bAggregatedQueryOptionsInitial, true);
 		assert.strictEqual(oBinding.aChildCanUseCachePromises.length, 0);
 	});
 
@@ -1620,6 +1621,7 @@ sap.ui.require([
 			// check correct sequence: on fetchCache call, aggregated query options must be reset
 			.callsFake(function () {
 				assert.deepEqual(oBinding.mAggregatedQueryOptions, {});
+				assert.strictEqual(oBinding.bAggregatedQueryOptionsInitial, true);
 				assert.strictEqual(oBinding.mCacheByContext, undefined);
 			});
 		this.mock(this.oModel).expects("getDependentBindings")
@@ -1632,6 +1634,7 @@ sap.ui.require([
 		oFireChangeExpectation = oBindingMock.expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Change});
 		oBinding.mAggregatedQueryOptions = {$select : ["Team_Id"]};
+		oBinding.bAggregatedQueryOptionsInitial = false;
 		oBinding.mCacheByContext = {};
 
 		// code under test

@@ -267,6 +267,7 @@ sap.ui.require([
 			mParameters);
 
 		assert.deepEqual(oBinding.mAggregatedQueryOptions, {});
+		assert.strictEqual(oBinding.bAggregatedQueryOptionsInitial, true);
 		assert.strictEqual(oBinding.aApplicationFilters, aFilters);
 		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
 		assert.strictEqual(oBinding.sChangeReason, undefined);
