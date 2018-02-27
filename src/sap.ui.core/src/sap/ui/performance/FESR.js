@@ -177,7 +177,7 @@ sap.ui.define(['sap/ui/thirdparty/URI', 'sap/ui/Device', 'sap/ui/performance/E2E
 					sFESRTransactionId = Passport.createGUID();
 				}
 			};
-		} else if (!bActive) {
+		} else if (!bActive && bFesrActive) {
 			bFesrActive = false;
 			Interaction.setActive(false);
 			XHRInterceptor.unregister("FESR", "open");
