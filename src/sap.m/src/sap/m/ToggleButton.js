@@ -36,6 +36,7 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.m.ToggleButton
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/button/ Toggle Button}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ToggleButton = Button.extend("sap.m.ToggleButton", /** @lends sap.m.ToggleButton.prototype */ { metadata : {

@@ -52,6 +52,7 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.m.FacetFilterList
+	 * @see {@link topic:395392f30f2a4c4d80d110d5f923da77/ Facet Filter List}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FacetFilterList = List.extend("sap.m.FacetFilterList", /** @lends sap.m.FacetFilterList.prototype */ { metadata : {
