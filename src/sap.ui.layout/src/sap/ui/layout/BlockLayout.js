@@ -64,6 +64,7 @@ sap.ui.define([
 		 * @public
 		 * @since 1.34
 		 * @alias sap.ui.layout.BlockLayout
+		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/block-layout/ Block Layout}
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var BlockLayout = Control.extend("sap.ui.layout.BlockLayout", { metadata : {
