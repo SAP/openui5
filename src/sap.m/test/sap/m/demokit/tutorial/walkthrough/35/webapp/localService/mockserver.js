@@ -9,7 +9,7 @@ sap.ui.define([
 
 			// create
 			var oMockServer = new MockServer({
-				rootUri: "/destinations/northwind/V2/Northwind/Northwind.svc/"
+				rootUri: "https://services.odata.org/V2/Northwind/Northwind.svc/"
 			});
 
 			var oUriParameters = jQuery.sap.getUriParameters();
