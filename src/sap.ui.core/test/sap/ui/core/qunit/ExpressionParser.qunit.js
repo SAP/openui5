@@ -147,6 +147,25 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("Parsing a full string with embedded binding", function (assert) {
+		var oExpression;
+
+		function resolveBinding(sInput, iStart) {
+			assert.strictEqual(sInput, " ${A} ");
+			assert.strictEqual(iStart, 2);
+			return {
+				result: {/*bindingInfo*/},
+				at : 5
+			};
+		}
+
+		// code under test
+		oExpression = ExpressionParser.parse(resolveBinding, " ${A} ");
+
+		assert.strictEqual(oExpression.at, 6);
+	});
+
+	//*********************************************************************************************
 	[
 		{ binding: "{=${target>sap:semantics}}" },
 		{ binding: "{=${ b}   }" },
@@ -376,6 +395,9 @@ sap.ui.require([
 	checkFixtures("odata fillUriTemplate", [{
 		expression: "{=odata.fillUriTemplate('http://foo.com/{p1,p2}', {'p1': 'v1', 'p2': 'v2'})}",
 		result: "http://foo.com/v1,v2"
+	}, {
+		expression: "{=odata.fillUriTemplate('http://foo.com/p1,p2')}",
+		result: "http://foo.com/p1,p2"
 	}]);
 
 	//*********************************************************************************************
