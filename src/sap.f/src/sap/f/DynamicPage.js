@@ -1592,11 +1592,11 @@ sap.ui.define([
 	 * Handles the pin/unpin button press event, which results in the pinning/unpinning of the <code>DynamicPageHeader</code>.
 	 * @private
 	 */
-	DynamicPage.prototype._onPinUnpinButtonPress = function (oEvent) {
+	DynamicPage.prototype._onPinUnpinButtonPress = function () {
 		if (this._bPinned) {
-			this._unPin(oEvent);
+			this._unPin();
 		} else {
-			this._pin(oEvent);
+			this._pin();
 			this._restorePinButtonFocus();
 		}
 	};
