@@ -288,11 +288,13 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 		sComponent = sComponent || sDefaultComponent || '';
 		if (!_bDefault || mMaxLevel[sComponent] == null) {
 			mMaxLevel[sComponent] = iLogLevel;
-			var mBackMapping = [];
-			Object.keys(oLogger.Level).forEach(function(v, idx) {
-				mBackMapping[idx] = v;
+			var sLogLevel;
+			Object.keys(oLogger.Level).forEach(function(sLevel) {
+				if (oLogger.Level[sLevel] === iLogLevel) {
+					sLogLevel = sLevel;
+				}
 			});
-			log(oLogger.Level.INFO, "Changing log level " + (sComponent ? "for '" + sComponent + "' " : "") + "to " + mBackMapping[iLogLevel], "", "sap.base.log");
+			log(oLogger.Level.INFO, "Changing log level " + (sComponent ? "for '" + sComponent + "' " : "") + "to " + sLogLevel, "", "sap.base.log");
 		}
 	};
 
