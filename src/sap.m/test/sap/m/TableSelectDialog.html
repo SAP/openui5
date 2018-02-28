@@ -63,7 +63,7 @@
 				}
 			} else {
 				// filter with empty array to reset filters
-				itemsBinding.filter(aFilters);
+				itemsBinding.filter(aFilters, "Application");
 			}
 		};
 
@@ -88,7 +88,7 @@
 			var aFilters = fnCreatePrefilter(sSearchValue),
 				itemsBinding = oTableSelectDialog1.getBinding("items");
 
-			itemsBinding.filter(aFilters);
+			itemsBinding.filter(aFilters, "Application");
 		};
 
 		/* dialog data */
