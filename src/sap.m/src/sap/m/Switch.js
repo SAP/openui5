@@ -36,7 +36,11 @@ function(
 		 * @param {object} [mSettings] initial settings for the new control
 		 *
 		 * @class
-		 * A switch is a user interface control on mobile devices that is used for change between binary states. The user can also drag the button handle or tap to change the state.
+		 * A switch is a user interface control on mobile devices that is used for change between binary states.
+		 * The user can also drag the button handle or tap to change the state.
+		 *
+		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/switch/ Switch}
+		 *
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE

@@ -35,6 +35,9 @@ sap.ui.define([
 	 *
 	 * From version 1.30, new image mode sap.m.ImageMode.Background is added. When this mode is set, the src property is set using the css style 'background-image'. The properties 'backgroundSize', 'backgroundPosition', 'backgroundRepeat' have effect only when image is in sap.m.ImageMode.Background mode. In order to make the high density image correctly displayed, the 'backgroundSize' should be set to the dimension of the normal density version.
 	 *
+	 * @see {@link topic:f86dbe9d7f7d48dea5286003b1322165 Image}
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/image/ Image}
+	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IFormContent
 	 *

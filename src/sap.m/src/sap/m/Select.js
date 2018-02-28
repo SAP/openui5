@@ -71,6 +71,9 @@ function(
 		 *
 		 * @class
 		 * The <code>sap.m.Select</code> control provides a list of items that allows users to select an item.
+		 *
+		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/select/ Select}
+		 *
 		 * @extends sap.ui.core.Control
 		 * @implements sap.ui.core.IFormContent
 		 *

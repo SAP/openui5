@@ -106,6 +106,8 @@ sap.ui.define([
 	 *
 	 * The height of the toolbar changes on desktop, tablet, and smartphones.
 	 *
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/toolbar-overview/#overflow-generic Overflow Toolbar}
+	 *
 	 * @extends sap.m.Toolbar
 	 * @implements sap.ui.core.Toolbar,sap.m.IBar
 	 *
