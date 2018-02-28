@@ -757,6 +757,21 @@
 				})
 			});
 
+			var oDialogStretchedWithContentSize = new sap.m.Dialog("stretchedDialogWithContentSize", {
+				title: "Stretched Dialog with content size set",
+				content: new sap.ui.core.HTML({
+					content: '<div>Lipsum limple text</div>'
+				}),
+				contentHeight: "100%",
+				contentWidth: "100%",
+				stretch: true,
+				beginButton: new sap.m.Button("stretchedDialogWithContentSizeCloseButton", {
+					text: "Cancel", press: function () {
+						oDialogStretchedWithContentSize.close();
+					}
+				})
+			});
+
 			var oDialogStretchedOnMobile = new sap.m.Dialog({
 				title: "Streched Dialog on Mobile",
 				stretchOnPhone: true,
@@ -1320,7 +1335,14 @@
                         press: function () {
                             oDialogStretched.open();
                         }
-                    }),
+					}),
+					new sap.m.Button('stretchedDialogWithContentSizeButton', {
+						text: "Stretched with Content Size",
+						width: _buttonWidth,
+						press: function () {
+							oDialogStretchedWithContentSize.open();
+						}
+					}),
                     new sap.m.Button("textareaDialogButton", {
                         text: "Textarea in Dialog",
                         width: _buttonWidth,
