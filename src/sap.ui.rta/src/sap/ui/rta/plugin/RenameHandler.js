@@ -54,26 +54,60 @@ sap.ui.define([
 		 * @param {sap.ui.dt.Overlay} oOverlay - target overlay
 		 * @public
 		 */
-		startEdit : function (oOverlay, vDomRef, sPluginMethodName) {
-			this._oEditedOverlay = oOverlay;
+		startEdit : function (mPropertyBag) {
+			this._bPreventMenu = true;
+			this._oEditedOverlay = mPropertyBag.overlay;
 
-			var oElement = oOverlay.getElement();
+			var oElement = mPropertyBag.overlay.getElement();
 
 			var oDesignTimeMetadata = this._oEditedOverlay.getDesignTimeMetadata();
 
-			var oEditableControlDomRef = oDesignTimeMetadata.getAssociatedDomRef(oElement, vDomRef);
+			var vEditableControlDomRef = oDesignTimeMetadata.getAssociatedDomRef(oElement, mPropertyBag.domRef);
 
 			// if the Control is currently not visible on the screen, we have to scroll it into view
-			if (!Utils.isElementInViewport(oEditableControlDomRef)) {
-				oEditableControlDomRef.get(0).scrollIntoView();
+			if (!Utils.isElementInViewport(vEditableControlDomRef)) {
+				vEditableControlDomRef.get(0).scrollIntoView();
 			}
 
-			this._$oEditableControlDomRef = jQuery(oEditableControlDomRef);
+			var _$ControlForWrapperDomRef = jQuery(ElementUtil.getDomRef(oElement)); /* Main Control */
+			this._$oEditableControlDomRef = jQuery(vEditableControlDomRef); /* Text Control */
+			var _$oEditableControlParentDomRef = this._$oEditableControlDomRef.parent(); /* Text Control parent*/
 
-			var oEditableControlOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oEditableControlDomRef.id) || oOverlay;
+			var iWidthDifference = 0;
 
-			var oWrapper = jQuery("<div class='sapUiRtaEditableField'></div>").appendTo(oEditableControlOverlay.$());
-			this._$editableField = jQuery("<div contentEditable='true'></div>").appendTo(oWrapper);
+			var iControlForWrapperWidth = parseInt(_$ControlForWrapperDomRef.outerWidth(), 10);
+
+			if (!isNaN(iControlForWrapperWidth)) {
+				var iEditableControlWidth = parseInt(this._$oEditableControlDomRef.outerWidth(), 10);
+				var iEditableControlParentWidth = parseInt(_$oEditableControlParentDomRef.outerWidth(), 10);
+
+				iWidthDifference = iControlForWrapperWidth - iEditableControlWidth;
+
+				if (iWidthDifference < 0 && iEditableControlParentWidth) {
+					if (_$oEditableControlParentDomRef.get(0).id !== _$ControlForWrapperDomRef.get(0).id
+						&& _$oEditableControlParentDomRef.children(":visible").length === 1
+						&& _$oEditableControlParentDomRef.children(":visible").get(0).id === this._$oEditableControlDomRef.get(0).id
+						&& iControlForWrapperWidth > iEditableControlParentWidth) {
+						iWidthDifference = iControlForWrapperWidth - iEditableControlParentWidth;
+					} else {
+						iWidthDifference = 0;
+					}
+				}
+			}
+
+			var oOverlayForWrapper = sap.ui.dt.OverlayRegistry.getOverlay(
+				vEditableControlDomRef instanceof jQuery
+					? vEditableControlDomRef.get(0).id
+					: vEditableControlDomRef.id
+			) || mPropertyBag.overlay;
+
+			var _$oWrapper = jQuery("<div class='sapUiRtaEditableField'></div>")
+				.css({
+					"white-space": "nowrap",
+					"overflow":"hidden",
+					"width": "calc(100% - (" + iWidthDifference + "px))"
+				}).appendTo(oOverlayForWrapper.$());
+			this._$editableField = jQuery("<div contentEditable='true'></div>").appendTo(_$oWrapper);
 
 			// if label is empty, set a preliminary dummy text at the control to get an overlay
 			if (this._$oEditableControlDomRef.text() === "") {
@@ -83,9 +117,14 @@ sap.ui.define([
 				this._$editableField.text(this._$oEditableControlDomRef.text());
 			}
 
+			if (!this.getOldValue()) {
+				this.setOldValue(RenameHandler._getCurrentEditableFieldText.call(this));
+			}
+
 			DOMUtil.copyComputedStyle(this._$oEditableControlDomRef, this._$editableField);
 			this._$editableField.children().remove();
 			this._$editableField.css('visibility', 'hidden');
+
 
 			// TODO : for all browsers
 			this._$editableField.css({
@@ -93,7 +132,8 @@ sap.ui.define([
 				"-webkit-user-modify": "read-write",
 				"-ms-user-modify": "read-write",
 				"user-modify": "read-write",
-				"text-overflow": "clip"
+				"text-overflow": "clip",
+				"white-space": "nowrap"
 			});
 
 			Overlay.getMutationObserver().ignoreOnce({
@@ -111,20 +151,19 @@ sap.ui.define([
 			this._$editableField.on("click", RenameHandler._stopPropagation.bind(this));
 			this._$editableField.on("mousedown", RenameHandler._stopPropagation.bind(this));
 
-			this.setOldValue(RenameHandler._getCurrentEditableFieldText.call(this));
-
 			// BCP: 1780352883
 			setTimeout(function () {
 				this._$oEditableControlDomRef.css("visibility", "hidden");
+				_$oWrapper.offset({left: this._$oEditableControlDomRef.offset().left});
 				this._$editableField.offset({left: this._$oEditableControlDomRef.offset().left});
 				this._$editableField.offset({top: this._$oEditableControlDomRef.offset().top});
 				this._$editableField.css('visibility', '');
 				this._$editableField.focus();
 
 				// keep Overlay selected while renaming
-				oOverlay.setSelected(true);
-				sap.ui.getCore().getEventBus().publish('sap.ui.rta', sPluginMethodName, {
-					overlay: oOverlay,
+				mPropertyBag.overlay.setSelected(true);
+				sap.ui.getCore().getEventBus().publish('sap.ui.rta', mPropertyBag.pluginMethodName, {
+					overlay: mPropertyBag.overlay,
 					editableField: this._$editableField
 				});
 			}.bind(this), 0);
@@ -189,10 +228,6 @@ sap.ui.define([
 			if (this._$oEditableControlDomRef.text() === "_?_") {
 				this._$oEditableControlDomRef.text("");
 			}
-			//var oElement = this._oEditedOverlay.getElement();
-			//if (oElement.variantManagementModeChange) {
-			//	oElement.fireVariantManagementModeChange({mode: ""});
-			//}
 
 			this._oEditedOverlay.$().find(".sapUiRtaEditableField").remove();
 			Overlay.getMutationObserver().ignoreOnce({
@@ -261,8 +296,8 @@ sap.ui.define([
 			// Rename to empty string should not be possible
 			// to prevent issues with disappearing elements
 			// '\xa0' = non-breaking space (&nbsp)
-			var sText = this._$editableField.text();
-			return sText === "" ? '\xa0' : sText.trim();
+			var sText = this._$editableField.text().trim();
+			return sText === "" ? '\xa0' : sText;
 		},
 
 		/**
