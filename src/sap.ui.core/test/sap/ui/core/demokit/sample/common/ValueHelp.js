@@ -22,6 +22,7 @@ sap.ui.define([
 
 	ValueHelp = Control.extend("sap.ui.core.sample.common.ValueHelp", {
 		metadata : {
+			interfaces : ["sap.ui.core.IFormContent"],
 			properties : {
 				enabled : {type: "boolean", defaultValue: true, bindable: "bindable"},
 				value: {type: "string", group: "Data", defaultValue: null, bindable: "bindable"}
