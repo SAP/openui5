@@ -735,18 +735,18 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.test("when calling '_deleteChanges' successfully, ", function(assert){
-		var fnDone = assert.async();
+	QUnit.test("when calling '_deleteChanges' successfully, ", function(assert) {
+		sandbox.stub(this.oRta, "_reloadPage");
 		sandbox.stub(this.oRta._getFlexController(), "resetChanges", function() {
+			assert.strictEqual(arguments[0], this.oRta.getLayer(), "then correct layer parameter passed");
+			assert.strictEqual(arguments[1], "Change.createInitialFileContent", "then correct generator parameter passed");
+			assert.deepEqual(arguments[2], Utils.getAppComponentForControl(this.oRootControl), "then correct component parameter passed");
 			return Promise.resolve();
-		});
+		}.bind(this));
 
-		sandbox.stub(this.oRta, "_reloadPage", function(){
-			assert.ok(true, "and page reload is triggered");
-			fnDone();
-		});
-
-		this.oRta._deleteChanges();
+		return this.oRta._deleteChanges().then(function() {
+			assert.ok(this.oRta._reloadPage.callCount, 1, "then page reload is triggered");
+		}.bind(this));
 	});
 
 	QUnit.test("when calling '_deleteChanges and there is an error', ", function(assert){

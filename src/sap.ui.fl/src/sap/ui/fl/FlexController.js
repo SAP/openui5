@@ -46,6 +46,7 @@ sap.ui.define([
 	FlexController.failedChangesCustomDataKeyXml = "sap.ui.fl.failedChanges.xml";
 	FlexController.PENDING = "sap.ui.fl:PendingChange";
 	FlexController.PROCESSING = "sap.ui.fl:ProcessingChange";
+	FlexController.variantTechnicalParameterName = "sap-ui-fl-control-variant-id";
 
 	/**
 	 * Sets the component name of the FlexController
@@ -859,8 +860,14 @@ sap.ui.define([
 	 *
 	 * @returns {Promise} promise that resolves without parameters
 	 */
-	FlexController.prototype.resetChanges = function (sLayer, sGenerator) {
-		return this._oChangePersistence.resetChanges(sLayer, sGenerator);
+	FlexController.prototype.resetChanges = function (sLayer, sGenerator, oComponent) {
+		return this._oChangePersistence.resetChanges(sLayer, sGenerator)
+			.then( function(oResponse) {
+				if (oComponent) {
+					Utils.setTechnicalURLParameterValues(oComponent, FlexController.variantTechnicalParameterName, []);
+				}
+				return oResponse;
+		});
 	};
 
 	/**
