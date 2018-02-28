@@ -268,6 +268,63 @@ sap.ui.require([
 		});
 	});
 
+	QUnit.test("when calling 'getChangesForVariantSwitch' with a wrongly sorted map of changes", function(assert) {
+		var oChangeContent0 = {"fileName":"change0", "variantReference":"variant0", "layer": "VENDOR"};
+		var oChangeContent1 = {"fileName":"change1", "variantReference":"variant0"};
+		var oChangeContent2 = {"fileName":"change2", "variantReference":"variant0"};
+		var oChangeContent3 = {"fileName":"change3", "variantReference":"variant1"};
+		var oChangeContent4 = {"fileName":"change4", "variantReference":"variant1"};
+
+		var oFakeVariantResponse = {
+			"changes" : {
+				"variantSection" : {
+					"variantManagementId" : {
+						"variants" : [{
+							"content" : {
+								"fileName": "variant0",
+								"content": {
+									"title": "variant 0"
+								}
+							},
+							"controlChanges" : [oChangeContent0, oChangeContent1, oChangeContent2],
+							"variantChanges" : {}
+						},
+						{
+							"content" : {
+								"fileName": "variant1",
+								"variantReference":"variant0",
+								"content": {
+									"title": "variant 1"
+								}
+							},
+							"controlChanges" : [oChangeContent0, oChangeContent3, oChangeContent4],
+							"variantChanges" : {}
+						}],
+						"variantManagementChanges": {}
+					}
+				}
+			}
+		};
+		var aChangeContents = [oChangeContent0, oChangeContent1, oChangeContent2, oChangeContent3, oChangeContent4];
+		var aChanges = aChangeContents.map(function (oChangeContent) {
+			return new Change(oChangeContent);
+		});
+		var mCurrentChanges = {
+			"dummyControlSelector":	[aChanges[2], aChanges[0], aChanges[1]]
+		};
+
+		var oVariantController = new VariantController("MyComponent", "1.2.3", oFakeVariantResponse);
+		var mChanges = oVariantController.getChangesForVariantSwitch("variantManagementId", "variant0", "variant1", mCurrentChanges);
+		var aExpectedNew = [aChanges[3], aChanges[4]];
+		var aExpectedRevert = [aChanges[2], aChanges[1]];
+		mChanges.aNew.forEach(function (oChange, i) {
+			assert.deepEqual(oChange._oDefinition, aExpectedNew[i]._oDefinition, "the change content returns correctly");
+		});
+		mChanges.aRevert.forEach(function (oChange, i) {
+			assert.deepEqual(oChange._oDefinition, aExpectedRevert[i]._oDefinition, "the change content returns correctly");
+		});
+	});
+
 	QUnit.test("when calling 'loadChangesMapForComponent' and afterwards 'loadSwitchChangesMapForComponent' of the ChangePersistence", function(assert) {
 		var aExistingChanges = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].controlChanges.map(function (oChange) {
 			return new Change(oChange);
