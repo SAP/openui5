@@ -4624,7 +4624,10 @@ sap.ui.require([
 	//   remains unchanged.
 	//   After resume, *separate* new requests for the master table and the details form are sent;
 	//   the request for the form reflects the changes. The field added to the form is updated.
-	QUnit.skip("suspend/resume: master list binding with details context binding, only context"
+	// JIRA bug 1169
+	// Ensure separate requests for master-detail scenarios with auto-$expand/$select and
+	// suspend/resume
+	QUnit.test("suspend/resume: master list binding with details context binding, only context"
 			+ " binding is adapted", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
@@ -4635,7 +4638,7 @@ sap.ui.require([
 		</ColumnListItem>\
 	</items>\
 </Table>\
-<FlexBox id="form" binding="{EQUIPMENT_2_EMPLOYEE}">\
+<FlexBox id="form" binding="{path : \'EQUIPMENT_2_EMPLOYEE\', parameters : {$$ownRequest : true}}">\
 	<Text id="idName" text="{Name}" />\
 	<Text id="idAge" text="{AGE}" />\
 </FlexBox>',
@@ -4695,31 +4698,6 @@ sap.ui.require([
 							"Name" : "Frederic Fall",
 							"MANAGER_ID" : "1"
 						})
-//TODO this is what happens today: initially different requests for master/detail are combined in
-// one request with $expand: This must not happen; we need a way to declare that bindings must
-// not be combined on auto-$expand/$select
-//				that.expectRequest("Equipments?$select=Category,ID,Name"
-//							+ "&$expand=EQUIPMENT_2_EMPLOYEE($select=ID,MANAGER_ID,Name)"
-//							+ "&$skip=0&$top=100", {
-//						value : [{
-//							"Category": "Electronics",
-//							"ID": 1,
-//							"Name": "Office PC",
-//							"EQUIPMENT_2_EMPLOYEE" : {
-//								"ID" : "2",
-//								"Name" : "Frederic Fall",
-//								"MANAGER_ID" : "1"
-//							}
-//						}, {
-//							"Category": "Electronics",
-//							"ID": 2,
-//							"Name": "Tablet X",
-//							"EQUIPMENT_2_EMPLOYEE" : {
-//								"ID" : "3",
-//								"Name" : "Jonathan Smith",
-//								"MANAGER_ID" : "2"
-//							}
-//					}]})
 					.expectChange("idEquipmentName", ["Office PC", "Tablet X"])
 					.expectChange(sIdManagerId, "1");
 
