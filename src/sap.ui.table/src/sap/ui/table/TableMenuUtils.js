@@ -264,7 +264,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 						oTable._oCellContextMenu = new Menu(oTable.getId() + "-cellcontextmenu");
 
 						var oCellContextMenuItem = new MenuItem({
-							text: oTable._oResBundle.getText("TBL_FILTER")
+							text: MenuUtils.TableUtils.getResourceText("TBL_FILTER")
 						});
 
 						oCellContextMenuItem._onSelect = function (oColumn, iRowIndex) {

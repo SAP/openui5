@@ -3,8 +3,9 @@
 sap.ui.require([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/RowAction",
-	"sap/ui/table/RowActionItem"
-], function(qutils, RowAction, RowActionItem) {
+	"sap/ui/table/RowActionItem",
+	"sap/ui/table/TableUtils"
+], function(qutils, RowAction, RowActionItem, TableUtils) {
 	"use strict";
 
 	var MENUICON = "sap-icon://overflow";
@@ -88,7 +89,7 @@ sap.ui.require([
 				tooltip: "C",
 				text: "Wrong"
 			}), 1);
-		}, ["sap-icon://delete", MENUICON], ["B", this.rowAction._oResBundle.getText("TBL_ROW_ACTION_MORE")]);
+		}, ["sap-icon://delete", MENUICON], ["B", TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_MORE")]);
 		checkRendering(this, "removeAllItems", assert, function() {
 			this.rowAction.removeAllItems();
 		}, [], []);
@@ -196,13 +197,13 @@ sap.ui.require([
 			this.rowAction.invalidate(); //Force Rerendering
 			sap.ui.getCore().applyChanges();
 			return true;
-		}, ["sap-icon://search", MENUICON], ["A", this.rowAction._oResBundle.getText("TBL_ROW_ACTION_MORE")]);
+		}, ["sap-icon://search", MENUICON], ["A", TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_MORE")]);
 		checkRendering(this, "setTooltip", assert, function() {
 			this.rowAction.setTooltip("Some Tooltip");
 			this.rowAction.invalidate(); //Force Rerendering
 			sap.ui.getCore().applyChanges();
 			return true;
-		}, ["sap-icon://search", MENUICON], ["A", this.rowAction._oResBundle.getText("TBL_ROW_ACTION_MORE")]);
+		}, ["sap-icon://search", MENUICON], ["A", TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_MORE")]);
 		assert.equal(jQuery(this.rowAction.$()).attr("title"), "Some Tooltip", "Tooltip is set");
 		checkRendering(this, "destroyItems", assert, function() {
 			this.rowAction.destroyItems();
@@ -222,19 +223,19 @@ sap.ui.require([
 	QUnit.test("Type Navigation", function(assert) {
 		checkRendering(this, "addItem", assert, function() {
 			this.rowAction.addItem(new RowActionItem({type: "Navigation"}));
-		}, [NAVICON], [this.rowAction._oResBundle.getText("TBL_ROW_ACTION_NAVIGATE")]);
+		}, [NAVICON], [TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_NAVIGATE")]);
 		checkRendering(this, "setIcon", assert, function() {
 			this.rowAction.getItems()[0].setIcon("sap-icon://account");
-		}, ["sap-icon://account"], [this.rowAction._oResBundle.getText("TBL_ROW_ACTION_NAVIGATE")]);
+		}, ["sap-icon://account"], [TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_NAVIGATE")]);
 	});
 
 	QUnit.test("Type Delete", function(assert) {
 		checkRendering(this, "addItem", assert, function() {
 			this.rowAction.addItem(new RowActionItem({type: "Delete"}));
-		}, [DELICON], [this.rowAction._oResBundle.getText("TBL_ROW_ACTION_DELETE")]);
+		}, [DELICON], [TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_DELETE")]);
 		checkRendering(this, "setIcon", assert, function() {
 			this.rowAction.getItems()[0].setIcon("sap-icon://account");
-		}, ["sap-icon://account"], [this.rowAction._oResBundle.getText("TBL_ROW_ACTION_DELETE")]);
+		}, ["sap-icon://account"], [TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_DELETE")]);
 	});
 
 	QUnit.test("Fixed Column Layout", function(assert) {
@@ -405,7 +406,7 @@ sap.ui.require([
 		assert.ok(!oItem._getText(false), "No Text or Tooltip set (Text preferred)");
 		assert.ok(!oItem._getText(true), "No Text or Tooltip set (Tooltip preferred)");
 		oItem.setType("Navigation");
-		var sText = this.rowAction._oResBundle.getText("TBL_ROW_ACTION_NAVIGATE");
+		var sText = TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_NAVIGATE");
 		assert.equal(oItem._getText(false), sText, "No Text or Tooltip set but type (Text preferred)");
 		assert.equal(oItem._getText(true), sText, "No Text or Tooltip set but type (Tooltip preferred)");
 		oItem.setTooltip("TT");
@@ -433,29 +434,29 @@ sap.ui.require([
 	QUnit.test("getAccessibilityInfo", function(assert) {
 		assert.equal(this.rowAction.getAccessibilityInfo().focusable, true, "ACCInfo.focusable: 2 Items");
 		assert.equal(this.rowAction.getAccessibilityInfo().enabled, true, "ACCInfo.enabled: 2 Items");
-		assert.equal(this.rowAction.getAccessibilityInfo().description, this.rowAction._oResBundle.getText("TBL_ROW_ACTION_MULTIPLE_ACTION", [2]),
+		assert.equal(this.rowAction.getAccessibilityInfo().description, TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_MULTIPLE_ACTION", [2]),
 			"ACCInfo.description: 2 Items");
 		this.rowAction.setVisible(false);
 		assert.equal(this.rowAction.getAccessibilityInfo().focusable, false, "ACCInfo.focusable: 2 Items - invisible");
 		assert.equal(this.rowAction.getAccessibilityInfo().enabled, false, "ACCInfo.enabled: 2 Items - invisible");
-		assert.equal(this.rowAction.getAccessibilityInfo().description, this.rowAction._oResBundle.getText("TBL_ROW_ACTION_NO_ACTION"),
+		assert.equal(this.rowAction.getAccessibilityInfo().description, TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_NO_ACTION"),
 			"ACCInfo.description: 2 Items - invisible");
 		this.rowAction.setVisible(true);
 		this.rowAction._setCount(0);
 		assert.equal(this.rowAction.getAccessibilityInfo().focusable, false, "ACCInfo.focusable: 2 Items - no Count");
 		assert.equal(this.rowAction.getAccessibilityInfo().enabled, false, "ACCInfo.enabled: 2 Items - no Count");
-		assert.equal(this.rowAction.getAccessibilityInfo().description, this.rowAction._oResBundle.getText("TBL_ROW_ACTION_NO_ACTION"),
+		assert.equal(this.rowAction.getAccessibilityInfo().description, TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_NO_ACTION"),
 			"ACCInfo.description: 2 Items - no Count");
 		this.rowAction._setCount(2);
 		this.rowAction.getItems()[0].setVisible(false);
 		assert.equal(this.rowAction.getAccessibilityInfo().focusable, true, "ACCInfo.focusable: 2 Items - 1 invisible");
 		assert.equal(this.rowAction.getAccessibilityInfo().enabled, true, "ACCInfo.enabled: 2 Items - 1 invisible");
-		assert.equal(this.rowAction.getAccessibilityInfo().description, this.rowAction._oResBundle.getText("TBL_ROW_ACTION_SINGLE_ACTION"),
+		assert.equal(this.rowAction.getAccessibilityInfo().description, TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_SINGLE_ACTION"),
 			"ACCInfo.description: 2 Items - 1 invisible");
 		this.rowAction.destroyItems();
 		assert.equal(this.rowAction.getAccessibilityInfo().focusable, false, "ACCInfo.focusable: 0 Items");
 		assert.equal(this.rowAction.getAccessibilityInfo().enabled, false, "ACCInfo.enabled: 0 Items");
-		assert.equal(this.rowAction.getAccessibilityInfo().description, this.rowAction._oResBundle.getText("TBL_ROW_ACTION_NO_ACTION"),
+		assert.equal(this.rowAction.getAccessibilityInfo().description, TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_NO_ACTION"),
 			"ACCInfo.description: 0 Items");
 	});
 

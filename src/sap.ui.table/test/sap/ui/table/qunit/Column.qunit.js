@@ -259,18 +259,13 @@ sap.ui.require([
 
 	QUnit.test("Localization and Invalidation", function(assert) {
 		var oColumnMenu = this._oColumnWithColumnMenu.getMenu();
-		var oSpyColumnMenu = this.spy(oColumnMenu, "_updateResourceBundle");
 		this._oColumnWithColumnMenu._openMenu();
 
 		assert.ok(!oColumnMenu._bInvalidated, "ColumnMenu not invalidated");
-		this._oTable._invalidateColumnMenus(true);
-		assert.ok(oSpyColumnMenu.calledOnce, "Bundle updated");
+		this._oTable._invalidateColumnMenus();
 		assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
 		this._oColumnWithColumnMenu._openMenu();
 		assert.ok(!oColumnMenu._bInvalidated, "ColumnMenu not invalidated");
-		this._oTable._invalidateColumnMenus();
-		assert.ok(oSpyColumnMenu.calledOnce, "Bundle not updated");
-		assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
 	});
 
 	QUnit.module("Template Clones", {

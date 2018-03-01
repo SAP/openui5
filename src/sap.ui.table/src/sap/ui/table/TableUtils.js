@@ -15,6 +15,12 @@ sap.ui.define([
 	var MessageType = coreLibrary.MessageType;
 
 	/**
+	 * The resource bundle of the sap.ui.table library.
+	 * @type {jQuery.sap.util.ResourceBundle}
+	 */
+	var oResourceBundle;
+
+	/**
 	 * Table cell type.
 	 *
 	 * @type {sap.ui.table.TableUtils.CellType}
@@ -472,7 +478,7 @@ sap.ui.define([
 			} else if (typeof oNoData === "string" || oTable.getNoData() instanceof String) {
 				return oNoData;
 			} else {
-				return oTable._oResBundle.getText("TBL_NO_DATA");
+				return TableUtils.getResourceText("TBL_NO_DATA");
 			}
 		},
 
@@ -1126,6 +1132,51 @@ sap.ui.define([
 			}
 
 			return iFirstFixedButtomIndex;
+		},
+
+		/**
+		 * Gets the resource bundle of the sap.ui.table library. The bundle will be loaded if it is not already loaded or if it should be reloaded.
+		 * After the bundle is loaded, {@link sap.ui.table.TableUtils.getResourceText} can be used to get texts.
+		 *
+		 * @param {object} [mOptions] Configuration options
+		 * @param {boolean} [mOptions.async=false] Whether to load the bundle asynchronously.
+		 * @param {boolean} [mOptions.reload=false] Whether to reload the bundle, if it already was loaded.
+		 * @returns {jQuery.sap.util.ResourceBundle | Promise} The resource bundle, or a Promise if the bundle is loaded asynchronously.
+		 */
+		getResourceBundle: function(mOptions) {
+			mOptions = jQuery.extend({async: false, reload: false}, mOptions);
+
+			if (oResourceBundle && mOptions.reload !== true) {
+				if (mOptions.async === true) {
+					return Promise.resolve(oResourceBundle);
+				} else {
+					return oResourceBundle;
+				}
+			}
+
+			var vResult = sap.ui.getCore().getLibraryResourceBundle("sap.ui.table", mOptions.async === true);
+
+			if (vResult instanceof Promise) {
+				vResult = vResult.then(function(oBundle) {
+					oResourceBundle = oBundle;
+					return oResourceBundle;
+				});
+			} else {
+				oResourceBundle = vResult;
+			}
+
+			return vResult;
+		},
+
+		/**
+		 * Gets a resource text, if the resource bundle was already loaded with {@link sap.ui.table.TableUtils.getResourceBundle}.
+		 *
+		 * @param {string} sKey The key of the resource text.
+		 * @param {string[]} [aValues] List of parameters values which should replace the placeholders.
+		 * @returns {string} The resource text, or an empty string if the resource bundle is not yet loaded.
+		 */
+		getResourceText: function(sKey, aValues) {
+			return oResourceBundle ? oResourceBundle.getText(sKey, aValues) : "";
 		}
 	};
 

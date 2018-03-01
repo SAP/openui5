@@ -388,18 +388,13 @@ function(jQuery, Element, coreLibrary, Popup, Filter, FilterOperator, FilterType
 	/**
 	 * This function invalidates the column's menu. All items will be re-created the next time the menu opens. This only
 	 * happens for generated menus.
-	 * @param {boolean} bUpdateLocalization Whether the texts of the menu should be updated too.
 	 * @private
 	 */
-	Column.prototype.invalidateMenu = function(bUpdateLocalization) {
+	Column.prototype.invalidateMenu = function() {
 		var oMenu = this.getAggregation("menu");
 
 		if (this._bMenuIsColumnMenu) {
-			if (bUpdateLocalization) {
-				oMenu._updateResourceBundle(); // Also invalidates the menu
-			} else {
-				oMenu._invalidate();
-			}
+			oMenu._invalidate();
 		}
 	};
 
