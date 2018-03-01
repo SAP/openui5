@@ -286,7 +286,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			}
 
 			this.setProperty('expanded', true, true);
-			this.$().attr('aria-expanded', true);
+			this.$().find('.sapTntNavLIGroup').attr('aria-expanded', true);
 
 			var expandIconControl = this._getExpandIconControl();
 			expandIconControl.setSrc(NavigationListItem.collapseIcon);
@@ -312,7 +312,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			}
 
 			this.setProperty('expanded', false, true);
-			this.$().attr('aria-expanded', false);
+			this.$().find('.sapTntNavLIGroup').attr('aria-expanded', false);
 
 			var expandIconControl = this._getExpandIconControl();
 			expandIconControl.setSrc(NavigationListItem.expandIcon);
@@ -402,14 +402,20 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 		NavigationListItem.prototype.renderGroupItem = function (rm, control, index, length) {
 
 			var isListExpanded = control.getExpanded(),
+				isNavListItemExpanded = this.getExpanded(),
 				text = this.getText(),
+				tooltip,
 				ariaProps = {
 					level: '1',
-					expanded: this.getExpanded(),
 					posinset: index + 1,
 					setsize: this._getVisibleItems(control).length
-				},
-				sTooltip;
+				};
+
+			//checking if there are items level 2 in the NavigationListItem
+			//of yes - there is need of aria-expanded property
+			if (isListExpanded && this.getItems().length !== 0) {
+				ariaProps.expanded = isNavListItemExpanded;
+			}
 
 			rm.write('<div');
 
@@ -423,9 +429,9 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			}
 
 			if (!isListExpanded) {
-				sTooltip = this.getTooltip_AsString() || text;
-				if (sTooltip) {
-					rm.writeAttributeEscaped("title", sTooltip);
+				tooltip = this.getTooltip_AsString() || text;
+				if (tooltip) {
+					rm.writeAttributeEscaped("title", tooltip);
 				}
 
 				ariaProps.label = text;
@@ -438,9 +444,9 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			rm.writeAccessibilityState(ariaProps);
 
 			if (control.getExpanded()) {
-				sTooltip = this.getTooltip_AsString() || text;
-				if (sTooltip) {
-					rm.writeAttributeEscaped("title", sTooltip);
+				tooltip = this.getTooltip_AsString() || text;
+				if (tooltip) {
+					rm.writeAttributeEscaped("title", tooltip);
 				}
 
 				rm.writeAttributeEscaped("aria-label", text);
@@ -536,9 +542,9 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 
 			var text = this.getText();
 
-			var sTooltip = this.getTooltip_AsString() || text;
-			if (sTooltip) {
-				rm.writeAttributeEscaped("title", sTooltip);
+			var tooltip = this.getTooltip_AsString() || text;
+			if (tooltip) {
+				rm.writeAttributeEscaped("title", tooltip);
 			}
 
 			// ARIA
