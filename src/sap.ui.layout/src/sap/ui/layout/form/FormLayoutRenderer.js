@@ -58,12 +58,11 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library", "sap/ui/core/them
 		rm.write(">");
 
 		// Form header
-		if (oToolbar) {
-			rm.renderControl(oToolbar);
-		} else {
-			var sSize = themingParameters.get('sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize');
-			this.renderTitle(rm, oForm.getTitle(), undefined, false, sSize, oForm.getId());
+		var sSize;
+		if (!oToolbar) {
+			sSize = themingParameters.get('sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize');
 		}
+		this.renderHeader(rm, oToolbar, oForm.getTitle(), undefined, false, sSize, oForm.getId());
 
 		this.renderContainers(rm, oLayout, oForm);
 
@@ -85,12 +84,10 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library", "sap/ui/core/them
 
 	FormLayoutRenderer.renderContainers = function(rm, oLayout, oForm){
 
-		var aContainers = oForm.getFormContainers();
+		var aContainers = oForm.getVisibleFormContainers();
 		for (var i = 0, il = aContainers.length; i < il; i++) {
 			var oContainer = aContainers[i];
-			if (oContainer.isVisible()) {
-				this.renderContainer(rm, oLayout, oContainer);
-			}
+			this.renderContainer(rm, oLayout, oContainer);
 		}
 
 	};
@@ -120,11 +117,7 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library", "sap/ui/core/them
 
 		rm.write(">");
 
-		if (oToolbar) {
-			rm.renderControl(oToolbar);
-		} else {
-			this.renderTitle(rm, oTitle, oContainer._oExpandButton, bExpandable, TitleLevel.H4, oContainer.getId());
-		}
+		this.renderHeader(rm, oToolbar, oTitle, oContainer._oExpandButton, bExpandable, TitleLevel.H4, oContainer.getId());
 
 		if (bExpandable) {
 			rm.write("<div id='" + oContainer.getId() + "-content'");
@@ -135,16 +128,12 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library", "sap/ui/core/them
 			rm.write(">");
 		}
 
-		var aElements = oContainer.getFormElements();
+		var aElements = oContainer.getVisibleFormElements();
 		for (var j = 0, jl = aElements.length; j < jl; j++) {
-
 			var oElement = aElements[j];
-
-			if (oElement.isVisible()) {
-				this.renderElement(rm, oLayout, oElement);
-			}
-
+			this.renderElement(rm, oLayout, oElement);
 		}
+
 		if (bExpandable) {
 			rm.write("</div>");
 		}
@@ -238,6 +227,20 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library", "sap/ui/core/them
 			}
 
 			rm.write("</" + sLevel + ">");
+		}
+
+	};
+
+	/*
+	 * Renders the header, containing Toolbar or Title, for a Form or a FormContainer
+	 * If this function is overwritten in a Layout please use the right IDs to be sure aria-describedby works fine
+	 */
+	FormLayoutRenderer.renderHeader = function(rm, oToolbar, oTitle, oExpandButton, bExpander, sLevelDefault, sContentId){
+
+		if (oToolbar) {
+			rm.renderControl(oToolbar);
+		} else {
+			this.renderTitle(rm, oTitle, oExpandButton, bExpander, sLevelDefault, sContentId);
 		}
 
 	};
