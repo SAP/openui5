@@ -132,10 +132,12 @@
 									class="sapUiSmallMarginBottom"/>
 							<Link text="View Documentation"
 								  target="_blank"
-								  href="#/topic/21ea0ea94614480d9a910b2e93431291"/>
+								  href="#/topic/21ea0ea94614480d9a910b2e93431291"
+								  class="sapUiTinyMarginBottom"/>
 							<Link text="Run Integration Tests"
 								  target="_blank"
-								  href="test-resources/sap/m/demokit/iconExplorer/webapp/test/integration/opaTests.qunit.html"/>
+								  href="test-resources/sap/m/demokit/iconExplorer/webapp/test/integration/opaTests.qunit.html"
+								  class="sapUiTinyMarginBottom"/>
 							<Link text="Run Unit Tests"
 								  target="_blank"
 								  href="test-resources/sap/m/demokit/iconExplorer/webapp/test/unit/unitTests.qunit.html"
