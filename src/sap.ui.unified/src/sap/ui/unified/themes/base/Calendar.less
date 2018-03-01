@@ -41,7 +41,13 @@
 	max-width: 40rem;
 }
 
-.sapUiCalHead > button,
+.sapUiCalTwoMonthsTwoColumns:not(.sapUiCalInt) > .sapUiCalHead {
+	max-width: 100%;
+	box-sizing: border-box;
+	text-align: left;
+}
+
+ .sapUiCalHead > button,
 .sapUiCalCancel {
 	background-color: @sapUiButtonLiteBackground;
 	border: none;
@@ -410,8 +416,26 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 
 .sapUiCalMulti .sapUiCalHeadB1,
 .sapUiCalIntLarge .sapUiCalHeadB1,
-.sapUiCalMonthInt .sapUiCalHeadB2{
+.sapUiCalMonthInt .sapUiCalHeadB2,
+.sapUiCalMulti .sapUiCalHeadB3,
+.sapUiCalIntLarge .sapUiCalHeadB3,
+.sapUiCalMonthInt .sapUiCalHeadB4 {
 	width: 12.5rem;
+}
+
+.sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB1,
+.sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB2,
+.sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB3,
+.sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB4 {
+	width: 5.75rem;
+}
+
+.sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB1 {
+	margin-left: calc(~"25% - 5.75rem");
+}
+
+.sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB3 {
+	margin-left: calc(~"50% - 2 * 5.75rem");
 }
 
 .sapUiCalItemNow > .sapUiCalItemText{
@@ -543,6 +567,13 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 	cursor: default;
 }
 
+.sapUiCalHeadSecondMonth {
+	.sapUiCalHeadNext,
+	.sapUiCalHeadPrev {
+		display: none;
+	}
+}
+
 /*** compact mode (desktop size) ***/
 
 .sapUiSizeCompact .sapUiCal,
@@ -617,7 +648,8 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 	margin-left: 0.25rem;
 }
 
-.sapUiSizeCompact .sapUiCalHeadB1{
+.sapUiSizeCompact .sapUiCalHeadB1,
+.sapUiSizeCompact .sapUiCalHeadB3 {
 	width: 6.25rem;
 }
 
@@ -626,8 +658,25 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 .sapUiSizeCompact .sapUiCalIntLarge .sapUiCalHeadB1,
 .sapUiSizeCompact.sapUiCalIntLarge .sapUiCalHeadB1,
 .sapUiSizeCompact .sapUiCalMonthInt .sapUiCalHeadB2,
-.sapUiSizeCompact.sapUiCalMonthInt .sapUiCalHeadB2{
+.sapUiSizeCompact.sapUiCalMonthInt .sapUiCalHeadB2,
+.sapUiSizeCompact .sapUiCalMulti .sapUiCalHeadB3,
+.sapUiSizeCompact.sapUiCalMulti .sapUiCalHeadB3,
+.sapUiSizeCompact .sapUiCalIntLarge .sapUiCalHeadB3,
+.sapUiSizeCompact.sapUiCalIntLarge .sapUiCalHeadB3,
+.sapUiSizeCompact .sapUiCalMonthInt .sapUiCalHeadB4,
+.sapUiSizeCompact.sapUiCalMonthInt .sapUiCalHeadB4 {
 	width: 12.5rem;
+}
+
+.sapUiSizeCompact .sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB1,
+.sapUiSizeCompact.sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB1,
+.sapUiSizeCompact .sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB2,
+.sapUiSizeCompact.sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB2,
+.sapUiSizeCompact .sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB3,
+.sapUiSizeCompact.sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB3,
+.sapUiSizeCompact .sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB4,
+.sapUiSizeCompact.sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB4 {
+	width: 5.75rem;
 }
 
 .sapUiSizeCompact .sapUiCalItem,
