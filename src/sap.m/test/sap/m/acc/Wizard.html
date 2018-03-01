@@ -31,6 +31,12 @@
 								} else {
 									oWizard.invalidateStep(step1);
 								}
+							},
+							change: function (oEvent) {
+								var val = oEvent.getParameter("value");
+								if (val.length <= 3) {
+									oWizard.discardProgress(step1);
+								}
 							}
 						})
 					]
