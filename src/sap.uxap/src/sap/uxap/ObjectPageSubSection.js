@@ -760,7 +760,7 @@ sap.ui.define([
 			aInternalAggregation.forEach(function (oObjectCandidate, iIndex) {
 				if (oObjectCandidate.getId() === oObject.getId()) {
 					aInternalAggregation.splice(iIndex, 1);
-					this._setAggregation(aInternalAggregation);
+					this._setAggregation(sAggregationName, aInternalAggregation);
 					bRemoved = true;
 				}
 				return !bRemoved;
