@@ -16,7 +16,6 @@
 		"localService/mockserver.js",
 		"manifest.json",
 		"model/formatter.js",
-		"neo-app.json",
 		"test/integration/navigationJourney.js",
 		"test/integration/opaTests.qunit.html",
 		"test/integration/pages/App.js",
