@@ -786,9 +786,15 @@ sap.ui.define([
 			fetchArrayFilter(this.aApplicationFilters, /*bAnd*/true, {}),
 			fetchArrayFilter(this.aFilters, /*bAnd*/true, {})
 		]).then(function (aFilterValues) {
-			if (aFilterValues[0]) { aNonEmptyFilters.push(aFilterValues[0]); }
-			if (aFilterValues[1]) { aNonEmptyFilters.push(aFilterValues[1]); }
-			if (sStaticFilter) { aNonEmptyFilters.push(sStaticFilter); }
+			if (aFilterValues[0]) {
+				aNonEmptyFilters.push(aFilterValues[0]);
+			}
+			if (aFilterValues[1]) {
+				aNonEmptyFilters.push(aFilterValues[1]);
+			}
+			if (sStaticFilter) {
+				aNonEmptyFilters.push(sStaticFilter);
+			}
 
 			return combineFilterValues(aNonEmptyFilters, ") and (");
 		});

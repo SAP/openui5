@@ -214,8 +214,19 @@
 		 */
 		function addLineTracking() {
 			oNode.update("blanket.$l(" + iFileIndex + ", " + iLine + "); " + oNode.source());
-			aHits[iLine] = 0;
+			initHits();
 			return true;
+		}
+
+		/*
+		 * Initialize hits count for current line, double check for duplicates.
+		 */
+		function initHits() {
+			if (iLine in aHits) {
+				jQuery.sap.log.warning("Duplicate line " + iLine, aFileNames[iFileIndex],
+					"sap.ui.test.BranchTracking");
+			}
+			aHits[iLine] = 0;
 		}
 
 		if (Device && isChildOfIgnoredNode(Device, oNode)) {
@@ -293,7 +304,7 @@
 					+ (bBranchTracking ? aBranchTracking.length : -1) + ", "
 					+ oNode.test.source() + ", " + iLine + ")"
 				);
-				aHits[iLine] = 0;
+				initHits();
 				if (bBranchTracking) {
 					aBranchTracking.push({
 						// Note: in case of missing "else" we blame it on the condition

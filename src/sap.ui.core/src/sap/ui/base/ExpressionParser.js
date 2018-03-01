@@ -241,26 +241,56 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 	});
 	rTokens = new RegExp(aTokens.join("|"), "g");
 
-	addInfix("*", 14, function (x, y) { return x * y; });
-	addInfix("/", 14, function (x, y) { return x / y; });
-	addInfix("%", 14, function (x, y) { return x % y; });
-	addInfix("+", 13, function (x, y) { return x + y; }).nud = function (oToken, oParser) {
-		return UNARY.bind(null, oParser.expression(this.lbp),
-			function (x) { return +x; });
+	addInfix("*", 14, function (x, y) {
+		return x * y;
+	});
+	addInfix("/", 14, function (x, y) {
+		return x / y;
+	});
+	addInfix("%", 14, function (x, y) {
+		return x % y;
+	});
+	addInfix("+", 13, function (x, y) {
+		return x + y;
+	}).nud = function (oToken, oParser) {
+		return UNARY.bind(null, oParser.expression(this.lbp), function (x) {
+			return +x;
+		});
 	};
-	addInfix("-", 13, function (x, y) { return x - y; }).nud = function (oToken, oParser) {
-		return UNARY.bind(null, oParser.expression(this.lbp),
-				function (x) { return -x; });
+	addInfix("-", 13, function (x, y) {
+		return x - y;
+	}).nud = function (oToken, oParser) {
+		return UNARY.bind(null, oParser.expression(this.lbp), function (x) {
+			return -x;
+		});
 	};
-	addInfix("<=", 11, function (x, y) { return x <= y; });
-	addInfix("<", 11, function (x, y) { return x < y; });
-	addInfix(">=", 11, function (x, y) { return x >= y; });
-	addInfix(">", 11, function (x, y) { return x > y; });
-	addInfix("in", 11, function (x, y) { return x in y; });
-	addInfix("===", 10, function (x, y) { return x === y; });
-	addInfix("!==", 10, function (x, y) { return x !== y; });
-	addInfix("&&", 7, function (x, fnY) { return x && fnY(); }, true);
-	addInfix("||", 6, function (x, fnY) { return x || fnY(); }, true);
+	addInfix("<=", 11, function (x, y) {
+		return x <= y;
+	});
+	addInfix("<", 11, function (x, y) {
+		return x < y;
+	});
+	addInfix(">=", 11, function (x, y) {
+		return x >= y;
+	});
+	addInfix(">", 11, function (x, y) {
+		return x > y;
+	});
+	addInfix("in", 11, function (x, y) {
+		return x in y;
+	});
+	addInfix("===", 10, function (x, y) {
+		return x === y;
+	});
+	addInfix("!==", 10, function (x, y) {
+		return x !== y;
+	});
+	addInfix("&&", 7, function (x, fnY) {
+		return x && fnY();
+	}, true);
+	addInfix("||", 6, function (x, fnY) {
+		return x || fnY();
+	}, true);
 
 	//Formatter functions to evaluate symbols like literals or operators in the expression grammar
 	/**
