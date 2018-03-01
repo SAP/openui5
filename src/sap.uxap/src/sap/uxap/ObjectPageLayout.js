@@ -98,6 +98,15 @@ sap.ui.define([
 	 *
 	 * The <code>ObjectPageLayout</code> is responsive and adapts to all screen sizes.
 	 *
+	 * @see {@link topic:2e61ab6c68a2480eb666c1927a707658 Object Page Layout}
+	 * @see {@link topic:d2ef0099542d44dc868719d908e576d0 Object Page Headers}
+	 * @see {@link topic:370b67986497463187336fa130aebbf1 Anchor Bar}
+	 * @see {@link topic:4527729576cb4a4888275b6935aad03a Object Page Blocks}
+	 * @see {@link topic:2978f6064742456ebed31c5ccf4d051d Creating Blocks}
+	 * @see {@link topic:bc410e94e46540efa02857e15aae583f Object Page Scrolling}
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/object-page/ Object Page Layout}
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/snapping-header/ Object Page – Snapping Header}
+	 *
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -106,12 +115,6 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.uxap.ObjectPageLayout
 	 * @since 1.26
-	 * @see {@link topic:2e61ab6c68a2480eb666c1927a707658 Object Page Layout}
-	 * @see {@link topic:d2ef0099542d44dc868719d908e576d0 Object Page Headers}
-	 * @see {@link topic:370b67986497463187336fa130aebbf1 Anchor Bar}
-	 * @see {@link topic:4527729576cb4a4888275b6935aad03a Object Page Blocks}
-	 * @see {@link topic:2978f6064742456ebed31c5ccf4d051d Creating Blocks}
-	 * @see {@link topic:bc410e94e46540efa02857e15aae583f Object Page Scrolling}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ObjectPageLayout = Control.extend("sap.uxap.ObjectPageLayout", /** @lends sap.uxap.ObjectPageLayout.prototype */ {
