@@ -319,7 +319,6 @@ function(
 			var bWasNull = !this._headerTitle;
 
 			this._headerTitle = this._headerTitle || new Title(this.getId() + "-title", {
-					text: sTitle,
 					level: this.getTitleLevel()
 				});
 			this._headerTitle.setText(sTitle);
