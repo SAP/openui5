@@ -28,6 +28,9 @@ sap.ui.define([],
 			aggregations: {
 				scale: {
 					domRef: ":sap-domref > .sapMSliderTickmarks"
+				},
+				customTooltips: {
+					ignore: true
 				}
 			},
 			templates: {

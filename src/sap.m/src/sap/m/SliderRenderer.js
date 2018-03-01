@@ -106,7 +106,8 @@ sap.ui.define(['./SliderUtilities'],
 		};
 
 		SliderRenderer.renderHandle = function(oRm, oSlider, mOptions) {
-			var bEnabled = oSlider.getEnabled();
+			var bEnabled = oSlider.getEnabled(),
+				oFirstTooltip = oSlider.getUsedTooltips()[0];
 
 			oRm.write("<span");
 
@@ -120,8 +121,8 @@ sap.ui.define(['./SliderUtilities'],
 				this.writeHandleTooltip(oRm, oSlider);
 			}
 
-			if (oSlider.getInputsAsTooltips()) {
-				oRm.writeAttribute("aria-controls", oSlider.getAggregation("_tooltips")[0].getId());
+			if (oSlider.getInputsAsTooltips() && oFirstTooltip) {
+				oRm.writeAttribute("aria-controls", oFirstTooltip.getId());
 			}
 
 			this.addHandleClass(oRm, oSlider);

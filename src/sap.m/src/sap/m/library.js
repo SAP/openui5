@@ -97,7 +97,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.IBreadcrumbs",
 			"sap.m.IconTab",
 			"sap.m.IScale",
-			"sap.m.ISliderTooltip",
 			"sap.m.semantic.IGroup",
 			"sap.m.semantic.IFilter",
 			"sap.m.semantic.ISort",
@@ -1318,7 +1317,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 */
 	sap.m.TileSizeBehavior = {
 		/**
-		 * Default behavior: tiles adapt to the size of the screen, getting smaller on small screens.
+		 * Default behavior: Tiles adapt to the size of the screen, getting smaller on small screens.
 		 * @public
 		 */
 		Responsive: "Responsive",
@@ -1454,18 +1453,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 *
 	 * @function
 	 * @name sap.ui.core.IScale.getLabel
-	 */
-
-	/**
-	 *
-	 *   Interface for controls which are suitable as a Tooltip for the Slider/RangeSlider.
-	 *
-	 *
-	 * @since 1.54
-	 * @name sap.m.ISliderTooltip
-	 * @interface
-	 * @public
-	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	/**
