@@ -63,6 +63,27 @@
 			sut.destroy();
 		});
 
+		QUnit.test("Should Render One Tile and it should be visible", function(assert) {
+			// Arrange
+			var tile1 = new sap.m.StandardTile(),
+				sut;
+
+			// SUT
+			sut = new sap.m.TileContainer({tiles : [tile1]});
+
+			// Act
+			sut.placeAt("qunit-fixture");
+			core.applyChanges();
+
+			// Assert
+			//The only that contains a tile id is id+ "-remove" that's why it's retrived like this
+			assert.equal($("#" + tile1.getId()+ "-remove").length,1, "tile is rendered");
+			assert.equal($("#" + tile1.getId()+ "-remove").css("visibility"), "visible", "tile is visible");
+
+			// Cleanup
+			sut.destroy();
+		});
+
 		QUnit.test("ShouldRenderMultipleTiles", function(assert) {
 			// Arrange
 			var tile1 = new sap.m.StandardTile(),
@@ -250,7 +271,7 @@
 
 			//SUT
 			sut = new m.TileContainer({tiles : new m.StandardTile()});
-			sut.placeAt("qunit-fixture");
+			sut.placeAt("uiArea1"); //with of uiArea1 is 600px, will fit 2 tiles x 210px (12 rem + 2x8 margins + 2x1 borders. If changed in less, should be reflected here)
 			core.applyChanges();
 			setTimeout(function() {
 				sut._calculatePageSize();
@@ -263,6 +284,7 @@
 				}
 
 				//Act
+				// scroll to the page where the last tile will be
 				sut.scrollIntoView(lastTile,false);
 
 				var aRenderedTiles = sut.$().find(".sapMTCCnt").children();
@@ -270,7 +292,7 @@
 				//Assert
 				assert.equal(sut._oPagesInfo.getCurrentPage(), 1);
 				assert.equal(sut._iMaxTiles, sut.getPageFirstTileIndex());
-				assert.equal(aRenderedTiles.length, 2, "last tile should be rendered in the DOM");
+				assert.equal(aRenderedTiles.length, 3, "last tile should be rendered in the DOM");
 				assert.ok(!!lastTile.getDomRef(), "last tile should have DOM element");
 				assert.equal(aRenderedTiles.last()[0], lastTile.getDomRef(), "last tile should be rendered as last element in the DOM");
 
