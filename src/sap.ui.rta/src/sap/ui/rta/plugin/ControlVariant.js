@@ -361,14 +361,13 @@ sap.ui.define([
 		});
 
 		if (oOverlay._triggerDuplicate) {
-			this.sCustomTextForDuplicate = this._getVariantTitleForCopy(
+			var sCustomTextForDuplicate = this._getVariantTitleForCopy(
 				sPreviousText,
 				oOverlay.getVariantManagement(),
 				this._getVariantModel(oVariantManagementControl).getData()
 			);
 
-			this.setOldValue(sPreviousText);
-			oVariantManagementControl.getTitle().setText(this.sCustomTextForDuplicate);
+			oVariantManagementControl.getTitle().setText(sCustomTextForDuplicate);
 
 			oOverlay.attachEventOnce("geometryChanged", function() {
 				fnHandleStartEdit();
@@ -379,11 +378,8 @@ sap.ui.define([
 	};
 
 	ControlVariant.prototype.stopEdit = function (bRestoreFocus) {
-		this.setOldValue("");
-
 		if (this._oEditedOverlay._triggerDuplicate) {
 			this._oEditedOverlay.getElementInstance().getTitle().getBinding("text").refresh(true);
-			delete this.sCustomTextForDuplicate;
 			if (!this._oEditedOverlay.hasStyleClass("sapUiRtaErrorBg")) {
 				delete this._oEditedOverlay._triggerDuplicate;
 			}
@@ -417,7 +413,8 @@ sap.ui.define([
 			oCommand,
 			sVariantManagementReference = oOverlay.getVariantManagement(),
 			bTextChanged = this.getOldValue() !== sText,
-			iDuplicateCount = bTextChanged || oOverlay._triggerDuplicate
+			bNewEntry = bTextChanged || oOverlay._triggerDuplicate,
+			iDuplicateCount = bNewEntry
 				? oModel._getVariantTitleCount(sText, sVariantManagementReference)
 				: 0,
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta"),
@@ -439,7 +436,7 @@ sap.ui.define([
 			sErrorText = "BLANK_ERROR_TEXT";
 		} else if (iDuplicateCount > 0) {
 			sErrorText = "DUPLICATE_ERROR_TEXT";
-		} else if (bTextChanged) {
+		} else if (bNewEntry) {
 
 			var oSetTitleCommand = this._createSetTitleCommand({
 				text: sText,
@@ -456,11 +453,11 @@ sap.ui.define([
 							designTimeMetadata: oDesignTimeMetadata,
 							variantManagementReference: sVariantManagementReference,
 							element: oRenamedElement,
-							newVariantTitle: this.sCustomTextForDuplicate
+							newVariantTitle: this.getOldValue()
 						})
 					]
 				});
-				if (this.sCustomTextForDuplicate !== sText) {
+				if (bTextChanged) {
 					oCommand.addCommand(oSetTitleCommand);
 				}
 			} else {
