@@ -111,19 +111,6 @@ function(
 		assert.strictEqual(this.oRenamePlugin._aSelection.length, 1, "then the array of selection has only one selected overlay");
 	});
 
-	QUnit.test("when a title gets renamed", function(assert) {
-		var fnDone = assert.async();
-		sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.startEdit', function (sChannel, sEvent, mParams) {
-			if (mParams.overlay === this.oFormContainerOverlay) {
-				assert.strictEqual(this.oFormContainerOverlay.getSelected(), true, "then the overlay is still selected");
-				this.oRenamePlugin.stopEdit(this.oFormContainerOverlay);
-				assert.strictEqual(this.oFormContainerOverlay.getSelected(), false, "then the overlay is not selected anymore");
-				fnDone();
-			}
-		}, this);
-		this.oRenamePlugin.startEdit(this.oFormContainerOverlay);
-	});
-
 	QUnit.test("when _isEditable is called", function(assert) {
 		this.oFormContainerOverlay.setDesignTimeMetadata({
 			actions: {
@@ -257,7 +244,7 @@ function(
 			if (mParams.overlay === this.oLayoutOverlay) {
 				assert.equal(this.oLayoutOverlay.getSelected(), true, "then the overlay is still selected");
 				this.oRenamePlugin.stopEdit(this.oLayoutOverlay);
-				assert.equal(this.oLayoutOverlay.getSelected(), false, "then the overlay is not selected anymore");
+				assert.equal(this.oLayoutOverlay.getSelected(), true, "then the overlay is still selected");
 				fnDone();
 			}
 		}, this);
