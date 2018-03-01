@@ -515,6 +515,27 @@
 			bDebug = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG, sClassName);
 			SyncPromise.listener = listener;
 		});
+
+		QUnit.config.autostart = false;
+		sap.ui.require(["sap/ui/core/Core"], function (Core) {
+			var oCore = sap.ui.getCore();
+
+			oCore.attachInit(function () {
+				function start() {
+					try {
+						QUnit.start();
+					} catch (ex) {
+						// no way to tell if QUnit.start() has already been called :-(
+					}
+				}
+
+				if (oCore.isThemeApplied()) {
+					start();
+				} else {
+					oCore.attachThemeChanged(start);
+				}
+			});
+		});
 	}
 }());
 //TODO add tooltips to highlighting to explain rules
