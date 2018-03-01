@@ -556,7 +556,11 @@ function(
 			this._bRenderFirstPage = false;
 			aVisibleTiles = this._getVisibleTiles();
 			this._updateTileDimensionInfoAndPageSize(aVisibleTiles);
-			if (this._iMaxTiles !== Infinity && this._iMaxTiles ) {
+			if (this.getTiles().length === 1) {
+				// in case of only one tile, it was rendered
+				// but still needs it's position and visibility to be updated
+				this._update(false, aVisibleTiles);
+			} else if (this._iMaxTiles !== Infinity && this._iMaxTiles ) {
 				this._renderTiles(aVisibleTiles, 0, this._iMaxTiles - 1);
 			}
 		} else {
@@ -1134,7 +1138,8 @@ function(
 	};
 
 	/**
-	 * Updates the tile positions.
+	 * Updates the tile positions only of the rendered tiles.
+	 * Tile property _rendered is set inside Tile.js onAfterRendering.
 	 *
 	 * @private
 	 */
