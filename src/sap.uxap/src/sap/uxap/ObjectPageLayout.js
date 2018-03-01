@@ -3194,11 +3194,11 @@ sap.ui.define([
 		return iTitleHeight + iHeaderHeight;
 	};
 
-	ObjectPageLayout.prototype._onPinUnpinButtonPress = function (oEvent) {
+	ObjectPageLayout.prototype._onPinUnpinButtonPress = function () {
 		if (this._bPinned) {
-			this._unPin(oEvent);
+			this._unPin();
 		} else {
-			this._pin(oEvent);
+			this._pin();
 		}
 	};
 
