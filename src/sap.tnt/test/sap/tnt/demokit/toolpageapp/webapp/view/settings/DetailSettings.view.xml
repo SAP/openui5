@@ -6,12 +6,17 @@
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc">
 	<m:Page
-		title="{i18n>systemSettingsTitle}"
 		showHeader="{device>/system/phone}"
 		showNavButton="{device>/system/phone}"
 		navButtonPress="onNavButtonPress">
-		<ObjectPageLayout
-			id="objectPageLayout">
+		<m:landmarkInfo>
+			<m:PageAccessibleLandmarkInfo
+				rootRole="Region"
+				rootLabel="{i18n>SystemSettings_rootLabel}"
+				contentRole="Main"
+				contentLabel="{i18n>SystemSettings_contentLabel}"/>
+		</m:landmarkInfo>
+		<ObjectPageLayout id="objectPageLayout">
 			<headerTitle>
 				<ObjectPageHeader
 					objectTitle="{i18n>systemSettingsTitle}"
