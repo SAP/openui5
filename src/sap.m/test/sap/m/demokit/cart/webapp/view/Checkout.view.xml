@@ -360,7 +360,7 @@
 									placeholder="{i18n>emailAddressText}"
 									value="{
 										path: '/CashOnDelivery/Email',
-										type: 'sap.ui.demo.cart.model.emailType'
+										type: 'sap.ui.demo.cart.model.EmailType'
 										}"
 									change="checkCashOnDeliveryStep">
 									<layoutData>

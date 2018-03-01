@@ -9,7 +9,7 @@ sap.ui.define([
 		bundleName: "sap.ui.demo.cart.i18n.i18n"
 	});
 
-	return String.extend("sap.ui.demo.cart.model.emailType", {
+	return String.extend("sap.ui.demo.cart.model.EmailType", {
 
 		/**
 		 * Validates the value to be parsed
