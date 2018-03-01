@@ -68,6 +68,12 @@ sap.ui.define([
 			return this;
 		},
 
+		getAccessibilityInfo : function() {
+			var oField = this.getAggregation("field");
+
+			return oField && oField.getAccessibilityInfo();
+		},
+
 		removeAssociation : function() {
 			var oField = this.getAggregation("field");
 
