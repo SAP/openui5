@@ -199,17 +199,36 @@ sap.ui.define([
 	 *   a schema; schema children are ignored because they do not contain $Annotations
 	 * @param {object} mAnnotations
 	 *   the root scope's $Annotations
+	 * @param {boolean} [bPrivileged=false]
+	 *   whether the schema has been loaded from a privileged source and thus may overwrite
+	 *   existing annotations
 	 */
-	function mergeAnnotations(oSchema, mAnnotations) {
+	function mergeAnnotations(oSchema, mAnnotations, bPrivileged) {
 		var sTarget;
 
-		for (sTarget in oSchema.$Annotations) {
-			if (sTarget in mAnnotations) {
-				// "PUT" semantics on term level, last annotation file wins
-				jQuery.extend(mAnnotations[sTarget], oSchema.$Annotations[sTarget]);
-			} else {
-				mAnnotations[sTarget] = oSchema.$Annotations[sTarget];
+		/*
+		 * "PUT" semantics on term/qualifier level, only privileged sources may overwrite.
+		 *
+		 * @param {object} oTarget
+		 *   The target object (which is modified)
+		 * @param {object} oSource
+		 *   The source object
+		 */
+		function extend(oTarget, oSource) {
+			var sName;
+
+			for (sName in oSource) {
+				if (bPrivileged || !(sName in oTarget)) {
+					oTarget[sName] = oSource[sName];
+				}
 			}
+		}
+
+		for (sTarget in oSchema.$Annotations) {
+			if (!(sTarget in mAnnotations)) {
+				mAnnotations[sTarget] = {};
+			}
+			extend(mAnnotations[sTarget], oSchema.$Annotations[sTarget]);
 		}
 		delete oSchema.$Annotations;
 	}
@@ -547,7 +566,7 @@ sap.ui.define([
 					mScope[sQualifiedName] = oElement;
 					if (oElement.$kind === "Schema") {
 						that.mSchema2MetadataUrl[sQualifiedName] = that.aAnnotationUris[i];
-						mergeAnnotations(oElement, mScope.$Annotations);
+						mergeAnnotations(oElement, mScope.$Annotations, true);
 					}
 				}
 			}
