@@ -1428,6 +1428,85 @@
 		helpers.renderObject(oNavContainer);
 	});
 
+	QUnit.module("RTA util functions", {
+
+		beforeEach: function () {
+			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, 5);
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+		}
+	});
+
+	QUnit.test("_suppressScroll", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			iScrollTopBefore,
+			iScrollTopAfter,
+			done = assert.async();
+
+		assert.expect(1);
+
+		// wait for the event when the page is rendered and ready
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			// Setup: save current scroll position and suppress scroll
+			iScrollTopBefore = oObjectPage._$opWrapper.scrollTop();
+			oObjectPage._suppressScroll();
+
+			// Act: call scrolling while scrolling is suppressed
+			oObjectPage._scrollTo(iScrollTopBefore + 10);
+
+			// Check if scroll suppression was effective
+			iScrollTopAfter = oObjectPage._$opWrapper.scrollTop();
+			assert.strictEqual(iScrollTopBefore, iScrollTopAfter, "scroll top is unchanged");
+			done();
+		});
+
+		// Act: render page to test scrolling behavior
+		helpers.renderObject(oObjectPage);
+	});
+
+	QUnit.test("_resumeScroll", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			iUpdatedScrollTop = 0,
+			oFirstSection = oObjectPage.getSections()[0],
+			oFourthSection = oObjectPage.getSections()[3],
+			done = assert.async();
+
+		// Arrange: set selection to a (non-first) section that requires page scrolling
+		oObjectPage.setSelectedSection(oFourthSection.getId());
+
+		assert.expect(3);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			// Arrange: save current scroll position and suppress scroll
+			oObjectPage._suppressScroll();
+
+			// Act: Change scrollTop (effect of RTA operation)
+			oObjectPage._$opWrapper.scrollTop(iUpdatedScrollTop);
+
+			// Act: resume page's own scrolling and restore state
+			oObjectPage._resumeScroll();
+
+			// Check that the restored section corresponds to the current scroll position
+			assert.strictEqual(oObjectPage.getSelectedSection(), oFirstSection.getId(), "selected section is correct");
+			assert.strictEqual(oObjectPage._$opWrapper.scrollTop(), iUpdatedScrollTop, "scroll top is correct");
+
+			// Check that the state is correctly preserved even of the page is meanwhile invalidated and rerendered
+			oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+				setTimeout(function() {
+					assert.strictEqual(oObjectPage._$opWrapper.scrollTop(), iUpdatedScrollTop, "scroll top is correct");
+					done();
+				}, 0);
+			});
+			// Act: invalidate and apply changes to cause rerendering
+			oObjectPage.invalidate();
+			sap.ui.getCore().applyChanges();
+		});
+
+		// Act: render page to test scrolling behavior
+		helpers.renderObject(oObjectPage);
+	});
+
 	function checkObjectExists(sSelector) {
 		var oObject = jQuery(sSelector);
 		return oObject.length !== 0;
