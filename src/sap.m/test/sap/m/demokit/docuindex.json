@@ -1841,7 +1841,7 @@
 		{
 		  "id": "sap.m.sample.ObjectHeaderFavFlag",
 		  "name": "Object Header - Favorite & Flag",
-		  "description": "The Object Header can indicate wether the object is a favorite, or has been flagged for further action. Changing these states is done elsewhere.<br><br><b>Note:</b> The <code>markFlagged</code> and <code>markFavorite</code> properties are deprecated as of version 1.42. We recommend using the <code>markers</code> aggregation instead."
+		  "description": "The Object Header can indicate whether the object is a favorite, or has been flagged for further action. Changing these states is done elsewhere.<br><br><b>Note:</b> The <code>markFlagged</code> and <code>markFavorite</code> properties are deprecated as of version 1.42. We recommend using the <code>markers</code> aggregation instead."
 		},
 		{
 		  "id": "sap.m.sample.ObjectHeaderTitleSel",

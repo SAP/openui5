@@ -244,8 +244,8 @@
         <lib name="qunit-composite" displayName="Qunit Composite" homepage="https://github.com/jquery/qunit-composite">
         	<license url="http://jquery.org/license" type="MIT License" file="../thirdparty/licenses/qunit-composite-MIT-LICENSE.txt" />
         </lib>
-        <lib name="qunit-reporter-junit" displayName="JUnit Reporter for QUnit" homepage="https://github.com/jquery/qunit-reporter-junit">
-        	<license url="http://jquery.org/license" type="MIT License" file="../thirdparty/licenses/qunit-reporter-junit-MIT-LICENSE.txt" />
+        <lib name="qunit-reporter-junit" displayName="JUnit Reporter for QUnit" homepage="https://github.com/JamesMGreene/qunit-reporter-junit">
+        	<license url="https://raw.githubusercontent.com/JamesMGreene/qunit-reporter-junit/master/LICENSE.txt" type="MIT License" file="../thirdparty/licenses/qunit-reporter-junit-MIT-LICENSE.txt" />
         </lib>
         <lib name="iscroll" displayName="cubiq.org - iscroll" homepage="http://cubiq.org/iscroll-4">
         	<license url="http://cubiq.org/license" type="MIT License" file="../thirdparty/licenses/iscroll-MIT-LICENSE.txt" />
@@ -257,7 +257,7 @@
         	<license url="http://www.mobify.com/mobifyjs/license/" type="MIT License" file="../thirdparty/licenses/mobify-MIT-LICENSE.txt" />
         </lib>
         <lib name="zynga" displayName="Zynga Scroller" homepage="http://zynga.github.com/scroller/">
-        	<license url="https://raw.github.com/zynga/scroller/master/MIT-LICENSE.txt" type="MIT License" file="../thirdparty/licenses/zyngascroll-MIT-LICENSE.txt" />
+        	<license url="https://github.com/pbakaus/scroller/blob/master/LICENSE.txt" type="MIT License" file="../thirdparty/licenses/zyngascroll-LICENSE.txt" />
         </lib>
         <lib name="less" displayName="LESS" homepage="http://lesscss.org/">
         	<license url="https://raw.github.com/cloudhead/less.js/master/LICENSE" type="Apache License Version 2.0" file="../thirdparty/licenses/LESS-Apache-LICENSE.txt" />
@@ -269,7 +269,7 @@
         	<license url="https://raw.github.com/mbostock/d3/master/LICENSE" type="BSD License" file="../thirdparty/licenses/D3-BSD-LICENSE.txt" />
         </lib>
         <lib name="jszip" displayName="JSZip" homepage="http://stuartk.com/jszip/">
-        	<license url="https://raw.github.com/Stuk/jszip/master/docs/MIT.txt" type="MIT License" file="../thirdparty/licenses/JSZip-MIT-LICENSE.txt" />
+        	<license url="https://github.com/Stuk/jszip/blob/master/LICENSE.markdown" type="MIT License" file="../thirdparty/licenses/JSZip-LICENSE.txt" />
         </lib>
         <lib name="caja" displayName="Google-Caja JS HTML Sanitizer" homepage="http://code.google.com/p/google-caja/wiki/JsHtmlSanitizer">
         	<license url="http://www.apache.org/licenses/LICENSE-2.0" type="Apache License Version 2.0" file="../thirdparty/licenses/Caja-Apache-LICENSE.txt" />
@@ -308,7 +308,7 @@
         	<license url="http://opensource.org/licenses/mit-license.php" type="MIT License" file="../thirdparty/licenses/signals-MIT-LICENSE.txt" />
         </lib>
         <lib name="blanket" displayName="blanket.js" homepage="http://blanketjs.org/">
-        	<license url="https://github.com/alex-seville/blanket/blob/master/LICENSE-MIT" type="MIT License" file="../thirdparty/licenses/blanket-MIT-LICENSE.txt" />
+        	<license url="https://github.com/alex-seville/blanket/blob/master/LICENSE" type="MIT License" file="../thirdparty/licenses/blanket-LICENSE.txt" />
         </lib>
         <lib name="array-polyfills" displayName="Array.prototype Polyfills" homepage="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/">
         	<license url="https://developer.mozilla.org/en-US/docs/MDN/About#Copyrights_and_licenses" type="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication" file="../thirdparty/licenses/array-polyfills-LICENSE.txt" />

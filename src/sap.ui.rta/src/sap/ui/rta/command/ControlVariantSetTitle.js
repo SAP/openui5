@@ -24,9 +24,6 @@ sap.ui.define([
 		metadata : {
 			library : "sap.ui.rta",
 			properties : {
-				renamedElement : {
-					type : "object"
-				},
 				oldText : {
 					type : "string"
 				},
@@ -54,7 +51,7 @@ sap.ui.define([
 	 * @returns {Promise} Returns resolve after execution
 	 */
 	ControlVariantSetTitle.prototype.execute = function() {
-		var oVariantManagementControl = this.getRenamedElement(),
+		var oVariantManagementControl = this.getElement(),
 			oVariantManagementControlBinding = oVariantManagementControl.getTitle().getBinding("text");
 
 		this.oAppComponent = flUtils.getAppComponentForControl(oVariantManagementControl);
@@ -85,7 +82,7 @@ sap.ui.define([
 	 * @returns {Promise} Returns resolve after undo
 	 */
 	ControlVariantSetTitle.prototype.undo = function() {
-		var oVariantManagementControlBinding = this.getRenamedElement().getTitle().getBinding("text"),
+		var oVariantManagementControlBinding = this.getElement().getTitle().getBinding("text"),
 			mPropertyBag = {
 			variantReference : this.sCurrentVariant,
 			changeType : "setTitle",

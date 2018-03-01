@@ -64,11 +64,11 @@ function(
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.m.FlexBox
 	 * @see https://www.w3.org/TR/css-flexbox-1/
 	 * @see https://www.w3schools.com/css/css3_flexbox.asp
+	 * @see {@link topic:674890e6d8534eaba2eaf63242e077eb Flex Box}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FlexBox = Control.extend("sap.m.FlexBox", /** @lends sap.m.FlexBox.prototype */ { metadata : {
@@ -167,8 +167,6 @@ function(
 	/**
 	 * Initializes the control.
 	 *
-	 * @name sap.m.FlexBox.init
-	 * @method
 	 * @public
 	 */
 	FlexBox.prototype.init = function() {
@@ -188,8 +186,6 @@ function(
 	/**
 	 * Adds item in the FlexBox.
 	 *
-	 * @name sap.m.FlexBox.addItem
-	 * @method
 	 * @public
 	 * @param {object} oItem Added item.
 	 * @returns {sap.m.FlexBox} <code>this</code> FlexBox reference for chaining.
@@ -204,8 +200,6 @@ function(
 	/**
 	 * Inserts single item.
 	 *
-	 * @name sap.m.FlexBox.insertItem
-	 * @method
 	 * @public
 	 * @param {object} oItem Inserted item.
 	 * @param {int} iIndex Index of the inserted item.
@@ -221,8 +215,6 @@ function(
 	/**
 	 * Removes single item.
 	 *
-	 * @name sap.m.FlexBox.removeItem
-	 * @method
 	 * @public
 	 * @param {any} vItem Item to be removed.
 	 * @returns {object} The removed item.
@@ -238,8 +230,6 @@ function(
 	/**
 	 * Removes all items.
 	 *
-	 * @name sap.m.FlexBox.removeAllItems
-	 * @method
 	 * @public
 	 * @returns {object} The removed items from flexbox.
 	 */
@@ -256,8 +246,6 @@ function(
 	/**
 	 * Helper that gets called when new item is inserted into items aggregation.
 	 *
-	 * @name sap.m.FlexBox._onItemInserted
-	 * @method
 	 * @private
 	 * @param {object} oItem Inserted item.
 	 */
@@ -273,8 +261,6 @@ function(
 	/**
 	 * Helper that gets called when an item is removed from items aggregation.
 	 *
-	 * @name sap.m.FlexBox._onItemRemoved
-	 * @method
 	 * @private
 	 * @param {object} oItem Removed item.
 	 */
@@ -290,8 +276,6 @@ function(
 	/**
 	 * Helper that gets called when an item is changed.
 	 *
-	 * @name sap.m.FlexBox._onItemChange
-	 * @method
 	 * @private
 	 * @param {object} oControlEvent Onchange event.
 	 */
@@ -323,8 +307,6 @@ function(
 	 * Gets called after an item is (re)rendered.
 	 * Here <code>this</code> points to the control, not to the FlexBox.
 	 *
-	 * @name sap.m.FlexBox._onAfterItemRendering
-	 * @method
 	 * @private
 	 */
 	FlexBox.prototype._onAfterItemRendering = function() {
@@ -337,8 +319,6 @@ function(
 	/**
 	 * Sets the render type of the FlexBox.
 	 *
-	 * @name sap.m.FlexBox.setRenderType
-	 * @method
 	 * @public
 	 * @param {string} sValue Render type in string format.
 	 * @returns {sap.m.FlexBox} <code>this</code> FlexBox reference for chaining.
@@ -367,8 +347,6 @@ function(
 	/**
 	 * Sets display inline for nested or contained FlexBox.
 	 *
-	 * @name sap.m.FlexBox.setDisplayInline
-	 * @method
 	 * @public
 	 * @param {boolean} bInline Indication for display inline.
 	 * @returns {sap.m.FlexBox} <code>this</code> FlexBox reference for chaining.
@@ -383,8 +361,6 @@ function(
 	/**
 	 * Sets direction for the FlexBox. It could be row, row-reverse, column or column-reverse.
 	 *
-	 * @name sap.m.FlexBox.setDirection
-	 * @method
 	 * @public
 	 * @param {string} sValue FlexBox direction in string format.
 	 * @returns {sap.m.FlexBox} <code>this</code> FlexBox reference for chaining.
@@ -409,8 +385,6 @@ function(
 	/**
 	 * Sets <code>fitContainer</code> so you can have nested FlexBox containers in columns or rows.
 	 *
-	 * @name sap.m.FlexBox.setFitContainer
-	 * @method
 	 * @public
 	 * @param {string} sValue Fit container in string format.
 	 * @returns {sap.m.FlexBox} <code>this</code> FlexBox reference for chaining.
@@ -425,8 +399,6 @@ function(
 	/**
 	 * Sets the wrapping.
 	 *
-	 * @name sap.m.FlexBox.setWrap
-	 * @method
 	 * @public
 	 * @param {string} sValue Wrapping in the flexbox.
 	 * @returns {sap.m.FlexBox} <code>this</code> FlexBox reference for chaining.
@@ -442,8 +414,6 @@ function(
 	/**
 	 * Sets the <code>justifyContent</code> - it can be flex-start, flex-end, center, space-between, space-around, space-evenly.
 	 *
-	 * @name sap.m.FlexBox.setJustifyContent
-	 * @method
 	 * @public
 	 * @param {string} sValue Justify content;
 	 * @returns {sap.m.FlexBox} this FlexBox reference for chaining.
@@ -459,8 +429,6 @@ function(
 	/**
 	 * Sets the alignment of items in the FlexBox.
 	 *
-	 * @name sap.m.FlexBox.setAlignItems
-	 * @method
 	 * @public
 	 * @param {string} sValue Align items.
 	 * @returns {sap.m.FlexBox} this FlexBox reference for chaining.
@@ -476,8 +444,6 @@ function(
 	/**
 	 * Sets the alignment of content in the FlexBox.
 	 *
-	 * @name sap.m.FlexBox.setAlignContent
-	 * @method
 	 * @public
 	 * @param {string} sValue Align content.
 	 * @returns {sap.m.FlexBox} this FlexBox reference for chaining.
@@ -493,8 +459,6 @@ function(
 	/**
 	 * Sets the FlexBox height.
 	 *
-	 * @name sap.m.FlexBox.setHeight
-	 * @method
 	 * @public
 	 * @param {string} sValue Height in string format.
 	 * @returns {sap.m.FlexBox} this FlexBox reference for chaining.
@@ -509,8 +473,6 @@ function(
 	/**
 	 * Sets the FlexBox width.
 	 *
-	 * @name sap.m.FlexBox.setWidth
-	 * @method
 	 * @public
 	 * @param {string} sValue Width in string format.
 	 * @returns {sap.m.FlexBox} this FlexBox reference for chaining.
@@ -525,8 +487,6 @@ function(
 	/**
 	 * Sets the background design.
 	 *
-	 * @name sap.m.FlexBox.setBackgroundDesign
-	 * @method
 	 * @public
 	 * @param {string} sValue Background design in string format.
 	 * @returns {sap.m.FlexBox} this FlexBox for reference chaining.
@@ -542,8 +502,6 @@ function(
 	/**
 	 * Gets the accessibility information.
 	 *
-	 * @name sap.m.FlexBox.getAccessibilityInfo
-	 * @method
 	 * @protected
 	 * @returns {object} The accessibility information.
 	 * @see sap.ui.core.Control#getAccessibilityInfo

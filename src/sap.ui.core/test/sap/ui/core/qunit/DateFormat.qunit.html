@@ -202,6 +202,20 @@
 		doTestRelative(true, {style: "long", relativeRange: [1, 5]}, "de", "style long, range [1, 5], de");
 	});
 
+	QUnit.test("format date with year before 100", function() {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			relative: true,
+			relativeScale: "auto"
+		}),
+		oDate = new Date(),
+		sResult;
+
+		oDate.setFullYear(oDate.getFullYear() - 2000);
+		sResult = oDateFormat.format(oDate);
+
+		assert.equal(sResult, "2000 years ago", "The date should be formatted correctly");
+	});
+
 	QUnit.test("parse date relative", function(assert){
 		doTestRelative(false, {pattern: "yyyy-MM-dd"}, "en", "yyyy-MM-dd, default range, en");
 		doTestRelative(false, {pattern: "yyyy-MM-dd"}, "de", "yyyy-MM-dd, default range, de");
@@ -1541,6 +1555,7 @@
 		assert.deepEqual(oIntervalFormat.parse("11042017 – 13042017"), aCompare, "Parse fallback with no delimiter");
 		assert.deepEqual(oIntervalFormat.parse("11042017 - 13042017"), aCompare, "Parse fallback with no delimiter and common connector");
 	});
+
 </script>
 
 </head>

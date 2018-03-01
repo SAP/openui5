@@ -16,7 +16,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	 * Table renderer.
 	 *
 	 * @namespace
-	 * @name sap.ui.table.TableRenderer
+	 * @alias sap.ui.table.TableRenderer
 	 */
 	var TableRenderer = {};
 

@@ -13,6 +13,24 @@
         "type": "FIX",
         "text": " sap.ui.dt.MiniMenu - various bugfixes \u0026 cleaning (split1)",
         "references": []
+      },
+      {
+        "id": "b71479bc898d27a2490385c58535f68d238096b3",
+        "type": "FIX",
+        "text": "sap.ui.dt - Root elements in DT can become invalid on app close",
+        "references": []
+      },
+      {
+        "id": "92a3a8f624fdadaad50402a1eac6b23a4dde2f0f",
+        "type": "FIX",
+        "text": "sap.ui.rta - Aggregation binding Overlay movable when not editable",
+        "references": []
+      },
+      {
+        "id": "bcecb61ee50e6ce23d8987147c2048e87e2fa260",
+        "type": "FIX",
+        "text": "sap.ui.rta - Handling of sync failed event + overlay creation error",
+        "references": []
       }
     ]
   }

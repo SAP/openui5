@@ -2375,6 +2375,7 @@
 
 		QUnit.module("MaskInput integration", {
 			beforeEach : function() {
+				this.clock = sinon.useFakeTimers();
 				this._defaultFormatter = sap.ui.core.format.DateFormat.getTimeInstance({style: "medium", strictParsing: true, relative: false});
 			},
 			typeAndCheckValueForDisplayFormat: function(sDisplayFormat, sInput, sExpectedValue) {
@@ -2394,6 +2395,7 @@
 				assert.equal(jQuery("#" + tp.getId() + "-inner").val(), sExpectedValue, "$input.val() ok");
 
 				//cleanup
+				this.clock.restore();
 				tp.destroy();
 			}
 		});
@@ -2945,6 +2947,27 @@
 
 			//assert
 			assert.equal(oSpyDestroy.callCount, 1, "When initMask is called, the old instance of semanticmask helper is destroyed");
+		});
+
+		QUnit.test("In IE when both focusin + setValue(''), the order of their calling is reversed and that caused" +
+			"missing first symbol in the mask", function(assert) {
+			//prepare
+			var oTp = new sap.m.TimePicker({
+					value: "000000",
+				placeholder: "Enter Value"
+				});
+
+			oTp.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			//act
+			oTp.setValue("");
+			oTp.focus();
+			this.clock.tick(1000);
+
+			//assert
+			assert.equal(oTp._oTempValue.toString(), "--:--:-- --", "the mask is the correct one");
+
 		});
 
 		QUnit.module("maskMode property", {
@@ -3598,6 +3621,27 @@
 			assert.equal(spy.callCount, 2, "changed event fired twice");
 
 			spy = null;
+			tp.destroy();
+		});
+
+		QUnit.test("_handleInputChange formats correctly givven value before setting it to the property value", function(assert) {
+			//system under test
+			var tp = new sap.m.TimePicker("tp", {
+				valueFormat: "h:mm:ss",
+				displayFormat: "h:mm:ss"
+			});
+
+			//arrange
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//act
+			tp._$input.val("2:28:34");
+			tp._handleInputChange();
+
+			//assert
+			assert.equal(tp.getValue(), '2:28:34', "getValue is correct");
+
 			tp.destroy();
 		});
 

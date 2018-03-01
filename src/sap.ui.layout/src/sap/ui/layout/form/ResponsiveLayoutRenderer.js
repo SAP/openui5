@@ -20,16 +20,8 @@ sap.ui.define(['sap/ui/core/Renderer', './FormLayoutRenderer'],
 
 	ResponsiveLayoutRenderer.renderContainers = function(rm, oLayout, oForm){
 
-		var aContainers = oForm.getFormContainers();
-		var aVisibleContainers = [];
-		var iLength = 0;
-		for ( var i = 0; i < aContainers.length; i++) {
-			var oContainer = aContainers[i];
-			if (oContainer.isVisible()) {
-				iLength++;
-				aVisibleContainers.push(oContainer);
-			}
-		}
+		var aVisibleContainers = oForm.getVisibleFormContainers();
+		var iLength = aVisibleContainers.length;
 
 		if (iLength > 0) {
 			// special case: only one container -> do not render an outer ResponsiveFlowLayout

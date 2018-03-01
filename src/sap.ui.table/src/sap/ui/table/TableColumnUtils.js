@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './library'],
 		 * @author SAP SE
 		 * @version ${version}
 		 * @namespace
-		 * @name sap.ui.table.TableColumnUtils
+		 * @alias sap.ui.table.TableColumnUtils
 		 * @private
 		 */
 		var TableColumnUtils = {

@@ -529,7 +529,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @return {boolean} wether the Opening is locked or not
+	 * @return {boolean} whether the Opening is locked or not
 	 */
 	MiniMenu.prototype.isMenuOpeningLocked = function () {
 		return this._bOpeningLocked;
@@ -565,7 +565,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * checks wether a Plugin locks the opening of a new MiniMenu
+	 * checks whether a Plugin locks the opening of a new MiniMenu
 	 * @param {object} oOverlay the Overlay which should be checked for
 	 * @return {boolean} true, if locked; false if not
 	 */

@@ -96,7 +96,6 @@ jQuery.sap.require("sap.ui.fl.Utils");
 				changes: {
 					changes: [],
 					contexts: [],
-					settings: {},
 					ui2personalization: {},
 					variantSection: {}
 				}
@@ -551,7 +550,6 @@ jQuery.sap.require("sap.ui.fl.Utils");
 	});
 
 	QUnit.test('if cache key equals NO CHANGES, no cache entry is available and no change information is passed by cache key', function(assert) {
-		var that = this;
 		var sTestComponentName = "testComponent";
 		var sAppVersion = "oldVersion";
 		var oComponent = {
@@ -563,16 +561,24 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		};
 		var oEntry = {
 			changes: {
-				changes: []
-			}
+				changes : [],
+				contexts : [],
+				variantSection : {},
+				ui2personalization : {}
+			},
+			componentClassName: sTestComponentName
 		};
-		Cache._entries[sTestComponentName][sAppVersion].promise = Promise.resolve(oEntry);
 
-		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
+		var oStubLoadBundle = this.stub(Cache, '_getChangesFromBundle').returns(Promise.resolve([]));
+		var oStubLoadChanges = this.stub(LrepConnector.prototype, 'loadChanges');
 
 		return Cache.getChangesFillingCache(this.oLrepConnector, oComponent, mPropertyBag).then(function(oResult) {
-			sinon.assert.notCalled(that.oLrepConnector.loadChanges);
-			assert.deepEqual(oResult, oEntry, "then an empty array is returned");
+			assert.ok(oStubLoadBundle, "then load changes from bundle");
+			assert.ok(oStubLoadChanges.notCalled, "instead of back end request");
+			assert.deepEqual(oResult, oEntry, "and return correct entry");
+		}).then(Cache.getCacheKey.bind(Cache, oComponent)).then(function(oResult) {
+			assert.ok(oStubLoadChanges.notCalled, "getCacheKey does not trigger back end request");
+			assert.equal(oResult, Cache.NOTAG, "but no tag for cache key is return");
 		});
 	});
 

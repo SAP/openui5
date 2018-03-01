@@ -246,6 +246,40 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapUiRespGridMedia-Std-LargeDesktop.sapU
 }
 
 /* ========================================================== */
+/* Form - ColumnLayout                                        */
+/* ========================================================== */
+.sapUiFormCL .sapUiFormElementLbl > .sapMLabel {
+	width: 100%;
+}
+
+.sapUiFormCL.sapUiFormCLSmallColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsS12) > .sapMLabel:after,
+.sapUiFormCL.sapUiFormCLWideColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsL12) > .sapMLabel:after {
+	position: absolute; /* otherwise ":" is inside of Elements padding */
+	right: 0;
+}
+
+.sapUiFormCL.sapUiFormCLSmallColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsS12) > .sapMLabel,
+.sapUiFormCL.sapUiFormCLWideColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsL12) > .sapMLabel {
+	text-align: end !important; /* to overwrite style set on element */
+	position: relative;
+	float: none; /* otherwise ":" is inside of Elements padding */
+}
+
+html[data-sap-ui-browser^=ie] .sapUiFormCL.sapUiFormCLSmallColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsS12) > .sapMLabel,
+html[data-sap-ui-browser^=ie] .sapUiFormCL.sapUiFormCLWideColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsL12) > .sapMLabel,
+html[data-sap-ui-browser^=ed] .sapUiFormCL.sapUiFormCLSmallColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsS12) > .sapMLabel,
+html[data-sap-ui-browser^=ed] .sapUiFormCL.sapUiFormCLWideColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsL12) > .sapMLabel {
+	text-align: right !important; /* to overwrite style set on element */
+}
+
+html[dir=rtl][data-sap-ui-browser^=ie] .sapUiFormCL.sapUiFormCLSmallColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsS12) > .sapMLabel,
+html[dir=rtl][data-sap-ui-browser^=ie] .sapUiFormCL.sapUiFormCLWideColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsL12) > .sapMLabel,
+html[dir=rtl][data-sap-ui-browser^=ed] .sapUiFormCL.sapUiFormCLSmallColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsS12) > .sapMLabel,
+html[dir=rtl][data-sap-ui-browser^=ed] .sapUiFormCL.sapUiFormCLWideColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsL12) > .sapMLabel {
+	text-align: left !important; /* to overwrite style set on element */
+}
+
+/* ========================================================== */
 /* COMPACT + CONDENSED SIZE + SPECIALS FOR SAP.UI.TABLE.TABLE */
 /* ========================================================== */
 

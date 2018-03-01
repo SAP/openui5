@@ -103,8 +103,6 @@ function(
 		]
 	};
 
-
-	var fnGetVariantTitleStub = sinon.spy(oModel, "_getVariantTitleForCopy");
 	sinon.stub(oModel, "getVariant").returns(oVariant);
 	sinon.stub(Utils, "getCurrentLayer").returns("CUSTOMER");
 	sinon.stub(oModel.oVariantController, "getVariants").returns([oVariant]);
@@ -132,14 +130,14 @@ function(
 		var mFlexSettings = {layer: "CUSTOMER"};
 
 		var oControlVariantDuplicateCommand = CommandFactory.getCommandFor(this.oVariantManagement, "duplicate", {
-			sourceVariantReference : oVariant.content.variantReference
+			sourceVariantReference : oVariant.content.variantReference,
+			newVariantTitle: "variant A Copy"
 		}, oDesignTimeMetadata, mFlexSettings);
 
 		assert.ok(oControlVariantDuplicateCommand, "control variant duplicate command exists for element");
 		oControlVariantDuplicateCommand.execute().then( function() {
 			var oDuplicateVariant = oControlVariantDuplicateCommand.getVariantChange();
 			assert.ok(fnCreateDefaultFileNameSpy.calledWith("Copy"), "then Copy appended to the fileName of the duplicate variant");
-			assert.ok(fnGetVariantTitleStub.calledOnce, "'_getVariantTitleForCopy' is called");
 			assert.notEqual(oDuplicateVariant.getId().indexOf("_Copy"), -1, "then fileName correctly duplicated");
 			assert.equal(oDuplicateVariant.getVariantReference(), oVariant.content.variantReference, "then variant reference correctly duplicated");
 			assert.equal(oDuplicateVariant.getTitle(), "variant A" + " Copy", "then variant reference correctly duplicated");

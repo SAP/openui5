@@ -49,6 +49,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 *      Note: this can be omitted, no matter whether <code>mSettings</code> will be given or not!
 	 * @param {object} [mSettings] optional map/JSON-object with initial property values, aggregated objects etc. for the new element
 	 *
+	 * @abstract
 	 * @class Base Class for Elements.
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
@@ -948,7 +949,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @param {object} [vPath.parameters] map of additional parameters for this binding
 	 * @param {string} [vPath.model] name of the model
 	 * @param {object} [vPath.events] map of event listeners for the binding events
-	 * @param {object} [mParameters] map of additional parameters for this binding (only taken into account when vPath is a string in that case the properties described for vPath above are valid here).
+	 * @param {object} [mParameters] map of additional parameters for this binding (only taken into account when vPath is a string in that case it corresponds to vPath.parameters).
 	 * The supported parameters are listed in the corresponding model-specific implementation of <code>sap.ui.model.ContextBinding</code>.
 	 *
 	 * @return {sap.ui.core.Element} reference to the instance itself

@@ -81,7 +81,7 @@ sap.ui.define(['sap/ui/thirdparty/URI', 'sap/ui/Device', 'sap/ui/performance/E2E
 			format(oInteraction.navigation, 16), // client_navigation_time
 			format(oInteraction.roundtrip, 16), // client_round_trip_time
 			format(oInteraction.duration, 16), // end_to_end_time
-			format(oInteraction.requests.length - oInteraction.incompleteRequests, 8), // completed network_round_trips
+			format(oInteraction.completeRoundtrips, 8), // completed network_round_trips
 			format(CLIENT_ID, 40), // client_id
 			format(oInteraction.networkTime, 16), // network_time
 			format(oInteraction.requestTime, 16), // request_time
@@ -177,7 +177,7 @@ sap.ui.define(['sap/ui/thirdparty/URI', 'sap/ui/Device', 'sap/ui/performance/E2E
 					sFESRTransactionId = Passport.createGUID();
 				}
 			};
-		} else if (!bActive) {
+		} else if (!bActive && bFesrActive) {
 			bFesrActive = false;
 			Interaction.setActive(false);
 			XHRInterceptor.unregister("FESR", "open");

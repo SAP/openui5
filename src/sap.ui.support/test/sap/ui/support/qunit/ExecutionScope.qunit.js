@@ -248,7 +248,7 @@
 
         assert.strictEqual(
             publicNotCloned.length,
-            16,
+            17,
             "should be with less elements than global scope"
         );
 

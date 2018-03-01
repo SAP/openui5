@@ -930,8 +930,8 @@ sap.ui.define([
 		return this._serializeToLrep().then(function () {
 			BusyIndicator.hide();
 			return this._getFlexController()._oChangePersistence.transportAllUIChanges(this._oRootControl, Utils.getRtaStyleClassName(), this.getLayer())
-				.then(function(sError) {
-					if (sError !== "Error") {
+				.then(function(sResponse) {
+					if (sResponse !== "Error" && sResponse !== "Cancel") {
 						this._showMessageToast("MSG_TRANSPORT_SUCCESS");
 					}
 				}.bind(this));
@@ -944,11 +944,12 @@ sap.ui.define([
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._deleteChanges = function() {
-		this._getFlexController().resetChanges(this.getLayer(), "Change.createInitialFileContent").then(function() {
-			this._reloadPage();
-		}.bind(this))["catch"](function(oError) {
-			return Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
-		});
+		return this._getFlexController().resetChanges(this.getLayer(), "Change.createInitialFileContent", FlexUtils.getAppComponentForControl(this._oRootControl || sap.ui.getCore().byId(this.getRootControl())))
+			.then(function() {
+				this._reloadPage();
+			}.bind(this))["catch"](function(oError) {
+				return Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
+			});
 	};
 
 	/**
@@ -1059,22 +1060,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function to automatically start the rename of the control variant plugin
-	 */
-	RuntimeAuthoring.prototype._setTitleOnCreatedVariant = function() {
-		var oVariantManagementControlOverlay = this.getPlugins()["controlVariant"].getVariantManagementControlOverlay();
-		if (oVariantManagementControlOverlay) {
-			oVariantManagementControlOverlay.attachEventOnce("geometryChanged", function(oEvent){
-				var oOverlay = oEvent.getSource();
-				if (oOverlay.getGeometry() && oOverlay.getGeometry().visible){
-					oOverlay.setSelected(true);
-					this.getPlugins()["controlVariant"].startEdit(oOverlay);
-				}
-			}, this);
-		}
-	};
-
-	/**
 	 * Function to handle modification of an element
 	 *
 	 * @param {sap.ui.base.Event} oEvent Event object
@@ -1092,8 +1077,6 @@ sap.ui.define([
 			return this.getCommandStack().pushAndExecute(oCommand).then(function(){
 				if (vAction && sNewControlID){
 					this._setRenameOnCreatedContainer(vAction, sNewControlID);
-				} else if (vAction === "setTitle"){
-					this._setTitleOnCreatedVariant();
 				}
 			}.bind(this))
 

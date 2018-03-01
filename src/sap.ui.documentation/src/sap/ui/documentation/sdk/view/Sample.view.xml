@@ -7,13 +7,14 @@
 		xmlns:controls="sap.ui.documentation.sdk.controls">
 	<Page
 			id="page"
+			showHeader="false"
 			showNavButton="{/showNavButton}"
 			navButtonPress="onNavBack"
 			busyIndicatorDelay="0">
 		<landmarkInfo>
 			<PageAccessibleLandmarkInfo rootRole="Region" rootLabel="Details" headerRole="Region" headerLabel="Header" contentRole="Main" contentLabel="Content"></PageAccessibleLandmarkInfo>
 		</landmarkInfo>
-		<customHeader>
+		<subHeader>
 			<Bar id="header" class="sapContrast sapContrastPlus">
 				<contentLeft>
 					<Button type="Back" press="onNavBack"/>
@@ -62,6 +63,6 @@
 							press="onNewTab" />
 				</contentRight>
 			</Bar>
-		</customHeader>
+		</subHeader>
 	</Page>
 </mvc:View>

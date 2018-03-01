@@ -21,7 +21,8 @@ sap.ui.define([
 		oAppVariantManager,
 		oRootControlRunningApp,
 		oCommandSerializer,
-		oChosenAppVariantDescriptor;
+		oChosenAppVariantDescriptor,
+		oDescriptorVariantClosure;
 
 	var fnGetDescriptor = function() {
 		return FlexUtils.getAppDescriptor(oRootControlRunningApp);
@@ -32,59 +33,30 @@ sap.ui.define([
 		return oAppVariantManager.createDescriptor(oAppVariantData);
 	};
 
-	var oDescriptorVariantClosure;
 	var fnTriggerSaveAppVariantToLREP = function(oDescriptorVariant) {
-		oDescriptorVariantClosure = null;
-
 		if (oDescriptorVariant) {
+			oDescriptorVariantClosure = null;
+
 			BusyIndicator.show();
 			oDescriptorVariantClosure = jQuery.extend({}, oDescriptorVariant);
 			// App variant descriptor is saved to the layered repository
 			return oAppVariantManager.saveAppVariantToLREP(oDescriptorVariant);
 		} else {
-			return false;
+			return Promise.reject();
 		}
 	};
 
-	var fnTriggerCopyUnsavedChangesToLREP = function(bSuccess, bCopyUnsavedChanges) {
-		if (bSuccess && bCopyUnsavedChanges) {
-			// If there are any unsaved changes, should be taken away for the new created app variant
-			return oAppVariantManager.copyUnsavedChangesToLREP(oDescriptorVariantClosure.getId(), bCopyUnsavedChanges);
-		} else {
-			return false;
-		}
-	};
-
-	var fnTriggerCatalogAssignment = function(bSuccess) {
-		if (bSuccess) {
-			// In case of S4 Hana Cloud, trigger automatic catalog assignment
-			return oAppVariantManager.triggerCatalogAssignment(oDescriptorVariantClosure);
-		} else {
-			return false;
-		}
-	};
-
-	var fnTriggerPlatformDependentFlow = function(oResult, bSaveAsTriggeredFromRtaToolbar, bCopyUnsavedChanges) {
-		if (oResult) {
-			var oUshellContainer = RtaUtils.getUshellContainer();
-			if (oUshellContainer && bCopyUnsavedChanges) {
-				// Tell FLP that no UI change is booked for the currently adapting app
-				oUshellContainer.setDirtyFlag(false);
-			}
-			// Shows the success message and closes the current app (if 'Save As' triggered from RTA toolbar) or opens the app variant overview list (if 'Save As' triggered from App variant overview List)
-			return oAppVariantManager.showSuccessMessageAndTriggerActionFlow(oDescriptorVariantClosure, bSaveAsTriggeredFromRtaToolbar);
-		} else {
-			return false;
-		}
+	var fnTriggerCatalogAssignment = function() {
+		// In case of S4 Hana Cloud, trigger automatic catalog assignment
+		return oAppVariantManager.triggerCatalogAssignment(oDescriptorVariantClosure);
 	};
 
 	var fnTriggerS4HanaAsynchronousCall = function(oResult) {
 		if (oResult && oResult.response && oResult.response.IAMId) {
 			// In case of S4 Hana Cloud, notify the key user to refresh the FLP Homepage manually
 			return oAppVariantManager.notifyKeyUserWhenTileIsReady(oResult.response.IAMId, oDescriptorVariantClosure.getId());
-		} else {
-			return true;
 		}
+		return Promise.resolve();
 	};
 
 	sap.ui.getCore().getEventBus().subscribe("sap.ui.rta.appVariant.manageApps.controller.ManageApps", "navigate", function() {
@@ -158,11 +130,9 @@ sap.ui.define([
 		 * @param {object} oLrepSerializer
 		 * @returns {boolean} returns a boolean value
 		 * @description App variant functionality is only supported in S/4 Hana Cloud Platform & S/4 Hana (On Premise)
-		 * with 'sap-ui-xx-rta-save-as=true' (toggle feature switch) as a part of url;
 		 * App variant functionality should be available if folowing conditions are met:
-		 * When an app is not a scaffolding app;
-		 * When it is not an FLP app;
-		 * When the current layer is not 'CUSTOMER';
+		 * When it is an FLP app;
+		 * When the current layer is 'CUSTOMER';
 		 * When it is not a standalone app runing on NEO Cloud;
 		 */
 		isPlatFormEnabled : function(oRootControl, sCurrentLayer, oLrepSerializer) {
@@ -173,20 +143,16 @@ sap.ui.define([
 
 			if (oDescriptor["sap.app"] && oDescriptor["sap.app"].id) {
 				if (RtaUtils.getUshellContainer() && !AppVariantUtils.isStandAloneApp() && sCurrentLayer === "CUSTOMER") {
-					var oUriParams = jQuery.sap.getUriParameters();
-					var aUriLayer = oUriParams.mParams["sap-ui-xx-rta-save-as"];
+					var oInboundInfo;
 
-					if (aUriLayer && aUriLayer.length) {
-						var oInboundInfo;
-						if (oDescriptor["sap.app"].crossNavigation && oDescriptor["sap.app"].crossNavigation.inbounds) {
-							oInboundInfo = AppVariantUtils.getInboundInfo(oDescriptor["sap.app"].crossNavigation.inbounds);
-						} else {
-							oInboundInfo = AppVariantUtils.getInboundInfo();
-						}
+					if (oDescriptor["sap.app"].crossNavigation && oDescriptor["sap.app"].crossNavigation.inbounds) {
+						oInboundInfo = AppVariantUtils.getInboundInfo(oDescriptor["sap.app"].crossNavigation.inbounds);
+					} else {
+						oInboundInfo = AppVariantUtils.getInboundInfo();
+					}
 
-						if (oInboundInfo) {
-							return aUriLayer[0] === 'true';
-						}
+					if (oInboundInfo) {
+						return true;
 					}
 				}
 			}
@@ -204,7 +170,31 @@ sap.ui.define([
 				oChosenAppVariantDescriptor = null;
 			}
 
-			return new Promise( function(resolve) {
+			return new Promise(function(resolve) {
+				var fnProcessSaveAsDialog = function() {
+					return oAppVariantManager.processSaveAsDialog(oDescriptor, bSaveAsTriggeredFromRtaToolbar);
+				};
+
+				var fnTriggerCopyUnsavedChangesToLREP = function() {
+					if (bCopyUnsavedChanges) {
+						// If there are any unsaved changes, should be taken away for the new created app variant
+						return oAppVariantManager.copyUnsavedChangesToLREP(oDescriptorVariantClosure.getId(), bCopyUnsavedChanges);
+					}
+					return Promise.resolve();
+				};
+
+				var fnTriggerPlatformDependentFlow = function(oResult) {
+					var oUshellContainer = RtaUtils.getUshellContainer();
+					if (oUshellContainer && bCopyUnsavedChanges) {
+						// Tell FLP that no UI change is booked for the currently adapting app
+						oUshellContainer.setDirtyFlag(false);
+					}
+					// Shows the success message and closes the current app (if 'Save As' triggered from RTA toolbar) or opens the app variant overview list (if 'Save As' triggered from App variant overview List)
+					return oAppVariantManager.showSuccessMessageAndTriggerActionFlow(oDescriptorVariantClosure, bSaveAsTriggeredFromRtaToolbar).then(function() {
+						return fnTriggerS4HanaAsynchronousCall(oResult).then(resolve);
+					});
+				};
+
 				sap.ui.require(["sap/ui/rta/appVariant/AppVariantManager"], function(AppVariantManager) {
 					if (!oAppVariantManager) {
 						oAppVariantManager = new AppVariantManager({
@@ -212,23 +202,28 @@ sap.ui.define([
 							commandSerializer : oCommandSerializer
 						});
 					}
-					// Key user gives the input e.g title, subtitle, description, icon to create a tile on FLP
-					return oAppVariantManager.processSaveAsDialog(oDescriptor, bSaveAsTriggeredFromRtaToolbar)
-						.then(fnTriggerCreateDescriptor)
-						.then(fnTriggerSaveAppVariantToLREP)
-						.then(function(bSuccess) {
-							return fnTriggerCopyUnsavedChangesToLREP(bSuccess, bCopyUnsavedChanges);
-						})
-						.then(fnTriggerCatalogAssignment)
-						.then(function(oResult) {
-							return fnTriggerPlatformDependentFlow(oResult, bSaveAsTriggeredFromRtaToolbar, bCopyUnsavedChanges)
-								.then(function() {
-									resolve(fnTriggerS4HanaAsynchronousCall(oResult));
-								});
-						})
-						["catch"](function() {
-							resolve(false);
+
+					// List of promises to be executed sequentially
+					var aPromiseChain = [
+						fnProcessSaveAsDialog,
+						fnTriggerCreateDescriptor,
+						fnTriggerSaveAppVariantToLREP,
+						fnTriggerCopyUnsavedChangesToLREP,
+						fnTriggerCatalogAssignment,
+						fnTriggerPlatformDependentFlow
+					];
+
+					// Execute a list of Promises
+					function processArray(aPromises) {
+						return aPromises.reduce(function(pacc, fn) {
+							return pacc.then(fn);
+						}, Promise.resolve())
+						.catch(function() {
+							return Promise.resolve(false);
 						});
+					}
+
+					processArray(aPromiseChain);
 				});
 			});
 		},

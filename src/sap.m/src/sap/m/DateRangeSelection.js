@@ -252,8 +252,6 @@ sap.ui.define([
 	 * @param {string} sValue The new value of the input.
 	 * @return {sap.m.DateRangeSelection} <code>this</code> to allow method chaining.
 	 * @public
-	 * @name sap.m.DateRangeSelection#setValue
-	 * @function
 	 */
 	DateRangeSelection.prototype.setValue = function(sValue) {
 
@@ -335,8 +333,6 @@ sap.ui.define([
 	 * @param {string} sValueFormat New value for property valueFormat
 	 * @return {sap.m.DateRangeSelection} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.m.DateRangeSelection#setValueFormat
-	 * @function
 	 */
 	DateRangeSelection.prototype.setValueFormat = function(sValueFormat) {
 
@@ -414,8 +410,6 @@ sap.ui.define([
 	 * @param {object} oDateValue New value for property <code>dateValue</code>
 	 * @return {sap.m.DateRangeSelection} <code>this</code> to allow method chaining.
 	 * @public
-	 * @name sap.m.DateRangeSelection#setDateValue
-	 * @function
 	 */
 	DateRangeSelection.prototype.setDateValue = function(oDateValue) {
 

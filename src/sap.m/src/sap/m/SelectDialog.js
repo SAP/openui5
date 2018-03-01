@@ -464,8 +464,6 @@ function(
 	/**
 	 * Opens the internal dialog with a searchfield and a list.
 	 *
-	 * @name sap.m.SelectDialog#open
-	 * @function
 	 * @param {string} sSearchValue  A value for the search can be passed to match with the filter applied to the list binding.
 	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
 	 * @public

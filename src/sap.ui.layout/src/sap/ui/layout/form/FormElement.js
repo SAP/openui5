@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/base/ManagedO
 	 * Constructor for a new sap.ui.layout.form.FormElement.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * A <code>FormElement</code> represents a row in a <code>FormContainer</code>.

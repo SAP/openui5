@@ -25,6 +25,7 @@ sap.ui.require([
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/uxap/ObjectPageHeader",
+	"sap/ui/Device",
 	"dt/control/SimpleScrollControl",
 	"sap/ui/thirdparty/sinon"
 ],
@@ -51,6 +52,7 @@ function(
 	ObjectPageSection,
 	ObjectPageSubSection,
 	ObjectPageHeader,
+	Device,
 	SimpleScrollControl,
 	sinon
 ) {
@@ -206,18 +208,10 @@ function(
 		QUnit.test("when CSS animation takes place in UI", function(assert) {
 			var done = assert.async();
 
-			var fnCheckSize = function() {
+			this.oElementOverlay.attachEventOnce('geometryChanged', function () {
 				assert.strictEqual(this.oButton.$().width(), this.oElementOverlay.$().width());
 				done();
-			}.bind(this);
-
-			// TODO: check browser support once again
-			if (!sap.ui.Device.browser.phantomJS && !sap.ui.Device.browser.edge && !sap.ui.Device.browser.msie) {
-				this.oButton.$().on("animationend webkitAnimationEnd oanimationend", fnCheckSize);
-			} else {
-				// phantomjs, MSIE & MS Edge don't support animation end events
-				setTimeout(fnCheckSize, 110);
-			}
+			}, this);
 
 			this.oButton.addStyleClass("sapUiDtTestAnimate");
 		});
@@ -327,40 +321,6 @@ function(
 		});
 	});
 
-	QUnit.module("Given that an Overlay is created for a control, but not rendered yet", {
-		beforeEach: function(assert) {
-			var fnDone = assert.async();
-
-			this.oButton = new Button();
-			this.oButton.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
-
-			this.oElementOverlay = new ElementOverlay({
-				element: this.oButton,
-				isRoot: true,
-				init: function () {
-					fnDone();
-				}
-			});
-		},
-		afterEach : function() {
-			this.oElementOverlay.destroy();
-			this.oButton.destroy();
-		}
-	}, function () {
-		QUnit.test("when overlay is rendered it should receive previously attached browser events", function (assert) {
-			var fnDone = assert.async();
-			assert.strictEqual(this.oElementOverlay.isRendered(), false, 'then an overlay is not rendered');
-			this.oElementOverlay.attachBrowserEvent('click', function () {
-				assert.ok(true, 'event was attached and triggered');
-				fnDone();
-			});
-			this.oElementOverlay.placeInOverlayContainer();
-			assert.strictEqual(this.oElementOverlay.isRendered(), true, 'then an overlay is rendered');
-			this.oElementOverlay.$().trigger('click');
-		});
-	});
-
 	QUnit.module("Given that an Overlay is created for a control with an invisible domRef", {
 		beforeEach : function(assert) {
 			var done = assert.async();
@@ -412,13 +372,15 @@ function(
 	}, function () {
 		// TODO: BUG - Invisible layout still has a rendered overlay
 		QUnit.test("when the layout's domRef is changed to visible...", function(assert) {
-			assert.notOk(this.oLayoutOverlay.$().is(':visible'), "the layout's overlay should not be in the DOM when the layout is invisible");
+			var fnDone = assert.async();
+			assert.strictEqual(this.oLayoutOverlay.isVisible(), false, "the layout's overlay should not be in the DOM when the layout is invisible");
+			this.oLayoutOverlay.attachEventOnce('geometryChanged', function () {
+				assert.strictEqual(this.oLayoutOverlay.isVisible(), true, "the layout's overlay is also in DOM");
+				assert.strictEqual(this.oLabelOverlay.isVisible(), true, "layout children's overlay is also in DOM");
+				fnDone();
+			}, this);
 			this.oVerticalLayout.$().css("display", "block");
-			this.oLayoutOverlay.applyStyles();
 			sap.ui.getCore().applyChanges();
-
-			assert.ok(this.oLayoutOverlay.$().is(':visible'), "the layout's overlay is also in DOM");
-			assert.ok(this.oLabelOverlay.$().is(':visible'), "layout children's overlay is also in DOM");
 		});
 	});
 
@@ -572,72 +534,6 @@ function(
 		QUnit.test("then...", function(assert) {
 			assert.strictEqual(this.oOverlay.isVisible(), false, "the overlay is marked as invisible");
 			assert.strictEqual(this.oOverlay.$().is(":visible"), false, "the overlay is hidden in DOM");
-		});
-	});
-
-	QUnit.module("Given that an Overlay is created for a control with cloneDomRef:true in the designtime Metadata", {
-		beforeEach : function(assert) {
-			var fnDone = assert.async();
-
-			this.oButton = new Button({
-				text : "Button"
-			});
-			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-			this.oOverlay = new ElementOverlay({
-				isRoot: true,
-				element : this.oButton,
-				designTimeMetadata : new ElementDesignTimeMetadata({
-					data: {
-						cloneDomRef : true
-					}
-				}),
-				init: function(){
-					this.placeInOverlayContainer();
-					fnDone();
-				}
-			});
-		},
-		afterEach : function() {
-			this.oOverlay.destroy();
-			this.oButton.destroy();
-		}
-	}, function () {
-		QUnit.test("when the overlay is rendered", function(assert) {
-			assert.strictEqual(this.oOverlay.$().find(".sapUiDtClonedDom").length, 1, "then a cloned DOM node is found in the overlay");
-		});
-	});
-
-	QUnit.module("Given that an Overlay is created for a control with cloneDomRef:'css-selector' in the designtime Metadata", {
-		beforeEach : function(assert) {
-			var fnDone = assert.async();
-
-			this.oButton = new Button({
-				text : "Button"
-			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-			this.oOverlay = new ElementOverlay({
-				isRoot: true,
-				element: this.oButton,
-				designTimeMetadata: new ElementDesignTimeMetadata({
-					data: {
-						cloneDomRef: ":sap-domref"
-					}
-				}),
-				init: function(){
-					this.placeInOverlayContainer();
-					fnDone();
-				}
-			});
-		},
-		afterEach : function() {
-			this.oOverlay.destroy();
-			this.oButton.destroy();
-		}
-	}, function () {
-		QUnit.test("when the overlay is rendered", function(assert) {
-			assert.strictEqual(this.oOverlay.$().find(".sapUiDtClonedDom").length, 1, "then a cloned DOM node is found in the overlay");
 		});
 	});
 
@@ -798,10 +694,16 @@ function(
 			var oInitialControlOffset = oContent1.$().offset();
 			var oInitialOverlayOffset = oContent1Overlay.$().offset();
 
-			// var oApplyStylesSpy = sandbox.spy(Overlay.prototype, "applyStyles");
+			if (!Device.browser.msie) {
+				var oApplyStylesSpy = sandbox.spy(oContent1Overlay, "applyStyles");
+			}
 
-			this.oSimpleScrollControlOverlay.getScrollContainerByIndex(0).scroll(function() {
-				// assert.equal(oApplyStylesSpy.callCount, 0,  "then the applyStyles Method is not called"); // due workaround for scroll event it's not true ATM
+			this.oSimpleScrollControlOverlay.attachEventOnce('scrollSynced', function() {
+				if (!Device.browser.msie) {
+					assert.equal(oApplyStylesSpy.callCount, 0,  "then the applyStyles Method is not called");
+				} else {
+					oContent1Overlay.applyStyles();
+				}
 				assert.equal(oContent1.$().offset().top, sInitialOffsetTop - 100, "Then the top offset is 100px lower");
 				assert.deepEqual(oContent1.$().offset(), oContent1Overlay.$().offset(), "Then the offset is still equal");
 				assert.deepEqual(oInitialControlOffset, oInitialOverlayOffset, "Then the offset is still equal");
@@ -818,10 +720,16 @@ function(
 			var oInitialControlOffset = oContent1.$().offset();
 			var oInitialOverlayOffset = oContent1Overlay.$().offset();
 
-			// var oApplyStylesSpy = sandbox.spy(Overlay.prototype, "applyStyles");
+			if (!Device.browser.msie) {
+				var oApplyStylesSpy = sandbox.spy(Overlay.prototype, "applyStyles");
+			}
 
 			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").scroll(function() {
-				// assert.equal(oApplyStylesSpy.callCount, 0,  "then the applyStyles Method is not called"); // see above
+				if (!Device.browser.msie) {
+					assert.equal(oApplyStylesSpy.callCount, 0,  "then the applyStyles Method is not called");
+				} else {
+					oContent1Overlay.applyStyles();
+				}
 				assert.equal(oContent1.$().offset().top, sInitialOffsetTop - 100, "Then the top offset is 100px lower");
 				assert.deepEqual(oContent1.$().offset(), oContent1Overlay.$().offset(), "Then the offset is still equal");
 				assert.deepEqual(oInitialControlOffset, oInitialOverlayOffset, "Then the offset is still equal");
@@ -908,22 +816,6 @@ function(
 		// 	assert.equal($AggregationOverlays.get(3).dataset["sapUiDtAggregation"], "footer", "then the overlay for headerTitle is fourth in DOM");
 		// });
 
-		QUnit.test("when _cloneDomRef is called", function(assert) {
-			this.oLayoutOverlay._cloneDomRef(this.oLayout.$().find("header")[0]);
-
-			var oSrcDomElement = this.oLayout.$().find("header").get(0);
-			var oDestDomElement = this.oLayoutOverlay.$().find(">.sapUiDtClonedDom").get(0);
-
-			assert.equal(window.getComputedStyle(oSrcDomElement)["visibility"], "hidden", "then the original domRef is hidden");
-			assert.equal(window.getComputedStyle(oDestDomElement)["visibility"], "visible", "then the cloned domRef is visible");
-
-			this.oLayoutOverlay._restoreVisibility();
-			assert.equal(
-				window.getComputedStyle(oSrcDomElement)["visibility"],
-				"visible",
-				"then after restoring visibility the original domRef is visible again"
-			);
-		});
 	});
 
 	QUnit.module("Given another SimpleScrollControl with Overlays and one scroll container aggregation is ignored", {

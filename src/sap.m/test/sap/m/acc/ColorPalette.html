@@ -1,0 +1,149 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>Color Palette Accessibility test page - sap.m</title>
+
+	<script src="../shared-config.js"></script>
+	<script src="../../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout">
+	</script>
+	<script>
+
+		jQuery.sap.require("sap.m.ColorPalette");
+		jQuery.sap.require("sap.m.ColorPalettePopover");
+		jQuery.sap.require("sap.m.MessageBox");
+
+		var ColorPalette = sap.m.ColorPalette,
+			ColorPalettePopover = sap.m.ColorPalettePopover,
+			Button = sap.m.Button,
+			HBox = sap.m.HBox,
+			VBox = sap.m.VBox,
+			MessageToast = sap.m.MessageToast,
+			Input = sap.m.Input,
+			Title = sap.m.Title,
+			TitleLevel = sap.ui.core.TitleLevel,
+			Label = sap.m.Label;
+
+		sap.ui.getCore().attachInit(function () {
+			//As Popover
+			new VBox({
+				items: [
+					new Title({
+						text: "Color Palette samples where the palette is wrapped in a Popover(desktop)/Dialog (mobile)",
+						level: TitleLevel.H1,
+						titleStyle: TitleLevel.H1
+					}),
+					generateColorPalettePopoverElements()
+				]
+			}).placeAt("content");
+
+			//Default Color Palette in standalone mode
+			new VBox({
+				items: [
+					new Title({
+						text: "Color Palette in standalone mode with default settings",
+						level: TitleLevel.H1,
+						titleStyle: TitleLevel.H1
+					}),
+					new Input({placeholder: "An interactive control before Color Palette"}),
+					new ColorPalette({
+						colorSelect: handleColorSelect
+					}),
+					new Input({placeholder: "An interactive control after Color Palette"})
+				]
+			}).placeAt("content");
+
+			function generateColorPalettePopoverElements() {
+				var oCPPop, oCPPop2Colors, oCPPop7Colors;
+
+				oCPPop = new ColorPalettePopover("oCPPop", {
+					defaultColor: "red",
+					colorSelect: handleColorSelect
+				});
+
+				oCPPop2Colors = new ColorPalettePopover("kpop2", {
+					defaultColor: "black",
+					showDefaultColorButton: false,
+					colors: [
+						"red",
+						"#ffff00"
+					],
+					colorSelect: handleColorSelect
+				});
+
+				oCPPop7Colors = new ColorPalettePopover("oCPPop7Colors", {
+					showDefaultColorButton: false,
+					showMoreColorsButton: false,
+					colors: [
+						"red",
+						"#ffff00",
+						"green",
+						"hsl(350, 60%, 60%)",
+						"lightblue",
+						"#a811ff",
+						"black"
+					],
+					colorSelect: handleColorSelect
+				});
+
+				return [
+					new HBox({
+						alignItems: sap.m.FlexAlignItems.Center,
+						items: [
+							new Label("lbl1", {text: "Color Palette with default settings"}),
+							new Button({
+								text: "Open",
+								press: function () {
+									oCPPop.openBy(this);
+								},
+								ariaLabelledBy: "lbl1"
+							})
+						]
+					}),
+
+					new HBox({
+						alignItems: sap.m.FlexAlignItems.Center,
+						items: [
+							new Label("lbl2", {text: "Color Palette with 2 colors and 'More Colors' button"}),
+							new Button({
+								text: "Open",
+								press: function () {
+									oCPPop2Colors.openBy(this);
+								},
+								ariaLabelledBy: "lbl2"
+							})
+						]
+					}),
+
+					new HBox({
+						alignItems: sap.m.FlexAlignItems.Center,
+						items: [
+							new Label("lbl3", {text: "Color Palette with 7 colors without any button"}),
+							new Button({
+								text: "Open",
+								press: function () {
+									oCPPop7Colors.openBy(this);
+								},
+								ariaLabelledBy: "lbl3"
+							})
+						]
+					})
+				];
+			}
+
+			function handleColorSelect(oEvent) {
+				MessageToast.show("value: " + oEvent.getParameter("value") +
+					", \n defaultAction: " + oEvent.getParameter("defaultAction"));
+			}
+		});
+	</script>
+</head>
+
+<body class="sapUiBody" role="application">
+<div id="content"></div>
+
+</body>
+</html>

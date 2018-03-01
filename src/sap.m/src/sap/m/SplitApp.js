@@ -52,6 +52,8 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.m.SplitApp
+	 * @see {@link topic:eedfe79e4c19462eafe8780aeab16a3c Split App}
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/split-screen/ Split App}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SplitApp = SplitContainer.extend("sap.m.SplitApp", /** @lends sap.m.SplitApp.prototype */ { metadata : {
@@ -110,7 +112,6 @@ sap.ui.define([
 	/**
 	 * Initializes the control.
 	 *
-	 * @name sap.m.SplitApp.init
 	 * @private
 	 */
 	SplitApp.prototype.init = function() {
@@ -130,7 +131,6 @@ sap.ui.define([
 	/**
 	 * Overwrites the onBeforeRendering.
 	 *
-	 * @name sap.m.SplitApp.onBeforeRendering
 	 * @private
 	 */
 	SplitApp.prototype.onBeforeRendering = function() {
@@ -145,7 +145,6 @@ sap.ui.define([
 	/**
 	 * Overwrites the onAfterRendering.
 	 *
-	 * @name sap.m.SplitApp.onAfterRendering
 	 * @private
 	 */
 	SplitApp.prototype.onAfterRendering = function(){
@@ -177,7 +176,6 @@ sap.ui.define([
 	/**
 	 * Fires the orientationChange event after SplitApp has reacted to the browser orientationChange event.
 	 *
-	 * @name sap.m.SplitApp._onOrientationChange
 	 * @private
 	 */
 	SplitApp.prototype._onOrientationChange = function(){

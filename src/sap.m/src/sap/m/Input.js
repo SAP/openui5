@@ -127,6 +127,7 @@ function(
 	 * @constructor
 	 * @public
 	 * @alias sap.m.Input
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/input-field/ Input}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Input = InputBase.extend("sap.m.Input", /** @lends sap.m.Input.prototype */ { metadata : {
@@ -402,8 +403,6 @@ function(
 	/**
 	 * Returns true if some word from the text starts with specific value.
 	 *
-	 * @name sap.m.Input._wordStartsWithValue
-	 * @method
 	 * @private
 	 * @param {string} sText The text of the word.
 	 * @param {string} sValue The value which must be compared to the word.
@@ -432,7 +431,6 @@ function(
 	/**
 	 * The default filter function for one and two-value. It checks whether the item text begins with the typed value.
 	 *
-	 * @name sap.m.Input._DEFAULTFILTER
 	 * @private
 	 * @param {string} sValue the current filter string.
 	 * @param {sap.ui.core.Item} oItem the filtered list item.
@@ -450,7 +448,6 @@ function(
 	/**
 	 * The default filter function for tabular suggestions. It checks whether some item text begins with the typed value.
 	 *
-	 * @name sap.m.Input._DEFAULTFILTER_TABULAR
 	 * @private
 	 * @param {string} sValue the current filter string.
 	 * @param {sap.m.ColumnListItem} oColumnListItem The filtered list item.
@@ -475,7 +472,6 @@ function(
 	/**
 	 * The default result function for tabular suggestions. It returns the value of the first cell with a "text" property.
 	 *
-	 * @name sap.m.Input._DEFAULTRESULT_TABULAR
 	 * @private
 	 * @param {sap.m.ColumnListItem} oColumnListItem The selected list item.
 	 * @returns {string} The value to be displayed in the input field.
@@ -496,7 +492,6 @@ function(
 	/**
 	 * Initializes the control.
 	 *
-	 * @name sap.m.Input.init
 	 * @private
 	 */
 	Input.prototype.init = function() {
@@ -519,7 +514,6 @@ function(
 	/**
 	 * Destroys the Input.
 	 *
-	 * @name sap.m.Input.exit
 	 * @private
 	 */
 	Input.prototype.exit = function() {
@@ -564,7 +558,6 @@ function(
 	/**
 	 * Resize the popup to the input width and makes sure that the input is never bigger than the popup.
 	 *
-	 * @name sap.m.Input._resizePopup
 	 * @private
 	 */
 	Input.prototype._resizePopup = function(bForceResize) {
@@ -594,7 +587,6 @@ function(
 	/**
 	 * Overwrites the onBeforeRendering.
 	 *
-	 * @name sap.m.Input.onBeforeRendering
 	 * @public
 	 */
 	Input.prototype.onBeforeRendering = function() {
@@ -619,7 +611,6 @@ function(
 	/**
 	 * Overwrites the onAfterRendering.
 	 *
-	 * @name sap.m.Input.onAfterRendering
 	 * @public
 	 */
 	Input.prototype.onAfterRendering = function() {
@@ -652,7 +643,6 @@ function(
 	/**
 	 * Returns input display text.
 	 *
-	 * @name sap.m.Input._getDisplayText
 	 * @private
 	 * @param {sap.ui.core.Item} oItem The displayed item.
 	 * @returns {string} The key for the text format mode.
@@ -683,7 +673,6 @@ function(
 	/**
 	 * Handles value updates.
 	 *
-	 * @name sap.m.Input._onValueUpdated
 	 * @private
 	 * @param {string} newValue The new selected value.
 	 */
@@ -720,9 +709,31 @@ function(
 	};
 
 	/**
+	 * Updates selectedItem or selectedRow from the suggestion list or table.
+	 *
+	 * @private
+	 * @returns {boolean} Indicates if an item or row is selected
+	 */
+	Input.prototype._updateSelectionFromList = function () {
+		if (this._iPopupListSelectedIndex  < 0) {
+			return false;
+		}
+
+		var oSelectedItem = this._oList.getSelectedItem();
+		if (oSelectedItem) {
+			if (this._hasTabularSuggestions()) {
+				this.setSelectionRow(oSelectedItem, true);
+			} else {
+				this.setSelectionItem(oSelectedItem._oItem, true);
+			}
+		}
+
+		return true;
+	};
+
+	/**
 	 * Updates and synchronizes the <code>selectedItem</code> association and <code>selectedKey</code> properties.
 	 *
-	 * @name sap.m.Input.setSelectionItem
 	 * @private
 	 * @param {sap.ui.core.Item | null} oItem Selected item.
 	 * @param {boolean} bInteractionChange Specifies if the change is triggered by user interaction.
@@ -782,7 +793,6 @@ function(
 	 * Sets the <code>selectedItem</code> association.
 	 *
 	 *
-	 * @name sap.m.Input.setSelectedItem
 	 * @public
 	 * @param {sap.ui.core.Item} oItem New value for the <code>selectedItem</code> association.
 	 * Default value is <code>null</code>.
@@ -812,7 +822,6 @@ function(
 	 *
 	 * Default value is an empty string <code>""</code> or <code>undefined</code>.
 	 *
-	 * @name sap.m.Input.setSelectedKey
 	 * @public
 	 * @param {string} sKey New value for property <code>selectedKey</code>.
 	 * If the provided <code>sKey</code> is an empty string <code>""</code> or <code>undefined</code>,
@@ -850,7 +859,6 @@ function(
 	 * <b>Note:</b> If duplicate keys exist, the first item matching the key is returned.
 	 *
 	 * @public
-	 * @name sap.m.Input.getSuggestionItemByKey
 	 * @param {string} sKey An item key that specifies the item to retrieve.
 	 * @returns {sap.ui.core.Item} Suggestion item.
 	 * @since 1.44
@@ -871,7 +879,6 @@ function(
 	/**
 	 * Updates and synchronizes the <code>selectedRow</code> association and <code>selectedKey</code> properties.
 	 *
-	 * @name sap.m.Input.setSelectionRow
 	 * @private
 	 * @param {sap.m.ColumnListItem} oListItem Selected item.
 	 * @param {boolean} bInteractionChange Specifies if the change is triggered by user interaction.
@@ -952,7 +959,6 @@ function(
 	 * Sets the <code>selectedRow</code> association.
 	 * Default value is <code>null</code>.
 	 *
-	 * @name sap.m.Input.setSelectedRow
 	 * @public
 	 * @param {sap.m.ColumnListItem} oListItem New value for the <code>selectedRow</code> association.
 	 * If an ID of a <code>sap.m.ColumnListItem</code> is given, the item with this ID becomes the
@@ -979,7 +985,6 @@ function(
 	/**
 	 * Returns/Instantiates the value help icon control when needed.
 	 *
-	 * @name sap.m.Input._getValueHelpIcon
 	 * @private
 	 * @returns {object} Value help icon of the input.
 	 */
@@ -1017,12 +1022,14 @@ function(
 	/**
 	 * Fire valueHelpRequest event if conditions for ValueHelpOnly property are met.
 	 *
-	 * @name sap.m.Input._fireValueHelpRequestForValueHelpOnly
 	 * @private
 	 */
 	Input.prototype._fireValueHelpRequestForValueHelpOnly = function() {
 		// if all the named properties are set to true, the control triggers "valueHelpRequest" for all user interactions
 		if (this.getEnabled() && this.getEditable() && this.getShowValueHelp() && this.getValueHelpOnly()) {
+			if (Device.system.phone) {
+				this.focus();
+			}
 			this.fireValueHelpRequest({fromSuggestions: false});
 		}
 	};
@@ -1030,7 +1037,6 @@ function(
 	/**
 	 * Fire valueHelpRequest event on tap.
 	 *
-	 * @name sap.m.Input.ontap
 	 * @public
 	 * @param {jQuery.Event} oEvent Ontap event.
 	 */
@@ -1042,7 +1048,6 @@ function(
 	/**
 	 * Defines the width of the input. Default value is 100%.
 	 *
-	 * @name sap.m.Input.setWidth
 	 * @public
 	 * @param {string} sWidth The new width of the input.
 	 * @returns {void} Sets the width of the Input.
@@ -1054,7 +1059,6 @@ function(
 	/**
 	 * Returns the width of the input.
 	 *
-	 * @name sap.m.Input.getWidth
 	 * @public
 	 * @return {string} The current width or 100% as default.
 	 */
@@ -1065,7 +1069,6 @@ function(
 	/**
 	 * Sets a custom filter function for suggestions. The default is to check whether the first item text begins with the typed value. For one and two-value suggestions this callback function will operate on sap.ui.core.Item types, for tabular suggestions the function will operate on sap.m.ColumnListItem types.
 	 *
-	 * @name sap.m.Input.setFilterFunction
 	 * @public
 	 * @param {function} fnFilter The filter function is called when displaying suggestion items and has two input parameters: the first one is the string that is currently typed in the input field and the second one is the item that is being filtered. Returning true will add this item to the popup, returning false will not display it.
 	 * @returns {sap.m.Input} this pointer for chaining
@@ -1087,8 +1090,6 @@ function(
 	/**
 	 * Sets a custom result filter function for tabular suggestions to select the text that is passed to the input field. Default is to check whether the first cell with a "text" property begins with the typed value. For one value and two-value suggestions this callback function is not called.
 	 *
-	 * @name sap.m.Input.setRowResultFunction
-	 * @method
 	 * @public
 	 * @param {function} fnFilter The result function is called with one parameter: the sap.m.ColumnListItem that is selected. The function must return a result string that will be displayed as the input field's value.
 	 * @returns {sap.m.Input} this pointer for chaining
@@ -1118,8 +1119,6 @@ function(
 	/**
 	 * Closes the suggestion list.
 	 *
-	 * @name sap.m.Input.closeSuggestions
-	 * @method
 	 * @public
 	 * @since 1.48
 	 */
@@ -1130,7 +1129,6 @@ function(
 	/**
 	 * Selects the text of the InputDomRef in the given range.
 	 *
-	 * @name sap.m.Input._doSelect
 	 * @private
 	 * @param {int} iStart Start of selection.
 	 * @param {iEnd} iEnd End of selection.
@@ -1153,8 +1151,6 @@ function(
 	/**
 	 * Scrolls to item.
 	 *
-	 * @name sap.m.Input._scrollToItem
-	 * @method
 	 * @private
 	 * @param {int} iIndex Index of the item to scroll to.
 	 */
@@ -1194,8 +1190,6 @@ function(
 	/**
 	 * Helper method for keyboard navigation in suggestion items.
 	 *
-	 * @name sap.m.Input._isSuggestionItemSelectable
-	 * @method
 	 * @private
 	 * @param {sap.ui.core.Item} oItem Suggestion item.
 	 * @returns {boolean} Is the suggestion item selectable.
@@ -1210,8 +1204,6 @@ function(
 	/**
 	 *  Helper method for distinguishing between incremental and non-incremental types of input.
 	 *
-	 * @name sap.m.Input._isIncrementalType
-	 * @method
 	 * @private
 	 * @returns {boolean} Is it incremental type.
 	 */
@@ -1228,8 +1220,6 @@ function(
 	/**
 	 * Keyboard handler helper.
 	 *
-	 * @name sap.m.Input._onsaparrowkey
-	 * @method
 	 * @private
 	 * @param {jQuery.Event} oEvent Arrow key event.
 	 * @param {string} sDir Arrow direction.
@@ -1369,8 +1359,6 @@ function(
 	/**
 	 * Keyboard handler for up arrow key.
 	 *
-	 * @name sap.m.Input.onsapup
-	 * @method
 	 * @public
 	 * @param {jQuery.Event} oEvent Keyboard event.
 	 */
@@ -1381,8 +1369,6 @@ function(
 	/**
 	 * Keyboard handler for down arrow key.
 	 *
-	 * @name sap.m.Input.onsapdown
-	 * @method
 	 * @public
 	 * @param {jQuery.Event} oEvent Keyboard event.
 	 */
@@ -1393,8 +1379,6 @@ function(
 	/**
 	 * Keyboard handler for page up key.
 	 *
-	 * @name sap.m.Input.onsappageup
-	 * @method
 	 * @public
 	 * @param {jQuery.Event} oEvent Keyboard event.
 	 */
@@ -1405,8 +1389,6 @@ function(
 	/**
 	 * Keyboard handler for page down key.
 	 *
-	 * @name sap.m.Input.onsappagedown
-	 * @method
 	 * @public
 	 * @param {jQuery.Event} oEvent Keyboard event.
 	 */
@@ -1417,8 +1399,6 @@ function(
 	/**
 	 * Keyboard handler for home key.
 	 *
-	 * @name sap.m.Input.onsaphome
-	 * @method
 	 * @public
 	 * @param {jQuery.Event} oEvent Keyboard event.
 	 */
@@ -1433,8 +1413,6 @@ function(
 	/**
 	 * Keyboard handler for end key.
 	 *
-	 * @name sap.m.Input.onsapend
-	 * @method
 	 * @public
 	 * @param {jQuery.Event} oEvent Keyboard event.
 	 */
@@ -1449,8 +1427,6 @@ function(
 	/**
 	 * Keyboard handler for escape key.
 	 *
-	 * @name sap.m.Input.onsapescape
-	 * @method
 	 * @public
 	 * @param {jQuery.Event} oEvent Keyboard event.
 	 */
@@ -1483,8 +1459,6 @@ function(
 	/**
 	 * Keyboard handler for enter key.
 	 *
-	 * @name sap.m.Input.onsapenter
-	 * @method
 	 * @public
 	 * @param {jQuery.Event} oEvent Keyboard event.
 	 */
@@ -1494,20 +1468,7 @@ function(
 		this.cancelPendingSuggest();
 
 		if (this._oSuggestionPopup && this._oSuggestionPopup.isOpen()) {
-			var oSelectedItem = this._oList.getSelectedItem();
-			if (oSelectedItem) {
-				if (this._hasTabularSuggestions()){
-					this.setSelectionRow(oSelectedItem, true);
-				} else {
-					this.setSelectionItem(oSelectedItem._oItem, true);
-				}
-			} else {
-				if (this._iPopupListSelectedIndex >= 0) {
-					this._fireSuggestionItemSelectedEvent();
-					this._doSelect();
-
-					this._iPopupListSelectedIndex = -1;
-				}
+			if (!this._updateSelectionFromList()) {
 				this._closeSuggestionPopup();
 			}
 		}
@@ -1524,8 +1485,6 @@ function(
 	/**
 	 * Keyboard handler for the onFocusLeave event.
 	 *
-	 * @name sap.m.Input.onsapfocusleave
-	 * @method
 	 * @public
 	 * @param {jQuery.Event} oEvent Keyboard event.
 	 */
@@ -1559,8 +1518,6 @@ function(
 	/**
 	 * Keyboard handler for the onMouseDown event.
 	 *
-	 * @name sap.m.Input.onmousedown
-	 * @method
 	 * @public
 	 * @param {jQuery.Event} oEvent Keyboard event.
 	 */
@@ -1575,8 +1532,6 @@ function(
 	/**
 	 * Removes events from the input.
 	 *
-	 * @name sap.m.Input._deregisterEvents
-	 * @method
 	 * @private
 	 */
 	Input.prototype._deregisterEvents = function() {
@@ -1593,8 +1548,6 @@ function(
 	/**
 	 * Update suggestion items.
 	 *
-	 * @name sap.m.Input.updateSuggestionItems
-	 * @method
 	 * @public
 	 * @return {sap.m.Input} this Input instance for chaining.
 	 */
@@ -1621,8 +1574,6 @@ function(
 		/**
 	 * Cancels any pending suggestions.
 	 *
-	 * @name sap.m.Input.cancelPendingSuggest
-	 * @method
 	 * @public
 	 */
 	Input.prototype.cancelPendingSuggest = function() {
@@ -1635,8 +1586,6 @@ function(
 	/**
 	 * Triggers suggestions.
 	 *
-	 * @name sap.m.Input._triggerSuggest
-	 * @method
 	 * @private
 	 * @param {string} sValue User input.
 	 */
@@ -1694,8 +1643,6 @@ function(
 		/**
 		 * Shows suggestions.
 		 *
-		 * @name sap.m.Input.setShowSuggestion
-		 * @method
 		 * @public
 		 * @param {boolean} bValue Show suggestions.
 		 * @return {sap.m.Input} this Input instance for chaining.
@@ -1714,8 +1661,6 @@ function(
 		/**
 		 * Shows value help suggestions in table.
 		 *
-		 * @name sap.m.Input.setShowTableSuggestionValueHelp
-		 * @method
 		 * @public
 		 * @param {boolean} bValue Show suggestions.
 		 * @return {sap.m.Input} this Input instance for chaining.
@@ -1738,8 +1683,6 @@ function(
 		/**
 		 * Gets show more button.
 		 *
-		 * @name sap.m.Input._getShowMoreButton
-		 * @method
 		 * @private
 		 * @return {sap.m.Button} Show more button.
 	 	 */
@@ -1762,8 +1705,6 @@ function(
 		/**
 		 * Gets button toolbar.
 		 *
-		 * @name sap.m.Input._getButtonToolbar
-		 * @method
 		 * @private
 		 * @return {sap.m.Toolbar} Button toolbar.
 	 	 */
@@ -1781,8 +1722,6 @@ function(
 		/**
 		 * Adds a show more button to the footer of the tabular suggestion popup/dialog.
 		 *
-		 * @name sap.m.Input._addShowMoreButton
-		 * @method
 		 * @private
 		 * @param{boolean} [bTabular] optional parameter to force override the tabular suggestions check
 		 */
@@ -1805,8 +1744,6 @@ function(
 		/**
 		 * Removes the show more button from the footer of the tabular suggestion popup/dialog.
 		 *
-		 * @name sap.m.Input._removeShowMoreButton
-		 * @method
 		 * @private
 		 */
 		Input.prototype._removeShowMoreButton = function() {
@@ -1824,8 +1761,6 @@ function(
 		/**
 		 * Event handler for user input.
 		 *
-		 * @name sap.m.Input.oninput
-		 * @method
 		 * @public
 		 * @param {jQuery.Event} oEvent User input.
 		 */
@@ -1858,8 +1793,6 @@ function(
 		/**
 		 * Gets the input value.
 		 *
-		 * @name sap.m.Input.getValue
-		 * @method
 		 * @public
 		 * @return {sap.m.Input} Value of the input.
 		 */
@@ -1870,8 +1803,6 @@ function(
 		/**
 		 * Refreshes delayed items.
 		 *
-		 * @name sap.m.Input._refreshItemsDelayed
-		 * @method
 		 * @public
 		 */
 		Input.prototype._refreshItemsDelayed = function() {
@@ -1882,8 +1813,6 @@ function(
 		/**
 		 * Adds suggestion item.
 		 *
-		 * @name sap.m.Input.addSuggestionItem
-		 * @method
 		 * @public
 		 * @param {sap.ui.core.Item} oItem Suggestion item.
 		 * @return {sap.m.Input} this Input instance for chaining.
@@ -1899,8 +1828,6 @@ function(
 		/**
 		 * Inserts suggestion item.
 		 *
-		 * @name sap.m.Input.insertSuggestionItem
-		 * @method
 		 * @public
 		 * @param {sap.ui.core.Item} oItem Suggestion item.
 		 * @param {int} iIndex Index to be inserted.
@@ -1917,8 +1844,6 @@ function(
 		/**
 		 * Removes suggestion item.
 		 *
-		 * @name sap.m.Input.removeSuggestionItem
-		 * @method
 		 * @public
 		 * @param {sap.ui.core.Item} oItem Suggestion item.
 		 * @returns {boolean} Determines whether the suggestion item has been removed.
@@ -1933,8 +1858,6 @@ function(
 		/**
 		 * Removes all suggestion items.
 		 *
-		 * @name sap.m.Input.removeAllSuggestionItems
-		 * @method
 		 * @public
 		 * @returns {boolean} Determines whether the suggestion items are removed.
 		 */
@@ -1948,8 +1871,6 @@ function(
 		/**
 		 * Destroys suggestion items.
 		 *
-		 * @name sap.m.Input.destroySuggestionItems
-		 * @method
 		 * @public
 		 * @return {sap.m.Input} this Input instance for chaining.
 		 */
@@ -1963,8 +1884,6 @@ function(
 		/**
 		 * Adds suggestion row.
 		 *
-		 * @name sap.m.Input.addSuggestionRow
-		 * @method
 		 * @public
 		 * @param {sap.ui.core.Item} oItem Suggestion item.
 		 * @return {sap.m.Input} this Input instance for chaining.
@@ -1981,8 +1900,6 @@ function(
 		/**
 		 * Inserts suggestion row.
 		 *
-		 * @name sap.m.Input.insertSuggestionRow
-		 * @method
 		 * @public
 		 * @param {sap.ui.core.Item} oItem Suggestion row
 		 * @param {int} iIndex Row index.
@@ -2000,8 +1917,6 @@ function(
 		/**
 		 * Removes suggestion row.
 		 *
-		 * @name sap.m.Input.removeSuggestionRow
-		 * @method
 		 * @public
 		 * @param {sap.ui.core.Item} oItem Suggestion row.
 		 * @returns {boolean} Determines whether the suggestion row is removed.
@@ -2016,8 +1931,6 @@ function(
 		/**
 		 * Removes all suggestion rows.
 		 *
-		 * @name sap.m.Input.removeAllSuggestionRows
-		 * @method
 		 * @public
 		 * @returns {boolean} Determines whether the suggestion rows are removed.
 		 */
@@ -2031,8 +1944,6 @@ function(
 		/**
 		 * Destroys all suggestion rows.
 		 *
-		 * @name sap.m.Input.destroySuggestionRows
-		 * @method
 		 * @public
 		 * @return {sap.m.Input} this Input instance for chaining.
 		 */
@@ -2054,9 +1965,7 @@ function(
 		/**
 		 * Initialize suggestion popup with lazy loading.
 		 *
-		 * @name sap.m.Input._lazyInitializeSuggestionPopup
 		 * @private
-		 * @method
 		 */
 		Input.prototype._lazyInitializeSuggestionPopup = function() {
 			if (!this._oSuggestionPopup) {
@@ -2067,9 +1976,7 @@ function(
 		/**
 		 * Closes suggestion popup.
 		 *
-		 * @name sap.m.Input._closeSuggestionPopup
 		 * @private
-		 * @method
 		 */
 		Input.prototype._closeSuggestionPopup = function() {
 
@@ -2095,8 +2002,6 @@ function(
 		/**
 		 * Helper function that creates suggestion popup.
 		 *
-		 * @name createSuggestionPopup
-		 * @function
 		 * @param {sap.m.Input} oInput Input instance where the popup will be created.
 		 */
 		function createSuggestionPopup(oInput) {
@@ -2142,9 +2047,9 @@ function(
 					initialFocus: oInput,
 					horizontalScrolling: true
 				}).attachAfterClose(function() {
-					if (oInput._iPopupListSelectedIndex  >= 0) {
-						oInput._fireSuggestionItemSelectedEvent();
-					}
+
+					oInput._updateSelectionFromList();
+
 					// only destroy items in simple suggestion mode
 					if (oInput._oList instanceof Table) {
 						oInput._oList.removeSelections(true);
@@ -2237,8 +2142,6 @@ function(
 		/**
 		 * Helper function that creates content for the suggestion popup.
 		 *
-		 * @name createSuggestionPopupContent
-		 * @function
 		 * @param {sap.m.Input} oInput Input instance where the popup will be created.
 		 * @param {boolean | null } bTabular Content for the popup.
 		 */
@@ -2303,8 +2206,6 @@ function(
 		/**
 		 * Helper function that destroys suggestion popup.
 		 *
-		 * @name destroySuggestionPopup
-		 * @function
 		 * @param {sap.m.Input} oInput Input instance.
 		 */
 		function destroySuggestionPopup(oInput) {
@@ -2331,8 +2232,6 @@ function(
 		/**
 		 * Helper function that overwrites popover in the Input.
 		 *
-		 * @name overwritePopover
-		 * @function
 		 * @param {sap.m.Popover} oPopover Popover instance.
 		 * @param {sap.m.Input} oInput Input instance.
 		 */
@@ -2352,8 +2251,6 @@ function(
 		/**
 		 * Helper function that refreshes list all items.
 		 *
-		 * @name refreshListItems
-		 * @function
 		 * @param {sap.m.Input} oInput Input instance.
 		 */
 		function refreshListItems(oInput) {
@@ -2515,9 +2412,7 @@ function(
 	/**
 	 * Creates highlighted text.
 	 *
-	 * @name sap.m.Input._createHighlightedText
 	 * @private
-	 * @method
 	 * @param {sap.m.Label} label Label within the input.
 	 * @returns {string} newText Created text.
 	 */
@@ -2555,9 +2450,7 @@ function(
 	/**
 	 * Highlights matched text in the suggestion list.
 	 *
-	 * @name sap.m.Input._highlightListText
 	 * @private
-	 * @method
 	 */
 	Input.prototype._highlightListText = function() {
 
@@ -2578,9 +2471,7 @@ function(
 	/**
 	 * Highlights matched text in the suggestion table.
 	 *
-	 * @name sap.m.Input._highlightTableText
 	 * @private
-	 * @method
 	 */
 	Input.prototype._highlightTableText = function() {
 
@@ -2601,9 +2492,7 @@ function(
 	/**
 	 * Event handler for the onFocusIn event.
 	 *
-	 * @name sap.m.Input.onfocusin
 	 * @public
-	 * @method
 	 * @param {jQuery.Event} oEvent On focus in event.
 	 */
 	Input.prototype.onfocusin = function(oEvent) {
@@ -2629,9 +2518,7 @@ function(
 	/**
 	 * Register F4 to trigger the valueHelpRequest event
 	 *
-	 * @name sap.m.Input.onsapshow
 	 * @private
-	 * @method
 	 * @param {jQuery.Event} oEvent Keyboard event.
 	 */
 	Input.prototype.onsapshow = function (oEvent) {
@@ -2649,9 +2536,7 @@ function(
 	/**
 	 * Event handler for input select.
 	 *
-	 * @name sap.m.Input.onsapselect
 	 * @private
-	 * @method
 	 * @param {jQuery.Event} oEvent Keyboard event.
 	 */
 	Input.prototype.onsapselect = function(oEvent) {
@@ -2661,9 +2546,7 @@ function(
 	/**
 	 * Event handler for the onFocusOut event.
 	 *
-	 * @name sap.m.Input.onfocusout
 	 * @private
-	 * @method
 	 * @param {jQuery.Event} oEvent Keyboard event.
 	 */
 	Input.prototype.onfocusout = function(oEvent) {
@@ -2675,9 +2558,7 @@ function(
 	/**
 	 * Check for tabular suggestions in the input.
 	 *
-	 * @name sap.m.Input._hasTabularSuggestions
 	 * @private
-	 * @method
 	 * @returns {boolean} Determines if the Input has tabular suggestions.
 	 */
 	Input.prototype._hasTabularSuggestions = function() {
@@ -2687,9 +2568,7 @@ function(
 	/**
 	 * Gets suggestion table with lazy loading.
 	 *
-	 * @name sap.m.Input._getSuggestionsTable
 	 * @private
-	 * @method
 	 * @returns {sap.m.Table} Suggestion table.
 	 */
 	Input.prototype._getSuggestionsTable = function() {
@@ -2736,9 +2615,7 @@ function(
 	/**
 	 * Fires suggestion selected event.
 	 *
-	 * @name sap.m.Input._fireSuggestionItemSelectedEvent
 	 * @private
-	 * @method
 	 */
 	Input.prototype._fireSuggestionItemSelectedEvent = function () {
 		if (this._iPopupListSelectedIndex >= 0) {
@@ -2757,9 +2634,7 @@ function(
 	/**
 	 * Clones input.
 	 *
-	 * @name sap.m.Input.clone
 	 * @public
-	 * @method
 	 * @returns {sap.m.Input} Cloned input.
 	 */
 	Input.prototype.clone = function() {

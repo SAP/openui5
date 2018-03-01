@@ -442,27 +442,36 @@ sap.ui.define([
 			iIndex++;
 		}
 		var oParentNode = null,
-			sParentPart = null;
+			sParentPart = null,
+			sPart;
 		while (oNode !== null && aParts[iIndex]) {
-			var sPart = aParts[iIndex];
+			sPart = aParts[iIndex];
+
 			if (sPart.indexOf("@") === 0) {
 				// special properties
 				oNode = this._getSpecialNode(oNode, sPart.substring(1), oParentNode, sParentPart);
 			} else if (oNode instanceof ManagedObject) {
-				oParentNode = oNode;
-				sParentPart = sPart;
-				var oNodeMetadata = oNode.getMetadata(), oProperty = oNodeMetadata.getProperty(sPart);
-				if (oProperty) {
-					oNode = oNode[oProperty._sGetter]();
+				var oNodeMetadata = oNode.getMetadata();
+
+				// look for the marker interface
+				if (oNodeMetadata.isInstanceOf("sap.ui.core.IDScope") && sPart.indexOf("#") === 0) {
+					oNode = oNode.byId(sPart.substring(1));
 				} else {
-					var oAggregation = oNodeMetadata.getAggregation(sPart) || oNodeMetadata.getAllPrivateAggregations()[sPart];
-					if (oAggregation) {
-						oNode = oNode[oAggregation._sGetter] ? oNode[oAggregation._sGetter]() : oNode.getAggregation(sPart);
+					oParentNode = oNode;
+					sParentPart = sPart;
+					var oProperty = oNodeMetadata.getProperty(sPart);
+					if (oProperty) {
+						oNode = oNode[oProperty._sGetter]();
 					} else {
-						if (oNode && oNode[sPart] && typeof oNode[sPart] === "function") {
-							oNode = oNode[sPart]();
+						var oAggregation = oNodeMetadata.getAggregation(sPart) || oNodeMetadata.getAllPrivateAggregations()[sPart];
+						if (oAggregation) {
+							oNode = oNode[oAggregation._sGetter] ? oNode[oAggregation._sGetter]() : oNode.getAggregation(sPart);
 						} else {
-							oNode = null;
+							if (oNode && oNode[sPart] && typeof oNode[sPart] === "function") {
+								oNode = oNode[sPart]();
+							} else {
+								oNode = null;
+							}
 						}
 					}
 				}

@@ -29,6 +29,9 @@ sap.ui.define([
 				},
 				newVariantReference : {
 					type : "string"
+				},
+				newVariantTitle : {
+					type : "string"
 				}
 			},
 			associations : {},
@@ -69,7 +72,8 @@ sap.ui.define([
 				appComponent : this.oAppComponent,
 				layer : this.sLayer,
 				newVariantReference : sNewVariantReference,
-				sourceVariantReference : sSourceVariantReference
+				sourceVariantReference : sSourceVariantReference,
+				title: this.getNewVariantTitle()
 		};
 
 		return this.oModel._copyVariant(mPropertyBag)
@@ -84,7 +88,7 @@ sap.ui.define([
 	 */
 	ControlVariantDuplicate.prototype.undo = function() {
 		if (this._oVariantChange) {
-			return this.oModel._removeVariant(this._oVariantChange, this.getSourceVariantReference(), this.sVariantManagementReference)
+			return this.oModel.removeVariant(this._oVariantChange, this.getSourceVariantReference(), this.sVariantManagementReference)
 				.then(function() {
 					this._oVariantChange = null;
 				}.bind(this));

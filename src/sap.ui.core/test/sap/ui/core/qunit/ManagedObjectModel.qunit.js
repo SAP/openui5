@@ -723,5 +723,32 @@ QUnit.test("ManagedObjectModel - Generic Testing for sap.m Controls", function(a
 
 });
 
+QUnit.test("ManagedObjectModel - Marker interface sap.ui.core.IDScope handling", function(assert) {
+	var sContent = sView = jQuery('#view').html();
 
+	var oView = sap.ui.xmlview({
+		viewContent: sView
+	});
+
+	sinon.spy(oView, "byId");
+
+	var sIdPrefix = oView.getId() + "--";
+
+	var oManagedObjectModel = new sap.ui.model.base.ManagedObjectModel(oView);
+
+	var oButton1 = oManagedObjectModel.getProperty("/#button1");
+
+	assert.ok(oButton1, "There is a button");
+	assert.equal(oButton1.getId(),sIdPrefix + "button1","We get the button");
+	ok(oView.byId.called, "As the view has the marker interface sap.ui.core.IDScope the byId method is called");
+
+	var oButton2 = oView.byId("button2");
+	var sText = oManagedObjectModel.getProperty("/#button2/text");
+	assert.equal(sText, oButton2.getText(), "We get the buttons text");
+
+	var oPanel = oManagedObjectModel.getProperty("/#panel");
+
+	assert.ok(oPanel, "There is a panel");
+	assert.equal(oPanel.getId(),sIdPrefix + "panel","We get the correct panel");
+});
 

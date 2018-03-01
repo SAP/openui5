@@ -429,19 +429,23 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 					}
 				};
 
+				if (sLayout != sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout &&
+						sLayout != sap.ui.layout.form.SimpleFormLayout.ColumnLayout) {
+					checkProperty("labelSpanL");
+					checkProperty("emptySpanL");
+					checkProperty("columnsXL");
+					checkProperty("columnsL");
+					checkProperty("columnsM");
+				}
+
 				if (sLayout != sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout) {
 					checkProperty("labelSpanXL");
-					checkProperty("labelSpanL");
 					checkProperty("labelSpanM");
 					checkProperty("labelSpanS");
 					checkProperty("adjustLabelSpan");
 					checkProperty("emptySpanXL");
-					checkProperty("emptySpanL");
 					checkProperty("emptySpanM");
 					checkProperty("emptySpanS");
-					checkProperty("columnsXL");
-					checkProperty("columnsL");
-					checkProperty("columnsM");
 					checkProperty("singleContainerFullSize");
 					checkProperty("breakpointXL");
 					checkProperty("breakpointL");
@@ -614,6 +618,16 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 					bWrong = true;
 				}
 			} else if (sElement == "sap.ui.layout.form.FormElement") {
+				bUnsupported = true;
+			}
+			break;
+
+		case "sap.ui.layout.form.ColumnLayout":
+			if (sLayoutData != "sap.ui.layout.form.ColumnElementData") {
+				if (!(sElement == "sap.ui.layout.form.FormContainer" && sLayoutData == "sap.ui.layout.form.ColumnContainerData")) {
+					bWrong = true;
+				}
+			} else if (sElement == "sap.ui.layout.form.FormElement" || sElement == "sap.ui.layout.form.FormContainer") {
 				bUnsupported = true;
 			}
 			break;

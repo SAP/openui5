@@ -97,16 +97,6 @@ sap.ui.define([
 				return '<div>' + html + '</div>';
 			},
 
-			_onOrientationChange: function(e) {
-				var page = this.byId("topicDetailPage");
-
-				if (e.landscape) {
-					page.setShowHeader(false);
-				} else {
-					page.setShowHeader(true);
-				}
-			},
-
 			backToSearch: function (text) {
 				this.onNavBack();
 			},

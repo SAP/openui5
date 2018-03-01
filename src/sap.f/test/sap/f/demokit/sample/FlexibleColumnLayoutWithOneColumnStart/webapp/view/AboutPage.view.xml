@@ -1,5 +1,5 @@
 <View xmlns="sap.m" displayBlock="true" xmlns:f="sap.f" controllerName="sap.f.FlexibleColumnLayoutWithOneColumnStart.controller.AboutPage" height="100%">
-	<f:DynamicPage>
+	<f:DynamicPage toggleHeaderOnTitleClick="false">
 		<!-- DynamicPage Title -->
 		<f:title>
 			<f:DynamicPageTitle>
@@ -8,38 +8,5 @@
 				</f:heading>
 			</f:DynamicPageTitle>
 		</f:title>
-
-		<!-- DynamicPage Header -->
-		<f:header>
-			<f:DynamicPageHeader pinnable="true">
-				<f:content>
-					<VBox fitContainer="true">
-						<Button text="Back" press="onBack"/>
-					</VBox>
-				</f:content>
-			</f:DynamicPageHeader>
-		</f:header>
-
-		<!-- DynamicPage Content -->
-		<f:content>
-			<VBox fitContainer="true">
-				<MessageStrip text="I am in DynamicPage content"/>
-				<MessageStrip text="I am in DynamicPage content"/>
-				<MessageStrip text="I am in DynamicPage content"/>
-				<MessageStrip text="I am in DynamicPage content"/>
-				<MessageStrip text="I am in DynamicPage content"/>
-			</VBox>
-		</f:content>
-
-		<!-- DynamicPage Footer -->
-		<f:footer>
-			<OverflowToolbar>
-				<ToolbarSpacer/>
-				<Button type="Accept" text="Accept"/>
-				<Button type="Reject" text="Reject"/>
-			</OverflowToolbar>
-		</f:footer>
 	</f:DynamicPage>
 </View>
-
-

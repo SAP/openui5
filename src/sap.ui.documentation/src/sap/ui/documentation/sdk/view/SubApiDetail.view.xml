@@ -63,7 +63,7 @@
 												class="sapUiSmallMarginBottom sapUiSmallMarginTop">
 											</m:MessageStrip>
 										</template:if>
-										<core:HTML content="{/description}"/>
+										<custom:JSDocText text="{/description}"/>
 
 										<template:if test="{data>/hasAnnotations}">
 											<layout:HorizontalLayout class="sapUiTinyMarginTop sapUiDocumentationAnnotationsText">
@@ -96,7 +96,7 @@
 												 class="sapUiSmallMarginTop">
 												<custom:Row>
 													<m:Link href="{ref}" text="{name}"/>
-													<core:HTML content="{description}"/>
+													<custom:JSDocText text="{description}"/>
 												</custom:Row>
 											</custom:LightTable>
 										</template:if>
@@ -120,7 +120,7 @@
 											 class="sapUiSmallMarginTop">
 											<custom:Row>
 												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}" deprecated="{= ${deprecated} !== undefined }"/>
-												<core:HTML content="{description}"/>
+												<custom:JSDocText text="{description}"/>
 											</custom:Row>
 										</custom:LightTable>
 									</custom:blocks>
@@ -137,14 +137,14 @@
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
 										<layout:VerticalLayout width="100%">
-											<core:HTML content="{/constructor/description}"/>
+											<custom:JSDocText text="{/constructor/description}"/>
 
 											<layout:VerticalLayout visible="{= ${/constructor/examples} !== undefined}"
 																   content="{ path : '/constructor/examples', templateShareable: 'false'}">
-												<core:HTML content="{data}"/>
+												<custom:JSDocText text="{data}"/>
 											</layout:VerticalLayout>
 
-											<core:HTML content="{/constructor/codeExample}"/>
+											<custom:JSDocText text="{/constructor/codeExample}"/>
 
 											<template:if test="{= !!${data>/constructor/parameters} }">
 												<custom:LightTable rows="{ path: '/constructor/parameters'}"
@@ -159,7 +159,7 @@
 																	enabled="{= !!${linkEnabled} }"/>
 														</layout:VerticalLayout>
 														<m:Text text="{defaultValue}" wrapping="false"/>
-														<core:HTML content="{description}"/>
+														<custom:JSDocText text="{description}"/>
 													</custom:Row>
 												</custom:LightTable>
 											</template:if>
@@ -173,7 +173,7 @@
 														<m:Link text="{type}"
 																href="#/api/{type}"
 																enabled="{= !!${linkEnabled} }"/>
-														<core:HTML content="{description}"/>
+														<custom:JSDocText text="{description}"/>
 													</custom:Row>
 												</custom:LightTable>
 											</template:if>
@@ -200,9 +200,9 @@
 												<m:Link text="{type}"
 														href="#/api/{= ${type}.replace('[]', '') }"
 														enabled="{= !!${linkEnabled} }"/>
-												<m:Text text="{defaultValue}" wrapping="false"/>
+												<m:Text text="{defaultValue}"/>
 												<layout:VerticalLayout width="100%">
-													<core:HTML content="{description}"/>
+													<custom:JSDocText text="{description}"/>
 													<m:ObjectStatus text="Visibility: {visibility}" state="{= ${visibility} === 'public' ? 'Success' : 'Warning'}"/>
 													<m:MessageStrip
 														visible="{=${deprecatedText} !== undefined}"
@@ -248,7 +248,7 @@
 												<m:Link text="{type}"
 														href="#/api/{type}"
 														enabled="{= !!${linkEnabled} }"/>
-												<core:HTML content="{description}"/>
+												<custom:JSDocText text="{description}"/>
 											</custom:Row>
 										</custom:LightTable>
 									</custom:blocks>
@@ -274,7 +274,7 @@
 												<m:Link text="{type}"
 														href="#/api/{type}"
 														enabled="{= !!${linkEnabled} }"/>
-												<core:HTML content="{description}"/>
+												<custom:JSDocText text="{description}"/>
 											</custom:Row>
 										</custom:LightTable>
 									</custom:blocks>
@@ -288,12 +288,46 @@
 										   title="Events"
 										   titleUppercase="false">
 							<subSections>
+								<custom:ObjectPageSubSection title="{= ${data>/hasEvents} &amp;&amp; !${data>/hasOwnEvents} ? 'Events' : 'Summary'}">
+									<custom:blocks>
+										<layout:VerticalLayout width="100%">
+											<template:if test="{data>/hasOwnEvents}">
+												<custom:LightTable
+														columnCount="2"
+														columnTitles="Event,Description">
+													<template:repeat list="{data>/events}" var="event">
+														<custom:Row>
+															<custom:ParamText text="{event>name}"
+																		href="#/api/{data>/name}/events/{event>name}"
+																		deprecated="{= ${event>deprecated} !== undefined }"
+																		press="scrollToEvent"/>
+															<custom:JSDocText text="{event>description}"/>
+														</custom:Row>
+													</template:repeat>
+												</custom:LightTable>
+											</template:if>
+											<template:if test="{= ${data>/borrowed/events/}.length > 0 }">
+												<m:Title text="Borrowed from:" class="sapUiSmallMarginTop sapUiDocumentationBorrowedTitle"/>
+												<layout:VerticalLayout width="100%" content="{path: '/borrowed/events/', templateShareable: 'false'}">
+														<m:Panel class="borrowedListPanel"
+																expandable="true"
+																expanded="true"
+																headerText="{name}"
+																width="100%">
+															<custom:BorrowedList list="{events}"/>
+														</m:Panel>
+												</layout:VerticalLayout>
+											</template:if>
+										</layout:VerticalLayout>
+									</custom:blocks>
+								</custom:ObjectPageSubSection>
+
 								<template:repeat list="{data>/events}" var="event">
 									<custom:ObjectPageSubSection title="{event>name}">
 										<custom:blocks>
 											<layout:VerticalLayout width="100%">
 
-												<core:HTML content="{event>description}"/>
+												<custom:JSDocText text="{event>description}"/>
 
 												<m:ObjectStatus text="Visibility: {event>visibility}" state="{= ${event>visibility} === 'public' ? 'Success' : 'Warning'}" class="sapUiSmallMarginBottom"/>
 
@@ -327,7 +361,7 @@
 																<m:Link text="{parameter>type}"
 																		href="#/api/{parameter>type}"
 																		enabled="{= !!${parameter>linkEnabled} }"/>
-																<core:HTML content="{parameter>description}"/>
+																<custom:JSDocText text="{parameter>description}"/>
 															</custom:Row>
 														</template:repeat>
 													</custom:LightTable>
@@ -347,6 +381,40 @@
 									   class="APIDetailMethodsSection">
 							<subSections>
 
+								<custom:ObjectPageSubSection title="{= ${data>/hasMethods} &amp;&amp; !${data>/hasOwnMethods} ? 'Methods' : 'Summary'}">
+									<custom:blocks>
+										<layout:VerticalLayout width="100%">
+											<template:if test="{data>/hasOwnMethods}">
+												<custom:LightTable
+														columnCount="2"
+														columnTitles="Method,Description">
+													<template:repeat list="{data>/methods}" var="method">
+														<custom:Row>
+															<custom:ParamText text="{method>name}"
+																		href="#/api/{data>/name}/methods/{method>name}"
+																		deprecated="{= ${method>deprecated} !== undefined }"
+																		press="scrollToMethod"/>
+															<custom:JSDocText text="{path: 'method>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+														</custom:Row>
+													</template:repeat>
+												</custom:LightTable>
+											</template:if>
+											<template:if test="{= ${data>/borrowed/methods/}.length > 0 }">
+												<m:Title text="Borrowed from:" class="sapUiSmallMarginTop sapUiDocumentationBorrowedTitle"/>
+												<layout:VerticalLayout width="100%" content="{path: '/borrowed/methods/', templateShareable: 'false'}">
+														<m:Panel class="borrowedListPanel"
+																expandable="true"
+																expanded="true"
+																headerText="{name}"
+																width="100%">
+															<custom:BorrowedList list="{methods}"/>
+														</m:Panel>
+												</layout:VerticalLayout>
+											</template:if>
+										</layout:VerticalLayout>
+									</custom:blocks>
+								</custom:ObjectPageSubSection>
+
 								<template:repeat list="{data>/methods}" var="method">
 									<custom:ObjectPageSubSection title="{method>name}" id="{= ${method>name}.replace('$', '') }_method">
 										<custom:blocks>
@@ -355,11 +423,11 @@
 
 												<layout:VerticalLayout width="100%">
 
-													<core:HTML content="{path: 'method>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+													<custom:JSDocText text="{path: 'method>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 
 													<layout:VerticalLayout visible="{= ${method>examples} !== undefined}" width="100%">
 														<template:repeat list="{method>examples}" var="example">
-															<core:HTML content="{path: 'example>data', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+															<custom:JSDocText text="{path: 'example>data', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 														</template:repeat>
 													</layout:VerticalLayout>
 
@@ -388,7 +456,7 @@
 														</m:MessageStrip>
 													</template:if>
 
-													<core:HTML content="{method>code}" />
+													<custom:JSDocText text="{method>code}" />
 
 													<template:if test="{= !!${method>parameters} &amp;&amp; ${method>parameters}.length > 0}">
 														<custom:LightTable
@@ -406,7 +474,7 @@
 																		</template:repeat>
 																	</layout:VerticalLayout>
 																	<m:Text text="{{parameter>defaultValue}" wrapping="false"/>
-																	<core:HTML content="{path: 'parameter>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+																	<custom:JSDocText text="{path: 'parameter>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 																</custom:Row>
 															</template:repeat>
 														</custom:LightTable>
@@ -424,7 +492,7 @@
 																				enabled="{= !!${rtype>linkEnabled} }"/>
 																	</template:repeat>
 																</layout:VerticalLayout>
-																<core:HTML content="{path: 'method>returnValue/description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+																<custom:JSDocText text="{path: 'method>returnValue/description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 															</custom:Row>
 														</custom:LightTable>
 													</template:if>
@@ -439,7 +507,7 @@
 																	<m:Link text="{throws>type}"
 																		href="#/api/{throws>type}"
 																		enabled="{= !!${throws>linkEnabled} }"/>
-																	<core:HTML content="{path: 'throws>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+																	<custom:JSDocText text="{path: 'throws>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 																</custom:Row>
 															</template:repeat>
 														</custom:LightTable>
@@ -466,13 +534,13 @@
 										<custom:LightTable rows="{ path : '/ui5-metadata/specialSettings'}"
 											columnCount="3"
 											columnTitles="Name,Type,Description"
-											class="sapUiSmallMarginTop">
+											class="sapUiSmallMarginTop sapUiDocumentationSpecialSettingsTable">
 											<custom:Row>
 												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}"/>
 												<m:Link text="{type}"
 														href="#/api/{type}"
 														enabled="{= !!${linkEnabled} }"/>
-												<core:HTML content="{description}"/>
+												<custom:JSDocText text="{description}"/>
 											</custom:Row>
 										</custom:LightTable>
 									</custom:blocks>
@@ -484,26 +552,44 @@
 					<template:if test="{data>/hasAnnotations}">
 						<ObjectPageSection id="annotations"
 										   title="Annotations"
-										   subSections="{ path : '/ui5-metadata/annotations'}"
 										   titleUppercase="false">
 							<subSections>
-								<custom:ObjectPageSubSection title="{= ${annotation} !== 'undefined' ? ${annotation} : '(' + ${namespaceText} + ')' }">
+								<custom:ObjectPageSubSection title="Summary">
 									<custom:blocks>
-										<layout:VerticalLayout width="100%">
-
-											<core:HTML content="{description}"/>
-
-											<custom:LightTable columnTitles="Namespace,Target Type,Applies To" columnCount="3">
-											<custom:Row>
-												<core:HTML content="{namespace}"/>
-												<core:HTML content="{target'}"/>
-												<core:HTML content="{appliesTo}"/>
-											</custom:Row>
+										<custom:LightTable
+												columnCount="2"
+												columnTitles="Annotation,Description">
+											<template:repeat list="{data>/ui5-metadata/annotations}" var="annotation">
+												<custom:Row>
+													<m:Link text="{= ${annotation>annotation} !== 'undefined' ? ${annotation>annotation} : '(' + ${annotation>namespaceText} + ')' }"
+															press="scrollToAnnotation"
+															wrapping="false"/>
+													<custom:JSDocText text="{path: 'annotation>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+												</custom:Row>
+											</template:repeat>
 										</custom:LightTable>
-
-										</layout:VerticalLayout>
 									</custom:blocks>
 								</custom:ObjectPageSubSection>
+
+								<template:repeat list="{data>/ui5-metadata/annotations}" var="annotation">
+									<custom:ObjectPageSubSection title="{= ${annotation>annotation} !== 'undefined' ? ${annotation>annotation} : '(' + ${annotation>namespaceText} + ')' }">
+										<custom:blocks>
+											<layout:VerticalLayout width="100%">
+
+												<custom:JSDocText text="{path: 'annotation>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
+
+												<custom:LightTable columnTitles="Namespace,Target Type,Applies To" columnCount="3">
+													<custom:Row>
+														<custom:JSDocText text="{annotation>namespace}"/>
+														<custom:JSDocText text="{annotation>target}"/>
+														<custom:JSDocText text="{annotation>appliesTo}"/>
+													</custom:Row>
+												</custom:LightTable>
+
+											</layout:VerticalLayout>
+										</custom:blocks>
+									</custom:ObjectPageSubSection>
+								</template:repeat>
 							</subSections>
 						</ObjectPageSection>
 					</template:if>

@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="UTF-8">
+	<title>XMLComposite - simple example w/o templating</title>
+	<script id="sap-ui-bootstrap" type="text/javascript" src="../../../../../../../../../resources/sap-ui-core.js" data-sap-ui-theme="sap_belize"
+	 data-sap-ui-resourceroots='{
+		"sap.ui.core.internal.samples.composite.xmlcomposite.exTable": "./"
+	}'>
+	</script>
+	<style type="text/css">
+		.heigth100percent {
+			height: 100%;
+		}
+	</style>
+	<script>
+		new sap.ui.core.ComponentContainer({
+			name : "sap.ui.core.internal.samples.composite.xmlcomposite.exTable",
+			height : "100%",
+			settings : {
+				id : "composite"
+			}
+		}).placeAt("content")
+	</script>
+</head>
+
+<body class="sapUiBody" role="application">
+	<div id="content"></div>
+</body>
+
+</html>

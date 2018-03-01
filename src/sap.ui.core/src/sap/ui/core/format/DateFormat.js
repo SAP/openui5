@@ -22,6 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 	 * If no pattern is specified a default pattern according to the locale settings is used.
 	 *
 	 * @public
+	 * @hideconstructor
 	 * @see http://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
 	 * @alias sap.ui.core.format.DateFormat
 	 */
@@ -2004,7 +2005,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 	 */
 	DateFormat.prototype.formatRelative = function(oJSDate, bUTC, aRange) {
 
-		var oToday = new Date(),
+		var oToday = new Date(), oDateUTC,
 			sScale = this.oFormatOptions.relativeScale || "day",
 			iDiff, sPattern, iDiffSeconds;
 
@@ -2020,11 +2021,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 		// For dates normalize to UTC to avoid issues with summer-/wintertime
 		if (sScale == "year" || sScale == "month" || sScale == "day") {
 			oToday = new Date(Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate()));
+
+			oDateUTC = new Date(0);
+
 			if (bUTC) {
-				oJSDate = new Date(Date.UTC(oJSDate.getUTCFullYear(), oJSDate.getUTCMonth(), oJSDate.getUTCDate()));
+				// The Date.UTC function doesn't accept years before 1900 (converts years before 100 into 1900 + years).
+				// Using setUTCFullYear to workaround this issue.
+				oDateUTC.setUTCFullYear(oJSDate.getUTCFullYear(), oJSDate.getUTCMonth(), oJSDate.getUTCDate());
 			} else {
-				oJSDate = new Date(Date.UTC(oJSDate.getFullYear(), oJSDate.getMonth(), oJSDate.getDate()));
+				oDateUTC.setUTCFullYear(oJSDate.getFullYear(), oJSDate.getMonth(), oJSDate.getDate());
 			}
+
+			oJSDate = oDateUTC;
 		}
 
 		iDiff = this._getDifference(sScale, [oToday, oJSDate]);

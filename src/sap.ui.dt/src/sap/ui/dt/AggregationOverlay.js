@@ -155,7 +155,9 @@ function(
 					}
 				}
 
-				oChild.fireAfterRendering();
+				oChild.fireAfterRendering({
+					domRef: $Child.get(0)
+				});
 			}
 
 			this.fireChildAdded();

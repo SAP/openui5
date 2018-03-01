@@ -73,21 +73,26 @@
 		});
 
 		QUnit.test("ChangeLogLevel", function (assert) {
-			assert.expect(0);
+			assert.expect(2);
+			var iLevel = jQuery.sap.log.getLevel();
+
 			// set log level and count messages
-			jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+			jQuery.sap.log.setLevel(jQuery.sap.log.Level.INFO);
 			var aLog1 = jQuery.sap.log.getLogEntries();
 			var iLogCount1 = aLog1.length;
 
 			// change log level
-			jQuery.sap.log.setLevel(jQuery.sap.log.Level.WARNING);
+			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ALL);
 			var aLog2 = jQuery.sap.log.getLogEntries();
 			var iLogCount2 = aLog2.length;
 			var oMyLogEntry = aLog2[aLog2.length-1];
 
 			// check results
-			//assertEquals("number of log entries should have increased by one", iLogCount1+1, iLogCount2);
-			//assertEquals("log message is wrong", "Changing level to WARNING", oMyLogEntry.message);
+			assert.equal(iLogCount1+1, iLogCount2, "number of log entries should have increased by one");
+			assert.equal(oMyLogEntry.message, "Changing log level to ALL",  "log message is wrong");
+
+			// reset
+			jQuery.sap.log.setLevel(iLevel);
 		});
 
 		QUnit.test("ChangeLogLevelEffects", function (assert) {

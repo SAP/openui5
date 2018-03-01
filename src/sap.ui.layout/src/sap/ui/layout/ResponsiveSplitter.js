@@ -70,6 +70,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.38
 	 * @alias sap.ui.layout.ResponsiveSplitter
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/responsive-splitter/ Responsive Splitter}
 	 */
 	var ResponsiveSplitter = Control.extend("sap.ui.layout.ResponsiveSplitter", /** @lends sap.ui.layout.ResponsiveSplitter.prototype */ {
 		metadata: {

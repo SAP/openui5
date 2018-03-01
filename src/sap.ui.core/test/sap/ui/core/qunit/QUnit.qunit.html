@@ -12,7 +12,6 @@
 	// include the required CSS and JS
 	jQuery.sap.require("sap.ui.qunit.qunit-junit");
 	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	jQuery.sap.require("sap.ui.thirdparty.require");
 
 	// any version < 2.0 activates legacy support
 	// note that the strange negated condition properly handles NaN
@@ -37,8 +36,12 @@
 
 		QUnit.test("overridden by external script (requirejs)", function(assert) {
 			var done = assert.async();
+			sap.ui._ui5loader.config({noConflict: true});
+			jQuery.sap.require("sap.ui.thirdparty.require");
+
 			require(["QUnitExt"], function(QUnitExt) {
 				assert.ok(typeof window.assert === "function", "window.assert is a function!");
+				sap.ui._ui5loader.config({noConflict: false});
 				done();
 			});
 		});

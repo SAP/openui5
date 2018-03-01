@@ -1214,6 +1214,9 @@ sap.ui.define([
 
 			if (this._bIgnoreFixedColumnCount !== bIgnoreFixedColumnCountCandidate) {
 				this._bIgnoreFixedColumnCount = bIgnoreFixedColumnCountCandidate;
+				if (this.getEnableColumnFreeze()) {
+					this._invalidateColumnMenus();
+				}
 				this.invalidate();
 			}
 		}
@@ -3328,7 +3331,9 @@ sap.ui.define([
 		// call collectTableSizes to determine whether the number of fixed columns can be displayed at all
 		// this is required to avoid flickering of the table in IE if the fixedColumnCount must be adjusted
 		this._collectTableSizes();
-		this._invalidateColumnMenus();
+		if (this.getEnableColumnFreeze()) {
+			this._invalidateColumnMenus();
+		}
 		return this;
 	};
 

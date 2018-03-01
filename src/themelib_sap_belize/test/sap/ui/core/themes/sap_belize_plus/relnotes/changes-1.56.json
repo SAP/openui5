@@ -7,6 +7,24 @@
         "type": "FIX",
         "text": " sap.m.Dialog: correct padding of the subheader when Toolbar is used",
         "references": []
+      },
+      {
+        "id": "d5fb02cda239b60c4fb94d6750050fe56b6821af",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: appointments have correct legend colors now",
+        "references": []
+      },
+      {
+        "id": "2c10a012330cf8055bdb6680febacf2d6546b3e0",
+        "type": "FIX",
+        "text": " sap.m.Button: Now the icons are with the correct color when Reject/Accept/Emphasized + Disabled",
+        "references": []
+      },
+      {
+        "id": "bcbce8313b0694d6fdb5ef84fe8b92720cd0bf13",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Focus outline fixed for HCB and HCW",
+        "references": []
       }
     ]
   }

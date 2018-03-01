@@ -7,8 +7,17 @@
 		id="page"
 		title="{i18n>homeTitle}"
 		showNavButton="{device>/system/phone}"
-		navButtonPress="onNavButtonPress"
-		showFooter="{=!${device>/system/phone}}" >
+		navButtonPress="onNavButtonPress">
+		<landmarkInfo>
+			<PageAccessibleLandmarkInfo
+				rootRole="Region"
+				rootLabel="{i18n>Home_rootLabel}"
+				subHeaderRole="Search"
+				subHeaderLabel="{i18n>Home_subHeaderLabel}"
+				contentRole="Navigation"
+				contentLabel="{i18n>Home_contentLabel}"
+				headerRole="Region" headerLabel="{i18n>Home_headerLabel}"/>
+		</landmarkInfo>
 		<headerContent>
 			<Button
 				icon="sap-icon://cart"

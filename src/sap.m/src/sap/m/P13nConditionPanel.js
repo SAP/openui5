@@ -1332,6 +1332,9 @@ sap.ui.define([
 							if (typeof sValue === "string" && oConditionGrid.oFormatter instanceof NumberFormat) {
 								oValue = parseFloat(sValue);
 								sValue = oConditionGrid.oFormatter.format(oValue);
+								if (isNaN(oValue)) {
+									break;
+								}
 							}
 
 							if (typeof sValue === "string" && oConditionGrid.oFormatter) {

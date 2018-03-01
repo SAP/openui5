@@ -71,7 +71,8 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 			"sap.ui.core.IContextMenu",
 			"sap.ui.core.IFormContent",
 			"sap.ui.core.dnd.IDragInfo",
-			"sap.ui.core.dnd.IDropInfo"
+			"sap.ui.core.dnd.IDropInfo",
+			"sap.ui.core.IDScope"
 		],
 		controls: [
 			"sap.ui.core.ComponentContainer",
@@ -1531,6 +1532,16 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 	 */
 
 	/**
+	 * Marker interface to flag controls that provide access to substructures from a byId method.
+	 *
+	 * @since 1.56.0
+	 * @name sap.ui.core.IDScope
+	 * @interface
+	 * @private
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+	/**
 	 * Opens the control by given opener ref.
 	 * @param {string} oEvent oncontextmenu event
 	 * @param {sap.ui.core.Element|DOMRef} oOpenerRef The element which will get the focus back again after the menu was closed.
@@ -1921,6 +1932,7 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 	lazy("sap.ui.core.BusyIndicator", "show hide attachOpen detachOpen attachClose detachClose");
 	lazy("sap.ui.core.tmpl.Template", "registerType unregisterType");
 	lazy("sap.ui.core.Fragment", "registerType");
+	lazy("sap.ui.core.IconPool", "createControlByURI addIcon getIconURI getIconInfo isIconURI getIconCollectionNames getIconNames getIconForMimeType");
 	lazy("sap.ui.core.service.ServiceFactoryRegistry", "register unregister get");
 
 	lazy("sap.ui.model.odata.AnnotationHelper", "createPropertySetting format getNavigationPath"

@@ -98,7 +98,20 @@ function(
 	};
 
 	BasePlugin.prototype._attachReevaluationEditable = function(oOverlay) {
+		var fnGeometryChangedCallback = function(oEvent) {
+			if (oEvent.getSource().getGeometry() && oEvent.getSource().getGeometry().visible) {
+				this.evaluateEditable([oOverlay], {onRegistration: true});
+				oOverlay.detachEvent('geometryChanged', fnGeometryChangedCallback, this);
+			}
+		};
+
 		oOverlay.attachElementModified(_onElementModified, this);
+
+		// the control can be set to visible, but still the control has no size when we do the check.
+		// that's why we also attach go 'geometryChanged' and check if the overlay has a size
+		if (!oOverlay.getGeometry() || !oOverlay.getGeometry().visible) {
+			oOverlay.attachEvent('geometryChanged', fnGeometryChangedCallback, this);
+		}
 	};
 
 	BasePlugin.prototype._getRelevantOverlays = function(oOverlay, sAggregationName) {
@@ -254,7 +267,6 @@ function(
 
 	/**
 	 * Checks the Aggregations on the Overlay for a specific Action
-	 * @name sap.ui.rta.plugin.Plugin.prototype.checkAggregationsOnSelf
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay overlay to be checked for action
 	 * @param {string} sAction action to be checked
 	 * @return {boolean} whether the Aggregation has a valid Action

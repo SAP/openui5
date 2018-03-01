@@ -440,6 +440,7 @@ sap.ui.define([
 								categories: tempRule.categories,
 								minversion: tempRule.minversion,
 								resolution: tempRule.resolution,
+								selected: tempRule.selected,
 								title: tempRule.title,
 								libName: treeTable[i].name,
 								check: tempRule.check

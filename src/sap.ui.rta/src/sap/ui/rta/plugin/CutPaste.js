@@ -136,6 +136,14 @@ function(
 	};
 
 	/**
+	 * @override
+	 */
+	CutPaste.prototype.cut = function(oOverlay) {
+		ControlCutPaste.prototype.cut.apply(this, arguments);
+		oOverlay.setSelected(false);
+	};
+
+	/**
 	 * Retrieve the context menu item for the actions.
 	 * Two items are returned here: one for "cut" and one for "paste".
 	 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay for which the context menu was opened

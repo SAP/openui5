@@ -1056,6 +1056,9 @@
 				oSelectionItem,
 				bIncludeItemInSelection;
 
+			// let the item navigation run for testing
+			this.stub(sap.ui.Device.system, "desktop", true);
+
 			bindListData(oList, data3, "/items", createTemplateListItem());
 
 			// add item to page & render
@@ -1273,6 +1276,9 @@
 					selectionChange: fnSelectionChangeSpy
 				}).addItem(oListItem1).addItem(oListItem2);
 
+			// let the item navigation run for testing
+			this.stub(sap.ui.Device.system, "desktop", true);
+
 			oList.placeAt("content");
 			sap.ui.getCore().applyChanges();
 			oList.focus();
@@ -1420,6 +1426,9 @@
 				items : [oListItem0, oListItem1, oListItem2]
 			});
 
+			// let the item navigation run for testing
+			this.stub(sap.ui.Device.system, "desktop", true);
+
 			oList.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
@@ -1486,6 +1495,9 @@
 
 			oList.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
+
+			// let the item navigation run for testing
+			this.stub(sap.ui.Device.system, "desktop", true);
 
 			var fnRenderSpy = this.spy(oList.getRenderer(), "render");
 
@@ -1786,9 +1798,8 @@
 			var oItem = oList.getItems()[0];
 			oItem.focus();
 			oItem.$().trigger("contextmenu");
-			assert.ok(oMenu._getMenu().bOpen, "Menu is open");
+			assert.equal(fnOpenAsContextMenu.callCount, 1, "Menu#OpenAsContextMenu is called");
 			oMenu.close();
-			assert.ok(fnOpenAsContextMenu.called);
 
 			// list should not be invalidated for destroyContextmenu
 			fnInvalidate.reset();
@@ -1796,6 +1807,7 @@
 			assert.ok(!fnInvalidate.called, "List is not invalidated when the contextMenu aggregation is destroyed");
 
 			//clean up
+			oMenu.destroy();
 			oList.destroy();
 		});
 
@@ -1824,25 +1836,23 @@
 
 			var $input = oInput.$("inner").focus();
 			$input.trigger("contextmenu");
+			assert.equal(fnOpenAsContextMenu.callCount, 0, "Menu#OpenAsContextMenu is not called");
 
-			assert.ok(!oMenu._getMenu(), "Menu is not opened");
-			assert.ok(!fnOpenAsContextMenu.called, "openAsContextMenu not called");
-
-			oListItem._oMultiSelectControl.focus();
-			oListItem._oMultiSelectControl.$().trigger("contextmenu");
-			assert.ok(oMenu._getMenu().bOpen, "Menu is open");
+			oListItem.getMultiSelectControl().focus();
+			oListItem.getMultiSelectControl().$().trigger("contextmenu");
+			assert.equal(fnOpenAsContextMenu.callCount, 1, "Menu#OpenAsContextMenu is called");
 			oMenu.close();
 
 			oList.setMode("SingleSelectLeft");
 			sap.ui.getCore().applyChanges();
 
-			oListItem._oSingleSelectControl.focus();
-			oListItem._oSingleSelectControl.$().trigger("contextmenu");
-			assert.ok(oMenu._getMenu().bOpen, "Menu is open");
+			oListItem.getSingleSelectControl().focus();
+			oListItem.getSingleSelectControl().$().trigger("contextmenu");
+			assert.equal(fnOpenAsContextMenu.callCount, 2, "Menu#OpenAsContextMenu is called again");
 			oMenu.close();
-			assert.ok(fnOpenAsContextMenu.calledTwice, "openAsContextMenu called twice");
 
 			// clean up
+			oMenu.destroy();
 			oList.destroy();
 		});
 

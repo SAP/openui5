@@ -1,0 +1,43 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+	<VBox class="sapUiSmallMargin">
+		<f:SimpleForm id="SimpleFormDisplayColumn_oneGroup234"
+			editable="false"
+			layout="ColumnLayout"
+			title="Address"
+			columnsM="2"
+			columnsL="3"
+			columnsXL="4"
+			>
+			<f:content>
+				<Label text="Name" />
+				<Text id="nameText" text="{SupplierName}" />
+				<Label text="Street/No." />
+				<Text text="{Street} {HouseNumber}" />
+				<Label text="ZIP Code/City" />
+				<Text text="{ZIPCode} {City}" />
+				<Label text="Country" />
+				<Text id="countryText" text="{Country}" />
+				<Label text="Web" />
+				<Link text="Url" href="{Url}" />
+				<Label text="Twitter" />
+				<Text text="{Twitter}" />
+				<Label text="Email" />
+				<Text text="{Email}" />
+				<Label text="Tel." />
+				<Text text="{Tel}" />
+				<Label text="SMS" />
+				<Text text="{Sms}" />
+				<Label text="Mobile" />
+				<Text text="{Mobile}" />
+				<Label text="Pager" />
+				<Text text="{Pager}" />
+				<Label text="Fax" />
+				<Text text="{Fax}" />
+			</f:content>
+		</f:SimpleForm>
+	</VBox>
+</core:FragmentDefinition>

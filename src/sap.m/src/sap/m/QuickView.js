@@ -66,6 +66,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.28.11
 	 * @alias sap.m.QuickView
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/quickview/ Quick View}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var QuickView = QuickViewBase.extend("sap.m.QuickView", /** @lends sap.m.QuickView.prototype */	{
@@ -223,7 +224,7 @@ sap.ui.define([
 
 		var oPopupControl = this._oPopover.getAggregation("_popup");
 		oPopupControl.addEventDelegate({
-			onBeforeRendering: this.onBeforeRenderingPopover,
+			onBeforeRendering: this._initializeQuickView,
 			onAfterRendering: this._setLinkWidth,
 			onkeydown: this._onPopupKeyDown
 		}, this);
@@ -244,7 +245,11 @@ sap.ui.define([
 		this._oPopover.addStyleClass("sapMQuickView");
 	};
 
-	QuickView.prototype.onBeforeRenderingPopover = function() {
+	/**
+	 * Initialize the QuickView.
+	 * @private
+	 */
+	QuickView.prototype._initializeQuickView = function() {
 
 		this._bRendered = true;
 
@@ -438,7 +443,16 @@ sap.ui.define([
 		"removeAggregation", "removeAllAggregation", "destroyAggregation"].forEach(function (sFuncName) {
 			QuickView.prototype["_" + sFuncName + "Old"] = QuickView.prototype[sFuncName];
 			QuickView.prototype[sFuncName] = function () {
-				var result = QuickView.prototype["_" + sFuncName + "Old"].apply(this, arguments);
+				var newArgs,
+					result;
+
+				if (["removeAggregation", "removeAllAggregation", "destroyAggregation"].indexOf(sFuncName) !== -1) {
+					newArgs = [arguments[0], true];
+				} else {
+					newArgs = [arguments[0], arguments[1], true];
+				}
+
+				result = QuickView.prototype["_" + sFuncName + "Old"].apply(this, newArgs);
 
 				// Marks items aggregation as changed and invalidate popover to trigger rendering
 				this._bItemsChanged = true;
@@ -449,7 +463,7 @@ sap.ui.define([
 					}
 
 					if (this._bRendered) {
-						this._oPopover.invalidate();
+						this._initializeQuickView();
 					}
 				}
 

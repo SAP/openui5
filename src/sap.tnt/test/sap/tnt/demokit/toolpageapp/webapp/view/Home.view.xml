@@ -5,6 +5,13 @@
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc">
 	<Page showHeader="false">
+		<landmarkInfo>
+			<PageAccessibleLandmarkInfo
+				rootRole="Region"
+				rootLabel="{i18n>Home_rootLabel}"
+				contentRole="Main"
+				contentLabel="{i18n>Home_contentLabel}"/>
+		</landmarkInfo>
 		<l:BlockLayout
 			id="BlockLayout"
 			background="Default">
@@ -15,16 +22,9 @@
 							path: 'view>/isPhone',
 							formatter: '.formatter.srcImageValue'
 						}"
-						width="100%"/>
+						width="100%"
+						height="100%"/>
 				</l:BlockLayoutCell>
-			</l:BlockLayoutRow>
-			<l:BlockLayoutRow>
-				<l:BlockLayoutCell
-					class="sapUiResponsiveContentPadding"
-					title="{i18n>shopAdminTitle}"
-					backgroundColorSet="ColorSet9"
-					backgroundColorShade="ShadeA"
-					titleAlignment="Left"/>
 			</l:BlockLayoutRow>
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
@@ -36,14 +36,20 @@
 							size="2.5rem"
 							color="Default"/>
 						<Title
+							id="administrationTile"
 							text="{i18n>administrationTitle}"
+							level="H3"
 							titleStyle="H2"
 							class="sapUiTinyMarginTopBottom"/>
 						<Text
 							text="{i18n>administrationContent}"
 							class="sapUiTinyMarginBottom"/>
-						<Link text="{i18n>accessLink}"/>
-						<Link text="{i18n>learnLink}"/>
+						<Link
+							text="{i18n>accessLink}"
+							tooltip="{i18n>accessAdministrationLink}"/>
+						<Link
+							text="{i18n>learnLink}"
+							tooltip="{i18n>learnAdministrationTooltip}"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 				<l:BlockLayoutCell
@@ -55,14 +61,20 @@
 							size="2.5rem"
 							color="Default"/>
 						<Title
+							id="productTile"
 							text="{i18n>productTitle}"
+							level="H3"
 							titleStyle="H2"
 							class="sapUiTinyMarginTopBottom"/>
 						<Text
 							text="{i18n>productContent}"
 							class="sapUiTinyMarginBottom"/>
-						<Link text="{i18n>accessLink}"/>
-						<Link text="{i18n>learnLink}"/>
+						<Link
+							text="{i18n>accessLink}"
+							tooltip="{i18n>accessProductsLink}"/>
+						<Link
+							text="{i18n>learnLink}"
+							tooltip="{i18n>learnProductsTooltip}"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 				<l:BlockLayoutCell
@@ -75,13 +87,18 @@
 							color="Default"/>
 						<Title
 							text="{i18n>revenueTitle}"
+							level="H3"
 							titleStyle="H2"
 							class="sapUiTinyMarginTopBottom"/>
 						<Text
 							text="{i18n>revenueContent}"
 							class="sapUiTinyMarginBottom"/>
-						<Link text="{i18n>accessLink}"/>
-						<Link text="{i18n>learnLink}"/>
+						<Link
+							text="{i18n>accessLink}"
+							tooltip="{i18n>accessRevenueLink}"/>
+						<Link
+							text="{i18n>learnLink}"
+							tooltip="{i18n>learnRevenueTooltip}"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 				<l:BlockLayoutCell
@@ -94,13 +111,18 @@
 							color="Default"/>
 						<Title
 							text="{i18n>supplierTitle}"
+							level="H3"
 							titleStyle="H2"
 							class="sapUiTinyMarginTopBottom"/>
 						<Text
 							text="{i18n>supplierContent}"
 							class="sapUiTinyMarginBottom"/>
-						<Link text="{i18n>accessLink}"/>
-						<Link text="{i18n>learnLink}"/>
+						<Link
+							text="{i18n>accessLink}"
+							tooltip="{i18n>accessSuppliersLink}"/>
+						<Link
+							text="{i18n>learnLink}"
+							tooltip="{i18n>learnSuppliersTooltip}"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
@@ -115,23 +137,32 @@
 							color="Default"/>
 						<Title
 							text="{i18n>socialMediaTitle}"
+							level="H3"
 							titleStyle="H2"
 							class="sapUiTinyMarginTopBottom"/>
 						<Text
 							text="{i18n>socialMediaContent}"
 							class="sapUiTinyMarginBottom"/>
-						<Link text="{i18n>accessLink}"/>
-						<Link text="{i18n>learnLink}"/>
+						<Link
+							text="{i18n>accessLink}"
+							tooltip="{i18n>accessSocialLink}"/>
+						<Link
+							text="{i18n>learnLink}"
+							tooltip="{i18n>learnSocialMediaTooltip}"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 				<l:BlockLayoutCell
 					backgroundColorSet="ColorSet9"
 					backgroundColorShade="ShadeA"
 					width="3">
-					<Table items="{path:'customer>/customers', templateShareable: false}">
+					<Table
+						items="{path:'customer>/customers', templateShareable: false}"
+						fixedLayout="false">
 						<headerToolbar>
 							<Toolbar design="Transparent">
-								<Title text="{i18n>customerOverviewTitle}"/>
+								<Title
+									text="{i18n>customerOverviewTitle}"
+									level="H3"/>
 							</Toolbar>
 						</headerToolbar>
 							<columns>

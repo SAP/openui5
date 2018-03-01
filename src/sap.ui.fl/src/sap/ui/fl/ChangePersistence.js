@@ -166,7 +166,9 @@ sap.ui.define([
 				Settings._storeInstance(oWrappedChangeFileContent.changes.settings);
 			}
 
-			if (!oWrappedChangeFileContent.changes || !oWrappedChangeFileContent.changes.changes) {
+			if (!oWrappedChangeFileContent.changes ||
+				((!oWrappedChangeFileContent.changes.changes || oWrappedChangeFileContent.changes.changes.length == 0) &&
+				(!oWrappedChangeFileContent.changes.variantSection || jQuery.isEmptyObject(oWrappedChangeFileContent.changes.variantSection)))) {
 				return [];
 			}
 
@@ -191,6 +193,9 @@ sap.ui.define([
 					&& Object.keys(oWrappedChangeFileContent.changes.variantSection).length !== 0
 					&& Object.keys(this._oVariantController._getChangeFileContent()).length === 0 ) {
 				this._oVariantController._setChangeFileContent(oWrappedChangeFileContent, oComponent);
+			}
+
+			if (Object.keys(this._oVariantController._getChangeFileContent()).length > 0) {
 				var aVariantChanges = this._oVariantController.loadInitialChanges();
 				aChanges = aChanges.concat(aVariantChanges);
 			}
@@ -954,6 +959,8 @@ sap.ui.define([
 									BusyIndicator.hide();
 								});
 						}.bind(this));
+				} else {
+					return "Cancel";
 				}
 			}.bind(this))
 			['catch'](fnHandleAllErrors);
@@ -979,7 +986,7 @@ sap.ui.define([
 								"&appVersion=" + this._mComponent.appVersion +
 								"&layer=" + sLayer +
 								"&generator=" + sGenerator;
-							if (aChanges[0].getRequest().length > 0) {
+							if (aChanges.length > 0) {
 								sUriOptions = sUriOptions + "&changelist=" + aChanges[0].getRequest();
 							}
 

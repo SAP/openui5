@@ -311,7 +311,7 @@ sap.ui.define(['jquery.sap.global', './LRUPersistentCache', './CacheManagerNOP',
 							bSupportedBrowserName = oSuppportedEnv.browserName === Device.browser.name,
 							bSupportedBrowserVersion = Device.browser.version >= oSuppportedEnv.browserVersion;
 
-						return bSupportedSystem && bSupportedBrowserName && bSupportedBrowserVersion;
+						return bSupportedSystem && bSupportedBrowserName && bSupportedBrowserVersion && window.indexedDB;
 					});
 				}
 				return this._bSupportedEnvironment;

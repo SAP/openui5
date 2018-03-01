@@ -7,6 +7,17 @@
 		title="{CategoryName}"
 		showNavButton="true"
 		navButtonPress="onNavButtonPress">
+		<landmarkInfo>
+			<PageAccessibleLandmarkInfo
+				rootRole="Region"
+				rootLabel="{i18n>Category_rootLabel}"
+				contentRole="Main"
+				contentLabel="{i18n>Category_contentLabel}"
+				footerRole="Region"
+				footerLabel="{i18n>Category_footerLabel}"
+				headerRole="Region"
+				headerLabel="{i18n>Category_headerLabel}"/>
+		</landmarkInfo>
 		<headerContent>
 			<Button
 				icon="sap-icon://cart"

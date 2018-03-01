@@ -10,8 +10,9 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
 		"sap/ui/documentation/sdk/controller/util/APIInfo",
-		"sap/ui/core/library"
-	], function (jQuery, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, APIInfo, CoreLibrary) {
+		"sap/ui/core/library",
+		"sap/base/log"
+	], function (jQuery, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, APIInfo, CoreLibrary, Log) {
 		"use strict";
 
 		var ViewType = CoreLibrary.mvc.ViewType;
@@ -63,11 +64,19 @@ sap.ui.define([
 					.then(this._buildBorrowedModel.bind(this))
 					.then(this._createModelAndSubView.bind(this))
 					.then(this._initSubView.bind(this))
-					.catch(function (sReason) {
+					.catch(function (vReason) {
 						// If the symbol does not exist in the available libs we redirect to the not found page
-						if (sReason === this.NOT_FOUND) {
+						if (vReason === this.NOT_FOUND) {
 							this._oContainerPage.setBusy(false);
 							this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+						} else {
+							// Handle named errors
+							if (vReason.name) {
+								Log.error(vReason.name, function () {
+									// Return error object for Support Info
+									return vReason;
+								});
+							}
 						}
 					}.bind(this));
 			},

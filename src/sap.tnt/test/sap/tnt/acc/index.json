@@ -2,7 +2,7 @@
 	"tests" : [
 		{
 			"control" : "sap.tnt.ToolPage",
-			"url" : "../ToolPage.html",
+			"url" : "ToolPage.html",
 			"appComponent" : "CA-UI5-CTR-ROD"
 		},
 		{

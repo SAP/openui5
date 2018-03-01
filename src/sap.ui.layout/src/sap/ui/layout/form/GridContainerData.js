@@ -11,7 +11,7 @@ sap.ui.define(['sap/ui/core/LayoutData', 'sap/ui/layout/library'],
 	 * Constructor for a new sap.ui.layout.form.GridContainerData.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * The <code>GridLayout</code>-specific layout data for <code>FormContainers</code>.

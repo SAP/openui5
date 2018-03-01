@@ -13,6 +13,30 @@
         "type": "FIX",
         "text": " sap.ui.unified.ColorPicker: DemoKit sample improvement",
         "references": []
+      },
+      {
+        "id": "d77050250cd60be10c307176b0f949a0556af4df",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Custom appointments sorter",
+        "references": []
+      },
+      {
+        "id": "30c0e987fcc55155f3d64b0462bc536eefc722ee",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Selecting day header or week number does not throw an error",
+        "references": []
+      },
+      {
+        "id": "775bc74085a36133b7d6cc678fec077154e77157",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: nonWorkingDays now can have another type when set using specialDates aggregation",
+        "references": []
+      },
+      {
+        "id": "c576ff2eadee2c6129be4fb41f1cf28aa252191a",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: Sample is now scrollable on mobile",
+        "references": []
       }
     ]
   }

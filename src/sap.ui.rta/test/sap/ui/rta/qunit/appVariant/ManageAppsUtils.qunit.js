@@ -169,7 +169,7 @@ sap.ui.require([
 				}
 			};
 
-			sandbox.stub(AppVariantOverviewUtils, "sendRequest").returns(Promise.resolve(oResult));
+			var sendRequestStub = sandbox.stub(AppVariantOverviewUtils, "sendRequest").returns(Promise.resolve(oResult));
 
 			return AppVariantOverviewUtils.getAppVariantOverview("testId", true).then(function(aAppVariantOverviewAttributes){
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
@@ -177,6 +177,9 @@ sap.ui.require([
 				assert.strictEqual(aAppVariantOverviewAttributes[0].semanticObject, "SemObj", "then the semantic object is correct");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].action, "Action", "then the action is correct");
 				assert.equal(aAppVariantOverviewAttributes[0].adaptUIButtonVisibility, true, "then the app is adaptable");
+				assert.ok(AppVariantOverviewUtils.sendRequest.calledOnce, "then the sendRequest is called once");
+				assert.strictEqual(sendRequestStub.firstCall.args[0], "/sap/bc/lrep/app_variant_overview/?sap.app/id=testId&layer=CUSTOMER*", "then the route is correct");
+				assert.strictEqual(sendRequestStub.firstCall.args[1], "GET", "then the operation is correct");
 			});
 		});
 
@@ -185,10 +188,13 @@ sap.ui.require([
 				response: {}
 			};
 
-			sandbox.stub(AppVariantOverviewUtils, "sendRequest").returns(Promise.resolve(oResult));
+			var sendRequestStub = sandbox.stub(AppVariantOverviewUtils, "sendRequest").returns(Promise.resolve(oResult));
 
 			return AppVariantOverviewUtils.getAppVariantOverview("testId", false).then(function(aAppVariantOverviewAttributes){
 				assert.equal(aAppVariantOverviewAttributes.length, 0, "then the result contains no app variant entries");
+				assert.ok(AppVariantOverviewUtils.sendRequest.calledOnce, "then the sendRequest is called once");
+				assert.strictEqual(sendRequestStub.firstCall.args[0], "/sap/bc/lrep/app_variant_overview/?sap.app/id=testId&layer=VENDOR", "then the route is correct");
+				assert.strictEqual(sendRequestStub.firstCall.args[1], "GET", "then the operation is correct");
 			});
 		});
 
@@ -212,16 +218,19 @@ sap.ui.require([
 				}
 			};
 
-			sandbox.stub(AppVariantOverviewUtils, "sendRequest").returns(Promise.resolve(oResult));
+			var sendRequestStub = sandbox.stub(AppVariantOverviewUtils, "sendRequest").returns(Promise.resolve(oResult));
 
 			return AppVariantOverviewUtils.getAppVariantOverview("testId", false).then(function(aAppVariantOverviewAttributes){
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].icon, "sap-icon://history", "then the icon of an app variant is correct");
 				assert.equal(aAppVariantOverviewAttributes[0].adaptUIButtonVisibility, false, "then the app is not adaptable");
+				assert.ok(AppVariantOverviewUtils.sendRequest.calledOnce, "then the sendRequest is called once");
+				assert.strictEqual(sendRequestStub.firstCall.args[0], "/sap/bc/lrep/app_variant_overview/?sap.app/id=testId&layer=VENDOR", "then the route is correct");
+				assert.strictEqual(sendRequestStub.firstCall.args[1], "GET", "then the operation is correct");
 			});
 		});
 
-		QUnit.test("When getAppVariantOverview() method is called on an app variant (currently adapting) which has no intent information present", function (assert) {
+		QUnit.test("When getAppVariantOverview() method is called on an app variant (currently adapting) which has no intent information present (Key user view)", function (assert) {
 			var oResult = {
 				response: {
 					items: [
@@ -265,7 +274,7 @@ sap.ui.require([
 				}
 			};
 
-			sandbox.stub(AppVariantOverviewUtils, "sendRequest").returns(Promise.resolve(oResult));
+			var sendRequestStub = sandbox.stub(AppVariantOverviewUtils, "sendRequest").returns(Promise.resolve(oResult));
 			sap.ui.rta.appVariant.AppVariantUtils.setNewAppVariantId("id1");
 
 			var oResourceBundlePromise = jQuery.sap.resources({
@@ -286,8 +295,10 @@ sap.ui.require([
 				assert.strictEqual(aAppVariantOverviewAttributes[1].action, "Action", "then the action of second app is correct");
 				assert.equal(aAppVariantOverviewAttributes[0].adaptUIButtonVisibility, false, "then the first app(variant) is not adaptable");
 				assert.equal(aAppVariantOverviewAttributes[1].adaptUIButtonVisibility, true, "then the second app is adaptable");
-
 				assert.equal(aAppVariantOverviewAttributes[0].currentStatus, oResourceBundle.getText("MAA_NEW_APP_VARIANT"), "then the first app(variant) is highlighted blue");
+				assert.ok(AppVariantOverviewUtils.sendRequest.calledOnce, "then the sendRequest is called once");
+				assert.strictEqual(sendRequestStub.firstCall.args[0], "/sap/bc/lrep/app_variant_overview/?sap.app/id=testId&layer=CUSTOMER*", "then the route is correct");
+				assert.strictEqual(sendRequestStub.firstCall.args[1], "GET", "then the operation is correct");
 			});
 		});
 	});
@@ -341,7 +352,7 @@ sap.ui.require([
 				}
 			};
 
-			sandbox.stub(AppVariantOverviewUtils, "sendRequest").returns(Promise.resolve(oResult));
+			var sendRequestStub = sandbox.stub(AppVariantOverviewUtils, "sendRequest").returns(Promise.resolve(oResult));
 
 			return AppVariantOverviewUtils.getAppVariantOverview("testId", true).then(function(aAppVariantOverviewAttributes){
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
@@ -350,6 +361,9 @@ sap.ui.require([
 				assert.strictEqual(aAppVariantOverviewAttributes[0].semanticObject, "SemObj", "then the semantic object is correct");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].action, "Action", "then the action is correct");
 				assert.equal(aAppVariantOverviewAttributes[0].adaptUIButtonVisibility, false, "then the app is not adaptable");
+				assert.ok(AppVariantOverviewUtils.sendRequest.calledOnce, "then the sendRequest is called once");
+				assert.strictEqual(sendRequestStub.firstCall.args[0], "/sap/bc/lrep/app_variant_overview/?sap.app/id=testId&layer=CUSTOMER*", "then the route is correct");
+				assert.strictEqual(sendRequestStub.firstCall.args[1], "GET", "then the operation is correct");
 			});
 		});
 
@@ -366,8 +380,8 @@ sap.ui.require([
 
 			return AppVariantOverviewUtils.getDescriptor("testIdDescriptorUrl").then(function(oDescriptor){
 				assert.ok(oDescriptor, "then the descriptor of the app is returned");
-
 				assert.strictEqual(oDescriptor["sap.app"].id, "testId", "then the id of the descriptor is right");
+				assert.ok(AppVariantOverviewUtils.sendRequest.calledOnce, "then the sendRequest is called once");
 			});
 		});
 	});

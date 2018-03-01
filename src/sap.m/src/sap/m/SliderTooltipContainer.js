@@ -147,9 +147,10 @@ function(
 		 * @public
 		 */
 		SliderTooltipContainer.prototype.repositionTooltips = function () {
-			var bParentRangeSlider = (this._oParentSlider.getMetadata().getName() ===  SliderUtilities.CONSTANTS.RANGE_SLIDER_NAME);
+			var bParentRangeSlider;
 
-			if (this.getDomRef()) {
+			if (this.getDomRef() && this._oParentSlider) {
+				bParentRangeSlider = (this._oParentSlider.getMetadata().getName() ===  SliderUtilities.CONSTANTS.RANGE_SLIDER_NAME);
 				this[bParentRangeSlider ? "_positionRangeTooltips" : "_positionTooltip"].call(this, this._oParentSlider.getAggregation("_tooltips"), arguments[0], arguments[1]);
 				this.getDomRef().style["top"] = (this._$ParentSlider.offset().top - SliderUtilities.CONSTANTS.TOOLTIP_CONTAINER_HEIGHT) + "px";
 				this._handleOverflow();
@@ -349,6 +350,7 @@ function(
 		SliderTooltipContainer.prototype.exit = function () {
 			this._oParentSlider = null;
 			this._$ParentSlider = null;
+			document.removeEventListener("scroll", this._scrollListener, true);
 		};
 
 		return SliderTooltipContainer;

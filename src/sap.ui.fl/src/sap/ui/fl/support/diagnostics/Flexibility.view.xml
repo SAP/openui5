@@ -70,6 +70,12 @@
 							<Text text="{= ${flexChangeDetails>/isPossibleRootCause} ? 'yes' : 'no'}"/>
 						</l:VerticalLayout>
 					</CustomListItem>
+					<CustomListItem visible="{= ${flexChangeDetails>/modifier} !== undefined}">
+						<l:VerticalLayout class="sapUiTinyMargin">
+							<Label text="Modifier"/>
+							<Text text="{flexChangeDetails>/modifier}"/>
+						</l:VerticalLayout>
+					</CustomListItem>
 					<GroupHeaderListItem title="Processing" upperCase="true"/>
 					<CustomListItem>
 						<l:VerticalLayout class="sapUiTinyMargin">

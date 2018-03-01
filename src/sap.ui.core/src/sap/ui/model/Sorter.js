@@ -25,6 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 	 *        implement the grouping behaviour for the aggregation which you want to group. In case a function
 	 *        is provided it must either return a primitive type value as the group key or an object containing
 	 *        a "key" property and additional properties needed for group visualization.
+	 *        <b>Note:</b> Grouping is only possible (and only makes sense) for the primary sort property.
 	 * @param {function} [fnComparator] a custom comparator function, which is used for clientside sorting instead
 	 *        of the default comparator method. Information about parameters and expected return values of such a
 	 *        method can be found in the default comparator documentation.

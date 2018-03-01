@@ -88,8 +88,6 @@ function(
 	/**
 	 * Sets initial values for the control.
 	 *
-	 * @name sap.m.NotificationListItem.init
-	 * @method
 	 * @public
 	 */
 	NotificationListItem.prototype.init = function () {
@@ -156,8 +154,6 @@ function(
 	/**
 	 * Sets the description.
 	 *
-	 * @name sap.m.NotificationListItem.setDescription
-	 * @method
 	 * @public
 	 * @param {string} description Description.
 	 * @returns {sap.m.NotificationListItem} NotificationListItem reference for chaining.
@@ -173,8 +169,6 @@ function(
 	/**
 	 * Sets the DateTime.
 	 *
-	 * @name sap.m.NotificationListItem.setDatetime
-	 * @method
 	 * @public
 	 * @param {object} dateTime DateTime.
 	 * @returns {sap.m.NotificationListBase} NotificationListBase reference for chaining.
@@ -189,8 +183,6 @@ function(
 	/**
 	 * Sets the unread text.
 	 *
-	 * @name sap.m.NotificationListItem.setUnread
-	 * @method
 	 * @public
 	 * @param {boolean} unread Indication of unread list item.
 	 * @returns {sap.m.NotificationListItem} NotificationListItem reference for chaining.
@@ -210,8 +202,6 @@ function(
 	/**
 	 * Sets the priority of the list item.
 	 *
-	 * @name sap.m.NotificationListItem.setPriority
-	 * @method
 	 * @public
 	 * @param {string} priority Priority of the list item.
 	 * @param {boolean} suppressInvalidation Indication for suppressing invalidation.
@@ -228,8 +218,6 @@ function(
 	/**
 	 * Sets the author picture for list item.
 	 *
-	 * @name sap.m.NotificationListItem.setAuthorPicture
-	 * @method
 	 * @public
 	 * @param {string} authorPicture Picture url in string format.
 	 * @param {boolean} suppressInvalidation Indication for suppressing invalidation.
@@ -246,8 +234,6 @@ function(
 	/**
 	 * Clones list item.
 	 *
-	 * @name sap.m.NotificationListItem.clone
-	 * @method
 	 * @public
 	 * @returns {sap.m.NotificationListItem} NotificationListItem reference for chaining.
 	 */
@@ -262,8 +248,6 @@ function(
 	/**
 	 * Overwrites onBeforeRendering
 	 *
-	 * @name sap.m.NotificationListItem.onBeforeRendering
-	 * @method
 	 * @public
 	 */
 	NotificationListItem.prototype.onBeforeRendering = function () {
@@ -274,8 +258,6 @@ function(
 	/**
 	 * Overwrites onAfterRendering
 	 *
-	 * @name sap.m.NotificationListItem.onAfterRendering
-	 * @method
 	 * @public
 	 */
 	NotificationListItem.prototype.onAfterRendering = function () {
@@ -285,8 +267,6 @@ function(
 	/**
 	 * Called when the control is destroyed.
 	 *
-	 * @name sap.m.NotificationListItem.exit
-	 * @method
 	 * @private
 	 */
 	NotificationListItem.prototype.exit = function () {
@@ -305,8 +285,6 @@ function(
 	/**
 	 * Returns the sap.m.Text control used in the NotificationListItem's description.
 	 *
-	 * @name sap.m.NotificationListItem._getDescriptionText
-	 * @method
 	 * @private
 	 * @returns {sap.m.Text} The notification description text
 	 */
@@ -333,8 +311,6 @@ function(
 	/**
 	 * Overrides the ListItemBase class toggling.
 	 *
-	 * @name sap.m.NotificationListItem._activeHandling
-	 * @method
 	 * @private
 	 */
 	NotificationListItem.prototype._activeHandling = function () {
@@ -344,8 +320,6 @@ function(
 	/**
 	 * Updates the hidden text, used for the ARIA support.
 	 *
-	 * @name sap.m.NotificationListItem._updateAriaAdditionalInfo
-	 * @method
 	 * @private
 	 */
 	NotificationListItem.prototype._updateAriaAdditionalInfo = function () {
@@ -368,8 +342,6 @@ function(
 	/**
 	 * Returns true if the text in the title or the text in the description is longer than two lines.
 	 *
-	 * @name sap.m.NotificationListItem._canTruncate
-	 * @method
 	 * @private
 	 * @returns {boolean} Whether the control should be truncated.
 	 */
@@ -390,8 +362,6 @@ function(
 	/**
 	 * Shows and hides truncate button.
 	 *
-	 * @name sap.m.NotificationListItem._showHideTruncateButton
-	 * @method
 	 * @private
 	 */
 	NotificationListItem.prototype._showHideTruncateButton = function () {
@@ -434,8 +404,6 @@ function(
 	/**
 	 * Deregisters resize handler.
 	 *
-	 * @name sap.m.NotificationListItem._deregisterResize
-	 * @method
 	 * @private
 	 */
 	NotificationListItem.prototype._deregisterResize = function () {
@@ -448,8 +416,6 @@ function(
 	/**
 	 * Registers resize handler.
 	 *
-	 * @name sap.m.NotificationListItem._registerResize
-	 * @method
 	 * @public
 	 */
 	NotificationListItem.prototype._registerResize = function () {
@@ -470,8 +436,6 @@ function(
 	/**
 	 * Resize handler for the NotificationListItem.
 	 *
-	 * @name sap.m.NotificationListItem._resizeNotification
-	 * @method
 	 * @private
 	 */
 	NotificationListItem.prototype._resizeNotification = function () {

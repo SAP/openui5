@@ -15,7 +15,8 @@ sap.ui.require([
 	"sap/ui/core/XMLTemplateProcessor",
 	"sap/ui/thirdparty/sinon"
 ],
-function(MoveControlsHandler,
+function(
+	MoveControlsHandler,
 	UIComponent,
 	ComponentContainer,
 	Change,
@@ -276,6 +277,25 @@ function(MoveControlsHandler,
 		fnAssertInitialState.call(this, assert);
 	});
 
+	QUnit.test("When applying the single move change, that was already performed on the UI, on jsControlTree with local id and reverting it afterwards, Then", function(assert) {
+		var oChange = new Change({
+			selector : this.mSelectorWithLocalId,
+			content : this.mSingleMoveChangeContentWithLocalId
+		});
+
+		sandbox.stub(JsControlTreeModifier, "findIndexInParentAggregation").returns(2);
+		assert.ok(MoveControlsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier, appComponent: oComponent}));
+
+		assert.equal(this.oObjectHeader.getAttributes().length, 1, "object attribute is removed from the header");
+		assert.equal(this.oObjectHeader.getAttributes()[0].getId(), this.oObjectAttribute2.getId(), "object attribute 2 is still in the header");
+		assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header is still at 1. position");
+		assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is still at 2. position");
+		assert.equal(this.oLayout.getContent()[2].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 3. position");
+
+		assert.ok(MoveControlsHandler.revertChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier, appComponent: oComponent}));
+		fnAssertInitialState.call(this, assert);
+	});
+
 	QUnit.test("When applying the single move change on jsControlTree with global id and reverting it afterwards, Then", function(assert) {
 		var oChange = new Change({
 			selector : this.mSelectorWithGlobalId,
@@ -346,6 +366,46 @@ function(MoveControlsHandler,
 
 		assert.ok(MoveControlsHandler.revertChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier}));
 		fnAssertInitialState.call(this, assert);
+	});
+
+	QUnit.test("When applying a change and using mPropertyBag.sourceAggregation and .targetAggregation", function(assert) {
+		var oChange = new Change({
+			selector : this.mSelectorWithGlobalId,
+			content : {
+				movedElements : [{
+					selector : {
+						id : this.oObjectAttribute.getId(),
+						type : "sap.m.ObjectAttribute"
+					},
+					sourceIndex : 0,
+					targetIndex : 1
+				}],
+				source : {
+					selector : {
+						id : this.oObjectHeader.getId(),
+						aggregation : "attributes"
+					}
+				},
+				target : {
+					selector : {
+						id : this.oLayout.getId(),
+						aggregation : "content"
+					}
+				}
+			}
+		});
+
+		var oRemoveStub = sandbox.stub(JsControlTreeModifier, "removeAggregation");
+		var oInsertStub = sandbox.stub(JsControlTreeModifier, "insertAggregation");
+		sandbox.stub(JsControlTreeModifier, "getAggregation").returns([this.oObjectAttribute]);
+
+		MoveControlsHandler.applyChange(oChange, this.oObjectHeader, {
+			modifier: JsControlTreeModifier,
+			sourceAggregation: "newSourceAggregation",
+			targetAggregation: "newTargetAggregation"
+		});
+		assert.equal(oRemoveStub.lastCall.args[1], "newSourceAggregation", "then the source aggregation from the change got changed");
+		assert.equal(oInsertStub.lastCall.args[1], "newTargetAggregation", "then the target aggregation from the change got changed");
 	});
 
 	QUnit.test("When applying broken changes (functionality independent of modifier), Then", function(assert) {
@@ -550,6 +610,35 @@ function(MoveControlsHandler,
 			MoveControlsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
 		}, new Error("Missing targetIndex for element with id '" + this.oObjectAttribute.getId()
 				+ "' in movedElements supplied"), "missing target index error captured");
+
+		oChange = new Change({
+			selector : this.mSelectorWithGlobalId,
+			content : {
+				movedElements : [{
+					selector : {
+						id : this.oObjectAttribute.getId() + "foo"
+					},
+					sourceIndex : 0,
+					targetIndex : 1
+				}],
+				source : {
+					selector : {
+						id : this.oObjectHeader.getId(),
+						aggregation : "attributes"
+					}
+				},
+				target :{
+					selector : {
+						id : this.oLayout.getId(),
+						aggregation : "content"
+					}
+				}
+			}
+		});
+
+		assert.throws(function() {
+			MoveControlsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
+		}, new Error("Control to move was not found. Id: '" + this.oObjectAttribute.getId() + "foo" + "'"), "Control with the given ID not found.");
 	});
 
 	QUnit.module("Given a Move Controls Change Handler on xmlControlTree", {

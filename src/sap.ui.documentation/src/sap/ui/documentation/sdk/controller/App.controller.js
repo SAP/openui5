@@ -42,15 +42,20 @@ sap.ui.define([
 					"which versions are available. " +
 					"You can view the version-specific Demo Kit by adding the version number to the URL, e.g. " +
 					"<a href='https://openui5.hana.ondemand.com/1.44.16/'>https://openui5.hana.ondemand.com/1.44.16/</a>"
-				});
+				}),
+				oHeaderModel = new JSONModel({
+					bShowSubHeader: Device.system.phone
+				}),
+				sTabNavigationId;
 
 				this.MENU_LINKS_MAP = {
 					"Legal": "https://www.sap.com/corporate/en/legal/impressum.html",
 					"Privacy": "https://www.sap.com/corporate/en/legal/privacy.html",
 					"Terms of Use": "https://www.sap.com/corporate/en/legal/terms-of-use.html",
 					"Copyright": "https://www.sap.com/corporate/en/legal/copyright.html",
-					"Trademark": "https://www.sap.com/corporate/en/legal/copyright.html#trademark",
-					"Disclaimer": "https://help.sap.com/viewer/disclaimer"
+					"Trademark": "https://www.sap.com/corporate/en/legal/trademark.html",
+					"Disclaimer": "https://help.sap.com/viewer/disclaimer",
+					"License": "LICENSE.txt"
 				};
 				this.FEEDBACK_SERVICE_URL = "https://feedback-sapuisofiaprod.hana.ondemand.com:443/api/v2/apps/5bb7d7ff-bab9-477a-a4c7-309fa84dc652/posts";
 				this.OLD_DOC_LINK_SUFFIX = ".html";
@@ -60,16 +65,24 @@ sap.ui.define([
 
 				this.setModel(oViewModel, "appView");
 
-				this.oTabNavigation = this._oView.byId("tabHeader");
+				// set the global header visibility data
+				this.setModel(oHeaderModel, "headerView");
+
 				this.oHeader = this._oView.byId("headerToolbar");
+
+				sTabNavigationId = (Device.system.phone) ? "selectHeader" : "tabHeader";
+				this._oView.byId(sTabNavigationId).setStashed(false);
+				this.oTabNavigation = this._oView.byId(sTabNavigationId);
+
+				// the unstashed control is added as **last child** => correct its position in parent container
+				this.oHeader.removeContent(this.oTabNavigation);
+				this.oHeader.insertContent(this.oTabNavigation, 1);
+
 				this.oRouter = this.getRouter();
 
 				ResizeHandler.register(this.oHeader, this.onHeaderResize.bind(this));
 				this.oRouter.attachRouteMatched(this.onRouteChange.bind(this));
 				this.oRouter.attachBypassed(this.onRouteNotFound.bind(this));
-
-				this.getRouter().getRoute("topicIdLegacyRoute").attachPatternMatched(this._onTopicOldRouteMatched, this);
-				this.getRouter().getRoute("apiIdLegacyRoute").attachPatternMatched(this._onApiOldRouteMatched, this);
 
 				this.oRouter.getRoute("entitySamplesLegacyRoute").attachPatternMatched(this._onEntityOldRouteMatched, this);
 				this.oRouter.getRoute("entityAboutLegacyRoute").attachPatternMatched(this._onEntityOldRouteMatched, this);
@@ -105,19 +118,16 @@ sap.ui.define([
 				Device.orientation.detachHandler(this._onOrientationChange, this);
 			},
 
-			_onTopicOldRouteMatched: function(oEvent) {
-
-				var sId = oEvent.getParameter("arguments").id;
+			_onTopicOldRouteMatched: function(sId) {
 				if (sId) {
 					sId = this._trimOldDocSuffix(sId);
 				}
 				this.getRouter().navTo("topicId", {id: sId});
 			},
 
-			_onApiOldRouteMatched: function(oEvent) {
+			_onApiOldRouteMatched: function(sId) {
 
-				var sId = oEvent.getParameter("arguments").id,
-					sEntityType,
+				var sEntityType,
 					sEntityId,
 					aSplit;
 
@@ -176,12 +186,17 @@ sap.ui.define([
 					sKey = oTabToSelect ? oTabToSelect.getKey() : "home",
 					bPhone = Device.system.phone,
 					oViewModel = this.getModel("appView"),
+					oHeaderModel = this.getModel("headerView"),
 					bHasMaster = this.getOwnerComponent().getConfigUtil().hasMasterView(sRouteName),
 					oMasterView,
 					sMasterViewId;
 
 				this.oTabNavigation.setSelectedKey(sKey);
 
+				// the *default* subHeader-visibility value is platform-dependent
+				// but can be later overwritten for specific views (in their respective controller),
+				// this is why we have to reset to the default before entering any specific view)
+				oHeaderModel.setProperty("/bShowSubHeader", bPhone); // reset to default subHeader visibility
 				oViewModel.setProperty("/bHasMaster", bHasMaster);
 
 				this._toggleTabHeaderClass();
@@ -228,7 +243,13 @@ sap.ui.define([
 			},
 
 			navigateToSection : function (oEvent) {
-				var sKey = oEvent.getParameter("key");
+				var sKey = oEvent.getParameter("key"),
+					oItem;
+
+				if (!sKey) {
+					oItem = oEvent.getParameter("selectedItem");
+					oItem && (sKey = oItem.getKey());
+				}
 
 				oEvent.preventDefault();
 				if (sKey && sKey !== "home") {
@@ -256,6 +277,8 @@ sap.ui.define([
 				if (!this._oAboutDialog) {
 					this._oAboutDialog = new sap.ui.xmlfragment("aboutDialogFragment", "sap.ui.documentation.sdk.view.AboutDialog", this);
 					this._oView.addDependent(this._oAboutDialog);
+				} else {
+					this._oAboutDialog.getContent()[0].backToTop(); // reset the nav container to the first page
 				}
 				this._oAboutDialog.open();
 			},
@@ -678,6 +701,9 @@ sap.ui.define([
 
 			_toggleTabHeaderClass: function() {
 				var th = this.byId("tabHeader");
+				if (th.getMetadata().getName() === "sap.ui.core._StashedControl") {
+					return;
+				}
 				if (this._isToggleButtonVisible()) {
 					th.addStyleClass("tabHeaderNoLeftMargin");
 				} else {

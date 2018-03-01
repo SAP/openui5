@@ -87,7 +87,8 @@
 }
 
 /* IE mobile and desctop ignores outline-offset. Use an overlay: */
-html[data-sap-ui-browser^="ie"] {
+html[data-sap-ui-browser^="ed"].sap-desktop .sapMSegB,
+html[data-sap-ui-browser^="ie"].sap-desktop .sapMSegB {
 	.sapMSegBBtn:focus {
 		outline: none;
 		position: relative;
@@ -98,9 +99,9 @@ html[data-sap-ui-browser^="ie"] {
 		width: 100%;
 		height: 100%;
 		position: absolute;
-		left: 0;
-		top: 0;
-		border: 0.125rem dotted @sapUiContentFocusColor;
+		left: -1px;
+		top: -1px;
+		border: 2px dashed @sapUiContentFocusColor;
 		pointer-events: none;
 	}
 	.sapMSegBBtn:last-child:focus {

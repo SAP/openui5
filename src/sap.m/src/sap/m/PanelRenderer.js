@@ -33,7 +33,7 @@ sap.ui.define(["sap/m/library"],
 	};
 
 	PanelRenderer.startPanel = function (oRm, oControl) {
-		oRm.write("<section");
+		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMPanel");
 		oRm.writeClasses();
@@ -152,7 +152,7 @@ sap.ui.define(["sap/m/library"],
 	};
 
 	PanelRenderer.endPanel = function (oRm) {
-		oRm.write("</section>");
+		oRm.write("</div>");
 	};
 
 	return PanelRenderer;

@@ -8,8 +8,6 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/LabelEnablement',
-	'sap/m/OverflowToolbar',
-	'sap/m/OverflowToolbarLayoutData',
 	'sap/ui/core/library',
 	'./LabelRenderer'
 ],
@@ -18,8 +16,6 @@ function(
 	library,
 	Control,
 	LabelEnablement,
-	OverflowToolbar,
-	OverflowToolbarLayoutData,
 	coreLibrary,
 	LabelRenderer
 	) {
@@ -71,7 +67,7 @@ function(
 	 * @constructor
 	 * @public
 	 * @alias sap.m.Label
-	 * @see {@link https://experience.sap.com/fiori-design-web/label/ UX Guidelines for sap.m.Label}
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/label/ Label}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Label = Control.extend("sap.m.Label", /** @lends sap.m.Label.prototype */ { metadata : {
@@ -224,7 +220,7 @@ function(
 		function getOwnGroup(oControl) {
 			var oLayoutData = oControl && oControl.getLayoutData();
 
-			if (oLayoutData && oLayoutData instanceof OverflowToolbarLayoutData) {
+			if (isInstanceOf(oLayoutData, "sap/m/OverflowToolbarLayoutData")) {
 				return oLayoutData.getGroup();
 			}
 		}
@@ -238,7 +234,7 @@ function(
 				sLabelledControlGroupId;
 
 			oToolbar = oLabel.getParent();
-			if (!oToolbar || !(oToolbar instanceof OverflowToolbar)) {
+			if (!isInstanceOf(oToolbar, "sap/m/OverflowToolbar")) {
 				return;
 			}
 
@@ -266,6 +262,15 @@ function(
 
 	// enrich Label functionality
 	LabelEnablement.enrich(Label.prototype);
+
+	// utility function to check if an object is an instance of a class
+	// without forcing the loading of the module that defines the class
+	function isInstanceOf (oObject, sModule) {
+		if (oObject && sModule) {
+			var fnClass = sap.ui.require(sModule); // will return the fnClass only if the module is already loaded
+			return (typeof fnClass === 'function')  && (oObject instanceof fnClass);
+		}
+	}
 
 	return Label;
 

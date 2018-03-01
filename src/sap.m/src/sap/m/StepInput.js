@@ -104,6 +104,7 @@ function(
 		 * @public
 		 * @since 1.40
 		 * @alias sap.m.StepInput
+		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/step-input/ Step Input}
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var StepInput = Control.extend("sap.m.StepInput", /** @lends sap.m.StepInput.prototype */ {
@@ -911,6 +912,8 @@ function(
 		StepInput.prototype.onsappageup = function (oEvent) {
 			this._applyValue(this._calculateNewValue(this.getLargerStep(), true).displayValue);
 			this._verifyValue();
+			// prevent document scrolling when page up key is pressed
+			oEvent.preventDefault();
 		};
 
 		/**
@@ -921,6 +924,8 @@ function(
 		StepInput.prototype.onsappagedown = function (oEvent) {
 			this._applyValue(this._calculateNewValue(this.getLargerStep(), false).displayValue);
 			this._verifyValue();
+			// prevent document scrolling when page down key is pressed
+			oEvent.preventDefault();
 		};
 
 		/**

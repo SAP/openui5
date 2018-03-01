@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 		 * @author SAP SE
 		 * @version ${version}
 		 * @namespace
-		 * @name sap.ui.table.TableMenuUtils
+		 * @alias sap.ui.table.TableMenuUtils
 		 * @private
 		 */
 		var MenuUtils = {

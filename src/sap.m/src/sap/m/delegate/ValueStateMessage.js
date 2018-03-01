@@ -2,12 +2,6 @@
  * ${copyright}
  */
 
-/**
- * @namespace
- * @name sap.m.delegate.ValueState
- * @private
- */
-
 sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/Popup', 'sap/ui/core/library'],
 	function(jQuery, Device, BaseObject, ValueStateSupport, Popup, coreLibrary) {
 		"use strict";

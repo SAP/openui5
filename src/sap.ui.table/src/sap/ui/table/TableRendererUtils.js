@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control'],
 	 * @author SAP SE
 	 * @version ${version}
 	 * @namespace
-	 * @name sap.ui.table.TableRendererUtils
+	 * @alias sap.ui.table.TableRendererUtils
 	 * @private
 	 */
 	var TableRendererUtils = {

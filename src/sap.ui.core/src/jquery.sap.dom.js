@@ -33,7 +33,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/dom/focus', 'sap/ui/dom/containsOrEq
 	"use strict";
 
 	/**
-	 * Shortcut for document.getElementById(), including a bug fix for older IE versions.
+	 * Shortcut for document.getElementById().
 	 *
 	 * @param {string} sId The id of the DOM element to return
 	 * @param {Window} [oWindow=window] The window (optional)

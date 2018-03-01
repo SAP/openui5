@@ -34,7 +34,6 @@ sap.ui.define([
 	 * @param {object} mPropertyBag Map containing the control modifier object (either sap.ui.fl.changeHandler.JsControlTreeModifier or
 	 *                                sap.ui.fl.changeHandler.XmlTreeModifier), the view object where the controls are embedded and the application component
 	 * @private
-	 * @name sap.ui.layout.changeHandler.RenameFormControl#applyChange
 	 */
 	RenameFormContainer.applyChange = function(oChangeWrapper, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier,

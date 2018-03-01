@@ -24,6 +24,7 @@ function(
 	 * @param {string} [sId] id for the new object, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new object
 	 *
+	 * @abstract
 	 * @class
 	 * The DragDrop plugin is an abstract plugin to enable drag and drop functionality of the Overlays
 	 * This Plugin should be overwritten by the D&D plugin implementations, the abstract functions should be used to perform actions

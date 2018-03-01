@@ -56,6 +56,11 @@
 			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
+			"control": "sap.m.ColorPalette",
+			"url": "ColorPalette.html",
+			"appComponent": "CA-UI5-CTR-BAL"
+		},
+		{
 			"control": "sap.m.DatePicker",
 			"url": "DatePicker.html",
 			"appComponent": "CA-UI5-CTR-BAL"

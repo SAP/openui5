@@ -921,6 +921,17 @@
 		assert.strictEqual(checkObjectExists("#objectPageViewSample--newHeader"), true);
 	});
 
+	QUnit.test("Should call ObjectPageHeader _toggleFocusableState", function (assert) {
+		var oObjectPage = this.oSampleView.byId("objectPage13"),
+			oHeader = oObjectPage.getHeaderTitle(),
+			oHeaderSpy = this.spy(oHeader, "_toggleFocusableState");
+
+		// act
+		oObjectPage.setToggleHeaderOnTitleClick(false);
+
+		// assert
+		assert.strictEqual(oHeaderSpy.callCount, 1, "ObjectPageHeader _toggleFocusableState is called");
+	});
 
 	QUnit.module("ObjectPage API", {
 		beforeEach: function () {
@@ -1415,6 +1426,51 @@
 		oNavContainer.addPage(oObjectPage);
 		oNavContainer.addPage(oSecondPage);
 		helpers.renderObject(oNavContainer);
+	});
+
+	QUnit.module("First visible section", {
+
+		beforeEach: function () {
+			this.oObjectPage = helpers.generateObjectPageWithSubSectionContent(oFactory, 5, 2);
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+		}
+	});
+
+	QUnit.test("iconTabBar mode selected section", function (assert) {
+		this.oObjectPage.setUseIconTabBar(true);
+
+		var oSectionToSelect = this.oObjectPage.getSections()[1];
+		this.oObjectPage.setSelectedSection(oSectionToSelect);
+
+		helpers.renderObject(this.oObjectPage);
+
+		assert.ok(this.oObjectPage._isFirstVisibleSectionBase(oSectionToSelect), "the selected section is the first visible one");
+	});
+
+	QUnit.test("iconTabBar mode selected section first subSection", function (assert) {
+		this.oObjectPage.setUseIconTabBar(true);
+
+		var oSectionToSelect = this.oObjectPage.getSections()[1],
+			oSectionToSelectFirstSubSection = oSectionToSelect.getSubSections()[0];
+		this.oObjectPage.setSelectedSection(oSectionToSelect);
+
+		helpers.renderObject(this.oObjectPage);
+
+		assert.ok(this.oObjectPage._isFirstVisibleSectionBase(oSectionToSelectFirstSubSection), "the first visible subSection is correct");
+	});
+
+	QUnit.test("iconTabBar mode selected section non-first subSection", function (assert) {
+		this.oObjectPage.setUseIconTabBar(true);
+
+		var oSectionToSelect = this.oObjectPage.getSections()[1],
+			oSectionToSelectSecondSubSection = oSectionToSelect.getSubSections()[1];
+		this.oObjectPage.setSelectedSection(oSectionToSelect);
+
+		helpers.renderObject(this.oObjectPage);
+
+		assert.ok(!this.oObjectPage._isFirstVisibleSectionBase(oSectionToSelectSecondSubSection), "the first visible subSection is correct");
 	});
 
 	function checkObjectExists(sSelector) {

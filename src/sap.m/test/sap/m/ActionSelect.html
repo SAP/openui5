@@ -33,7 +33,7 @@
 		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				src="../../../resources/sap-ui-core.js"
-				data-sap-ui-libs="sap.m">
+				data-sap-ui-libs="sap.m, sap.ui.layout">
 		</script>
 		<script>
 		jQuery.sap.require("sap.m.MessageToast");
@@ -355,12 +355,19 @@
 
 					contentLeft: [oLabel1, oActionSelect1],
 
-					contentMiddle: oLabel5 = new sap.m.Label({
+					contentMiddle: new sap.m.Label({
 						text: "Action Select Control demo page"
 					})
 				}),
 
-				content: [oLabel0, oActionSelect0, oLabel4, oActionSelect4],
+				content: [
+					new sap.ui.layout.Grid({
+						content: [
+							new sap.m.VBox({items: [oLabel0, oActionSelect0]}),
+							new sap.m.VBox({items: [oLabel4, oActionSelect4]})
+						]
+					})
+				],
 
 				footer: oBar1 = new sap.m.Bar({
 					contentLeft: [oLabel3, oActionSelect3],

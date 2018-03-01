@@ -114,7 +114,7 @@
 			{
 				"id": "sap.ui.unified.sample.ColorPicker",
 				"name": "Color Picker",
-				"description": "Basic example of Color Picker"
+				"description": "Basic example of Color Picker. Note that you have to set the Color Picker mode to HSL to take advantage of the responsiveness of the control on a mobile device."
 			},
 			{
 				"id": "sap.ui.unified.sample.FileUploaderBasic",

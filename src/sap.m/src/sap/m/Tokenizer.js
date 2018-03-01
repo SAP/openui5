@@ -733,7 +733,8 @@ sap.ui.define([
 	 */
 	Tokenizer.prototype._getAsyncValidationCallback = function(aValidators, iValidatorIndex, sInitialText,
 															   oSuggestionObject, fValidateCallback) {
-		var that = this;
+		var that = this,
+			bAddTokenSuccess;
 
 		return function(oToken) {
 			if (oToken) { // continue validating
@@ -744,8 +745,15 @@ sap.ui.define([
 					suggestionObject : oSuggestionObject,
 					validationCallback : fValidateCallback
 				}, aValidators);
+				bAddTokenSuccess = that._addUniqueToken(oToken, fValidateCallback);
 
-				that._addUniqueToken(oToken, fValidateCallback);
+				if (bAddTokenSuccess) {
+					that.fireTokenUpdate({
+						addedTokens : [oToken],
+						removedTokens : [],
+						type : Tokenizer.TokenUpdateType.Added
+					});
+				}
 			} else {
 				if (fValidateCallback) {
 					fValidateCallback(false);
@@ -781,9 +789,16 @@ sap.ui.define([
 	 *          {function} [optional] validationCallback - callback which gets called after validation has finished
 	 */
 	Tokenizer.prototype._addValidateToken = function(oParameters) {
-		var oToken = this._validateToken(oParameters);
+		var oToken = this._validateToken(oParameters),
+			bAddTokenSuccessful = this._addUniqueToken(oToken, oParameters.validationCallback);
 
-		this._addUniqueToken(oToken, oParameters.validationCallback);
+		if (bAddTokenSuccessful) {
+			this.fireTokenUpdate({
+				addedTokens : [oToken],
+				removedTokens : [],
+				type : Tokenizer.TokenUpdateType.Added
+			});
+		}
 	};
 
 	/**
@@ -794,7 +809,7 @@ sap.ui.define([
 	 * @param {function} fValidateCallback [optional] A validation function callback
 	 * @returns {boolean} True if the token was added
 	 */
-	Tokenizer.prototype._addUniqueToken = function(oToken, fValidateCallback, bSuppressTokenUpdate) {
+	Tokenizer.prototype._addUniqueToken = function(oToken, fValidateCallback) {
 		if (!oToken) {
 			return false;
 		}
@@ -807,15 +822,6 @@ sap.ui.define([
 			}
 
 			return false;
-		}
-
-		if (!bSuppressTokenUpdate) {
-			this.fireTokenUpdate({
-				addedTokens : [oToken],
-				removedTokens : [],
-				type : Tokenizer.TokenUpdateType.Added
-			});
-
 		}
 
 		this.addToken(oToken);

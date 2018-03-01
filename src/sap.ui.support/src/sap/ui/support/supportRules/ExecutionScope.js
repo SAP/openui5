@@ -121,6 +121,25 @@ sap.ui.define(
 			return false;
 		}
 
+		function getClonedElementFromListBindingId(oControl) {
+			var sParentAggregationName = oControl.sParentAggregationName,
+				oParent = oControl.getParent();
+			if (oParent && sParentAggregationName) {
+				var oBindingInfo = oParent.getBindingInfo(sParentAggregationName);
+
+				if (
+					oBindingInfo &&
+					oControl instanceof oBindingInfo.template.getMetadata().getClass()
+				) {
+					return oParent.getId();
+				} else {
+					return getClonedElementFromListBindingId(oParent);
+				}
+			}
+
+			return null;
+		}
+
 		function intersect(a, b) {
 			var res = [];
 
@@ -162,6 +181,7 @@ sap.ui.define(
 
 					if (oConfig && Object.keys(oConfig).length) {
 						var filteredElements = elements;
+						var oRepresentativeClones = {};
 
 						Object.keys(configKeys).forEach(function (predefinedKey) {
 							if (oConfig.hasOwnProperty(predefinedKey)) {
@@ -186,17 +206,27 @@ sap.ui.define(
 										break;
 									case "cloned":
 										if (!oConfig["cloned"]) {
-											filteredElements = filteredElements.filter(function (
-												element
-											) {
-												return (
-													isClonedElementFromListBinding(element) === false
-												);
+											filteredElements = filteredElements.filter(function (element) {
+												var bIsClonedFromListBinding = isClonedElementFromListBinding(element);
+
+												if (bIsClonedFromListBinding) {
+													var sListBindingId = getClonedElementFromListBindingId(element);
+
+													if (!oRepresentativeClones.hasOwnProperty(sListBindingId)) {
+														oRepresentativeClones[sListBindingId] = element;
+													}
+												}
+
+												return (bIsClonedFromListBinding === false);
 											});
 										}
 										break;
 								}
 							}
+						});
+
+						Object.keys(oRepresentativeClones).forEach(function (sRepresentativeCloneId) {
+							filteredElements.push(oRepresentativeClones[sRepresentativeCloneId]);
 						});
 
 						return filteredElements;

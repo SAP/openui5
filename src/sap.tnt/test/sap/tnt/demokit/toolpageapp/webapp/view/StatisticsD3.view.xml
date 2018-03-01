@@ -13,10 +13,12 @@
 			<l:BlockLayoutCell>
 				<Title
 					text="{i18n>ovSysUptime}"
+					level="H4"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>orderStatusDate}"
+					level="H5"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
 				<tool:D3PieChart data="{view>/PieChartData}">
@@ -26,10 +28,12 @@
 			<l:BlockLayoutCell>
 				<Title
 					text="{i18n>disUsersMonth}"
+					level="H4"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>customerRatingDate}"
+					level="H5"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
 				<tool:D3ColumnChart data="{view>/ColumnChartData}">
@@ -39,10 +43,12 @@
 			<l:BlockLayoutCell>
 				<Title
 					text="{i18n>costUpgStor}"
+					level="H4"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>salesTrendDate}"
+					level="H5"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
 				<tool:D3ComparisonChart data="{view>/ComparisonChartData}">
@@ -54,10 +60,12 @@
 			<l:BlockLayoutCell>
 				<Title
 					text="{i18n>databaseUsage}"
+					level="H4"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>canceledOrdersDate}"
+					level="H5"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
 				<tool:D3ColumnChart data="{view>/ColumnChartData2}">
@@ -67,10 +75,12 @@
 			<l:BlockLayoutCell>
 				<Title
 					text="{i18n>impCostCenter}"
+					level="H4"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>netPromoterDate}"
+					level="H5"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
 				<tool:D3ComparisonChart data="{view>/ComparisonChartData2}">
@@ -80,10 +90,12 @@
 			<l:BlockLayoutCell>
 				<Title
 					text="{i18n>maintenanceCompletion}"
+					level="H4"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>revenueDate}"
+					level="H5"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
 				<tool:D3PieChart data="{view>/PieChartData2}">

@@ -6,7 +6,7 @@
 
 sap.ui.define([
 	'jquery.sap.global',
-	"sap/ui/core/Control",
+	'sap/ui/core/Control',
 	'sap/ui/codeeditor/js/ace/ace',
 	'sap/ui/codeeditor/js/ace/ext-language_tools',
 	'sap/ui/codeeditor/js/ace/ext-beautify',
@@ -184,9 +184,16 @@ sap.ui.define([
 		this._oEditorDomRef.style.width = "100%";
 		this._oEditor = ace.edit(oDomRef);
 
-		this._oEditor.getSession().setValue("");
-		this._oEditor.getSession().setUseWrapMode(true);
-		this._oEditor.getSession().setMode("ace/mode/javascript");
+		var oSession = this._oEditor.getSession();
+
+		// Ensure worker is used only when the CodeEditor has focus.
+		// This helps preventing race conditions between the framework's
+		// lifecycle and the Ace editor's lifecycle.
+		oSession.setUseWorker(false);
+
+		oSession.setValue("");
+		oSession.setUseWrapMode(true);
+		oSession.setMode("ace/mode/javascript");
 		this._oEditor.setTheme("ace/theme/tomorrow");
 
 		this._oEditor.setOptions({
@@ -369,6 +376,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * @private
+	 */
+	CodeEditor.prototype.onfocusin = function() {
+		if (!this.getEditable()) {
+			document.activeElement.blur(); // prevent virtual keyboard from opening when control is not editable
+		}
+	};
+
+	/**
 	 * Sets <code>maxLines</code> property.
 	 * @param {int} iMaxLines Maximum number of lines the editor should display
 	 * @override
@@ -437,6 +453,14 @@ sap.ui.define([
 	CodeEditor.prototype.destroy = function (bSuppressInvalidate) {
 		this._oEditor.destroy(bSuppressInvalidate);
 		Control.prototype.destroy.call(this, bSuppressInvalidate);
+	};
+
+	CodeEditor.prototype.onfocusout = function () {
+		this._oEditor.getSession().setUseWorker(false);
+	};
+
+	CodeEditor.prototype.onfocusin = function () {
+		this._oEditor.getSession().setUseWorker(true);
 	};
 
 	return CodeEditor;

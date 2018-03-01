@@ -290,8 +290,8 @@
 		var bHoverable = oButton._isHoverable();
 
 		// Assert
-		assert.strictEqual(bHoverable, oTestDescription.shouldBeHoverable, "The button determined wether is should be hoverable");
-		assert.strictEqual(oButton.$("inner").hasClass("sapMBtnHoverable"), oTestDescription.shouldHaveCssClass, "The button determined wether is should be hoverable");
+		assert.strictEqual(bHoverable, oTestDescription.shouldBeHoverable, "The button determines whether it should be hoverable");
+		assert.strictEqual(oButton.$("inner").hasClass("sapMBtnHoverable"), oTestDescription.shouldHaveCssClass, "The button determines whether it should be hoverable");
 	}
 
 	QUnit.test("Should be hoverable if the button is enabled and in desktop", function(assert) {

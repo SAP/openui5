@@ -13,7 +13,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/theming/
 	 * Constructor for a new sap.ui.layout.form.FormContainer.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * A <code>FormContainer</code> represents a group inside a <code>Form</code>. It consists of <code>FormElements</code>.
@@ -250,6 +250,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/theming/
 		}else {
 			return null;
 		}
+
+	};
+
+	/**
+	 * Provides an array of all visible <code>FormElement</code> elements
+	 * that are assigned to the <code>FormContainer</code>
+	 * @return {sap.ui.layout.form.FormElement[]} Array of visible <code>FormElement</code>
+	 * @private
+	 */
+	FormContainer.prototype.getVisibleFormElements = function() {
+
+		var aElements = this.getFormElements();
+		var aVisibleElements = [];
+		for ( var i = 0; i < aElements.length; i++) {
+			var oElement = aElements[i];
+			if (oElement.isVisible()) {
+				aVisibleElements.push(oElement);
+			}
+		}
+
+		return aVisibleElements;
 
 	};
 

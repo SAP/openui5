@@ -41,6 +41,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.12
 	 * @alias sap.m.ObjectNumber
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/object-display-elements/#-object-status Object Number}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ObjectNumber = Control.extend("sap.m.ObjectNumber", /** @lends sap.m.ObjectNumber.prototype */ { metadata : {

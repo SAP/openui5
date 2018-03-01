@@ -15,6 +15,7 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
+	 * @abstract
 	 * @class
 	 * A layout data base type.
 	 * @extends sap.ui.core.Element

@@ -1,0 +1,28 @@
+<!-- NOTE: pls observe that this is *not* a good example of a fragment for an 
+XMLComposite since we assume that in the header and the cells there is a text 
+- such assumptions are unsafe since the consumer of an XMLFragment is in
+general not known. A better example would ensure that the types used in the
+defintion of the XMLComposite in the associated .js file guarantees 
+the existence of all paths used in the fragment -->
+<core:FragmentDefinition 
+	xmlns="sap.m" 
+	xmlns:core="sap.ui.core">
+	<Table columns = "{$this>/columns}" items = "{$this>/items}">
+		<columns>
+			<!-- :sap.m.Column -->
+			<Column>
+				<!-- header (default):sap.ui.core.Control -->
+				<Label text="{$this>header/text}"/>
+			</Column>
+		</columns>
+		<items>
+			<!-- sap.m.ListItemBase -->
+			<ColumnListItem cells="{$this>cells}">
+				<cells>
+					<!-- :sap.ui.core.Control -->
+					<Label text ="{$this>text}"/>
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</core:FragmentDefinition>

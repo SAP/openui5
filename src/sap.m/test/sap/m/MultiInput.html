@@ -1005,10 +1005,11 @@
 		});
 
 	   //******************************************
-	   			var oSimpleForm = new sap.ui.layout.form.SimpleForm("simpoleFrom", {
-				title : "MultiInput in simple form",
+				var oSimpleForm = new sap.ui.layout.form.SimpleForm("simpleFrom", {
+				editable: true,
+				title : "MultiInput in SimpleForm",
 				content: [
-					new sap.m.Label({labelFor: oMultiInput7.getId(), text:"Street/ Number"}),
+					new sap.m.Label({text:"Street/ Number"}),
 					oMultiInput7
 				]
 			});
@@ -1037,7 +1038,7 @@
 			]
 		});
 
-		var readOnlyButton = new sap.m.Button({
+		var readOnlyButton = new sap.m.ToggleButton({
 			text : "Toggle Read-Only",
 			press : function() {
 				oMultiInput9.setEditable(!oMultiInput9.getEditable());

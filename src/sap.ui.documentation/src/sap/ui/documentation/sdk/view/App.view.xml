@@ -15,11 +15,6 @@
 		class="sapUiDemokit">
 		<content>
 			<tnt:ToolHeader id="headerToolbar">
-				<ToggleButton icon="sap-icon://menu2" type="Transparent" visible="{= ${appView>/bHasMaster} &amp;&amp; ( ${appView>/bPhoneSize} || !${appView>/bLandscape} ) &amp;&amp; !${appView>/bSearchMode} }" press="toggleMaster" pressed="{appView>/bIsShownMaster}">
-					<layoutData>
-						<OverflowToolbarLayoutData priority="NeverOverflow" />
-					</layoutData>
-				</ToggleButton>
 				<Image id="sap_logo" src="./resources/sap/ui/documentation/sdk/images/logo_ui5.png"
 					visible="{=!${appView>/bPhoneSize}}"
 					densityAware="false"
@@ -29,7 +24,26 @@
 					decorative="false"
 					press="navigateToSection" />
 				<core:ExtensionPoint name="customStartLinks" />
+				<Select id="selectHeader"
+						stashed="true"
+						class="sapUiDocumentationSelect"
+						visible="{=!${appView>/bSearchMode}}"
+						change="navigateToSection"
+						autoAdjustWidth="true">
+					<items>
+						<core:Item id="welcomeTab" text="Home" key="home"/>
+						<core:Item id="topicMasterTab" text="Documentation" key="topic"/>
+						<core:Item id="apiMasterTab" text="API Reference" key="api"/>
+						<core:Item id="controlsMasterTab" text="Samples" key="controls"/>
+						<core:Item id="demoAppsTab" text="Demo Apps" key="demoapps"/>
+						<core:Item id="toolsTab" text="Tools" key="tools"/>
+					</items>
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" />
+					</layoutData>
+				</Select>
 				<IconTabHeader id="tabHeader"
+						stashed="true"
 						selectedKey="home"
 						showOverflowSelectList="true"
 						backgroundDesign="Transparent"
@@ -55,7 +69,7 @@
 					</items>
 				</IconTabHeader>
 
-				<ToolbarSpacer visible="{=!${appView>/bPhoneSize}}">
+				<ToolbarSpacer visible="{= ${device>/system/phone} || !${appView>/bPhoneSize}}">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" minWidth="{= ${device>/system/tablet} ? '' : '1rem'}" />
 					</layoutData>
@@ -82,8 +96,8 @@
 								<MenuItem text="{= ${versionData>/isBetaVersion} ? 'Beta' : ''} Version {versionData>/version} {=${versionData>/isDevVersion} ? '- development in progress!' : ''}" visible="{appView>/bPhoneSize}" />
 								<MenuItem text="Feedback" visible="{appView>/bPhoneSize}" />
 								<MenuItem text="About" />
-								<MenuItem text="Legal" visible="{=!${versionData>/isOpenUI5}}"/>
-								<MenuItem text="Privacy" visible="{=!${versionData>/isOpenUI5}}"/>
+								<MenuItem text="Legal" />
+								<MenuItem text="Privacy" />
 								<MenuItem text="Terms of Use" visible="{=!${versionData>/isOpenUI5}}">
 									<items>
 										<MenuItem text="Terms of Use" />
@@ -92,6 +106,7 @@
 										<MenuItem text="Disclaimer" />
 									</items>
 								</MenuItem>
+								<MenuItem text="License" visible="{versionData>/isOpenUI5}"/>
 							</items>
 						</Menu>
 					</menu>
@@ -99,11 +114,21 @@
 				<core:ExtensionPoint name="customLinks" />
 			</tnt:ToolHeader>
 
+			<Bar visible="{= ${device>/system/phone} &amp;&amp; ${appView>/bHasMaster} &amp;&amp; ${headerView>/bShowSubHeader} }" class="sapContrast sapContrastPlus">
+				<contentLeft>
+					<ToggleButton icon="sap-icon://menu2" type="Transparent" press="toggleMaster" pressed="{appView>/bIsShownMaster}">
+						<layoutData>
+							<OverflowToolbarLayoutData priority="NeverOverflow" />
+						</layoutData>
+					</ToggleButton>
+				</contentLeft>
+			</Bar>
+
 			<core:ExtensionPoint name="customControls" />
 			<ScrollContainer
 					id="contentId"
 					width="100%"
-					height="calc(100% - 3rem)"
+					height="{= ${device>/system/phone} &amp;&amp; ${appView>/bHasMaster} &amp;&amp; ${headerView>/bShowSubHeader} ? 'calc(100% - 5rem)' : 'calc(100% - 3rem)'}"
 					horizontal="false"
 					vertical="false">
 				<SplitApp id="splitApp"

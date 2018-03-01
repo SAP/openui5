@@ -154,8 +154,6 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ListItemBase', './Text',
         /**
          * Sets initial values of the control.
          *
-         * @name sap.m.NotificationListBase.init
-         * @method
          * @protected
          */
         NotificationListBase.prototype.init = function () {
@@ -169,9 +167,6 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ListItemBase', './Text',
         /**
          * Overwrites the setter of the title property.
          *
-         * @overwrites
-         * @name sap.m.NotificationListBase.setTitle
-         * @method
          * @public
          * @param {string} title Title.
          * @returns {sap.m.NotificationListBase} NotificationListBase reference for chaining.
@@ -187,9 +182,6 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ListItemBase', './Text',
         /**
          * Overwrites the setter for the datetime property.
          *
-         * @overwrites
-         * @name sap.m.NotificationListBase.setDatetime
-         * @method
          * @public
          * @param {string} dateTime The datetime in string format.
          * @returns {string} The set datetime value.
@@ -205,8 +197,6 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ListItemBase', './Text',
         /**
          * Overwrites the authorName property.
          *
-         * @name sap.m.NotificationListBase.setAuthorName
-         * @method
          * @public
          * @param {string} authorName The author name in string format.
          * @returns {string} The set author name.
@@ -226,8 +216,6 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ListItemBase', './Text',
         /**
          * Clones the NotificationListBase.
          *
-         * @name sap.m.NotificationListBase.clone
-         * @method
          * @public
          * @returns {sap.m.NotificationListBase} The cloned NotificationListBase.
          */
@@ -244,8 +232,6 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ListItemBase', './Text',
         /**
          * Closes the NotificationListBase.
          *
-         * @name sap.m.NotificationListBase.close
-         * @method
          * @public
          */
         NotificationListBase.prototype.close = function () {
@@ -285,8 +271,6 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ListItemBase', './Text',
         /**
          * Returns the sap.m.Text control used in the NotificationListBase's header title.
          *
-         * @name sap.m.NotificationListBase._getHeaderTitle
-         * @method
          * @protected
          * @returns {sap.m.Text} The title control inside the NotificationListBase control.
          */
@@ -309,8 +293,6 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ListItemBase', './Text',
         /**
          * Returns the sap.m.Text control used in the NotificationListBase's header title.
          *
-         * @name sap.m.NotificationListBase._getDateTimeText
-         * @method
          * @protected
          * @returns {sap.m.Text} The datetime control inside the NotificationListBase control.
          */
@@ -333,8 +315,6 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ListItemBase', './Text',
         /**
          * Returns the sap.m.Text control used in the NotificationListBase's author name.
          *
-         * @name sap.m.NotificationListBase._getAuthorName
-         * @method
          * @protected
          * @returns {sap.m.Text} The notification author name text.
          */
@@ -356,8 +336,6 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ListItemBase', './Text',
         /**
          * Returns the sap.m.Image or the sap.ui.core.Control used in the NotificationListBase's author picture.
          *
-         * @name sap.m.NotificationListBase._getAuthorImage
-         * @method
          * @protected
          * @returns {sap.m.Image|sap.ui.core.Control} The notification author picture text.
          */
@@ -390,8 +368,6 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ListItemBase', './Text',
         /**
          * Returns the sap.m.OverflowToolbar control used in the NotificationListBase.
          *
-         * @name sap.m.NotificationListBase._getToolbar
-         * @method
          * @protected
          * @returns {sap.m.OverflowToolbar} The footer toolbar.
          */
@@ -414,8 +390,6 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ListItemBase', './Text',
         /**
          * Checks if an sap.ui.core.URI parameter is an icon src or not.
          *
-         * @name isIcon
-         * @function
          * @protected
          * @param {string} source The source to be checked.
          * @returns {boolean} The result of the check.

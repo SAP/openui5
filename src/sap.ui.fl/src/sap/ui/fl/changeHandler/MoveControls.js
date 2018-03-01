@@ -70,8 +70,12 @@ function(
 			throw new Error("Missing targetIndex for element with id '" + mMovedElement.selector.id
 					+ "' in movedElements supplied");
 		}
+		var oControl = oModifier.bySelector(mMovedElement.selector || mMovedElement.id, oAppComponent, oView);
 
-		return oModifier.bySelector(mMovedElement.selector || mMovedElement.id, oAppComponent, oView);
+		if (!oControl) {
+			throw new Error("Control to move was not found. Id: '" + mMovedElement.selector.id + "'");
+		}
+		return oControl;
 	};
 
 	MoveControls._checkCompleteChangeContentConditions = function(mSpecificChangeInfo) {
@@ -143,9 +147,11 @@ function(
 	 * @param {sap.ui.core.Control} oRelevantContainer control that matches the change selector for applying the change, which is the source of the move
 	 * @param {object} mPropertyBag - map of properties
 	 * @param {object} mPropertyBag.view - xml node representing a ui5 view
+	 * @param {string} [mPropertyBag.sourceAggregation] - name of the source aggregation. Overwrites the aggregation from the change. Can be provided by a custom ChangeHandler, that uses this ChangeHandler
+	 * @param {string} [mPropertyBag.targetAggregation] - name of the target aggregation. Overwrites the aggregation from the change. Can be provided by a custom ChangeHandler, that uses this ChangeHandler
 	 * @param {sap.ui.fl.changeHandler.BaseTreeModifier} mPropertyBag.modifier - modifier for the controls
 	 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent - appComopnent
-	 * @return {boolean} true - if change could be applied
+	 * @return {boolean} Returns true if change could be applied, otherwise undefined
 	 * @public
 	 * @function
 	 * @name sap.ui.fl.changeHandler.MoveControls#applyChange
@@ -158,45 +164,32 @@ function(
 		this._checkConditions(oChange, oModifier, oView, oAppComponent);
 
 		var oChangeContent = oChange.getContent();
-		var sSourceAggregation = oChangeContent.source.selector.aggregation;
+		var sSourceAggregation = mPropertyBag.sourceAggregation || oChangeContent.source.selector.aggregation;
 		var oTargetParent = oModifier.bySelector(oChangeContent.target.selector, oAppComponent, oView);
-		var sTargetAggregation = oChangeContent.target.selector.aggregation;
+		var sTargetAggregation = mPropertyBag.targetAggregation || oChangeContent.target.selector.aggregation;
 
 		var aRevertData = [];
 		oChangeContent.movedElements.forEach(function(mMovedElement, iElementIndex) {
 			var oMovedElement = this._getElementControlOrThrowError(mMovedElement, oModifier, oAppComponent, oView);
-			if (!oMovedElement) {
-				FlexUtils.log.warning("Element to move not found");
-				return;
-			}
-			var oSourceParent = oModifier.getParent(oMovedElement);
 
+			var oSourceParent = oModifier.getParent(oMovedElement);
 			var iInsertIndex = mMovedElement.targetIndex;
 
 			// save the current index, sourceParent and sourceAggregation for revert
-			var iIndex;
-			var mAllAggregations = oModifier.getAllAggregations(oSourceParent);
-			Object.keys(mAllAggregations).some(function(sKey) {
-				var aAggregation = oModifier.getAggregation(oSourceParent, sKey);
-				if (Array.isArray(aAggregation)) {
-					iIndex = aAggregation.indexOf(oMovedElement);
-					if (iIndex > -1) {
-						sSourceAggregation = sKey;
-						aRevertData.unshift({
-							index: iIndex,
-							aggregation: sKey,
-							sourceParent: oSourceParent
-						});
-						return true;
-					}
-				}
-			});
+			var iIndex = oModifier.findIndexInParentAggregation(oMovedElement);
+			if (iIndex > -1) {
+				// mPropertyBag.sourceAggregation should always be used when available
+				sSourceAggregation = mPropertyBag.sourceAggregation || oModifier.getParentAggregationName(oMovedElement, oSourceParent);
 
-			// on XML, getAllAggregations doesn't work yet, so we have to take the (in specific circumstances wrong) data from the change.
-			if (!jQuery.isNumeric(iIndex)) {
+				// if iIndex === iInserIndex the operation was already performed
+				// in this case we need the sourceIndex that is saved in the change in order to revert it to the correct index
+				if (iIndex === iInsertIndex) {
+					iIndex = mMovedElement.sourceIndex;
+				}
+
 				aRevertData.unshift({
-					index: mMovedElement.sourceIndex,
-					aggregation: oChangeContent.source.selector.aggregation,
+					index: iIndex,
+					aggregation: sSourceAggregation,
 					sourceParent: oSourceParent
 				});
 			}

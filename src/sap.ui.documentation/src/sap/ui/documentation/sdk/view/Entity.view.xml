@@ -31,45 +31,9 @@
 
 		<headerContent>
 			<l:Grid defaultSpan="L4 M6 S12" class="sapUiNoMargin" hSpacing="0">
-				<l:VerticalLayout class="sapUiLargeMarginEnd" width="98%">
-
-					<m:HBox id="apiRefLink" visible="false" class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom">
-						<m:Label design="Bold" text="API Reference:"/>
-						<m:Link emphasized="true" text="{/name}" enabled="true" href="#/api/{/name}"/>
-					</m:HBox>
-
-					<m:HBox visible="{/show/introLink}" class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom">
-						<m:Label design="Bold" text="Documentation:"/>
-						<m:Link emphasized="true" text="{/baseName}" enabled="true" href="{/docuLink}"/>
-					</m:HBox>
-
-					<m:HBox class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom">
-						<m:Label text="Extends:"/>
-						<m:Link text="{/baseTypeText}" enabled="true" href="#/entity/{/baseType}"
-								visible="{=!!${/baseTypeNav}}"/>
-						<m:Text text="N/A" visible="{=!${/baseTypeNav}}"/>
-					</m:HBox>
-
-					<m:ObjectAttribute
-							title="Application Component"
-							text="{/appComponent}" />
-				</l:VerticalLayout>
-
-				<l:VerticalLayout class="sapUiLargeMarginLeft" width="100%">
-					<m:ObjectAttribute
-							class="sapUiTinyMarginBottom"
-							title="Available since"
-							text="{/entity/since}" />
-
-					<m:ObjectAttribute
-							class="sapUiTinyMarginBottom"
-							title="Category"
-							text="{/entity/category}" />
-
-					<m:ObjectAttribute
-							title="Content Density"
-							text="{/entity/formFactors}" />
-				</l:VerticalLayout>
+				<l:VerticalLayout width="98%" id="headerColumn0"/>
+				<l:VerticalLayout width="100%" id="headerColumn1" visible="false"/>
+				<l:VerticalLayout width="100%" id="headerColumn2" visible="false"/>
 			</l:Grid>
 		</headerContent>
 

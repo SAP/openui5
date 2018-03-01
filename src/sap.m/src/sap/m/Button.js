@@ -70,6 +70,7 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.m.Button
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/button/ Button}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Button = Control.extend("sap.m.Button", /** @lends sap.m.Button.prototype */ { metadata : {

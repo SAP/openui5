@@ -17,6 +17,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 	 *
 	 * @class
 	 * Grid layout data
+	 *
+	 * <b>Note:</b> When <code>GridData</code> is used for controls inside a form the property <code>linebreak</code> has to be
+	 * set to <code>true</code> when the next form element has to be displayed on a new line. This is needed because
+	 * otherwise the <code>GridData</code> overrides the layout provided by the <code>Form</code>.
 	 * @extends sap.ui.core.LayoutData
 	 *
 	 * @author SAP SE

@@ -85,40 +85,7 @@
 					id="demoAppsFooter"
 					visible="{/bFooterVisible}">
 					<l:BlockLayoutRow>
-						<l:BlockLayoutCell
-								class="demokitInitialPagesColorPatternFContrast sapUiDocumentationFooter">
-							<HBox
-									justifyContent="SpaceBetween"
-									alignItems="Center">
-								<Image
-										src="./resources/sap/ui/documentation/sdk/images/logo_sap.png"
-										densityAware="false"
-										width="4.25rem"
-										height="2rem">
-								</Image>
-								<HBox
-										width="100%"
-										justifyContent="End"
-										wrap="Wrap"
-										visible="{=!${appView>/isOpenUI5}}">
-									<Link
-											class="demokitInitialPagesBrightLink sapUiLargeMarginEnd"
-											text="Legal Disclosure"
-											href="https://www.sap.com/corporate/en/legal/impressum.html"
-											target="_blank"/>
-									<Link
-											class="demokitInitialPagesBrightLink sapUiLargeMarginEnd"
-											text="Privacy"
-											href="https://www.sap.com/corporate/en/legal/privacy.html"
-											target="_blank"/>
-									<Link
-											class="demokitInitialPagesBrightLink"
-											text="Terms of Use"
-											href="https://www.sap.com/corporate/en/legal/terms-of-use.html"
-											target="_blank"/>
-								</HBox>
-							</HBox>
-						</l:BlockLayoutCell>
+						<core:Fragment id="footerFragment" fragmentName="sap.ui.documentation.sdk.view.Footer" type="XML" />
 					</l:BlockLayoutRow>
 				</l:BlockLayout>
 			</ScrollContainer>

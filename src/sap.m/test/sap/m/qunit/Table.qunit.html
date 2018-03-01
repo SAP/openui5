@@ -405,7 +405,7 @@
 		});
 
 		QUnit.test("Test for accessibility content", function(assert) {
-			var sut = createSUT("idTableAcc", true, false, "MultiSelect");
+			var sut = createSUT("idTableAcc", true, false);
 			var oColumn = sut.getColumns()[0];
 			var oBinding = sut.getBinding("items");
 			oColumn.setFooter(new sap.m.Label({text: "Greetings"}));
@@ -416,13 +416,13 @@
 			assert.equal(sut.getAccessibilityType(), "Table", "Accessilitiy role correctly set");
 
 			// _setHeaderAnnouncement() test
-			var $tblHeader = sut.$("tblHeader").first().trigger("focusin");
+			var $tblHeader = sut.$("tblHeader").focus();
 			sap.ui.getCore().applyChanges();
 			var $invisibleText = document.getElementById($tblHeader.attr("aria-labelledBy"));
 			assert.equal($invisibleText.innerHTML, "Header Row Name Color Number", "Text correctly assigned for screen reader announcement");
 
 			// _setFooterAnnouncment() test
-			var $tblFooter = sut.$("tblFooter").first().trigger("focusin");
+			var $tblFooter = sut.$("tblFooter").focus();
 			sap.ui.getCore().applyChanges();
 			$invisibleText = document.getElementById($tblHeader.attr("aria-labelledBy"));
 			assert.equal($invisibleText.innerHTML, "Footer Row Name Greetings", "Text correctly assigned for screen reader announcement");
@@ -430,7 +430,7 @@
 			// noDataText test
 			oBinding.filter([new sap.ui.model.Filter("name", "Contains", "xxx")]);
 			sap.ui.getCore().applyChanges();
-			var $noData = sut.$("nodata").first().trigger("focusin");
+			var $noData = sut.$("nodata").focus();
 			$invisibleText = document.getElementById($tblHeader.attr("aria-labelledBy"));
 			assert.equal($invisibleText.innerHTML, "No data", "Text correctly assinged for screen reader announcement");
 
@@ -447,12 +447,12 @@
 			sap.ui.getCore().applyChanges();
 
 			// saptabnext event on tblHeader
-			var $tblHeader = sut.$("tblHeader").first().trigger("focusin");
+			var $tblHeader = sut.$("tblHeader").focus();
 			qutils.triggerKeydown($tblHeader, jQuery.sap.KeyCodes.TAB);
 			assert.ok(fnIsHeaderRowEvent.called, "Event was triggered on the header");
 
 			// saptabnext on tblFooter
-			var $tblFooter = sut.$("tblFooter").first().trigger("focusin");
+			var $tblFooter = sut.$("tblFooter").focus();
 			qutils.triggerKeydown($tblFooter, jQuery.sap.KeyCodes.TAB);
 			assert.ok(fnIsFooterRowEvent.called, "Event was triggered on the footer");
 
@@ -466,7 +466,7 @@
 			sut.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			var $tblHeader = sut.$("tblHeader").first().trigger("focusin");
+			var $tblHeader = sut.$("tblHeader").focus();
 			// shift-tab on header row
 			qutils.triggerKeyboardEvent($tblHeader, jQuery.sap.KeyCodes.TAB, true, false, false);
 			assert.equal(document.activeElement, sut.$("before")[0]);
@@ -553,7 +553,7 @@
 			var iItemsLength = sut.getItems().length;
 			assert.equal(iItemsLength, 5, "5 items are shown in the table, growing is not triggered");
 
-			var $trigger = sut.$("trigger").trigger("focusin");
+			var $trigger = sut.$("trigger").focus();
 			qutils.triggerKeydown($trigger, jQuery.sap.KeyCodes.SPACE);
 			assert.ok(iItemsLength < sut.getItems().length, "Growing triggered via onsapspace event");
 			assert.ok(fnCheckGrowingFromScratch.called, "checkGrowingFromScratch called in order to recalculate merging cells");
@@ -566,7 +566,7 @@
 			sut.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			var $tblHeader = sut.$('tblHeader').first().trigger("focusin");
+			var $tblHeader = sut.$('tblHeader').focus();
 
 			assert.ok(!sut._selectAllCheckBox.getSelected(), "SelectAll checkbox is not selected");
 			qutils.triggerKeydown($tblHeader, jQuery.sap.KeyCodes.SPACE);

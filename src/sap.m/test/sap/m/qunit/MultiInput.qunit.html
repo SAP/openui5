@@ -1050,38 +1050,6 @@
 		assert.notOk(spy.called, "Input's ontap method is not called");
 	});
 
-	QUnit.test("tokenUpdate should be fired before adding/deleting tokens", function(assert) {
-
-		var testTokenText = "C-Item",
-			nTokensOnTokenChange;
-
-		this.multiInput1.addValidator(function(args){
-			return new sap.m.Token({text: args.text});
-		});
-
-		this.multiInput1.attachTokenUpdate(function(evt){
-			nTokensOnTokenChange = this.multiInput1.getTokens().length;
-		}.bind(this));
-
-		this.multiInput1.setValue(testTokenText);
-
-		//act
-		this.multiInput1.onsapfocusleave({});
-		sap.ui.getCore().applyChanges();
-
-		// assert
-		assert.strictEqual(nTokensOnTokenChange, 0, "tokenUpdate is fired before adding tokens");
-		assert.strictEqual(this.multiInput1.getTokens().length, 1, "a token was added");
-
-		// act
-		this.multiInput1.getTokens()[0]._deleteIcon.firePress();
-
-		//assert
-		assert.strictEqual(nTokensOnTokenChange, 1, "tokenUpdate is fired before deleting tokens");
-		assert.strictEqual(this.multiInput1.getTokens().length, 0, "a token was deleted");
-
-	});
-
 	QUnit.test("Change event is properly fired on different interactions", function (assert) {
 		//Setup
 		var oChangeFireSpy = this.spy(this.multiInput1, "fireChange"),

@@ -71,10 +71,14 @@ sap.ui.define([],
 		var oHeader = oCal.getAggregation("header");
 		oRm.renderControl(oHeader);
 
+		var iMonthsCount = aMonths.length;
 		oRm.write("<div id=\"" + sId + "-content\" class=\"sapUiCalContent\">");
-		for (var i = 0; i < aMonths.length; i++) {
+		for (var i = 0; i < iMonthsCount; i++) {
 			var oMonth = aMonths[i];
 			oRm.renderControl(oMonth);
+			if (iMonthsCount === 2 && i === 0) {
+				oRm.renderControl(oCal.getAggregation("secondMonthHeader"));
+			}
 		}
 
 		this.renderCalContentOverlay(oRm, oCal, sId);

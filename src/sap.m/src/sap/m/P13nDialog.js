@@ -427,8 +427,6 @@ sap.ui.define([
 	 * @param {sap.m.P13nPanel} oPanel
 	 * @returns {sap.m.Button | sap.m.StandardListItem | null}
 	 * @private
-	 * @name P13nDialog#_mapPanelToNavigationItem
-	 * @function
 	 */
 	P13nDialog.prototype._mapPanelToNavigationItem = function(oPanel) {
 		if (!oPanel) {

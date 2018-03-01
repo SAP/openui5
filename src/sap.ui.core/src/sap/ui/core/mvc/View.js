@@ -44,6 +44,9 @@ sap.ui.define([
 	 */
 	var View = Control.extend("sap.ui.core.mvc.View", /** @lends sap.ui.core.mvc.View.prototype */ { metadata : {
 
+		interfaces: [
+			"sap.ui.core.IDScope"
+		],
 		library : "sap.ui.core",
 		properties : {
 

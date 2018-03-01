@@ -808,7 +808,7 @@ function(
 					this.updateDomValue(lastInvalidText);
 
 					for (i = 0; i < aValidTokens.length; i++) {
-						if (this._tokenizer._addUniqueToken(aValidTokens[i], undefined, true)) {
+						if (this._tokenizer._addUniqueToken(aValidTokens[i])) {
 							aAddedTokens.push(aValidTokens[i]);
 						}
 					}

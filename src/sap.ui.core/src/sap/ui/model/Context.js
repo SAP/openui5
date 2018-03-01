@@ -124,6 +124,7 @@ sap.ui.define(['sap/ui/base/Object'],
 	/**
 	 * This method returns, whether the context is preliminary.
 	 * @private
+	 * @sap-restricted sap.suite.ui.generic
 	 * @return {boolean} the preliminary flag
 	 */
 	Context.prototype.isPreliminary = function() {
@@ -155,7 +156,7 @@ sap.ui.define(['sap/ui/base/Object'],
 	 *
 	 * @param {sap.ui.model.Context} oOldContext The old Context
 	 * @param {sap.ui.model.Context} oNewContext The new Context
-	 * @return {boolean} Wether oNewContext has changed
+	 * @return {boolean} Whether oNewContext has changed
 	 * @private
 	 */
 	Context.hasChanged = function(oOldContext, oNewContext) {

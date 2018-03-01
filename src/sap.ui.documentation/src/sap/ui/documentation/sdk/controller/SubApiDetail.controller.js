@@ -9,27 +9,26 @@ sap.ui.define([
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
-		"sap/ui/documentation/sdk/controls/ObjectPageSubSection",
 		"sap/ui/documentation/sdk/controller/util/APIInfo",
-		"sap/ui/documentation/sdk/controls/ParamText",
-		"sap/ui/layout/VerticalLayout",
 		"sap/m/Label",
 		"sap/m/Link",
-		"sap/m/ObjectStatus",
-		"sap/ui/core/HTML",
-		"sap/m/Title",
-		"sap/m/Panel",
-		"sap/ui/documentation/sdk/controls/BorrowedList",
-		"sap/ui/documentation/sdk/controls/LightTable",
-		"sap/ui/documentation/sdk/controls/Row"
-	], function (jQuery, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, ObjectPageSubSection, APIInfo,
-				 ParamText, VerticalLayout, Label, Link, ObjectStatus, HTML, Title, Panel, BorrowedList, LightTable, Row) {
+		"sap/m/Text",
+		"sap/m/HBox",
+		"sap/m/ObjectAttribute",
+		"sap/m/Popover",
+		"sap/m/FlexWrap"
+	], function (jQuery, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, APIInfo,
+			Label, Link, Text, HBox, ObjectAttribute, Popover, FlexWrap) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.SubApiDetail", {
 
 			NOT_AVAILABLE: 'N/A',
-			NOT_FOUND: 'Not found',
+			SECTION_MAP: {
+				"properties": "controlProperties",
+				"fields": "properties",
+				"special settings": "specialsettings"
+			},
 
 			onInit: function () {
 				this._objectPage = this.byId("apiDetailObjectPage");
@@ -64,23 +63,12 @@ sap.ui.define([
 				// Attach the model to the view
 				this.setModel(this._oModel);
 
-				// Handle summary tables life cycle
-				this._oEventsSummary && this._destroySummaryTable(this._oEventsSummary);
-				this._oMethodsSummary && this._destroySummaryTable(this._oMethodsSummary);
-				this._oAnnotationSummary && this._destroySummaryTable(this._oAnnotationSummary);
-
 				// Build needed resources and pre-process data
 				this._oEntityData.appComponent = this._oControlData.component || this.NOT_AVAILABLE;
 				this._oEntityData.hasSample = this._oControlData.hasSample;
 				this._oEntityData.sample = this._oControlData.hasSample ? this._sTopicId : this.NOT_AVAILABLE;
 
 				this._buildHeaderLayout(this._oControlData, this._oEntityData);
-
-				if (this._oControlData) {
-					this._oControlData.hasMethods && this._createMethodsSummary();
-					this._oControlData.hasEvents && this._createEventsSummary();
-					this._oControlData.hasAnnotations && this._createAnnotationsSummary();
-				}
 
 				jQuery.sap.delayedCall(0, this, function () {
 					// Initial prettify
@@ -184,21 +172,6 @@ sap.ui.define([
 			/* begin: internal methods									   */
 			/* =========================================================== */
 
-			/**
-			 * Summary tables have a complex life cycle and they have to be removed from the list and destroyed before
-			 * the new binding context is applied as they are a different type of item than others in the list
-			 * and can't be reused.
-			 *
-			 * @param {object} oSummaryTableReference Reference to the summary table
-			 * @private
-			 */
-			_destroySummaryTable: function (oSummaryTableReference) {
-				var oParent = oSummaryTableReference.getParent();
-
-				oParent && oParent.removeAggregation("subSection", oSummaryTableReference, true);
-				oSummaryTableReference.destroy();
-			},
-
 			_navigateRouter: function(sEntityType, sEntityId, bShouldStoreToHistory) {
 				this._oRouter.stop();
 				this._oRouter.navTo("apiId", {
@@ -213,12 +186,7 @@ sap.ui.define([
 				var sSection = oSection.getTitle().toLowerCase(),
 					sSubSection = (oSubSection && oSubSection.getTitle() !== 'Overview') ? oSubSection.getTitle() : '';
 
-				if (sSection === 'properties') {
-					sSection = 'controlProperties';
-				}
-				if (sSection === 'fields') {
-					sSection = 'properties';
-				}
+				sSection = this.SECTION_MAP[sSection] || sSection;
 
 				this._navigateRouter(sSection, sSubSection, bShouldStoreToHistory);
 			},
@@ -227,183 +195,6 @@ sap.ui.define([
 				// Google Prettify requires this class
 				jQuery('.sapUxAPObjectPageContainer pre', this._objectPage.$()).addClass('prettyprint');
 				window.prettyPrint();
-			},
-
-			_createMethodsSummary: function () {
-				var oSection = this.byId("methods"),
-					aSubSections = oSection.getSubSections(),
-					oControlData = this._oControlData,
-					bBorrowedOnly = oControlData.hasMethods && !oControlData.hasOwnMethods;
-
-				if (aSubSections.length > 0 && (aSubSections[0].getTitle() === "Summary" || aSubSections[0].getTitle() === "Methods" || bBorrowedOnly)) {
-					aSubSections[0].setTitle(bBorrowedOnly ? "Methods" : "Summary");
-					return;
-				}
-
-				this._oMethodsSummary = new ObjectPageSubSection({
-					title: bBorrowedOnly ? "Methods" : "Summary",
-					blocks: [
-						// Creating this segment here is better than having a fragment we have to fetch on every navigation
-						new VerticalLayout({
-							width: "100%",
-							content: [
-								new LightTable({
-									columnTitles: ["Method", "Description"],
-									columnCount: 2,
-									rows: {
-										path: "/methods",
-										templateShareable: false,
-										template: new Row({
-											visible: "{= !!${path: 'name'} }",
-											content: [
-												new ParamText({
-													text: "{name}",
-													href: "#/api/{/name}/methods/{name}",
-													deprecated: "{= ${deprecated} !== undefined }",
-													press: this.scrollToMethod.bind(this)
-												}),
-												new HTML({content: "{description}"})
-											]
-										})
-									}
-								}),
-								new Title({
-									visible: "{= ${/borrowed/methods/}.length > 0 }",
-									text: "Borrowed from:"
-								}).addStyleClass("sapUiSmallMarginTop").addStyleClass("sapUiDocumentationBorrowedTitle"),
-								new VerticalLayout({
-									visible: "{= ${/borrowed/methods/}.length > 0 }",
-									width: "100%",
-									content: {
-										path: "/borrowed/methods/",
-										templateShareable: false,
-										template: new Panel({
-											expandable: true,
-											expanded: true,
-											headerText: "{name}",
-											width: "100%",
-											content: [
-													new BorrowedList({
-														list: "{methods}"
-													})
-												]
-											}).addStyleClass("borrowedListPanel")
-									}
-								})
-							]
-						})
-					]
-				});
-
-				oSection.insertSubSection(this._oMethodsSummary, 0);
-
-			},
-
-			_createEventsSummary: function () {
-				var oSection = this.byId("events"),
-					aSubSections = oSection.getSubSections(),
-					oControlData = this._oControlData,
-					bBorrowedOnly = oControlData.hasEvents && !oControlData.hasOwnEvents;
-
-				if (aSubSections.length > 0 && (aSubSections[0].getTitle() === "Summary" || aSubSections[0].getTitle() === "Events" || bBorrowedOnly)) {
-					aSubSections[0].setTitle(bBorrowedOnly ? "Events" : "Summary");
-
-					return;
-				}
-
-				this._oEventsSummary = new ObjectPageSubSection({
-					title: bBorrowedOnly ? "Events" : "Summary",
-					blocks: [
-						// Creating this segment here is better than having a fragment we have to fetch on every navigation
-						new VerticalLayout({
-							width: "100%",
-							content: [
-								new LightTable({
-									visible: "{/hasOwnEvents}",
-									columnTitles: ["Event", "Description"],
-									columnCount: 2,
-									rows: {
-										path: "/events",
-										templateShareable: false,
-										template: new Row({
-											visible: "{= !!${path: 'name'} }",
-											content: [
-												new ParamText({
-													text: "{name}",
-													href: "#/api/{/name}/events/{name}",
-													press: this.scrollToEvent.bind(this),
-													deprecated: "{= ${deprecated} !== undefined }"
-												}),
-												new HTML({content: "{description}"})
-											]
-										})
-									}
-								}),
-								new Title({
-									visible: "{= ${/borrowed/events/}.length > 0 }",
-									text: "Borrowed from:"
-								}).addStyleClass("sapUiSmallMarginTop").addStyleClass("sapUiDocumentationBorrowedTitle"),
-								new VerticalLayout({
-									visible: "{= ${/borrowed/events/}.length > 0 }",
-									width: "100%",
-									content: {
-										path: "/borrowed/events/",
-										templateShareable: false,
-										template: new Panel({
-											expandable: true,
-											expanded: true,
-											headerText: "{name}",
-											width: "100%",
-											content: new BorrowedList({
-												list: "{events}"
-											})
-										}).addStyleClass("borrowedListPanel")
-									}
-								})
-							]
-						})
-					]
-				});
-
-				oSection.insertSubSection(this._oEventsSummary, 0);
-
-			},
-
-			_createAnnotationsSummary: function () {
-				var oSection = this.byId("annotations");
-
-				var aSubSections = oSection.getSubSections();
-				if (aSubSections.length > 0 && aSubSections[0].getTitle() === "Summary") {
-					return;
-				}
-
-				this._oAnnotationSummary = new ObjectPageSubSection({
-					title: "Summary",
-					blocks: [
-						new LightTable({
-							columnTitles: ["Annotation", "Description"],
-							columnCount: 2,
-							rows: {
-								path: "/ui5-metadata/annotations",
-								templateShareable: false,
-								template: new Row({
-									visible: "{= !!${annotation} }",
-									content: [
-										new Link({
-											text: "{= ${annotation} !== 'undefined' ? ${annotation} : '(' + ${namespaceText} + ')' }",
-											press: this.scrollToAnnotation.bind(this),
-											wrapping: false
-										}),
-										new HTML({content: "{description}"})
-									]
-								})
-							}
-						})
-					]
-				});
-
-				oSection.insertSubSection(this._oAnnotationSummary, 0);
-
 			},
 
 			scrollToMethod: function (oEvent) {
@@ -476,22 +267,22 @@ sap.ui.define([
 			_getHeaderLayoutUtil: function () {
 				if (!this._oHeaderLayoutUtil) {
 					var _getObjectAttributeBlock = function (sTitle, sText) {
-							return new sap.m.ObjectAttribute({
+							return new ObjectAttribute({
 								title: sTitle,
 								text: sText
 							}).addStyleClass("sapUiTinyMarginBottom");
 						},
 						_getLink = function (oConfig) {
-							return new sap.m.Link(oConfig || {});
+							return new Link(oConfig || {});
 						},
 						_getText = function (oConfig) {
-							return new sap.m.Text(oConfig || {});
+							return new Text(oConfig || {});
 						},
 						_getLabel = function (oConfig) {
-							return new sap.m.Label(oConfig || {});
+							return new Label(oConfig || {});
 						},
 						_getHBox = function (oConfig, bAddCommonStyles) {
-							var oHBox = new sap.m.HBox(oConfig || {});
+							var oHBox = new HBox(oConfig || {});
 
 							if (bAddCommonStyles) {
 								oHBox.addStyleClass("sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom");
@@ -524,6 +315,19 @@ sap.ui.define([
 										emphasized: true,
 										text: oControlData.docuLinkText,
 										href: "#/topic/" + oControlData.docuLink
+									})
+								]
+							}, true);
+						},
+						_getUXGuidelinesBlock: function (oControlData) {
+							return _getHBox({
+								items: [
+									_getLabel({design: "Bold", text: "UX Guidelines:"}),
+									_getLink({
+										emphasized: true,
+										text: oControlData.uxGuidelinesLinkText,
+										href: oControlData.uxGuidelinesLink,
+										target: "_blank"
 									})
 								]
 							}, true);
@@ -572,7 +376,7 @@ sap.ui.define([
 
 							return _getHBox({
 								items: aItems,
-								wrap: sap.m.FlexWrap.Wrap
+								wrap: FlexWrap.Wrap
 							}, true).addStyleClass("sapUiDocumentationCommaList");
 						},
 						_getModuleBlock: function (oControlData, oEntityData) {
@@ -602,7 +406,7 @@ sap.ui.define([
 			 */
 			_openSubclassesImplementationsPopover: function (oEvent) {
 				var aPopoverContent = this._aSubClasses.map(function (oElement) {
-					return new sap.m.Link({
+					return new Link({
 						text: oElement,
 						href: "#/api/" + oElement
 					}).addStyleClass("sapUiTinyMarginBottom sapUiTinyMarginEnd");
@@ -625,7 +429,7 @@ sap.ui.define([
 
 			_getPopover: function () {
 				if (!this._oPopover) {
-					this._oPopover = new sap.m.Popover({
+					this._oPopover = new Popover({
 						placement: "Bottom",
 						showHeader: false
 					}).addStyleClass("sapUiDocumentationSubclassesPopover");
@@ -642,12 +446,17 @@ sap.ui.define([
 			 * @param {object} oEntityData additional data object source
 			 */
 			_buildHeaderLayout: function (oControlData, oEntityData) {
-				var aHeaderControls = [[], [], []],
+				var FIRST_COLUMN = 0,
+					SECOND_COLUMN = 1,
+					THIRD_COLUMN = 2,
+					ENTITIES_PER_COLUMN = 3,
+					aHeaderControls = [[], [], []],
 					oHeaderLayoutUtil = this._getHeaderLayoutUtil(),
 					aSubClasses = oEntityData.extendedBy || oEntityData.implementedBy || [],
 					aHeaderBlocksInfo = [
 						{creator: "_getControlSampleBlock", exists: oControlData.isClass},
 						{creator: "_getDocumentationBlock", exists: oControlData.docuLink !== undefined},
+						{creator: "_getUXGuidelinesBlock", exists: oControlData.uxGuidelinesLink !== undefined},
 						{creator: "_getExtendsBlock", exists: oControlData.isClass},
 						{creator: "_getSubclassesBlock", exists: aSubClasses.length > 0},
 						{creator: "_getImplementsBlock", exists: oControlData.hasImplementsData},
@@ -662,12 +471,12 @@ sap.ui.define([
 							iIndexToAdd,
 							fnGetIndexToAdd = function (iControlsAdded) {
 								// determines the column(1st, 2nd or 3rd), the next entity data key-value should be added to.
-								if (iControlsAdded <= 3) {
-									return 0;
-								} else if (iControlsAdded <= 6) {
-									return 1;
+								if (iControlsAdded <= ENTITIES_PER_COLUMN) {
+									return FIRST_COLUMN;
+								} else if (iControlsAdded <= ENTITIES_PER_COLUMN * 2) {
+									return SECOND_COLUMN;
 								}
-								return 2;
+								return THIRD_COLUMN;
 							};
 
 						aHeaderBlocksInfo.forEach(function (oHeaderBlockInfo) {

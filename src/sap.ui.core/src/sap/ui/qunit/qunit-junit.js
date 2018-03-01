@@ -107,15 +107,6 @@
 				}
 			}
 		});
-		QUnit.log(function(data) {
-			// manipulate data.message for failing tests with source info
-			if (!data.result && data.source) {
-				// save original error message (see QUnit.log below)
-				data.___message = data.message;
-				// add source info to message for detailed reporting
-				data.message += '\n' + 'Source: ' + data.source;
-			}
-		});
 
 		// load and execute qunit-reporter-junit script synchronously via XHR
 		var req = new window.XMLHttpRequest();
@@ -132,22 +123,13 @@
 		};
 		req.send(null);
 
-		// this will be executed after the hooks from qunit-reporter-junit
-		QUnit.log(function(data) {
-			if (!data.result && data.source) {
-				// restore original message to prevent adding the source info to the error message title (see qunit-reporter-junit)
-				data.message = data.___message;
-				data.___message = undefined;
-			}
-		});
-
 		//callback to put results on window object
-		QUnit.jUnitReport = function(oData) {
+		QUnit.jUnitDone(function(oData) {
 
 			window._$jUnitReport.results = oData.results;
 			window._$jUnitReport.xml = oData.xml;
 
-		};
+		});
 
 		// store the information about executed tests
 		QUnit.log(function(oDetails) {

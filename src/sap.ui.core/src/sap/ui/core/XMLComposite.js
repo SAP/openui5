@@ -247,6 +247,43 @@ sap.ui.define([
 		return oSettings;
 	}
 
+	function templateAggregations(oParent, oMetadata, oContextVisitor) {
+		var aAggregationFragments = oMetadata._aggregationFragments,
+			sLibrary = oMetadata.getLibraryName(),
+			bCheckMultiple;
+		if (aAggregationFragments) {
+			Object.keys(aAggregationFragments).forEach(function(sAggregationName) {
+				var oAggregation = oMetadata.getAggregation(sAggregationName);
+
+				if (!oAggregation) {
+					return true;
+				}
+				//check if there are user defined aggregations
+				var oAggregationRoot = oParent.getElementsByTagNameNS(sLibrary, sAggregationName)[0];
+				if (!oAggregationRoot) {
+					oAggregationRoot = document.createElementNS(sLibrary, sAggregationName);
+					oParent.appendChild(oAggregationRoot);
+					bCheckMultiple = false;
+				} else {
+					bCheckMultiple = true;
+				}
+
+				if (bCheckMultiple && !oAggregation.multiple) {
+					return true;// in case the user defined own content this shall win
+				}
+
+				var oAggregationFragment = aAggregationFragments[sAggregationName];
+				// resolve templating in composite aggregation fragment
+				oContextVisitor.visitChildNodes(oAggregationFragment);
+
+				// add the templated content
+				for (var j = oAggregationFragment.childElementCount; j > 0; j--) {
+					oAggregationRoot.appendChild(oAggregationFragment.children[0]);
+				}
+			});
+		}
+	}
+
 	/**
 	 * XMLComposite is the base class for composite controls that use a XML fragment representation
 	 * for their visual parts. From a user perspective such controls appear as any other control, but internally the
@@ -823,102 +860,13 @@ sap.ui.define([
 		addMetadataContexts(mContexts, oVisitor, oElement.getAttribute("metadataContexts"), sDefaultMetadataContexts, oImpl.prototype.defaultMetaModel);
 		addAttributesContext(mContexts, oImpl.prototype.alias, oElement, oImpl, oVisitor);
 		var oContextVisitor = oVisitor["with"](mContexts, true);
-		var mMetadata = oImpl.getMetadata();
+		templateAggregations(oElement, oMetadata, oContextVisitor);
 		// resolve templating
 		oContextVisitor.visitChildNodes(oFragment);
-		var oNode = oFragment.ownerDocument.createElementNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.xmlcomposite/1", mMetadata.getCompositeAggregationName());
+		var oNode = oFragment.ownerDocument.createElementNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.xmlcomposite/1", oMetadata.getCompositeAggregationName());
 		oNode.appendChild(oFragment);
 		oElement.appendChild(oNode);
 	};
 
-	/**
-	 * TODO: Where to put default helpers
-	 */
-	XMLComposite.helper = {
-		// Annotation Helper to go to the meta model context of the corresponding meta model
-		listContext: function (oContext) {
-			var oBindingInfo = oContext.getModel().getProperty(oContext.getPath());
-			if (typeof oBindingInfo === "string") {
-				oBindingInfo = ManagedObject.bindingParser(oBindingInfo);
-			}
-			if (jQuery.isArray(oBindingInfo)) {
-				var oBinding = oContext.getModel().getProperty(oContext.getPath() + "/@binding");
-				if (oBinding) {
-					return oBinding.getModel().getMetaModel().getMetaContext(oBinding.getPath());
-				} else {
-					return undefined;
-				}
-			}
-			if (typeof oBindingInfo === "object") {
-				var oVisitor = oContext.getModel().getVisitor();
-				var oModel = oVisitor.getSettings().models[oBindingInfo.model];
-				if (oModel) {
-					return oModel.createBindingContext(oBindingInfo.path);
-				}
-				return null;
-			} else {
-				return undefined;
-			}
-		},
-		// TODO: very similar to listContext, maybe parts like the identical first 60% can be factored out
-		listMetaContext: function (oContext) {
-			var oBindingInfo = oContext.getModel().getProperty(oContext.getPath());
-			if (typeof oBindingInfo === "string") {
-				oBindingInfo = ManagedObject.bindingParser(oBindingInfo);
-			}
-			if (jQuery.isArray(oBindingInfo)) {
-				var oBinding = oContext.getModel().getProperty(oContext.getPath() + "/@binding");
-				if (oBinding) {
-					return oBinding.getModel().getMetaModel().getMetaContext(oBinding.getPath());
-				} else {
-					return undefined;
-				}
-			}
-			if (typeof oBindingInfo === "object") {
-				var oVisitor = oContext.getModel().getVisitor();
-				oBindingInfo = ManagedObject.bindingParser("{" + oBindingInfo.path + "}");
-				var oModel = oVisitor.getSettings().models[oBindingInfo.model];
-				if (oModel) {
-					var oMetaModel = oModel.getMetaModel();
-					if (oMetaModel && oMetaModel.getMetaContext) {
-						return oMetaModel.getMetaContext(oBindingInfo.path);
-					}
-				}
-				return null;
-			} else {
-				return undefined;
-			}
-		},
-
-		// Annotation Helper to bind a property to the managed object model
-		runtimeProperty: function (oContext, vValue) {
-			if (oContext.getModel().getContextName) {
-				return "{$" + oContext.getModel().getContextName() + ">" + oContext.getPath() + "}";
-			}
-			return vValue;
-		},
-
-		// Annotation Helper to bind a property to the managed object model
-		runtimeBinding: function (oContext, vValue) {
-			return "{Name}";
-		},
-
-		// Annotation Helper to bind an aggregation
-		runtimeListBinding: function (oContext, vValue) {
-			// if the value is an array, this is an resolved list binding and the binding needs to be as string
-			if (jQuery.isArray(vValue)) {
-				var oBinding = oContext.getModel().getProperty(oContext.getPath() + "/@binding");
-				if (oBinding) {
-					return "{path: '" + oBinding.getPath() + "'}";
-				}
-				return null;
-			}
-			return vValue;
-		}
-	};
-	XMLComposite.helper.listMetaContext.requiresIContext = true;
-	XMLComposite.helper.runtimeProperty.requiresIContext = true;
-	XMLComposite.helper.runtimeListBinding.requiresIContext = true;
-	XMLComposite.helper.runtimeBinding.requiresIContext = true;
 	return XMLComposite;
 });

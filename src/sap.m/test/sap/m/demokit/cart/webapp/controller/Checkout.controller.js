@@ -177,7 +177,7 @@ sap.ui.define([
 		 * shows warning message and cancels order if affirmed
 		 */
 		handleWizardCancel: function () {
-			var sText = this.getResourceBundle().getText("checkoutControllerConfirmCancel");
+			var sText = this.getResourceBundle().getText("checkoutControllerAreYouSureCancel");
 			this._handleSubmitOrCancel(sText, "warning", "home");
 		},
 
@@ -186,7 +186,7 @@ sap.ui.define([
 		 * shows warning message and submits order if affirmed
 		 */
 		handleWizardSubmit: function () {
-			var sText = this.getResourceBundle().getText("checkoutControllerConfirmSubmit");
+			var sText = this.getResourceBundle().getText("checkoutControllerAreYouSureSubmit");
 			this._handleSubmitOrCancel(sText, "confirm", "ordercompleted");
 		},
 

@@ -11,6 +11,7 @@
   function suite() {
     var suite = new parent.jsUnitTestSuite();
     var contextPath = "/" + window.location.pathname.split("/")[1];
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/unified/qunit/Header.qunit.html");
     suite.addTestPage(contextPath + "/test-resources/sap/ui/unified/qunit/Calendar.qunit.html");
     suite.addTestPage(contextPath + "/test-resources/sap/ui/unified/qunit/CalendarDate.qunit.html");
     suite.addTestPage(contextPath + "/test-resources/sap/ui/unified/qunit/Calendar_Islamic.qunit.html");
