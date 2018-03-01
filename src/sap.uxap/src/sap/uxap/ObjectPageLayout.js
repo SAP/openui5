@@ -3456,8 +3456,13 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._resumeScroll = function () {
 		this._bSuppressScroll = false;
-		if (this._iStoredScrollPosition) {
-			this._scrollTo(this._iStoredScrollPosition, 0);
+		// restore state:
+		// (1) restore latest stored scrollPosition
+		// (2) adjust snapped state and selectedSection to the ones that corresponds to the current scrollPosition (these, by design, will be auto-detected and adjusted in the **onScroll** listener)
+		if (this._iStoredScrollPosition) { // restore scroll position if available
+			this._scrollTo(this._iStoredScrollPosition, 0); // snapped state and selectedSection will be auto-detected and adjusted in the onScroll handler
+		} else { // remain at current scroll position
+			this._onScroll({target: {scrollTop: this._$opWrapper.scrollTop()}}); // explicitly call the onScroll handler to allow auto-detect and adjust the selectedSection and the snapped state
 		}
 	};
 
