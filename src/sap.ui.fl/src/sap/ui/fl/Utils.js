@@ -1162,6 +1162,78 @@ sap.ui.define([
 		hasInterface: function(oElement, sInterface) {
 			var aInterfaces = oElement.getMetadata().getInterfaces();
 			return aInterfaces.indexOf(sInterface) !== -1;
+		},
+
+		/**
+		 * Gets the Metadata of am XML control.
+		 *
+		 * @param {Node} oControl control in XML
+		 * @returns {sap.ui.base.Metadata} Returns the Metadata of the control
+		 */
+		getControlMetadataInXml: function(oControl) {
+			var sControlType = this.getControlTypeInXml(oControl);
+			jQuery.sap.require(sControlType);
+			var ControlType = jQuery.sap.getObject(sControlType);
+			return ControlType.getMetadata();
+		},
+
+		/**
+		 * Gets the ControlType of an XML control
+		 *
+		 * @param {Node} oControl control in XML
+		 * @returns {string} Returns the control type as a string, e.g. 'sap.m.Button'.
+		 */
+		getControlTypeInXml: function (oControl) {
+			var sControlType = oControl.namespaceURI;
+			sControlType = sControlType ? sControlType + "." : ""; // add a dot if there is already a prefix
+			sControlType += oControl.localName;
+
+			return sControlType;
+		},
+
+		/**
+		 * Gets all the children of an XML Node that are element nodes
+		 *
+		 * @param {Node} oNode XML Node
+		 * @returns {Node[]} Returns an array with the children of the node.
+		 */
+		getElementNodeChildren: function(oNode) {
+			var aChildren = [];
+			var aNodes = oNode.childNodes;
+			for (var i = 0, n = aNodes.length; i < n; i++) {
+				if (aNodes[i].nodeType === 1) {
+					aChildren.push(aNodes[i]);
+				}
+			}
+			return aChildren;
+		},
+
+		/**
+		 * Recursivly goes through an XML Tree and calls a callback function for every control inside
+		 * Does not call the callback function for aggregations
+		 *
+		 * @param {function} fnCallback function that will be called for every control with the following argument:
+		 * 								{Node} node Element
+		 * @param {Node} oRootNode rootnode from which we start traversing the tree
+		 */
+		traverseXmlTree: function(fnCallback, oRootNode) {
+			function recurse(oParent, oCurrentNode, bIsAggregation) {
+				var oAggregations;
+				if (!bIsAggregation) {
+					var oMetadata = Utils.getControlMetadataInXml(oCurrentNode);
+					oAggregations = oMetadata.getAllAggregations();
+				}
+				var aChildren = Utils.getElementNodeChildren(oCurrentNode);
+				aChildren.forEach(function(oChild) {
+					var bIsCurrentNodeAggregation = oAggregations && oAggregations[oChild.localName];
+					recurse(oCurrentNode, oChild, bIsCurrentNodeAggregation);
+					// if it's an aggregation, we don't call the callback function
+					if (!bIsCurrentNodeAggregation) {
+						fnCallback(oChild);
+					}
+				});
+			}
+			recurse(oRootNode, oRootNode, false);
 		}
 	};
 	return Utils;
