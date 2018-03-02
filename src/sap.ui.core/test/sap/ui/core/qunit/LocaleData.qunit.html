@@ -766,6 +766,40 @@
 		});
 	});
 
+	QUnit.test("Currency Digits", function(assert) {
+
+		var oLocaleData = sap.ui.core.LocaleData.getInstance(
+			sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()
+		);
+
+		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
+		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 2, "number of digits for Euro");
+
+		sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies({"JPY": {"digits": 3}});
+		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 3, "number of digits for Japanese Yen");
+		sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies({"EUR": {"digits": 3}});
+		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
+
+		sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies();
+		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
+
+
+		sap.ui.getCore().getConfiguration().getFormatSettings().addCustomCurrencies();
+		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
+
+		sap.ui.getCore().getConfiguration().getFormatSettings().addCustomCurrencies({"EUR": {"digits": 3}});
+		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 3, "number of digits for Euro");
+		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
+
+		sap.ui.getCore().getConfiguration().getFormatSettings().addCustomCurrencies({"JPY": {"digits": 3}});
+		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 3, "number of digits for Euro");
+		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 3, "number of digits for Japanese Yen");
+
+		sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies();
+		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 2, "number of digits for Euro");
+		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
+	});
+
 </script>
 
 </head>

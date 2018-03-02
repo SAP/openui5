@@ -1725,7 +1725,52 @@
 	});
 
 
+	QUnit.test("Currency format with custom number of decimals", function(assert) {
+		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
+			currencyCode: false
+		});
+		assert.equal(oFormat.format(123456.789, "EUR"), "\u20ac" + "123,456.79", "123456.789 EUR");
+		assert.equal(oFormat.format(123456.789, "JPY"), "\u00a5" + "123,457", "123456.789 YEN");
+		assert.equal(oFormat.format(123456.789, "CKZ"), "CKZ\xa0" + "123,456.79", "123456.789 CKZ");
+		assert.equal(oFormat.format(123456.789, "BTC"), "BTC\xa0" + "123,456.79", "123456.789 BTC");
 
+		// set custom currency digits
+		sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies({
+			"EUR": {"digits": 1},
+			"JPY": {"digits": 3},
+			"CKZ": {"digits": 3},
+			"BTC": {"digits": 5}
+		});
+
+		oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
+			currencyCode: false
+		});
+		assert.equal(oFormat.format(123456.789, "EUR"), "\u20ac" + "123,456.8", "123456.789 EUR");
+		assert.equal(oFormat.format(123456.789, "JPY"), "\u00a5" + "123,456.789", "123456.789 YEN");
+		assert.equal(oFormat.format(123456.789, "CKZ"), "CKZ\xa0" + "123,456.789", "123456.789 CKZ");
+		assert.equal(oFormat.format(123456.789, "BTC"), "BTC\xa0" + "123,456.78900", "123456.789 BTC");
+
+		// add custom currencies
+		sap.ui.getCore().getConfiguration().getFormatSettings().addCustomCurrencies({
+			"DEFAULT": {"digits": 6}
+		});
+		oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
+			currencyCode: false
+		});
+		assert.equal(oFormat.format(123456.789, "EUR"), "\u20ac" + "123,456.8", "123456.789 EUR");
+		assert.equal(oFormat.format(123456.789, "MON"), "MON\xa0" + "123,456.789000", "123456.789 MON");
+
+		// reset custom currencies
+		sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies();
+
+		oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
+			currencyCode: false
+		});
+		assert.equal(oFormat.format(123456.789, "EUR"), "\u20ac" + "123,456.79", "123456.789 EUR");
+		assert.equal(oFormat.format(123456.789, "JPY"), "\u00a5" + "123,457", "123456.789 YEN");
+		assert.equal(oFormat.format(123456.789, "CKZ"), "CKZ\xa0" + "123,456.79", "123456.789 CKZ");
+		assert.equal(oFormat.format(123456.789, "BTC"), "BTC\xa0" + "123,456.79", "123456.789 BTC");
+	});
 
 	QUnit.test("Currency format with sMeasure and showMeasure set to none", function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
