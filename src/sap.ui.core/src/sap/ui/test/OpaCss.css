@@ -54,3 +54,25 @@
 .opaFrame:hover {
 	opacity: 1;
 }
+
+/* Layout settings for starting with FLP sandbox */
+
+.sapUiOpaBodyFLP #qunit {
+	position: absolute;
+	top: 0;
+	height: 100%;
+	width: 30%;
+	overflow: auto;
+	opacity: 0.7;
+}
+
+.sapUiOpaBodyFLP #qunit:hover {
+	opacity: 1;
+}
+
+.sapUiOpaBodyFLP #qunit-header {
+	border-radius: 0 !important;
+}
+.sapUiOpaBodyFLP #qunit .test-message {
+	width: 100%;
+}
