@@ -533,6 +533,7 @@ sap.ui.define([
 		}
 
 		this._toggleHeaderInTabChain(false);
+		this._updateARIAStates(false);
 	};
 
 	/**
@@ -567,6 +568,7 @@ sap.ui.define([
 		}
 
 		this._toggleHeaderInTabChain(true);
+		this._updateARIAStates(true);
 	};
 
 	/**
@@ -1069,6 +1071,19 @@ sap.ui.define([
 		}
 	};
 
+	DynamicPage.prototype._updateTitleARIAState = function (bExpanded) {
+		var oDynamicPageTitle = this.getTitle();
+
+		if (exists(oDynamicPageTitle)) {
+			oDynamicPageTitle._updateARIAState(bExpanded);
+		}
+	};
+
+	DynamicPage.prototype._updateARIAStates = function (bExpanded) {
+		this._updateHeaderARIAState(bExpanded);
+		this._updateTitleARIAState(bExpanded);
+	};
+
 	/**
 	 * Updates the media size of the control based on its own width, not on the entire screen size (which media query does).
 	 * This is necessary, because the control will be embedded in other controls (like the <code>sap.f.FlexibleColumnLayout</code>),
@@ -1476,13 +1491,11 @@ sap.ui.define([
 
 		if (this._shouldSnap()) {
 			this._snapHeader(true, true /* bUserInteraction */);
-			this._updateHeaderARIAState(false);
 
 		} else if (this._shouldExpand()) {
 
 			this._expandHeader(false, true /* bUserInteraction */);
 			this._toggleHeaderVisibility(true);
-			this._updateHeaderARIAState(true);
 
 		} else if (!this._bPinned && this._bHeaderInTitleArea) {
 			var bDoOffsetContent = (this._getScrollPosition() >= this._getSnappingHeight()); // do not offset if the scroll is transferring between expanded-header-in-title to expanded-header-in-content
