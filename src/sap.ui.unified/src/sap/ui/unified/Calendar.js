@@ -2248,8 +2248,11 @@ sap.ui.define([
 			oSecondMonthHeader = this.getAggregation("secondMonthHeader");
 
 		oHeader.setTextButton2(sYear);
+		oHeader.setAriaLabelButton2(sYear);
 		oHeader._setTextButton4(sYear);
+		oHeader._setAriaLabelButton4(sYear);
 		oSecondMonthHeader.setTextButton2(sYear);
+		oSecondMonthHeader.setAriaLabelButton2(sYear);
 	};
 
 	Calendar.prototype._updateHeadersYearAdditionalText = function (sYear) {
