@@ -66,6 +66,7 @@ sap.ui.define([
 		 * @public
 		 * @since 1.30
 		 * @alias sap.m.Wizard
+		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/wizard/ Wizard}
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var Wizard = Control.extend("sap.m.Wizard", /** @lends sap.m.Wizard.prototype */ {

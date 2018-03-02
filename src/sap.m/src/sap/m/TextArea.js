@@ -82,6 +82,7 @@ function(
 	 * @public
 	 * @since 1.9.0
 	 * @alias sap.m.TextArea
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/text-area/ Text Area}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TextArea = InputBase.extend("sap.m.TextArea", /** @lends sap.m.TextArea.prototype */ { metadata : {
