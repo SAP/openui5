@@ -338,11 +338,15 @@ sap.ui.define([
 				// we need to extend the controller if an instance is passed
 				var sOwnerId = ManagedObject._sOwnerId;
 				if (bAsync) {
-					oController = Controller.extendByCustomizing(oController, sName, bAsync)
+					oController = Controller.extendByMember(oController, bAsync)
+						.then(function(oController) {
+							return Controller.extendByCustomizing(oController, sName, bAsync);
+						})
 						.then(function(oController) {
 							return Controller.extendByProvider(oController, sName, sOwnerId, bAsync);
 						});
 				} else {
+					oController = Controller.extendByMember(oController, bAsync);
 					oController = Controller.extendByCustomizing(oController, sName, bAsync);
 					oController = Controller.extendByProvider(oController, sName, sOwnerId, bAsync);
 				}
@@ -363,9 +367,9 @@ sap.ui.define([
 					connectToView(oController);
 				}
 			}
-
 		} else {
-			oThis.oController = {};
+			sap.ui.controller("sap.ui.core.mvc.EmptyControllerImpl", {"_sap.ui.core.mvc.EmptyControllerImpl":true});
+			oThis.oController = sap.ui.controller("sap.ui.core.mvc.EmptyControllerImpl");
 		}
 	};
 
@@ -1004,10 +1008,11 @@ sap.ui.define([
 	 * @private
 	 */
 	View._resolveEventHandler = function(sName, oController) {
-
 		var fnHandler;
 
-		if (!sap.ui.getCore().getConfiguration().getControllerCodeDeactivated()) {
+		if (sap.ui.getCore().getConfiguration().getControllerCodeDeactivated()) {
+			fnHandler = function() {};
+		} else {
 			switch (sName.indexOf('.')) {
 				case 0:
 					// starts with a dot, must be a controller local handler
@@ -1025,9 +1030,6 @@ sap.ui.define([
 				default:
 					fnHandler = jQuery.sap.getObject(sName);
 			}
-		} else {
-			// When design mode is enabled, controller code is not loaded. That is why we stub the handler functions.
-			fnHandler = function() {};
 		}
 
 		if ( typeof fnHandler === "function" ) {
