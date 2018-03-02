@@ -19,6 +19,22 @@ sap.ui.define([
 	function ODataBinding() {}
 
 	/**
+	 * Throws an Error if the binding's root binding is suspended.
+	 *
+	 * @throws {Error} If the binding's root binding is suspended
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.checkSuspended = function () {
+		var oRootBinding = this.getRootBinding();
+
+		if (oRootBinding && oRootBinding.isSuspended()) {
+			throw new Error("Must not call method when the binding's root binding is suspended: "
+				+ this);
+		}
+	};
+
+	/**
 	 * Creates a cache for this binding if a cache is needed and updates <code>oCachePromise</code>.
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
@@ -146,7 +162,7 @@ sap.ui.define([
 		}
 
 		// (quasi-)absolute binding
-		if (!that.bRelative || oContext && !oContext.fetchValue) {
+		if (!this.bRelative || !oContext.fetchValue) {
 			return oQueryOptionsPromise;
 		}
 
@@ -435,13 +451,14 @@ sap.ui.define([
 	 * invalid user input.
 	 *
 	 * @throws {Error}
-	 *   If there is a change of this binding which has been sent to the server and for which there
-	 *   is no response yet.
+	 *   If the binding's root binding is suspended or if there is a change of this binding which
+	 *   has been sent to the server and for which there is no response yet.
 	 *
 	 * @public
 	 * @since 1.40.1
 	 */
 	ODataBinding.prototype.resetChanges = function () {
+		this.checkSuspended();
 		this.resetChangesForPath("");
 		this.resetChangesInDependents();
 		this.resetInvalidDataState();

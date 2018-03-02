@@ -196,6 +196,13 @@ sap.ui.require([
 			assert.strictEqual(AnnotationHelper.getNavigationPath(sPath), mFixture[sPath], sPath);
 		}
 
+		// sinon-4 allows stubbing some library methods like filter
+		// assure that the split/filter/join function is not called if the path doesn't contain "."
+		this.mock(Array.prototype).expects("filter").never();
+
+		// code under test
+		assert.strictEqual(AnnotationHelper.getNavigationPath("EMPLOYEE_2_TEAM"),
+			"EMPLOYEE_2_TEAM", "EMPLOYEE_2_TEAM");
 	});
 
 	//*********************************************************************************************

@@ -9,7 +9,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 	"use strict";
 
 	// Math.fround polyfill
-	if (!Math.fround) {
+	if (!Math.fround) { // sap-ui-cover-browser msie
 		// IE 10+
 		var aArray = new window.Float32Array(1);
 

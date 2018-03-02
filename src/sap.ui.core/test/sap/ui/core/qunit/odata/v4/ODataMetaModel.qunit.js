@@ -1022,17 +1022,23 @@ sap.ui.require([
 			: mScope["name.space.DerivedPrimitiveFunction"][0].$ReturnType,
 		"/ChangeManagerOfTeam/value" : oTeamData.value,
 		// action overloads -----------------------------------------------------------------------
+		//TODO @$ui5.overload: support for split segments? etc.
 		"/OverloadedAction/@$ui5.overload" : sinon.match.array.deepEquals([aOverloadedAction[2]]),
+		"/OverloadedAction/@$ui5.overload/0" : aOverloadedAction[2],
+		// Note: trailing slash does not make a difference in "JSON" drill-down
+		"/OverloadedAction/@$ui5.overload/0/$ReturnType/" : aOverloadedAction[2].$ReturnType,
+		"/OverloadedAction/@$ui5.overload/0/$ReturnType/$Type" : "tea_busi.ComplexType_Salary",
+		"/OverloadedAction/" : mScope["tea_busi.ComplexType_Salary"],
 		"/name.space.OverloadedAction" : aOverloadedAction,
 		"/T€AMS/NotFound/name.space.OverloadedAction" : aOverloadedAction,
 		"/name.space.OverloadedAction/1" : aOverloadedAction[1],
 		"/OverloadedAction/$Action/1" : aOverloadedAction[1],
+		"/OverloadedAction/@$ui5.overload/AMOUNT" : mScope["tea_busi.ComplexType_Salary"].AMOUNT,
 		"/OverloadedAction/AMOUNT" : mScope["tea_busi.ComplexType_Salary"].AMOUNT,
 		"/T€AMS/name.space.OverloadedAction/Team_Id" : oTeamData.Team_Id,
 		"/T€AMS/name.space.OverloadedAction/@$ui5.overload"
 			: sinon.match.array.deepEquals([aOverloadedAction[1]]),
 		"/name.space.OverloadedAction/@$ui5.overload" : sinon.match.array.deepEquals([]),
-		//TODO allow path to continue after @$ui5.overload? support for split segments? etc.
 		// only "Action" and "Function" is expected as $kind, but others are not filtered out!
 		"/name.space.BrokenOverloads"
 			: sinon.match.array.deepEquals(mScope["name.space.BrokenOverloads"]),
@@ -2571,6 +2577,18 @@ sap.ui.require([
 				oContextCopy = this.oMetaModel.getMetaContext("/EMPLOYEES"),
 				oNewContext = this.oMetaModel.getMetaContext("/T€AMS");
 
+			// without context
+			oBinding = this.oMetaModel.bindContext(sPath, null);
+
+			assert.ok(oBinding instanceof ContextBinding);
+			assert.strictEqual(oBinding.getModel(), this.oMetaModel);
+			assert.strictEqual(oBinding.getPath(), sPath);
+			assert.strictEqual(oBinding.getContext(), null);
+
+			assert.strictEqual(oBinding.isInitial(), true);
+			assert.strictEqual(oBinding.getBoundContext(), null);
+
+			// with context
 			oBinding = this.oMetaModel.bindContext(sPath, oContextCopy);
 
 			assert.ok(oBinding instanceof ContextBinding);
@@ -2604,6 +2622,12 @@ sap.ui.require([
 			assert.strictEqual(oBoundContext.getModel(), this.oMetaModel);
 			assert.strictEqual(oBoundContext.getPath(),
 				bAbsolutePath ? sPath : oContext.getPath() + "/" + sPath);
+
+			// code under test - same context
+			oBinding.setContext(oContext);
+
+			assert.strictEqual(iChangeCount, 1, "context unchanged");
+			assert.strictEqual(oBinding.getBoundContext(), oBoundContext);
 
 			// code under test
 			oBinding.setContext(oContextCopy);
@@ -3226,7 +3250,7 @@ sap.ui.require([
 				"same.target" : {
 					"@Common.Description" : "",
 					"@Common.Label" : {
-						"new" : true // Note: no aggregation of properties here!
+						"old" : true // Note: no aggregation of properties here!
 					},
 					"@Common.Text" : ""
 				},
@@ -3251,7 +3275,7 @@ sap.ui.require([
 					"$Annotations" : {
 						"same.target" : {
 							"@Common.Description" : "",
-							"@Common.Label" : {
+							"@Common.Label" : { // illegal overwrite within $metadata, ignored!
 								"new" : true
 							}
 						},
@@ -3380,6 +3404,13 @@ sap.ui.require([
 	QUnit.test("_mergeAnnotations: with annotation files", function (assert) {
 		var mScope0 = {
 				"$EntityContainer" : "tea_busi.DefaultContainer",
+				"$Reference" : {
+					"../../../../default/iwbep/tea_busi_foo/0001/$metadata" : {
+						"$Include" : [
+							"tea_busi_foo.v0001."
+						]
+					}
+				},
 				"$Version" : "4.0",
 				"tea_busi." : {
 					"$kind" : "Schema",
@@ -3407,6 +3438,24 @@ sap.ui.require([
 				},
 				"tea_busi.Worker" : {
 					"$kind" : "EntityType"
+				}
+			},
+			mScope1 = {
+				"$Version" : "4.0",
+				"tea_busi_foo.v0001." : {
+					"$kind" : "Schema",
+					"$Annotations" : {
+						"tea_busi_foo.v0001.Product/Name" : {
+							"@Common.Label" : "from $metadata"
+						}
+					}
+				},
+				"tea_busi_foo.v0001.Product" : {
+					"$kind" : "EntityType",
+					"Name" : {
+						"$kind" : "Property",
+						"$Type" : "Edm.String"
+					}
 				}
 			},
 			mAnnotationScope1 = {
@@ -3451,6 +3500,9 @@ sap.ui.require([
 								"$Type" : "some.Record",
 								"Value" : "from annotation #2"
 							}
+						},
+						"tea_busi_foo.v0001.Product/Name" : {
+							"@Common.Label" : "from annotation #2"
 						}
 					}
 				}
@@ -3477,9 +3529,19 @@ sap.ui.require([
 							"Value" : "from annotation #2"
 						},
 						"@From.Annotation1" : "from annotation #1"
+					},
+					"tea_busi_foo.v0001.Product/Name" : {
+						"@Common.Label" : "from annotation #2"
 					}
 				},
 				"$EntityContainer" : "tea_busi.DefaultContainer",
+				"$Reference" : {
+					"../../../../default/iwbep/tea_busi_foo/0001/$metadata" : {
+						"$Include" : [
+							"tea_busi_foo.v0001."
+						]
+					}
+				},
 				"$Version" : "4.0",
 				"bar." : {
 					"$kind" : "Schema"
@@ -3525,6 +3587,24 @@ sap.ui.require([
 			"foo." : "/URI/1",
 			"tea_busi." : this.oMetaModel.sUrl
 		});
+
+		// prepare to load "cross-service reference"
+		this.oMetaModel.mSchema2MetadataUrl["tea_busi_foo.v0001."]
+			= "/a/default/iwbep/tea_busi_foo/0001/$metadata"; // simulate #validate of mScope0
+		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
+			.returns(SyncPromise.resolve(mScope0));
+		this.mock(this.oMetaModel.oRequestor).expects("read")
+			.withExactArgs("/a/default/iwbep/tea_busi_foo/0001/$metadata")
+			.returns(Promise.resolve(mScope1));
+		this.oMetaModelMock.expects("validate")
+			.withExactArgs("/a/default/iwbep/tea_busi_foo/0001/$metadata", mScope1)
+			.returns(mScope1);
+
+		// code under test
+		return this.oMetaModel.fetchObject("/tea_busi_foo.v0001.Product/Name@Common.Label")
+			.then(function (sLabel) {
+				assert.strictEqual(sLabel, "from annotation #2", "not overwritten by $metadata");
+			});
 	});
 
 	//*********************************************************************************************

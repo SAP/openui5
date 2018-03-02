@@ -742,7 +742,7 @@ sap.ui.define([
 		 * "com.sap.vocabularies.Communication.v1.PhoneType/fax".
 		 *
 		 * @param {string} sSemantics
-		 *   the sap:semantivs value ("tel" or "email")
+		 *   the sap:semantics value ("tel" or "email")
 		 * @param {string} sTypesList
 		 *   the comma-separated list of types for sap:semantics
 		 * @param {object} oProperty

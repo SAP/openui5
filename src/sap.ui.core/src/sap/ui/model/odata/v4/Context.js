@@ -158,6 +158,7 @@ sap.ui.define([
 	 *   has been detected; this should be shown to the user who needs to decide whether to try
 	 *   deletion again. If the entity does not exist, we assume it has already been deleted by
 	 *   someone else and report success.
+	 * @throws {Error} If the context's root binding is suspended
 	 *
 	 * @function
 	 * @name sap.ui.model.odata.v4.Context#delete
@@ -167,6 +168,7 @@ sap.ui.define([
 	Context.prototype["delete"] = function (sGroupId) {
 		var that = this;
 
+		this.oBinding.checkSuspended();
 		if (this.isTransient()) {
 			return that.oBinding._delete(sGroupId, "n/a", that);
 		}
@@ -454,7 +456,7 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If <code>refresh</code> is called on a context not created by a
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding}, if the group ID is not valid, if the
-	 *   binding is not refreshable or has pending changes.
+	 *   binding is not refreshable or has pending changes, or if its root binding is suspended.
 	 *
 	 * @public
 	 * @since 1.53.0
@@ -503,6 +505,8 @@ sap.ui.define([
 	 *   A relative path within the JSON structure
 	 * @returns {Promise}
 	 *   A promise on the requested value
+	 * @throws {Error}
+	 *   If the context's root binding is suspended
 	 *
 	 * @public
 	 * @see #getBinding
@@ -511,6 +515,8 @@ sap.ui.define([
 	 * @since 1.39.0
 	 */
 	Context.prototype.requestObject = function (sPath) {
+		this.oBinding.checkSuspended();
+
 		return Promise.resolve(this.fetchValue(sPath)).then(function (vResult) {
 			return clone(vResult);
 		});
@@ -527,12 +533,16 @@ sap.ui.define([
 	 *   given property path that formats corresponding to the property's EDM type and constraints.
 	 * @returns {Promise}
 	 *   A promise on the requested value; it is rejected if the value is not primitive
+	 * @throws {Error}
+	 *   If the context's root binding is suspended
 	 *
 	 * @public
 	 * @see sap.ui.model.odata.v4.ODataMetaModel#requestUI5Type
 	 * @since 1.39.0
 	 */
 	Context.prototype.requestProperty = function (sPath, bExternalFormat) {
+		this.oBinding.checkSuspended();
+
 		return Promise.resolve(fetchPrimitiveValue(this, sPath, bExternalFormat));
 	};
 

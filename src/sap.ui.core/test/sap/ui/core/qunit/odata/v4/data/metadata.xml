@@ -190,6 +190,10 @@
 				<ReturnType Type="Collection(com.sap.gateway.default.iwbep.tea_busi.v0001.Worker)"
 					Nullable="false"/>
 			</Function>
+			<Function Name="__FAKE__FuGetEmployeesByManager" IsBound="true">
+				<Parameter Name="_it" Type="com.sap.gateway.default.iwbep.tea_busi.v0001.MANAGER" Nullable="false"/>
+				<ReturnType Type="Collection(com.sap.gateway.default.iwbep.tea_busi.v0001.Worker)" Nullable="false"/>
+			</Function>
 			<Function Name="FuGetEmployeeLocationByEmployeeID">
 				<Parameter Name="EmployeeID" Type="Edm.String" Nullable="false" MaxLength="4"/>
 				<ReturnType Type="com.sap.gateway.default.iwbep.tea_busi.v0001.ComplexType_Location"

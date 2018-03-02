@@ -151,6 +151,13 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("validate without length", function (assert) {
+		var oType = new StringType({}, {});
+
+		oType.validateValue("ABC");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("nullable", function (assert) {
 		var that = this;
 

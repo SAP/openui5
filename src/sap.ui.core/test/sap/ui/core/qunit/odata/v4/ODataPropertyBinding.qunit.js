@@ -334,6 +334,10 @@ sap.ui.require([
 
 			assert.strictEqual(oBinding.oCachePromise.getResult(),
 				oFixture.sTarget === "base" ? oCache : undefined);
+
+			// code under test
+			// #deregisterChange is not called again, if #setContext is called with the same context
+			oBinding.setContext(oTargetContext);
 		});
 	});
 	//TODO cache promise is NOT always fulfilled
@@ -1343,6 +1347,7 @@ sap.ui.require([
 
 			oBinding.vValue = ""; // simulate a read - intentionally use a falsy value
 
+			this.mock(oBinding).expects("checkSuspended").withExactArgs();
 			this.mock(this.oModel).expects("checkGroupId").withExactArgs(oFixture.updateGroupId);
 			this.mock(this.oModel.oMetaModel).expects("fetchUpdateData")
 				.withExactArgs("Address/City", sinon.match.same(oContext))
@@ -1390,6 +1395,7 @@ sap.ui.require([
 
 		oPropertyBinding.vValue = "fromServer"; // simulate a read
 
+		this.mock(oPropertyBinding).expects("checkSuspended").withExactArgs();
 		this.mock(this.oModel.oMetaModel).expects("fetchUpdateData")
 			.withExactArgs("Name", sinon.match.same(oContext))
 			.returns(SyncPromise.resolve({
@@ -1416,6 +1422,7 @@ sap.ui.require([
 			oError = new Error("Must not change a property before it has been read"),
 			oPropertyBinding = this.oModel.bindProperty("Name", oContext);
 
+		this.mock(oPropertyBinding).expects("checkSuspended").withExactArgs();
 		assert.strictEqual(oPropertyBinding.vValue, undefined);
 		this.mock(this.oModel.oMetaModel).expects("fetchUpdateData").never();
 		this.mock(oPropertyBinding).expects("withCache").never();
@@ -1437,6 +1444,7 @@ sap.ui.require([
 			oPropertyBinding = this.oModel.bindProperty("Name", oContext);
 
 		oPropertyBinding.vValue = "foo";
+		this.mock(oPropertyBinding).expects("checkSuspended").withExactArgs();
 		this.mock(this.oModel.oMetaModel).expects("fetchUpdateData").never();
 		this.mock(oPropertyBinding).expects("withCache").never();
 
@@ -1454,6 +1462,7 @@ sap.ui.require([
 
 		oPropertyBinding.vValue = "fromServer"; // simulate a read
 
+		this.mock(oPropertyBinding).expects("checkSuspended").withExactArgs();
 		this.mock(this.oModel.oMetaModel).expects("fetchUpdateData")
 			.withExactArgs("Name", sinon.match.same(oContext))
 			.returns(SyncPromise.resolve(Promise.reject(oError)));
@@ -1477,6 +1486,7 @@ sap.ui.require([
 		oError.canceled = true;
 		oPropertyBinding.vValue = "fromServer"; // simulate a read
 
+		this.mock(oPropertyBinding).expects("checkSuspended").withExactArgs();
 		this.mock(this.oModel.oMetaModel).expects("fetchUpdateData")
 			.withExactArgs("Name", sinon.match.same(oContext))
 			.returns(SyncPromise.resolve({

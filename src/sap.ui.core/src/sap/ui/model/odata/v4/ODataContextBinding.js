@@ -103,6 +103,7 @@ sap.ui.define([
 				}
 
 				this.mAggregatedQueryOptions = {};
+				this.bAggregatedQueryOptionsInitial = true;
 				this.oCachePromise = SyncPromise.resolve();
 				this.mCacheByContext = undefined;
 				this.sGroupId = undefined;
@@ -263,7 +264,7 @@ sap.ui.define([
 			vEntity = fnGetEntity,
 			sETag,
 			oModel = this.oModel,
-			sMetaPath = oModel.getMetaModel().getMetaPath(sPath),
+			sMetaPath = oModel.getMetaModel().getMetaPath(sPath) + "/@$ui5.overload/0/$ReturnType",
 			mParameters = jQuery.extend({}, this.oOperation.mParameters),
 			oRequestor = oModel.oRequestor,
 			mQueryOptions = jQuery.extend({}, oModel.mUriParameters, this.mQueryOptions);
@@ -424,11 +425,11 @@ sap.ui.define([
 	 *   with an instance of <code>Error</code> in case of failure, for instance if the operation
 	 *   metadata is not found, if overloading is not supported, or if a collection-valued function
 	 *   parameter is encountered.
-	 * @throws {Error} If the given group ID is invalid, if the binding is not a deferred operation
-	 *   binding (see {@link sap.ui.model.odata.v4.ODataContextBinding}), if the binding is not
-	 *   resolved or relative to a transient context
-	 *   (see {@link sap.ui.model.odata.v4.Context#isTransient}), or if deferred operation bindings
-	 *   are nested.
+	 * @throws {Error} If the binding's root binding is suspended, the given group ID is invalid, if
+	 *   the binding is not a deferred operation binding (see
+	 *   {@link sap.ui.model.odata.v4.ODataContextBinding}), if the binding is not resolved or
+	 *   relative to a transient context (see {@link sap.ui.model.odata.v4.Context#isTransient}), or
+	 *   if deferred operation bindings are nested.
 	 *
 	 * @public
 	 * @since 1.37.0
@@ -439,6 +440,7 @@ sap.ui.define([
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
 			that = this;
 
+		this.checkSuspended();
 		this.oModel.checkGroupId(sGroupId);
 		sGroupId = sGroupId || this.getGroupId();
 		if (!this.oOperation) {
@@ -602,13 +604,19 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.resumeInternal = function (bCheckUpdate) {
-		this.mAggregatedQueryOptions = {};
-		this.mCacheByContext = undefined;
-		this.fetchCache(this.oContext);
-		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
-			oDependentBinding.resumeInternal(bCheckUpdate);
-		});
-		this._fireChange({reason : ChangeReason.Change});
+		if (!this.oOperation) {
+			this.mAggregatedQueryOptions = {};
+			this.bAggregatedQueryOptionsInitial = true;
+			this.mCacheByContext = undefined;
+			this.fetchCache(this.oContext);
+			this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+				oDependentBinding.resumeInternal(bCheckUpdate);
+			});
+			this._fireChange({reason : ChangeReason.Change});
+		} else if (this.oOperation.bAction === false) {
+			// ignore returned promise, error handling takes place in execute
+			this.execute();
+		}
 	};
 
 	/**

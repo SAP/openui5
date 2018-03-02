@@ -57,6 +57,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
+		{i : {}, o : undefined},
 		{i : {nullable : true}, o : undefined},
 		{i : {nullable : "true"}, o : undefined},
 		{i : {nullable : false}, o : {nullable : false}},

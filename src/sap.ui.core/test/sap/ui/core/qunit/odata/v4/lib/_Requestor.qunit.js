@@ -235,10 +235,12 @@ sap.ui.require([
 			oResult = {},
 			fnSubmit = this.spy();
 
+		this.mock(oRequestor).expects("convertResourcePath").withExactArgs("Employees?foo=bar")
+			.returns("~Employees~?foo=bar");
 		this.mock(_Requestor).expects("cleanPayload")
 			.withExactArgs(sinon.match.same(oPayload)).returns(oChangedPayload);
 		this.mock(jQuery).expects("ajax")
-			.withExactArgs(sServiceUrl + "Employees?foo=bar", {
+			.withExactArgs(sServiceUrl + "~Employees~?foo=bar", {
 				data : JSON.stringify(oChangedPayload),
 				headers : sinon.match({
 					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
@@ -314,6 +316,7 @@ sap.ui.require([
 
 		QUnit.test(sTitle, function (assert) {
 			var oConvertedResponse = {},
+				sMetaPath = "~",
 				oRequestor = _Requestor.create(sServiceUrl, oModelInterface, undefined, undefined,
 					oFixture.sODataVersion),
 				oRequestorMock = this.mock(oRequestor),
@@ -328,11 +331,12 @@ sap.ui.require([
 			oRequestorMock.expects("doCheckVersionHeader")
 				.withExactArgs(sinon.match.func, "Employees");
 			oRequestorMock.expects("doConvertResponse")
-				.withExactArgs(oResponsePayload)
+				.withExactArgs(oResponsePayload, sMetaPath)
 				.returns(oConvertedResponse);
 
 			// code under test
-			return oRequestor.request("GET", "Employees", "$direct")
+			return oRequestor.request("GET", "Employees", "$direct", undefined, undefined,
+					undefined, undefined, sMetaPath)
 				.then(function (result) {
 					assert.strictEqual(result, oConvertedResponse);
 				});
@@ -350,7 +354,7 @@ sap.ui.require([
 			.withArgs(sServiceUrl + "Employees")
 			.returns(createMock(assert, oResponsePayload, "OK", {"DataServiceVersion" : "2.0"}));
 		this.mock(oRequestor).expects("doConvertResponse")
-			.withExactArgs(oResponsePayload)
+			.withExactArgs(oResponsePayload, undefined)
 			.throws(oError);
 
 		// code under test
@@ -417,6 +421,7 @@ sap.ui.require([
 			oRequestorMock = this.mock(oRequestor),
 			mResponse = {
 				headers : {
+					"Content-Length" : "42",
 					"OData-Version" : "foo"
 				},
 				responseText : JSON.stringify({d : {foo : "bar"}})
@@ -515,12 +520,14 @@ sap.ui.require([
 
 		QUnit.test(sTitle, function (assert) {
 			var oConvertedPayload = {},
+				sMetaPath = "~",
 				aExpectedRequests = [{
 					method : "GET",
 					url : "Products",
 					headers : oFixture.mExpectedRequestHeaders,
 					body : undefined,
 					$cancel : undefined,
+					$metaPath : sMetaPath,
 					$promise : sinon.match.defined,
 					$reject : sinon.match.func,
 					$resolve : sinon.match.func,
@@ -532,9 +539,11 @@ sap.ui.require([
 				oRequestorMock = this.mock(oRequestor);
 
 			oRequestorMock.expects("doConvertResponse")
-				.withExactArgs(oFixture.mProductsResponse) // not same; it is stringified and parsed
+				// not same; it is stringified and parsed
+				.withExactArgs(oFixture.mProductsResponse, sMetaPath)
 				.returns(oConvertedPayload);
-			oGetProductsPromise = oRequestor.request("GET", "Products", "group1")
+			oGetProductsPromise = oRequestor.request("GET", "Products", "group1", undefined,
+					undefined, undefined, undefined, sMetaPath)
 				.then(function (oResponse) {
 					assert.strictEqual(oResponse, oConvertedPayload);
 				});
@@ -560,7 +569,7 @@ sap.ui.require([
 			oResponse = {d : {foo : "bar"}};
 
 		oRequestorMock.expects("doConvertResponse")
-			.withExactArgs(oResponse)
+			.withExactArgs(oResponse, undefined)
 			.throws(oError);
 		oGetProductsPromise = oRequestor.request("GET", "Products", "group1")
 			.then(function () {
@@ -828,13 +837,15 @@ sap.ui.require([
 				.exactly(bSuccess || o.bReadFails ? 0 : 1)
 				.withExactArgs(sinon.match.same(oTokenRequiredResponse))
 				.returns(oError);
+			this.mock(oRequestor).expects("convertResourcePath").atLeast(1)
+				.withExactArgs("foo").returns("~foo~");
 
 			// With <code>bRequestSucceeds === false</code>, "request" always fails,
 			// with <code>bRequestSucceeds === true</code>, "request" always succeeds,
 			// else "request" first fails due to missing CSRF token which can be fetched via
 			// "ODataModel#refreshSecurityToken".
 			this.mock(jQuery).expects("ajax").atLeast(1)
-				.withExactArgs("/Service/foo", sinon.match({
+				.withExactArgs("/Service/~foo~", sinon.match({
 					data : JSON.stringify(oRequestPayload),
 					headers : {"foo" : "bar"},
 					method : "FOO"
@@ -1047,7 +1058,7 @@ sap.ui.require([
 	QUnit.test("submitBatch(...): success", function (assert) {
 		var aExpectedRequests = [[{
 				method : "POST",
-				url : "Customers",
+				url : "~Customers",
 				headers : {
 					"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 					"Accept-Language" : "ab-CD",
@@ -1056,13 +1067,14 @@ sap.ui.require([
 				},
 				body : {"ID" : 1},
 				$cancel : undefined,
+				$metaPath : undefined,
 				$promise : sinon.match.defined,
 				$reject : sinon.match.func,
 				$resolve : sinon.match.func,
 				$submit : undefined
 			}, {
 				method : "DELETE",
-				url : "SalesOrders('42')",
+				url : "~SalesOrders('42')",
 				headers : {
 					"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 					"Accept-Language" : "ab-CD",
@@ -1070,13 +1082,14 @@ sap.ui.require([
 				},
 				body : undefined,
 				$cancel : undefined,
+				$metaPath : undefined,
 				$promise : sinon.match.defined,
 				$reject : sinon.match.func,
 				$resolve : sinon.match.func,
 				$submit : undefined
 			}], {
 				method : "GET",
-				url : "Products",
+				url : "~Products",
 				headers : {
 					"Accept" : "application/json;odata.metadata=full",
 					"Accept-Language" : "ab-CD",
@@ -1085,6 +1098,7 @@ sap.ui.require([
 				},
 				body : undefined,
 				$cancel : undefined,
+				$metaPath : undefined,
 				$promise : sinon.match.defined,
 				$reject : sinon.match.func,
 				$resolve : sinon.match.func,
@@ -1099,8 +1113,11 @@ sap.ui.require([
 				{responseText : JSON.stringify(aResults[0])}
 			],
 			oRequestor = _Requestor.create("/Service/", oModelInterface,
-				{"Accept-Language" : "ab-CD"});
+				{"Accept-Language" : "ab-CD"}),
+			oRequestorMock = this.mock(oRequestor);
 
+		oRequestorMock.expects("convertResourcePath").withExactArgs("Products")
+			.returns("~Products");
 		aPromises.push(oRequestor.request("GET", "Products", "group1", {
 			Foo : "bar",
 			Accept : "application/json;odata.metadata=full"
@@ -1108,6 +1125,8 @@ sap.ui.require([
 			assert.deepEqual(oResult, aResults[0]);
 			aResults[0] = null;
 		}));
+		oRequestorMock.expects("convertResourcePath").withExactArgs("Customers")
+			.returns("~Customers");
 		aPromises.push(oRequestor.request("POST", "Customers", "group1", {
 			Foo : "baz"
 		}, {
@@ -1116,11 +1135,15 @@ sap.ui.require([
 			assert.deepEqual(oResult, aResults[1]);
 			aResults[1] = null;
 		}));
+		oRequestorMock.expects("convertResourcePath").withExactArgs("SalesOrders('42')")
+			.returns("~SalesOrders('42')");
 		aPromises.push(oRequestor.request("DELETE", "SalesOrders('42')", "group1")
 			.then(function (oResult) {
 				assert.deepEqual(oResult, aResults[2]);
 				aResults[2] = null;
 			}));
+		oRequestorMock.expects("convertResourcePath").withExactArgs("SalesOrders")
+			.returns("~SalesOrders");
 		oRequestor.request("GET", "SalesOrders", "group2");
 
 		this.mock(oRequestor).expects("request")
@@ -1137,7 +1160,7 @@ sap.ui.require([
 		assert.strictEqual(oRequestor.mBatchQueue.group1, undefined);
 		TestUtils.deepContains(oRequestor.mBatchQueue.group2, [[/*change set*/], {
 			method : "GET",
-			url : "SalesOrders"
+			url : "~SalesOrders"
 		}]);
 
 		return Promise.all(aPromises);
@@ -2038,6 +2061,15 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("convertResourcePath (V4)", function (assert) {
+		var sResourcePath = {},
+			oRequestor = _Requestor.create("/");
+
+		// code under test
+		assert.strictEqual(oRequestor.convertResourcePath(sResourcePath), sResourcePath);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("convertQueryOptions", function (assert) {
 		var oExpand = {},
 			oRequestor = _Requestor.create("/");
@@ -2234,143 +2266,6 @@ sap.ui.require([
 		sResult = oRequestor.formatPropertyAsLiteral(vValue, oProperty);
 
 		assert.strictEqual(sResult, sKeyPredicate);
-	});
-
-	//*********************************************************************************************
-	[{
-		sKeyPredicate : "('42')",
-		oEntityInstance : {"ID" : "42"},
-		oEntityType : {
-			"$Key" : ["ID"],
-			"ID" : {
-				"$Type" : "Edm.String"
-			}
-		}
-	}, {
-		sKeyPredicate : "('Walter%22s%20Win''s')",
-		oEntityInstance : {"ID" : "Walter\"s Win's"},
-		oEntityType : {
-			"$Key" : ["ID"],
-			"ID" : {
-				"$Type" : "Edm.String"
-			}
-		}
-	}, {
-		sKeyPredicate : "(Sector='DevOps',ID='42')",
-		oEntityInstance : {"ID" : "42", "Sector" : "DevOps"},
-		oEntityType : {
-			"$Key" : ["Sector", "ID"],
-			"Sector" : {
-				"$Type" : "Edm.String"
-			},
-			"ID" : {
-				"$Type" : "Edm.String"
-			}
-		}
-	}, {
-		sKeyPredicate : "(Bar=42,Fo%3Do='Walter%22s%20Win''s')",
-		oEntityInstance : {
-			"Bar" : 42,
-			"Fo=o" : "Walter\"s Win's"
-		},
-		oEntityType : {
-			"$Key" : ["Bar", "Fo=o"],
-			"Bar" : {
-				"$Type" : "Edm.Int16"
-			},
-			"Fo=o" : {
-				"$Type" : "Edm.String"
-			}
-		}
-	}].forEach(function (oFixture) {
-		QUnit.test("getKeyPredicate: " + oFixture.sKeyPredicate, function (assert) {
-			var oRequestor = _Requestor.create("/");
-
-			this.spy(oRequestor, "formatPropertyAsLiteral");
-
-			assert.strictEqual(
-				oRequestor.getKeyPredicate(oFixture.oEntityInstance, "~path~", {
-					"~path~" : oFixture.oEntityType
-				}),
-				oFixture.sKeyPredicate);
-
-			// check that formatPropertyAsLiteral() is called for each key property
-			oFixture.oEntityType.$Key.forEach(function (sProperty) {
-				sinon.assert.calledWithExactly(oRequestor.formatPropertyAsLiteral,
-					sinon.match.same(oFixture.oEntityInstance[sProperty]),
-					sinon.match.same(oFixture.oEntityType[sProperty]));
-			});
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("getKeyPredicate: key with alias", function (assert) {
-		var oComplexType = {
-				"baz" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String"
-				}
-			},
-			oEntityInstance = {},
-			oEntityType = {
-				"$Key" : ["qux", {"foo" : "bar/baz"}],
-				"qux" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String"
-				}
-			},
-			oHelperMock = this.mock(_Helper),
-			oRequestor = _Requestor.create("/"),
-			oRequestorMock = this.mock(oRequestor);
-
-		oHelperMock.expects("drillDown")
-			.withExactArgs(oEntityInstance, ["qux"]).returns("v1");
-		oHelperMock.expects("drillDown")
-			.withExactArgs(oEntityInstance, ["bar", "baz"]).returns("v2");
-		oRequestorMock.expects("formatPropertyAsLiteral")
-			.withExactArgs("v1", sinon.match.same(oEntityType.qux)).returns("~1");
-		oRequestorMock.expects("formatPropertyAsLiteral")
-			.withExactArgs("v2", sinon.match.same(oComplexType.baz)).returns("~2");
-
-		assert.strictEqual(oRequestor.getKeyPredicate(oEntityInstance, "~path~", {
-				"~path~" : oEntityType,
-				"~path~/bar" : oComplexType
-			}),
-			"(qux=~1,foo=~2)");
-	});
-
-	//*********************************************************************************************
-	[{
-		sDescription : "one key property",
-		oEntityInstance : {},
-		oEntityType : {
-			"$Key" : ["ID"],
-			"ID" : {
-				"$Type" : "Edm.String"
-			}
-		}
-	}, {
-		sDescription : "multiple key properties",
-		oEntityInstance : {"Sector" : "DevOps"},
-		oEntityType : {
-			"$Key" : ["Sector", "ID"],
-			"Sector" : {
-				"$Type" : "Edm.String"
-			},
-			"ID" : {
-				"$Type" : "Edm.String"
-			}
-		}
-	}].forEach(function (oFixture) {
-		QUnit.test("getKeyPredicate: missing key, " + oFixture.sDescription, function (assert) {
-			var oRequestor = _Requestor.create("/");
-
-			assert.strictEqual(
-				oRequestor.getKeyPredicate(oFixture.oEntityInstance, "~path~", {
-					"~path~" : oFixture.oEntityType
-				}),
-				undefined);
-		});
 	});
 
 	//*********************************************************************************************

@@ -206,7 +206,6 @@ sap.ui.define([
 	 *   {@link #fetchTypes})
 	 */
 	Cache.prototype.calculateKeyPredicates = function (oRootInstance, mTypeForMetaPath) {
-		var oRequestor = this.oRequestor;
 
 		/**
 		 * Adds predicates to all entities in the given collection and creates the map $byPredicate
@@ -240,7 +239,7 @@ sap.ui.define([
 
 			if (oType && oType.$Key) {
 				oInstance["@$ui5.predicate"] =
-					oRequestor.getKeyPredicate(oInstance, sMetaPath, mTypeForMetaPath);
+					_Helper.getKeyPredicate(oInstance, sMetaPath, mTypeForMetaPath);
 			}
 
 			Object.keys(oInstance).forEach(function (sProperty) {
@@ -326,7 +325,7 @@ sap.ui.define([
 						_Helper.getSelectForPath(that.mQueryOptions, sPath));
 					// determine and save the key predicate
 					that.fetchTypes().then(function (mTypeForMetaPath) {
-						oEntityData["@$ui5.predicate"] = that.oRequestor.getKeyPredicate(
+						oEntityData["@$ui5.predicate"] = _Helper.getKeyPredicate(
 							oEntityData,
 							_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sPath)),
 							mTypeForMetaPath);
@@ -608,9 +607,7 @@ sap.ui.define([
 				aEntities = that.mPostRequests[sRequestPath];
 				for (i = aEntities.length - 1; i >= 0; i--) {
 					sTransientGroup = aEntities[i]["@$ui5.transient"];
-					if (sTransientGroup) {
-						that.oRequestor.removePost(sTransientGroup, aEntities[i]);
-					}
+					that.oRequestor.removePost(sTransientGroup, aEntities[i]);
 				}
 				delete that.mPostRequests[sRequestPath];
 			}
@@ -1226,7 +1223,7 @@ sap.ui.define([
 		if (!this.oPromise) {
 			this.oPromise = SyncPromise.resolve(this.oRequestor.request("GET",
 				this.sResourcePath + this.sQueryString, sGroupId, undefined, undefined,
-				fnDataRequested));
+				fnDataRequested, undefined, this.sMetaPath));
 			this.bSentReadRequest = true;
 		}
 		return this.oPromise.then(function (oResult) {
@@ -1315,7 +1312,7 @@ sap.ui.define([
 			}
 			this.oPromise = SyncPromise.all([
 				this.oRequestor.request("GET", sResourcePath, sGroupId, undefined, undefined,
-					fnDataRequested),
+					fnDataRequested, undefined, this.sMetaPath),
 				this.fetchTypes()
 			]).then(function (aResult) {
 				that.calculateKeyPredicates(aResult[0], aResult[1]);
