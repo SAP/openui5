@@ -130,8 +130,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		//Make sure when a button gets removed to reset the selected button
 		this.removeButton = function (sButton) {
-			SegmentedButton.prototype.removeButton.call(this, sButton);
+			var oRemovedButton = SegmentedButton.prototype.removeButton.call(this, sButton);
 			this.setSelectedButton(this.getButtons()[0]);
+			return oRemovedButton;
 		};
 	};
 
@@ -581,6 +582,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oRemovedButton.detachEvent("_change", this._forwardChangeEvent, this);
 			this._syncSelect();
 		}
+
+		return oRemovedButton;
 	};
 
 	SegmentedButton.prototype.removeAllButtons = function () {
@@ -598,6 +601,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 			this._syncSelect();
 		}
+
+		return aButtons;
 	};
 
 	/**
@@ -620,7 +625,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @override
 	 */
 	SegmentedButton.prototype.removeItem = function (oItem, bSuppressInvalidate) {
-		this.removeAggregation("items", oItem, bSuppressInvalidate);
+		var oRemovedItem = this.removeAggregation("items", oItem, bSuppressInvalidate);
 		// Reset selected button if the removed button is the currently selected one
 		if (oItem && oItem instanceof sap.m.SegmentedButtonItem &&
 			this.getSelectedButton() === oItem.oButton.getId()) {
@@ -628,6 +633,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.setSelectedButton("");
 		}
 		this.updateItems();
+		return oRemovedItem;
 	};
 
 	/**
@@ -650,12 +656,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @override
 	 */
 	SegmentedButton.prototype.removeAllItems = function (bSuppressInvalidate) {
-		this.removeAllAggregation("items", bSuppressInvalidate);
+		var oRemovedItems = this.removeAllAggregation("items", bSuppressInvalidate);
 		this.removeAllButtons();
 
 		// Reset selectedKey and selectedButton
 		this.setSelectedKey("");
 		this.setSelectedButton("");
+
+		return oRemovedItems;
 	};
 
 	/** Event handler for the internal button press events.
