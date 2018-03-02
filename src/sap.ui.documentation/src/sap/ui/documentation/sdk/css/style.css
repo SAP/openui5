@@ -1877,6 +1877,32 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 	border-right: solid 1px #e5e5e5;
 }
 
+.sapUiTheme-sap_belize_hcb .sapUiDocLightTable .head,
+.sapUiTheme-sap_belize_hcb .sapUiDocLightTable .row {
+	background-color: #000000;
+	border-bottom: solid 1px #ffffff;
+	border-left: solid 1px #ffffff;
+	border-right: solid 1px #ffffff;
+}
+
+.sapUiTheme-sap_belize_hcb .sapUiDocLightTable .head {
+	border-top: 1px solid #ffffff;
+	border-bottom: 0.125rem solid #ffffff;
+}
+
+.sapUiTheme-sap_belize_hcw .sapUiDocLightTable .head,
+.sapUiTheme-sap_belize_hcw .sapUiDocLightTable .row {
+	background-color: #ffffff;
+	border-bottom: solid 1px #000000;
+	border-left: solid 1px #000000;
+	border-right: solid 1px #000000;
+}
+
+.sapUiTheme-sap_belize_hcw .sapUiDocLightTable .head {
+	border-top: 1px solid #000000;
+	border-bottom: 0.125rem solid #000000;
+}
+
 /*
  * End of DemokitLightTable CSS
  */
