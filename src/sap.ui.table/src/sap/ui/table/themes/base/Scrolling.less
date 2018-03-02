@@ -285,6 +285,17 @@ html.sap-desktop.sap-tablet {
 		}
 	}
 
+	.sapUiTableVSb,
+	.sapUiTableHSb {
+		&::-webkit-scrollbar-thumb {
+			background-color: @sapUiScrollBarFaceColor;
+		}
+
+		&::-webkit-scrollbar {
+			background-color: @sapUiScrollBarTrackColor;
+		}
+	}
+
 }
 
 html.sap-tablet:not(.sap-desktop), html.sap-phone {
