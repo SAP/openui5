@@ -505,6 +505,8 @@ sap.ui.define([
 		modifyAccOfCOLUMNROWHEADER: function($Cell, bOnCellFocus) {
 			var oTable = this.getTable(),
 				bEnabled = $Cell.hasClass("sapUiTableSelAllEnabled");
+			oTable.$("sapUiTableGridCnt").removeAttr("role");
+
 			var mAttributes = ExtensionHelper.getAriaAttributesFor(
 				this, TableAccExtension.ELEMENTTYPES.COLUMNROWHEADER,
 				{enabled: bEnabled, checked: bEnabled && !oTable.$().hasClass("sapUiTableSelAll")}
@@ -945,6 +947,7 @@ sap.ui.define([
 			if (!oTable) {
 				return;
 			}
+			oTable.$("sapUiTableGridCnt").attr("role", ExtensionHelper.getAriaAttributesFor(this, "CONTENT", {}).role);
 			oTable._mTimeouts._cleanupACCExtension = jQuery.sap.delayedCall(100, this, function() {
 				var oTable = this.getTable();
 				if (!oTable) {
