@@ -31,7 +31,6 @@ function(
 	"use strict";
 
 
-
 	// shortcut for sap.m.ListKeyboardMode
 	var ListKeyboardMode = library.ListKeyboardMode;
 
@@ -40,8 +39,6 @@ function(
 
 	// shortcut for sap.m.ListType
 	var ListType = library.ListType;
-
-
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = library.ButtonType;
@@ -346,7 +343,6 @@ function(
 
 	ListItemBase.prototype.getAccessibilityDescription = function(oBundle) {
 		var aOutput = [],
-			mType = ListType,
 			sType = this.getType(),
 			sHighlight = this.getHighlight(),
 			sTooltip = this.getTooltip_AsString();
@@ -367,13 +363,13 @@ function(
 			aOutput.push(oBundle.getText("LIST_ITEM_COUNTER", this.getCounter()));
 		}
 
-		if (sType == mType.Navigation) {
+		if (sType == ListType.Navigation) {
 			aOutput.push(oBundle.getText("LIST_ITEM_NAVIGATION"));
 		} else {
-			if (sType == mType.Detail || sType == mType.DetailAndActive) {
+			if (sType == ListType.Detail || sType == ListType.DetailAndActive) {
 				aOutput.push(oBundle.getText("LIST_ITEM_DETAIL"));
 			}
-			if (sType == mType.Active || sType == mType.DetailAndActive) {
+			if (sType == ListType.Active || sType == ListType.DetailAndActive) {
 				aOutput.push(oBundle.getText("LIST_ITEM_ACTIVE"));
 			}
 		}
@@ -448,8 +444,8 @@ function(
 	 * @return {sap.ui.core.Icon}
 	 * @private
 	 */
-	ListItemBase.prototype.getDeleteControl = function() {
-		if (this._oDeleteControl) {
+	ListItemBase.prototype.getDeleteControl = function(bCreateIfNotExist) {
+		if (!bCreateIfNotExist || this._oDeleteControl) {
 			return this._oDeleteControl;
 		}
 
@@ -473,8 +469,8 @@ function(
 	 * @return {sap.ui.core.Icon}
 	 * @private
 	 */
-	ListItemBase.prototype.getDetailControl = function() {
-		if (this._oDetailControl) {
+	ListItemBase.prototype.getDetailControl = function(bCreateIfNotExist) {
+		if (!bCreateIfNotExist || this._oDetailControl) {
 			return this._oDetailControl;
 		}
 
@@ -499,8 +495,8 @@ function(
 	 * @return {sap.ui.core.Icon}
 	 * @private
 	 */
-	ListItemBase.prototype.getNavigationControl = function() {
-		if (this._oNavigationControl) {
+	ListItemBase.prototype.getNavigationControl = function(bCreateIfNotExist) {
+		if (!bCreateIfNotExist || this._oNavigationControl) {
 			return this._oNavigationControl;
 		}
 
@@ -520,8 +516,9 @@ function(
 	 * @return {sap.m.RadioButton}
 	 * @private
 	 */
-	ListItemBase.prototype.getSingleSelectControl = function() {
-		if (this._oSingleSelectControl) {
+	ListItemBase.prototype.getSingleSelectControl = function(bCreateIfNotExist) {
+		if (!bCreateIfNotExist || this._oSingleSelectControl) {
+			bCreateIfNotExist && this._oSingleSelectControl.setSelected(this.getSelected());
 			return this._oSingleSelectControl;
 		}
 
@@ -531,10 +528,10 @@ function(
 			activeHandling : false,
 			selected : this.getSelected()
 		}).addStyleClass("sapMLIBSelectS").setParent(this, null, true).setTabIndex(-1).attachSelect(function(oEvent) {
-				var bSelected = oEvent.getParameter("selected");
-				this.setSelected(bSelected);
-				this.informList("Select", bSelected);
-			}, this);
+			var bSelected = oEvent.getParameter("selected");
+			this.setSelected(bSelected);
+			this.informList("Select", bSelected);
+		}, this);
 
 		return this._oSingleSelectControl;
 	};
@@ -545,8 +542,9 @@ function(
 	 * @return {sap.m.CheckBox}
 	 * @private
 	 */
-	ListItemBase.prototype.getMultiSelectControl = function() {
-		if (this._oMultiSelectControl) {
+	ListItemBase.prototype.getMultiSelectControl = function(bCreateIfNotExist) {
+		if (!bCreateIfNotExist || this._oMultiSelectControl) {
+			bCreateIfNotExist && this._oMultiSelectControl.setSelected(this.getSelected());
 			return this._oMultiSelectControl;
 		}
 
@@ -569,30 +567,22 @@ function(
 	 * @returns {sap.ui.core.Control}
 	 * @private
 	 */
-	ListItemBase.prototype.getModeControl = function(bUpdate) {
-		var sMode = this.getMode(),
-			mListMode = ListMode;
+	ListItemBase.prototype.getModeControl = function(bCreateIfNotExist) {
+		var sMode = this.getMode();
 
-		if (!sMode || sMode == mListMode.None) {
+		if (!sMode || sMode == ListMode.None) {
 			return;
 		}
 
-		if (sMode == mListMode.Delete) {
-			return this.getDeleteControl();
+		if (sMode == ListMode.Delete) {
+			return this.getDeleteControl(bCreateIfNotExist);
 		}
 
-		var oSelectionControl = null;
-		if (sMode == mListMode.MultiSelect) {
-			oSelectionControl = this.getMultiSelectControl();
-		} else {
-			oSelectionControl = this.getSingleSelectControl();
+		if (sMode == ListMode.MultiSelect) {
+			return this.getMultiSelectControl(bCreateIfNotExist);
 		}
 
-		if (oSelectionControl && bUpdate) {
-			oSelectionControl.setSelected(this.getSelected());
-		}
-
-		return oSelectionControl;
+		return this.getSingleSelectControl(bCreateIfNotExist);
 	};
 
 	/**
@@ -601,16 +591,15 @@ function(
 	 * @returns {sap.ui.core.Icon}
 	 * @private
 	 */
-	ListItemBase.prototype.getTypeControl = function() {
-		var sType = this.getType(),
-			mType = ListType;
+	ListItemBase.prototype.getTypeControl = function(bCreateIfNotExist) {
+		var sType = this.getType();
 
-		if (sType == mType.Detail || sType == mType.DetailAndActive) {
-			return this.getDetailControl();
+		if (sType == ListType.Detail || sType == ListType.DetailAndActive) {
+			return this.getDetailControl(bCreateIfNotExist);
 		}
 
-		if (sType == mType.Navigation) {
-			return this.getNavigationControl();
+		if (sType == ListType.Navigation) {
+			return this.getNavigationControl(bCreateIfNotExist);
 		}
 	};
 
@@ -752,14 +741,12 @@ function(
 	 * @return {Boolean}
 	 */
 	ListItemBase.prototype.isIncludedIntoSelection = function() {
-		var sMode = this.getMode(),
-			mMode = ListMode;
-
-		return (sMode == mMode.SingleSelectMaster || (
+		var sMode = this.getMode();
+		return (sMode == ListMode.SingleSelectMaster || (
 				 this.getListProperty("includeItemInSelection") && (
-					sMode == mMode.SingleSelectLeft ||
-					sMode == mMode.SingleSelect ||
-					sMode == mMode.MultiSelect)
+					sMode == ListMode.SingleSelectLeft ||
+					sMode == ListMode.SingleSelect ||
+					sMode == ListMode.MultiSelect)
 				));
 	};
 
@@ -781,12 +768,10 @@ function(
 	 * @return {Boolean}
 	 */
 	ListItemBase.prototype.hasActiveType = function() {
-		var mType = ListType,
-			sType = this.getType();
-
-		return (sType == mType.Active ||
-				sType == mType.Navigation ||
-				sType == mType.DetailAndActive);
+		var sType = this.getType();
+		return (sType == ListType.Active ||
+				sType == ListType.Navigation ||
+				sType == ListType.DetailAndActive);
 	};
 
 	ListItemBase.prototype.setActive = function(bActive) {
@@ -923,7 +908,7 @@ function(
 	ListItemBase.prototype._activeHandling = function($This) {
 		$This.toggleClass("sapMLIBActive", this._active);
 
-		if (Device.system.Desktop && this.isActionable()) {
+		if (Device.system.desktop && this.isActionable()) {
 			$This.toggleClass("sapMLIBHoverable", !this._active);
 		}
 	};
@@ -964,9 +949,8 @@ function(
 		}
 
 		// exit from edit mode
-		var mKeyboardMode = ListKeyboardMode;
-		if (oEvent.srcControl !== this && oList.getKeyboardMode() == mKeyboardMode.Edit) {
-			oList.setKeyboardMode(mKeyboardMode.Navigation);
+		if (oEvent.srcControl !== this && oList.getKeyboardMode() == ListKeyboardMode.Edit) {
+			oList.setKeyboardMode(ListKeyboardMode.Navigation);
 			this._switchFocus(oEvent);
 			return;
 		}
@@ -1062,8 +1046,7 @@ function(
 				var oList = this.getList();
 				if (oList) {
 					this.$().prop("tabIndex", -1);
-					var mKeyboardMode = ListKeyboardMode;
-					oList.setKeyboardMode(oList.getKeyboardMode() == mKeyboardMode.Edit ? mKeyboardMode.Navigation : mKeyboardMode.Edit);
+					oList.setKeyboardMode(oList.getKeyboardMode() == ListKeyboardMode.Edit ? ListKeyboardMode.Navigation : ListKeyboardMode.Edit);
 					this._switchFocus(oEvent);
 				}
 			}

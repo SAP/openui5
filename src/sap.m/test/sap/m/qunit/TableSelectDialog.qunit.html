@@ -534,11 +534,11 @@
 			var oTable = sap.ui.getCore().byId("oTableSelectDialog1-table");
 			var aItems = oTable.getItems();
 			aItems[2].setSelected(true);
-			assert.equal(aItems[0].getModeControl().getSelected(), false, "SingleSelection: Item 0 should not be selected");
-			assert.equal(aItems[1].getModeControl().getSelected(), false, "SingleSelection: Item 1 should not be selected");
-			assert.equal(aItems[2].getModeControl().getSelected(), true, "SingleSelection: Item 2 should be selected");
-			assert.equal(aItems[3].getModeControl().getSelected(), false, "SingleSelection: Item 3 should not be selected");
-			assert.equal(aItems[4].getModeControl().getSelected(), false, "SingleSelection: Item 4 should not be selected");
+			assert.equal(aItems[0].getSelected(), false, "SingleSelection: Item 0 should not be selected");
+			assert.equal(aItems[1].getSelected(), false, "SingleSelection: Item 1 should not be selected");
+			assert.equal(aItems[2].getSelected(), true, "SingleSelection: Item 2 should be selected");
+			assert.equal(aItems[3].getSelected(), false, "SingleSelection: Item 3 should not be selected");
+			assert.equal(aItems[4].getSelected(), false, "SingleSelection: Item 4 should not be selected");
 			oTable.fireSelect({ listItem : aItems[2] });
 		});
 

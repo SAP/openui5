@@ -1071,7 +1071,7 @@
 			assert.strictEqual(oList.setIncludeItemInSelection(bIncludeItemInSelection).getIncludeItemInSelection(), bIncludeItemInSelection, 'The control property "includeItemInSelection" is "' + bIncludeItemInSelection + '" on ' + oList);
 			sap.ui.getCore().applyChanges();
 			oList.getItems().forEach(function (oItem) {
-				assert.strictEqual(oItem.$().hasClass("sapMLIBActionable"), true, 'Each item has css class "sapMLIBCursor" on ' + oList);
+				assert.strictEqual(oItem.$().hasClass("sapMLIBActionable"), true, 'Each item has css class "sapMLIBActionable" on ' + oList);
 			});
 
 			// simulate tap & check result
