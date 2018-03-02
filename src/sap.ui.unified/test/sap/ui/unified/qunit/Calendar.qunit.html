@@ -985,6 +985,29 @@
 				oCal7.destroy();
 			});
 
+			// BCP: 1780409322
+			QUnit.test("year change update aria-label of the button", function (assert) {
+				// prepare
+				var oCalendar = new sap.ui.unified.Calendar(),
+						oCurrentDate = new Date(2017, 5, 2),
+						oNewFocusedDate = new Date(2018, 6, 3);
+
+				oCalendar.displayDate(oCurrentDate);
+				oCalendar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				assert.equal(oCalendar.$("-Head-B2").attr("aria-label"),oCalendar.$("-Head-B2").text(), "aria-label should be equal to the text of the button");
+
+				// act
+				oCalendar.displayDate(oNewFocusedDate);
+
+				// assert
+				assert.equal(oCalendar.$("-Head-B2").attr("aria-label"),oCalendar.$("-Head-B2").text(), "aria-label should be equal to the text of the button");
+
+				// cleanup
+				oCalendar.destroy();
+			});
+
 
 			// BCP: 1780409322
 			QUnit.test("month change update aria-label of the button", function (assert) {
