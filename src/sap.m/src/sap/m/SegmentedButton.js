@@ -186,9 +186,10 @@ function(
 
 		//Make sure when a button gets removed to reset the selected button
 		this.removeButton = function (sButton) {
-			SegmentedButton.prototype.removeButton.call(this, sButton);
+			var oRemovedButton = SegmentedButton.prototype.removeButton.call(this, sButton);
 			this.setSelectedButton(this.getButtons()[0]);
 			this._fireChangeEvent();
+			return oRemovedButton;
 		};
 	};
 
@@ -567,6 +568,8 @@ function(
 			oRemovedButton.detachEvent("_change", this._fireChangeEvent, this);
 			this._syncSelect();
 		}
+
+		return oRemovedButton;
 	};
 
 	SegmentedButton.prototype.removeAllButtons = function () {
@@ -584,6 +587,8 @@ function(
 			}
 			this._syncSelect();
 		}
+
+		return aButtons;
 	};
 
 	/**
@@ -606,8 +611,9 @@ function(
 	 * @override
 	 */
 	SegmentedButton.prototype.removeItem = function (oItem) {
+		var oRemovedItem;
 		if (oItem !== null && oItem !== undefined) {
-			this.removeAggregation("items", oItem);
+			oRemovedItem = this.removeAggregation("items", oItem);
 			this.removeButton(oItem.oButton);//since this fires a "_change" event, it must be placed after public items are removed
 		}
 		// Reset selected button if the removed button is the currently selected one
@@ -618,6 +624,8 @@ function(
 		}
 
 		this.setSelectedItem(this.getItems()[0]);
+
+		return oRemovedItem;
 	};
 
 	/**
@@ -641,13 +649,15 @@ function(
 	 * @override
 	 */
 	SegmentedButton.prototype.removeAllItems = function (bSuppressInvalidate) {
-		this.removeAllAggregation("items", bSuppressInvalidate);
+		var oRemovedItems = this.removeAllAggregation("items", bSuppressInvalidate);
 		this.removeAllButtons();
 
 		// Reset selectedKey, selectedButton and selectedItem
 		this.setSelectedKey("");
 		this.setSelectedButton("");
 		this.setSelectedItem("");
+
+		return oRemovedItems;
 	};
 
 	/** Event handler for the internal button press events.
