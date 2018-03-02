@@ -61,7 +61,7 @@ sap.ui.require([
 	}
 
 	/**
-	 * Creates a V4 OData model for <code>GWSAMPLE_BASIC</code>.
+	 * Creates a V4 OData model for <code>zui5_epm_sample</code>.
 	 *
 	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
 	 *   potentially overwrite the parameters groupId, operationMode, serviceUrl,
@@ -434,11 +434,13 @@ sap.ui.require([
 			 * Stub function for _Requestor#request. Checks that the expected request arrived and
 			 * returns a promise for its response.
 			 */
-			function checkRequest(sMethod, sUrl, sGroupId, mHeaders, oPayload) {
+			function checkRequest(sMethod, sUrl, sGroupId, mHeaders, oPayload, fnSubmit,
+					fnCancel, sMetaPath, bIsFreshToken) {
 				var oActualRequest = {
 						groupId : sGroupId,
 						method : sMethod,
-						url : sUrl,
+						// This conversion would be done by the requestor code that is mocked away
+						url : that.oModel.oRequestor.convertResourcePath(sUrl),
 						headers : mHeaders,
 						payload : oPayload
 					},
@@ -453,7 +455,8 @@ sap.ui.require([
 					oResponse = oExpectedRequest.response;
 					delete oExpectedRequest.response;
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
-					oResponse = that.oModel.oRequestor.doConvertResponse(oResponse);
+					// This conversion would be done by the requestor code that is mocked away
+					oResponse = that.oModel.oRequestor.doConvertResponse(oResponse, sMetaPath);
 				}
 
 				if (!that.aRequests.length) { // waiting may be over after promise has been handled
@@ -756,11 +759,12 @@ sap.ui.require([
 	 *   and response as value
 	 * @param {object|object[]} mValueByControl A map or an array of maps containing control id as
 	 *   key and the expected control values as value
-	 * @param {sap.ui.model.odata.v4.ODataModel} [oModel] The model; it is attached to the view
-	 *   and to the test instance.
+	 * @param {string|sap.ui.model.odata.v4.ODataModel} [vModel]
+	 *   The model (or the name of a function at <code>this</code> which creates it); it is attached
+	 *   to the view and to the test instance.
 	 *   If no model is given, the <code>TEA_BUSI</code> model is created and used.
 	 */
-	function testViewStart(sTitle, sView, mResponseByRequest, mValueByControl, oModel) {
+	function testViewStart(sTitle, sView, mResponseByRequest, mValueByControl, vModel) {
 
 		QUnit.test(sTitle, function (assert) {
 			var sControlId, sRequest, that = this;
@@ -779,7 +783,10 @@ sap.ui.require([
 			} else {
 				expectChanges(mValueByControl);
 			}
-			return this.createView(assert, sView, oModel);
+			if (typeof vModel === "string") {
+				vModel = this[vModel]();
+			}
+			return this.createView(assert, sView, vModel);
 		});
 	}
 
@@ -3121,9 +3128,12 @@ sap.ui.require([
 	// after rendering (via setTimeout). This must not lead to separate requests for each table
 	// cell resp. console errors due to data access via virtual context.
 	// BCP 1770367083
+	// Also tests that key properties are $select'ed for a sap.ui.table.Table with query options
+	// different from $expand and $select in the binding parameters of the rows aggregation.
 	QUnit.test("sap.ui.table.Table with VisibleRowCountMode='Auto'", function (assert) {
 		var sView = '\
-<t:Table id="table" rows="{/EMPLOYEES}" visibleRowCountMode="Auto">\
+<t:Table id="table" rows="{path : \'/EMPLOYEES\', parameters : {$filter : \'AGE gt 42\'}}"\
+		visibleRowCountMode="Auto">\
 	<t:Column>\
 		<t:label>\
 			<Label text="Name"/>\
@@ -3140,7 +3150,7 @@ sap.ui.require([
 		return this.createView(assert, sView, oModel).then(function () {
 			// table.Table must render to call getContexts on its row aggregation's list binding
 			that.oView.placeAt("qunit-fixture");
-			that.expectRequest("EMPLOYEES?$select=ID,Name&$skip=0&$top=105", {
+			that.expectRequest("EMPLOYEES?$filter=AGE%20gt%2042&$select=ID,Name&$skip=0&$top=105", {
 					"value" : [
 						{"Name" : "Frederic Fall"},
 						{"Name" : "Jonathan Smith"}
@@ -3714,6 +3724,69 @@ sap.ui.require([
 	);
 
 	//*********************************************************************************************
+	// Scenario: master/detail with V2 adapter where the detail URI must be adjusted for V2
+	// Additionally properties of a contained complex type are used with auto-$expand/$select
+	QUnit.test("V2 adapter: master/detail", function (assert) {
+		var oModel = this.createModelForV2FlightService({autoExpandSelect : true}),
+			sView = '\
+<Table id="master" items="{/FlightCollection}">\
+	<ColumnListItem>\
+		<Text id="carrid" text="{carrid}" />\
+	</ColumnListItem>\
+</Table>\
+<FlexBox id="detail" binding="{}">\
+	<Text id="cityFrom" text="{flightDetails/cityFrom}" />\
+	<Text id="cityTo" text="{flightDetails/cityTo}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("FlightCollection?$select=carrid,connid,fldate&$skip=0&$top=100", {
+				"d" : {
+					"results" : [{
+						"__metadata" : {
+							"type" : "RMTSAMPLEFLIGHT.Flight"
+						},
+						"carrid" : "AA",
+						"connid" : "0017",
+						"fldate" : "/Date(1502323200000)/"
+					}]
+				}
+			})
+			.expectChange("carrid", ["AA"])
+			.expectChange("cityFrom") // expect a later change
+			.expectChange("cityTo"); // expect a later change
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("master").getItems()[0].getBindingContext();
+
+			that.expectRequest("FlightCollection(carrid='AA',connid='0017',fldate="
+				+ "datetime'2017-08-10T00%3A00%3A00')?$select=carrid,connid,fldate,flightDetails", {
+					"d": {
+						"__metadata": {
+							"type": "RMTSAMPLEFLIGHT.Flight"
+						},
+						"carrid": "AA",
+						"connid": "0017",
+						"fldate": "/Date(1502323200000)/",
+						"flightDetails" : {
+							"__metadata" : {
+								"type" : "RMTSAMPLEFLIGHT.FlightDetails"
+							},
+							"cityFrom" : "New York",
+							"cityTo" : "Los Angeles"
+						}
+					}
+				})
+				.expectChange("cityFrom", "New York")
+				.expectChange("cityTo", "Los Angeles");
+
+			that.oView.byId("detail").setBindingContext(oContext);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: <FunctionImport m:HttpMethod="GET"> in V2 Adapter
 	// Usage of service: /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
 	QUnit.test("V2 Adapter: FunctionImport", function (assert) {
@@ -3734,21 +3807,21 @@ sap.ui.require([
 						},
 						"carrid" : "AA",
 						"connid" : "0017",
-						"fldate" : "\/Date(1502323200000)\/"
+						"fldate" : "/Date(1502323200000)/"
 					}, {
 						"__metadata" : {
 							"type":"RMTSAMPLEFLIGHT.Flight"
 						},
 						"carrid" : "DL",
 						"connid" : "1699",
-						"fldate" : "\/Date(1502323200000)\/"
+						"fldate" : "/Date(1502323200000)/"
 					}, {
 						"__metadata" : {
 							"type":"RMTSAMPLEFLIGHT.Flight"
 						},
 						"carrid" : "UA",
 						"connid" : "3517",
-						"fldate" : "\/Date(1502323200000)\/"
+						"fldate" : "/Date(1502323200000)/"
 					}]
 				}
 			});
@@ -3775,15 +3848,58 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: <FunctionImport m:HttpMethod="GET" ReturnType="Edm.DateTime"> in V2 Adapter
+	QUnit.test("V2 Adapter: bound function returns primitive", function (assert) {
+		var oModel = this.createModelForV2FlightService(),
+			sView = '\
+<FlexBox binding="{/NotificationCollection(\'foo\')}">\
+	<Text id="updated" text="{= %{updated} }" />\
+	<FlexBox id="function" binding="{RMTSAMPLEFLIGHT.__FAKE__FunctionImport(...)}">\
+		<Text id="value" text="{= %{value} }" />\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("NotificationCollection('foo')", {
+				"d" : {
+					"__metadata" : {
+						"type":"RMTSAMPLEFLIGHT.Notification"
+					},
+					"ID" : "foo",
+					"updated" : "/Date(1502323200000)/"
+				}
+			})
+			.expectChange("updated", "2017-08-10T00:00:00Z") //TODO unexpected change
+			.expectChange("updated", "2017-08-10T00:00:00Z")
+			.expectChange("value", undefined); //TODO unexpected change
+
+
+		// code under test
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("__FAKE__FunctionImport?ID='foo'", {
+					"d" : { // Note: DataServiceVersion : 1.0
+						"__FAKE__FunctionImport" : "/Date(1502323200000)/"
+					}
+				})
+				.expectChange("value", "2017-08-10T00:00:00Z");
+
+			that.oView.byId("function").getObjectBinding().execute();
+			return that.waitForChanges(assert);
+		});
+	});
+	//TODO support also "version 2.0 JSON representation of a property"?
+	//TODO support "version 2.0 JSON representation of a collection of EDMSimpleType values"!
+
+
+	//*********************************************************************************************
 	// Scenario: <FunctionImport m:HttpMethod="GET" sap:action-for="..."> in V2 Adapter
 	// Usage of service: /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
 	//TODO $metadata of <FunctionImport> is broken, key properties and parameters do not match!
 	// --> server expects GetFlightDetails?airlineid='AA'&connectionid='0017'&fldate=datetime'...'
 	QUnit.test("V2 Adapter: bound function", function (assert) {
 		var oModel = this.createModelForV2FlightService(),
-			//TODO key predicate MUST use V4 literal form! fldate=\'2017-08-10T00:00:00Z\'
 			sView = '\
-<FlexBox binding="{/FlightCollection(carrid=\'AA\'&amp;connid=\'0017\'&amp;fldate=datetime\'2017-08-10T00:00:00\')}">\
+<FlexBox binding="{/FlightCollection(carrid=\'AA\',connid=\'0017\',fldate=2017-08-10T00:00:00Z)}">\
 	<Text id="carrid" text="{carrid}" />\
 	<FlexBox id="function" binding="{RMTSAMPLEFLIGHT.GetFlightDetails(...)}">\
 		<Text id="distance" text="{distance}" />\
@@ -3791,15 +3907,15 @@ sap.ui.require([
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("FlightCollection(carrid='AA'&connid='0017'"
-			+ "&fldate=datetime'2017-08-10T00:00:00')", {
+		this.expectRequest("FlightCollection(carrid='AA',connid='0017'"
+			+ ",fldate=datetime'2017-08-10T00%3A00%3A00')", {
 				"d" : {
 					"__metadata" : {
 						"type":"RMTSAMPLEFLIGHT.Flight"
 					},
 					"carrid" : "AA",
 					"connid" : "0017",
-					"fldate" : "\/Date(1502323200000)\/"
+					"fldate" : "/Date(1502323200000)/"
 				}
 			})
 			.expectChange("carrid", "AA")
@@ -3811,8 +3927,7 @@ sap.ui.require([
 			that.expectRequest("GetFlightDetails?carrid='AA'&connid='0017'"
 				+ "&fldate=datetime'2017-08-10T00:00:00'", {
 					"d" : {
-//TODO support this, pretty much like ComplexType
-//						"GetFlightDetails" : {
+						"GetFlightDetails" : {
 							"__metadata" : {
 								"type" : "RMTSAMPLEFLIGHT.FlightDetails"
 							},
@@ -3830,7 +3945,7 @@ sap.ui.require([
 							"flightType" : "",
 							"period" : 0
 						}
-//					}
+					}
 				})
 				.expectChange("distance", "2,572.0000");
 
@@ -3841,7 +3956,6 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	// Scenario: <FunctionImport m:HttpMethod="POST"> in V2 Adapter
-	// Usage of service: /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
 	QUnit.test("V2 Adapter: ActionImport", function (assert) {
 		var oModel = this.createModelForV2FlightService(),
 			that = this;
@@ -3865,7 +3979,7 @@ sap.ui.require([
 						},
 						"carrid" : "AA",
 						"connid" : "0017",
-						"fldate" : "\/Date(1502323200000)\/",
+						"fldate" : "/Date(1502323200000)/",
 						"PRICE" : "2222.00",
 						"SEATSMAX" : 320
 					}
@@ -3935,7 +4049,7 @@ sap.ui.require([
 							"type" : "GWSAMPLE_BASIC.SalesOrder"
 						},
 						"SalesOrderID" : "08/15",
-						"CreatedAt" : "\/Date(1502323200000)\/"
+						"CreatedAt" : "/Date(1502323200000)/"
 					}
 				})
 				.expectChange("id0", "0815") //TODO unexpected change
@@ -4073,6 +4187,16 @@ sap.ui.require([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Minimal test for an absolute ODataPropertyBinding. This scenario is comparable with
+	// "FavoriteProduct" in the SalesOrders application.
+	testViewStart("V2 Adapter: Absolute ODataPropertyBinding",
+		'<Text id="text" text="{= %{/ProductSet(\'HT-1000\')/CreatedAt} }" />',
+		{"ProductSet('HT-1000')/CreatedAt" : {"d" : {"CreatedAt" : "/Date(1502323200000)/"}}},
+		{"text" : "2017-08-10T00:00:00.0000000Z"},
+		"createModelForV2SalesOrderService"
+	);
 
 	//*********************************************************************************************
 	// Scenario: Table with suspended list binding is changed by adding and removing a column. After
@@ -4326,12 +4450,10 @@ sap.ui.require([
 				"Team_Id": "TEAM_01",
 				"MEMBER_COUNT": 2,
 				"TEAM_2_EMPLOYEES": [{
-					"@odata.etag": "W/\"19770724000000.0000000\"",
 					"ID": "1",
 					"Name": "Frederic Fall",
 					"AGE": 52
 				}, {
-					"@odata.etag": "W/\"19770724000000.0000000\"",
 					"ID": "3",
 					"Name": "Jonathan Smith",
 					"AGE": 56
@@ -4358,12 +4480,10 @@ sap.ui.require([
 					"Team_Id": "TEAM_01",
 					"MANAGER_ID": "3",
 					"TEAM_2_EMPLOYEES": [{
-						"@odata.etag": "W/\"19770724000000.0000000\"",
 						"ID": "1",
 						"Name": "Frederic Fall",
 						"STATUS": "Available"
 					}, {
-						"@odata.etag": "W/\"19770724000000.0000000\"",
 						"ID": "3",
 						"Name": "Jonathan Smith",
 						"STATUS": "Occupied"
@@ -4430,5 +4550,337 @@ sap.ui.require([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Operation binding for a function, first it is deferred, later is has been executed.
+	//   Show interaction of execute() and suspend()/resume(); setParameter() has been tested
+	//   for refresh() already, see test "Function binding: setParameter, execute and refresh".
+	QUnit.test("Function binding: execute and suspend/resume", function (assert) {
+		var sFunctionName = "com.sap.gateway.default.iwbep.tea_busi.v0001"
+				+ ".FuGetEmployeeSalaryForecast",
+			sView = '\
+<FlexBox id="employee" binding="{/EMPLOYEES(\'2\')}">\
+	<Text id="salary" text="{SALARY/YEARLY_BONUS_AMOUNT}" />\
+	<FlexBox id="function" binding="{' + sFunctionName + '(...)}">\
+		<Text id="forecastSalary" text="{SALARY/YEARLY_BONUS_AMOUNT}" />\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('2')", {
+				"SALARY": {
+					"YEARLY_BONUS_AMOUNT": 100
+				}
+			})
+			.expectChange("salary", "100")
+			.expectChange("forecastSalary", null); //TODO unexpected change
+		return this.createView(assert, sView).then(function () {
+			var oEmployeeBinding = that.oView.byId("employee").getObjectBinding();
+
+			that.expectRequest("EMPLOYEES('2')", {
+					"SALARY": {
+						"YEARLY_BONUS_AMOUNT": 100
+					}
+				});
+
+			oEmployeeBinding.suspend();
+			oEmployeeBinding.resume(); // MUST NOT trigger a request for the bound function!
+
+			return that.waitForChanges(assert).then(function () {
+				var oFunctionBinding = that.oView.byId("function").getObjectBinding();
+
+				that.expectRequest("EMPLOYEES('2')/" + sFunctionName + "()", {
+						"SALARY": {
+							"YEARLY_BONUS_AMOUNT": 142
+						}
+					})
+					.expectChange("forecastSalary", "142");
+				oFunctionBinding.execute();
+
+				return that.waitForChanges(assert).then(function () {
+					that.expectRequest("EMPLOYEES('2')", {
+							"SALARY": {
+								"YEARLY_BONUS_AMOUNT": 110
+							}
+						})
+						.expectRequest("EMPLOYEES('2')/" + sFunctionName + "()", {
+							"SALARY": {
+								"YEARLY_BONUS_AMOUNT": 150
+							}
+						})
+						.expectChange("salary", "110")
+						.expectChange("forecastSalary", "150");
+
+					oEmployeeBinding.suspend();
+					oEmployeeBinding.resume();
+				});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Master table with list binding is suspended after initialization. Detail form for
+	//   "selected" context from table is then changed by adding and removing a form field; table
+	//   remains unchanged.
+	//   After resume, *separate* new requests for the master table and the details form are sent;
+	//   the request for the form reflects the changes. The field added to the form is updated.
+	QUnit.skip("suspend/resume: master list binding with details context binding, only context"
+			+ " binding is adapted", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{path : \'/Equipments\', templateShareable : false}">\
+	<items>\
+		<ColumnListItem>\
+			<Text id="idEquipmentName" text="{Name}" />\
+		</ColumnListItem>\
+	</items>\
+</Table>\
+<FlexBox id="form" binding="{EQUIPMENT_2_EMPLOYEE}">\
+	<Text id="idName" text="{Name}" />\
+	<Text id="idAge" text="{AGE}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Equipments?$select=Category,ID,Name&$skip=0&$top=100", {
+				value : [{
+					"Category": "Electronics",
+					"ID": 1,
+					"Name": "Office PC"
+				}, {
+					"Category": "Electronics",
+					"ID": 2,
+					"Name": "Tablet X"
+				}]
+			})
+			.expectChange("idEquipmentName", ["Office PC", "Tablet X"])
+			.expectChange("idName")
+			.expectChange("idAge");
+		return this.createView(assert, sView, oModel).then(function () {
+			var oForm = that.oView.byId("form");
+
+			oForm.setBindingContext(that.oView.byId("table").getBinding("items")
+				.getCurrentContexts()[0]);
+
+			that.expectRequest("Equipments(Category='Electronics',ID=1)/EQUIPMENT_2_EMPLOYEE"
+					+ "?$select=AGE,ID,Name", {
+						"AGE" : 52,
+						"ID" : "2",
+						"Name" : "Frederic Fall"
+					})
+				.expectChange("idName", "Frederic Fall")
+				.expectChange("idAge", "52");
+
+			return that.waitForChanges(assert).then(function () {
+				var sIdManagerId;
+
+				// no change in table, only in contained form
+				oForm.getObjectBinding().getRootBinding().suspend();
+				sIdManagerId = that.addToForm(oForm, "MANAGER_ID", assert);
+				that.removeFromForm(oForm, "idAge");
+
+				that.expectRequest("Equipments?$select=Category,ID,Name&$skip=0&$top=100", {
+						value : [{
+							"Category": "Electronics",
+							"ID": 1,
+							"Name": "Office PC"
+						}, {
+							"Category": "Electronics",
+							"ID": 2,
+							"Name": "Tablet X"
+						}]
+					})
+					.expectRequest("Equipments(Category='Electronics',ID=1)/EQUIPMENT_2_EMPLOYEE"
+						+ "?$select=ID,MANAGER_ID,Name", {
+							"ID" : "2",
+							"Name" : "Frederic Fall",
+							"MANAGER_ID" : "1"
+						})
+//TODO this is what happens today: initially different requests for master/detail are combined in
+// one request with $expand: This must not happen; we need a way to declare that bindings must
+// not be combined on auto-$expand/$select
+//				that.expectRequest("Equipments?$select=Category,ID,Name"
+//							+ "&$expand=EQUIPMENT_2_EMPLOYEE($select=ID,MANAGER_ID,Name)"
+//							+ "&$skip=0&$top=100", {
+//						value : [{
+//							"Category": "Electronics",
+//							"ID": 1,
+//							"Name": "Office PC",
+//							"EQUIPMENT_2_EMPLOYEE" : {
+//								"ID" : "2",
+//								"Name" : "Frederic Fall",
+//								"MANAGER_ID" : "1"
+//							}
+//						}, {
+//							"Category": "Electronics",
+//							"ID": 2,
+//							"Name": "Tablet X",
+//							"EQUIPMENT_2_EMPLOYEE" : {
+//								"ID" : "3",
+//								"Name" : "Jonathan Smith",
+//								"MANAGER_ID" : "2"
+//							}
+//					}]})
+					.expectChange("idEquipmentName", ["Office PC", "Tablet X"])
+					.expectChange(sIdManagerId, "1");
+
+				oForm.getObjectBinding().getRootBinding().resume();
+
+				return that.waitForChanges(assert);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Deferred operation binding returns a collection. A nested list binding for "value"
+	// with auto-$expand/$select displays the result.
+	QUnit.test("Deferred operation returns collection, auto-$expand/$select", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/GetSOContactList(...)}" id="function">\
+	<Table items="{value}">\
+		<items>\
+			<ColumnListItem>\
+				<Text id="id" text="{ContactGUID}" />\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("id", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("GetSOContactList(SalesOrderID='0500000001')", {
+					value : [{
+						"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"
+					}, {
+						"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"
+					}, {
+						"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
+					}]
+				})
+				.expectChange("id", [
+					"fa163e7a-d4f1-1ee8-84ac-11f9c591d177",
+					"fa163e7a-d4f1-1ee8-84ac-11f9c591f177",
+					"fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
+				]);
+
+			that.oView.byId("function").getObjectBinding()
+				.setParameter("SalesOrderID", "0500000001")
+				.execute();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: List binding for non-deferred function call which returns a collection, with
+	// auto-$expand/$select.
+	QUnit.test("List: function returns collection, auto-$expand/$select", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table items="{/GetSOContactList(SalesOrderID=\'0500000001\')}">\
+	<items>\
+		<ColumnListItem>\
+			<Text id="id" text="{ContactGUID}" />\
+		</ColumnListItem>\
+	</items>\
+</Table>';
+
+		this.expectRequest("GetSOContactList(SalesOrderID='0500000001')?$select=ContactGUID"
+				+ "&$skip=0&$top=100", {
+			value : [{
+				"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"
+			}, {
+				"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"
+			}, {
+				"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
+			}]
+		})
+		.expectChange("id", [
+			"fa163e7a-d4f1-1ee8-84ac-11f9c591d177",
+			"fa163e7a-d4f1-1ee8-84ac-11f9c591f177",
+			"fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
+		]);
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: ODataContextBinding for non-deferred function call which returns a collection. A
+	// nested list binding for "value" with auto-$expand/$select displays the result.
+	// github.com/SAP/openui5/issues/1727
+	QUnit.test("Context: function returns collection, auto-$expand/$select", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/GetSOContactList(SalesOrderID=\'0500000001\')}" id="function">\
+	<Table items="{value}">\
+		<items>\
+			<ColumnListItem>\
+				<Text id="id" text="{ContactGUID}" />\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>';
+
+		this.expectChange("id", false);
+
+		this.expectRequest("GetSOContactList(SalesOrderID='0500000001')?$select=ContactGUID", {
+			value : [{
+				"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"
+			}, {
+				"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"
+			}, {
+				"ContactGUID": "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
+			}]
+		})
+		.expectChange("id", [
+			"fa163e7a-d4f1-1ee8-84ac-11f9c591d177",
+			"fa163e7a-d4f1-1ee8-84ac-11f9c591f177",
+			"fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
+		]);
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: ODataContextBinding for non-deferred bound function call which returns a
+	// collection. A nested list binding for "value" with auto-$expand/$select displays the result.
+	QUnit.test("Context: bound function returns coll., auto-$expand/$select", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sFunctionName = "com.sap.gateway.default.iwbep.tea_busi.v0001"
+				+ ".__FAKE__FuGetEmployeesByManager",
+			sView = '\
+<FlexBox binding="{/MANAGERS(\'1\')/' + sFunctionName + '()}" id="function">\
+	<Table items="{value}">\
+		<items>\
+			<ColumnListItem>\
+				<Text id="id" text="{ID}" />\
+				<Text id="name" text="{Name}" />\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>';
+
+		this.expectRequest("MANAGERS('1')/" + sFunctionName + "()?$select=ID,Name", {
+			value : [{
+				"ID" : "3",
+				"Name": "Jonathan Smith"
+			}, {
+				"ID" : "6",
+				"Name": "Susan Bay"
+			}]
+		})
+		.expectChange("id", ["3", "6"])
+		.expectChange("name", ["Jonathan Smith", "Susan Bay"]);
+
+		return this.createView(assert, sView, oModel);
+	});
+	//TODO Gateway says "Expand/Select not supported for functions"!
+	//TODO Gateway says "System query options not supported for functions"!
+	// --> TripPinRESTierService is OK with both!
+	// http://services.odata.org/TripPinRESTierService/(S(...))/People('russellwhyte')/Trips(1)/
+	// Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetInvolvedPeople()
+	// ?$count=true&$select=UserName&$skip=1
 });
 //TODO test delete

@@ -556,6 +556,7 @@ sap.ui.require([
 		}
 	].forEach(function (oFixture) {
 		var sSemanticsValue = oFixture.sSemantics + ";type=" + oFixture.sTypes;
+
 		QUnit.test("getV4TypesForV2Semantics: " + sSemanticsValue, function (assert) {
 			var bLogExpected = oFixture.sOutput === "" || oFixture.oExpectedMessage,
 				oType = { "name" : "Foo" },
@@ -571,6 +572,16 @@ sap.ui.require([
 			assert.strictEqual(Utils.getV4TypesForV2Semantics(oFixture.sSemantics, oFixture.sTypes,
 				oProperty, oType), oFixture.sOutput, sSemanticsValue);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getV4TypesForV2Semantics: ignores unknown semantic with type", function (assert) {
+		var sSemantic = "tle;type=cell",
+			oProperty = { "name" : "bar", "sap:semantics" : sSemantic },
+			oType = { "name" : "Foo" };
+
+		assert.strictEqual(Utils.getV4TypesForV2Semantics("tle", "cell", oProperty, oType), "",
+			sSemantic);
 	});
 
 	//*********************************************************************************************
@@ -1157,6 +1168,8 @@ sap.ui.require([
 		role : "dimension", term : "com.sap.vocabularies.Analytics.v1.Dimension"
 	}, {
 		role : "measure", term : "com.sap.vocabularies.Analytics.v1.Measure"
+	}, {
+		role : "foo", term : "must.not.exist"
 	}].forEach(function (oFixture) {
 		var sRole = oFixture.role;
 
@@ -1167,7 +1180,8 @@ sap.ui.require([
 			// code under test
 			Utils.addV4Annotation(oProperty, oExtension, "Property");
 
-			assert.deepEqual(oProperty[oFixture.term], {"Bool" : "true"});
+			assert.deepEqual(oProperty[oFixture.term],
+				sRole === "foo" ? undefined : {"Bool" : "true"});
 		});
 	});
 

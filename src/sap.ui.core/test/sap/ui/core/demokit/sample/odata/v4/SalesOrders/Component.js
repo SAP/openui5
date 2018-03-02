@@ -52,6 +52,8 @@ sap.ui.define([
 					models : { undefined : oModel,
 						ui : new JSONModel({
 								bCreateItemPending : false,
+								filterProductID : "",
+								filterValue : "",
 								bLineItemSelected : false,
 								bRealOData : TestUtils.isRealOData(),
 								bSalesOrderSelected : false,

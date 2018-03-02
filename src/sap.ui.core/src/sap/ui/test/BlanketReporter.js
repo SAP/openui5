@@ -12,7 +12,11 @@ sap.ui.define([
 ], function (jQuery, Controller, XMLView, Filter, FilterType, JSONModel) {
 	"use strict";
 
-	var sStyle = '\
+	// lower case package names, UpperCamelCase class name, optional lowerCamelCase method name
+	// 1st group: qualified class name
+	// 2nd group: optional method name (incl. leading dot!)
+	var rModule = /^((?:[a-z0-9]+\.)+_?[A-Z]\w+)(\.[a-z]\w+)?$/,
+		sStyle = '\
 		.blanket-source {\
 			overflow-x: scroll;\
 			background-color: #FFFFFF;\
@@ -316,11 +320,13 @@ sap.ui.define([
 	 * @param {number} iThreshold
 	 *   Threshold for KPIs as a percentage
 	 * @param {string[]} [aTestedFiles]
-	 *   The tested files (derived from the module names) or undefined if all tests were run
+	 *   The tested files (derived from the module names) or undefined if all tests were run.
+	 *   Note: unsorted, may still contain duplicates or even <code>undefined</code>!
 	 * @returns {JSONModel} The JSON model
 	 */
 	function createModel(oCoverageData, iLinesOfContext, iThreshold, aTestedFiles) {
-		var oTotal = {
+		var mSummarizedFiles = {}, // maps file name to true for already summarized files
+			oTotal = {
 				files : [],
 				lines : {
 					total : 0,
@@ -355,6 +361,11 @@ sap.ui.define([
 				},
 				i;
 
+			if (sFile in mSummarizedFiles) {
+				return;
+			}
+			mSummarizedFiles[sFile] = true;
+
 			for (i = 0; i < aFileData.length; i++) {
 				if (aFileData[i] !== undefined) {
 					oFileSummary.lines.total++;
@@ -382,14 +393,13 @@ sap.ui.define([
 			oTotal.branches.missed += oFileSummary.branches.missed;
 		}
 
-		if (aTestedFiles) {
-			aTestedFiles.filter(function (sFile) {
-				return sFile in oCoverageData.files;
-			}).forEach(summarize);
+		if (aTestedFiles
+				&& aTestedFiles.every(function (sFile) {return sFile in oCoverageData.files;})) {
 			oTotal.filterThreshold = false;
 		} else {
-			Object.keys(oCoverageData.files).sort().forEach(summarize);
+			aTestedFiles = Object.keys(oCoverageData.files);
 		}
+		aTestedFiles.sort().forEach(summarize);
 
 		oTotal.linesOfContext = iLinesOfContext;
 		oTotal.threshold = iThreshold;
@@ -428,7 +438,11 @@ sap.ui.define([
 	}
 
 	function convertToFile(sModule) {
-		return jQuery.sap.getResourceName(sModule);
+		var aMatches = rModule.exec(sModule);
+
+		return !aMatches || aMatches[2] === ".integration"
+			? undefined // "all"
+			: jQuery.sap.getResourceName(aMatches[1]);
 	}
 
 	return function (oScript, fnGetTestedModules, oCoverageData) {

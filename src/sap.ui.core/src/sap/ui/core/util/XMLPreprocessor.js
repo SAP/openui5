@@ -378,17 +378,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 		 */
 		function isTemplateElement(oElement, sLocalName) {
 			return oElement.namespaceURI === sNAMESPACE
-				&& localName(oElement) === sLocalName;
-		}
-
-		/**
-		 * Returns the local name of the given XML DOM element, taking care of IE8.
-		 *
-		 * @param {Element} oElement any XML DOM element
-		 * @returns {string} the local name
-		 */
-		function localName(oElement) {
-			return oElement.localName || oElement.baseName; // IE8
+				&& oElement.localName === sLocalName;
 		}
 
 		/**
@@ -1047,7 +1037,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 
 					requireFor(oFragmentElement);
 					if (oFragmentElement.namespaceURI === "sap.ui.core"
-							&& localName(oFragmentElement) === "FragmentDefinition") {
+							&& oFragmentElement.localName === "FragmentDefinition") {
 						liftChildNodes(oFragmentElement, oWithControl, oElement);
 					} else {
 						oElement.parentNode.insertBefore(oFragmentElement, oElement);
@@ -1291,7 +1281,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 							}
 							oTestElement = oSelectedElement = aChildren.shift();
 							// repeat as long as we're on an <elseif>
-						} while (oTestElement && localName(oTestElement) === "elseif");
+						} while (oTestElement && oTestElement.localName === "elseif");
 					} else if (performTest(oIfElement, oWithControl)) {
 						// no <if>-specific children and <if> test is true -> select the <if>
 						oSelectedElement = oIfElement;
@@ -1530,7 +1520,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 						fnSupportInfo({context:oNode, env:{caller:"visitNode", before: {name: oNode.tagName}}});
 					}
 					if (oNode.namespaceURI === sNAMESPACE) {
-						switch (localName(oNode)) {
+						switch (oNode.localName) {
 						case "alias":
 							templateAlias(oNode, oWithControl);
 							return;
@@ -1551,7 +1541,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 							error("Unexpected tag ", oNode);
 						}
 					} else if (oNode.namespaceURI === "sap.ui.core") {
-						switch (localName(oNode)) {
+						switch (oNode.localName) {
 						case "ExtensionPoint":
 							if (templateExtensionPoint(oNode, oWithControl)) {
 								return;
@@ -1568,7 +1558,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 						// no default
 						}
 					} else {
-						fnVisitor = mVisitors[oNode.namespaceURI + " " + localName(oNode)]
+						fnVisitor = mVisitors[oNode.namespaceURI + " " + oNode.localName]
 							|| mVisitors[oNode.namespaceURI];
 
 						if (fnVisitor) {

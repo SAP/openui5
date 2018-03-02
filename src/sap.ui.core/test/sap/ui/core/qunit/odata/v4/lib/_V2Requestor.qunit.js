@@ -6,9 +6,12 @@ sap.ui.require([
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/model/odata/v4/lib/_V2Requestor"
-], function (jQuery, SyncPromise, DateFormat, ODataUtils, _Requestor, asV2Requestor) {
+], function (jQuery, SyncPromise, DateFormat, ODataUtils, _Helper, _Parser, _Requestor,
+		asV2Requestor) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -63,8 +66,8 @@ sap.ui.require([
 		bIsCollection : true,
 		oResponsePayload : {
 			"d" : {
-				"__count": "3",
-				"__next": "...?$skiptoken=12",
+				"__count" : "3",
+				"__next" : "...?$skiptoken=12",
 				"results" : [{"String" : "foo"}, {"Boolean" : true}]
 			}
 		},
@@ -74,11 +77,25 @@ sap.ui.require([
 			"value" : [{"String" : "foo"}, {"Boolean" : true}]
 		}
 	}, {
+		bIsCollection : true,
+		oResponsePayload : {
+			"d" : {
+				"results" : [{"String" : "foo"}, {"Boolean" : true}]
+			}
+		},
+		oExpectedResult : {
+			"value" : [{"String" : "foo"}, {"Boolean" : true}]
+		}
+	}, {
 		bIsCollection : false,
 		oResponsePayload : {
-			"d" : {"String" : "foo"}
+			"d" : {
+				"__metadata" : {},
+				"String" : "foo"
+			}
 		},
-		oExpectedResult : {"String" : "foo"}
+		//TODO "__metadata" : {} is actually unexpected here, in real life
+		oExpectedResult : {"__metadata" : {}, "String" : "foo"}
 	}, {
 		bIsCollection : false,
 		oResponsePayload : {
@@ -105,6 +122,110 @@ sap.ui.require([
 			assert.deepEqual(oRequestor.doConvertResponse(oFixture.oResponsePayload),
 				oFixture.oExpectedResult);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("doConvertResponse, 2.2.7.2.3 RetrieveComplexType Request", function (assert) {
+		var oPayload = {},
+			oRequestor = {},
+			oResponsePayload = {
+				// /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
+				// FlightCollection(carrid='...',connid='...',fldate=datetime'...')/flightDetails
+				"d" : {
+					"flightDetails" : {
+						"__metadata" : {
+							"type" : "RMTSAMPLEFLIGHT.FlightDetails"
+						}
+					}
+				}
+			};
+
+		asV2Requestor(oRequestor);
+		this.mock(oRequestor).expects("convertNonPrimitive")
+			.withExactArgs(sinon.match.same(oResponsePayload.d.flightDetails))
+			.returns(oPayload);
+
+		// code under test
+		assert.strictEqual(oRequestor.doConvertResponse(oResponsePayload), oPayload);
+	});
+
+	//*********************************************************************************************
+	[{
+		"d" : {
+			// "An optional "__metadata" name/value pair..."
+			"readMe1st" : {}
+		}
+	}, {
+		"d" : {
+			// "An optional "__metadata" name/value pair..."
+			"ID" : 0,
+			"Name" : "Food"
+		}
+	}].forEach(function (oResponsePayload, i) {
+		QUnit.test("doConvertResponse, not 2.2.7.2.3 RetrieveComplexType: " + i, function (assert) {
+			var oPayload = {},
+				oRequestor = {};
+
+			asV2Requestor(oRequestor);
+			this.mock(oRequestor).expects("convertNonPrimitive")
+				.withExactArgs(sinon.match.same(oResponsePayload.d))
+				.returns(oPayload);
+
+			// code under test
+			assert.strictEqual(oRequestor.doConvertResponse(oResponsePayload), oPayload);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("doConvertResponse, 2.2.7.2.4 RetrievePrimitiveProperty Req.", function (assert) {
+		var sMetaPath = "/FlightCollection/fldate",
+			sOutput = "2017-08-10T00:00:00Z",
+			oProperty = {},
+			oRequestor = {
+				oModelInterface : {fnFetchMetadata : function () {}}
+			},
+			oResponsePayload = {
+				// /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
+				// FlightCollection(carrid='...',connid='...',fldate=datetime'...')/fldate
+				"d" : {
+					"fldate": "/Date(1502323200000)/"
+				}
+			};
+
+		asV2Requestor(oRequestor);
+		this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata")
+			.withExactArgs(sMetaPath)
+			.returns(SyncPromise.resolve(oProperty));
+		this.mock(oRequestor).expects("convertPrimitive")
+			.withExactArgs(oResponsePayload.d.fldate, sinon.match.same(oProperty), sMetaPath,
+				"fldate")
+			.returns(sOutput);
+
+		// code under test
+		assert.deepEqual(
+			oRequestor.doConvertResponse(oResponsePayload, sMetaPath),
+			{value : sOutput});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("doConvertResponse, 2.2.7.2.3 & 2.2.7.2.4: null", function (assert) {
+		var sMetaPath = "/FlightCollection/fldate",
+			oRequestor = {},
+			oResponsePayload = {
+				// /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
+				// FlightCollection(carrid='...',connid='...',fldate=datetime'...')/fldate
+				"d" : {
+					"fldate": null
+				}
+			};
+
+		asV2Requestor(oRequestor);
+		this.mock(oRequestor).expects("convertPrimitive").never();
+
+		// code under test
+		assert.deepEqual(
+			oRequestor.doConvertResponse(oResponsePayload, sMetaPath),
+			{value : null});
 	});
 
 	//*********************************************************************************************
@@ -233,8 +354,8 @@ sap.ui.require([
 
 			// code under test
 			assert.throws(function () {
-				oRequestor.convertNonPrimitive(oObject, {});
-			}, new Error("Cannot convert complex value without type information in "
+				oRequestor.convertNonPrimitive(oObject);
+			}, new Error("Cannot convert structured value without type information in "
 					+ "__metadata.type: " + JSON.stringify(oObject)));
 		});
 	});
@@ -264,13 +385,15 @@ sap.ui.require([
 
 			asV2Requestor(oRequestor);
 			if (oFixture.sConvertMethod) {
-				oFixture.sType === "Edm.DateTimeOffset"
-					? this.mock(oRequestor).expects(oFixture.sConvertMethod)
+				if (oFixture.sType === "Edm.DateTimeOffset") {
+					this.mock(oRequestor).expects(oFixture.sConvertMethod)
 						.withExactArgs(sinon.match.same(vV2Value), {$Type : oFixture.sType})
-						.returns(vV4Value)
-					: this.mock(oRequestor).expects(oFixture.sConvertMethod)
+						.returns(vV4Value);
+				} else {
+					this.mock(oRequestor).expects(oFixture.sConvertMethod)
 						.withExactArgs(sinon.match.same(vV2Value))
 						.returns(vV4Value);
+				}
 			} else {
 				vV4Value = vV2Value; // no conversion
 			}
@@ -324,6 +447,9 @@ sap.ui.require([
 
 		// code under test
 		assert.strictEqual(oRequestor.convertDate("\/Date(1395705600000)\/"), "2014-03-25");
+
+		// code under test
+		assert.strictEqual(oRequestor.convertDate("\/Date(-327628800000)\/"), "1959-08-15");
 	});
 
 	//*********************************************************************************************
@@ -380,6 +506,9 @@ sap.ui.require([
 	}, {
 		input : "/Date(1395752399000)/", // DateTime in V2
 		output : "2014-03-25T12:59:59Z"  // must be interpreted as UTC
+	}, {
+		input : "/Date(-327628800000)/", // DateTime in V2 before 1970
+		output : "1959-08-15T00:00:00Z"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("convertDateTimeOffset, success " + i, function (assert) {
 			var oRequestor = {};
@@ -595,28 +724,37 @@ sap.ui.require([
 			}
 		}
 	}, { // test nested $expand structure
+		// def at root and baz in foo are complex properties for which two nested simple properties
+		// are selected in V4  -> In V2 these complex properties have to be selected once
 		expectedResultHandlerCalls : [
 			{key : "$expand", value : "foo,foo/bar,baz"},
 			{key : "$orderby", value : "foo,bar"},
-			{key : "$select", value : "foo/xyz,foo/bar/*,baz/*,abc"}
+			{key : "$select", value : "foo/xyz,foo/baz,foo/bar/*,baz/*,abc,def"}
 		],
 		expectedResultHandlerCallsSorted : [
 			{key : "$expand", value : "baz,foo,foo/bar"},
 			{key : "$orderby", value : "foo,bar"},
-			{key : "$select", value : "abc,baz/*,foo/bar/*,foo/xyz"}
+			{key : "$select", value : "abc,baz/*,def,foo/bar/*,foo/baz,foo/xyz"}
 		],
 		queryOptions : {
 			"$expand" : {
 				"foo" : {
-					"$select" : "xyz",
+					"$select" : ["xyz", "baz/qux", "baz/quux"],
 					"$expand" : {
 						"bar" : true
 					}
 				},
 				"baz" : true
 			},
-			"$select" : "abc",
+			"$select" : "abc,def/ghi,def/jkl",
 			"$orderby" : "foo,bar"
+		}
+	}, { // garbage in, garbage out - do not touch if there is a type cast
+		expectedResultHandlerCalls : [
+			{key : "$select", value : "foo/name.space.OtherType"}
+		],
+		queryOptions : {
+			"$select" : "foo/name.space.OtherType"
 		}
 	}].forEach(function (oFixture, i) {
 		var sTitle = "doConvertSystemQueryOptions (V2): " + i + ", mQueryOptions"
@@ -1372,5 +1510,120 @@ sap.ui.require([
 		var oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
 
 		assert.strictEqual(oRequestor.isActionBodyOptional(), true);
+	});
+
+	//*****************************************************************************************
+	QUnit.test("convertKeyPredicate: simple string predicate", function (assert) {
+		var oEntityType = {
+				$Key : ["KeyProperty"],
+				KeyProperty : {$Type : "Edm.String"}
+			},
+			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+
+		this.mock(_Helper).expects("getMetaPath")
+			.withExactArgs("/my/path('foo')").returns("/my/path");
+		this.mock(oRequestor).expects("fetchTypeForPath").withExactArgs("/my/path")
+			.returns(SyncPromise.resolve(oEntityType));
+		this.mock(_Parser).expects("parseKeyPredicate").withExactArgs("('foo')")
+			.returns({"" : "'foo'"});
+
+		assert.strictEqual(oRequestor.convertKeyPredicate("('foo')", "/my/path('foo')"), "('foo')");
+	});
+
+	//*****************************************************************************************
+	QUnit.test("convertKeyPredicate: simple non-string predicate", function (assert) {
+		var oEntityType = {
+				$Key : ["KeyProperty"],
+				KeyProperty : {$Type : "Edm.Foo"}
+			},
+			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+
+		this.mock(_Helper).expects("getMetaPath")
+			.withExactArgs("/my/path(42)").returns("/my/path");
+		this.mock(oRequestor).expects("fetchTypeForPath").withExactArgs("/my/path")
+			.returns(SyncPromise.resolve(oEntityType));
+		this.mock(_Parser).expects("parseKeyPredicate").withExactArgs("(42)").returns({"" : "42"});
+		this.mock(_Helper).expects("parseLiteral").withExactArgs("42", "Edm.Foo", "/my/path(42)")
+			.returns(42);
+		this.mock(oRequestor).expects("formatPropertyAsLiteral")
+			.withExactArgs(42, sinon.match.same(oEntityType.KeyProperty)).returns("~42~");
+
+		assert.strictEqual(oRequestor.convertKeyPredicate("(42)", "/my/path(42)"), "(~42~)");
+	});
+
+	//*****************************************************************************************
+	QUnit.test("convertKeyPredicate: named non-string predicate, encoded", function (assert) {
+		var oEntityType = {
+				$Key : ["føø"],
+				"føø" : {$Type : "Edm.Foo"}
+			},
+			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0");
+
+		this.mock(_Helper).expects("getMetaPath")
+			.withExactArgs("/my/path(f%C3%B8%C3%B8=42)").returns("/my/path");
+		this.mock(oRequestor).expects("fetchTypeForPath").withExactArgs("/my/path")
+			.returns(SyncPromise.resolve(oEntityType));
+		this.mock(_Parser).expects("parseKeyPredicate").withExactArgs("(føø=42)")
+			.returns({"føø" : "42"});
+		this.mock(_Helper).expects("parseLiteral")
+			.withExactArgs("42", "Edm.Foo", "/my/path(f%C3%B8%C3%B8=42)")
+			.returns(42);
+		this.mock(oRequestor).expects("formatPropertyAsLiteral")
+			.withExactArgs(42, sinon.match.same(oEntityType["føø"])).returns("~bãr~");
+
+		assert.strictEqual(
+			oRequestor.convertKeyPredicate("(f%C3%B8%C3%B8=42)", "/my/path(f%C3%B8%C3%B8=42)"),
+			"(f%C3%B8%C3%B8=~b%C3%A3r~)");
+	});
+
+	//*****************************************************************************************
+	QUnit.test("convertKeyPredicate: compound predicate", function (assert) {
+		var oEntityType = {
+				$Key : ["p1", "p2", "p3"],
+				p1 : {$Type : "Edm.Double"},
+				p2 : {$Type : "Edm.String"},
+				p3 : {$Type : "Edm.Double"}
+			},
+			oHelperMock = this.mock(_Helper),
+			oParserMock = this.mock(_Parser),
+			oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0"),
+			oRequestorMock = this.mock(oRequestor);
+
+		this.mock(_Helper).expects("getMetaPath")
+			.withExactArgs("/my/path(p1=1,p2='2',p3=3)").returns("/my/path");
+		oRequestorMock.expects("fetchTypeForPath").withExactArgs("/my/path")
+			.returns(SyncPromise.resolve(oEntityType));
+		oParserMock.expects("parseKeyPredicate").withExactArgs("(p1=1,p2='2',p3=3)")
+			.returns({"p1" : "1", "p2" : "'2'", "p3" : "3"});
+		oHelperMock.expects("parseLiteral")
+			.withExactArgs("1", "Edm.Double", "/my/path(p1=1,p2='2',p3=3)").returns(1);
+		oRequestorMock.expects("formatPropertyAsLiteral")
+			.withExactArgs(1, sinon.match.same(oEntityType.p1)).returns("1d");
+		oHelperMock.expects("parseLiteral")
+			.withExactArgs("3", "Edm.Double", "/my/path(p1=1,p2='2',p3=3)").returns(3);
+		oRequestorMock.expects("formatPropertyAsLiteral")
+			.withExactArgs(3, sinon.match.same(oEntityType.p3)).returns("3d");
+
+		assert.strictEqual(
+			oRequestor.convertKeyPredicate("(p1=1,p2='2',p3=3)", "/my/path(p1=1,p2='2',p3=3)"),
+			"(p1=1d,p2='2',p3=3d)");
+	});
+
+	//*****************************************************************************************
+	["", "?$select=*"].forEach(function (sQuery) {
+		QUnit.test("convertResourcePath: query=" + sQuery, function (assert) {
+			var oRequestor = _Requestor.create("/", undefined, undefined, undefined, "2.0"),
+				oRequestorMock = this.mock(oRequestor);
+
+			oRequestorMock.expects("convertKeyPredicate")
+				.withExactArgs("(42)", "/Foo/Bar(42)")
+				.returns("(~42~)");
+			oRequestorMock.expects("convertKeyPredicate")
+				.withExactArgs("(23)", "/Foo/Bar(42)/Baz/Qux(23)")
+				.returns("(~23~)");
+
+			assert.strictEqual(oRequestor.convertResourcePath("Foo/Bar(42)/Baz/Qux(23)" + sQuery),
+				"Foo/Bar(~42~)/Baz/Qux(~23~)" + sQuery);
+		});
 	});
 });

@@ -2318,6 +2318,21 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getODataAssociation*Set*End: entityContainer is undefined", function (assert) {
+		var that = this;
+
+		return withMetaModel(assert, function (oMetaModel) {
+			var oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product");
+
+			that.mock(oMetaModel).expects("getODataEntityContainer").returns(null);
+
+			// code under test
+			assert.strictEqual(oMetaModel.getODataAssociationSetEnd(oEntityType, "ToSupplier"),
+				null);
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getODataProperty", function (assert) {
 		return withMetaModel(assert, function (oMetaModel) {
 			var oComplexType = oMetaModel.getODataComplexType("GWSAMPLE_BASIC.CT_Address"),

@@ -23,6 +23,8 @@ sap.ui.define([
 		// OData operators (only recognized when surrounded by spaces; aMatches[1] contains the
 		// leading spaces, aMatches[2] the operator if found)
 		sOperators = "(" + sWhitespace + "+)(and|eq|ge|gt|le|lt|ne|or)" + sWhitespace + "*",
+		// a GUID (has to be recognized before a path because it may start with a letter)
+		sGuid = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}",
 		// '*' (poss. %-encoded)
 		sStar = "(?:\\*|%2[aA])",
 		// A path consisting of simple identifiers separated by '/' or '.' optionally followed by
@@ -37,10 +39,10 @@ sap.ui.define([
 		// All other characters in expressions (constants of type double/date/time/GUID), '/' as
 		// part of rootExpr or implicitVariableExpr, '+' may be %-encoded
 		sValue = '(?:[-+:./\\w"]|%2[bB])+',
-		// A Token: either an operator, a delimiter, a path (in aMatches[4]), a value (in
-		// aMatches[5]) or a system query option (in aMatches[6])
-		rToken = new RegExp("^(?:" + sOperators +  "|" + sDelimiters + "|(" + sPath + ")|("
-			+ sValue + ")|(" + sSystemQueryOption + "))"),
+		// A Token: either an operator, a delimiter, a GUID (in aMatches[4]), a path (in
+		// aMatches[5]), a value (in aMatches[6]) or a system query option (in aMatches[7])
+		rToken = new RegExp("^(?:" + sOperators +  "|" + sDelimiters + "|(" + sGuid + ")|("
+			+ sPath + ")|(" + sValue + ")|(" + sSystemQueryOption + "))"),
 		// The two hex digits of a %-escape
 		rEscapeDigits = /^[0-9a-f]{2}$/i,
 		// The list of built-in functions
@@ -205,9 +207,9 @@ sap.ui.define([
 	addLeafSymbol("PATH");
 	addLeafSymbol("VALUE");
 
+	//*****************************************************************************************
 	/**
-	 * The base class for the system query option parser and the filter parser. Takes care of token
-	 * and error handling.
+	 * The base parser class. Takes care of token and error handling.
 	 */
 	function Parser() {
 	}
@@ -292,17 +294,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks that all tokens have been consumed and returns the result.
+	 * Checks that all tokens have been consumed.
 	 *
-	 * @param {object} oResult The result to return
-	 * @returns {object} The result
 	 * @throws {SyntaxError} If there are unconsumed tokens
 	 */
-	Parser.prototype.finish = function (oResult) {
+	Parser.prototype.finish = function () {
 		if (this.iCurrentToken < this.aTokens.length) {
 			this.expected("end of input", this.aTokens[this.iCurrentToken]);
 		}
-		return oResult;
 	};
 
 	/**
@@ -316,6 +315,7 @@ sap.ui.define([
 		this.iCurrentToken = 0;
 	};
 
+	//*****************************************************************************************
 	/**
 	 * A parser that is able to parse a filter string into a syntax tree which recognizes paths,
 	 * comparison operators, literals and built-in functions (which are identical in V2 and V4).
@@ -388,10 +388,53 @@ sap.ui.define([
 	 * @throws {SyntaxError} If there is a syntax error
 	 */
 	FilterParser.prototype.parse = function (sFilter) {
+		var oResult;
+
 		this.init(sFilter);
-		return this.finish(this.expression(0));
+		oResult = this.expression(0);
+		this.finish();
+		return oResult;
 	};
 
+	//*****************************************************************************************
+	/**
+	 * A parser that is able to parse key predicates.
+	 */
+	function KeyPredicateParser() {
+	}
+
+	KeyPredicateParser.prototype = Object.create(Parser.prototype);
+
+	/**
+	 * Parses a key predicate.
+	 *
+	 * @param {string} sKeyPredicate The key predicate
+	 * @returns {object} The object representation
+	 * @throws {SyntaxError} If there is a syntax error
+	 */
+	KeyPredicateParser.prototype.parse = function (sKeyPredicate) {
+		var sKey,
+			oKeyProperties = {},
+			sValue;
+
+		this.init(sKeyPredicate);
+		this.advance("(");
+		if (this.current().id === "VALUE") {
+			oKeyProperties[""] = this.advance().value;
+		} else {
+			do {
+				sKey = this.advance("PATH").value;
+				this.advance("=");
+				sValue = this.advance("VALUE").value;
+				oKeyProperties[sKey] = sValue;
+			} while (this.advanceIf(","));
+		}
+		this.advance(")");
+		this.finish();
+		return oKeyProperties;
+	};
+
+	//*****************************************************************************************
 	/**
 	 * A parser that is able to parse system query strings. It focuses on $select and $expand, all
 	 * other options remain strings, even when embedded into an expand statement.
@@ -404,13 +447,17 @@ sap.ui.define([
 	/**
 	 * Parses a system query option string.
 	 *
-	 * @param {string} sOption The option string (for error messages)
+	 * @param {string} sOption The option string
 	 * @returns {object} The object representation
 	 * @throws {SyntaxError} If there is a syntax error
 	 */
 	SystemQueryOptionParser.prototype.parse = function (sOption) {
+		var oResult;
+
 		this.init(sOption);
-		return this.finish(this.parseSystemQueryOption());
+		oResult = this.parseSystemQueryOption();
+		this.finish();
+		return oResult;
 	};
 
 	/**
@@ -546,6 +593,7 @@ sap.ui.define([
 		}
 	};
 
+	//*****************************************************************************************
 	/**
 	 * Unescapes a %-encoded character.
 	 *
@@ -651,11 +699,11 @@ sap.ui.define([
 			iOffset = 0;
 			if (aMatches) {
 				sValue = aMatches[0];
-				if (aMatches[6]) {
+				if (aMatches[7]) {
 					sId = "OPTION";
-				} else if (aMatches[5]) {
+				} else if (aMatches[6] || aMatches[4]) {
 					sId = "VALUE";
-				} else if (aMatches[4]) {
+				} else if (aMatches[5]) {
 					sId = "PATH";
 					if (sValue === "false" || sValue === "true" || sValue === "null") {
 						sId = "VALUE";
@@ -773,6 +821,17 @@ sap.ui.define([
 		 */
 		parseFilter : function (sFilter) {
 			return new FilterParser().parse(sFilter);
+		},
+
+		/**
+		 * Parses a key predicate into an object containing name/value pairs. A predicate in the
+		 * form "('42')" is returned as {"" : "'42'"}.
+		 *
+		 * @param {string} sKeyPredicate The key predicate
+		 * @returns {object} The name/value pairs
+		 */
+		parseKeyPredicate : function (sKeyPredicate) {
+			return new KeyPredicateParser().parse(sKeyPredicate);
 		},
 
 		/**

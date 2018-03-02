@@ -267,6 +267,7 @@ sap.ui.require([
 			mParameters);
 
 		assert.deepEqual(oBinding.mAggregatedQueryOptions, {});
+		assert.strictEqual(oBinding.bAggregatedQueryOptionsInitial, true);
 		assert.strictEqual(oBinding.aApplicationFilters, aFilters);
 		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
 		assert.strictEqual(oBinding.sChangeReason, undefined);
@@ -694,6 +695,7 @@ sap.ui.require([
 				aDiff = [/*some diff*/],
 				that = this;
 
+			this.mock(oBinding).expects("checkSuspended").withExactArgs();
 			this.mock(oBinding.oCachePromise.getResult()).expects("read")
 				.withExactArgs(0, 3, 0, "groupId", sinon.match.func)
 				.returns(SyncPromise.resolve(oData));
@@ -799,6 +801,7 @@ sap.ui.require([
 			oVirtualContext = {};
 
 		oBinding.sChangeReason = "AddVirtualContext";
+		this.mock(oBinding).expects("checkSuspended").twice().withExactArgs();
 		this.mock(this.oModel).expects("resolve")
 			.withExactArgs(oBinding.sPath, sinon.match.same(oParentContext))
 			.returns(sResolvedPath);
@@ -1085,6 +1088,7 @@ sap.ui.require([
 
 		this.mock(oContext).expects("fetchValue").withExactArgs("TEAM_2_EMPLOYEES")
 			.returns(oPromise);
+		this.mock(ODataListBinding.prototype).expects("checkSuspended").withExactArgs();
 
 		// code under test
 		oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext);
@@ -1279,6 +1283,7 @@ sap.ui.require([
 
 			oBinding = this.oModel.bindList(bRelative ? "TEAM_2_EMPLOYEES" : "/EMPLOYEES",
 					oContext);
+			this.mock(oBinding).expects("checkSuspended").twice().withExactArgs();
 			oBinding.attachChange(function () {
 				// code under test
 				var aContexts = oBinding.getContexts(1, 2); // failing read
@@ -1549,6 +1554,7 @@ sap.ui.require([
 			oReadPromise = createResult(2, 0, true),
 			that = this;
 
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		oBinding.setContext(oContext);
 		this.mock(oContext).expects("fetchValue").withExactArgs("TEAM_2_EMPLOYEES")
 			.returns(oReadPromise);
@@ -2004,6 +2010,7 @@ sap.ui.require([
 				});
 			oBinding = oModel.bindList("TEAM_2_EMPLOYEES", undefined, undefined, undefined,
 				oFixture.mParameters);
+			this.mock(oBinding).expects("checkSuspended").withExactArgs();
 
 			oBinding.mCacheByContext = {"/TEAMS('1')" : {}, "/TEAMS('42')" : {}};
 			this.mock(oBinding).expects("hasPendingChanges").returns(false);
@@ -2050,6 +2057,7 @@ sap.ui.require([
 		oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1);
 		oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext, undefined, undefined,
 			{$$operationMode : OperationMode.Server});
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(true);
 
 		// code under test
@@ -2068,7 +2076,7 @@ sap.ui.require([
 				aFilters = [oFilter],
 				sStaticFilter = "Age gt 18";
 
-
+			oBindingMock.expects("checkSuspended").withExactArgs();
 			this.mock(ODataListBinding.prototype).expects("fetchCache").atLeast(1)
 				.callsFake(function () {
 					this.oCachePromise = SyncPromise.resolve({});
@@ -2191,6 +2199,7 @@ sap.ui.require([
 			oContext2 = Context.create(this.oModel, {}, "/Employees('2')"),
 			oReadPromise = SyncPromise.resolve(Promise.resolve());
 
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext1).expects("fetchCanonicalPath")
 			.returns(SyncPromise.resolve("Employees('1')"));
 		this.mock(oContext2).expects("fetchCanonicalPath")
@@ -2326,6 +2335,7 @@ sap.ui.require([
 			oBinding = this.oModel.bindList("EMPLOYEES", oParentContext),
 			oRange = {start : 3, length : 2};
 
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oParentContext).expects("fetchValue").withExactArgs("EMPLOYEES")
 			.returns(SyncPromise.resolve(aData));
 
@@ -2346,6 +2356,7 @@ sap.ui.require([
 			oBinding = this.oModel.bindList("EMPLOYEES", oParentContext),
 			oRange = {start : 3, length : 2};
 
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oParentContext).expects("fetchValue").withExactArgs("EMPLOYEES")
 			.returns(SyncPromise.resolve());
 
@@ -2805,6 +2816,7 @@ sap.ui.require([
 				oBinding = this.oModel.bindList("/EMPLOYEES");
 			}
 			oBindingMock = this.mock(oBinding);
+			oBindingMock.expects("checkSuspended").withExactArgs();
 			oCacheMock = this.mock(oBinding.oCachePromise.getResult());
 			oBindingMock.expects("getGroupId").returns(oFixture.sGroupId || "$auto");
 			oModelMock.expects("isDirectGroup")
@@ -2894,6 +2906,8 @@ sap.ui.require([
 		this.mock(oContext).expects("fetchCanonicalPath")
 			.withExactArgs()
 			.returns(SyncPromise.resolve("/TEAMS('02')"));
+		this.mock(oBinding).expects("checkSuspended").withExactArgs()
+			.thrice(); // from create and twice getContexts
 		this.mock(oBinding).expects("getUpdateGroupId").returns("updateGroup");
 		oExpectation = this.mock(oBinding).expects("createInCache")
 			.withExactArgs("updateGroup", /*vPostPath*/sinon.match.object, "",
@@ -2907,7 +2921,7 @@ sap.ui.require([
 		that.mock(oBinding.oContext).expects("fetchValue").twice()
 			.withExactArgs("TEAM_2_EMPLOYEES").returns(SyncPromise.resolve(aCacheResult));
 
-		// code under test - ensure that getContext delivers the created context correctly
+		// code under test - ensure that getContexts delivers the created context correctly
 		aContexts = oBinding.getContexts(0, 3);
 
 		this.mock(oBinding).expects("refreshSingle").never();
@@ -2915,7 +2929,7 @@ sap.ui.require([
 		assert.strictEqual(aContexts.length, 3);
 		assert.strictEqual(aContexts[0], oContext);
 
-		// code under test - ensure that getContext creates the contexts correctly
+		// code under test - ensure that getContexts creates the contexts correctly
 		aContexts = oBinding.getContexts(1, 3);
 
 		assert.strictEqual(aContexts.length, 3);
@@ -2948,6 +2962,8 @@ sap.ui.require([
 			that = this;
 
 		oBinding.enableExtendedChangeDetection(false);
+		this.mock(oBinding).expects("checkSuspended").withExactArgs()
+			.twice(); // from create and getContexts
 		this.mock(_Helper).expects("buildPath")
 			.withExactArgs("/TEAMS('02')", "TEAM_2_EMPLOYEES")
 			.returns("/TEAMS('02')/TEAM_2_EMPLOYEES");
@@ -3751,6 +3767,7 @@ sap.ui.require([
 
 		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined, "noCache");
 
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("hasPendingChanges").returns(false);
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
 			.returns(SyncPromise.resolve("/TEAMS('42')/TEAM_2_EMPLOYEES"));

@@ -363,6 +363,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Converts the resource path if needed. For OData V4 requests no conversion is done.
+	 * May be overwritten for other OData service versions.
+	 *
+	 * @param {string} sResourcePath The V4 resource path
+	 * @returns {string} The resource path as required for the server
+	 */
+	Requestor.prototype.convertResourcePath = function (sResourcePath) {
+		return sResourcePath;
+	};
+
+	/**
 	 * Checks whether the "OData-Version" header is set to "4.0" otherwise an error is thrown.
 	 *
 	 * @param {function} fnGetHeader
@@ -441,10 +452,14 @@ sap.ui.define([
 	 *
 	 * @param {object} oResponsePayload
 	 *   The OData response payload
+	 * @param {string} [sMetaPath]
+	 *   The meta path corresponding to the resource path; needed in case V2 response does not
+	 *   contain <code>__metadata.type</code>, for example "2.2.7.2.4 RetrievePrimitiveProperty
+	 *   Request"
 	 * @returns {object}
 	 *   The OData V4 response payload
 	 */
-	Requestor.prototype.doConvertResponse = function (oResponsePayload) {
+	Requestor.prototype.doConvertResponse = function (oResponsePayload, sMetaPath) {
 		return oResponsePayload;
 	};
 
@@ -492,57 +507,6 @@ sap.ui.define([
 	 */
 	Requestor.prototype.getGroupSubmitMode = function (sGroupId) {
 		return this.oModelInterface.fnGetGroupProperty(sGroupId, "submit");
-	};
-
-	/**
-	 * Returns the key predicate (see "4.3.1 Canonical URL") for the given entity using the given
-	 * meta data.
-	 *
-	 * @param {object} oInstance
-	 *   Entity instance runtime data
-	 * @param {string} sMetaPath
-	 *   The meta path of the entity in the cache incl. the cache's resource path
-	 * @param {object} mTypeForMetaPath
-	 *   Maps meta paths to the corresponding (entity or complex) types
-	 * @returns {string}
-	 *   The key predicate, e.g. "(Sector='DevOps',ID='42')" or "('42')" or undefined if one
-	 *   key property is undefined
-	 *
-	 * @private
-	 */
-	Requestor.prototype.getKeyPredicate = function (oInstance, sMetaPath, mTypeForMetaPath) {
-		var bFailed,
-			aKey = mTypeForMetaPath[sMetaPath].$Key,
-			aKeyProperties = [],
-			bSingleKey = aKey.length === 1,
-			that = this;
-
-		bFailed = aKey.some(function (vKey) {
-			var sAlias, sKeyPath, aPath, sPropertyName, oType, vValue;
-
-			if (typeof vKey === "string") {
-				sAlias = sKeyPath = vKey;
-			} else {
-				sAlias = Object.keys(vKey)[0];
-				sKeyPath = vKey[sAlias];
-			}
-			aPath = sKeyPath.split("/");
-
-			vValue = _Helper.drillDown(oInstance, aPath);
-			if (vValue === undefined) {
-				return true;
-			}
-
-			// the last path segment is the name of the simple property
-			sPropertyName = aPath.pop();
-			// find the type containing the simple property
-			oType = mTypeForMetaPath[_Helper.buildPath(sMetaPath, aPath.join("/"))];
-
-			vValue = encodeURIComponent(that.formatPropertyAsLiteral(vValue, oType[sPropertyName]));
-			aKeyProperties.push(bSingleKey ? vValue : encodeURIComponent(sAlias) + "=" + vValue);
-		});
-
-		return bFailed ? undefined : "(" + aKeyProperties.join(",") + ")";
 	};
 
 	/**
@@ -776,6 +740,10 @@ sap.ui.define([
 	 *   A function that is called for clean-up if the request is canceled while waiting in a batch
 	 *   queue, ignored for GET requests; {@link #cancelChanges} cancels this request only if this
 	 *   callback is given
+	 * @param {string} [sMetaPath]
+	 *   The meta path corresponding to the resource path; needed in case V2 response does not
+	 *   contain <code>__metadata.type</code>, for example "2.2.7.2.4 RetrievePrimitiveProperty
+	 *   Request"
 	 * @param {boolean} [bIsFreshToken=false]
 	 *   Whether the CSRF token has already been refreshed and thus should not be refreshed
 	 *   again
@@ -787,7 +755,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Requestor.prototype.request = function (sMethod, sResourcePath, sGroupId, mHeaders, oPayload,
-			fnSubmit, fnCancel, bIsFreshToken) {
+			fnSubmit, fnCancel, sMetaPath, bIsFreshToken) {
 		var oBatchRequest,
 			bIsBatch = sResourcePath === "$batch",
 			sPayload,
@@ -800,7 +768,7 @@ sap.ui.define([
 				var sCurrentCSRFToken = that.mHeaders["X-CSRF-Token"];
 				// Adding query parameters could have been the responsibility of submitBatch,
 				// but doing it here makes the $batch recognition easier.
-				jQuery.ajax(that.sServiceUrl + sResourcePath
+				jQuery.ajax(that.sServiceUrl + that.convertResourcePath(sResourcePath)
 						+ (bIsBatch ? that.sQueryParams : ""), {
 					data : sPayload,
 					headers : jQuery.extend({},
@@ -823,7 +791,7 @@ sap.ui.define([
 							jqXHR.getResponseHeader("Content-Type"), oPayload));
 					} else {
 						try {
-							fnResolve(that.doConvertResponse(oPayload));
+							fnResolve(that.doConvertResponse(oPayload, sMetaPath));
 						} catch (oError) {
 							fnReject(oError);
 						}
@@ -837,7 +805,7 @@ sap.ui.define([
 							// no fnSubmit, it has been called already
 							// no fnCancel, it is only relevant while the request is in the queue
 							fnResolve(that.request(sMethod, sResourcePath, sGroupId, mHeaders,
-								oPayload, undefined, undefined, true));
+								oPayload, undefined, undefined, sMetaPath, true));
 						}, fnReject);
 					} else {
 						fnReject(_Helper.createError(jqXHR));
@@ -867,7 +835,7 @@ sap.ui.define([
 					}
 					oRequest = {
 						method : sMethod,
-						url : sResourcePath,
+						url : that.convertResourcePath(sResourcePath),
 						headers : jQuery.extend({},
 							that.mPredefinedPartHeaders,
 							that.mHeaders,
@@ -875,6 +843,7 @@ sap.ui.define([
 							that.mFinalHeaders),
 						body : oPayload,
 						$cancel : fnCancel,
+						$metaPath : sMetaPath,
 						$reject : fnReject,
 						$resolve : fnResolve,
 						$submit : fnSubmit
@@ -1009,7 +978,7 @@ sap.ui.define([
 					try {
 						that.doCheckVersionHeader(getResponseHeader.bind(vResponse), vRequest.url,
 							true);
-						vRequest.$resolve(that.doConvertResponse(oResponse));
+						vRequest.$resolve(that.doConvertResponse(oResponse, vRequest.$metaPath));
 					} catch (oErr) {
 						vRequest.$reject(oErr);
 					}

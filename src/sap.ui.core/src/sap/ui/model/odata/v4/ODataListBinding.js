@@ -77,6 +77,7 @@ sap.ui.define([
 					throw new Error("Invalid path: " + sPath);
 				}
 				this.mAggregatedQueryOptions = {};
+				this.bAggregatedQueryOptionsInitial = true;
 				this.aApplicationFilters = _Helper.toArray(vFilters);
 				this.oCachePromise = SyncPromise.resolve();
 				this.sChangeReason = oModel.bAutoExpandSelect ? "AddVirtualContext" : undefined;
@@ -309,8 +310,8 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.v4.Context#created} returns a promise that is resolved when the
 	 *   creation is finished
 	 * @throws {Error}
-	 *   If a relative binding is not yet resolved or if the binding already contains an entity
-	 *   created via this function
+	 *   If the binding's root binding is suspended, a relative binding is not yet resolved or if
+	 *   the binding already contains an entity created via this function
 	 *
 	 * @public
 	 * @since 1.43.0
@@ -325,10 +326,10 @@ sap.ui.define([
 		if (!sResolvedPath) {
 			throw new Error("Binding is not yet resolved: " + this);
 		}
-
 		if (this.aContexts[-1]) {
 			throw new Error("Must not create twice");
 		}
+		this.checkSuspended();
 
 		vCreatePath = sResolvedPath.slice(1);
 		if (this.bRelative && this.oContext.fetchCanonicalPath) {
@@ -596,8 +597,8 @@ sap.ui.define([
 	 *   that the cache promise is already created when the events are fired.
 	 * @param {string} sStaticFilter
 	 *   The static filter value
-	 * @returns {sap.ui.base.SyncPromise} A promise which resolves with the $filter value or "" if the
-	 *   filter arrays are empty and the static filter parameter is not given. It rejects with
+	 * @returns {sap.ui.base.SyncPromise} A promise which resolves with the $filter value or "" if
+	 *   the filter arrays are empty and the static filter parameter is not given. It rejects with
 	 *   an error if a filter has an unknown operator or an invalid path.
 	 *
 	 * @private
@@ -852,14 +853,15 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.ODataListBinding}
 	 *   <code>this</code> to facilitate method chaining
 	 * @throws {Error}
-	 *   If there are pending changes or if an unsupported operation mode is used (see
-	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList})
+	 *   If the binding's root binding is suspended, there are pending changes or if an unsupported
+	 *   operation mode is used (see {@link sap.ui.model.odata.v4.ODataModel#bindList})
 	 *
 	 * @public
 	 * @see sap.ui.model.ListBinding#filter
 	 * @since 1.39.0
 	 */
 	ODataListBinding.prototype.filter = function (vFilters, sFilterType) {
+		this.checkSuspended();
 		if (this.sOperationMode !== OperationMode.Server) {
 			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");
 		}
@@ -902,8 +904,8 @@ sap.ui.define([
 	 *   The array of already created contexts with the first entry containing the context for
 	 *   <code>iStart</code>
 	 * @throws {Error}
-	 *   If extended change detection is enabled and <code>iMaximumPrefetchSize</code> is set or
-	 *   <code>iStart</code> is not 0
+	  *  If the binding's root binding is suspended, if extended change detection is enabled and
+	  *  <code>iMaximumPrefetchSize</code> is set or <code>iStart</code> is not 0
 	 *
 	 * @protected
 	 * @see sap.ui.model.ListBinding#getContexts
@@ -926,6 +928,8 @@ sap.ui.define([
 		jQuery.sap.log.debug(this + "#getContexts(" + iStart + ", " + iLength + ", "
 				+ iMaximumPrefetchSize + ")",
 			undefined, sClassName);
+
+		this.checkSuspended();
 
 		if (iStart !== 0 && this.bUseExtendedChangeDetection) {
 			throw new Error("Unsupported operation: v4.ODataListBinding#getContexts,"
@@ -1445,7 +1449,7 @@ sap.ui.define([
 				// Keep the header context even if we lose the parent context, so that the header
 				// context remains unchanged if the parent context is temporarily dropped during a
 				// refresh.
-				if (this.aContexts && this.aContexts[-1] && this.aContexts[-1].isTransient()) {
+				if (this.aContexts[-1] && this.aContexts[-1].isTransient()) {
 					// to allow switching the context for new created entities (transient or not)
 					// we first have to implement a store/restore mechanism for the -1 entry
 					throw new Error("setContext on relative binding is forbidden if a transient " +
@@ -1491,14 +1495,15 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.ODataListBinding}
 	 *   <code>this</code> to facilitate method chaining
 	 * @throws {Error}
-	 *   If there are pending changes or if an unsupported operation mode is used (see
-	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList}).
+	 *   If the binding's root binding is suspended, there are pending changes or if an unsupported
+	 *   operation mode is used (see {@link sap.ui.model.odata.v4.ODataModel#bindList}).
 	 *
 	 * @public
 	 * @see sap.ui.model.ListBinding#sort
 	 * @since 1.39.0
 	 */
 	ODataListBinding.prototype.sort = function (vSorters) {
+		this.checkSuspended();
 		if (this.sOperationMode !== OperationMode.Server) {
 			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");
 		}
@@ -1543,7 +1548,8 @@ sap.ui.define([
 	 * @param {object[]} aColumns
 	 *   An array with objects holding the analytical information for every column, from left to
 	 *   right
-	 * @throws {Error} In case a column is both a dimension and a measure
+	 * @throws {Error}
+	 *   If the binding's root binding is suspended or a column is both a dimension and a measure
 	 *
 	 * @protected
 	 * @see sap.ui.model.analytics.AnalyticalBinding#updateAnalyticalInfo

@@ -23,6 +23,48 @@ sap.ui.require([
 			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
+		},
+
+		/**
+		 * Tests Expression.path returning a property w/ constraints.
+		 *
+		 * @param {object} assert The QUnit assert object
+		 * @param {object} oProperty The property value in the meta model at the resolved path
+		 * @param {object} oExpectedConstraints The expected constraints
+		 */
+		testPathReturningProperty : function (assert, oProperty, oExpectedConstraints) {
+			var oExpectedResult = {
+					constraints : oExpectedConstraints,
+					result : "binding",
+					type : oProperty.type,
+					value : "bar"
+				},
+				oMetaModel = {
+					getProperty : function (sPath) {}
+				},
+				oInterface = {
+					getModel : function () { return oMetaModel; }
+				},
+				oPathValue = {
+					path : "/dataServices/schema/0/entityType/0/foo/Path",
+					value : "bar"
+				},
+				sResolvedPath = "/dataServices/schema/0/entityType/i/property/j",
+				oResult;
+
+			this.mock(Basics).expects("followPath").callsFake(function (oInterface, vRawValue) {
+				assert.strictEqual(oInterface.getModel(), oMetaModel);
+				assert.strictEqual(oInterface.getPath(), oPathValue.path);
+				assert.deepEqual(vRawValue, {"Path" : oPathValue.value});
+
+				return {resolvedPath : sResolvedPath};
+			});
+			this.mock(oMetaModel).expects("getProperty").withExactArgs(sResolvedPath)
+				.returns(oProperty);
+
+			oResult = Expression.path(oInterface, oPathValue);
+
+			assert.deepEqual(oResult, oExpectedResult, "result");
 		}
 	});
 
@@ -187,27 +229,10 @@ sap.ui.require([
 		constraints : {nullable : "false"}
 	}, {
 		property : {type : "Edm.DateTime", "sap:display-format": "DateOnly"},
-		constraints : {displayFormat : 'DateOnly'}
+		constraints : {displayFormat : "DateOnly"}
 	}, {
 		property : {type : "Edm.Decimal", precision : "10", scale : "variable"},
-		constraints : {precision : "10", scale : 'variable'}
-	}, {
-		//TODO: productive code always provides precision and scale, is this ok?
-		property : {
-			type : "Edm.Decimal",
-			"Org.OData.Validation.V1.Minimum" : {
-				"String" : "10", "Org.OData.Validation.V1.Exclusive" : { "Bool" : "true" }}
-		},
-		constraints : {precision : undefined, scale : undefined, minimum : "10",
-			minimumExclusive : "true"}
-	}, {
-		property : {
-			type : "Edm.Decimal",
-			"Org.OData.Validation.V1.Maximum" : {
-				"String" : "100", "Org.OData.Validation.V1.Exclusive" : {}}
-		},
-		constraints : {precision : undefined, scale : undefined, maximum : "100",
-			maximumExclusive : "true"}
+		constraints : {precision : "10", scale : "variable"}
 	}, {
 		property : {type : "Edm.String", maxLength : "30", nullable : "false"},
 		constraints : {maxLength : "30", nullable : "false"}
@@ -224,43 +249,43 @@ sap.ui.require([
 			"com.sap.vocabularies.Common.v1.IsDigitSequence" : {}},
 		constraints : {maxLength : "30", isDigitSequence : "true"}
 	}].forEach(function (oFixture) {
-		QUnit.test("path: type " + oFixture.property.type, function (assert) {
-			var oExpectedResult = {
-					result : "binding",
-					value : "bar",
-					type : oFixture.property.type
-				},
-				sResolvedPath = "/dataServices/schema/0/entityType/i/property/j",
-				oMetaModel = {
-					getProperty : function (sPath) {
-						assert.strictEqual(sPath, sResolvedPath);
-						return oFixture.property;
-					}
-				},
-				oInterface = {
-					getModel : function () { return oMetaModel; }
-				},
-				oPathValue = {
-					path : "/dataServices/schema/0/entityType/0/foo/Path",
-					value : "bar"
-				},
-				oResult;
+		QUnit.test("path: type=" + oFixture.property.type + ", constraints="
+				+ JSON.stringify(oFixture.constraints), function (assert) {
+			this.testPathReturningProperty(assert, oFixture.property, oFixture.constraints);
+		});
+	});
 
-			if (oFixture.constraints) {
-				oExpectedResult.constraints = oFixture.constraints;
+	//*********************************************************************************************
+	["Decimal", "String"].forEach(function (sType) {
+		["Minimum", "Maximum"].forEach(function (sMinOrMax) {
+			var sMinOrMaxLower = sMinOrMax.toLowerCase();
+
+			/*
+			 * Adds a test for a decimal with minimum/maximum value.
+			 * @param {object} [oExclusiveAnnotation]
+			 *   The value for the "Org.OData.Validation.V1.Exclusive" annotation
+			 */
+			function addTest(oExclusiveAnnotation) {
+				var oConstraints = {},
+					oMinMax = {},
+					oProperty = {type : "Edm.Decimal"};
+
+				oMinMax[sType] = "10";
+				oProperty["Org.OData.Validation.V1." + sMinOrMax] = oMinMax;
+				oConstraints[sMinOrMaxLower] = "10";
+				if (oExclusiveAnnotation) {
+					oMinMax["Org.OData.Validation.V1.Exclusive"] = oExclusiveAnnotation;
+					oConstraints[sMinOrMaxLower + "Exclusive"] = "true";
+				}
+				QUnit.test("path: type=Edm.Decimal, " + sMinOrMax + " as " + sType + ", exclusive="
+						+ JSON.stringify(oExclusiveAnnotation), function (assert) {
+					this.testPathReturningProperty(assert, oProperty, oConstraints);
+				});
 			}
-			this.mock(Basics).expects("followPath").callsFake(function (oInterface, vRawValue) {
-				assert.strictEqual(oInterface.getModel(), oMetaModel);
-				assert.strictEqual(oInterface.getPath(), oPathValue.path);
-				assert.deepEqual(vRawValue, {"Path" : oPathValue.value});
 
-				return {resolvedPath : sResolvedPath};
-			});
-			this.oLogMock.expects("warning").never();
-
-			oResult = Expression.path(oInterface, oPathValue);
-
-			assert.deepEqual(oResult, oExpectedResult, "result");
+			addTest();
+			addTest({}, "true");
+			addTest({Bool : "true"}, "true");
 		});
 	});
 
@@ -721,6 +746,26 @@ sap.ui.require([
 		assert.deepEqual(Expression.uriEncode(oInterface, oPathValue), {
 			result : "expression",
 			value : "odata.uriEncode('PT13H57M06S','Edm.Time')", //TODO split seconds
+			type : "Edm.String"
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("uriEncode other constant", function (assert) {
+		var oInterface = {},
+			oPathValue = {};
+
+		this.mock(Expression).expects("parameter")
+			.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oPathValue), 0)
+			.returns({
+				result : "constant",
+				value : "bar",
+				type : "Edm.String"
+			});
+
+		assert.deepEqual(Expression.uriEncode(oInterface, oPathValue), {
+			result : "expression",
+			value : "odata.uriEncode('bar','Edm.String')",
 			type : "Edm.String"
 		});
 	});
@@ -1403,6 +1448,9 @@ sap.ui.require([
 									RecordType : "com.sap.vocabularies.UI.v1.DataFieldForAnnotation"
 								}]
 							},
+							"com.sap.vocabularies.UI.v1.Facets" : [{
+								RecordType : "com.sap.vocabularies.UI.v1.Facet"
+							}],
 							schema : [{
 								namespace : "bar",
 								Value : {Path : "foo"}
@@ -1456,6 +1504,10 @@ sap.ui.require([
 		}, {
 			i : "/dataServices/schema/1",
 			o : "/dataServices/schema/[${namespace}==='weird\\'name']"
+		}, {
+			i : "/dataServices/schema/0/entityType/0/com.sap.vocabularies.UI.v1.Facets/0",
+			o : "/dataServices/schema/[${namespace}==='myschema']/entityType/[$\{name}==='Contact']"
+				+ "/com.sap.vocabularies.UI.v1.Facets/0"
 		}].forEach(function (oFixture) {
 			assert.strictEqual(Expression.replaceIndexes(oModel, oFixture.i), oFixture.o,
 				oFixture.o);
@@ -1543,6 +1595,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("parseTimeOfDay", function (assert) {
+		assert.strictEqual(Expression.parseTimeOfDay("23:59:59.123").getTime(),
+			Date.UTC(1970, 0, 1, 23, 59, 59, 123));
 		assert.strictEqual(Expression.parseTimeOfDay("23:59:59.123456789012").getTime(),
 			Date.UTC(1970, 0, 1, 23, 59, 59, 123));
 	});

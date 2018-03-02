@@ -476,7 +476,7 @@ sap.ui.require([
 						<End Type="GWSAMPLE_BASIC.Product" Multiplicity="*"\
 								Role="Foo2"/>\
 					</Association>\
-					<EntityContainer Name="Container">\
+					<EntityContainer Name="Container" m:IsDefaultEntityContainer="true">\
 						<EntitySet Name="BusinessPartnerSet"\
 								EntityType="GWSAMPLE_BASIC.BusinessPartner"/>\
 						<EntitySet Name="ProductSet"\ EntityType="GWSAMPLE_BASIC.Product"/>\
@@ -488,6 +488,9 @@ sap.ui.require([
 								Role="ToRole_Assoc_BusinessPartner_Products"/>\
 						</AssociationSet>\
 					</EntityContainer>\
+				</Schema>\
+				<Schema Namespace="AnotherSchema">\
+					<EntityContainer Name="Container"/>\
 				</Schema>',
 			{
 				"$EntityContainer" : "GWSAMPLE_BASIC.0001.Container",
@@ -535,9 +538,17 @@ sap.ui.require([
 						"$kind" : "EntitySet",
 						"$Type" : "GWSAMPLE_BASIC.0001.Product"
 					}
+				},
+				"AnotherSchema." : {
+					"$kind" : "Schema"
+				},
+				"AnotherSchema.Container" : {
+					"$kind" : "EntityContainer"
 				}
 			});
 	});
+	// TODO multiple containers in a schema
+	// TODO AssociationSets between two containers
 
 	//*********************************************************************************************
 	["DELETE", "GET", "MERGE", "PATCH", "POST", "PUT"].forEach(function (sHttpMethod) {
@@ -828,6 +839,9 @@ sap.ui.require([
 			'@com.sap.vocabularies.Analytics.v1.Measure' : true
 		}
 	}, {
+		annotationsV2 : 'sap:aggregation-role="foo"',
+		expectedAnnotationsV4 : null
+	}, {
 		annotationsV2 : 'sap:display-format="NonNegative"',
 		expectedAnnotationsV4 : {
 			'@com.sap.vocabularies.Common.v1.IsDigitSequence' : true
@@ -873,6 +887,9 @@ sap.ui.require([
 				$Path : "PathExpression"
 			}
 		}
+	}, {
+		annotationsV2 : 'sap:visible="true"',
+		expectedAnnotationsV4 : null
 	}, { // multiple V4 annotations for one V2 annotation
 		annotationsV2 : 'sap:visible="false"',
 		expectedAnnotationsV4 : {
@@ -893,17 +910,7 @@ sap.ui.require([
 		var sTitle = "convert: V2 annotation at Property: " + oFixture.annotationsV2;
 
 		QUnit.test(sTitle, function (assert) {
-			// there are no $annotations yet at the schema so mergeAnnotations is not called
-			this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
-
-			testConversion(assert, '\
-					<Schema Namespace="GWSAMPLE_BASIC.0001">\
-						<EntityType Name="Foo">\
-							<Property Name="Bar" Type="Edm.String" \
-								' + oFixture.annotationsV2 + ' />\
-						</EntityType>\
-					</Schema>',
-				{
+			var oExpectedResult = {
 					"GWSAMPLE_BASIC.0001." : {
 						"$Annotations" : {
 							"GWSAMPLE_BASIC.0001.Foo/Bar" : oFixture.expectedAnnotationsV4
@@ -917,7 +924,23 @@ sap.ui.require([
 							"$Type" : "Edm.String"
 						}
 					}
-				});
+				},
+				sXML = '\
+					<Schema Namespace="GWSAMPLE_BASIC.0001">\
+						<EntityType Name="Foo">\
+							<Property Name="Bar" Type="Edm.String" \
+								' + oFixture.annotationsV2 + ' />\
+						</EntityType>\
+					</Schema>';
+
+			// there are no $annotations yet at the schema so mergeAnnotations is not called
+			this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
+
+			// no expectedAnnotationsV4 so there is no need for $annotations at the schema
+			if (!oFixture.expectedAnnotationsV4) {
+				delete oExpectedResult["GWSAMPLE_BASIC.0001."]["$Annotations"];
+			}
+			testConversion(assert, sXML, oExpectedResult);
 		});
 	});
 
@@ -1386,6 +1409,9 @@ sap.ui.require([
 			'@Org.OData.Capabilities.V1.SkipSupported' : false,
 			'@Org.OData.Capabilities.V1.TopSupported' : false
 		}
+	}, { // sap:pageable
+		annotationsV2 : 'sap:pageable="true"',
+		expectedAnnotationsV4 : {}
 	}, { // sap:requires-filter
 		annotationsV2 : 'sap:requires-filter="true"',
 		expectedAnnotationsV4 : {
@@ -1393,6 +1419,9 @@ sap.ui.require([
 				"RequiresFilter" : true
 			}
 		}
+	}, { // sap:requires-filter
+		annotationsV2 : 'sap:requires-filter="false"',
+		expectedAnnotationsV4 : {}
 	}, { // sap:searchable - different default values in V2 and V4
 		annotationsV2 : '',
 		expectedAnnotationsV4 : {
@@ -1409,12 +1438,15 @@ sap.ui.require([
 		}
 	}, {
 		annotationsV2 : 'sap:searchable="true"',
-		expectedAnnotationsV4 : {}
+		expectedAnnotationsV4 : null
 	}, { // sap:topable
 		annotationsV2 : 'sap:topable="false"',
 		expectedAnnotationsV4 : {
 			'@Org.OData.Capabilities.V1.TopSupported' : false
 		}
+	}, { // sap:topable
+		annotationsV2 : 'sap:topable="true"',
+		expectedAnnotationsV4 : {}
 	}, { // sap:updatable and sap:updatable-path
 		annotationsV2 : 'sap:updatable="false"',
 		expectedAnnotationsV4 : {
@@ -1487,7 +1519,7 @@ sap.ui.require([
 				};
 
 			// no expectedAnnotationsV4 so there is no need for $annotations at the schema
-			if (!Object.keys(oFixture.expectedAnnotationsV4).length) {
+			if (!oFixture.expectedAnnotationsV4) {
 				delete oExpectedResult["GWSAMPLE_BASIC."]["$Annotations"];
 			}
 			if (oFixture.message) {
