@@ -101,6 +101,11 @@ html.sap-desktop .sapUiCalItem:focus{
 	outline: none;
 }
 
+html[data-sap-ui-browser^="ed"].sap-desktop .sapUiCalItem:focus,
+html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalItem:focus {
+	border-style: dashed;
+}
+
 html.sap-desktop .sapUiCalItem:hover > .sapUiCalItemText,
 html.sap-desktop .sapUiCalItem:focus > .sapUiCalItemText{
 	line-height: 2.5rem;
