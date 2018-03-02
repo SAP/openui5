@@ -1533,7 +1533,7 @@ sap.ui.define([
 
 
 			// update visibility
-			var bShouldBeVisible = (iScrollableContentSize > this.iScreenHeight),
+			var bShouldBeVisible = (iScrollableContentSize > Math.ceil(this.iScreenHeight)),
 				bVisibilityChange = (bShouldBeVisible !== this._getCustomScrollBar().getVisible());
 
 			if (bVisibilityChange) {
