@@ -208,7 +208,6 @@ sap.ui.define([
 		 * @private
 		 */
 		_onEditableFieldFocus : function (oEvent) {
-			this._oEditedOverlay.setSelected(false);
 			var el = oEvent.target;
 			var range = document.createRange();
 			range.selectNodeContents(el);
@@ -238,22 +237,17 @@ sap.ui.define([
 			if (bRestoreFocus) {
 				var oOverlay = this._oEditedOverlay;
 
-				// timeout is needed because of invalidation (test on bounded fields)
-				// TODO: get rid of timeout! prevent UI5 from taking focus out of overlays
-				this._iStopTimeout = setTimeout(function () {
-					oOverlay.setSelected(true);
-					oOverlay.focus();
-					sap.ui.getCore().getEventBus().publish('sap.ui.rta', sPluginMethodName, {
-						overlay: oOverlay
-					});
-				}, 500);
+				oOverlay.setSelected(true);
+				oOverlay.focus();
 			}
-
-			this._oEditedOverlay.setSelected(false);
 
 			delete this._$editableField;
 			delete this._$oEditableControlDomRef;
 			delete this._oEditedOverlay;
+
+			sap.ui.getCore().getEventBus().publish('sap.ui.rta', sPluginMethodName, {
+				overlay: oOverlay
+			});
 		},
 
 		/**
@@ -316,8 +310,6 @@ sap.ui.define([
 			if (this._$oEditableControlDomRef) {
 				this.stopEdit(false);
 			}
-
-			clearTimeout(this._iStopTimeout);
 		}
 	};
 	return RenameHandler;
