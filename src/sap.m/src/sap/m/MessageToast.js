@@ -66,6 +66,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 		 * @public
 		 * @since 1.9.2
 		 * @alias sap.m.MessageToast
+		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/message-toast/ Message Toast}
 		 */
 		var MessageToast = {};
 

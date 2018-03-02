@@ -76,6 +76,7 @@ function(
 		 * @public
 		 * @since 1.28
 		 * @alias sap.m.MessagePopover
+		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/message-popover/ Message Popover}
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var MessagePopover = Control.extend("sap.m.MessagePopover", /** @lends sap.m.MessagePopover.prototype */ {

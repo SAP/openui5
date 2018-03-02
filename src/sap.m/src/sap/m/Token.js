@@ -47,6 +47,7 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.m.Token
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/token/ Token}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Token = Control.extend("sap.m.Token", /** @lends sap.m.Token.prototype */ { metadata : {

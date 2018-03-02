@@ -43,6 +43,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 			 * @alias sap.m.MessageBox
 			 * @public
 			 * @since 1.21.2
+			 * @see {@link fiori:https://experience.sap.com/fiori-design-web/message-box/ Message Box}
 			 */
 			var MessageBox = {};
 

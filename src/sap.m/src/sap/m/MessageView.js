@@ -103,6 +103,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.46
 	 * @alias sap.m.MessageView
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/message-view/ Message View}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var MessageView = Control.extend("sap.m.MessageView", /** @lends sap.m.MessageView.prototype */ {
