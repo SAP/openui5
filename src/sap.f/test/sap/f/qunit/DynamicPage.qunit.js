@@ -2146,6 +2146,22 @@
 		assert.equal(oDynamicPage._getEntireHeaderHeight(), 0, "correct with no header and no title");
 	});
 
+	QUnit.test("DynamicPage _hasVisibleTitleAndHeader returns correct state" , function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			oHeader = oDynamicPage.getHeader(),
+			aHeaderContent = oHeader.getContent();
+
+		// Assert
+		assert.ok(aHeaderContent.length, "Content aggregation is set");
+		assert.ok(oDynamicPage._hasVisibleTitleAndHeader(), "Title and Header are visible");
+
+		// Act
+		oHeader.destroyContent();
+
+		// Assert
+		assert.notOk(oDynamicPage._hasVisibleTitleAndHeader(), "Header is not visible");
+	});
+
 	QUnit.test("DynamicPageTitle _getActionsToolbar returns toolbar with correct style", function (assert) {
 		var oActionsToolbar = this.oDynamicPage.getTitle()._getActionsToolbar();
 		assert.equal(oActionsToolbar.getStyle(), sap.m.ToolbarStyle.Clear, "actions toolbar has correct style");
