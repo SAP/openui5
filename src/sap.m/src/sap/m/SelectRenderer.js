@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/IconPool', 'sap/m/library', 'sap/ui/Device', 'sap/ui/core/InvisibleText', 'sap/ui/core/library'],
+sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/IconPool', 'sap/m/library', 'sap/ui/Device', "sap/ui/core/InvisibleText", 'sap/ui/core/library'],
 	function(Renderer, ValueStateSupport, IconPool, library, Device, InvisibleText, coreLibrary) {
 		"use strict";
 
@@ -35,7 +35,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/
 		 * @param {sap.m.Select} oSelect An object representation of the control that should be rendered.
 		 */
 		SelectRenderer.render = function(oRm, oSelect) {
-			var	sTooltip = ValueStateSupport.enrichTooltip(oSelect, oSelect.getTooltip_AsString()),
+			var	sTooltip = oSelect.getTooltip_AsString(),
 				sType = oSelect.getType(),
 				bAutoAdjustWidth = oSelect.getAutoAdjustWidth(),
 				bEnabled = oSelect.getEnabled(),
@@ -319,6 +319,27 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/
 		};
 
 		/**
+		 * Returns the id of the InvisibleText containing information about the value state of the Select
+		 * @param oSelect
+		 * @returns {string}
+		 * @private
+		 */
+		SelectRenderer._getValueStateString = function(oSelect) {
+			var sCoreLib = "sap.ui.core";
+
+			switch (oSelect.getValueState()) {
+				case ValueState.Success:
+					return InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_SUCCESS");
+				case ValueState.Warning:
+					return InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_WARNING");
+				case ValueState.Error:
+					return InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_ERROR");
+			}
+
+			return "";
+		};
+
+		/**
 		 * Writes the accessibility state.
 		 * To be overwritten by subclasses.
 		 *
@@ -326,13 +347,19 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/
 		 * @param {sap.ui.core.Control} oSelect An object representation of the control that should be rendered.
 		 */
 		SelectRenderer.writeAccessibilityState = function(oRm, oSelect) {
+			var sValueState = this._getValueStateString(oSelect);
+
+			if (sValueState) {
+				sValueState = " " + sValueState;
+			}
+
 			oRm.writeAccessibilityState(oSelect, {
 				role: this.getAriaRole(oSelect),
 				disabled: !oSelect.getEnabled(),
 				expanded: oSelect.isOpen(),
 				invalid: (oSelect.getValueState() === ValueState.Error) ? true : undefined,
 				labelledby: {
-					value: oSelect.getId() + "-label",
+					value: oSelect.getId() + "-label" + sValueState,
 					append: true
 				},
 				haspopup: (oSelect.getType() === SelectType.IconOnly) ? true : undefined
