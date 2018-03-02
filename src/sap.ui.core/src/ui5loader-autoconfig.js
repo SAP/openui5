@@ -89,23 +89,29 @@
 	(function() {
 		// check URI param
 		var mUrlMatch = /(?:^|\?|&)sap-ui-debug=([^&]*)(?:&|$)/.exec(window.location.search),
-			vDebugInfo = (mUrlMatch && decodeURIComponent(mUrlMatch[1])) || '';
+			vDebugInfo = mUrlMatch && decodeURIComponent(mUrlMatch[1]);
 
 		// check local storage
 		try {
 			vDebugInfo = vDebugInfo || window.localStorage.getItem("sap-ui-debug");
 		} catch (e) {
-			// happens in FF when cookies are deactivated
+			// access to localStorage might be disallowed
 		}
+
+		// check bootstrapScript attribute
 		vDebugInfo = vDebugInfo || (oBootstrapScript && oBootstrapScript.getAttribute("data-sap-ui-debug"));
 
-		// normalize
-		if ( /^(?:false|true|x|X)$/.test(vDebugInfo) ) {
-			vDebugInfo = vDebugInfo !== 'false';
+		// normalize vDebugInfo; afterwards, it either is a boolean or a string not representing a boolean
+		if ( typeof vDebugInfo === 'string' ) {
+			if ( /^(?:false|true|x|X)$/.test(vDebugInfo) ) {
+				vDebugInfo = vDebugInfo !== 'false';
+			}
+		} else {
+			vDebugInfo = !!vDebugInfo;
 		}
 
-		// if bootstrap URL already contains -dbg URL, just set sap-ui-loaddbg
-		if (/-dbg\.js([?#]|$)/.test(sBootstrapUrl)) {
+		// if bootstrap URL explicitly refers to a debug source, generally use debug sources
+		if ( /-dbg\.js([?#]|$)/.test(sBootstrapUrl) ) {
 			window['sap-ui-loaddbg'] = true;
 			vDebugInfo = vDebugInfo || true;
 		}
