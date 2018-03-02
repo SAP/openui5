@@ -117,9 +117,7 @@ sap.ui.define([
 				this._$editableField.text(this._$oEditableControlDomRef.text());
 			}
 
-			if (!this.getOldValue()) {
-				this.setOldValue(RenameHandler._getCurrentEditableFieldText.call(this));
-			}
+			this.setOldValue(RenameHandler._getCurrentEditableFieldText.call(this));
 
 			DOMUtil.copyComputedStyle(this._$oEditableControlDomRef, this._$editableField);
 			this._$editableField.children().remove();
