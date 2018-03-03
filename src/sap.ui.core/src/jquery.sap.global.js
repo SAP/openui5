@@ -671,18 +671,22 @@
 	(function() {
 		// check URI param
 		var mUrlMatch = /(?:^|\?|&)sap-ui-debug=([^&]*)(?:&|$)/.exec(location.search),
-			vDebugInfo = (mUrlMatch && mUrlMatch[1]) || '';
+			vDebugInfo = mUrlMatch && decodeURIComponent(mUrlMatch[1]);
 
 		// check local storage
 		try {
 			vDebugInfo = vDebugInfo || window.localStorage.getItem("sap-ui-debug");
 		} catch (e) {
-			// happens in FF when cookies are deactivated
+			// access to localStorage might be disallowed
 		}
 
-		// normalize
-		if ( /^(?:false|true|x|X)$/.test(vDebugInfo) ) {
-			vDebugInfo = vDebugInfo !== 'false';
+		// normalize vDebugInfo; afterwards, it either is a boolean or a string not representing a boolean
+		if ( typeof vDebugInfo === 'string' ) {
+			if ( /^(?:false|true|x|X)$/.test(vDebugInfo) ) {
+				vDebugInfo = vDebugInfo !== 'false';
+			}
+		} else {
+			vDebugInfo = !!vDebugInfo;
 		}
 
 		window["sap-ui-debug"] = vDebugInfo;
