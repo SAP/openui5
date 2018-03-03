@@ -1377,6 +1377,7 @@ sap.ui.define([
 	 * @param {function} [fnCheckEntry] A function which can be used to restrict invalidation to specific entries,
 	 *     gets the entity key and object as parameters and should return true for entities to invalidate.
 	 * @public
+	 * @since 1.52.1
 	 */
 	ODataModel.prototype.invalidate = function(fnCheckEntry) {
 		var oEntry;
@@ -1396,6 +1397,7 @@ sap.ui.define([
 	 *
 	 * @param {string|sap.ui.model.Context} vEntry the reference to the entry, either by key, absolute path or context object
 	 * @public
+	 * @since 1.52.1
 	 */
 	ODataModel.prototype.invalidateEntry = function(vEntry) {
 		var oEntry;
@@ -1421,6 +1423,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sEntityType the qualified name of the entity type
 	 * @public
+	 * @since 1.52.1
 	 */
 	ODataModel.prototype.invalidateEntityType = function(sEntityType) {
 		var oEntry;
