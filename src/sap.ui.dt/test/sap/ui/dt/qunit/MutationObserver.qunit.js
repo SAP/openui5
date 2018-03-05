@@ -11,6 +11,7 @@ sap.ui.require([
 	'sap/m/Panel',
 	'sap/m/Button',
 	'sap/ui/layout/VerticalLayout',
+	'sap/m/Label',
 	'sap/ui/thirdparty/sinon'
 ],
 function(
@@ -22,6 +23,7 @@ function(
 	Panel,
 	Button,
 	VerticalLayout,
+	Label,
 	sinon
 ) {
 	'use strict';
@@ -29,12 +31,13 @@ function(
 
 	QUnit.module("Given that a MutationObserver is created", {
 		beforeEach : function() {
-			this.oLabel = new sap.m.Label({
-				text : "text"
+			this.oLabel = new Label({
+				text : "text text text text text text text text text text text text text text text text text text"
 			});
-			this.oMutationObserver = new MutationObserver();
 			this.oLabel.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
+			this.oMutationObserver = new MutationObserver();
+			this.oMutationObserver.addToWhiteList(this.oLabel.getId());
 		},
 		afterEach : function() {
 			this.oMutationObserver.destroy();
@@ -65,20 +68,23 @@ function(
 	});
 
 	QUnit.test("when a mutation is ignored", function(assert) {
+		var $Fixture = jQuery('#qunit-fixture');
+		var iFixtureWidth = $Fixture.width();
 		var done = assert.async();
-
 		this.oMutationObserver.ignoreOnce({
 			target: this.oLabel.getDomRef(),
 			type: "childList"
 		});
-		assert.equal(this.oMutationObserver._aIgnoredMutations.length, 1, "the mutation is being ignored");
+		assert.equal(this.oMutationObserver._aIgnoredMutations.length, 1, "the mutation is in ignore list");
 
 		this.oMutationObserver.attachEventOnce("domChanged", function(oEvent) {
 			assert.equal(oEvent.mParameters.targetNodes.indexOf(this.oLabel.getDomRef()), -1, "the label change is not part of the event");
 			assert.equal(this.oMutationObserver._aIgnoredMutations.length, 0, "the mutation is no longer ignored");
+			$Fixture.width(iFixtureWidth);
 			done();
 		}.bind(this));
 		this.oLabel.$().append("<div />");
+		$Fixture.width(100);
 	});
 
 	QUnit.module("Given a Vertical Layout with a scrollable Panel and another Vertical Layout with two scrollable panels for which DT is started...", {
@@ -134,7 +140,7 @@ function(
 			sap.ui.getCore().applyChanges();
 
 			// Makes the area where DT will be active more prominent
-			jQuery(this.oVerticalLayoutRoot.getDomRef()).css("border", "solid");
+			jQuery(this.oVerticalLayoutRoot.getDomRef()).css("outline", "solid");
 
 			this.oDesignTime = new DesignTime({
 				rootElements : [this.oVerticalLayoutRoot]
@@ -156,7 +162,8 @@ function(
 	QUnit.test("when the panel outside of DT is scrolled", function(assert) {
 		var done = assert.async();
 		var spy = sinon.spy();
-		setTimeout(function(){
+		Overlay.getMutationObserver().attachEventOnce("domChanged", spy);
+		setTimeout(function () {
 			assert.equal(spy.called, false, "then the event was not fired");
 			done();
 		});
@@ -181,5 +188,9 @@ function(
 			done();
 		});
 		this.Panel0.$().find('>.sapMPanelContent').scrollTop(50);
+	});
+
+	QUnit.done(function( details ) {
+		jQuery("#qunit-fixture").hide();
 	});
 });
