@@ -79,6 +79,7 @@
 			Device,
 			iFileIndex = aFileNames.length,
 			sFileName = oConfiguration.inputFileName,
+			iNoOfOutputLines,
 			sScriptInput = oConfiguration.inputFile,
 			sScriptOutput;
 
@@ -100,12 +101,18 @@
 		sScriptOutput = "" + falafel(sScriptInput, {
 				attachComment : bComment,
 				comment : bComment,
-				loc : true
-//				range : false,
-//				source : undefined, // would simply be attached to each Location
+				loc : true,
+				range : true,
+				source : sScriptInput // is simply attached to each Location
 //				tokens : false,
 //				tolerant : false
 			}, visit.bind(null, bBranchTracking, iFileIndex, Device));
+
+		iNoOfOutputLines = sScriptOutput.split("\n").length;
+		if (iNoOfOutputLines !== _$blanket[sFileName].source.length) {
+			jQuery.sap.log.warning("Line length mismatch! " + _$blanket[sFileName].source.length
+				+ " vs. " + iNoOfOutputLines, sFileName, "sap.ui.test.BranchTracking");
+		}
 
 		fnSuccess(sScriptOutput);
 	}
@@ -229,6 +236,27 @@
 			aHits[iLine] = 0;
 		}
 
+		/*
+		 * Preserve operator's source code incl. comments and line breaks, but avoid leading closing
+		 * or trailing opening parentheses.
+		 *
+		 * Note: outer parentheses are absorbed by operators and do not appear in operand's source!
+		 *
+		 * @returns {string}
+		 */
+		function operator() {
+			var sSource = oNode.loc.source.slice(oNode.left.range[1], oNode.right.range[0]);
+
+			if (sSource[0] === ")") {
+				sSource = sSource.slice(1);
+			}
+			if (sSource.slice(-1) === "(") {
+				sSource = sSource.slice(0, -1);
+			}
+
+			return sSource;
+		}
+
 		if (Device && isChildOfIgnoredNode(Device, oNode)) {
 			return false;
 		}
@@ -320,10 +348,10 @@
 					return false;
 				}
 				if (oNode.operator === "||" || oNode.operator === "&&") {
-					// Note: (...) around right source!
 					sOldSource = oNode.left.source();
+					// Note: (...) around right source!
 					sNewSource = "blanket.$b(" + iFileIndex + ", " + aBranchTracking.length + ", "
-						+ sOldSource + ") " + oNode.operator + " (" + oNode.right.source() + ")";
+						+ sOldSource + ") " + operator() + " (" + oNode.right.source() + ")";
 					if (!rWordChar.test(sOldSource[0])) {
 						// Note: handle minified code like "return!x||y;"
 						sNewSource = " " + sNewSource;
