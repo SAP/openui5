@@ -27,7 +27,9 @@ sap.ui.require([
 	/*eslint max-nested-callbacks: 0, no-new: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
+	var aAllowedBindingParameters = ["$$groupId", "$$operationMode", "$$ownRequest",
+			"$$updateGroupId"],
+		sClassName = "sap.ui.model.odata.v4.ODataListBinding",
 		TestControl = ManagedObject.extend("test.sap.ui.model.odata.v4.ODataListBinding", {
 			metadata : {
 				aggregations : {
@@ -318,8 +320,7 @@ sap.ui.require([
 			sUpdateGroupId = "update foo";
 
 		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters),
-				["$$groupId", "$$operationMode", "$$updateGroupId"])
+			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
 			.returns(mBindingParameters);
 		oModelMock.expects("buildQueryOptions").withExactArgs(sinon.match.same(mParameters), true)
 			.returns(mQueryOptions);
@@ -370,8 +371,7 @@ sap.ui.require([
 
 		oBinding.mCacheByContext = {}; //mCacheByContext must be reset before fetchCache
 		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters),
-				["$$groupId", "$$operationMode", "$$updateGroupId"])
+			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
 			.returns({$$operationMode : OperationMode.Server});
 		oModelMock.expects("buildQueryOptions")
 			.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
@@ -1834,8 +1834,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("$$groupId, $$updateGroupId, $$operationMode", function (assert) {
-		var aAllowed = ["$$groupId", "$$operationMode", "$$updateGroupId"],
-			oBinding = this.oModel.bindList("/EMPLOYEES"),
+		var oBinding = this.oModel.bindList("/EMPLOYEES"),
 			oModelMock = this.mock(this.oModel),
 			mParameters = {},
 			oPrototypeMock;
@@ -1844,7 +1843,7 @@ sap.ui.require([
 		oModelMock.expects("getUpdateGroupId").twice().withExactArgs().returns("fromModel");
 
 		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters), aAllowed)
+			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
 			.returns({$$groupId : "foo", $$operationMode : "Server", $$updateGroupId : "bar"});
 		// code under test
 		oBinding.applyParameters(mParameters);
@@ -1853,7 +1852,7 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
 
 		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters), aAllowed)
+			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
 			.returns({$$groupId : "foo"});
 		// code under test
 		oBinding.applyParameters(mParameters);
@@ -1862,7 +1861,7 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
 		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters), aAllowed)
+			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
 			.returns({});
 		// code under test
 		oBinding.applyParameters(mParameters);
@@ -1871,7 +1870,7 @@ sap.ui.require([
 
 		// buildBindingParameters also called for relative binding
 		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters), aAllowed)
+			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
 			.returns({$$groupId : "foo", $$operationMode : "Server", $$updateGroupId : "bar"});
 		oPrototypeMock = this.mock(ODataListBinding.prototype);
 		oPrototypeMock.expects("applyParameters").withExactArgs(mParameters); // called by c'tor

@@ -181,15 +181,13 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.applyParameters = function (mParameters, sChangeReason) {
-		var oBindingParameters;
+		var oBindingParameters = this.oModel.buildBindingParameters(mParameters,
+			["$$groupId", "$$ownRequest", "$$updateGroupId"]);
 
-		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
-
-		oBindingParameters = this.oModel.buildBindingParameters(mParameters,
-			["$$groupId", "$$updateGroupId"]);
 		this.sGroupId = oBindingParameters.$$groupId;
 		this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
-		this.mParameters = mParameters;
+		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
+		this.mParameters = mParameters; // store mParameters at binding after validation
 		if (!this.oOperation) {
 			this.fetchCache(this.oContext);
 			if (sChangeReason) {

@@ -21,7 +21,7 @@ sap.ui.require([
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var aAllowedBindingParameters = ["$$groupId", "$$updateGroupId"],
+	var aAllowedBindingParameters = ["$$groupId", "$$ownRequest", "$$updateGroupId"],
 		sClassName = "sap.ui.model.odata.v4.ODataContextBinding";
 
 	//*********************************************************************************************
@@ -111,7 +111,7 @@ sap.ui.require([
 		oModelMock.expects("buildQueryOptions")
 			.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
 		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters), ["$$groupId", "$$updateGroupId"])
+			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
 			.returns(mBindingParameters);
 		this.mock(oBinding).expects("fetchCache").withExactArgs(undefined).callsFake(function () {
 			this.oCachePromise = SyncPromise.resolve({});
@@ -145,7 +145,7 @@ sap.ui.require([
 			oModelMock.expects("buildQueryOptions")
 				.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
 			oModelMock.expects("buildBindingParameters")
-				.withExactArgs(sinon.match.same(mParameters), ["$$groupId", "$$updateGroupId"])
+				.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
 				.returns({
 					$$groupId : sGroupId,
 					$$updateGroupId : sUpdateGroupId
@@ -180,7 +180,7 @@ sap.ui.require([
 		oModelMock.expects("buildQueryOptions")
 			.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
 		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters), ["$$groupId", "$$updateGroupId"])
+			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
 			.returns({
 				$$groupId : sGroupId,
 				$$updateGroupId : sUpdateGroupId
@@ -213,7 +213,7 @@ sap.ui.require([
 		oModelMock.expects("buildQueryOptions")
 			.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
 		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters), ["$$groupId", "$$updateGroupId"])
+			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
 			.returns({
 				$$groupId : sGroupId,
 				$$updateGroupId : sUpdateGroupId
@@ -710,7 +710,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("$$groupId, $$updateGroupId", function (assert) {
+	QUnit.test("$$groupId, $$ownRequest, $$updateGroupId", function (assert) {
 		var oBinding,
 			oModelMock = this.mock(this.oModel),
 			mParameters = {

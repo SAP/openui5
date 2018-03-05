@@ -217,7 +217,7 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.applyParameters = function (mParameters, sChangeReason) {
 		var oBindingParameters = this.oModel.buildBindingParameters(mParameters,
-				["$$groupId", "$$operationMode", "$$updateGroupId"]),
+				["$$groupId", "$$operationMode", "$$ownRequest", "$$updateGroupId"]),
 			sOperationMode;
 
 		sOperationMode = oBindingParameters.$$operationMode || this.oModel.sOperationMode;
@@ -227,7 +227,6 @@ sap.ui.define([
 			throw new Error("Unsupported operation mode: " + sOperationMode);
 		}
 		this.sOperationMode = sOperationMode;
-
 		this.sGroupId = oBindingParameters.$$groupId;
 		this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
