@@ -43,6 +43,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 			this._sGroupingPath = "";
 			this._bDataRequested = false;
 			this._oContainerDomRef = null;
+			this._iLastItemsCount = 0;
 			this._iTriggerTimer = 0;
 			this._aChunk = [];
 			this._oRM = null;
@@ -237,6 +238,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 
 		// returns the growing information to be shown at the growing button
 		_getListItemInfo : function() {
+			this._iLastItemsCount = this._oControl.getItems(true).length;
 			return ("[ " + this._iRenderedDataItems + " / " + NumberFormat.getFloatInstance().format(this._oControl.getMaxItemsCount()) + " ]");
 		},
 
@@ -611,13 +613,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 					bLengthFinal = oBinding.isLengthFinal(),
 					bHasScrollToLoad = oControl.getGrowingScrollToLoad();
 
+				// put the focus to the newly added item if growing button is pressed
+				if (oTrigger.getDomRef().contains(document.activeElement)) {
+					(aItems[this._iLastItemsCount] || oControl).focus();
+				}
+
 				// show, update or hide the growing button
 				if (!iItemsLength || !this._iLimit ||
 					(bLengthFinal && this._iLimit >= iBindingLength) ||
 					(bHasScrollToLoad && this._getHasScrollbars())) {
-					if (document.activeElement === oTrigger.getDomRef()) {
-						oControl.forwardTab(true);
-					}
 					oControl.$("triggerList").css("display", "none");
 				} else {
 					if (bLengthFinal) {
