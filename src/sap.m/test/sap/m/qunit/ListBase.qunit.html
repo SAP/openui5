@@ -1771,6 +1771,34 @@
 			oText2.destroy();
 		});
 
+		QUnit.test("group headers info of the item", function(assert) {
+			var oGroupHeader1 = new sap.m.GroupHeaderListItem({
+					title: "Group Header 1"
+				}),
+				oListItem1 = new sap.m.StandardListItem({
+					title: "List Item 1"
+				}),
+				oGroupHeader2 = new sap.m.GroupHeaderListItem({
+					title: "Group Header 2"
+				}),
+				oListItem2 = new sap.m.StandardListItem({
+					title: "List Item 2"
+				}),
+				oList = new sap.m.List({
+					items: [oGroupHeader1, oListItem1, oGroupHeader2, oListItem2]
+				}).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+
+			oListItem1.focus();
+			assert.ok(oListItem1.getAccessibilityInfo().description.indexOf(oGroupHeader1.getTitle()) > -1, "group headers info exist in the accessibility info of the item");
+
+			oListItem2.focus();
+			assert.ok(oListItem2.getAccessibilityInfo().description.indexOf(oGroupHeader2.getTitle()) > -1, "group headers info of the item matches with the correct group header");
+
+			oList.destroy();
+		});
+
 		QUnit.module("Context Menu");
 
 		QUnit.test("Context Menu", function(assert) {
