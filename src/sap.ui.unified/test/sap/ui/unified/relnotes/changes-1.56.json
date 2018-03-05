@@ -37,6 +37,30 @@
         "type": "FIX",
         "text": " sap.ui.unified.ColorPicker: Sample is now scrollable on mobile",
         "references": []
+      },
+      {
+        "id": "97447e2d75b19c2db6ff4476f55e8b9e8fd3e00d",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: Change header when two months are used",
+        "references": []
+      },
+      {
+        "id": "fe28125b3307fb60ccb790152e8f5573c88b261f",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: No double focus outline on Belize on IE",
+        "references": []
+      },
+      {
+        "id": "bf7681e89ae1cd89b0fdd55d2e28697da8db2709",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Update aria-label for the year button",
+        "references": []
+      },
+      {
+        "id": "06ac89fd56d0f2191fb8a75fd21510a0f9f1850b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: focus clearly visible in IE for HCB and HCW",
+        "references": []
       }
     ]
   }

@@ -25,6 +25,12 @@
         "type": "FIX",
         "text": " sap.f.DynamicPageTitle: Enable main actions moving in RTA",
         "references": []
+      },
+      {
+        "id": "a1c46cc22e724a6bb77fbbe8e8f0fa7ac70f50d6",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Arrow buttons aligned with VD spec",
+        "references": []
       }
     ]
   }

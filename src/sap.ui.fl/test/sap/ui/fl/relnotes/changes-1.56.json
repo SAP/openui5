@@ -25,6 +25,12 @@
         "type": "FIX",
         "text": " sap.ui.fl: MoveControls now reverts to the correct position",
         "references": []
+      },
+      {
+        "id": "b2bf2b7faf961d427609444570d3f23f4f8bee65",
+        "type": "FIX",
+        "text": " Fix open issues",
+        "references": []
       }
     ]
   }

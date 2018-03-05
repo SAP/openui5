@@ -67,6 +67,12 @@
         "type": "FIX",
         "text": " sap.ui.rta: fixed tests running out of stack space in IE11",
         "references": []
+      },
+      {
+        "id": "4276d565086f20cd232dc9360c5ac3cd73fbb1ce",
+        "type": "FIX",
+        "text": " sap.ui.rta: check geometry of overlay instead of original element",
+        "references": []
       }
     ]
   }

@@ -25,6 +25,30 @@
         "type": "FIX",
         "text": " sap.ui.unified.Menu: Focus outline fixed for HCB and HCW",
         "references": []
+      },
+      {
+        "id": "a1c46cc22e724a6bb77fbbe8e8f0fa7ac70f50d6",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Arrow buttons aligned with VD spec",
+        "references": []
+      },
+      {
+        "id": "649f5b3dfb79962423b69fd6965bfe4a4f43714e",
+        "type": "FIX",
+        "text": " sap.m.Button: Emphasized button has correct focus outline color on its down state in Belize",
+        "references": []
+      },
+      {
+        "id": "d735d2312e3811075df9f37e2c0611a24a6e46bd",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: focus outline clearly visible in IE",
+        "references": []
+      },
+      {
+        "id": "fe28125b3307fb60ccb790152e8f5573c88b261f",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: No double focus outline on Belize on IE",
+        "references": []
       }
     ]
   }

@@ -163,6 +163,60 @@
         "type": "FIX",
         "text": " sap.ui.unified.MenuListItem: Arrow positioned correctly in compact mode",
         "references": []
+      },
+      {
+        "id": "5e3c12dd3890894e2762bc8cf22c45fbd106832c",
+        "type": "FEATURE",
+        "text": " Form: new column-based layout",
+        "references": []
+      },
+      {
+        "id": "697c90f1d1bdfe591ba786967360372363fb19c4",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: properly show TimePicker in Edge",
+        "references": []
+      },
+      {
+        "id": "b286900b7c48e29a2a2c5c899cbd5e0fef2faf2d",
+        "type": "FIX",
+        "text": " sap.m.Dialog: stretch property when using content size fixed",
+        "references": []
+      },
+      {
+        "id": "ec73c707b246826444f7efafaf34813a1f0aa734",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Tokenizer in Safari is no longer cut off",
+        "references": []
+      },
+      {
+        "id": "4a00c8b8be575c7019ce9ef23844ef12beb8c0e5",
+        "type": "FIX",
+        "text": " sap.m.Page: Escape title properly",
+        "references": []
+      },
+      {
+        "id": "a3f56056cdd63ff7a9199af8cbf657d6e54996d5",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: removeItem, removeItems, removeButton and removeButtons return the removed elements",
+        "references": []
+      },
+      {
+        "id": "6769ad14f76f0281656816dcdd79bf76f93b81b9",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Counter text changed",
+        "references": []
+      },
+      {
+        "id": "74dcf456d3dc458607e340d365e6604dc4ac522f",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: Tile is initially visible now if TileContainer contains only one tile",
+        "references": []
+      },
+      {
+        "id": "de5c07c1c59f3a15601dcd7a2ee1a4f4d57a48af",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: The placeholder now is correctly displayed in IE after focusout",
+        "references": []
       }
     ]
   }

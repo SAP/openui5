@@ -1,0 +1,13 @@
+{
+  "1.56.0": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "7446115ef4d6903a00e862ce25d96ccbe239431a",
+        "type": "FIX",
+        "text": " sap.ui.commons.MatrixLayout: Render calculations corrected for Edge",
+        "references": []
+      }
+    ]
+  }
+}

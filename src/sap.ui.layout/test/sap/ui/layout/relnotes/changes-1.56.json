@@ -13,6 +13,12 @@
         "type": "FIX",
         "text": " sap.ui.layout: MoveSimpleForm and AddSimpleFormGroup ChangeHandler",
         "references": []
+      },
+      {
+        "id": "5e3c12dd3890894e2762bc8cf22c45fbd106832c",
+        "type": "FEATURE",
+        "text": " Form: new column-based layout",
+        "references": []
       }
     ]
   }

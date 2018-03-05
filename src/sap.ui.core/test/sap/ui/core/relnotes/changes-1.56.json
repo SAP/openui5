@@ -115,6 +115,30 @@
         "type": "FIX",
         "text": " sap.ui.core.cache.CacheManager: IE in privacy mode is disabled.",
         "references": []
+      },
+      {
+        "id": "075d8de223afe82d2de55a23a6d0f46fe6b3e6ee",
+        "type": "FEATURE",
+        "text": " Mockserver: Allow usage of inline metadata documents",
+        "references": []
+      },
+      {
+        "id": "9b8fe26a68873554cf0cf838a1fdb007e1ba8a57",
+        "type": "FIX",
+        "text": " base/log: fix logging of LogLevel change",
+        "references": []
+      },
+      {
+        "id": "9a7b30f8486e4f388742253130a5872a27160508",
+        "type": "FIX",
+        "text": " core.Element: fix bindElement documentation",
+        "references": []
+      },
+      {
+        "id": "79d88b58429d4f2ecc25188cb501a2f2231ddf66",
+        "type": "FIX",
+        "text": " sap.ui.base.BindingParser: String part in expression binding",
+        "references": []
       }
     ]
   }
