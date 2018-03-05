@@ -625,6 +625,11 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	};
 
 	Control.prototype.destroy = function(bSuppressInvalidate) {
+		// ignore repeated calls
+		if (this.bIsDestroyed) {
+			return;
+		}
+
 		// avoid rerendering
 		this._bIsBeingDestroyed = true;
 

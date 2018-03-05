@@ -2644,6 +2644,11 @@ sap.ui.define([
 	 * @public
 	 */
 	ManagedObject.prototype.destroy = function(bSuppressInvalidate) {
+		// ignore repeated calls
+		if (this.bIsDestroyed) {
+			return;
+		}
+
 		var that = this;
 
 		// avoid binding update/propagation
