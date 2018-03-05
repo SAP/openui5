@@ -3,15 +3,13 @@
  */
 
 // Provides control sap.m.List.
-sap.ui.define(['./ListBase', './library', './ListRenderer'],
-	function(ListBase, library, ListRenderer) {
+sap.ui.define(["./library", "./ListBase", "./ListRenderer"],
+	function(library, ListBase, ListRenderer) {
 	"use strict";
-
 
 
 	// shortcut for sap.m.BackgroundDesign
 	var BackgroundDesign = library.BackgroundDesign;
-
 
 
 	/**
@@ -47,50 +45,8 @@ sap.ui.define(['./ListBase', './library', './ListRenderer'],
 			 * @since 1.14
 			 */
 			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : BackgroundDesign.Solid}
-		},
-		aggregations : {
-
-			/**
-			 * Defines columns of the list.
-			 * @deprecated Since version 1.16. Instead, use the <code>sap.m.Table</code> control.
-			 */
-			columns : {type : "sap.m.Column", multiple : true, singularName : "column", deprecated: true}
 		}
 	}});
-
-	List.prototype.onBeforeRendering = function() {
-		if (ListBase.prototype.onBeforeRendering) {
-			ListBase.prototype.onBeforeRendering.call(this);
-		}
-
-		// if "columns" aggregation is not in use or incompatible then ignore
-		if (!this.getColumns().length || this._isColumnsIncompatible()) {
-			return;
-		}
-
-		/**
-		 * FIXME: Here to support old API if columns are set
-		 * We are trying to extend renderer to render list as table
-		 * This is so ugly and we need to get rid of it ASAP
-		 */
-		var proto = sap.ui.requireSync("sap/m/Table").prototype;
-		Object.keys(proto).forEach(function(key) {
-			this[key] = proto[key];
-		}, this);
-
-		/**
-		 * FIXME: Handle different default backgroundDesign value for Table
-		 */
-		if (!this.mProperties.hasOwnProperty("backgroundDesign")) {
-			this.setBackgroundDesign("Translucent");
-		}
-
-	};
-
-	// checks if "columns" usage is not compatible anymore
-	List.prototype._isColumnsIncompatible = function() {
-		return sap.ui.getCore().getConfiguration().getCompatibilityVersion("sapMListAsTable").compareTo("1.16") >= 0;
-	};
 
 	return List;
 

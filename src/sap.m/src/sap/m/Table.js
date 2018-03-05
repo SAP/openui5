@@ -4,16 +4,16 @@
 
 // Provides control sap.m.Table.
 sap.ui.define([
-	'jquery.sap.global',
-	'./ListBase',
-	'./ListItemBase',
-	'./library',
-	'sap/ui/Device',
-	'./TableRenderer'
+	"jquery.sap.global",
+	"sap/ui/Device",
+	"./library",
+	"./ListBase",
+	"./ListItemBase",
+	"./CheckBox",
+	"./TableRenderer"
 ],
-	function(jQuery, ListBase, ListItemBase, library, Device, TableRenderer) {
+	function(jQuery, Device, library, ListBase, ListItemBase, CheckBox, TableRenderer) {
 	"use strict";
-
 
 
 	// shortcut for sap.m.ListKeyboardMode
@@ -463,10 +463,10 @@ sap.ui.define([
 	 * @return {sap.m.CheckBox} reference to the internal select all checkbox
 	 */
 	Table.prototype._getSelectAllCheckbox = function() {
-		return this._selectAllCheckBox || (this._selectAllCheckBox = new sap.m.CheckBox({
+		return this._selectAllCheckBox || (this._selectAllCheckBox = new CheckBox({
 			id: this.getId("sa"),
 			activeHandling: false
-		}).addStyleClass('sapMLIBSelectM').setParent(this, null, true).attachSelect(function () {
+		}).addStyleClass("sapMLIBSelectM").setParent(this, null, true).attachSelect(function () {
 			if (this._selectAllCheckBox.getSelected()) {
 				this.selectAll(true);
 			} else {

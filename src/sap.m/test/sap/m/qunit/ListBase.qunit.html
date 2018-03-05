@@ -1237,21 +1237,6 @@
 		QUnit.module("Internal methods");
 		/********************************************************************************/
 
-		QUnit.test("_isColumnsIncompatible", function(assert) {
-			var oList = new sap.m.List();
-
-			// add item to page & render
-			oPage.addContent(oList);
-			sap.ui.getCore().applyChanges();
-
-			// call method & do tests
-			assert.strictEqual(oList._isColumnsIncompatible(), false, "method returns false for any version larger than 1.14");
-
-			// cleanup
-			oPage.removeAllContent();
-			oList.destroy();
-		});
-
 		QUnit.module("KeyboardHandling");
 		QUnit.test("Basics", function (assert) {
 			var fnDetailPressSpy = this.spy(),

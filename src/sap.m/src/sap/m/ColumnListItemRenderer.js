@@ -2,8 +2,16 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Renderer', './ColumnHeader', './Label', 'sap/ui/core/library', 'sap/ui/Device', 'sap/m/library'],
-	function(jQuery, ListItemBaseRenderer, Renderer, ColumnHeader, Label, coreLibrary, Device, library) {
+sap.ui.define([
+	"jquery.sap.global",
+	"sap/ui/core/Renderer",
+	"sap/ui/core/library",
+	"sap/ui/Device",
+	"./library",
+	"./ListItemBaseRenderer",
+	"./Label"
+],
+	function(jQuery, Renderer, coreLibrary, Device, library, ListItemBaseRenderer, Label) {
 	"use strict";
 
 	// shortcut for sap.m.PopinDisplay
@@ -288,12 +296,15 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 				rm.addClass("sapMListTblSubCntHdr");
 				rm.writeClasses();
 				rm.write(">");
-				if (oHeader instanceof ColumnHeader) {
+
+				var fnColumnHeaderClass = sap.ui.require("sap/m/ColumnHeader");
+				if (typeof fnColumnHeaderClass == "function" && oHeader instanceof fnColumnHeaderClass) {
 					var sColumnHeaderTitle = oHeader.getText();
 					oHeader = new Label({text: sColumnHeaderTitle});
 				} else {
 					oHeader = oHeader.clone();
 				}
+
 				oColumn.addDependent(oHeader);
 				oLI._addClonedHeader(oHeader);
 				oColumn.applyAlignTo(oHeader, "Begin");

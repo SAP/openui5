@@ -2,13 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
+sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	function(library, Device, InvisibleText) {
 	"use strict";
 
 
 	// shortcut for sap.m.ListType
-	var ListType = library.ListType;
+	var ListItemType = library.ListType;
 
 	// shortcut for sap.m.ListMode
 	var ListMode = library.ListMode;
@@ -49,8 +49,8 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	};
 
 	ListItemBaseRenderer.isModeMatched = function(sMode, iOrder) {
-		var mOrderConfig = (sap.m.ListBaseRenderer || {}).ModeOrder || {};
-		return (mOrderConfig[sMode] == iOrder);
+		var mOrderConfig = (sap.ui.require("sap/m/ListBaseRenderer") || {}).ModeOrder || {};
+		return mOrderConfig[sMode] == iOrder;
 	};
 
 	/**
@@ -80,7 +80,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 
 	ListItemBaseRenderer.decorateMode = function(oModeControl, oLI) {
 
-		// remove animation classes to avoid unexpected re-rendering bahavior
+		// remove animation classes to avoid unexpected re-rendering behavior
 		oModeControl.removeStyleClass("sapMLIBSelectAnimation sapMLIBUnselectAnimation");
 
 		// determine whether animation is necessary or not
@@ -267,13 +267,13 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 			aDescribedBy.push(this.getAriaAnnouncement("deletable"));
 		}
 
-		if (sType == ListType.Navigation) {
+		if (sType == ListItemType.Navigation) {
 			aDescribedBy.push(this.getAriaAnnouncement("navigation"));
 		} else {
-			if (sType == ListType.Detail || sType == ListType.DetailAndActive) {
+			if (sType == ListItemType.Detail || sType == ListItemType.DetailAndActive) {
 				aDescribedBy.push(this.getAriaAnnouncement("detail"));
 			}
-			if (sType == ListType.Active || sType == ListType.DetailAndActive) {
+			if (sType == ListItemType.Active || sType == ListItemType.DetailAndActive) {
 				aDescribedBy.push(this.getAriaAnnouncement("active"));
 			}
 		}
