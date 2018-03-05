@@ -11,6 +11,7 @@ sap.ui.require([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/OperationMode",
+	"sap/ui/model/odata/v4/AnnotationHelper",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/Sorter",
@@ -18,7 +19,8 @@ sap.ui.require([
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
 ], function (jQuery, ColumnListItem, CustomListItem, Text, Controller, ChangeReason, Filter,
-		FilterOperator, OperationMode, ODataListBinding, ODataModel, Sorter, TestUtils) {
+		FilterOperator, OperationMode, AnnotationHelper, ODataListBinding, ODataModel, Sorter,
+		TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -330,7 +332,8 @@ sap.ui.require([
 			} else {
 				sExpectedValue = aExpectedValues.shift();
 				// Note: avoid bad performance of assert.strictEqual(), e.g. DOM manipulation
-				if (sValue !== sExpectedValue || vRow === undefined || vRow < 10) {
+				if (sValue !== sExpectedValue || vRow === undefined || typeof vRow !== "number"
+						|| vRow < 10) {
 					assert.strictEqual(sValue, sExpectedValue,
 						sVisibleId + ": " + JSON.stringify(sValue));
 				}
@@ -1712,95 +1715,47 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Metadata access to Manager which is not loaded yet.
-	QUnit.test("Metadata: Manager", function (assert) {
+	// Scenario: Metadata access to MANAGERS which is not loaded yet.
+	QUnit.test("Metadata access to MANAGERS which is not loaded yet", function (assert) {
 		var sView = '\
 <Table id="table" items="{/MANAGERS}">\
 	<ColumnListItem>\
 		<Text id="item" text="{@sapui.name}" />\
 	</ColumnListItem>\
 </Table>',
-			oModel = createTeaBusiModel().getMetaModel(),
-			that = this;
+			oModel = createTeaBusiModel().getMetaModel();
 
-		this.expectChange("item", false);
-		return this.createView(assert, sView, oModel).then(function () {
-			that.expectChange("item", "ID", "/MANAGERS/ID")
-				.expectChange("item", "TEAM_ID", "/MANAGERS/TEAM_ID")
-				.expectChange("item", "Manager_to_Team", "/MANAGERS/Manager_to_Team");
-			return that.waitForChanges(assert);
-		});
+		this.expectChange("item", "ID", "/MANAGERS/ID")
+			.expectChange("item", "TEAM_ID", "/MANAGERS/TEAM_ID")
+			.expectChange("item", "Manager_to_Team", "/MANAGERS/Manager_to_Team");
+		return this.createView(assert, sView, oModel);
 	});
 
 	//*********************************************************************************************
-	// Scenario: Metadata access to Product which resides in an include
-	QUnit.test("Metadata: Product", function (assert) {
-		var sView = '\
-<Table id="table" items="{/Equipments/EQUIPMENT_2_PRODUCT}">\
-	<ColumnListItem>\
-		<Text id="item" text="{@sapui.name}" />\
-	</ColumnListItem>\
-</Table>',
-			oModel = createTeaBusiModel().getMetaModel(),
-			that = this;
-
-		return oModel.requestObject("/Equipments").then(function () {
-			that.expectChange("item", false);
-			return that.createView(assert, sView, oModel);
-		}).then(function () {
-			that.expectChange("item", "ID", "/Equipments/EQUIPMENT_2_PRODUCT/ID")
-				.expectChange("item", "Name", "/Equipments/EQUIPMENT_2_PRODUCT/Name")
-				.expectChange("item", "SupplierIdentifier",
-					"/Equipments/EQUIPMENT_2_PRODUCT/SupplierIdentifier")
-				.expectChange("item", "ProductPicture",
-					"/Equipments/EQUIPMENT_2_PRODUCT/ProductPicture")
-				.expectChange("item", "PRODUCT_2_CATEGORY",
-					"/Equipments/EQUIPMENT_2_PRODUCT/PRODUCT_2_CATEGORY")
-				.expectChange("item", "PRODUCT_2_SUPPLIER",
-					"/Equipments/EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER");
-			return that.waitForChanges(assert);
-		});
-	});
-
-	//*********************************************************************************************
-	// Scenario: Metadata property access to product name. It should be empty initially, but later
-	// updated via a change event.
+	// Scenario: Metadata property access to product name. It should be updated via one change
+	// event.
 	QUnit.test("Metadata: Product name", function (assert) {
 		var sView = '<Text id="product" text="{/Equipments/EQUIPMENT_2_PRODUCT/@sapui.name}" />',
-			oModel = createTeaBusiModel().getMetaModel(),
-			that = this;
+			oModel = createTeaBusiModel().getMetaModel();
 
-		oModel.setDefaultBindingMode("OneWay");
-		return oModel.requestObject("/Equipments").then(function () {
-			that.expectChange("product", undefined);
-			return that.createView(assert, sView, oModel);
-		}).then(function () {
-			that.expectChange("product",
-					"com.sap.gateway.default.iwbep.tea_busi_product.v0001.Product");
-			return that.waitForChanges(assert);
-		});
+		this.expectChange("product",
+			"com.sap.gateway.default.iwbep.tea_busi_product.v0001.Product");
+		return this.createView(assert, sView, oModel);
 	});
 
 	//*********************************************************************************************
-	// Scenario: Metadata property access to product name. It should be empty initially, but later
-	// updated via a change event.
+	// Scenario: Metadata property access to product name. It should be updated via one change
+	// event.
 	QUnit.test("Metadata: Product name via form", function (assert) {
 		var sView = '\
 <FlexBox binding="{/Equipments/EQUIPMENT_2_PRODUCT/}">\
 	<Text id="product" text="{@sapui.name}" />\
 </FlexBox>',
-			oModel = createTeaBusiModel().getMetaModel(),
-			that = this;
+			oModel = createTeaBusiModel().getMetaModel();
 
-		oModel.setDefaultBindingMode("OneWay");
-		return oModel.requestObject("/Equipments").then(function () {
-			that.expectChange("product", undefined);
-			return that.createView(assert, sView, oModel);
-		}).then(function () {
-			that.expectChange("product",
-					"com.sap.gateway.default.iwbep.tea_busi_product.v0001.Product");
-			return that.waitForChanges(assert);
-		});
+		this.expectChange("product",
+			"com.sap.gateway.default.iwbep.tea_busi_product.v0001.Product");
+		return this.createView(assert, sView, oModel);
 	});
 
 	//*********************************************************************************************
@@ -1816,7 +1771,6 @@ sap.ui.require([
 			oModel = createTeaBusiModel().getMetaModel(),
 			that = this;
 
-		oModel.setDefaultBindingMode("OneWay");
 		this.expectChange("item", false);
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectChange("item", "ID", "/MANAGERS/ID")
@@ -1841,6 +1795,20 @@ sap.ui.require([
 				.setBindingContext(oModel.getContext("/Equipments/EQUIPMENT_2_PRODUCT"));
 			return that.waitForChanges(assert);
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Avoid duplicate call to computed annotation
+	QUnit.test("Avoid duplicate call to computed annotation", function (assert) {
+		var oModel = createTeaBusiModel().getMetaModel(),
+			sView = '\
+<Text id="text"\
+	text="{/MANAGERS/TEAM_ID@@sap.ui.model.odata.v4.AnnotationHelper.getValueListType}"/>';
+
+		this.mock(AnnotationHelper).expects("getValueListType").returns("foo");
+
+		this.expectChange("text", "foo");
+		return this.createView(assert, sView, oModel);
 	});
 
 	//*********************************************************************************************
