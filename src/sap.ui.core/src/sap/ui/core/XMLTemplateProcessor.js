@@ -4,8 +4,17 @@
 
 /*global HTMLTemplateElement, DocumentFragment, Promise*/
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/ManagedObject', 'sap/ui/core/CustomData', './mvc/View', './ExtensionPoint', './StashedControlSupport', 'sap/ui/base/SyncPromise'],
-function(jQuery, DataType, ManagedObject, CustomData, View, ExtensionPoint, StashedControlSupport, SyncPromise) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/base/DataType',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/core/CustomData',
+	'./mvc/View',
+	'./mvc/EventHandlerResolver',
+	'./ExtensionPoint',
+	'./StashedControlSupport',
+	'sap/ui/base/SyncPromise'],
+function(jQuery, DataType, ManagedObject, CustomData, View, EventHandlerResolver, ExtensionPoint, StashedControlSupport, SyncPromise) {
 	"use strict";
 
 
@@ -705,14 +714,14 @@ function(jQuery, DataType, ManagedObject, CustomData, View, ExtensionPoint, Stas
 
 					} else if (oInfo && oInfo._iKind === 5 /* EVENT */ ) {
 						// EVENT
-						var vEventHandler = View._resolveEventHandler(sValue, oView._oContainingView.oController);
+						var vEventHandler = EventHandlerResolver.resolveEventHandler(sValue, oView._oContainingView.oController); // TODO: can this be made async? (to avoid the hard resolver dependency)
 						if ( vEventHandler ) {
 							mSettings[sName] = vEventHandler;
 						} else {
 							jQuery.sap.log.warning(oView + ": event handler function \"" + sValue + "\" is not a function or does not exist in the controller.");
 						}
 					} else if (oInfo && oInfo._iKind === -1) {
-						// SPECIAL SETTING - currently only allowed for View´s async setting
+						// SPECIAL SETTING - currently only allowed for View's async setting
 						if (View.prototype.isPrototypeOf(oClass.prototype) && sName == "async") {
 							mSettings[sName] = parseScalarType(oInfo.type, sValue, sName, oView._oContainingView.oController);
 						} else {
