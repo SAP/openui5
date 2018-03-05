@@ -6,7 +6,8 @@ sap.ui.define(['sap/ui/core/XMLComposite'],
 			aggregations: {
 				items: {
 					type: "sap.ui.core.Control",
-					multiple: true
+					multiple: true,
+					forwarding: { idSuffix: "--forwardText", aggregation: "textItems" }
 				}
 			},
 			defaultAggregation: "items"

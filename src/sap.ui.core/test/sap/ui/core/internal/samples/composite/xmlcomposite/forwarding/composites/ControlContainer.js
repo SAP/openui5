@@ -14,6 +14,7 @@ sap.ui.define(['sap/ui/core/Control'],
 			renderer: function (oRm, oControl) {
 				oRm.write("<div");
 				oRm.writeControlData(oControl);
+				oRm.writeClasses();
 				oRm.write(">");
                 oRm.renderControl(oControl.getContent());
 				oRm.write("</div>");
