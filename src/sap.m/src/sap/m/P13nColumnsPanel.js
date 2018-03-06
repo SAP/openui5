@@ -250,8 +250,8 @@ sap.ui.define([
 				var $dialogCont = null, iContentHeight, iHeaderHeight;
 				var oParent = that.getParent();
 				var oToolbar = that._getToolbar();
-				if (oParent) {
-					$dialogCont = jQuery("#" + oParent.getId() + "-cont");
+				if (oParent && oParent.$) {
+					$dialogCont = oParent.$("cont");
 					if ($dialogCont.children().length > 0 && oToolbar.$().length > 0) {
 						iScrollContainerHeightOld = oScrollContainer.$()[0].clientHeight;
 
