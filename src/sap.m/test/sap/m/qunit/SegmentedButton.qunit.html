@@ -1271,6 +1271,26 @@
 		oSegmentedButton.destroy();
 	});
 
+	// BCP: 1880235141
+	QUnit.test("remove button returns the removed button", function (assert) {
+		// Arrange
+		var oResult,
+			oButton1 = new sap.m.Button("button1"),
+			oButton2 = new sap.m.Button("button2"),
+			oSegmentedButton = new sap.m.SegmentedButton({ buttons: [oButton1, oButton2] });
+
+		// Act
+		oResult = oSegmentedButton.removeButton(oButton1);
+
+		// Assert
+		assert.equal(oResult.getId(), oButton1.getId(), "removeButton should return the removed button");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+		oButton1.destroy();
+		oButton2.destroy();
+	});
+
 	/* ------------------------------ */
 	/* removeAllButtons()             */
 	/* ------------------------------ */
@@ -1303,6 +1323,28 @@
 
 		// Cleanup
 		oSegmentedButton.destroy();
+	});
+
+	// BCP: 1880235141
+	QUnit.test("remove all buttons returns the removed buttons", function (assert) {
+		assert.expect(2);
+		// Arrange
+		var aResult,
+			aButtons = [new sap.m.Button("button1"), new sap.m.Button("button2")],
+			oSegmentedButton = new sap.m.SegmentedButton({ buttons: aButtons });
+
+		// Act
+		aResult = oSegmentedButton.removeAllButtons();
+
+		// Assert
+		aResult.forEach(function (oRemovedButton, index) {
+			assert.equal(oRemovedButton.getId(), aButtons[index].getId(), "removeAllButtons should remove button " + oRemovedButton.getId());
+		});
+
+		// Cleanup
+		oSegmentedButton.destroy();
+		aButtons[0].destroy();
+		aButtons[1].destroy();
 	});
 
 	/* ------------------------------ */
@@ -1628,6 +1670,26 @@
 		assert.strictEqual(this.oSB.getSelectedKey(), "b4", "Button with key 'b4' is selected");
 	});
 
+	// BCP: 1880235141
+	QUnit.test("remove item returns the removed item", function (assert) {
+		// Arrange
+		var oResult,
+			oSegmentedButtonItem1 = new sap.m.SegmentedButtonItem("item1"),
+			oSegmentedButtonItem2 = new sap.m.SegmentedButtonItem("item2"),
+			oSegmentedButton = new sap.m.SegmentedButton({ items: [oSegmentedButtonItem1, oSegmentedButtonItem2] });
+
+		// Act
+		oResult = oSegmentedButton.removeItem(oSegmentedButtonItem1);
+
+		// Assert
+		assert.equal(oResult.getId(), oSegmentedButtonItem1.getId(), "removeItem should return the removed item");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+		oSegmentedButtonItem1.destroy();
+		oSegmentedButtonItem2.destroy();
+	});
+
 	QUnit.test("insertItem", function (assert) {
 		// Arrange
 		this.oSB.addItem(new sap.m.SegmentedButtonItem({text: "Button 1"}));
@@ -1662,6 +1724,28 @@
 		assert.strictEqual(this.oSB.getSelectedKey(), "", "There is no selected key");
 		assert.strictEqual(this.oSB.getSelectedButton(), null, "There is no selected button");
 		assert.strictEqual(this.oSB.$().find("li").length, 0, "There are 0 buttons rendered");
+	});
+
+	// BCP: 1880235141
+	QUnit.test("remove all items returns the removed items", function (assert) {
+		assert.expect(2);
+		// Arrange
+		var aResult,
+			aItems = [new sap.m.SegmentedButtonItem("item1"), new sap.m.SegmentedButtonItem("item2")],
+			oSegmentedButton = new sap.m.SegmentedButton({ items: aItems });
+
+		// Act
+		aResult = oSegmentedButton.removeAllItems();
+
+		// Assert
+		aResult.forEach(function (oRemovedItem, index) {
+			assert.equal(oRemovedItem.getId(), aItems[index].getId(), "removeAllItems should remove item " + oRemovedItem.getId());
+		});
+
+		// Cleanup
+		oSegmentedButton.destroy();
+		aItems[0].destroy();
+		aItems[1].destroy();
 	});
 
 
