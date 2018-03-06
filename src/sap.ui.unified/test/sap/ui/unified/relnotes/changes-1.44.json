@@ -273,5 +273,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.28": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "070cce98aa50dfd0c3879c196cb92b3987663bbc",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Selecting day header or week number does not throw an error",
+        "references": []
+      }
+    ]
   }
 }

@@ -256,5 +256,40 @@
         "references": []
       }
     ]
+  },
+  "1.52.8": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "7fb160fe302461280e5cc88ac4cedbe522437d15",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: No double focus outline on Belize on IE",
+        "references": []
+      },
+      {
+        "id": "1ea8d869851c0fb6c52d485cb8eef16993ccc117",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Selecting day header or week number does not throw an error",
+        "references": []
+      },
+      {
+        "id": "13374df21728b1f18e1525e4668ad6b2a0e8e7b1",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: focus clearly visible in IE for HCB and HCW",
+        "references": []
+      },
+      {
+        "id": "a143b8b26f0f63952d46cc8c021af951323ec77f",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: nonWorkingDays now can have another type when set using specialDates aggregation",
+        "references": []
+      },
+      {
+        "id": "2e2ac2a2fe68fe7e10306b4dd743b07ae92443a7",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: Sample is now scrollable on mobile",
+        "references": []
+      }
+    ]
   }
 }
