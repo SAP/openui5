@@ -5,19 +5,19 @@
       {
         "id": "e9f341ce4cff1c152df3ab41fbbb6bcb6fae1c83",
         "type": "FEATURE",
-        "text": " Core.IconPool: Icon font updated to version 3.7 with 1 new icon",
+        "text": "Core.IconPool: Icon font updated to version 3.7 with 1 new icon",
         "references": []
       },
       {
         "id": "8506a320691046339722c8ddf06afc260f410a82",
         "type": "FEATURE",
-        "text": " Demo Kit: new demo apps landing page",
+        "text": "Demo Kit: new demo apps landing page",
         "references": []
       },
       {
         "id": "23959d181f477d89f79c8638010b9f2897bfd255",
         "type": "FEATURE",
-        "text": " new demo apps landing page",
+        "text": "new demo apps landing page",
         "references": []
       }
     ]
@@ -28,8 +28,13 @@
       {
         "id": "7e25dbedea34a95bd17a51f28e7982213377ba89",
         "type": "FIX",
-        "text": " SDK: accept hash for LICENSE.txt",
-        "references": []
+        "text": "SDK: accept hash for LICENSE.txt",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1320"
+          }
+        ]
       }
     ]
   }

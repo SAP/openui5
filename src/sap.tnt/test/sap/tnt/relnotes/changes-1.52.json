@@ -5,20 +5,25 @@
       {
         "id": "b3000f4b21b23848ddbdf67bbc651ab7205981e6",
         "type": "FEATURE",
-        "text": " sap.tnt.NavigationList: New selectedItem association added",
+        "text": "sap.tnt.NavigationList: New selectedItem association added",
         "references": []
       },
       {
         "id": "2bf98f8445277efe4375bdd74e60c753ea8d6551",
         "type": "FEATURE",
-        "text": " sap.tnt.NavigationListItem: new property \"visible\" introduced",
+        "text": "sap.tnt.NavigationListItem: new property \"visible\" introduced",
         "references": []
       },
       {
         "id": "1e9e157ddfc9b9dce16b4e89ae620d66b108a841",
         "type": "FIX",
-        "text": " sap.tnt.NavigationList: Memory leak when closing popover is now fixed",
-        "references": []
+        "text": "sap.tnt.NavigationList: Memory leak when closing popover is now fixed",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1684"
+          }
+        ]
       }
     ]
   },
@@ -28,8 +33,13 @@
       {
         "id": "958fc79106a83d1273498a7c3540d12071e6ae8c",
         "type": "FIX",
-        "text": " sap.m.NavigationList: Tab navigation is now correct",
-        "references": []
+        "text": "sap.m.NavigationList: Tab navigation is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780437515"
+          }
+        ]
       }
     ]
   },
@@ -39,8 +49,13 @@
       {
         "id": "9b912a5664d0933ebfd0b0fa6765b1f84b6db0aa",
         "type": "FIX",
-        "text": " sap.tnt.NavigationList: aria-expanded for the items works correctly now",
-        "references": []
+        "text": "sap.tnt.NavigationList: aria-expanded for the items works correctly now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880204175"
+          }
+        ]
       }
     ]
   }

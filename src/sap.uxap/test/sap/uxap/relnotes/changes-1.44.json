@@ -1,0 +1,79 @@
+{
+	"1.44.0": {
+		"data": "November 2016",
+		"notes": [
+			{
+				"id": "1207646db7488ad03e8f3bd6a264a8ab5915aa2b",
+				"type": "FEATURE",
+				"text": "sap.uxap: Shared configuration for test pages",
+				"references": []
+			},
+			{
+				"id": "07ef0f8cba0467f6c95eb8e8181d12e50dc6afa4",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageLayout - _storeScrollLocation works with subsections",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670438251"
+					}
+				]
+			},
+			{
+				"id": "b2f01bf510210f7fb1c354d348550685b932ea81",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageHeader - IE focus problem fixed",
+				"references": []
+			},
+			{
+				"id": "a6460453a87c53130f1a17500db6190a3c62295b",
+				"type": "FEATURE",
+				"text": "uxap.ObjectPageLayout,uxap.ObjectPageSectionBase: sectionTitleLevel and titleLevel properties added",
+				"references": []
+			},
+			{
+				"id": "18d19e0be5cebbf5ffa9ef59f7e1c514ebacbb74",
+				"type": "FEATURE",
+				"text": "uxap.ObjectPage initially selected section on load",
+				"references": []
+			},
+			{
+				"id": "0035bc634e14f59bcdc798d9b260c5af5c18377d",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPage: didn't access map members safely",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670390469"
+					}
+				]
+			},
+			{
+				"id": "e78c82553dcf095558a7cf48866e79c90d1c0f22",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageSectionBase - changes to subsections always update the anchor bar",
+				"references": [
+					{
+						"type": "GitHub",
+						"reference": "1102"
+					},
+					{
+						"type": "BCP",
+						"reference": "1670381177"
+					}
+				]
+			},
+			{
+				"id": "da35622a5f51657222fb75c06c40c463b5dd5d4b",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageHeader - adding an invisible action button does not prevent it from becoming transparent",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670355392"
+					}
+				]
+			}
+		]
+	}
+}

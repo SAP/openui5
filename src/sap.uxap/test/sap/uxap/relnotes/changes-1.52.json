@@ -1,0 +1,180 @@
+{
+	"1.52.0": {
+		"data": "November 2017",
+		"notes": [
+			{
+				"id": "6c930aa98f401c8fc8c6c774010601cafe5d3600",
+				"type": "FEATURE",
+				"text": "sap.uxap.ObjectPageLayout: Added visual indicator for ObjectPageDynamicHeaderTitle",
+				"references": []
+			},
+			{
+				"id": "ded0200946b8224accd6befde9b31a02b7cfd8df",
+				"type": "FIX",
+				"text": "sap.ui.rta - call for action without element as parameter",
+				"references": []
+			},
+			{
+				"id": "464d493e81bc82e426278e4f6e4a15215c7abffe",
+				"type": "FEATURE",
+				"text": "sap.uxap.ObjectPageLayout: Enabled preserveHeaderStateOnScroll",
+				"references": []
+			},
+			{
+				"id": "4f55a9b43b01094011772b329831ed11278e8d94",
+				"type": "FEATURE",
+				"text": "sap.uxap.ObjectPageLayout: Enabled toggle header on title press",
+				"references": []
+			},
+			{
+				"id": "92c8c774f25e33903dbdc216d19cda26d0cc4672",
+				"type": "FEATURE",
+				"text": "sap.uxap.ObjectPageLayout: Enabled pinnable header",
+				"references": []
+			},
+			{
+				"id": "94935713437c6960c6c8da30b67bd2937d6e4a3a",
+				"type": "FIX",
+				"text": "sap.ui.fl Correctly mark change as being applied changeHandler for xml views",
+				"references": []
+			},
+			{
+				"id": "df769ee1af7f87f025e89ed0393f79c195102a3f",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageLayout: Control responsive behavior fix",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1780382804"
+					}
+				]
+			},
+			{
+				"id": "4528c44b967403c89f8c34b1c55feacde8de1fc3",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageLayout: Header expand on zoomed browser fixed",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1780309606"
+					}
+				]
+			},
+			{
+				"id": "b1f483f9235fb6564e800053dad6caf7551580c8",
+				"type": "FIX",
+				"text": "Flexibility: ObjectPageLayoutSection not movable to header",
+				"references": []
+			}
+		]
+	},
+	"1.52.1": {
+		"data": "December 2017",
+		"notes": []
+	},
+	"1.52.2": {
+		"data": "December 2017",
+		"notes": []
+	},
+	"1.52.3": {
+		"data": "undefined 2017",
+		"notes": [
+			{
+				"id": "218eacad301eb621dd50cb9886aaebcb0cd08edd",
+				"type": "FIX",
+				"text": "uxap.ObjectPageLayout: Expand header button behavior fixed",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1770560595"
+					}
+				]
+			},
+			{
+				"id": "28b8d09fe477a3726fa233229a194dfd4c3ab644",
+				"type": "FIX",
+				"text": "uxap.ObjectPageLayout: Find closest scrolled section fixed",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1780468527"
+					}
+				]
+			},
+			{
+				"id": "fd3b398e6798e026ec03fc33a4d8473b777cf7a1",
+				"type": "FIX",
+				"text": "uxap.ObjectPageLayout: Closest section check fixed",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1780435324"
+					}
+				]
+			}
+		]
+	},
+	"1.52.4": {
+		"data": "January 2018",
+		"notes": []
+	},
+	"1.52.5": {
+		"data": "January 2018",
+		"notes": []
+	},
+	"1.52.6": {
+		"data": "February 2018",
+		"notes": [
+			{
+				"id": "86070cd8be4e850ae9c0d250a4b44912bcb3d9b5",
+				"type": "FIX",
+				"text": "uxap.ObjectPageLayout: Ensured setting selectedSection is correct",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1780508217"
+					}
+				]
+			}
+		]
+	},
+	"1.52.7": {
+		"data": "February 2018",
+		"notes": []
+	},
+	"1.52.8": {
+		"data": "March 2018",
+		"notes": [
+			{
+				"id": "84de8bd5d13e4835c163b5aaa097ddacd189bbcb",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageSubSection: Fixed JS error in removeAggregation",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1780191583"
+					}
+				]
+			},
+			{
+				"id": "5d4ea86c9edbd463b0a703df14282e13c9af0935",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageLayout: Flickering issue",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1880028962"
+					}
+				]
+			}
+		]
+	},
+	"1.52.9": {
+		"data": "March 2018",
+		"notes": []
+	},
+	"1.52.10": {
+		"data": "March 2018",
+		"notes": []
+	}
+}

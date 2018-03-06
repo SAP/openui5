@@ -5,8 +5,13 @@
       {
         "id": "4603566fa6a8ca53a606d50df3eea289b51fa67e",
         "type": "FIX",
-        "text": " sap.ui.commons.TextField - paste of text with line endings on IE works.",
-        "references": []
+        "text": "sap.ui.commons.TextField - paste of text with line endings on IE works.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1730434255"
+          }
+        ]
       }
     ]
   },
@@ -16,8 +21,13 @@
       {
         "id": "b61384077ca5bc6e335ea5ceb63acb524e4a07ed",
         "type": "FIX",
-        "text": " sap.ui.commons.MatrixLayout: Render calculations corrected for Edge",
-        "references": []
+        "text": "sap.ui.commons.MatrixLayout: Render calculations corrected for Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000745792018"
+          }
+        ]
       }
     ]
   }

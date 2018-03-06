@@ -1,0 +1,59 @@
+{
+	"1.36.0": {
+		"data": "January 2016",
+		"notes": [
+			{
+				"id": "5eeedb475ebfb59d40550d7004a19ce06e619b00",
+				"type": "FIX",
+				"text": "Grid now works inside the ObjectPageHeaderContent",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570887062"
+					}
+				]
+			},
+			{
+				"id": "b4696d489d6a77da1c37cb36d7cf57299aed9774",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageHeaderContent: fix aligment issue in IE",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570863766"
+					}
+				]
+			},
+			{
+				"id": "b72fdd0e7aeee6cf3001bebf50c153a33b3d5ca9",
+				"type": "FEATURE",
+				"text": "uxap.ObjectPageHeader use of sap.m.Breadcumbs control",
+				"references": []
+			},
+			{
+				"id": "57602c3746a0a9a4da966ab1a3fac39a4e5234e9",
+				"type": "FIX",
+				"text": "sap.uxap.HierarchicalSelect - HCB left boarder removal selector now works",
+				"references": []
+			},
+			{
+				"id": "70f9686c8912b29f8e279400e798cf94a7916b83",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageLayout property showAnchorBarPopover now works",
+				"references": []
+			},
+			{
+				"id": "287b309ffa70ccae7e6314c1199daa4ae283e5ab",
+				"type": "FIX",
+				"text": "sap.uxap.AnchorBar - missing hierarchicalSelect and scroll arrows on ipad",
+				"references": []
+			},
+			{
+				"id": "fff51f6fd082db19237fc94b981faad4c9cf9a74",
+				"type": "FIX",
+				"text": "sap.uxap.AnchorBar misaligned in IE",
+				"references": []
+			}
+		]
+	}
+}
