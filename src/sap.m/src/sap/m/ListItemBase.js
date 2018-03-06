@@ -4,28 +4,31 @@
 
 // Provides control sap.m.ListItemBase.
 sap.ui.define([
-	'jquery.sap.global',
-	'./library',
-	'sap/ui/core/Control',
-	'sap/ui/core/IconPool',
-	'sap/ui/core/Icon',
-	'sap/m/Button',
-	'sap/ui/model/BindingMode',
-	'sap/ui/Device',
-	'sap/m/CheckBox',
-	'./ListItemBaseRenderer',
-	'jquery.sap.keycodes'
+	"jquery.sap.global",
+	"sap/base/events/KeyCodes",
+	"sap/ui/model/BindingMode",
+	"sap/ui/Device",
+	"sap/ui/core/Control",
+	"sap/ui/core/IconPool",
+	"sap/ui/core/Icon",
+	"./library",
+	"./Button",
+	"./CheckBox",
+	"./RadioButton",
+	"./ListItemBaseRenderer"
 ],
 function(
 	jQuery,
-	library,
+	KeyCodes,
+	BindingMode,
+	Device,
 	Control,
 	IconPool,
 	Icon,
+	library,
 	Button,
-	BindingMode,
-	Device,
 	CheckBox,
+	RadioButton,
 	ListItemBaseRenderer
 ) {
 	"use strict";
@@ -38,7 +41,7 @@ function(
 	var ListMode = library.ListMode;
 
 	// shortcut for sap.m.ListType
-	var ListType = library.ListType;
+	var ListItemType = library.ListType;
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = library.ButtonType;
@@ -71,7 +74,7 @@ function(
 			/**
 			 * Defines the visual indication and behavior of the list items, e.g. <code>Active</code>, <code>Navigation</code>, <code>Detail</code>.
 			 */
-			type : {type : "sap.m.ListType", group : "Misc", defaultValue : ListType.Inactive},
+			type : {type : "sap.m.ListType", group : "Misc", defaultValue : ListItemType.Inactive},
 
 			/**
 			 * Whether the control should be visible on the screen. If set to false, a placeholder is rendered instead of the real control.
@@ -363,13 +366,13 @@ function(
 			aOutput.push(oBundle.getText("LIST_ITEM_COUNTER", this.getCounter()));
 		}
 
-		if (sType == ListType.Navigation) {
+		if (sType == ListItemType.Navigation) {
 			aOutput.push(oBundle.getText("LIST_ITEM_NAVIGATION"));
 		} else {
-			if (sType == ListType.Detail || sType == ListType.DetailAndActive) {
+			if (sType == ListItemType.Detail || sType == ListItemType.DetailAndActive) {
 				aOutput.push(oBundle.getText("LIST_ITEM_DETAIL"));
 			}
-			if (sType == ListType.Active || sType == ListType.DetailAndActive) {
+			if (sType == ListItemType.Active || sType == ListItemType.DetailAndActive) {
 				aOutput.push(oBundle.getText("LIST_ITEM_ACTIVE"));
 			}
 		}
@@ -522,11 +525,11 @@ function(
 			return this._oSingleSelectControl;
 		}
 
-		this._oSingleSelectControl = new sap.m.RadioButton({
-			id : this.getId() + "-selectSingle",
-			groupName : this.getListProperty("id") + "_selectGroup",
-			activeHandling : false,
-			selected : this.getSelected()
+		this._oSingleSelectControl = new RadioButton({
+			id: this.getId() + "-selectSingle",
+			groupName: this.getListProperty("id") + "_selectGroup",
+			activeHandling: false,
+			selected: this.getSelected()
 		}).addStyleClass("sapMLIBSelectS").setParent(this, null, true).setTabIndex(-1).attachSelect(function(oEvent) {
 			var bSelected = oEvent.getParameter("selected");
 			this.setSelected(bSelected);
@@ -549,9 +552,9 @@ function(
 		}
 
 		this._oMultiSelectControl = new CheckBox({
-			id : this.getId() + "-selectMulti",
-			activeHandling : false,
-			selected : this.getSelected()
+			id: this.getId() + "-selectMulti",
+			activeHandling: false,
+			selected: this.getSelected()
 		}).addStyleClass("sapMLIBSelectM").setParent(this, null, true).setTabIndex(-1).attachSelect(function(oEvent) {
 			var bSelected = oEvent.getParameter("selected");
 			this.setSelected(bSelected);
@@ -594,11 +597,11 @@ function(
 	ListItemBase.prototype.getTypeControl = function(bCreateIfNotExist) {
 		var sType = this.getType();
 
-		if (sType == ListType.Detail || sType == ListType.DetailAndActive) {
+		if (sType == ListItemType.Detail || sType == ListItemType.DetailAndActive) {
 			return this.getDetailControl(bCreateIfNotExist);
 		}
 
-		if (sType == ListType.Navigation) {
+		if (sType == ListItemType.Navigation) {
 			return this.getNavigationControl(bCreateIfNotExist);
 		}
 	};
@@ -626,8 +629,8 @@ function(
 	ListItemBase.prototype.isActionable = function() {
 		return this.getListProperty("includeItemInSelection") ||
 				this.getMode() == ListMode.SingleSelectMaster || (
-					this.getType() != ListType.Inactive &&
-					this.getType() != ListType.Detail
+					this.getType() != ListItemType.Inactive &&
+					this.getType() != ListItemType.Detail
 				);
 	};
 
@@ -769,9 +772,9 @@ function(
 	 */
 	ListItemBase.prototype.hasActiveType = function() {
 		var sType = this.getType();
-		return (sType == ListType.Active ||
-				sType == ListType.Navigation ||
-				sType == ListType.DetailAndActive);
+		return (sType == ListItemType.Active ||
+				sType == ListItemType.Navigation ||
+				sType == ListItemType.DetailAndActive);
 	};
 
 	ListItemBase.prototype.setActive = function(bActive) {
@@ -787,7 +790,7 @@ function(
 		this._active = bActive;
 		this._activeHandling($This);
 
-		if (this.getType() == ListType.Navigation) {
+		if (this.getType() == ListItemType.Navigation) {
 			this._activeHandlingNav($This);
 		}
 
@@ -1026,14 +1029,13 @@ function(
 		}
 
 		// switch focus to row and focused item with F7
-		var mKeyCodes = jQuery.sap.KeyCodes;
-		if (oEvent.which == mKeyCodes.F7) {
+		if (oEvent.which == KeyCodes.F7) {
 			this._switchFocus(oEvent);
 			return;
 		}
 
 		// F2 fire detail event or switch keyboard mode
-		if (oEvent.which == mKeyCodes.F2) {
+		if (oEvent.which == KeyCodes.F2) {
 			if (oEvent.srcControl === this &&
 				this.getType().indexOf("Detail") == 0 &&
 				this.hasListeners("detailPress") ||
@@ -1136,9 +1138,8 @@ function(
 			return;
 		}
 
-		// do not handle already handled events
 		// allow the context menu to open on the SingleSelect or MultiSelect control
-		// is(":focusable") check is required as IE sets activeElement also  to text controls
+		// is(":focusable") check is required as IE sets activeElement also to text controls
 		if (jQuery(document.activeElement).is(":focusable") &&
 			document.activeElement !== this.getDomRef() &&
 			oEvent.srcControl !== this.getModeControl()) {
