@@ -49,7 +49,7 @@ sap.ui.define([
 					"Privacy": "https://www.sap.com/corporate/en/legal/privacy.html",
 					"Terms of Use": "https://www.sap.com/corporate/en/legal/terms-of-use.html",
 					"Copyright": "https://www.sap.com/corporate/en/legal/copyright.html",
-					"Trademark": "https://www.sap.com/corporate/en/legal/copyright.html#trademark",
+					"Trademark": "https://www.sap.com/corporate/en/legal/trademark.html",
 					"Disclaimer": "https://help.sap.com/viewer/disclaimer",
 					"License": "LICENSE.txt"
 				};
