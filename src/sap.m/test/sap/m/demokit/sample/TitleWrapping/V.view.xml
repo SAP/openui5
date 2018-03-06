@@ -1,46 +1,37 @@
-<mvc:View
-	xmlns:l="sap.ui.layout"
-	xmlns:html="http://www.w3.org/1999/xhtml"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m"
-	controllerName="sap.m.sample.TitleWrapping.V"
-	height="100%">
-
-	<HBox width="100%">
-	<Label text="Wrapping :" />
-	<Switch state="false" change="enableWrapping" />
-	</HBox>
-	<l:VerticalLayout
-		class="sapUiContentPadding equalColumns"
-		width="100%" >
-		<l:content>
-
-			<FlexBox
-				id="FlexBox"
-				width="95%"
-				class="columns"
-				alignItems="Stretch">
-				<items>
-					<Title id="WrappingTitle" text="Title with wrapping - Lorem Ipsum is simply dummy text of the printing and typesetting industry. " >
-						<layoutData>
-							<FlexItemData growFactor="1" />
-						</layoutData>
-					</Title>
-
-					<Title text="Title without wrapping - Lorem Ipsum has been the industry's standard dummy text ever since the 1500s." >
-						<layoutData>
-							<FlexItemData growFactor="1" />
-						</layoutData>
-					</Title>
-				</items>
-			</FlexBox>
-
-		</l:content>
-	</l:VerticalLayout>
-
-
-
-
-	<Slider id="Slider" min="0" max="100" value="100" liveChange="changeWidth" showAdvancedTooltip="true" enableTickmarks="true"/>
+<mvc:View xmlns:core="sap.ui.core"
+		  xmlns:mvc="sap.ui.core.mvc"
+		  xmlns="sap.m"
+		  xmlns:f="sap.ui.layout.form"
+		  xmlns:l="sap.ui.layout"
+		  controllerName="sap.m.sample.TitleWrapping.V"
+		  displayBlock="true">
+	<f:SimpleForm
+			layout="ResponsiveGridLayout"
+			editable="true"
+			title="Title Wrapping"
+			adjustLabelSpan="false"
+			labelSpanXL="1"
+			labelSpanL="1"
+			labelSpanM="1"
+			labelSpanS="4"
+			emptySpanXL="7"
+			emptySpanL="7"
+			emptySpanM="1"
+			emptySpanS="0"
+			columnsXL="1"
+			columnsL="1"
+			columnsM="1"
+			columnsS="1">
+		<Label text="Wrapping" />
+		<Switch state="true" change="onWrappingChange" />
+		<Label text="Container Width" />
+		<Slider id="widthSlider" value="100" liveChange="onSliderMoved" />
+	</f:SimpleForm>
+	<Panel id="containerLayout"
+		   headerText="Rendered Title in container"
+		   width="70%">
+		<Title id="WrappingTitle"
+			   wrapping="true"
+			   text="The Persecution and Assassination of Jean-Paul Marat as Performed by the Inmates of the Asylum of Charenton Under the Direction of the Marquis de Sade."/>
+	</Panel>
 </mvc:View>
-
