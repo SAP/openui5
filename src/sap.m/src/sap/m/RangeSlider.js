@@ -179,10 +179,9 @@ sap.ui.define([
 
             this._mHandleTooltip.bTooltipsSwapped = false; // Reset tooltips swapping
 
-            // For backwards compatibility when tickmarks are enabled, should be visible
-            if (this.getEnableTickmarks() && !this.getAggregation("scale")) {
-                this.setAggregation("scale", new sap.m.ResponsiveScale(), true);
-            }
+            // set the correct scale aggregation, if needed
+            this._syncScaleUsage();
+
 
             if (this.getShowAdvancedTooltip()) {
                 this._forwardProperties(["enabled"], this.getAggregation("_tooltipContainer"));
@@ -319,7 +318,7 @@ sap.ui.define([
             }
 
             if (this.getShowHandleTooltip()) {
-                oHandle.title = sValue;
+                oHandle.title = this._formatValueByScale(sValue);
             }
 
             bMergedRanges = aRange[0] === aRange[1];
@@ -335,16 +334,17 @@ sap.ui.define([
         RangeSlider.prototype._updateHandleAria = function (oHandle, sValue) {
             var aRange = this.getRange(),
                 oProgressHandle = this.getDomRef("progress"),
-                fNormalizedValue = this.toFixed(sValue, this._iDecimalPrecision);
+                fNormalizedValue = this.toFixed(sValue, this._iDecimalPrecision),
+                sScaleLabel = this._formatValueByScale(fNormalizedValue);
 
             this._updateHandlesAriaLabels();
 
-            oHandle.setAttribute("aria-valuenow", fNormalizedValue);
+            this._updateHandleAriaAttributeValues(oHandle, sValue, sScaleLabel);
 
             if (oProgressHandle) {
                 oProgressHandle.setAttribute("aria-valuenow", aRange.join("-"));
                 oProgressHandle.setAttribute("aria-valuetext",
-                    this._oResourceBundle.getText('RANGE_SLIDER_RANGE_ANNOUNCEMENT', aRange));
+                    this._oResourceBundle.getText('RANGE_SLIDER_RANGE_ANNOUNCEMENT', aRange.map(this._formatValueByScale, this)));
             }
         };
 

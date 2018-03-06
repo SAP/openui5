@@ -4,9 +4,10 @@
 
 sap.ui.define([
 		'./library',
+		'./SliderUtilities',
 		'sap/ui/core/Element'
 	],
-	function (library, Element) {
+	function (library, SliderUtilities, Element) {
 		"use strict";
 
 		/**
@@ -64,7 +65,7 @@ sap.ui.define([
 		 *
 		 * @returns {number} The max number of possible tickmarks
 		 */
-		Scale.prototype.calcNumTickmarks = function (fSize, fStep, iTickmarksThreshold) {
+		Scale.prototype.calcNumberOfTickmarks = function (fSize, fStep, iTickmarksThreshold) {
 			var iMaxPossible = Math.floor(fSize / fStep); //How many tickmarks would be there if we show one for each step?
 
 			iMaxPossible = iTickmarksThreshold && (iMaxPossible > iTickmarksThreshold) ?
@@ -95,27 +96,6 @@ sap.ui.define([
 			}
 
 			return iTickmarksCount;
-		};
-
-		/**
-		 * Calculate the distance between tickmarks.
-		 *
-		 * Actually this calculates the distance between the first and the second tickmark, but as it's
-		 * assumed that the tickmarks are spread evenly, it doesn't matter.
-		 *
-		 * @param {int} iTickmarksCount Number of tickmarks that'd be drawn
-		 * @param {float} fStart The start value of the scale.
-		 * @param {float} fEnd The end value of the scale.
-		 * @param {float} fStep The step walking from start to end.
-		 * @returns {float} The distance between tickmarks
-		 * @private
-		 */
-		Scale.prototype.calcTickmarksDistance = function (iTickmarksCount, fStart, fEnd, fStep) {
-			var fScaleSize = Math.abs(fStart - fEnd),
-				iMaxPossibleTickmarks = Math.floor(fScaleSize / fStep),
-				iStepsCount = Math.ceil(iMaxPossibleTickmarks / iTickmarksCount);
-
-			return fStart + (iStepsCount * fStep);
 		};
 
 		/**
@@ -200,6 +180,41 @@ sap.ui.define([
 			}
 
 			return aHiddenLabelsIndices;
+		};
+
+		/**
+		 * Shows/hides tickmarks when some limitations are met.
+		 * Implements responsiveness of the tickmarks.
+		 *
+		 * @param {jQuery.Event} oEvent The event object passed.
+		 * @private
+		 * @sap-restricted sap.m.Slider
+		 */
+		Scale.prototype.handleResize = function (oEvent) {
+			var aLabelsInDOM, fOffsetLeftPct, fOffsetLeftPx, aHiddenLabels,
+				$oSlider = oEvent.control.$(),
+				aTickmarksInDOM = $oSlider.find(".sapMSliderTick"),
+				iScaleWidth = $oSlider.find(".sapMSliderTickmarks").width(),
+				bShowTickmarks = (iScaleWidth / aTickmarksInDOM.size()) >= SliderUtilities.CONSTANTS.TICKMARKS.MIN_SIZE.SMALL;
+
+			//Small tickmarks should get hidden if their width is less than _SliderUtilities.CONSTANTS.TICKMARKS.MIN_SIZE.SMALL
+			if (this._bTickmarksLastVisibilityState !== bShowTickmarks) {
+				aTickmarksInDOM.toggle(bShowTickmarks);
+				this._bTickmarksLastVisibilityState = bShowTickmarks;
+			}
+
+			// Tickmarks with labels responsiveness
+			aLabelsInDOM = $oSlider.find(".sapMSliderTickLabel").toArray();
+			// The distance between the first and second label in % of Scale's width
+			fOffsetLeftPct = parseFloat(aLabelsInDOM[1].style.left);
+			// Convert to PX
+			fOffsetLeftPx = iScaleWidth * fOffsetLeftPct / 100;
+			// Get which labels should become hidden
+			aHiddenLabels = this.getHiddenTickmarksLabels(iScaleWidth, aLabelsInDOM.length, fOffsetLeftPx, SliderUtilities.CONSTANTS.TICKMARKS.MIN_SIZE.WITH_LABEL);
+
+			aLabelsInDOM.forEach(function (oElem, iIndex) {
+				oElem.style.display = aHiddenLabels[iIndex] ? "none" : "inline-block";
+			});
 		};
 
 		return Scale;
