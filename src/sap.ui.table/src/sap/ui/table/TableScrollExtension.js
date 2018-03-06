@@ -1223,9 +1223,10 @@ sap.ui.define([
 
 		if (nScrollPosition == null) {
 			var iFirstVisibleRowIndex = oTable.getFirstVisibleRow();
-			if (iFirstVisibleRowIndex >= oTable._getMaxFirstRenderedRowIndex()) {
+			var iMaxFirstRenderedRowIndex = oTable._getMaxFirstRenderedRowIndex();
+			if (iMaxFirstRenderedRowIndex > 0 && iFirstVisibleRowIndex >= iMaxFirstRenderedRowIndex) {
 				this._nVerticalScrollPosition = this.getVerticalScrollRange();
-				this._iFirstVisibleRowInBuffer = iFirstVisibleRowIndex - oTable._getMaxFirstRenderedRowIndex();
+				this._iFirstVisibleRowInBuffer = iFirstVisibleRowIndex - iMaxFirstRenderedRowIndex;
 			} else {
 				this._nVerticalScrollPosition = iFirstVisibleRowIndex * this.getVerticalScrollRangeRowFraction();
 				this._iFirstVisibleRowInBuffer = null;
