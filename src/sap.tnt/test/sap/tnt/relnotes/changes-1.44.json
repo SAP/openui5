@@ -24,13 +24,23 @@
         "id": "5543f5f86408ad89cba75236433e183b4b0cd512",
         "type": "FIX",
         "text": "sap.tnt. ToolPage: SideNavigation is initially expanded  on laptop with touch",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670424167"
+          }
+        ]
       },
       {
         "id": "c0bdbed3a148eee6945b01fe1f2b92b0471d71c1",
         "type": "FIX",
         "text": "sap.tnt.NavigationList: Popover not closing in collapsed mode issue fixed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670453591"
+          }
+        ]
       }
     ]
   },
@@ -51,8 +61,13 @@
       {
         "id": "a06d4d779a05de759a263c436f016a0657dab3d1",
         "type": "FIX",
-        "text": " sap.tnt.ToolPage: SideNavigation overlapping the content in combi devices now corrected",
-        "references": []
+        "text": "sap.tnt.ToolPage: SideNavigation overlapping the content in combi devices now corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670554554"
+          }
+        ]
       }
     ]
   },
@@ -62,8 +77,13 @@
       {
         "id": "1c906441b26e8fa14a101d3c8926d57c0cf8f56a",
         "type": "FIX",
-        "text": " sap.tnt.ToolPage: Hidden footer when XmlView\u0027s height is 100% now corrected",
-        "references": []
+        "text": "sap.tnt.ToolPage: Hidden footer when XmlView's height is 100% now corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770115384"
+          }
+        ]
       }
     ]
   },
@@ -73,14 +93,24 @@
       {
         "id": "b691bd5d559e4e3a84f3437d2860016368d9ad6f",
         "type": "FIX",
-        "text": " sap.tnt.SideNavigation: Item navigation is now correct",
-        "references": []
+        "text": "sap.tnt.SideNavigation: Item navigation is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003036242017"
+          }
+        ]
       },
       {
         "id": "f761adc2f6199527c3cb264c88b086f650432908",
         "type": "FIX",
-        "text": " sap.tnt.ToolPage: Tool page is now correctly displayed, when there is no header",
-        "references": []
+        "text": "sap.tnt.ToolPage: Tool page is now correctly displayed, when there is no header",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780211583"
+          }
+        ]
       }
     ]
   },
@@ -90,8 +120,17 @@
       {
         "id": "393534bf841b8e06e5bffb3addd64edece6b06dc",
         "type": "FIX",
-        "text": " sap.tnt.NavigationList: Memory leak when closing popover is now fixed",
-        "references": []
+        "text": "sap.tnt.NavigationList: Memory leak when closing popover is now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770384722"
+          },
+          {
+            "type": "GitHub",
+            "reference": "1684"
+          }
+        ]
       }
     ]
   }

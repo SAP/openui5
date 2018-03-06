@@ -1,0 +1,30 @@
+{
+	"1.48.0": {
+		"data": "",
+		"notes": [
+			{
+				"id": "4f2622be8baa5e91a738319850202d6f91c203e0",
+				"type": "FIX",
+				"text": "sap.m.ObjectAttribute: displayed correctly in ObjectPage",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1780115432"
+					}
+				]
+			},
+			{
+				"id": "44a412219ae0ba5fbe81cabf0836ebf25e7dc523",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageHeader: ObjectPageHeaderIdentifier line removed",
+				"references": []
+			},
+			{
+				"id": "8493be88db25f845c16a86bcb025b9bbc5b2beb2",
+				"type": "FIX",
+				"text": "sap.uxap.AnchorBar: AnchorBar Button hover fixed",
+				"references": []
+			}
+		]
+	}
+}

@@ -5,31 +5,46 @@
       {
         "id": "788127d8f124f9426fb76a522a0f3e4768cb9cc1",
         "type": "FIX",
-        "text": " sap.tnt.NavigationList: Keyboard handling fixed",
-        "references": []
+        "text": "sap.tnt.NavigationList: Keyboard handling fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770459375"
+          }
+        ]
       },
       {
         "id": "7e5a7585c4c3a5f65f8043c003445b07fafe319a",
         "type": "FIX",
-        "text": " sap.tnt.SideNavigation: Selected item in HCB and HCW in colored correctly",
-        "references": []
+        "text": "sap.tnt.SideNavigation: Selected item in HCB and HCW in colored correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770487398"
+          }
+        ]
       },
       {
         "id": "395ce8dc5b928aa329d7570c78c70347df380601",
         "type": "FIX",
-        "text": " sap.tnt.SideNavigation: Size M has correct width now",
-        "references": []
+        "text": "sap.tnt.SideNavigation: Size M has correct width now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770501020"
+          }
+        ]
       },
       {
         "id": "2c87e48b205406401f0ce18ddfd2f2f050d6b59a",
         "type": "FIX",
-        "text": " sap.tnt.ToolPage: correct header DOM structure",
+        "text": "sap.tnt.ToolPage: correct header DOM structure",
         "references": []
       },
       {
         "id": "cf137de19a839e809bf656d6fcf51af6355cce88",
         "type": "FEATURE",
-        "text": " sap.tnt.InfoLabel: control implemented",
+        "text": "sap.tnt.InfoLabel: control implemented",
         "references": []
       }
     ]
@@ -40,8 +55,13 @@
       {
         "id": "be570f02d7b6b973ec805db346dcfe64fae82010",
         "type": "FIX",
-        "text": " sap.tnt.NavigationList: aria-expanded for the items works correctly now",
-        "references": []
+        "text": "sap.tnt.NavigationList: aria-expanded for the items works correctly now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880204175"
+          }
+        ]
       }
     ]
   }

@@ -1,0 +1,98 @@
+{
+	"1.40.0": {
+		"data": "",
+		"notes": [
+			{
+				"id": "5f66db70fae78654852968934c1f3a79849ead10",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageLayout: fix forms spacing",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670314800"
+					}
+				]
+			},
+			{
+				"id": "39e354de23684df6ad0378d505718d22ee58a20a",
+				"type": "FEATURE",
+				"text": "sap.uxap.ObjectPageHeader: Change 'Locked' and 'Unsaved Changes' icons",
+				"references": []
+			},
+			{
+				"id": "b2a00df29cc182c8d3161d6d38f1c79816b0e775",
+				"type": "FIX",
+				"text": "ObjectSubSection memory would leak proxied aggregation",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670315806"
+					}
+				]
+			},
+			{
+				"id": "7d632aca46d75c274629ab879dc40156a89edea1",
+				"type": "FIX",
+				"text": "ObjectPageLayout: Typo in ARIA role",
+				"references": []
+			},
+			{
+				"id": "3b13b67121bb43393350759c0491a67a50c3c682",
+				"type": "FEATURE",
+				"text": "sap.uxap.ObjectPageLayout footer implemented",
+				"references": []
+			},
+			{
+				"id": "695472da0f9c888dfb3baf5a30b165284bb77189",
+				"type": "FIX",
+				"text": "objectPageLayout's transform css would clash with the one in the Shell",
+				"references": []
+			},
+			{
+				"id": "e9366f0bdb8e8e1ba2a8a9f347559bad29377f36",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageHeader: subtitle displayed correctly in Compact mode",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670328312"
+					}
+				]
+			},
+			{
+				"id": "69c9e2fb14139bc3dde5968612d1e3e11769d042",
+				"type": "FEATURE",
+				"text": "sap.uxap.ObjectPage: sap_belize enabled",
+				"references": []
+			},
+			{
+				"id": "78326f5f2721ac4465c09417c7700669371ad0a6",
+				"type": "FIX",
+				"text": "Binding actionSheetButtons in the ObjectPageHeader was broken",
+				"references": []
+			},
+			{
+				"id": "40e9c96f284fc3633246a72afa86ba5ccdc71f6a",
+				"type": "FIX",
+				"text": "ObjectPage section/subsection titles weren't with the appropriate aria-level",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670181382"
+					}
+				]
+			},
+			{
+				"id": "52473cd5eb16a5d47b8ddbc815dc6af36705fcec",
+				"type": "FIX",
+				"text": "promoted subsection where the parent section has no title wasn't working",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670206923"
+					}
+				]
+			}
+		]
+	}
+}
