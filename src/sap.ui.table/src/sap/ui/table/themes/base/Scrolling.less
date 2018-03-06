@@ -139,6 +139,46 @@ html[data-sap-ui-browser^="ed"] .sapUiTableHScr {
 
 
 
+html.sap-desktop:not(.sap-tablet),
+html.sap-desktop.sap-tablet {
+
+	.sapUiTableVSb {
+		&::-webkit-scrollbar-thumb {
+			border-left: 0.125rem solid @sapUiScrollBarTrackColor;
+			border-right: 0.125rem solid @sapUiScrollBarTrackColor;
+		}
+
+		&::-webkit-scrollbar:vertical {
+			width: @_sapUiTableDefaultScrollBarSize;
+		}
+	}
+
+	.sapUiTableHSb {
+		&::-webkit-scrollbar-thumb {
+			border-top: 0.125rem solid @sapUiScrollBarTrackColor;
+			border-bottom: 0.125rem solid @sapUiScrollBarTrackColor;
+		}
+
+		&::-webkit-scrollbar:horizontal {
+			height: @_sapUiTableDefaultScrollBarSize;
+		}
+	}
+
+	.sapUiTableVSb,
+	.sapUiTableHSb {
+		&::-webkit-scrollbar-thumb {
+			background-color: @sapUiScrollBarFaceColor;
+		}
+
+		&::-webkit-scrollbar {
+			background-color: @sapUiScrollBarTrackColor;
+		}
+	}
+
+}
+
+
+
 html.sap-tablet:not(.sap-desktop), html.sap-phone {
 
 	.sapUiTableVSb,
