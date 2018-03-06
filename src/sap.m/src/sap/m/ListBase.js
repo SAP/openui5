@@ -1674,8 +1674,12 @@ function(
 		};
 	};
 
-	// this gets called when items are focused
-	ListBase.prototype.onItemFocusIn = function(oItem) {
+	// this gets called when the focus is on the item or its content
+	ListBase.prototype.onItemFocusIn = function(oItem, oFocusedControl) {
+		if (oItem !== oFocusedControl) {
+			return;
+		}
+
 		if (!sap.ui.getCore().getConfiguration().getAccessibility()) {
 			return;
 		}

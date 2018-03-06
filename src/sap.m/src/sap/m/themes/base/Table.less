@@ -19,7 +19,7 @@ html[data-sap-ui-browser^='ed'] .sapMListTbl {
 	display: table-row;
 }
 
-.sapMListTbl th:focus,
+.sapMListTbl .sapMTableTH:focus,
 .sapMListTbl td:focus {
 	outline: none;
 }
@@ -39,7 +39,7 @@ html[data-sap-ui-browser^='ed'] .sapMListTbl {
 	clip: rect(0, 0, 0, 0);
 }
 
-tr.sapMListTblHeaderNone > th {
+tr.sapMListTblHeaderNone > .sapMTableTH {
 	border: 0;
 	margin-top: 0;
 	padding-top: 0;
@@ -247,18 +247,38 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 }
 
 /* table column header */
-.sapMListTbl th {
+.sapMListTbl .sapMTableTH {
 	background: @sapUiListHeaderBackground;
 	border-bottom: 1px solid @sapUiListBorderColor;
+	background-clip: padding-box;
 }
 
 /* table sticky column headers */
-.sapMListTblStickyColHdr,
-html[data-sap-ui-browser^='cr'] .sapMListTblStickyColHdr > .sapMTableTH {
+/* to make the focus oultine borders visible on the left and right */
+.sapMTableStickyColHdrTH {
+	padding: 0 1px;
+}
+
+.sapMTableStickyColHdrTR .sapMListTblHeader,
+.sapMTableStickyColHdrTH .sapMTableTH {
 	position: sticky;
 	position: -webkit-sticky;
 	top: 0;
-	z-index: 100;
+	z-index: 1;
+}
+
+/* the focus borders are overlapped by the th elements, */
+/* hence to make the focus outline border visible, the below style needs to be applied */
+.sapMTableStickyColHdrTH .sapMListTblHeader:focus {
+	outline-offset: 0;
+}
+
+/* busyIndicator should not overlapped by the sticky column headers */
+.sapMTableStickyColHdrTR ~ .sapUiLocalBusyIndicator,
+.sapMTableStickyColHdrTR > .sapUiLocalBusyIndicator,
+.sapMTableStickyColHdrTH ~ .sapUiLocalBusyIndicator,
+.sapMTableStickyColHdrTH > .sapUiLocalBusyIndicator {
+	z-index: 1;
 }
 
 /* table footer */
