@@ -1558,6 +1558,42 @@ html[data-sap-ui-browser^="ff"] .sapUiDemokit .landingImage {
 	position: relative;
 }
 
+.sapUiDemokit .welcomeImage {
+    height: 100%;
+}
+
+/* Special case with initial page having different aspect ratio according to screen size */
+.sapUiDemokit .welcomeImageCell:before {
+    content: '';
+    display: block;
+    float: left;
+}
+
+.sapUiDemokit .welcomeImageCell:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+@media (max-width: 64rem) {
+	.sapUiDemokit .welcomeImageCell:before {
+		/* Aspect ratio on a smaller display differs */
+        padding-top: 34%;
+	}
+}
+@media (max-width: 64rem) and (orientation: portrait) {
+    .sapUiDemokit .welcomeImageCell:before {
+		/* Aspect ratio on a landscape mode differs */
+        padding-top: 40%;
+	}
+}
+@media (min-width: 64rem) {
+    .sapUiDemokit .welcomeImageCell:before {
+		/* Keeping aspect ratio according to the image set */
+        padding-top: 19.5%;
+	}
+}
+
 /* FireFox does not handle aspect ratio optimization so this must be disabled for it only by resetting the element position */
 html[data-sap-ui-browser^="ff"] .sapUiDemokit .welcomeImage {
 	position: relative;
