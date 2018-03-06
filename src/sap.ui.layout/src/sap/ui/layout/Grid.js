@@ -26,13 +26,21 @@ sap.ui.define([
 
 
 	/**
-	 * Constructor for a new Grid.
+	 * Constructor for a new <code>Grid</code>.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The Grid control is a layout which positions its child controls in a 12 column flow layout. Its children can be specified to take on a variable amount of columns depending on available screen size. With this control it is possible to achieve flexible layouts and line-breaks for extra large-, large-, medium- and small-sized screens, such as large desktop, desktop, tablet, and mobile. The Grid control's width can be percentage- or pixel-based and the spacing between its columns can be set to various pre-defined values.
+	 * The <code>Grid</code> control is a layout which positions its child controls in a 12 column flow layout.
+	 * Its children can be specified to take on a variable amount of columns depending on available
+	 * screen size. With this control it is possible to achieve flexible layouts and line-breaks for
+	 * extra large-, large-, medium- and small-sized screens, such as large desktop, desktop, tablet,
+	 * and mobile. The <code>Grid</code> control's width can be percentage- or pixel-based and the spacing between
+	 * its columns can be set to various predefined values.
+	 *
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/grid-layout/#responsive-grid Grid}
+	 *
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
