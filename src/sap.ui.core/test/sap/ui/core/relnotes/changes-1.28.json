@@ -2683,5 +2683,16 @@
         "references": []
       }
     ]
+  },
+  "1.28.51": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "b98b782c2d800233b55b31b43d83f6643106bd59",
+        "type": "FIX",
+        "text": " jquery: prevent auto-detection of content type",
+        "references": []
+      }
+    ]
   }
 }
