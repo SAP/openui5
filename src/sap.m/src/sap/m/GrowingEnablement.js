@@ -611,10 +611,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 					iItemsLength = aItems.length,
 					iBindingLength = oBinding.getLength() || 0,
 					bLengthFinal = oBinding.isLengthFinal(),
-					bHasScrollToLoad = oControl.getGrowingScrollToLoad();
+					bHasScrollToLoad = oControl.getGrowingScrollToLoad(),
+					oTriggerDomRef = oTrigger.getDomRef();
 
 				// put the focus to the newly added item if growing button is pressed
-				if (oTrigger.getDomRef().contains(document.activeElement)) {
+				if (oTriggerDomRef && oTriggerDomRef.contains(document.activeElement)) {
 					(aItems[this._iLastItemsCount] || oControl).focus();
 				}
 
