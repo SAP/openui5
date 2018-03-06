@@ -205,19 +205,18 @@ html.sap-desktop .sapMST:not(:hover).sapMST:not(:focus) .sapMSTBulleted {
 	visibility: hidden;
 }
 
-/* BREAKPOINT FOR SMALL PHONES */
-@media screen and (max-width: 374px) {
-	.sapMST.OneByOne {
+.sapMTileSmallPhone {
+	&.sapMST.OneByOne {
 		width: 9.25rem;
 		height: 9.25rem;
 	}
 
-	.sapMST.TwoByOne {
+	&.sapMST.TwoByOne {
 		width: 19rem;
 		height: 9.25rem;
 	}
 
-	.sapMSTBulleted {
+	&.sapMSTBulleted {
 		bottom: 0.188rem;
 	}
 }
