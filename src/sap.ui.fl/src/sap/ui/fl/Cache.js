@@ -194,7 +194,7 @@ sap.ui.define(["sap/ui/fl/LrepConnector", "sap/ui/fl/Utils"], function (LrepConn
 		// in case of no changes present according to async hints
 		if (mPropertyBag && mPropertyBag.cacheKey === "<NO CHANGES>") {
 			var currentLoadChanges = oChangesBundleLoadingPromise.then(function (aChanges) {
-				return {
+				oCacheEntry.file = {
 					changes: {
 						changes : aChanges,
 						contexts : [],
@@ -203,6 +203,7 @@ sap.ui.define(["sap/ui/fl/LrepConnector", "sap/ui/fl/Utils"], function (LrepConn
 					},
 					componentClassName: sComponentName
 				};
+				return oCacheEntry.file;
 			});
 			oCacheEntry.promise = currentLoadChanges;
 			return currentLoadChanges;
