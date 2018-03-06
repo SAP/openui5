@@ -32,5 +32,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.8": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "9b912a5664d0933ebfd0b0fa6765b1f84b6db0aa",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationList: aria-expanded for the items works correctly now",
+        "references": []
+      }
+    ]
   }
 }

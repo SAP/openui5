@@ -746,5 +746,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.8": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "e8ce2a544b81204471629de32d78f8f0181f7f3c",
+        "type": "FIX",
+        "text": " sap.ui.core.cache.CacheManager: IE in privacy mode is disabled.",
+        "references": []
+      }
+    ]
   }
 }

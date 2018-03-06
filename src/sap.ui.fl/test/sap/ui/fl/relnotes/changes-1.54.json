@@ -128,5 +128,16 @@
         "references": []
       }
     ]
+  },
+  "1.54.2": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "2d8a8bb3786c7956ade92abf2d0efaa293480598",
+        "type": "FIX",
+        "text": " Fix open issues",
+        "references": []
+      }
+    ]
   }
 }

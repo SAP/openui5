@@ -170,5 +170,46 @@
         "references": []
       }
     ]
+  },
+  "1.54.2": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "df58e34a2a8ef35cef71b2df44d260d854aa8a8f",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Arrow buttons aligned with VD spec",
+        "references": []
+      },
+      {
+        "id": "2997a68968b99be1ef9ff57164f9204de0612e41",
+        "type": "FIX",
+        "text": " sap.m.Button: Emphasized button has correct focus outline color on its down state in Belize",
+        "references": []
+      },
+      {
+        "id": "5959bf928d679c5eac47578872d0f7f0bfa43a50",
+        "type": "FIX",
+        "text": " sap.m.Button: Now the icons are with the correct color when Reject/Accept/Emphasized + Disabled",
+        "references": []
+      },
+      {
+        "id": "970295d49d4083f378d4763f779dbaad4fbf1d5a",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: focus outline clearly visible in IE",
+        "references": []
+      },
+      {
+        "id": "37518a1a0393c3585a57b89b521c8c9dbb8a5edb",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: No double focus outline on Belize on IE",
+        "references": []
+      },
+      {
+        "id": "98727fc3c21c327c8927a9af040464b78fa1e72a",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Focus outline fixed for HCB and HCW",
+        "references": []
+      }
+    ]
   }
 }
