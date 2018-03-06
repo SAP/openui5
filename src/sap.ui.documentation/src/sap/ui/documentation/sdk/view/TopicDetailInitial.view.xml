@@ -141,7 +141,7 @@
 					<l:VerticalLayout width="100%">
 						<custom:TitleLink
 								width="100%"
-								text="Developing Content"
+								text="Developing Controls"
 								href="#/topic/8dcab0011d274051808f959800cabf9f"
 								titleStyle="H1"/>
 						<Text
