@@ -290,5 +290,22 @@
         "references": []
       }
     ]
+  },
+  "1.54.2": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "a7bd11cbc9ada7c8ff5e86c7705f16d1789defaf",
+        "type": "FIX",
+        "text": " sap.ui.rta: Getting rid of the feature toggle parameter.",
+        "references": []
+      },
+      {
+        "id": "2b3ecc4b2fa97faca73fd7428eb426eabb3914cb",
+        "type": "FIX",
+        "text": " sap.ui.rta: check geometry of overlay instead of original element",
+        "references": []
+      }
+    ]
   }
 }

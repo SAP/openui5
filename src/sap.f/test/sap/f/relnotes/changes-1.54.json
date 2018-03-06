@@ -74,5 +74,28 @@
         "references": []
       }
     ]
+  },
+  "1.54.2": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "e36badf6f0cd3d2cf0c60b5f23367d556763ecda",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Inactive focusable header title fixed",
+        "references": []
+      },
+      {
+        "id": "a1adb710beab984c0df3c588ef32a050f8e0bc79",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Enable main actions moving in RTA",
+        "references": []
+      },
+      {
+        "id": "df58e34a2a8ef35cef71b2df44d260d854aa8a8f",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Arrow buttons aligned with VD spec",
+        "references": []
+      }
+    ]
   }
 }

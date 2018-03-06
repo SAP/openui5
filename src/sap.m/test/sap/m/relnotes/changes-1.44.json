@@ -2803,5 +2803,34 @@
         "references": []
       }
     ]
+  },
+  "1.44.28": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "26eb289d1049e51109ddb11ee38896e2bcf61c58",
+        "type": "FIX",
+        "text": " sap.m.MessagePage: Positioning in ObjectPage section fixed",
+        "references": []
+      },
+      {
+        "id": "24d91b39ec6d1cc722a19a229b886bc32546acb3",
+        "type": "FIX",
+        "text": " sap.m.MessageToast: Improve Accessibility by adding aria-labelledby",
+        "references": []
+      },
+      {
+        "id": "67cde26304f87dc4f57981a4baacab43e684a900",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Reset cached sizes on control reset",
+        "references": []
+      },
+      {
+        "id": "5c2e405493929463c29e6c61fc93e5fdb50a6707",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Height corrected in compactMode",
+        "references": []
+      }
+    ]
   }
 }
