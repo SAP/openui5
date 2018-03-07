@@ -104,54 +104,54 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 		MessageToast._validateSettings = function(mSettings) {
 
 			// duration
-			this._isFiniteInteger(mSettings.duration);
+			MessageToast._isFiniteInteger(mSettings.duration);
 
 			// width
-			this._validateWidth(mSettings.width);
+			MessageToast._validateWidth(mSettings.width);
 
 			// my
-			this._validateDockPosition(mSettings.my);
+			MessageToast._validateDockPosition(mSettings.my);
 
 			// at
-			this._validateDockPosition(mSettings.at);
+			MessageToast._validateDockPosition(mSettings.at);
 
 			// of
-			this._validateOf(mSettings.of);
+			MessageToast._validateOf(mSettings.of);
 
 			// offset
-			this._validateOffset(mSettings.offset);
+			MessageToast._validateOffset(mSettings.offset);
 
 			// collision
-			this._validateCollision(mSettings.collision);
+			MessageToast._validateCollision(mSettings.collision);
 
 			// onClose
-			this._validateOnClose(mSettings.onClose);
+			MessageToast._validateOnClose(mSettings.onClose);
 
 			// autoClose
-			this._validateAutoClose(mSettings.autoClose);
+			MessageToast._validateAutoClose(mSettings.autoClose);
 
 			// animationTimingFunction
-			this._validateAnimationTimingFunction(mSettings.animationTimingFunction);
+			MessageToast._validateAnimationTimingFunction(mSettings.animationTimingFunction);
 
 			// animationDuration
-			this._isFiniteInteger(mSettings.animationDuration);
+			MessageToast._isFiniteInteger(mSettings.animationDuration);
 		};
 
 		MessageToast._isFiniteInteger = function(iNumber) {
 			if (typeof iNumber !== "number" || !isFinite(iNumber) || !(Math.floor(iNumber) === iNumber) || iNumber <= 0) {
-				jQuery.sap.log.error('"iNumber" needs to be a finite positive nonzero integer on ' + this + "._isFiniteInteger");
+				jQuery.sap.log.error('"iNumber" needs to be a finite positive nonzero integer on ' + MessageToast + "._isFiniteInteger");
 			}
 		};
 
 		MessageToast._validateWidth = function(sWidth) {
 			if (!CSSSize.isValid(sWidth)) {
-				jQuery.sap.log.error(sWidth + ' is not of type ' + '"sap.ui.core.CSSSize" for property "width" on ' + this + "._validateWidth");
+				jQuery.sap.log.error(sWidth + ' is not of type ' + '"sap.ui.core.CSSSize" for property "width" on ' + MessageToast + "._validateWidth");
 			}
 		};
 
 		MessageToast._validateDockPosition = function(sDock) {
 			if (!Dock.isValid(sDock)) {
-				jQuery.sap.log.error('"' + sDock + '"' + ' is not of type ' + '"sap.ui.core.Popup.Dock" on ' + this + "._validateDockPosition");
+				jQuery.sap.log.error('"' + sDock + '"' + ' is not of type ' + '"sap.ui.core.Popup.Dock" on ' + MessageToast + "._validateDockPosition");
 			}
 		};
 
@@ -161,13 +161,13 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 				!(vElement instanceof Control) &&
 				vElement !== window) {
 
-				jQuery.sap.log.error('"of" needs to be an instance of sap.ui.core.Control or an Element or a jQuery object or the window on ' + this + "._validateOf");
+				jQuery.sap.log.error('"of" needs to be an instance of sap.ui.core.Control or an Element or a jQuery object or the window on ' + MessageToast + "._validateOf");
 			}
 		};
 
 		MessageToast._validateOffset = function(sOffset) {
 			if (typeof sOffset !== "string") {
-				jQuery.sap.log.error(sOffset + ' is of type ' + typeof sOffset + ', expected "string" for property "offset" on ' + this + "._validateOffset");
+				jQuery.sap.log.error(sOffset + ' is of type ' + typeof sOffset + ', expected "string" for property "offset" on ' + MessageToast + "._validateOffset");
 			}
 		};
 
@@ -175,19 +175,19 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 			var rValidCollisions = /^(fit|flip|none|flipfit|flipflip|flip flip|flip fit|fitflip|fitfit|fit fit|fit flip)$/i;
 
 			if (!rValidCollisions.test(sCollision)) {
-				jQuery.sap.log.error('"collision" needs to be a single value “fit”, “flip”, or “none”, or a pair for horizontal and vertical e.g. "fit flip”, "fit none", "flipfit" on ' + this + "._validateOffset");
+				jQuery.sap.log.error('"collision" needs to be a single value “fit”, “flip”, or “none”, or a pair for horizontal and vertical e.g. "fit flip”, "fit none", "flipfit" on ' + MessageToast + "._validateOffset");
 			}
 		};
 
 		MessageToast._validateOnClose = function(fn) {
 			if (typeof fn !== "function" && fn !== null) {
-				jQuery.sap.log.error('"onClose" should be a function or null on ' + this + "._validateOnClose");
+				jQuery.sap.log.error('"onClose" should be a function or null on ' + MessageToast + "._validateOnClose");
 			}
 		};
 
 		MessageToast._validateAutoClose = function(b) {
 			if (typeof b !== "boolean") {
-				jQuery.sap.log.error('"autoClose" should be a boolean on ' + this + "._validateAutoClose");
+				jQuery.sap.log.error('"autoClose" should be a boolean on ' + MessageToast + "._validateAutoClose");
 			}
 		};
 
@@ -195,7 +195,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 			var rValidTimingFn = /^(ease|linear|ease-in|ease-out|ease-in-out)$/i;
 
 			if (!rValidTimingFn.test(sTimingFunction)) {
-				jQuery.sap.log.error('"animationTimingFunction" should be a string, expected values: ' + "ease, linear, ease-in, ease-out, ease-in-out on " + this + "._validateAnimationTimingFunction");
+				jQuery.sap.log.error('"animationTimingFunction" should be a string, expected values: ' + "ease, linear, ease-in, ease-out, ease-in-out on " + MessageToast + "._validateAnimationTimingFunction");
 			}
 		};
 
@@ -261,10 +261,10 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 		MessageToast._handleResizeEvent = function() {
 
 			if (Device.system.phone || Device.system.tablet) {
-				this._resetPosition(this._aPopups);
+				MessageToast._resetPosition(MessageToast._aPopups);
 			}
 
-			jQuery.sap.delayedCall(0, this, "_applyPositions", [this._aPopups]);
+			jQuery.sap.delayedCall(0, MessageToast, "_applyPositions", [MessageToast._aPopups]);
 		};
 
 		MessageToast._handleMouseDownEvent = function(oEvent) {
@@ -275,7 +275,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 				return;
 			}
 
-			this._aPopups.forEach(function(oPopup) {
+			MessageToast._aPopups.forEach(function(oPopup) {
 				oPopup && oPopup.__bAutoClose && oPopup.close();
 			});
 		};
@@ -298,7 +298,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 					mPosition = oPopup._oPosition;	// TODO _oPosition is a private property
 
 					if (Device.system.phone || Device.system.tablet) {
-						jQuery.sap.delayedCall(0, this, "_applyPosition", [oPopup, mPosition]);
+						jQuery.sap.delayedCall(0, MessageToast, "_applyPosition", [oPopup, mPosition]);
 					} else {
 						oPopup.setPosition(mPosition.my, mPosition.at, mPosition.of, mPosition.offset);
 					}
@@ -362,8 +362,8 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 		 * @public
 		 */
 		MessageToast.show = function(sMessage, mOptions) {
-			var that = this,
-				mSettings = jQuery.extend({}, this._mSettings, { message: sMessage }),
+			var that = MessageToast,
+				mSettings = jQuery.extend({}, MessageToast._mSettings, { message: sMessage }),
 				oPopup = new Popup(),
 				iPos,
 				oMessageToastDomRef,
@@ -377,14 +377,14 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 			jQuery.extend(mSettings, mOptions);
 
 			// validate all settings
-			this._validateSettings(mSettings);
+			MessageToast._validateSettings(mSettings);
 
 			// create the message toast HTML markup
 			oMessageToastDomRef = createHTMLMarkup(mSettings);
 
-			// save this pop-up instance and the position,
+			// save MessageToast pop-up instance and the position,
 			// to be used inside fnMTAttachClosed closure
-			iPos = this._aPopups.push(oPopup) - 1;
+			iPos = MessageToast._aPopups.push(oPopup) - 1;
 
 			// sets the content of the pop-up
 			oPopup.setContent(oMessageToastDomRef);
@@ -412,17 +412,17 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup', 's
 			}
 
 			// do not bind if already bound
-			if (!this._bBoundedEvents) {
+			if (!MessageToast._bBoundedEvents) {
 
 				// bind to the resize event to handle orientation change and resize events
-				jQuery(window).on("resize." + CSSCLASS, this._handleResizeEvent.bind(this));
-				jQuery(document).on(sPointerEvents, this._handleMouseDownEvent.bind(this));
-				this._bBoundedEvents = true;
+				jQuery(window).on("resize." + CSSCLASS, MessageToast._handleResizeEvent.bind(MessageToast));
+				jQuery(document).on(sPointerEvents, MessageToast._handleMouseDownEvent.bind(MessageToast));
+				MessageToast._bBoundedEvents = true;
 			}
 
 			// opens the popup's content at the position specified via #setPosition
 			oPopup.open();
-			this._iOpenedPopups++;
+			MessageToast._iOpenedPopups++;
 
 			function handleMTClosed() {
 				InstanceManager.removePopoverInstance(that._aPopups[iPos]);
