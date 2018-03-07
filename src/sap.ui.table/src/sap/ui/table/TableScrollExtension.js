@@ -243,22 +243,22 @@ sap.ui.define([
 			var iNewFirstVisibleRowIndex = oScrollExtension.getRowIndexAtCurrentScrollPosition();
 			var iOldFirstVisibleRowIndex = oTable.getFirstVisibleRow();
 			var bNewFirstVisibleRowInBuffer = iNewFirstVisibleRowIndex < 0;
-			var iOldFirstVisibleRowInBuffer = iOldFirstVisibleRowIndex >= oTable._getMaxFirstRenderedRowIndex();
+			var bOldFirstVisibleRowInBuffer = iOldFirstVisibleRowIndex >= oTable._getMaxFirstRenderedRowIndex();
 			var bFirstVisibleRowChanged = iNewFirstVisibleRowIndex !== iOldFirstVisibleRowIndex;
-			var bRowsUpdateRequired = bFirstVisibleRowChanged && !(bNewFirstVisibleRowInBuffer && iOldFirstVisibleRowInBuffer);
+			var bRowsUpdateRequired = bFirstVisibleRowChanged && !(bNewFirstVisibleRowInBuffer && bOldFirstVisibleRowInBuffer);
 
 			if (bRowsUpdateRequired) {
 				if (bNewFirstVisibleRowInBuffer) {
 					// The actual new first visible row cannot be determined yet. It will be done when the inner scroll position gets updated.
-					iNewFirstVisibleRowIndex = oTable._getMaxFirstVisibleRowIndex();
+					iNewFirstVisibleRowIndex = oTable._getMaxFirstRenderedRowIndex();
 				}
 				jQuery.sap.log.debug("sap.ui.table.TableScrollExtension",
 					"updateFirstVisibleRow: From " + iOldFirstVisibleRowIndex + " to " + iNewFirstVisibleRowIndex, oTable);
 				oTable.setFirstVisibleRow(iNewFirstVisibleRowIndex, true);
-				VerticalScrollingHelper._bIgnoreOnRowsUpdated = true;
+				oTable._bIgnoreOnRowsUpdatedOnScroll = true;
 				oTable.attachEventOnce("_rowsUpdated", function() {
 					oScrollExtension.updateInnerVerticalScrollPosition();
-					delete VerticalScrollingHelper._bIgnoreOnRowsUpdated;
+					delete oTable._bIgnoreOnRowsUpdatedOnScroll;
 				});
 			} else if (TableUtils.isVariableRowHeightEnabled(oTable)) {
 				jQuery.sap.log.debug("sap.ui.table.TableScrollExtension",
@@ -287,7 +287,7 @@ sap.ui.define([
 		 * @private
 		 */
 		onRowsUpdated: function(oEvent) {
-			if (VerticalScrollingHelper._bIgnoreOnRowsUpdated) {
+			if (this._bIgnoreOnRowsUpdatedOnScroll) {
 				return;
 			}
 
