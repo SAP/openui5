@@ -49,6 +49,13 @@ sap.ui.define([
 		return true;
 	};
 
+	ControlVariantDuplicate.prototype.getPreparedChange = function() {
+		if (!this._aPreparedChanges) {
+			jQuery.sap.log.error("No prepared change available for ControlVariantDuplicate");
+		}
+		return this._aPreparedChanges;
+	};
+
 	/**
 	 * @public Triggers the duplication of a variant
 	 * @returns {Promise} Returns resolve after execution
@@ -77,8 +84,9 @@ sap.ui.define([
 		};
 
 		return this.oModel._copyVariant(mPropertyBag)
-			.then(function(oVariant){
-				this._oVariantChange = oVariant;
+			.then(function(aChanges){
+				this._oVariantChange = aChanges[0];
+				this._aPreparedChanges = aChanges;
 			}.bind(this));
 	};
 
@@ -91,6 +99,7 @@ sap.ui.define([
 			return this.oModel.removeVariant(this._oVariantChange, this.getSourceVariantReference(), this.sVariantManagementReference)
 				.then(function() {
 					this._oVariantChange = null;
+					this._aPreparedChanges = null;
 				}.bind(this));
 		}
 	};
