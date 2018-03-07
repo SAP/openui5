@@ -8,7 +8,7 @@
         },
 		"VMTitle": "Object Page Title",
 	  	"VMSubtitle": "Object Page Subtitle",
-	  	"SectionTitle1": "Object page section with form",
+	  	"SubSectionTitle1": "Object page sub section with form",
 	  	"SectionTitle2":  "Object page section navproperty",
   		"SectionTitle3": "Object page section with variant management inside",
         "Property01": "propValue01",

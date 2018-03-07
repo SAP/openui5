@@ -36,8 +36,8 @@
 
 				</uxap:headerTitle>
 				<uxap:sections>
-					<uxap:ObjectPageSection id="ObjectPageSectionWithForm" title="{SectionTitle1}">
-						<uxap:ObjectPageSubSection>
+					<uxap:ObjectPageSection id="ObjectPageSectionWithForm">
+						<uxap:ObjectPageSubSection  id="ObjectPageSubSectionWithForm" title="{SubSectionTitle1}">
 							<form:SimpleForm class="sapUiSmallMargin"
 											 title="Simple Form bound to EntityType02" id="MainForm"
 											 maxContainerCols="3"
