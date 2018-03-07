@@ -24,8 +24,7 @@
 							press="backToSearch"
 							visible="false"/>
 					<m:Button
-							class="sapUiHideOnPhone"
-							visible="{=!${device>/system/phone}}"
+							visible="{device>/system/desktop}"
 							icon="sap-icon://full-screen"
 							type="Transparent"
 							tooltip="Show this document in full screen mode"
