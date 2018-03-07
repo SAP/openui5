@@ -44,4 +44,27 @@ sap.ui.define([], function () {
 			assert.ok(this.oCodeEditor._oEditor.getSession().getUseWorker() === false, "should not use worker after blur.");
 		});
 
+		QUnit.test("Focused elements in code editor editable:false", function (assert) {
+			//Arrange
+			this.oCodeEditor.setEditable(false);
+			this.oCodeEditor.setVisible(true);
+
+			//ACT
+			this.oCodeEditor.focus();
+
+			// ASSERT
+			assert.strictEqual(document.activeElement.classList.contains("ace_text-input"), false, "When code editor is not editable focus should not be on the code editor");
+		});
+
+		QUnit.test("Focused elements in code editor editable:true", function (assert) {
+
+			//Arrange
+			this.oCodeEditor.setVisible(true);
+
+			//ACT
+			this.oCodeEditor.focus();
+
+			// ASSERT
+			assert.strictEqual(document.activeElement.classList.contains("ace_text-input"), true, "When code editor is  editable focus should be on the code editor");
+		});
 });
