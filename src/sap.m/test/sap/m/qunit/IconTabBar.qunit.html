@@ -2584,6 +2584,7 @@
 						aTabItems.push(new sap.m.IconTabFilter({
 							key: i.toString(),
 							text : 'Tab ' + i,
+							enabled: i % 10 != 0,
 							content: new sap.m.Text({
 								text: 'Content ' + i
 							})
@@ -2623,6 +2624,16 @@
 				this.clock.tick(500);
 
 				assert.strictEqual(this.oIconTabBar.$().find('.sapMITBSelected').length, 1, "A tab is selected");
+
+				this.oIconTabBar.setSelectedKey('9');
+				sap.ui.getCore().applyChanges();
+
+				assert.strictEqual(this.oIconTabBar._getIconTabHeader().oSelectedItem.getText(), 'Tab 9' , "Enabled tab is correctly selected");
+
+				this.oIconTabBar.setSelectedKey('10');
+				sap.ui.getCore().applyChanges();
+
+				assert.strictEqual(this.oIconTabBar._getIconTabHeader().oSelectedItem.getText(), 'Tab 9' , "Disabled tab is not selected");
 			});
 
 			QUnit.module("IconTabHeader Tabs",{
