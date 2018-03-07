@@ -4196,10 +4196,6 @@
 			this.testFacetFilterList(4);
 		});
 
-		QUnit.test("Facet filter no tabindex is set on container element", function (assert) {
-			assert.ok(!this.oFF.$().attr("tabindex"), "no tabindex is set");
-		});
-
 
 		QUnit.module("Other scenarios");
 
@@ -4417,6 +4413,71 @@
 			oFFL.setSelectedKeys({ "key1": "Text 1" });
 
 			assert.equal(oUpdateFacetFilterButtonTextSpy.callCount, 1);
+
+			oFFL.destroy();
+		});
+
+		// BCP: 1880240852
+		// BCP: 1880222185
+		QUnit.test("RootDomRef is set to the ItemNavigation", function (assert) {
+			// Arrange
+			var oFF = new sap.m.FacetFilter({
+				type: "Simple",
+				lists: [
+					new sap.m.FacetFilterList("list1", {
+						key: "item1",
+						title: "Item 1"
+					}),
+					new sap.m.FacetFilterList("list2", {
+						key: "item2",
+						title: "Item 2"
+					})
+				]
+			});
+
+			oFF.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.equal(oFF.oItemNavigation.getRootDomRef(), oFF.getDomRef(), "RootDomRef is properly set to the item navigation");
+
+			// Cleanup
+			destroyFF(oFF);
+		});
+
+		// BCP: 1880240852
+		// BCP: 1880222185
+		QUnit.test("onsaptabnext should not call focus on the FacetFilter instance - itemNavigation will take care of it", function (assert) {
+			// Arrange
+			var oFF = new sap.m.FacetFilter({
+				type: "Simple",
+				lists: [
+					new sap.m.FacetFilterList("list1", {
+						key: "item1",
+						title: "Item 1"
+					}),
+					new sap.m.FacetFilterList("list2", {
+						key: "item2",
+						title: "Item 2"
+					})
+				]
+			});
+			var oFFFocusSpy = this.spy(oFF, "focus");
+			oFF.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			var oMockedEvent = {
+				target: oFF.getDomRef()
+			};
+
+			// Act
+			oFF._closePopoverFlag = true; // simulate old implementation where flag when popover is closed is set
+			oFF.onsaptabnext(oMockedEvent);
+
+			// Assert
+			assert.equal(oFFFocusSpy.callCount, 0, "Focus method of the FacetFilter should not be called ontabnext");
+
+			// Cleanup
+			destroyFF(oFF);
 		});
 
 		// Helper functions
