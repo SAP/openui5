@@ -4,8 +4,8 @@
 
 // Provides control sap.m.P13nDimMeasurePanel.
 sap.ui.define([
-	'jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nDimMeasureItem', './SearchField', './Table', './library', 'sap/ui/model/ChangeReason', 'sap/ui/model/json/JSONModel', 'sap/ui/model/BindingMode', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Item', 'sap/ui/core/InvisibleText', 'sap/ui/core/IconPool', 'sap/m/ScrollContainer'
-], function(jQuery, ColumnListItem, P13nPanel, P13nDimMeasureItem, SearchField, Table, library, ChangeReason, JSONModel, BindingMode, ResizeHandler, Item, InvisibleText, IconPool, ScrollContainer) {
+	'jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nDimMeasureItem', './SearchField', './Table', './library', 'sap/ui/core/library', 'sap/ui/model/ChangeReason', 'sap/ui/model/json/JSONModel', 'sap/ui/model/BindingMode', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Item', 'sap/ui/core/InvisibleText', 'sap/ui/core/IconPool', 'sap/m/ScrollContainer'
+], function(jQuery, ColumnListItem, P13nPanel, P13nDimMeasureItem, SearchField, Table, library, CoreLibrary, ChangeReason, JSONModel, BindingMode, ResizeHandler, Item, InvisibleText, IconPool, ScrollContainer) {
 	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority
@@ -527,6 +527,7 @@ sap.ui.define([
 			selectionChange: jQuery.proxy(this._onSelectionChange, this),
 			columns: [
 				new sap.m.Column({
+					vAlign: CoreLibrary.VerticalAlign.Middle,
 					header: new sap.m.Text({
 						text: {
 							parts: [
@@ -544,10 +545,12 @@ sap.ui.define([
 						}
 					})
 				}), new sap.m.Column({
+					vAlign: CoreLibrary.VerticalAlign.Middle,
 					header: new sap.m.Text({
 						text: oRb.getText('COLUMNSPANEL_COLUMN_TYPE')
 					})
 				}), new sap.m.Column({
+					vAlign: CoreLibrary.VerticalAlign.Middle,
 					header: new sap.m.Text({
 						text: oRb.getText('COLUMNSPANEL_COLUMN_ROLE')
 					})

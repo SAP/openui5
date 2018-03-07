@@ -4,8 +4,8 @@
 
 // Provides control sap.m.P13nColumnsPanel.
 sap.ui.define([
-	'jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nColumnsItem', './SearchField', './Table', './library', 'sap/ui/model/ChangeReason', 'sap/ui/model/json/JSONModel', 'sap/ui/model/BindingMode', 'sap/ui/core/ResizeHandler', 'sap/ui/core/IconPool', 'sap/m/ScrollContainer'
-], function(jQuery, ColumnListItem, P13nPanel, P13nColumnsItem, SearchField, Table, library, ChangeReason, JSONModel, BindingMode, ResizeHandler, IconPool, ScrollContainer) {
+	'jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nColumnsItem', './SearchField', './Table', './library', 'sap/ui/core/library', 'sap/ui/model/ChangeReason', 'sap/ui/model/json/JSONModel', 'sap/ui/model/BindingMode', 'sap/ui/core/ResizeHandler', 'sap/ui/core/IconPool', 'sap/m/ScrollContainer'
+], function(jQuery, ColumnListItem, P13nPanel, P13nColumnsItem, SearchField, Table, library, CoreLibrary, ChangeReason, JSONModel, BindingMode, ResizeHandler, IconPool, ScrollContainer) {
 	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority
@@ -491,6 +491,7 @@ sap.ui.define([
 			selectionChange: jQuery.proxy(this._onSelectionChange, this),
 			columns: [
 				new sap.m.Column({
+					vAlign: CoreLibrary.VerticalAlign.Middle,
 					header: new sap.m.Text({
 						text: {
 							parts: [
