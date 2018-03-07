@@ -698,6 +698,10 @@ function(
 			}
 		}
 
+		if (Device.browser.msie) {
+			this.getDomRef().focus();
+		}
+
 		this._openSubMenuDelayed(oItem);
 
 	};
