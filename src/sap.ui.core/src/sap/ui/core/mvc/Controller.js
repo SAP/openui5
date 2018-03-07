@@ -81,6 +81,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 			if (mControllerLifecycleMethods[sMemberName] !== undefined) {
 				// special handling for lifecycle methods
 				var fnOri = oController[sMemberName];
+				var fnCust = oCustomControllerDef[sMemberName];
 				if (fnOri && typeof fnOri === "function") {
 					// use closure to keep correct values inside overridden function
 					(function(fnCust, fnOri, bOriBefore){
@@ -95,7 +96,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 								fnOri.apply(oController, arguments);
 							}
 						};
-					})(fn || oCustomControllerDef[sMemberName], fnOri, mControllerLifecycleMethods[sMemberName]);
+					})(fn || fnCust, fnOri, mControllerLifecycleMethods[sMemberName]);
+				} else if (typeof fnCust === "function") {
+					oController[sMemberName] = fnCust;
+				} else {
+					jQuery.sap.log.error("Controller extension failed: lifecycleMethod '" + sMemberName + "', is not a function");
 				}
 				return true;
 			}
