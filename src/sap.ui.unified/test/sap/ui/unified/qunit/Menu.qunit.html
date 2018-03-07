@@ -927,6 +927,36 @@
 
 		module("Misc");
 
+		// BCP: 002075129500003736822017
+		// BCP: 002075129400000480702018
+		QUnit.test("mouseover will set the focus to the domRef always in IE", function (assert) {
+			// Arrange
+			var oMenu = new sap.ui.unified.Menu(),
+					oDomRef = { focus: this.spy() },
+					oHoveredItemStub = {},
+					oGetDomRefStub = this.stub(oMenu, "getDomRef", function () { return oDomRef }),
+					oGetItemByDomRef = this.stub(oMenu, "getItemByDomRef", function () { return oHoveredItemStub }),
+					oSetHoveredItemStub = this.stub(oMenu, "setHoveredItem", function () { }),
+					oOpenSubMenuDelayedStub = this.stub(oMenu, "_openSubMenuDelayed", function () { }),
+					oBrowserStub = this.stub(sap.ui.Device, "browser", { msie: true }),
+					oMockedEvent = { target: {} };
+			oMenu.bOpen = true, // simulate that menu is opened
+
+					// Act
+					oMenu.onmouseover(oMockedEvent);
+
+			// Assert
+			assert.equal(oDomRef.focus.callCount, 1, "Focus on the DomRef should be called once");
+
+			// Cleanup
+			oGetDomRefStub.restore();
+			oGetItemByDomRef.restore();
+			oSetHoveredItemStub.restore();
+			oOpenSubMenuDelayedStub.restore();
+			oBrowserStub.restore();
+			oMenu.destroy();
+		});
+
 		test("Destruction", function() {
 			var sId = oRootMenu.getId();
 			var sSubId = oSubMenu.getId();
