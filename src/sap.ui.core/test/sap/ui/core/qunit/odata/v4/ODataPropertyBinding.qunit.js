@@ -1758,8 +1758,8 @@ sap.ui.require([
 			oError = new Error("fail intentionally");
 
 		this.mock(oBinding).expects("withCache").returns(SyncPromise.reject(oError));
-		this.oLogMock.expects("error").withExactArgs("Error in deregisterChange", oError,
-			sClassName);
+		this.mock(this.oModel).expects("reportError")
+			.withExactArgs("Error in deregisterChange", sClassName, oError);
 
 		// code under test
 		oBinding.deregisterChange();

@@ -294,7 +294,7 @@ sap.ui.define([
 		this.withCache(function (oCache, sPath) {
 			oCache.deregisterChange(sPath, that);
 		}).catch(function (oError) {
-			jQuery.sap.log.error("Error in deregisterChange", oError, sClassName);
+			that.oModel.reportError("Error in deregisterChange", sClassName, oError);
 		});
 	};
 

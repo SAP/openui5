@@ -224,8 +224,6 @@ sap.ui.define([
 	 * @returns {string}
 	 *   The path relative to the binding's path or <code>undefined</code> if the path is not a sub
 	 *   path and the binding is relative
-	 * @throws {Error}
-	 *   If the binding is absolute and the path does not start with the binding's path
 	 *
 	 * @private
 	 */
@@ -241,12 +239,12 @@ sap.ui.define([
 				if (sPath[0] === "/") {
 					sPath = sPath.slice(1);
 				}
-			} else if (this.bRelative) {
-				// this path doesn't match, but some parent binding might possibly fulfill it
-				sPath = undefined;
 			} else {
-				// this path definitely does not match
-				throw new Error(sPath + ": invalid path, must start with " + this.sPath);
+				// A mismatch can only happen when a list binding's context has been parked and is
+				// destroyed later. Such a context does no longer have a subpath of the binding's
+				// path. The only caller in this case is ODataPropertyBinding#deregisterChange
+				// which can safely be ignored.
+				sPath = undefined;
 			}
 		}
 		return sPath;

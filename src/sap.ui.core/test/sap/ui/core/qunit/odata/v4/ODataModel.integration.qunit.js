@@ -4882,5 +4882,55 @@ sap.ui.require([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: BCP 1870017061
+	// Master/Detail, object page with a table.Table: When changing the entity for the object page
+	// the property bindings below the table's list binding complained about an invalid path in
+	// deregisterChange. This scenario only simulates the object page, the contexts from the master
+	// list are hardcoded to keep the test small.
+	QUnit.test("deregisterChange", function (assert) {
+		var oModel = createSalesOrdersModel(),
+			sView = '\
+<FlexBox id="form">\
+	<t:Table rows="{path: \'SO_2_SOITEM\', parameters : {$$updateGroupId:\'update\'}}">\
+		<t:Column>\
+			<t:template>\
+				<Text id="position" text="{ItemPosition}" />\
+			</t:template>\
+		</t:Column>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("position", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("SalesOrderList('0500000000')/SO_2_SOITEM?$skip=0&$top=110", {
+					"value" : [{
+						"ItemPosition" : "10",
+						"SalesOrderID" : "0500000000"
+					}]
+				})
+				.expectChange("position", ["10"]);
+
+			// table.Table must render to call getContexts on its row aggregation's list binding
+			that.oView.placeAt("qunit-fixture");
+			that.oView.byId("form").bindElement("/SalesOrderList('0500000000')");
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('0500000001')/SO_2_SOITEM?$skip=0&$top=110", {
+					"value" : [{
+						"ItemPosition" : "20",
+						"SalesOrderID" : "0500000001"
+					}]
+				})
+				.expectChange("position", null, null) //TODO unexpected change
+				.expectChange("position", ["20"]);
+
+			that.oView.byId("form").bindElement("/SalesOrderList('0500000001')");
+			return that.waitForChanges(assert);
+		});
+	});
 });
 //TODO test delete
