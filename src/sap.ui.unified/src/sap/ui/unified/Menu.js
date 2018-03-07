@@ -561,6 +561,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 			}
 		}
 
+		if (Device.browser.msie) {
+			this.getDomRef().focus();
+		}
+
 		this._openSubMenuDelayed(oItem);
 
 	};
