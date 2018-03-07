@@ -1739,57 +1739,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("deregisterChange: absolute binding", function (assert) {
-		var oBinding = this.oModel.bindList("/SalesOrderList"),
-			oListener = {};
-
-		this.mock(_Helper).expects("buildPath").withExactArgs(1, "foo").returns("~");
-		this.mock(oBinding.oCachePromise.getResult()).expects("deregisterChange")
-			.withExactArgs("~", sinon.match.same(oListener));
-
-		oBinding.deregisterChange("foo", oListener, 1);
-	});
-	// TODO deregisterChange from a property binding may arrive after the binding changed or
-	//      activated its cache when a relative binding with cache changed its parent
-	//      context. Find a better way to deal with these registrations.
-
-	//*********************************************************************************************
-	QUnit.test("deregisterChange: cache is not yet available", function (assert) {
-		var oBinding = this.oModel.bindList("/SalesOrderList"),
-			oCache = {
-				deregisterChange : function () {}
-			};
-
-		// simulate pending cache creation
-		oBinding.oCachePromise = SyncPromise.resolve(Promise.resolve(oCache));
-		this.mock(oCache).expects("deregisterChange").never();
-
-		oBinding.deregisterChange("foo", {});
-
-		return oBinding.oCachePromise.then();
-	});
-
-	//*********************************************************************************************
-	QUnit.test("deregisterChange: relative binding resolved", function (assert) {
-		var oBinding,
-			oContext = Context.create(this.oModel, {}, "/foo"),
-			oListener = {};
-
-		oBinding = this.oModel.bindList("SO_2_SOITEM", oContext);
-		this.mock(_Helper).expects("buildPath").withExactArgs("SO_2_SOITEM", 1, "foo").returns("~");
-		this.mock(oContext).expects("deregisterChange")
-			.withExactArgs("~", sinon.match.same(oListener));
-
-		oBinding.deregisterChange("foo", oListener, 1);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("deregisterChange: relative binding unresolved", function (assert) {
-		this.oModel.bindList("SO_2_SOITEM")
-			.deregisterChange("foo", {}, 1); // nothing must happen
-	});
-
-	//*********************************************************************************************
 	QUnit.test("forbidden", function (assert) {
 		var oBinding = this.oModel.bindList("/EMPLOYEES");
 

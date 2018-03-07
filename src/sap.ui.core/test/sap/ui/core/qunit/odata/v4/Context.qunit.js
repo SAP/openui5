@@ -167,21 +167,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("deregisterChange", function (assert) {
-		var oBinding = {
-				deregisterChange : function () {}
-			},
-			oContext = Context.create(null, oBinding, "/foo", 42),
-			oListener = {},
-			sPath = "bar";
-
-		this.mock(oBinding).expects("deregisterChange")
-			.withExactArgs(sPath, sinon.match.same(oListener), 42);
-
-		oContext.deregisterChange(sPath, oListener);
-	});
-
-	//*********************************************************************************************
 	[
 		{aBindingHasPendingChanges : [true], bResult : true},
 		{aBindingHasPendingChanges : [false, true], bResult : true},

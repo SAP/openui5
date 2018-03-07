@@ -330,32 +330,6 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Deregisters the given change listener.
-	 *
-	 * @param {string} sPath
-	 *   The path
-	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} oListener
-	 *   The change listener
-	 *
-	 * @private
-	 */
-	ODataContextBinding.prototype.deregisterChange = function (sPath, oListener) {
-		var oCache;
-
-		if (!this.oCachePromise.isFulfilled()) {
-			// Be prepared for late deregistrations by dependents of parked contexts
-			return;
-		}
-
-		oCache = this.oCachePromise.getResult();
-		if (oCache) {
-			oCache.deregisterChange(sPath, oListener);
-		} else if (this.oContext) {
-			this.oContext.deregisterChange(_Helper.buildPath(this.sPath, sPath), oListener);
-		}
-	};
-
-	/**
 	 * Destroys the object. The object must not be used anymore after this function was called.
 	 *
 	 * @public
