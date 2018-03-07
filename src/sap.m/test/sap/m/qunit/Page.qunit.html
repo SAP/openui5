@@ -219,6 +219,24 @@
 
 			module("Properties Check");
 
+			test("Title escaping", function(assert) {
+				//Setup
+				var oModel = new sap.ui.model.json.JSONModel({"test": "{hello}"});
+				var oPage = new sap.m.Page({
+					title:'{/test}'
+				});
+				oPage.setModel(oModel);
+				oPage.placeAt('content');
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				assert.equal(oPage.getTitle(), oPage.$("title-inner").text(), "Title should be escaped properly when using curly braces.")
+
+				// Cleanup
+				oPage.destroy();
+				oModel.destroy();
+			});
+
 			test("showSubHeader", function() {
 				var oSubHeader = sap.ui.getCore().byId("mySubHeader");
 				ok(jQuery.sap.domById("mySubHeader"), "subHeader should be rendered");
