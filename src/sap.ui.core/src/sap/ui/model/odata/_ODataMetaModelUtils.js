@@ -565,32 +565,30 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the index of the object inside the given array, where the property with the
+		 * Returns the index of the first object inside the given array, where the property with the
 		 * given name has the given expected value.
 		 *
-		 * @param {object[]} aArray
+		 * @param {object[]} [aArray]
 		 *   some array
 		 * @param {any} vExpectedPropertyValue
 		 *   expected value of the property with given name
 		 * @param {string} [sPropertyName="name"]
 		 *   some property name
 		 * @returns {number}
-		 *   the index of the object found or <code>-1</code> if no such object is found
+		 *   the index of the first object found or <code>-1</code> if no such object is found
 		 */
 		findIndex : function (aArray, vExpectedPropertyValue, sPropertyName) {
-			var iIndex = -1;
+			var i, n;
 
 			sPropertyName = sPropertyName || "name";
 			if (aArray) {
-				aArray.forEach(function (oObject, i) {
-					if (oObject[sPropertyName] === vExpectedPropertyValue) {
-						iIndex = i;
-						return false; // break
+				for (i = 0, n = aArray.length; i < n; i++) {
+					if (aArray[i][sPropertyName] === vExpectedPropertyValue) {
+						return i;
 					}
-				});
+				}
 			}
-
-			return iIndex;
+			return -1;
 		},
 
 		/**
