@@ -120,6 +120,7 @@ sap.ui.define([
 		 */
 		onResetChanges : function () {
 			this.byId("peopleList").getBinding("items").resetChanges();
+			this._bTechnicalErrors = false; // If there were technical errors, cancelling changes resets them.
 			this._setUIChanges(false);
 		},
 

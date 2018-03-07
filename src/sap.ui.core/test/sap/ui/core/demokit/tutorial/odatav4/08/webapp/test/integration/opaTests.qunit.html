@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Integration tests for the OData V4 Tutorial</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+	<script id="sap-ui-bootstrap"
+	        src="../../../../../../../../../../../resources/sap-ui-core.js"
+	        data-sap-ui-resourceroots='{
+				"sap.ui.core.tutorial.odatav4" : "../../"
+			}'
+	        data-sap-ui-frameOptions="deny"
+	        data-sap-ui-preload="async">
+	</script>
+	<script src="../../../../../../../../../../../resources/sap/ui/qunit/qunit-2-css.js"></script>
+	<script src="../../../../../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+	<script src="../../../../../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script>
+		/* global QUnit */
+		QUnit.config.autostart = false;
+		sap.ui.getCore().attachInit(function() {
+			sap.ui.require([
+				"sap/ui/core/tutorial/odatav4/test/integration/AllJourneys"
+			], function() {
+				QUnit.start();
+			});
+		});
+	</script>
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+</body>
+</html>
