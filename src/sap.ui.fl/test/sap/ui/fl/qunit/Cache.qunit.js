@@ -568,7 +568,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			},
 			componentClassName: sTestComponentName
 		};
-
+		var oAddedEntry = {something: "2"};
 		var oStubLoadBundle = this.stub(Cache, '_getChangesFromBundle').returns(Promise.resolve([]));
 		var oStubLoadChanges = this.stub(LrepConnector.prototype, 'loadChanges');
 
@@ -580,6 +580,12 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			//GetCacheKey in case of no change does not trigger back end request but returns NOTAG
 			assert.ok(oStubLoadChanges.notCalled, "getCacheKey does not trigger back end request");
 			assert.equal(oResult, Cache.NOTAG, "but no tag for cache key is return");
+		}).then(Cache.addChange.bind(Cache, oComponent, oAddedEntry)).then(function() {
+			var oCacheEntry = Cache.getEntry(oComponent.name, oComponent.appVersion);
+			assert.deepEqual(oCacheEntry.file.changes.changes[0], oAddedEntry, "New dirty change is added into cache entry content");
+			return oCacheEntry.promise.then(function(mChanges) {
+				assert.deepEqual(mChanges.changes.changes[0], oAddedEntry, "New dirty change is added into cache entry promise");
+			});
 		});
 	});
 
