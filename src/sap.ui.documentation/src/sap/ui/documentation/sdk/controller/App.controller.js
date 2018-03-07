@@ -450,10 +450,7 @@ sap.ui.define([
 			 * @returns {number}
 			 */
 			versionSwitchCustomComparator: function (sGroupTitleA, sGroupTitleB) {
-				var iMinorVersionA = Number(sGroupTitleA.split(".")[1]), // E.g: Extract 52 from "1.52.5"
-					iMinorVersionB = Number(sGroupTitleB.split(".")[1]);
-
-				return iMinorVersionA - iMinorVersionB;
+				return jQuery.sap.Version(sGroupTitleA).compareTo(jQuery.sap.Version(sGroupTitleB));
 			},
 
 			/**
@@ -487,11 +484,21 @@ sap.ui.define([
 
 			_changeVersionURL: function (sVersion) {
 				var sHref = window.location.href,
-					sOrigin = window.location.origin;
+					sOrigin = window.location.origin,
+					rPattern = /\d\.\d{2}\.\d{1,2}/, // Matches x.xx.x && x.xx.xx
+					bURLVersionExists = sHref.match(rPattern) !== null,
+					sNewHref;
 
 				// Version should be inserted after the location origin
 				// E.g: https://ui5.sap.com/1.50.5/#/api/sap.f.DynamicPage
-				window.location.href = sOrigin + "/" + sVersion + sHref.slice(sOrigin.length);
+				// If there was already a version in the URL, just replace it with the new one
+				if (bURLVersionExists) {
+					sNewHref = sHref.replace(rPattern, sVersion);
+				} else {
+					sNewHref = sOrigin + "/" + sVersion + sHref.slice(sOrigin.length);
+				}
+
+				window.location.href = sNewHref;
 			},
 
 			/**
@@ -763,10 +770,10 @@ sap.ui.define([
 			},
 
 			_requestVersionInfo: function () {
-				jQuery.when(jQuery.ajax(sNeoAppJsonPath)).then(
+				Promise.resolve(jQuery.ajax(sNeoAppJsonPath)).then(
 					// Success
 					function(oNeoAppJson) {
-						if (!oNeoAppJson) {
+						if (!(oNeoAppJson && oNeoAppJson.routes)) {
 							Log.warning("No versions were found");
 							return;
 						}
@@ -777,16 +784,15 @@ sap.ui.define([
 
 						// Store needed data
 						this._aNeoAppVersions = oNeoAppJson.routes.map(function(oRoute) {
-							var sVersion = oRoute.target.version,
-								oVersionObject = {};
+							var oVersion = jQuery.sap.Version(oRoute.target.version),
+								oVersionSummary = {};
 
 							// Add the following properties, in order use them for grouping later
-							// Also convert patch version to number, to avoid having to do so when sorting
-							oVersionObject.patchVersion = Number(sVersion.split(".")[2]); // E.g: Extract 5 from "1.52.5"
-							oVersionObject.groupTitle = sVersion.slice(0, 4); // E.g: Extract "1.52" from "1.52.5"
-							oVersionObject.version = sVersion;
+							oVersionSummary.patchVersion = oVersion.getPatch(); // E.g: Extract 5 from "1.52.5"
+							oVersionSummary.groupTitle = oVersion.getMajor() + "." + oVersion.getMinor(); // E.g: Extract "1.52" from "1.52.5"
+							oVersionSummary.version = oVersion.toString();
 
-							return oVersionObject;
+							return oVersionSummary;
 						});
 
 						// Make version select visible
