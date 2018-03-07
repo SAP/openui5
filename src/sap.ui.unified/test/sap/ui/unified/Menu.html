@@ -7,7 +7,7 @@
 		<script src="shared-config.js"></script>
 		<script src="../../../../resources/sap-ui-core.js"
 				id="sap-ui-bootstrap"
-				data-sap-ui-libs="sap.ui.unified"
+				data-sap-ui-libs="sap.ui.unified, sap.m"
 				data-sap-ui-theme="sap_bluecrystal">
 		</script>
 
@@ -230,7 +230,6 @@
 				}
 
 				var aButton = new sap.ui.commons.MenuButton({text: sText, menu: createMenuStructure(oMenuConfig)});
-				aButton.placeAt("target");
 				return aButton;
 			}
 
@@ -392,8 +391,8 @@
 				return aItems;
 			}
 
-			createTest("Open Menu 1 (Basic)", oMenuStructure1);
-			createTest("Open Menu 2 (TextField)", oMenuStructure2);
+			createTest("Open Menu 1 (Basic)", oMenuStructure1).placeAt("target");
+			createTest("Open Menu 2 (TextField)", oMenuStructure2).placeAt("target");
 			createTest("Open Menu 3 (RichTooltip)", {
           		config: {},
           		items: [
@@ -414,15 +413,15 @@
           				config: {text: "Item 5", tooltip: createRichTooltip("Item 5")}
           			}
           		]
-			});
+			}).placeAt("target");
 			createTest("Open Menu 4 (Large, No Sub Menus)", {
 				config: {},
 				items: createManyItems(false)
-			});
+			}).placeAt("target");
 			createTest("Open Menu 5 (Large, Sub Menus)", {
       			config: {},
       			items: createManyItems(true)
-      		});
+      		}).placeAt("target");
 
 			var oRerenderingButton = createTest("Open Menu (Debug: Rerendering)", {
             	config: {},
@@ -446,7 +445,24 @@
               		}
 				]
       		});
-			oRerenderingButton.addStyleClass("SettingHidden");
+			oRerenderingButton.addStyleClass("SettingHidden").placeAt("target");
+
+			var oDialog = new sap.m.Dialog({
+				showHeader: false,
+				content: createTest("Menu in Dialog", oMenuStructure1) ,
+				endButton: new sap.m.Button({
+					text: "Close",
+					press: function () {
+						oDialog.close();
+					}
+				})
+			});
+			new sap.ui.commons.Button({
+				text: "Open Dialog",
+				press: function () {
+					oDialog.open();
+				}
+			}).placeAt("target");
 
 		</script>
 	</head>
