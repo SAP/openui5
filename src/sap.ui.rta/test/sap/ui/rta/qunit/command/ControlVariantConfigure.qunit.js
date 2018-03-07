@@ -160,6 +160,8 @@ function(
 		assert.ok(oControlVariantConfigureCommand, "control variant configure command exists for element");
 		oControlVariantConfigureCommand.execute().then(function() {
 			var aConfigureChanges = oControlVariantConfigureCommand.getChanges();
+			var aPreparedChanges = oControlVariantConfigureCommand.getPreparedChange();
+			assert.equal(aPreparedChanges.length, 3, "then the prepared changes are available");
 			assert.deepEqual(aConfigureChanges, aChanges, "then the changes are correctly set in change");
 			assert.equal(oData["variantMgmtId1"].variants[1].title, oTitleChange.title, "then title is correctly set in model");
 			assert.equal(oData["variantMgmtId1"].variants[1].favorite, oFavoriteChange.favorite, "then favorite is correctly set in model");
@@ -167,6 +169,8 @@ function(
 			assert.equal(oControlVariantConfigureCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 3, "then 3 dirty changes are present");
 
 			oControlVariantConfigureCommand.undo().then( function() {
+				aPreparedChanges = oControlVariantConfigureCommand.getPreparedChange();
+				assert.notOk(aPreparedChanges, "then no prepared changes are available after undo");
 				assert.equal(oData["variantMgmtId1"].variants[1].title, oTitleChange.originalTitle, "then title is correctly reverted in model");
 				assert.equal(oData["variantMgmtId1"].variants[1].favorite, oFavoriteChange.originalFavorite, "then favorite is correctly set in model");
 				assert.equal(oData["variantMgmtId1"].variants[1].visible, !oVisibleChange.visible, "then visibility is correctly reverted in model");

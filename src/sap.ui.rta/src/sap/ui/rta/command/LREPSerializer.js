@@ -159,16 +159,22 @@ sap.ui.define([
 
 			var aCommands = this.getCommandStack().getAllExecutedCommands();
 			aCommands.forEach(function(oCommand) {
-				// for revertable changes which don't belong to LREP (variantSwitch) or runtime only changes
-				if ((oCommand instanceof FlexCommand || oCommand instanceof AppDescriptorCommand)
-					|| !oCommand.getRuntimeOnly()) {
-					var oChange = oCommand.getPreparedChange();
-					if (oSettings.isAtoEnabled()) {
-						oChange.setRequest("ATO_NOTIFICATION");
+				// only commands with 'getPreparedChange' function implemented (like FlexCommand and AppDescriptorCommand)
+				// get moved to the new app variant
+				// variant commands are not FlexCommands but some still have 'getPreparedChange'
+				if (oCommand.getPreparedChange && !oCommand.getRuntimeOnly()) {
+					var vChange = oCommand.getPreparedChange();
+					if (!Array.isArray(vChange)) {
+						vChange = [vChange];
 					}
 
-					oChange.setNamespace(sNamespace);
-					oChange.setComponent(sReferenceAppIdForChanges);
+					vChange.forEach(function(oChange) {
+						if (oSettings.isAtoEnabled()) {
+							oChange.setRequest("ATO_NOTIFICATION");
+						}
+						oChange.setNamespace(sNamespace);
+						oChange.setComponent(sReferenceAppIdForChanges);
+					});
 				}
 			});
 
