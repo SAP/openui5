@@ -51,6 +51,24 @@
 			});
 		});
 
+		QUnit.test("getDisplayedPlaceholder calls _getPlaceholder", function (assert) {
+			// Prepare
+			var oSut = new DateTimeField({displayFormat: "medium"}),
+				oGetPlaceholderSpy = this.spy(oSut, "_getPlaceholder");
+
+			// Act
+			oSut.getDisplayedPlaceholder();
+
+			// Assert
+			assert.ok(oGetPlaceholderSpy.calledOnce, "_getPlaceholder is called when getDisplayedPlaceholder()");
+			assert.equal(oSut._getPlaceholder(), oSut.getDisplayedPlaceholder(), "getDisplayedPlaceholder and _getPlaceholder()" +
+					" returns same thing");
+
+			// Cleanup
+			oSut.destroy();
+			oGetPlaceholderSpy.restore();
+		});
+
 		QUnit.test("Fake test to have a root module with at least one test, otherwise qunit-2 will fail", function (assert) {
 			assert.ok(true, "assert ok");
 		});
@@ -70,6 +88,28 @@
 			// Assert
 			assert.equal(oSut.$().find("input").attr("placeholder"), "placeholder1",
 				"the placeholder is changed with the provided one");
+
+			// Cleanup
+			oSut.destroy();
+		});
+
+		QUnit.test("if no placeholder is set, _getPlaceholder returns the used displayFormat", function (assert) {
+			// Prepare
+			var oSut = new DateTimeField({displayFormat: "yyyy-MM-dd"});
+
+			// Assert
+			assert.equal(oSut._getPlaceholder(), "yyyy-MM-dd", "the displayed placeholder is correct when there's no placeholder set");
+
+			// Cleanup
+			oSut.destroy();
+		});
+
+		QUnit.test("if a placeholder is set, _getPlaceholder returns it", function (assert) {
+			// Prepare
+			var oSut = new DateTimeField({placeholder: "placeholder"});
+
+			// Assert
+			assert.equal(oSut._getPlaceholder(), "placeholder", "the displayed placeholder is correct when there's a placeholder set");
 
 			// Cleanup
 			oSut.destroy();

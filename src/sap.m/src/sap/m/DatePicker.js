@@ -92,8 +92,10 @@ sap.ui.define([
 	 * valid value string is "2015-07-30", which leads to an output of "Jul 30, 2015".
 	 *
 	 * If no placeholder is set to the <code>DatePicker</code>, the used
-	 * <code>displayFormat</code> is displayed as a placeholder. If another placeholder
-	 * is needed, it must be set.
+	 * <code>displayFormat</code> is displayed as a placeholder. This is only a visual
+	 * representation and the value is not set to the placeholder property. To get the placeholder,
+	 * you can use the <code>getDisplayedPlaceholder</code> method. If another placeholder is needed,
+	 * it must be set.
 	 *
 	 * <b>Note:</b> If the string does NOT match the <code>displayFormat</code>
 	 * (from user input) or the <code>valueFormat</code> (on app level), the
