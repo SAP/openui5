@@ -4860,5 +4860,56 @@ sap.ui.require([
 	// http://services.odata.org/TripPinRESTierService/(S(...))/People('russellwhyte')/Trips(1)/
 	// Microsoft.OData.Service.Sample.TrippinInMemory.Models.GetInvolvedPeople()
 	// ?$count=true&$select=UserName&$skip=1
+
+	//*********************************************************************************************
+	// Scenario: Delete an entity via a context binding and check that bindings to properties of
+	// this entity are notified even if they have a child path of the context binding without being
+	// dependent to it.
+	QUnit.test("notify non-dependent bindings after deletion", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'0500000000\')}" id="form">\
+	<FlexBox id="businessPartner" binding="{SO_2_BP}">\
+		<Text id="phoneNumber" text="{PhoneNumber}" />\
+	</FlexBox>\
+	<Text id="companyName" text="{SO_2_BP/CompanyName}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('0500000000')?$select=SalesOrderID"
+					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber)", {
+				"SalesOrderID" : "0500000000",
+				"SO_2_BP" : {
+					"@odata.etag" : "etag",
+					"BusinessPartnerID" : "0100000000",
+					"CompanyName" : "SAP",
+					"PhoneNumber" : "06227747474"
+				}
+			})
+			.expectChange("companyName", "SAP") //TODO unexpected change
+			.expectChange("phoneNumber", "06227747474") //TODO unexpected change
+			.expectChange("companyName", "SAP")
+			.expectChange("phoneNumber", "06227747474");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("businessPartner").getBindingContext();
+
+			that.expectRequest({
+					headers : {
+						"If-Match": "etag"
+					},
+					method : "DELETE",
+					url : "BusinessPartnerList('0100000000')"
+				})
+				// Note: The value of the property binding is undefined because there is no
+				// explicit cache value for it, but the type's formatValue converts this to null.
+				.expectChange("companyName", null)
+				.expectChange("phoneNumber", null);
+
+			oContext.delete();
+
+			return that.waitForChanges(assert);
+		});
+	});
 });
 //TODO test delete

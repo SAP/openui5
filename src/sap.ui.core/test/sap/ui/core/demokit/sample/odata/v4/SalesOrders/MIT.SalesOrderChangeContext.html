@@ -22,14 +22,21 @@
 			<li> local: <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders">http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders</a></li>
 		</ul>
 		<h2>REALIZE and CHECK</h2>
+		<h3>Change a sales order line item, change sales order context</h3>
 		<ol>
-			<li>Change the note of a Sales Order Line Item</li>
+			<li>Change the note of a Sales Order Line Item.</li>
 			<li>Change the context of the Sales Order Line Items table by selecting a different
-			Sales Order</li>
-			<li>Press the <code>Refresh</code> button for the Sales Order List</li>
+			Sales Order.</li>
+		</ol>
+		<h3>Check hasPendingChanges via refresh</h3>
+		<ol>
+			<li>Press the <code>Refresh</code> button for the Sales Order List.</li>
 			<li><b>Check:</b> You get a warning about pending changes.</li>
-			<li>Cancel the warning</li>
-			<li>Press the <code>Refresh All</code> button in the toolbar</li>
+			<li>Cancel the warning.</li>
+		</ol>
+		<h3>Check the same via Reset all</h3>
+		<ol>
+			<li>Press the <code>Refresh all</code> button in the toolbar.</li>
 			<li><b>Check:</b> You get a warning about pending changes.</li>
 			<li>Confirm the warning by pressing the <code>Ok</code> button.</li>
 			<li><b>Check:</b> The note of the Sales Order Line Item is reset to the value before.
@@ -39,6 +46,13 @@
 			and Sales Order Details are different and <code>Cancel changes</code> resets changes
 			for a certain group (via the model).</p>
 			</li>
+		</ol>
+		<h3>Delete a Business Partner</h3>
+		<ol>
+			<li>Select a Sales Order</li>
+			<li>Within the Sales Order Details press the <code>Delete business partner</code>
+			button (only enabled w/o realOData)</li>
+			<li><b>Check:</b> That all Business Partner details are gone.</li>
 		</ol>
 	</body>
 </html>
