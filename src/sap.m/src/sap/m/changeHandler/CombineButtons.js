@@ -28,7 +28,6 @@ sap.ui.define(["sap/ui/fl/Utils", "jquery.sap.global"],
 		 * @public
 		 */
 		CombineButtons.applyChange = function(oChange, oControl, mPropertyBag) {
-
 			if (mPropertyBag.modifier.targets !== "jsControlTree") {
 				throw new Error("Combine buttons change can't be applied on XML tree");
 			}
@@ -123,10 +122,10 @@ sap.ui.define(["sap/ui/fl/Utils", "jquery.sap.global"],
 			var oModifier = mPropertyBag.modifier,
 				oRevertData =  oChange.getRevertData(),
 				oChangeDefinition = oChange.getDefinition(),
-				oParent = oControl,
 				sParentAggregation = oRevertData.parentAggregation,
 				iAggregationIndex = oRevertData.insertIndex,
 				oMenuButton =  oModifier.bySelector(oRevertData.menuButtonId, mPropertyBag.appComponent),
+				oParent = oModifier.getParent(oMenuButton),
 				aButtonsIds = oChangeDefinition.content.combineButtonSelectors;
 
 			for (var i = 0; i < aButtonsIds.length; i++) {
@@ -135,6 +134,7 @@ sap.ui.define(["sap/ui/fl/Utils", "jquery.sap.global"],
 			}
 
 			oModifier.removeAggregation(oParent, sParentAggregation, oMenuButton);
+			oMenuButton.destroy();
 
 			oChange.resetRevertData();
 

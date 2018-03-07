@@ -185,15 +185,11 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 	});
 
 	QUnit.test("applyChange shall raise an exception if the control does not have the required methods", function (assert) {
-		var exception, oControl;
+		var vReturn;
 
-		//Call CUT
-		try {
-			this.oChangeHandler.applyChange(this.oChangeWithGlobalIdsWrapper, oControl, {modifier : this.JsControlTreeModifier});
-		} catch (ex) {
-			exception = ex;
-		}
-		assert.ok(exception, "Shall raise an exception");
+		vReturn = this.oChangeHandler.applyChange(this.oChangeWithGlobalIdsWrapper, {}, {modifier : this.JsControlTreeModifier});
+
+		assert.notOk(vReturn, "Does not return true");
 	});
 
 	QUnit.test('when calling completeChangeContent', function (assert) {
