@@ -77,6 +77,12 @@
 
 				<ObjectStatus text="{= ${versionData>/isBetaVersion} ? 'Beta version' : 'Version'} {versionData>/version} {= ${versionData>/isBetaVersion} ? '– not for productive use!' : ${versionData>/isDevVersion} ? '- development in progress!' : ''}" state="{= ${versionData>/isBetaVersion} ? 'Error' : ${versionData>/isDevVersion} ? 'Warning' : 'None'}" visible="{=!${appView>/bPhoneSize}}" />
 
+				<Button id="changeVersionButton" press="onChangeVersionButtonPress" type="Transparent" text="Change version" visible="{appView>/bShowVersionSwitchInHeader}">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow" />
+					</layoutData>
+				</Button>
+
 				<custom:Search id="searchControl" toggle="onToggleSearchMode" search="onSearch" width="{= (${appView>/bPhoneSize} &amp;&amp; ${appView>/bSearchMode}) ? '100%' : ''}"/>
 
 				<Button press="feedbackDialogOpen" icon="sap-icon://comment" type="Transparent" visible="{=!${appView>/bPhoneSize} &amp;&amp; !${appView>/bSearchMode}}">
@@ -94,6 +100,7 @@
 						<Menu class="sapContrast sapContrastPlus" itemSelected="handleMenuItemClick">
 							<items>
 								<MenuItem text="{= ${versionData>/isBetaVersion} ? 'Beta' : ''} Version {versionData>/version} {=${versionData>/isDevVersion} ? '- development in progress!' : ''}" visible="{appView>/bPhoneSize}" />
+								<MenuItem text="Change version" visible="{appView>/bShowVersionSwitchInMenu}" />
 								<MenuItem text="Feedback" visible="{appView>/bPhoneSize}" />
 								<MenuItem text="About" />
 								<MenuItem text="Legal" />
