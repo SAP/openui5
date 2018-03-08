@@ -287,6 +287,10 @@
 				amd: false,
 				exports: 'Mobify' // or Mobify.UI.Carousel?
 			},
+			'sap/ui/thirdparty/qunit-2': {
+				amd: false,
+				exports: 'QUnit'
+			},
 			'sap/ui/thirdparty/punycode': {
 				amd: true,
 				exports: 'punycode'
@@ -303,6 +307,10 @@
 				exports: 'signals'
 			},
 			'sap/ui/thirdparty/sinon': {
+				amd: true,
+				exports: 'sinon'
+			},
+			'sap/ui/thirdparty/sinon-4': {
 				amd: true,
 				exports: 'sinon'
 			},
