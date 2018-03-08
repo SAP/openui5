@@ -274,5 +274,36 @@
 		assert.strictEqual(oSectionButton.getText(), "Title(2)", "section title binding updates anchor bar button");
 	});
 
+	QUnit.module("Accessibility", {
+		beforeEach: function () {
+			this.anchorBarView = sap.ui.xmlview("UxAP-69_anchorBarBinding", {
+				viewName: "view.UxAP-69_AnchorBarBinding"
+			});
+			this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
+			this.anchorBarView.setModel(oModel);
+			this.anchorBarView.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.anchorBarView.destroy();
+			this.oObjectPage = null;
+		}
+	});
+
+	QUnit.test("Count information", function (assert) {
+		var aAnchorBarContent = this.oObjectPage.getAggregation("_anchorBar").getContent(),
+			iAnchorBarContentLength = aAnchorBarContent.length,
+			$oCurrentButtonDomRef,
+			iIndex;
+
+		for (iIndex = 0; iIndex < iAnchorBarContentLength; iIndex++) {
+			$oCurrentButtonDomRef = aAnchorBarContent[iIndex].$();
+			// Convert the numbers to strings, since .attr would return a string
+			// We need to add '+ 1' to the index for posinset, since posinset starts from 1, rather than 0
+			assert.strictEqual($oCurrentButtonDomRef.attr("aria-setsize"), iAnchorBarContentLength.toString(), "aria-setsize indicates anchorBar's length correctly");
+			assert.strictEqual($oCurrentButtonDomRef.attr("aria-posinset"), (iIndex + 1).toString(), "aria-posinset indicates the correct position of the button");
+		}
+	});
+
 
 }(jQuery, QUnit, sinon, sap.uxap.Importance, sap.uxap));

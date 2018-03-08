@@ -27,6 +27,7 @@ sap.ui.define(["sap/m/ToolbarRenderer", "sap/ui/core/Renderer", "sap/m/BarInPage
 
 				rm.write("<div");
 				rm.writeAttributeEscaped("id", oToolbar.getId() + "-scroll");
+				rm.writeAttributeEscaped("role", "menu");
 				rm.write(">");
 
 				AnchorBarRenderer.renderBarItems(rm, oToolbar);

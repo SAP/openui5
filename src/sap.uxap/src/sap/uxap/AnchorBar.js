@@ -1086,6 +1086,28 @@ sap.ui.define([
 	};
 
 	/**
+	 * This method is a hook for the RenderManager that gets called
+	 * during the rendering of child Controls. It allows to add,
+	 * remove and update existing accessibility attributes (ARIA) of
+	 * those controls.
+	 *
+	 * @param {sap.ui.core.Control} oElement - The Control that gets rendered by the RenderManager
+	 * @param {Object} mAriaProps - The mapping of "aria-" prefixed attributes
+	 * @protected
+	 */
+	AnchorBar.prototype.enhanceAccessibilityState = function (oElement, mAriaProps) {
+		var oContent = this.getContent(),
+			iIndex = oContent.indexOf(oElement);
+
+		if (iIndex !== -1) {
+			mAriaProps.role = "menuitemradio";
+			mAriaProps.type = "button";
+			mAriaProps.setsize = oContent.length;
+			mAriaProps.posinset = iIndex + 1; // we need "+ 1", since iIndex would start from 0 (due to indexOf)
+		}
+	};
+
+	/**
 	 * clean created controls and deregister handlers
 	 */
 	AnchorBar.prototype.exit = function () {
