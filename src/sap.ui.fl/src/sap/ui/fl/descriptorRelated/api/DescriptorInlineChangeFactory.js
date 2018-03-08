@@ -62,7 +62,7 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 		        "appdescr_app_addAnnotationsToOData", "appdescr_app_addTechnicalAttributes", "appdescr_app_removeTechnicalAttributes",
 		        "appdescr_app_setTitle", "appdescr_app_setSubTitle", "appdescr_app_setShortTitle", "appdescr_app_setDescription", "appdescr_app_setInfo",
 		        "appdescr_app_setDestination", "appdescr_app_setKeywords", "appdescr_app_setAch", "appdescr_ui5_addNewModel", "appdescr_ui5_replaceComponentUsage",
-		        "appdescr_smb_addNamespace", "appdescr_smb_changeNamespace", "appdescr_ui_generic_app_setMainPage", "appdescr_ui_setIcon",
+		        "appdescr_smb_addNamespace", "appdescr_smb_changeNamespace", "appdescr_ui_generic_app_setMainPage", "appdescr_ui_setIcon", "appdescr_ui_setDeviceTypes",
 		        "appdescr_ui5_addLibraries", "appdescr_url_setUri"];
 	};
 
@@ -758,6 +758,22 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	DescriptorInlineChangeFactory.create_ui_setIcon = function(mParameters) {
 		Utils.checkParameterAndType(mParameters, "icon", "string");
 		return this._createDescriptorInlineChange('appdescr_ui_setIcon', mParameters);
+	};
+
+	/**
+	 * Creates an inline change of change type appdescr_ui_setDeviceTypes
+	 *
+	 * @param {object} mParameters parameters of the change type
+	 * @param {object} mParameters.deviceTypes the device types
+	 *
+	 * @return {Promise} resolving when creating the descriptor inline change was successful (without backend access)
+	 *
+	 * @private
+	 * @sap-restricted
+	 */
+	DescriptorInlineChangeFactory.create_ui_setDeviceTypes = function(mParameters) {
+		Utils.checkParameterAndType(mParameters, "deviceTypes", "object");
+		return this._createDescriptorInlineChange('appdescr_ui_setDeviceTypes', mParameters);
 	};
 
 	/**
