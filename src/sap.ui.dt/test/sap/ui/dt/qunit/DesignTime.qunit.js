@@ -8,6 +8,7 @@ sap.ui.require([
 	'sap/ui/layout/VerticalLayout',
 	'sap/ui/layout/HorizontalLayout',
 	'sap/m/Page',
+	'sap/m/Panel',
 	'sap/ui/base/ManagedObjectMetadata',
 	'sap/ui/dt/Overlay',
 	'sap/ui/dt/ElementOverlay',
@@ -29,6 +30,7 @@ function(
 	VerticalLayout,
 	HorizontalLayout,
 	Page,
+	Panel,
 	ManagedObjectMetadata,
 	Overlay,
 	ElementOverlay,
@@ -775,6 +777,7 @@ function(
 		},
 		afterEach : function() {
 			this.oDesignTime.destroy();
+			this.oLayoutOuter.destroy();
 		}
 	}, function(){
 
@@ -1327,6 +1330,54 @@ function(
 					fnDone();
 				}
 			);
+		});
+	});
+
+	QUnit.module("Check overlay styles for new overlays after initial sync", {
+		beforeEach: function(assert) {
+			var fnDone = assert.async();
+			this.oPanel = new Panel({
+				width: '300px',
+				height: '100px'
+			});
+			this.oPanel.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oPanel]
+			});
+
+			this.oDesignTime.attachEventOnce('synced', fnDone, this);
+		},
+		afterEach: function() {
+			this.oDesignTime.destroy();
+			this.oPanel.destroy();
+		}
+	}, function () {
+		QUnit.test("when adding new control into an aggregation", function (assert) {
+			var fnDone = assert.async();
+			var oButton = new Button({ text: 'New Button' });
+			var fnMetadataResolve;
+
+			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime", function () {
+				return new Promise(function (fnResolve) {
+					fnMetadataResolve = fnResolve;
+				});
+			});
+
+			this.oDesignTime.attachEventOnce('synced', function () {
+				var oElementOverlay = OverlayRegistry.getOverlay(oButton);
+				assert.ok(oElementOverlay.isRendered(), 'the overlay is rendered');
+				assert.ok(oElementOverlay.$().width() > 0 && oElementOverlay.$().height() > 0, 'the overlay has non-zero dimension');
+				fnDone();
+			}, this);
+
+			this.oPanel.addContent(oButton);
+			sap.ui.getCore().applyChanges();
+
+			// If it brakes with "fnMetadataResolve is not a function",
+			// then just wrap the next line into setTimeout
+			fnMetadataResolve({});
 		});
 	});
 
