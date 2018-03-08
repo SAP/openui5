@@ -806,7 +806,13 @@ function(
 	ListItemBase.prototype.ontap = function(oEvent) {
 
 		// do not handle already handled events
-		if (this._eventHandledByControl || window.getSelection().toString()) {
+		if (this._eventHandledByControl) {
+			return;
+		}
+
+		// do not handle in case of text selection
+		var sTextSelection = window.getSelection().toString().replace("\n", "");
+		if (sTextSelection) {
 			return;
 		}
 
