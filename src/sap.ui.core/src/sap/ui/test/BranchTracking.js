@@ -210,8 +210,7 @@
 		var aHits = aStatistics[iFileIndex],
 			aBranchTracking = aHits.branchTracking,
 			iLine = oNode.loc.start.line,
-			sNewSource,
-			sOldSource;
+			sNewSource;
 
 		/*
 		 * Adds line tracking instrumentation to the current node.
@@ -348,11 +347,11 @@
 					return false;
 				}
 				if (oNode.operator === "||" || oNode.operator === "&&") {
-					sOldSource = oNode.left.source();
 					// Note: (...) around right source!
 					sNewSource = "blanket.$b(" + iFileIndex + ", " + aBranchTracking.length + ", "
-						+ sOldSource + ") " + operator() + " (" + oNode.right.source() + ")";
-					if (!rWordChar.test(sOldSource[0])) {
+						+ oNode.left.source() + ") "
+						+ operator() + " (" + oNode.right.source() + ")";
+					if (!rWordChar.test(oNode.loc.source[oNode.range[0]])) {
 						// Note: handle minified code like "return!x||y;"
 						sNewSource = " " + sNewSource;
 					}
