@@ -361,7 +361,7 @@
 																<m:Link text="{parameter>type}"
 																		href="#/api/{parameter>type}"
 																		enabled="{= !!${parameter>linkEnabled} }"/>
-																<custom:JSDocText text="{parameter>description}"/>
+																<custom:JSDocText text="{path: 'parameter>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 															</custom:Row>
 														</template:repeat>
 													</custom:LightTable>
