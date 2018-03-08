@@ -49,13 +49,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 			oRm.addClass("sapUiCalendarRowVis" + sVisualisation);
 		}
 
-		// This makes the row focusable
-		if (oRow._sFocusedAppointmentId) {
-			oRm.writeAttribute("tabindex", "-1");
-		} else {
-			oRm.writeAttribute("tabindex", "0");
-		}
-
 		if (sTooltip) {
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
