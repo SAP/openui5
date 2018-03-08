@@ -18,7 +18,7 @@
 			<VBox fitContainer="true">
 				<Toolbar class="sapFDynamicPageAlignContent">
 					<ToolbarSpacer/>
-					<SearchField search="onSearch" width="50%"/>
+					<SearchField search="onSearch" width="17.5rem"/>
 					<Button icon="sap-icon://add" type="Transparent" press="onAdd"/>
 					<Button icon="sap-icon://sort" type="Transparent" press="onSort"/>
 				</Toolbar>
