@@ -6,8 +6,8 @@
 sap.ui.define([
 		'jquery.sap.global',
 		'sap/ui/base/EventProvider', 'sap/ui/base/ManagedObject',
-		'sap/ui/model/message/MessageModel', './Message', './ControlMessageProcessor'],
-	function(jQuery, EventProvider, ManagedObject, MessageModel, Message, ControlMessageProcessor) {
+		'sap/ui/model/message/MessageModel', './Message', './ControlMessageProcessor', 'sap/ui/core/message/MessageProcessor'],
+	function(jQuery, EventProvider, ManagedObject, MessageModel, Message, ControlMessageProcessor, MessageProcessor) {
 
 	"use strict";
 
@@ -127,7 +127,9 @@ sap.ui.define([
 	 * @public
 	 */
 	MessageManager.prototype.addMessages = function(vMessages) {
-		var	oMessage = vMessages;
+		var oMessage = vMessages,
+			mProcessors = this.getAffectedProcessors(vMessages);
+
 		if (!vMessages) {
 			return;
 		}else if (Array.isArray(vMessages)) {
@@ -138,7 +140,7 @@ sap.ui.define([
 		} else {
 			this._importMessage(vMessages);
 		}
-		this._updateMessageModel();
+		this._updateMessageModel(mProcessors);
 	};
 
 	/**
@@ -149,7 +151,6 @@ sap.ui.define([
 		var sMessageKey = oMessage.getTarget(),
 				oProcessor = oMessage.getMessageProcessor(),
 				sProcessorId = oProcessor && oProcessor.getId();
-
 		if (!this.mMessages[sProcessorId]) {
 			this.mMessages[sProcessorId] = {};
 		}
@@ -160,11 +161,12 @@ sap.ui.define([
 
 	/**
 	 * push messages to registered MessageProcessors
+	 * @param {map} mProcessors A Map containing the affected processor ids
 	 * @private
 	 */
-	MessageManager.prototype._pushMessages = function() {
+	MessageManager.prototype._pushMessages = function(mProcessors) {
 		var that = this;
-		jQuery.each(this.mProcessors, function(sId, oProcessor) {
+		jQuery.each(mProcessors, function(sId, oProcessor) {
 			var vMessages = that.mMessages[sId] ? that.mMessages[sId] : {};
 			that._sortMessages(vMessages);
 			//push a copy
@@ -197,19 +199,19 @@ sap.ui.define([
 
 	/**
 	 * update MessageModel
+	 * @param {map} mProcessors A Map containing the affected processor ids
 	 * @private
 	 */
-	MessageManager.prototype._updateMessageModel = function() {
-		var aMessages = [];
-
-		var oMessageModel = this.getMessageModel();
+	MessageManager.prototype._updateMessageModel = function(mProcessors) {
+		var aMessages = [],
+			oMessageModel = this.getMessageModel();
 
 		jQuery.each(this.mMessages, function(sProcessorId, mMessages) {
 			jQuery.each(mMessages, function(sKey, vMessages){
 				aMessages = jQuery.merge(aMessages, vMessages);
 			});
 		});
-		this._pushMessages();
+		this._pushMessages(mProcessors);
 		oMessageModel.setData(aMessages);
 	};
 
@@ -218,9 +220,17 @@ sap.ui.define([
 	 * @public
 	 */
 	MessageManager.prototype.removeAllMessages = function() {
+		var mProcessors = {};
+
+		for (var sProcessorId in this.mMessages) {
+			//use the first Message/Message array to get the processor for the update
+			var sFirstKey = Object.keys(this.mMessages[sProcessorId])[0];
+			var vMessages = this.mMessages[sProcessorId][sFirstKey];
+			jQuery.extend(mProcessors, this.getAffectedProcessors(vMessages));
+		}
 		this.aMessages = [];
 		this.mMessages = {};
-		this._updateMessageModel();
+		this._updateMessageModel(mProcessors);
 	};
 
 	/**
@@ -244,7 +254,9 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageManager.prototype._removeMessages = function(vMessages, bOnlyValidationMessages) {
-		var that = this;
+		var that = this,
+			mProcessors = this.getAffectedProcessors(vMessages);
+
 		if (!vMessages || (Array.isArray(vMessages) && vMessages.length == 0)) {
 			return;
 		} else if (Array.isArray(vMessages)) {
@@ -263,7 +275,7 @@ sap.ui.define([
 				that._removeMessages(aMessages, bOnlyValidationMessages);
 			});
 		}
-		this._updateMessageModel();
+		this._updateMessageModel(mProcessors);
 	};
 
 	/**
@@ -274,12 +286,13 @@ sap.ui.define([
 	 */
 	MessageManager.prototype._removeMessage = function(oMessage) {
 		var oProcessor = oMessage.getMessageProcessor(),
-				sProcessorId = oProcessor && oProcessor.getId(),
-				mMessages = this.mMessages[sProcessorId];
+			sProcessorId = oProcessor && oProcessor.getId(),
+			mMessages = this.mMessages[sProcessorId];
 
 		if (!mMessages) {
 			return;
 		}
+
 		var aMessages = mMessages[oMessage.getTarget()];
 
 		if (aMessages) {
@@ -315,12 +328,15 @@ sap.ui.define([
 	 * @public
 	 */
 	MessageManager.prototype.registerMessageProcessor = function(oProcessor) {
-		var sProcessorId = oProcessor.getId();
+		var sProcessorId = oProcessor.getId(),
+			mProcessors = {};
+
 		if (!this.mProcessors[sProcessorId]) {
-			this.mProcessors[sProcessorId] = oProcessor;
+			this.mProcessors[sProcessorId] = sProcessorId;
 			oProcessor.attachMessageChange(this.onMessageChange, this);
 			if (sProcessorId in this.mMessages) {
-				this._pushMessages();
+				mProcessors[sProcessorId] = oProcessor;
+				this._pushMessages(mProcessors);
 			}
 		}
 	};
@@ -331,7 +347,7 @@ sap.ui.define([
 	 * @public
 	 */
 	MessageManager.prototype.unregisterMessageProcessor = function(oProcessor) {
-		this.removeMessages(this.mMessages[oProcessor.getId()]);
+		this.removeMessagesByProcessor(oProcessor.getId());
 		delete this.mProcessors[oProcessor.getId()];
 		oProcessor.detachMessageChange(this.onMessageChange, this);
 	};
@@ -394,6 +410,46 @@ sap.ui.define([
 		}
 		return this.oMessageModel;
 	};
+
+	/**
+	 * getAffectedProcessors
+	 * @return {map} mProcessors A Map containing the affected processor ids
+	 * @param {sap.ui.core.message.Message|sap.ui.core.message.Message[]} vMessages Array of sap.ui.core.message.Message or single sap.ui.core.message.Message
+	 * @private
+	 */
+	MessageManager.prototype.getAffectedProcessors = function(vMessages) {
+		var oProcessor,
+			sProcessorId,
+			mProcessors = {};
+
+		if (vMessages) {
+			if (!Array.isArray(vMessages)) {
+				vMessages = [vMessages];
+			}
+			vMessages.forEach(function(oMessage) {
+				oProcessor = oMessage.getMessageProcessor();
+				if (oProcessor instanceof MessageProcessor) {
+					sProcessorId = oProcessor.getId();
+					mProcessors[sProcessorId] = oProcessor;
+				}
+			});
+		}
+		return mProcessors;
+	};
+
+	/**
+	 * Removes all Messages for the given Processor Id. This function
+	 * is used only during deregistration of a MessageProcessor. No
+	 * further 'pushMessages' needed.
+	 *
+	 * @param {string} sProcessorId The Id of a MessageProcessor
+	 * @private
+	 */
+	MessageManager.prototype.removeMessagesByProcessor = function(sProcessorId) {
+		delete this.mMessages[sProcessorId];
+		this._updateMessageModel({});
+	};
+
 	return MessageManager;
 
 });
