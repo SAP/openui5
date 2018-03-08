@@ -5,19 +5,19 @@
       {
         "id": "b5b315e9a2e999f60d6fbc60bcadaa5687603adf",
         "type": "FEATURE",
-        "text": " sap.ui.dt: Shared configuration for test pages",
+        "text": "sap.ui.dt: Shared configuration for test pages",
         "references": []
       },
       {
         "id": "f9b274c8ebd8f4195c499c83904c68dc339c1599",
         "type": "FIX",
-        "text": " - cut-paste shortcuts on mac",
+        "text": "- cut-paste shortcuts on mac",
         "references": []
       },
       {
         "id": "3b873b3281987956b9fec1ea10866b3473d4be2a",
         "type": "FIX",
-        "text": " sap.ui.dt: Improve check on SimpleForm move",
+        "text": "sap.ui.dt: Improve check on SimpleForm move",
         "references": []
       }
     ]

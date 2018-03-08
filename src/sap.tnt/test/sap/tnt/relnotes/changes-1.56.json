@@ -5,8 +5,13 @@
       {
         "id": "c0dd1c50b9a1c9da56a40a017502b45169c71cd6",
         "type": "FIX",
-        "text": " sap.tnt.NavigationList: aria-expanded for the items works correctly now",
-        "references": []
+        "text": "sap.tnt.NavigationList: aria-expanded for the items works correctly now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880204175"
+          }
+        ]
       }
     ]
   }

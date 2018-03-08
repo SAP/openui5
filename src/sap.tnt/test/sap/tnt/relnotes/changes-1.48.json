@@ -5,44 +5,67 @@
       {
         "id": "1770a7001881854c006f7bad8a1fb78c7c9b3249",
         "type": "FEATURE",
-        "text": " sap.m.IconTabHeader: Unselected state is implemented",
+        "text": "sap.m.IconTabHeader: Unselected state is implemented",
         "references": []
       },
       {
         "id": "c37c94c653c7b4f6a7533ffa8314f705f1bd9287",
         "type": "FEATURE",
-        "text": " sap.m.IconTabHeader: Usability on small screens is now improved",
+        "text": "sap.m.IconTabHeader: Usability on small screens is now improved",
         "references": []
       },
       {
         "id": "601e422ff678503da9530011dfe71a0eea717c68",
         "type": "FEATURE",
-        "text": " sap.tnt.IconTabHeader: sap.m.IconTabHeader is now correctly displayed inside sap.tnt.ToolHeader",
+        "text": "sap.tnt.IconTabHeader: sap.m.IconTabHeader is now correctly displayed inside sap.tnt.ToolHeader",
         "references": []
       },
       {
         "id": "e91c49c8853010ac24bc4c9304ff6a4a7c19a7fe",
         "type": "FIX",
-        "text": "  Add Improvements to Run sap.tnt.demokit.toolpageapp on Mobile Devices",
+        "text": "Add Improvements to Run sap.tnt.demokit.toolpageapp on Mobile Devices",
         "references": []
       },
       {
         "id": "a71d0e8706fbb65375fd85503b8f835a98ce62f5",
         "type": "FIX",
-        "text": " sap.m.IconTabHeader, sap.m.RadioButtonGroup, sap.tnt.NavigationList: Alt+Arrow fixed.",
-        "references": []
+        "text": "sap.m.IconTabHeader, sap.m.RadioButtonGroup, sap.tnt.NavigationList: Alt+Arrow fixed.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770135328"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770135288"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770135282"
+          }
+        ]
       },
       {
         "id": "38649781837cac62811fef166f243fb426762c10",
         "type": "FIX",
-        "text": " sap.tnt.ToolHeader: qUnits tests are fixed",
-        "references": []
+        "text": "sap.tnt.ToolHeader: qUnits tests are fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770156561"
+          }
+        ]
       },
       {
         "id": "b25fe9b6de87f97dade3889b57647349f2923b2d",
         "type": "FIX",
-        "text": " sap.tnt.ToolPage: Hidden footer when XmlView\u0027s height is 100% now corrected",
-        "references": []
+        "text": "sap.tnt.ToolPage: Hidden footer when XmlView's height is 100% now corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770115384"
+          }
+        ]
       }
     ]
   }

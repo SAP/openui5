@@ -5,8 +5,13 @@
       {
         "id": "4603566fa6a8ca53a606d50df3eea289b51fa67e",
         "type": "FIX",
-        "text": " sap.ui.commons.TextField - paste of text with line endings on IE works.",
-        "references": []
+        "text": "sap.ui.commons.TextField - paste of text with line endings on IE works.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1730434255"
+          }
+        ]
       }
     ]
   }

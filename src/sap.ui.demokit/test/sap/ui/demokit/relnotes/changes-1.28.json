@@ -82,7 +82,12 @@
 				"id": "9f895fb08971121030ed1f1524a006b37419735b",
 				"type": "FIX",
 				"text": "Existence of namespace ensured during Core.initLibrary()",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570295165"
+					}
+				]
 			}
 		]
 	}
