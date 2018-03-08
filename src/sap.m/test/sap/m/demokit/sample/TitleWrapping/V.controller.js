@@ -1,36 +1,25 @@
-sap.ui.define([
-		'jquery.sap.global',
-		'sap/m/MessageToast',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, MessageToast, Controller, JSONModel) {
+sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
+	function(Controller, JSONModel) {
 	"use strict";
 
 	var VController = Controller.extend("sap.m.sample.TitleWrapping.V", {
 
-		onInit : function (evt) {
-			// set explored app's demo model on this sample
+		onInit: function (oEvent) {
 			this.getView();
 		},
-
-		enableWrapping : function(evt) {
-			var title = sap.ui.getCore().byId("__xmlview0--WrappingTitle");
-
-			if (title.getWrapping()) {
-				title.setWrapping(false);
-			} else {
-				title.setWrapping(true);
-			}
+		onSliderMoved: function (event) {
+			var value = event.getParameter("value");
+			value = value - 30;
+			this.byId("containerLayout").setWidth(value + "%");
 		},
-		changeWidth : function(evt) {
-			var flexBox = sap.ui.getCore().byId("__xmlview0--FlexBox"),	slider = sap.ui.getCore().byId("__xmlview0--Slider");
+		onWrappingChange: function(oEvent) {
 
-			flexBox.setWidth(slider.getValue() + "%");
+			var title = sap.ui.getCore().byId("__xmlview0--WrappingTitle");
+			title.setWrapping(!title.getWrapping());
 		}
-
 	});
-
 
 	return VController;
 
 });
+
