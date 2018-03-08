@@ -132,9 +132,51 @@ html[dir=rtl] .sapMNCValueScr {
 	font-weight: @sapUiFontHeaderWeight;
 }
 
+.sapMNCValue.Neutral,
+.sapMNCIndicator.Neutral,
+.sapMNCScale.Neutral {
+	color: @sapUiNeutralText;
+}
 
-/* BREAKPOINT FOR SMALL PHONES */
-@media screen and (max-width: 374px) {
+.sapMNCValue.Good,
+.sapMNCIndicator.Good,
+.sapMNCScale.Good {
+	color: @sapUiPositiveText;
+}
+
+.sapMNCValue.Error,
+.sapMNCIndicator.Error,
+.sapMNCScale.Error {
+	color: @sapUiNegativeText;
+}
+
+.sapMNCValue.Critical,
+.sapMNCIndicator.Critical,
+.sapMNCScale.Critical {
+	color: @sapUiCriticalText;
+}
+
+.sapMNCIndicator.Loading,
+.sapMNCValue.Loading,
+.sapMNCScale.Loading,
+.sapMNCIconImage.Loading,
+.sapMNCIndicator.Failed,
+.sapMNCValue.Failed,
+.sapMNCScale.Failed,
+.sapMNCIconImage.Failed {
+	color: @sapUiContentLabelColor;
+	opacity: 0.25;
+}
+
+.sapMNC:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+}
+
+.sapMNC:focus:not([tabindex]) {
+	outline: none;
+}
+
+.sapMTileSmallPhone {
 	.sapMNC {
 		height: 3.438rem;
 		width: 8rem;
@@ -186,54 +228,7 @@ html[dir=rtl] .sapMNCValueScr {
 		margin-top: 0.625rem;
 		font-size: 0.875rem;
 	}
-}
 
-.sapMNCValue.Neutral,
-.sapMNCIndicator.Neutral,
-.sapMNCScale.Neutral {
-	color: @sapUiNeutralText;
-}
-
-.sapMNCValue.Good,
-.sapMNCIndicator.Good,
-.sapMNCScale.Good {
-	color: @sapUiPositiveText;
-}
-
-.sapMNCValue.Error,
-.sapMNCIndicator.Error,
-.sapMNCScale.Error {
-	color: @sapUiNegativeText;
-}
-
-.sapMNCValue.Critical,
-.sapMNCIndicator.Critical,
-.sapMNCScale.Critical {
-	color: @sapUiCriticalText;
-}
-
-.sapMNCIndicator.Loading,
-.sapMNCValue.Loading,
-.sapMNCScale.Loading,
-.sapMNCIconImage.Loading,
-.sapMNCIndicator.Failed,
-.sapMNCValue.Failed,
-.sapMNCScale.Failed,
-.sapMNCIconImage.Failed {
-	color: @sapUiContentLabelColor;
-	opacity: 0.25;
-}
-
-.sapMNC:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
-}
-
-.sapMNC:focus:not([tabindex]) {
-	outline: none;
-}
-
-/* BREAKPOINT FOR SMALL PHONES */
-@media screen and (max-width: 374px) {
 	.sapMGTHdrTxt > .sapMText {
 		font-size: @sapMFontHeader6Size;
 	}
