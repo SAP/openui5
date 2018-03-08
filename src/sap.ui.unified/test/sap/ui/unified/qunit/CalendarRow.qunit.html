@@ -328,12 +328,11 @@
 			QUnit.test("Row", function(assert) {
 				assert.ok(!jQuery("#Row1").attr("style"), "Row1: no width and heigh set");
 				assert.ok(!jQuery("#Row1").attr("title"), "Row1: no tooltip set");
-				assert.equal(jQuery("#Row1").attr("tabindex"), "-1", "Row1: tabindex set");
+				assert.equal(jQuery("#Row1").attr("tabindex"), undefined, "Row1: no tab index should be set");
 
 				assert.equal(jQuery("#Row2").css("width"), "500px", "Row2: width set");
 				assert.equal(jQuery("#Row2").css("height"), "100px", "Row2: height set");
 				assert.equal(jQuery("#Row2").attr("title"), "Row tooltip", "Row2: tooltip set");
-				assert.equal(jQuery("#Row2").attr("tabindex"), "0", "Row2: tabindex set");
 			});
 
 			QUnit.test("Appointments row", function(assert) {
