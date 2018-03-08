@@ -447,13 +447,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 			} else  {
 				oExtensionProvider = loadExtensionProvider(oController, bAsync);
 				oExtensions = oExtensionProvider.getControllerExtensions(sName /* controller name */, sOwnerId /* component ID / clarfiy if this is needed? */, bAsync);
-				if (oExtensions && oExtensions.length) {
+				if (oExtensions && Array.isArray(oExtensions)) {
 					// in sync mode, oExtensions is an array of controller extensions
 					for (var i = 0, l = oExtensions.length; i < l; i++) {
 						mixinControllerDefinition(oController, oExtensions[i]);
 					}
 				} else {
-					jQuery.sap.log.error("Controller Extension Provider: Extension Provider " + oExtensionProvider + " could not be found");
+					jQuery.sap.log.error("Controller Extension Provider: Error in ExtensionProvider.getControllerExtensions: " + Controller._sExtensionProvider + " - no valid extensions returned");
 				}
 			}
 
