@@ -163,11 +163,7 @@ sap.ui.define([
 		},
 
 		getControlType: function (oControl) {
-			var sControlType = oControl.namespaceURI;
-			sControlType = (sControlType ? sControlType + "." : ""); // add a dot if there is already a prefix
-			sControlType += this._getLocalName(oControl);
-
-			return sControlType;
+			return Utils.getControlTypeInXml(oControl);
 		},
 
 		getAllAggregations: function (oControl) {
@@ -290,10 +286,7 @@ sap.ui.define([
 		},
 
 		_getControlMetadata: function(oControl) {
-			var sControlType = this.getControlType(oControl);
-			jQuery.sap.require(sControlType);
-			var ControlType = jQuery.sap.getObject(sControlType);
-			return ControlType.getMetadata();
+			return Utils.getControlMetadataInXml(oControl);
 		},
 
 		_getControlsInAggregation: function(oParent, oAggregationNode) {
@@ -405,17 +398,18 @@ sap.ui.define([
 		 * Validates if the control has the correct type for the aggregation.
 		 *
 		 * @param {sap.ui.core.Control} oControl control whose type is to be checked
-		 * @param {object} oAggregationMetadata metadata of the aggregation
+		 * @param {object} mAggregationMetadata Aggregation info object
 		 * @param {sap.ui.core.Control} oParent parent of the control
 		 * @param {string} sFragment path to the fragment that contains the control, whose type is to be checked
+		 * @param {int} iIndex index of the current control in the parent aggregation
 		 * @returns {boolean} Returns true if the type matches
 		 */
-		validateType: function(oControl, oAggregationMetadata, oParent, sFragment, iIndex) {
-			var sTypeOrInterface = oAggregationMetadata.type;
+		validateType: function(oControl, mAggregationMetadata, oParent, sFragment, iIndex) {
+			var sTypeOrInterface = mAggregationMetadata.type;
 
 			// if aggregation is not multiple and already has element inside, then it is not valid for element
-			if (oAggregationMetadata.multiple === false && this.getAggregation(oParent, oAggregationMetadata.name) &&
-					this.getAggregation(oParent, oAggregationMetadata.name).length > 0) {
+			if (mAggregationMetadata.multiple === false && this.getAggregation(oParent, mAggregationMetadata.name) &&
+					this.getAggregation(oParent, mAggregationMetadata.name).length > 0) {
 				return false;
 			}
 			var aControls = sap.ui.xmlfragment({fragmentContent: sFragment});
@@ -430,38 +424,21 @@ sap.ui.define([
 		},
 
 		/**
-		 * Loads a fragment and turns the result into an array of nodes
+		 * Loads a fragment and turns the result into an array of nodes. Also prefixes all the controls with a given namespace
+		 * Throws an Error if there is at least one control in the fragment without stable ID
 		 *
 		 * @param {string} sFragment path to the fragment
-		 * @param {string} sChangeId id of the current change
-		 * @returns {array} Returns an array with the nodes of the controls of the fragment
+		 * @param {string} sNamespace namespace of the app
+		 * @returns {Node[]} Returns an array with the nodes of the controls of the fragment
 		 */
-		instantiateFragment: function(sFragment, sChangeId) {
-			var oFragment = jQuery.sap.parseXML(sFragment, "application/xml");
+		instantiateFragment: function(sFragment, sNamespace) {
+			var oFragment = jQuery.sap.parseXML(sFragment);
+			oFragment = this.checkAndPrefixIdsInFragment(oFragment, sNamespace);
 
-			if (oFragment.parseError.errorCode !== 0) {
-				throw new Error("The XML Fragment could not be instantiated. Reason: " + oFragment.parseError.reason);
-			}
-
-			var oControlNodes = oFragment.documentElement;
-			if (oControlNodes.localName === "FragmentDefinition") {
-				// Workaround for IE/Edge as the .children property is not available there
-				var aNodes = oControlNodes.childNodes, aChildren = [];
-				for (var i = 0, n = aNodes.length; i < n; i++) {
-					if (aNodes[i].nodeType === 1) {
-						aChildren.push(aNodes[i]);
-					}
-				}
-
-				for (var j = 0, m = aChildren.length; j < m; j++) {
-					// aChildren[j].id is not available in IE11, therefore using .getAttribute/.setAttribute
-					aChildren[j].setAttribute("id", sChangeId + "--" + aChildren[j].getAttribute("id"));
-				}
-				return aChildren;
+			if (oFragment.localName === "FragmentDefinition") {
+				return Utils.getElementNodeChildren(oFragment);
 			} else {
-				// aChildren[j].id is not available in IE11, therefore using .getAttribute/.setAttribute
-				oControlNodes.setAttribute("id", sChangeId + "--" + oControlNodes.getAttribute("id"));
-				return [oControlNodes];
+				return [oFragment];
 			}
 		},
 

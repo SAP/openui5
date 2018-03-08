@@ -60,12 +60,13 @@ sap.ui.define([
 		var oView = mPropertyBag.view;
 		var oViewInstance = Utils.getViewForControl(oControl);
 		var oController = oViewInstance && oViewInstance.getController();
+		var sNamespace = mPropertyBag.appComponent.getMetadata().getName();
 
 		var aNewControls;
 		try {
-			aNewControls = oModifier.instantiateFragment(sFragment, oChange.getId(), oViewInstance, oController);
+			aNewControls = oModifier.instantiateFragment(sFragment, sNamespace, oViewInstance, oController);
 		} catch (oError) {
-			throw new Error("The following XML Fragment could not be instantiated: " + sFragment);
+			throw new Error("The following XML Fragment could not be instantiated: " + sFragment + " Reason: " + oError.message);
 		}
 
 		var oAggregationDefinition = oModifier.findAggregation(oControl, sAggregationName);
