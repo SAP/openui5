@@ -873,6 +873,7 @@ function(
 					.then(
 						function (oOverlay) {
 							oParentAggregationOverlay.insertChild(null, oOverlay);
+							oOverlay.applyStyles(); // TODO: remove after Task Manager implementation
 							this._oTaskManager.complete(iTaskId);
 						}.bind(this),
 						function (vError) {

@@ -1047,14 +1047,29 @@ sap.ui.define([
 	 * @param {string} sNewControlID The id of the newly created container
 	 */
 	RuntimeAuthoring.prototype._setRenameOnCreatedContainer = function(vAction, sNewControlID) {
+		var fnStartEdit = function (oElementOverlay) {
+			oElementOverlay.setSelected(true);
+			this.getPlugins()["rename"].startEdit(oElementOverlay);
+		};
+		var fnGeometryChangedCallback = function(oEvent) {
+			var oElementOverlay = oEvent.getSource();
+			if (oElementOverlay.getGeometry() && oElementOverlay.getGeometry().visible) {
+				fnStartEdit.call(this, oElementOverlay);
+				oElementOverlay.detachEvent('geometryChanged', fnGeometryChangedCallback, this);
+			}
+		};
 		var sNewContainerID = this.getPlugins()["createContainer"].getCreatedContainerId(vAction, sNewControlID);
+
 		this._oDesignTime.attachEvent("elementOverlayCreated", function(oEvent){
 			var oNewOverlay = oEvent.getParameter("elementOverlay");
 			if (oNewOverlay.getElement().getId() === sNewContainerID) {
-				oNewOverlay.attachEventOnce("geometryChanged", function(oEvent){
-					oNewOverlay.setSelected(true);
-					this.getPlugins()["rename"].startEdit(oNewOverlay);
-				}.bind(this));
+				// the control can be set to visible, but still the control has no size when we do the check.
+				// that's why we also attach go 'geometryChanged' and check if the overlay has a size
+				if (!oNewOverlay.getGeometry() || !oNewOverlay.getGeometry().visible) {
+					oNewOverlay.attachEvent('geometryChanged', fnGeometryChangedCallback, this);
+				} else {
+					fnStartEdit.call(this, oNewOverlay);
+				}
 			}
 		}.bind(this));
 	};
