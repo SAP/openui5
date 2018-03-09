@@ -70,7 +70,22 @@ function (Helper, Opa5, TestUtils, Properties) {
 		Opa5.assert.ok(true, "Log checked");
 	}
 
-	Opa5.extendConfig({autoWait : true, timeout : TestUtils.isRealOData() ? 30 : undefined});
+	/*
+	 * Gets the default OPA configuration for all our OPA tests
+	 *
+	 * @param {boolean} [bSupportAssistant]
+	 *   Whether support assistant should be used or not, default is false
+	 */
+	function getConfig(bSupportAssistant) {
+		return {
+			appParams : {'sap-ui-support' : bSupportAssistant ? 'true,silent' : 'false'},
+			autoWait : true,
+			extensions : bSupportAssistant ? ['sap/ui/core/support/RuleEngineOpaExtension'] : [],
+			timeout : TestUtils.isRealOData() ? 30 : undefined
+		};
+	}
+
+	Opa5.extendConfig(getConfig());
 
 	Opa5.createPageObjects({
 		/*
@@ -78,6 +93,12 @@ function (Helper, Opa5, TestUtils, Properties) {
 		 */
 		onAnyPage: {
 			actions : {
+				applySupportAssistant : function () {
+					// we use support assistant only for the test run with mock data
+					sap.ui.test.Opa.getContext().bSupportAssistant =
+						TestUtils.isRealOData() ? false : true;
+					Opa5.extendConfig(getConfig(sap.ui.test.Opa.getContext().bSupportAssistant));
+				},
 				cleanUp : function(sControlId) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
@@ -120,6 +141,38 @@ function (Helper, Opa5, TestUtils, Properties) {
 					return this.waitFor({
 						success : function () {
 							checkLog(aExpected);
+						}
+					});
+				},
+				analyzeSupportAssistant: function () {
+					return this.waitFor({
+						success: function () {
+							if (!sap.ui.test.Opa.getContext().bSupportAssistant) {
+								Opa5.assert.ok(true, "Support assistant inactive, - check skipped");
+								return;
+							}
+
+							jQuery.sap.support.analyze({type : 'global'}).then(function() {
+								var oIssues =
+										jQuery.sap.support.getLastAnalysisHistory().issues || [];
+
+								oIssues = oIssues.filter(function(oIssue) {
+									if (oIssue.severity !== "High" ||
+										// as long as BCP 1870071678 is not solved
+										oIssue.rule.id === "xmlViewUnusedNamespaces") {
+										return false;
+									}
+									return true;
+								})
+
+								Opa5.assert.strictEqual(oIssues.length, 0,
+									"No support assistant prio high issues");
+								if (oIssues.length) {
+									Opa5.assert.getFinalReport();
+								}
+								sap.ui.test.Opa.getContext().bSupportAssistant = false;
+								Opa5.extendConfig(getConfig(false));
+							});
 						}
 					});
 				}

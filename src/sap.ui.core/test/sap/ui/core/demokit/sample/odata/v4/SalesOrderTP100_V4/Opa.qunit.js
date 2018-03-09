@@ -13,6 +13,7 @@ sap.ui.require([
 
 	//*****************************************************************************
 	opaTest("Start sales orders TP100 app and check log", function (Given, When, Then) {
+		When.onAnyPage.applySupportAssistant();
 		Given.iStartMyUIComponent({
 			autoWait : true,
 			componentConfig : {
@@ -25,6 +26,7 @@ sap.ui.require([
 		When.onTheMainPage.pressMoreButton(/SalesOrderItems-trigger/);
 
 		Then.onAnyPage.checkLog();
+		Then.onAnyPage.analyzeSupportAssistant();
 		Then.iTeardownMyUIComponent();
 	});
 });
