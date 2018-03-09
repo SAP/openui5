@@ -30,6 +30,9 @@ sap.ui.require([
 				this.oMockedAppComponent = {
 					getLocalId: function () {
 						return undefined;
+					},
+					createId: function (id) {
+						return id;
 					}
 				};
 			},
