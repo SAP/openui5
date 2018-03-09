@@ -235,7 +235,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 				 * @static
 				 */
 				MessageBox.show = function (vMessage, mOptions) {
-					var oDialog, oMessageText, vMessageContent, oResult = null, that = this, aButtons = [], i,
+					var oDialog, oMessageText, vMessageContent, oResult = null, aButtons = [], i,
 							sIcon, sTitle, vActions, fnCallback, sDialogId, sClass,
 							mDefaults = {
 								id: ElementMetadata.uid("mbox"),
@@ -290,7 +290,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 
 						// Don't check in ResourceBundle library if the button is with custom text
 						if (MessageBox.Action.hasOwnProperty(sAction)) {
-							sText = that._rb.getText("MSGBOX_" + sAction);
+							sText = MessageBox._rb.getText("MSGBOX_" + sAction);
 						}
 
 						var oButton = new Button({
@@ -320,7 +320,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 						var oFT = new FormattedText().setVisible(false).setHtmlText(mOptions.details);
 
 						var oShowLink = new Link({
-							text: that._rb.getText("MSGBOX_LINK_TITLE"),
+							text: MessageBox._rb.getText("MSGBOX_LINK_TITLE"),
 							press: function () {
 								var oInitialFocus = oDialog.getInitialFocus();
 								oDialog.addAriaLabelledBy(oFT);
@@ -369,7 +369,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 							if (typeof mOptions.initialFocus === "string") {//covers string and MessageBox.Action cases
 								for (i = 0; i < aButtons.length; i++) {
 									if (MessageBox.Action.hasOwnProperty(mOptions.initialFocus)) {
-										if (that._rb.getText("MSGBOX_" + mOptions.initialFocus).toLowerCase() === aButtons[i].getText().toLowerCase()) {
+										if (MessageBox._rb.getText("MSGBOX_" + mOptions.initialFocus).toLowerCase() === aButtons[i].getText().toLowerCase()) {
 											oInitialFocusControl = aButtons[i];
 											break;
 										}
@@ -484,7 +484,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 
 					var mDefaults = {
 						icon: Icon.NONE,
-						title: this._rb.getText("MSGBOX_TITLE_ALERT"),
+						title: MessageBox._rb.getText("MSGBOX_TITLE_ALERT"),
 						actions: Action.OK,
 						id: ElementMetadata.uid("alert"),
 						initialFocus: null
@@ -560,7 +560,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 
 					var mDefaults = {
 						icon: Icon.QUESTION,
-						title: this._rb.getText("MSGBOX_TITLE_CONFIRM"),
+						title: MessageBox._rb.getText("MSGBOX_TITLE_CONFIRM"),
 						actions: [Action.OK, Action.CANCEL],
 						id: ElementMetadata.uid("confirm"),
 						initialFocus: null
@@ -633,7 +633,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 
 					var mDefaults = {
 						icon: Icon.ERROR,
-						title: this._rb.getText("MSGBOX_TITLE_ERROR"),
+						title: MessageBox._rb.getText("MSGBOX_TITLE_ERROR"),
 						actions: [Action.CLOSE],
 						id: ElementMetadata.uid("error"),
 						initialFocus: null
@@ -690,7 +690,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 
 					var mDefaults = {
 						icon: Icon.INFORMATION,
-						title: this._rb.getText("MSGBOX_TITLE_INFO"),
+						title: MessageBox._rb.getText("MSGBOX_TITLE_INFO"),
 						actions: [Action.OK],
 						id: ElementMetadata.uid("info"),
 						initialFocus: null
@@ -747,7 +747,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 
 					var mDefaults = {
 						icon: Icon.WARNING ,
-						title: this._rb.getText("MSGBOX_TITLE_WARNING"),
+						title: MessageBox._rb.getText("MSGBOX_TITLE_WARNING"),
 						actions: [Action.OK],
 						id: ElementMetadata.uid("warning"),
 						initialFocus: null
@@ -804,7 +804,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 
 					var mDefaults = {
 						icon: Icon.SUCCESS ,
-						title: this._rb.getText("MSGBOX_TITLE_SUCCESS"),
+						title: MessageBox._rb.getText("MSGBOX_TITLE_SUCCESS"),
 						actions: [Action.OK],
 						id: ElementMetadata.uid("success"),
 						initialFocus: null
