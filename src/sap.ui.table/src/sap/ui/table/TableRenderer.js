@@ -212,6 +212,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	};
 
 	TableRenderer.renderTable = function(rm, oTable) {
+		this.renderTabElement(rm, "sapUiTableCtrlBefore");
 		rm.write("<div");
 		rm.writeAttribute("id", oTable.getId() + "-tableCCnt");
 		rm.addClass("sapUiTableCCnt");
@@ -220,16 +221,15 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 		this.renderTableCCnt(rm, oTable);
 		rm.write("</div>");
+		this.renderTabElement(rm, "sapUiTableCtrlAfter");
 		this.renderVSb(rm, oTable);
 		this.renderHSb(rm, oTable);
 	};
 
 	TableRenderer.renderTableCCnt = function(rm, oTable) {
-		this.renderTabElement(rm, "sapUiTableCtrlBefore");
 		this.renderTableCtrl(rm, oTable);
 		this.renderRowHdr(rm, oTable);
 		this.renderRowActions(rm, oTable);
-		this.renderTabElement(rm, "sapUiTableCtrlAfter");
 
 		rm.write("<div");
 		rm.addClass("sapUiTableCtrlEmpty");
