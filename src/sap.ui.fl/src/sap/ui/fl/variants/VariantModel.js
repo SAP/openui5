@@ -317,8 +317,9 @@ sap.ui.define([
 		//Flex Controller
 		var oVariant = this.oFlexController.createVariant(oDuplicateVariantData, this.oComponent);
 
+		var aChanges = [];
 		[oVariant].concat(oVariant.getControlChanges()).forEach(function(oChange) {
-			this.oFlexController._oChangePersistence.addDirtyChange(oChange);
+			aChanges.push(this.oFlexController._oChangePersistence.addDirtyChange(oChange));
 		}.bind(this));
 
 		//Variant Controller
@@ -327,7 +328,7 @@ sap.ui.define([
 		//Variant Model
 		this.oData[mPropertyBag.variantManagementReference].variants.splice(iIndex, 0, oVariantModelData);
 		return this.updateCurrentVariant(mPropertyBag.variantManagementReference, oVariant.getId()).then( function () {
-			return oVariant;
+			return aChanges;
 		});
 	};
 
