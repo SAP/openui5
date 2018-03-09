@@ -258,8 +258,8 @@ sap.ui.define([
 	 */
 	AppVariantManager.prototype.saveAppVariantToLREP = function(oAppVariantDescriptor) {
 		return oAppVariantDescriptor.submit()["catch"](function(oError) {
-			var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_SAVE_APP_VARIANT_FAILED", oError, oAppVariantDescriptor.getId());
 			BusyIndicator.hide();
+			var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_SAVE_APP_VARIANT_FAILED", oError, oAppVariantDescriptor.getId());
 			return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
 		});
 	};
@@ -274,6 +274,14 @@ sap.ui.define([
 	/**
 	 *
 	 * @param {String} sAppVariantId
+	 */
+	AppVariantManager.prototype._deleteAppVariantFromLREP = function(sAppVariantId) {
+		return AppVariantUtils.triggerDeleteAppVariantFromLREP(sAppVariantId);
+	};
+
+	/**
+	 *
+	 * @param {String} sAppVariantId
 	 * @param {Boolean} bCopyUnsavedChanges
 	 * @returns {Promise} returns the server response
 	 * @description Books the unsaved changes for the new app variant and persist these changes in the layered repository
@@ -282,10 +290,16 @@ sap.ui.define([
 		var oCommandStack = this.getCommandSerializer().getCommandStack();
 		if (bCopyUnsavedChanges && oCommandStack.getAllExecutedCommands().length) {
 			return this._takeOverDirtyChangesByAppVariant(sAppVariantId)["catch"](function(oError) {
-				var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_COPY_UNSAVED_CHANGES_FAILED", oError, sAppVariantId);
-				BusyIndicator.hide();
-				return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
-			});
+				return this._deleteAppVariantFromLREP(sAppVariantId)["catch"](function(oError) {
+					BusyIndicator.hide();
+					var oErrorInfo = AppVariantUtils.buildErrorInfo("SAVE_AS_MSG_DELETE_APP_VARIANT", oError, sAppVariantId);
+					return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
+				}).then(function() {
+					BusyIndicator.hide();
+					var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_COPY_UNSAVED_CHANGES_FAILED", oError);
+					return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
+				});
+			}.bind(this));
 		}
 
 		return Promise.resolve();
@@ -300,8 +314,8 @@ sap.ui.define([
 	AppVariantManager.prototype.triggerCatalogAssignment = function(oAppVariantDescriptor) {
 		if (AppVariantUtils.isS4HanaCloud(oAppVariantDescriptor.getSettings())) {
 			return AppVariantUtils.triggerCatalogAssignment(oAppVariantDescriptor.getId(), oAppVariantDescriptor.getReference())["catch"](function(oError) {
-				var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_CATALOG_ASSIGNMENT_FAILED", oError, oAppVariantDescriptor.getId());
 				BusyIndicator.hide();
+				var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_CATALOG_ASSIGNMENT_FAILED", oError, oAppVariantDescriptor.getId());
 				return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
 			});
 		}
@@ -332,9 +346,9 @@ sap.ui.define([
 				});
 			});
 		})["catch"](function(oError) {
+			BusyIndicator.hide();
 			var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_TILE_CREATION_FAILED", oError, sAppVariantId);
 			oErrorInfo.copyId = true;
-			BusyIndicator.hide();
 			return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
 		});
 	};
