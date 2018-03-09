@@ -16,12 +16,13 @@ sap.ui.define(['sap/base/util/equal'], function(equal) {
 	 * list, which causes terrible performance on large datasets.
 	 *
 	 * @deprecated As of 1.38, use {@link sap/base/util/arraySymbolDiff} instead if applicable
-	 * @public
 	 * @param {Array} aOld Old Array
 	 * @param {Array} aNew New Array
 	 * @param {function} [fnCompare] Function to compare list entries
 	 * @param {boolean} [bUniqueEntries] Whether entries are unique, so no duplicate entries exist
+	 * @exports sap/base/util/arrayDiff
 	 * @return {Array} List of changes
+	 * @private
 	 */
 	var fnArrayDiff = function(aOld, aNew, fnCompare, bUniqueEntries){
 		fnCompare = fnCompare || function(vValue1, vValue2) {
