@@ -172,7 +172,9 @@ sap.ui.define([
 				 *
 				 * Example:
 				 *
-				 * <pre><Panel class=“sapFDynamicPageAlignContent” width=“auto”></Panel></pre>
+				 * <pre>
+				 * <code> &lt;Panel class=“sapFDynamicPageAlignContent” width=“auto”&gt;&lt;/Panel&gt; </code>
+				 * </pre>
 				 *
 				 * Please keep in mind that the alignment is not possible when the controls are placed in
 				 * a {@link sap.ui.layout.Grid} or in other layout controls that use
