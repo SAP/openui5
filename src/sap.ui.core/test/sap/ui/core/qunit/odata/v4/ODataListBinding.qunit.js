@@ -4252,6 +4252,102 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	[true, false].forEach(function (bOnRemoveCalled) {
+		["group", undefined].forEach(function (sGroupId) {
+			[true, false].forEach(function (bTransient) {
+				var sTitle = "refreshSingle with allow remove: " + bOnRemoveCalled + ", groupId: "
+					+ sGroupId + ", transient: " + bTransient;
+
+				QUnit.test(sTitle, function (assert) {
+					var oBinding = this.oModel.bindList("/EMPLOYEES"),
+						oBindingMock = this.mock(oBinding),
+						oCache = {
+							hasPendingChangesForPath : function () {return false;},
+							refreshSingleWithRemove : function () {}
+						},
+						oCacheRequestPromise,
+						oContext,
+						oDependent0 = {refreshInternal : function () {}},
+						oDependent1 = {refreshInternal : function () {}},
+						oExpectation,
+						sExpectedGroupId = sGroupId || "$auto",
+						iIndex = bTransient ? -1 : 1,
+						that = this;
+
+					// initialize with 6 contexts, bLengthFinal===true and bKeyPredicates===true
+					// [-1, 0, 1, 2, undefined, 4, 5]
+					oBinding.createContexts(0, 3, createData(3, 0, true, 3, true));
+					if (bTransient) {
+						oBinding.aContexts[-1] =
+							Context.create(this.oModel, oBinding, "/EMPLOYEES/-1", -1);
+					}
+					oBinding.createContexts(4, 10, createData(2, 4, true, 6, true));
+					oContext = oBinding.aContexts[iIndex];
+					oBinding.oCachePromise = SyncPromise.resolve(oCache);
+
+					oCacheRequestPromise = SyncPromise.resolve(Promise.resolve().then(function () {
+						// fnOnRemove Test
+						if (bOnRemoveCalled) {
+							that.mock(oContext).expects("destroy")
+								.withExactArgs()
+								.callsFake(function () {
+									oContext.oBinding = undefined;
+								});
+							oBindingMock.expects("_fireChange")
+								.withExactArgs({reason : ChangeReason.Remove});
+							that.mock(that.oModel).expects("getDependentBindings").never();
+
+							// code under test
+							oExpectation.firstCall.args[3](oContext.iIndex);
+
+							if (iIndex === -1) {
+								assert.strictEqual(oBinding.aContexts.length, 6);
+								assert.notOk(3 in oBinding.aContexts);
+								assert.strictEqual(oBinding.aContexts[4].iIndex, 4);
+								assert.strictEqual(oBinding.aContexts[5].iIndex, 5);
+							} else {
+								assert.strictEqual(oBinding.aContexts.length, 5);
+								assert.notOk(2 in oBinding.aContexts);
+								assert.strictEqual(oBinding.aContexts[3].iIndex, 3);
+								assert.strictEqual(oBinding.aContexts[4].iIndex, 4);
+							}
+							assert.strictEqual(oBinding.aContexts[0].iIndex, 0);
+							assert.strictEqual(oBinding.aContexts[1].iIndex, 1);
+							assert.strictEqual(oBinding.iMaxLength, 5);
+						} else {
+							that.mock(that.oModel).expects("getDependentBindings")
+								.withExactArgs(sinon.match.same(oContext))
+								.returns([oDependent0, oDependent1]);
+							that.mock(oDependent0).expects("refreshInternal")
+								.withExactArgs(sExpectedGroupId, false);
+							that.mock(oDependent1).expects("refreshInternal")
+								.withExactArgs(sExpectedGroupId, false);
+						}
+					}));
+
+					oBindingMock.expects("isRefreshable").withExactArgs().returns(true);
+					oBindingMock.expects("hasPendingChangesForPath")
+						.withExactArgs(bTransient ? "/EMPLOYEES/-1" : "/EMPLOYEES('1')")
+						.returns(false);
+					oExpectation = this.mock(oCache).expects("refreshSingleWithRemove")
+						.withExactArgs(sExpectedGroupId, oContext.iIndex, sinon.match.func,
+							sinon.match.func)
+						.callsArg(2)
+						.returns(oCacheRequestPromise);
+					oBindingMock.expects("fireDataRequested").withExactArgs();
+					oBindingMock.expects("fireDataReceived").withExactArgs({data : {}});
+					this.mock(oContext).expects("checkUpdate")
+						.exactly(bOnRemoveCalled ? 0 : 1)
+						.withExactArgs();
+
+					// code under test
+					return oBinding.refreshSingle(oContext, sGroupId, true);
+				});
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("refreshSingle, no fireDataReceived if no fireDataRequested", function (assert) {
 		var oBinding = this.oModel.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),

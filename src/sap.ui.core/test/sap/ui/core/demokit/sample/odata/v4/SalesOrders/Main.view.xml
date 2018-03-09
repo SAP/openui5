@@ -87,7 +87,10 @@
 		<Table growing="true" growingThreshold="5" id="SalesOrders"
 			items="{
 					path : '/SalesOrderList',
-					filters: {path: 'SalesOrderID', operator: 'GE', value1: '0500000000'},
+					filters : [
+						{path : 'SalesOrderID', operator : 'GE', value1 : '0500000000'},
+						{path : 'LifecycleStatus', operator : 'EQ', value1 : 'N'}
+					],
 					parameters : {
 						$count : true,
 						$filter : 'SO_2_BP/CompanyName ge \'M\'',
@@ -103,7 +106,7 @@
 			selectionChange="onSalesOrdersSelect">
 			<headerToolbar>
 				<Toolbar id="SalesOrdersToolbar">
-					<Title id="SalesOrdersTitle" text="{$count} Sales Orders" titleStyle="H2">
+					<Title id="SalesOrdersTitle" text="{$count} New Sales Orders" titleStyle="H2">
 						<layoutData>
 							<ToolbarLayoutData shrinkable="false" />
 						</layoutData>

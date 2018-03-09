@@ -3171,9 +3171,9 @@ sap.ui.require([
 			oElement = {"@$ui5._.predicate" : sKeyPredicate},
 			aElements = [{}, oElement],
 			sResourcePath = "Employees",
-			mQueryOptionsCopy = {$filter: "foo", $count: true, $sort: "bar", $select: "Name"},
+			mQueryOptionsCopy = {$filter: "foo", $count: true, $orderby: "bar", $select: "Name"},
 			oCache = this.createCache(sResourcePath,
-				{$filter: "foo", $count: true, $sort: "bar", $select: "Name"}),
+				{$filter: "foo", $count: true, $orderby: "bar", $select: "Name"}),
 			oCacheMock = this.mock(oCache),
 			oPromise,
 			sQueryString = "?$select=Name",
@@ -3214,6 +3214,223 @@ sap.ui.require([
 			assert.strictEqual(oCache.aElements[1], oResponse);
 			assert.strictEqual(oCache.aElements.$byPredicate[sKeyPredicate], oResponse);
 		});
+	});
+
+	//*********************************************************************************************
+	[{
+		mBindingQueryOptions : {$filter: "age gt 40"},
+		iIndex : 1,
+		sKeyPredicate : "('0')",
+		mKeyProperties : {"ID" : "'0'"},
+		sQueryString : "?$filter=(age%20gt%2040)%20and%20ID%20eq%20'0'",
+		mQueryOptionsForRequest : {$filter: "(age gt 40) and ID eq '0'"},
+		bRemoved : true
+	}, {
+		mBindingQueryOptions : {$filter: "age gt 40"},
+		iIndex : 1,
+		sKeyPredicate : "('0')",
+		mKeyProperties : {"ID" : "'0'"},
+		sQueryString : "?$filter=%28age%20gt%2040%29%20and%20ID%20eq%20'0'",
+		mQueryOptionsForRequest : {$filter: "(age gt 40) and ID eq '0'"},
+		bRemoved : false
+	}, {
+		mBindingQueryOptions : {$filter: "age gt 40 or age lt 20"},
+		iIndex : 1,
+		sKeyPredicate : "('0')",
+		mKeyProperties : {"ID" : "'0'", "Name" : "'Foo'"},
+		sQueryString : "?$filter=(age%20gt%2040%20or%20age%20lt%2020)%20and%20ID%20eq%20'0'%20"
+			+ "and%20Name%20eq%20'Foo'",
+			mQueryOptionsForRequest : {$filter: "(age gt 40 or age lt 20) and ID eq '0'"
+				+ " and Name eq 'Foo'"},
+		bRemoved : true
+	}, {
+		mBindingQueryOptions : {$filter: "age gt 40"},
+		iIndex : 1,
+		sKeyPredicate : "('0')",
+		mKeyProperties : {"ID" : "'0'", "Name" : "'Foo'"},
+		sQueryString : "?$filter=age%20gt%2040%20and%20ID%20eq%20'0'%20"
+			+ "and%20Name%20eq%20'Foo'",
+		mQueryOptionsForRequest : {$filter: "(age gt 40) and ID eq '0' and Name eq 'Foo'"},
+		bRemoved : false
+	}, {
+		mBindingQueryOptions : {},
+		iIndex : 1,
+		sKeyPredicate : "('0')",
+		mKeyProperties : {"ID" : "'0'", "Name" : "'Foo'"},
+		sQueryString : "?$filter=ID%20eq%20'0'%20and%20Name%20eq%20'Foo'",
+		mQueryOptionsForRequest : {$filter: "ID eq '0' and Name eq 'Foo'"},
+		bRemoved : false
+	}, { // with transient
+		mBindingQueryOptions : {},
+		iIndex : -1,
+		sKeyPredicate : "('0')",
+		mKeyProperties : {"ID" : "'0'", "Name" : "'Foo'"},
+		sQueryString : "?$filter=ID%20eq%20'0'%20and%20Name%20eq%20'Foo'",
+		mQueryOptionsForRequest : {$filter: "ID eq '0' and Name eq 'Foo'"},
+		bRemoved : true
+	}].forEach(function (oFixture) {
+		var sTitle = "CollectionCache#refreshSingleWithRemove: removed=" + oFixture.bRemoved;
+
+		QUnit.test(sTitle, function (assert) {
+			var sResourcePath = "Employees",
+				oCache = this.createCache(sResourcePath, {$filter: "age gt 40"}),
+				oCacheMock = this.mock(oCache),
+				fnDataRequested = this.spy(),
+				oElement = {"@$ui5._.predicate" : oFixture.sKeyPredicate},
+				aElements = [{}, {}, {}],
+				mTypeForMetaPath = {},
+				fnOnRemove = this.spy(),
+				oPromiseFetchTypes = SyncPromise.resolve(mTypeForMetaPath),
+				oPromise,
+				oResponse = oFixture.bRemoved
+								? {value : []}
+								: {value : [{Foo : "Bar"}]}, // at least an entity is returned
+				oPromiseRequest = Promise.resolve(oResponse),
+				that = this;
+
+			// cache preparation
+			oCache.iLimit = 2;
+			aElements[oFixture.iIndex] = oElement;
+			oCache.aElements = aElements;
+			oCache.aElements.$count = 2;
+			oCache.aElements.$byPredicate = {};
+			oCache.aElements.$byPredicate[oFixture.sKeyPredicate] =  oElement;
+			this.spy(_Helper, "updateCache");
+
+			this.mock(jQuery).expects("extend")
+				.withExactArgs({}, sinon.match.same(oCache.mQueryOptions))
+				.returns(oFixture.mBindingQueryOptions);
+			oCacheMock.expects("fetchTypes")
+				.withExactArgs()
+				.callsFake(function () {
+					that.oRequestorMock.expects("request")
+						.withExactArgs("GET", sResourcePath + oFixture.sQueryString, "group",
+							undefined, undefined, sinon.match.same(fnDataRequested))
+						.returns(oPromiseRequest);
+					return oPromiseFetchTypes;
+				});
+			this.mock(_Helper).expects("getKeyProperties")
+				.withExactArgs(oElement, "/" + sResourcePath, sinon.match.same(mTypeForMetaPath))
+				.returns(oFixture.mKeyProperties);
+			this.oRequestorMock.expects("buildQueryString")
+				.withExactArgs(oCache.sMetaPath, oFixture.mQueryOptionsForRequest, false,
+					oCache.bSortExpandSelect)
+				.returns(oFixture.sQueryString);
+			oCacheMock.expects("calculateKeyPredicates")
+				.exactly(oFixture.bRemoved ? 0 : 1)
+				.withExactArgs(sinon.match.same(oResponse.value[0]),
+					sinon.match.same(mTypeForMetaPath));
+			this.mock(_Cache).expects("computeCount")
+				.exactly(oFixture.bRemoved ? 0 : 1)
+				.withExactArgs(sinon.match.same(oResponse.value[0]));
+
+			// code under test
+			oPromise = oCache.refreshSingleWithRemove("group", oFixture.iIndex, fnDataRequested,
+				fnOnRemove);
+
+			assert.strictEqual(oCache.bSentReadRequest, true);
+			return oPromise.then(function () {
+				if (oFixture.bRemoved) {
+					assert.deepEqual(oCache.aElements[1], {});
+					assert.deepEqual(oCache.aElements.$byPredicate[oFixture.sKeyPredicate],
+						undefined);
+					assert.strictEqual(oCache.iLimit, 1);
+
+					sinon.assert.calledWithExactly(_Helper.updateCache,
+						sinon.match.same(oCache.mChangeListeners), "",
+						sinon.match.same(aElements), {$count : 1});
+					sinon.assert.calledOnce(fnOnRemove);
+				} else {
+					assert.strictEqual(oCache.aElements[1], oResponse.value[0]);
+					assert.strictEqual(oCache.aElements.$byPredicate[oFixture.sKeyPredicate],
+						oResponse.value[0]);
+					assert.strictEqual(oCache.iLimit, 2);
+				}
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bRemoved) {
+		QUnit.test("refreshSingleWithRemove: parallel delete", function(assert) {
+			var fnOnRemove = this.spy(),
+				sResourcePath = "Employees",
+				oCache = this.createCache(sResourcePath, {$filter: "age gt 40"}),
+				oCacheMock = this.mock(oCache),
+				oElement = {"@$ui5._.predicate" : "('3')"},
+				aElements = [{}, {}, {}, oElement],
+				oResult = {"ID" : "3"},
+				mTypeForMetaPath = {};
+
+			// cache preparation
+			oCache.aElements = aElements;
+			oCache.aElements.$byPredicate = {"('3')" : oElement};
+
+			oCacheMock.expects("fetchTypes").withExactArgs()
+				.returns(SyncPromise.resolve(mTypeForMetaPath));
+			this.mock(_Helper).expects("getKeyProperties")
+				.withExactArgs(oElement, "/" + sResourcePath, sinon.match.same(mTypeForMetaPath))
+				.returns({"ID" : "'3'"});
+			this.oRequestorMock.expects("buildQueryString")
+				.withExactArgs(oCache.sMetaPath, {$filter: "(age gt 40) and ID eq '3'"}, false,
+					oCache.bSortExpandSelect)
+				.returns("?$filter=%28age%20gt%2040%29%20and%20ID%20eq%20'3'");
+			this.oRequestorMock.expects("request")
+				.withExactArgs("GET",
+					sResourcePath + "?$filter=%28age%20gt%2040%29%20and%20ID%20eq%20'3'", "group",
+					undefined, undefined, undefined)
+				.callsFake(function () {
+					// simulate another delete while this one is waiting for its promise
+					oCache.aElements.splice(0, 1);
+					return Promise.resolve(bRemoved ? {value : []} : {value : [oResult]});
+				});
+
+			// code under test
+			return oCache.refreshSingleWithRemove("group", 3, undefined, fnOnRemove)
+				.then(function () {
+					if (bRemoved) {
+						sinon.assert.calledWithExactly(fnOnRemove, 2);
+					} else {
+						assert.strictEqual(oCache.aElements[2], oResult);
+					}
+				});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refreshSingleWithRemove: server returns more than one entity", function(assert) {
+		var fnOnRemove = this.spy(),
+			sResourcePath = "Employees",
+			oCache = this.createCache(sResourcePath, {$filter: "age gt 40"}),
+			oCacheMock = this.mock(oCache),
+			oElement = {"@$ui5._.predicate" : "('3')"},
+			aElements = [{}, {}, {}, oElement],
+			oResult = {"ID" : "3"},
+			mTypeForMetaPath = {};
+
+		// cache preparation
+		oCache.aElements = aElements;
+		oCache.aElements.$byPredicate = {"('3')" : oElement};
+
+		oCacheMock.expects("fetchTypes").withExactArgs()
+			.returns(SyncPromise.resolve(mTypeForMetaPath));
+		this.mock(_Helper).expects("getKeyProperties")
+			.returns({"ID" : "'3'"});
+		this.oRequestorMock.expects("buildQueryString")
+			.returns("?$filter=%28age%20gt%2040%29%20and%20ID%20eq%20'3'");
+		this.oRequestorMock.expects("request")
+			.callsFake(function () {
+				return Promise.resolve({value : [oResult, oResult]});
+			});
+
+		// code under test
+		return oCache.refreshSingleWithRemove("group", 3, undefined, fnOnRemove)
+			.then(function () {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError.message,
+					"Unexpected server response, more than one entity returned.");
+			});
 	});
 
 	//*********************************************************************************************

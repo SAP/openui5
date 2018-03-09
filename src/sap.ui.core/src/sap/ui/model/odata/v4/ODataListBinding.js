@@ -1284,6 +1284,12 @@ sap.ui.define([
 	 *   The context object for the entity to be refreshed
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh
+	 * @param {boolean} [bAllowRemoval=false]
+	 *   Allows the list binding to remove the given context from its collection because the
+	 *   entity does not match the binding's filter anymore,
+	 *   see {@link sap.ui.model.odata.v4.ODataListBinding#filter}; a removed context is
+	 *   destroyed, see {@link sap.ui.model.Context#destroy}.
+	 *   Supported since 1.55.0
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which resolves with <code>undefined</code> when the entity is updated in the
 	 *   cache.
@@ -1292,7 +1298,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.refreshSingle = function (oContext, sGroupId) {
+	ODataListBinding.prototype.refreshSingle = function (oContext, sGroupId, bAllowRemoval) {
 		var that = this;
 
 		this.oModel.checkGroupId(sGroupId);
@@ -1309,34 +1315,70 @@ sap.ui.define([
 			var bDataRequested = false,
 				oPromise;
 
-			function fireDataReceived (oData) {
+			function fireDataReceived(oData) {
 				if (bDataRequested) {
 					that.fireDataReceived(oData);
 				}
 			}
 
-			sGroupId = sGroupId || that.getGroupId();
-			oPromise = oCache.refreshSingle(sGroupId, oContext.iIndex, function () {
-					bDataRequested = true;
-					that.fireDataRequested();
-				}
-			).then(function () {
-				fireDataReceived({data : {}});
-				oContext.checkUpdate();
-			}, function (oError) {
-				fireDataReceived({error : oError});
-				throw oError;
-			})["catch"](function (oError) {
-				that.oModel.reportError("Failed to refresh entity: " + oContext, sClassName,
-					oError);
-			});
+			function fireDataRequested() {
+				bDataRequested = true;
+				that.fireDataRequested();
+			}
 
-			// call refreshInternal on all dependent bindings to ensure that all resulting data
-			// requests are in the same batch request
-			that.oModel.getDependentBindings(oContext).forEach(function (oDependentBinding) {
-				// with bCheckUpdate = false because it is done after data is received
-				oDependentBinding.refreshInternal(sGroupId, false);
-			});
+			function refreshDependentBindings() {
+				that.oModel.getDependentBindings(oContext).forEach(function (oDependentBinding) {
+					// with bCheckUpdate = false because it is done after data is received
+					oDependentBinding.refreshInternal(sGroupId, false);
+				});
+			}
+
+			function onRemove(iIndex) {
+				var oContextOfDeletedRow = that.aContexts[iIndex],
+					i;
+
+				if (iIndex === -1) {
+					delete that.aContexts[-1];
+				} else {
+					that.aContexts.splice(iIndex, 1);
+					for (i = iIndex; i < that.aContexts.length; i += 1) {
+						if (that.aContexts[i]) {
+							that.aContexts[i].setIndex(i);
+						}
+					}
+				}
+				oContextOfDeletedRow.destroy();
+				that.iMaxLength -= 1; // this doesn't change Infinity
+				that._fireChange({reason : ChangeReason.Remove});
+			}
+
+			sGroupId = sGroupId || that.getGroupId();
+			oPromise =
+				(bAllowRemoval
+					? oCache.refreshSingleWithRemove(sGroupId, oContext.iIndex, fireDataRequested,
+						onRemove)
+					: oCache.refreshSingle(sGroupId, oContext.iIndex, fireDataRequested))
+				.then(function () {
+					fireDataReceived({data : {}});
+					if (oContext.oBinding) { // do not update destroyed context
+						oContext.checkUpdate();
+						if (bAllowRemoval) {
+							refreshDependentBindings();
+						}
+					}
+				}, function (oError) {
+					fireDataReceived({error : oError});
+					throw oError;
+				})["catch"](function (oError) {
+					that.oModel.reportError("Failed to refresh entity: " + oContext, sClassName,
+						oError);
+				});
+
+			if (!bAllowRemoval) {
+				// call refreshInternal on all dependent bindings to ensure that all resulting data
+				// requests are in the same batch request
+				refreshDependentBindings();
+			}
 
 			return oPromise;
 		});
