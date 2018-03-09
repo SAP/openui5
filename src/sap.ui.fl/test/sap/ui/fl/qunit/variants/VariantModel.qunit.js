@@ -687,15 +687,15 @@ sap.ui.require([
 		};
 		sandbox.stub(this.oModel, "_duplicateVariant").returns(oVariantData);
 		sandbox.stub(BaseTreeModifier, "getSelector").returns({id: "variantMgmtId1"});
-		sandbox.stub(this.oModel.oFlexController._oChangePersistence, "addDirtyChange");
+		sandbox.stub(this.oModel.oFlexController._oChangePersistence, "addDirtyChange").returnsArg(0);
 
 		var mPropertyBag = {
 			variantManagementReference: "variantMgmtId1"
 		};
-		return this.oModel._copyVariant(mPropertyBag).then( function (oVariant) {
+		return this.oModel._copyVariant(mPropertyBag).then( function (aChanges) {
 			assert.ok(fnAddVariantToControllerStub.calledOnce, "then function to add variant to VariantController called");
 			assert.equal(this.oModel.oData["variantMgmtId1"].variants[3].key, oVariantData.content.fileName, "then variant added to VariantModel");
-			assert.equal(oVariant.getId(), oVariantData.content.fileName, "then the returned variant is the duplicate variant");
+			assert.equal(aChanges[0].getId(), oVariantData.content.fileName, "then the returned variant is the duplicate variant");
 		}.bind(this));
 	});
 

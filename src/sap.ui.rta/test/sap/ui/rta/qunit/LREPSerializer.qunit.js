@@ -14,8 +14,10 @@ sap.ui.require([
 	'sap/ui/rta/qunit/RtaQunitUtils',
 	'sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory',
 	'sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory',
-	'sap/ui/fl/FlexController',
+	'sap/ui/fl/FlexControllerFactory',
 	'sap/ui/fl/Change',
+	'sap/ui/fl/variants/VariantModel',
+	'sap/ui/fl/variants/VariantManagement',
 	//should be last:
 	'sap/ui/thirdparty/sinon',
 	'sap/ui/thirdparty/sinon-ie',
@@ -31,8 +33,10 @@ sap.ui.require([
 	RtaQunitUtils,
 	DescriptorInlineChangeFactory,
 	DescriptorChangeFactory,
-	FlexController,
+	FlexControllerFactory,
 	Change,
+	VariantModel,
+	VariantManagement,
 	sinon
 ) {
 	"use strict";
@@ -71,11 +75,35 @@ sap.ui.require([
 				}
 			};
 		},
-		getModel: function () {}
+		getModel: function () {return oModel;}
 	};
 	sinon.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 
 	FakeLrepConnectorLocalStorage.enableFakeConnector();
+
+	var oData = {
+		"variantMgmtId1": {
+			"defaultVariant": "variant0",
+			"variants": [
+				{
+					"author": "SAP",
+					"key": "variantMgmtId1",
+					"layer": "VENDOR",
+					"visible": true,
+					"title": "Standard"
+				}, {
+					"author": "Me",
+					"key": "variant0",
+					"layer": "CUSTOMER",
+					"visible": true,
+					"title": "variant A"
+				}
+			]
+		}
+	};
+
+	var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent);
+	var oModel = new VariantModel(oData, oFlexController, oMockedAppComponent);
 
 	QUnit.module("Given a command serializer loaded with an RTA command stack containing commands", {
 		beforeEach : function(assert) {
@@ -359,7 +387,7 @@ sap.ui.require([
 
 	QUnit.test(	"Execute 1 'remove' command and 1 App Descriptor 'add library' command," +
 				"undo the 'add library' command and call saveCommands which rejects", function(assert) {
-		var oSaveAllStub = sandbox.stub(FlexController.prototype, "saveAll").returns(Promise.reject());
+		var oSaveAllStub = sandbox.stub(oFlexController, "saveAll").returns(Promise.reject());
 
 		// Create commands
 		this.oRemoveCommand = CommandFactory.getCommandFor(this.oInput1, "Remove", {
@@ -563,6 +591,132 @@ sap.ui.require([
 			fnCleanUp();
 			return Promise.reject(oError);
 		});
+	});
+
+	QUnit.module("Given a command serializer loaded with an RTA command stack containing ctrl variant commands", {
+		beforeEach : function(assert) {
+			// Prepare fake LRep
+			FakeLrepLocalStorage.deleteChanges();
+			assert.equal(FakeLrepLocalStorage.getNumChanges(), 0, "Local storage based LREP is empty");
+
+			// Create command stack
+			this.oCommandStack = new CommandStack();
+
+			// Create Variant Management Control
+			this.oVariantManagement = new VariantManagement("variantMgmtId1");
+			this.oVariantManagement.setModel(oModel, "$FlexVariants");
+			this.oDesignTimeMetadata = new DesignTimeMetadata({ data : {} });
+
+			// Create serializer instance
+			this.oSerializer = new CommandSerializer({
+				commandStack: this.oCommandStack,
+				rootControl: this.oVariantManagement
+			});
+
+			// Stub Variant Model and Variant Controller functions
+			var oVariant = {
+				"content": {
+					"fileName":"variant0",
+					"content": {
+						"title":"variant A"
+					},
+					"layer":"CUSTOMER",
+					"variantReference":"variant00",
+					"reference": "Dummy.Component"
+				},
+				"controlChanges" : []
+			};
+			sandbox.stub(oModel, "getVariant").returns(oVariant);
+			sandbox.stub(oModel.oVariantController, "_setVariantData").returns(1);
+			sandbox.stub(oModel.oVariantController, "_updateChangesForVariantManagementInMap");
+			sandbox.stub(oModel.oVariantController, "addVariantToVariantManagement");
+			sandbox.stub(oModel.oVariantController, "removeVariantFromVariantManagement");
+		},
+		afterEach : function(assert) {
+			this.oCommandStack.destroy();
+			this.oSerializer.destroy();
+			this.oVariantManagement.destroy();
+			this.oDesignTimeMetadata.destroy();
+			FakeLrepLocalStorage.deleteChanges();
+			sandbox.restore();
+		}
+	});
+
+	QUnit.test("when the LREPSerializer.saveAsCommands gets called with 4 different ctrl variant commands created containing one or more changes and this is booked for a new app variant with different id", function(assert) {
+		var done = assert.async();
+		// then five changes are expected to be written in LREP, the switch command is ignored
+		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(5, assert, "save");
+
+		// Create control variant configure command
+		var oTitleChange = {
+			appComponent : oMockedAppComponent,
+			changeType : "setTitle",
+			layer : "CUSTOMER",
+			originalTitle : "variant A",
+			title : "test",
+			variantReference : "variant0"
+		};
+		var oFavoriteChange = {
+			appComponent : oMockedAppComponent,
+			changeType : "setFavorite",
+			favorite : false,
+			layer : "CUSTOMER",
+			originalFavorite : true,
+			variantReference : "variant0"
+		};
+		var oVisibleChange = {
+			appComponent : oMockedAppComponent,
+			changeType : "setVisible",
+			layer : "CUSTOMER",
+			variantReference : "variant0",
+			visible : false
+		};
+		var aChanges = [oTitleChange, oFavoriteChange, oVisibleChange];
+		this.oControlVariantConfigureCommand = CommandFactory.getCommandFor(this.oVariantManagement, "configure", {
+			control : this.oVariantManagement,
+			changes : aChanges
+		}, this.oDesignTimeMetadata, {layer: "CUSTOMER"});
+
+		// create control variant switch command
+		this.oControlVariantSwitchCommand = CommandFactory.getCommandFor(this.oVariantManagement, "switch", {
+			targetVariantReference : "newVariantReference",
+			sourceVariantReference : "oldVariantReference"
+		});
+
+		// create control variant duplicate command
+		this.oControlVariantDuplicateCommand = CommandFactory.getCommandFor(this.oVariantManagement, "duplicate", {
+			sourceVariantReference: "variant0",
+			newVariantTitle: "newTitle"
+		}, this.oDesignTimeMetadata, {layer: "CUSTOMER"});
+
+		// create control variant setTitle command
+		this.oControlVariantSetTitleCommand = CommandFactory.getCommandFor(this.oVariantManagement, "setTitle", {
+			newText : "newText"
+		}, this.oDesignTimeMetadata, {layer: "CUSTOMER"});
+
+
+		sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns({
+			"sap.app": {
+				id: "sap.original.test"
+			}
+		});
+
+		this.oCommandStack.attachCommandExecuted(function(oEvent) {
+			if (oEvent.getParameters().command === this.oControlVariantSetTitleCommand) {
+				this.oSerializer.saveAsCommands("customer.sap.test")
+				.then(function() {
+					assert.ok(true, "then the promise for LREPSerializer.saveAsCommands() gets resolved");
+					assert.equal(this.oCommandStack.getCommands().length, 0, "and the command stack has been cleared");
+					fnCleanUp();
+					done();
+				}.bind(this));
+			}
+		}.bind(this));
+
+		this.oCommandStack.pushAndExecute(this.oControlVariantConfigureCommand)
+		.then(this.oCommandStack.pushAndExecute(this.oControlVariantSwitchCommand))
+		.then(this.oCommandStack.pushAndExecute(this.oControlVariantDuplicateCommand))
+		.then(this.oCommandStack.pushAndExecute(this.oControlVariantSetTitleCommand));
 	});
 
 });
