@@ -19,6 +19,7 @@
 		};
 
 		var oTable = new sap.m.Table("items", {
+			headerText: "Rating indicator in Table",
 			columns: [
 				new sap.m.Column({header: new sap.m.Text({text: "Name"})}),
 				new sap.m.Column({header: new sap.m.Text({text: "Rating"})})
@@ -123,7 +124,6 @@
 							]
 						}),
 						oRatingList,
-						new sap.m.Label({text: 'Rating indicator in Table:', labelFor: oTable}),
 						oTable
 					]
 				});
