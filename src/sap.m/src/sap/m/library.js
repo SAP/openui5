@@ -3344,22 +3344,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 
 		/**
-		 * Search given control's parents and try to find ScrollDelegate.
+		 * Search given control's parents and try to find a ScrollDelegate.
 		 *
-		 * @param {sap.ui.core.Control} oControl
-		 * @return {Object|undefined} ScrollDelegate or undefined if cannot find
+		 * @param {sap.ui.core.Control} oControl Starting point for the search
+		 * @param {boolean} bGlobal Whether the search should stop on component level (<code>false</code>) or not
+		 * @return {Object|undefined} ScrollDelegate or undefined if it cannot be found
 		 * @name sap.m#getScrollDelegate
 		 * @public
 		 * @since 1.11
 		 */
-		oLib.getScrollDelegate = function(oControl) {
+		oLib.getScrollDelegate = function(oControl, bGlobal) {
 			if (!(oControl instanceof sap.ui.core.Control)) {
 				return;
 			}
 
+			var oComponentType = sap.ui.require("sap/ui/core/UIComponent");
+
+			function doGetParent(c) {
+				if (!c) {
+					return;
+				}
+				return bGlobal && oComponentType && (c instanceof oComponentType) ? c.oContainer : c.oParent;
+			}
+
 			/*eslint-disable no-cond-assign */
-			for (var parent = oControl; parent = parent.oParent;) {
-				if (typeof parent.getScrollDelegate == "function") {
+			for (var parent = oControl; parent = doGetParent(parent);) {
+				if (parent && typeof parent.getScrollDelegate == "function") {
 					return parent.getScrollDelegate();
 				}
 			}
