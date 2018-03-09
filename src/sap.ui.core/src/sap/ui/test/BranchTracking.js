@@ -574,6 +574,20 @@
 				}
 			});
 		});
+
+		// allow easier module selection: larger list, one click selection
+		QUnit.begin(function () {
+			jQuery("#qunit-modulefilter-dropdown-list").css("max-height", "none");
+
+			jQuery("#qunit-modulefilter-dropdown").click(function (oMouseEvent) {
+				if (oMouseEvent.target.tagName === "LABEL") {
+					setTimeout(function () {
+						// click on label instead of checkbox triggers "Apply" automatically
+						jQuery("#qunit-modulefilter-actions").children().first().click();
+					});
+				}
+			});
+		});
 	}
 }());
 //TODO add tooltips to highlighting to explain rules
