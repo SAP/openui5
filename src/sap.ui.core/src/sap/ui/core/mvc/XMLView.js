@@ -513,24 +513,26 @@ sap.ui.define([
 			// unset any preprocessors (e.g. from an enclosing JSON view)
 
 			// create a function, which scopes the instance creation of a class with the corresponding owner ID
-			// XMLView special logic for asynchronous template parsing,
-			// when component loading is async but instance creation is sync.
-			var oParseConfig = {
-				"fnRunWithPreprocessor": function(fn) {
-					return ManagedObject.runWithPreprocessors(fn, {
-						settings: that._fnSettingsPreprocessor
-					});
-				}
-			};
+			// XMLView special logic for asynchronous template parsing, when component loading is async but
+			// instance creation is sync.
+			function fnRunWithPreprocessor(fn) {
+				return ManagedObject.runWithPreprocessors(fn, {
+					settings: that._fnSettingsPreprocessor
+				});
+			}
 
 			// parse the XML tree
-			var bAsync = !!that.oAsyncState;
-			return XMLTemplateProcessor.parseTemplatePromise(that._xContent, that, bAsync, oParseConfig).then(function(aParsedContent) {
-				that._aParsedContent = aParsedContent;
-				if (bAsync) {
+			if (!this.oAsyncState) {
+				this._aParsedContent = fnRunWithPreprocessor(XMLTemplateProcessor.parseTemplate.bind(null, this._xContent, this));
+			} else {
+				return XMLTemplateProcessor.parseTemplatePromise(this._xContent, this, true, {
+					fnRunWithPreprocessor: fnRunWithPreprocessor
+				}).then(function(aParsedContent) {
+					that._aParsedContent = aParsedContent;
+					// allow rendering of preserve content
 					delete that.oAsyncState.suppressPreserve;
-				}
-			});
+				});
+			}
 		};
 
 		XMLView.prototype.getControllerName = function() {
