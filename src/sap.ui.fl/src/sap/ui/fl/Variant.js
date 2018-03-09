@@ -213,6 +213,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the namespace.
+	 *
+	 * @param {string} sNamespace Namespace of the variants document
+	 *
+	 * @public
+	 */
+	Variant.prototype.setNamespace = function (sNamespace) {
+		this._oDefinition.content.namespace = sNamespace;
+	};
+
+	/**
 	 * Returns the id of the variant
 	 * @returns {string} Id of the variant document
 	 *
@@ -438,6 +449,16 @@ sap.ui.define([
 	 */
 	Variant.prototype.getComponent = function () {
 		return this._oDefinition.content.reference;
+	};
+
+	/**
+	 * Sets the component for the variant
+	 *
+	 * @param {string} sComponent ID of the app or app variant
+	 * @public
+	 */
+	Variant.prototype.setComponent = function (sComponent) {
+		this._oDefinition.content.reference = sComponent;
 	};
 
 	/**

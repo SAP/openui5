@@ -46,6 +46,14 @@ sap.ui.define([
 		return true;
 	};
 
+	ControlVariantSetTitle.prototype.getPreparedChange = function() {
+		this._oPreparedChange = this.getVariantChange();
+		if (!this._oPreparedChange) {
+			jQuery.sap.log.error("No prepared change available for ControlVariantSetTitle");
+		}
+		return this._oPreparedChange;
+	};
+
 	/**
 	 * @public Template Method to implement execute logic, with ensure precondition Element is available
 	 * @returns {Promise} Returns resolve after execution
@@ -91,7 +99,7 @@ sap.ui.define([
 		};
 
 		return Promise.resolve(this.oModel._setVariantProperties(this.sVariantManagementReference, mPropertyBag, false))
-						.then( function(oChange){
+						.then(function(oChange) {
 								this._oVariantChange = oChange;
 								oVariantManagementControlBinding.checkUpdate(true); /*Force Update as binding key stays same*/
 						}.bind(this));

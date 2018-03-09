@@ -59,7 +59,13 @@ sap.ui.require([
 	});
 
 	QUnit.test("when getNamespace is called", function(assert) {
-		assert.strictEqual(this.oVariant.getNamespace(), "sap.ui.rta.test.Demo.md.Component", "then reference is returned as namespace");
+		assert.equal(this.oVariant.getNamespace(), "sap.ui.rta.test.Demo.md.Component", "then reference is returned as namespace");
+	});
+
+	QUnit.test("when setNamespace is called", function(assert) {
+		assert.equal(this.oVariant.getNamespace(), "sap.ui.rta.test.Demo.md.Component");
+		this.oVariant.setNamespace("apps/ReferenceAppId/variants/");
+		assert.equal(this.oVariant.getNamespace(), "apps/ReferenceAppId/variants/", "the namespace has been changed");
 	});
 
 	QUnit.test("when getControlChanges is called", function(assert) {
@@ -149,6 +155,12 @@ sap.ui.require([
 	QUnit.test("when getComponent is called", function(assert) {
 		var sComponent = this.oVariant.getComponent();
 		assert.equal(sComponent, this.oVariantDef.content.reference);
+	});
+
+	QUnit.test("when setComponent is called", function(assert) {
+		assert.equal(this.oVariant.getComponent(), "sap.ui.rta.test.Demo.md.Component");
+		this.oVariant.setComponent("AppVariantId");
+		assert.equal(this.oVariant.getComponent(), "AppVariantId", "the component has been changed");
 	});
 
 	QUnit.test("when isUserDependent is called", function(assert) {
