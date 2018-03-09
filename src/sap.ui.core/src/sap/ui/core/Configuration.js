@@ -1637,6 +1637,17 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
+		 * Retrieves the custom units.
+		 * These custom units are set by {@link sap.ui.core.Configuration#setCustomUnits} and {@link sap.ui.core.Configuration#addCustomUnits}
+		 * @return {object} custom units object
+		 * @see sap.ui.core.Configuration#setCustomUnits
+		 * @see sap.ui.core.Configuration#addCustomUnits
+		 */
+		getCustomUnits: function () {
+			return this.mSettings["units"] ? this.mSettings["units"]["short"] : undefined;
+		},
+
+		/**
 		 * Sets custom units which can be used to do Unit Formatting.
 		 *
 		 * The custom unit object consists of:
@@ -1658,7 +1669,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 *		"unitPattern-count-other": "{0} bags"
 		 *  }
 		 * }
-	     * </code>
+		  * </code>
 		 * In the above snippet:
 		 * * <code>"BAG"</code> represent the unit key which is used to reference it.
 		 * * <code>"unitPattern-count-one"</code> represent the unit pattern for the form "one", e.g. the number <code>1</code> in the 'en' locale.
@@ -1680,17 +1691,6 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 			}
 			this._set("units", mUnitsshort);
 			return this;
-		},
-
-		/**
-		 * Retrieves the custom units.
-		 * These custom units are set by {@link sap.ui.core.Configuration#setCustomUnits} and {@link sap.ui.core.Configuration#addCustomUnits}
-		 * @return {object} custom units object
-		 * @see sap.ui.core.Configuration#setCustomUnits
-		 * @see sap.ui.core.Configuration#addCustomUnits
-		 */
-		getCustomUnits: function () {
-			return this.mSettings["units"] ? this.mSettings["units"]["short"] : undefined;
 		},
 
 		/**
@@ -1857,6 +1857,68 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		setNumberSymbol : function(sType, sSymbol) {
 			check(sType == "decimal" || sType == "group" || sType == "plusSign" || sType == "minusSign", "sType must be decimal, group, plusSign or minusSign");
 			this._set("symbols-latn-" + sType, sSymbol);
+			return this;
+		},
+
+		/**
+		 * Retrieves the custom currencies.
+		 * E.g.
+		 * <code>
+		 * {
+		 *  "KWD": {"digits": 3},
+		 *  "TND" : {"digits": 3}
+		 * }
+		 * </code>
+		 * @returns {object} the mapping between custom currencies and its digits
+		 */
+		getCustomCurrencies : function() {
+			return this.mSettings["currency"];
+		},
+
+		/**
+		 * Sets custom currencies and replaces existing entries.
+		 * E.g.
+		 * <code>
+		 * {
+		 *  "KWD": {"digits": 3},
+		 *  "TND" : {"digits": 3}
+		 * }
+		 * </code>
+		 * Note: To unset the custom currencies: call with <code>undefined</code>
+		 * @param {object} mCurrencies currency map which is set
+		 * @returns {sap.ui.core.Configuration.FormatSettings}
+		 */
+		setCustomCurrencies : function(mCurrencies) {
+			check(typeof mCurrencies === "object" || mCurrencies == null, "mCurrencyDigits must be an object");
+			Object.keys(mCurrencies || {}).forEach(function(sCurrencyDigit) {
+				check(typeof sCurrencyDigit === "string");
+				check(typeof mCurrencies[sCurrencyDigit] === "object");
+			});
+			this._set("currency", mCurrencies);
+			return this;
+		},
+
+		/**
+		 * Adds custom currencies to the existing entries.
+		 * E.g.
+		 * <code>
+		 * {
+		 *  "KWD": {"digits": 3},
+		 *  "TND" : {"digits": 3}
+		 * }
+		 * </code>
+		 *
+		 * @param {object} mCurrencies adds to the currency map
+		 * @return {sap.ui.core.Configuration.FormatSettings}
+		 * @see sap.ui.core.Configuration#setCustomCurrencies
+		 */
+		addCustomCurrencies: function (mCurrencies) {
+			// add custom units, or remove the existing ones if none are given
+			var mExistingCurrencies = this.getCustomCurrencies();
+			if (mExistingCurrencies){
+				mCurrencies = jQuery.extend({}, mExistingCurrencies, mCurrencies);
+			}
+			this.setCustomCurrencies(mCurrencies);
 			return this;
 		},
 
