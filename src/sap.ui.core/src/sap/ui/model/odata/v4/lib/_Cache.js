@@ -85,6 +85,8 @@ sap.ui.define([
 	 *   A map of key-value pairs representing the query string
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
+	 *
+	 * @private
 	 */
 	function Cache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect) {
 		this.bActive = true;
@@ -115,6 +117,8 @@ sap.ui.define([
 	 *   entity and the entity list are passed as parameter
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise for the DELETE request
+	 *
+	 * @public
 	 */
 	Cache.prototype._delete = function (sGroupId, sEditUrl, sPath, fnCallback) {
 		var aSegments = sPath.split("/"),
@@ -189,6 +193,8 @@ sap.ui.define([
 	 *   The path
 	 * @param {object} [oItem]
 	 *   The item; if it is <code>undefined</code>, nothing happens
+	 *
+	 * @private
 	 */
 	Cache.prototype.addByPath = function (mMap, sPath, oItem) {
 		if (oItem) {
@@ -206,6 +212,8 @@ sap.ui.define([
 	 * @param {object} oRootInstance A single top-level instance
 	 * @param {object} mTypeForMetaPath A map from meta path to the entity type (as delivered by
 	 *   {@link #fetchTypes})
+	 *
+	 * @private
 	 */
 	Cache.prototype.calculateKeyPredicates = function (oRootInstance, mTypeForMetaPath) {
 
@@ -261,6 +269,8 @@ sap.ui.define([
 
 	/**
 	 * Throws an error if the cache is not active.
+	 *
+	 * @private
 	 */
 	Cache.prototype.checkActive = function () {
 		var oError;
@@ -294,6 +304,8 @@ sap.ui.define([
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved without data when the POST request has been successfully sent
 	 *   and the entity has been marked as non-transient
+	 *
+	 * @public
 	 */
 	Cache.prototype.create = function (sGroupId, vPostPath, sPath, oEntityData,
 			fnCancelCallback, fnErrorCallback) {
@@ -369,6 +381,8 @@ sap.ui.define([
 	 *   The path
 	 * @param {object} oListener
 	 *   The change listener
+	 *
+	 * @public
 	 */
 	Cache.prototype.deregisterChange = function (sPath, oListener) {
 		this.removeByPath(this.mChangeListeners, sPath, oListener);
@@ -386,6 +400,8 @@ sap.ui.define([
 	 *   Relative path to drill-down into
 	 * @returns {any}
 	 *   The result matching to <code>sPath</code>
+	 *
+	 * @private
 	 */
 	Cache.prototype.drillDown = function (oData, sPath) {
 		var that = this;
@@ -465,6 +481,8 @@ sap.ui.define([
 	 *
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that is resolved with a map from resource path + entity path to the type
+	 *
+	 * @private
 	 */
 	Cache.prototype.fetchTypes = function () {
 		var aPromises, mTypeForMetaPath, that = this;
@@ -533,6 +551,8 @@ sap.ui.define([
 	 *   The relative path of a binding; must not end with '/'
 	 * @returns {boolean}
 	 *   <code>true</code> if there are pending changes
+	 *
+	 * @public
 	 */
 	Cache.prototype.hasPendingChangesForPath = function (sPath) {
 		return Object.keys(this.mPatchRequests).some(function (sRequestPath) {
@@ -547,6 +567,8 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath The path
 	 * @param {object} [oListener] The listener
+	 *
+	 * @private
 	 */
 	Cache.prototype.registerChange = function (sPath, oListener) {
 		this.addByPath(this.mChangeListeners, sPath, oListener);
@@ -561,6 +583,8 @@ sap.ui.define([
 	 *   The path
 	 * @param {object} oItem
 	 *   The item
+	 *
+	 * @private
 	 */
 	Cache.prototype.removeByPath = function (mMap, sPath, oItem) {
 		var aItems = mMap[sPath],
@@ -586,6 +610,8 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If there is a change which has been sent to the server and for which there is no response
 	 *   yet.
+	 *
+	 * @public
 	 */
 	Cache.prototype.resetChangesForPath = function (sPath) {
 		var that = this;
@@ -623,6 +649,8 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bActive
 	 *   Whether the cache shell be active
+	 *
+	 * @public
 	 */
 	Cache.prototype.setActive = function (bActive) {
 		this.bActive = bActive;
@@ -638,6 +666,8 @@ sap.ui.define([
 	 * @param {object} mQueryOptions
 	 *   The new query options
 	 * @throws {Error} If the cache has already sent a read request
+	 *
+	 * @public
 	 */
 	Cache.prototype.setQueryOptions = function (mQueryOptions) {
 		if (this.bSentReadRequest) {
@@ -653,6 +683,8 @@ sap.ui.define([
 	 * Returns the cache's URL.
 	 *
 	 * @returns {string} The URL
+	 *
+	 * @public
 	 */
 	Cache.prototype.toString = function () {
 		return this.oRequestor.getServiceUrl() + this.sResourcePath + this.sQueryString;
@@ -679,6 +711,8 @@ sap.ui.define([
 	 *   Path of the unit or currency for the property, relative to the entity
 	 * @returns {Promise}
 	 *   A promise for the PATCH request
+	 *
+	 * @public
 	 */
 	Cache.prototype.update = function (sGroupId, sPropertyPath, vValue, fnErrorCallback, sEditUrl,
 			sEntityPath, sUnitOrCurrencyPath) {
@@ -831,6 +865,8 @@ sap.ui.define([
 	 *
 	 *   The promise is rejected if the cache is inactive (see {@link #setActive}) when the response
 	 *   arrives.
+	 *
+	 * @public
 	 */
 	CollectionCache.prototype.fetchValue = function (sGroupId, sPath, fnDataRequested, oListener) {
 		var aElements,
@@ -863,6 +899,8 @@ sap.ui.define([
 	 *   The start index
 	 * @param {number} iEnd
 	 *   The end index (will not be filled)
+	 *
+	 * @private
 	 */
 	CollectionCache.prototype.fill = function (oPromise, iStart, iEnd) {
 		var i,
@@ -897,6 +935,8 @@ sap.ui.define([
 	 * @returns {object}
 	 *   Returns an object with a member <code>start</code> for the start index for the next
 	 *   read and <code>length</code> for the number of entries to be read.
+	 *
+	 * @private
 	 */
 	CollectionCache.prototype.getReadRange = function (iStart, iLength, iPrefetchLength) {
 		var aElements = this.aElements;
@@ -959,6 +999,8 @@ sap.ui.define([
 	 *   The promise is rejected if the cache is inactive (see {@link #setActive}) when the response
 	 *   arrives.
 	 * @throws {Error} If given index or length is less than 0
+	 *
+	 * @public
 	 * @see sap.ui.model.odata.v4.lib._Requestor#request
 	 */
 	CollectionCache.prototype.read = function (iIndex, iLength, iPrefetchLength, sGroupId,
@@ -1038,6 +1080,8 @@ sap.ui.define([
 	 *   The group ID
 	 * @param {function} [fnDataRequested]
 	 *   The function is called when the back-end requests have been sent.
+	 *
+	 * @private
 	 */
 	CollectionCache.prototype.requestElements = function (iStart, iEnd, sGroupId, fnDataRequested) {
 		var sDelimiter = this.sQueryString ? "&" : "?",
@@ -1122,7 +1166,7 @@ sap.ui.define([
 	 *   A promise which which resolves with <code>undefined</code> when the entity is updated in
 	 *   the cache.
 	 *
-	 * @private
+	 * @public
 	 */
 	CollectionCache.prototype.refreshSingle = function (sGroupId, iIndex, fnDataRequested) {
 		var sPredicate = this.aElements[iIndex]["@$ui5.predicate"],
@@ -1182,6 +1226,8 @@ sap.ui.define([
 	 *
 	 * @throws {Error}
 	 *   Deletion of a property is not supported.
+	 *
+	 * @public
 	 */
 	PropertyCache.prototype._delete = function () {
 		throw new Error("Unsupported");
@@ -1192,6 +1238,8 @@ sap.ui.define([
 	 *
 	 * @throws {Error}
 	 *   Creation of a property is not supported.
+	 *
+	 * @public
 	 */
 	PropertyCache.prototype.create = function () {
 		throw new Error("Unsupported");
@@ -1214,9 +1262,10 @@ sap.ui.define([
 	 *   via {@link #update} later.
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the element.
-	 *
 	 *   The promise is rejected if the cache is inactive (see {@link #setActive}) when the response
 	 *   arrives.
+	 *
+	 * @public
 	 */
 	PropertyCache.prototype.fetchValue = function (sGroupId, sPath, fnDataRequested, oListener) {
 		var that = this;
@@ -1239,6 +1288,8 @@ sap.ui.define([
 	 *
 	 * @throws {Error}
 	 *   Updating a single property is not supported.
+	 *
+	 * @public
 	 */
 	PropertyCache.prototype.update = function () {
 		throw new Error("Unsupported");
@@ -1265,6 +1316,8 @@ sap.ui.define([
 	 *   error.
 	 * @param {string} [sMetaPath]
 	 *   Optional meta path in case it cannot be derived from the given resource path
+	 *
+	 * @private
 	 */
 	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost,
 			sMetaPath) {
@@ -1302,6 +1355,8 @@ sap.ui.define([
 	 *   arrives.
 	 * @throws {Error}
 	 *   If the cache is using POST but no POST request has been sent yet
+	 *
+	 * @public
 	 */
 	SingleCache.prototype.fetchValue = function (sGroupId, sPath, fnDataRequested, oListener) {
 		var sResourcePath = this.sResourcePath + this.sQueryString,
@@ -1348,6 +1403,8 @@ sap.ui.define([
 	 *   A promise to be resolved with the result of the request.
 	 * @throws {Error}
 	 *   If the cache does not allow POST or another POST is still being processed.
+	 *
+	 * @public
 	 */
 	SingleCache.prototype.post = function (sGroupId, oData, sETag) {
 		var sHttpMethod = "POST",
@@ -1409,6 +1466,8 @@ sap.ui.define([
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
+	 *
+	 * @public
 	 */
 	Cache.create = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect) {
 		return new CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect);
@@ -1431,6 +1490,8 @@ sap.ui.define([
 	 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
+	 *
+	 * @public
 	 */
 	Cache.createProperty = function (oRequestor, sResourcePath, mQueryOptions) {
 		return new PropertyCache(oRequestor, sResourcePath, mQueryOptions);
@@ -1461,6 +1522,8 @@ sap.ui.define([
 	 *   Optional meta path in case it cannot be derived from the given resource path
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
+	 *
+	 * @public
 	 */
 	Cache.createSingle = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
 			bPost, sMetaPath) {
@@ -1473,6 +1536,8 @@ sap.ui.define([
 	 * influenced by the annotations "@odata.count" and "@odata.nextLink".
 	 *
 	 * @param {object} oResult The result
+	 *
+	 * @private
 	 */
 	Cache.computeCount = function (oResult) {
 		if (oResult && typeof oResult === "object") {
@@ -1515,6 +1580,8 @@ sap.ui.define([
 	 *   The property value
 	 * @returns {object}
 	 *   The resulting object
+	 *
+	 * @private
 	 */
 	Cache.makeUpdateData = function (aPropertyPath, vValue) {
 		return aPropertyPath.reduceRight(function (vValue0, sSegment) {
