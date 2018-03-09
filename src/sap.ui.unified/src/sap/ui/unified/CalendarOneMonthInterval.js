@@ -182,8 +182,8 @@ sap.ui.define([
 			oOneMonthDatesRow.setDate(oLocalFocusDate);//really focus the given date
 			oOneMonthDatesRow._bNoRangeCheck = false;
 
-			/* Planning Calendar is already notified about startDateChange event, so no need to manually update its row's startdate
-			ike we previously did  */
+			/* Planning Calendar is already notified about startDateChange event, so no need to manually update its
+			 row's startDate like we previously did  */
 
 			this._oFocusDateOneMonth = null;
 

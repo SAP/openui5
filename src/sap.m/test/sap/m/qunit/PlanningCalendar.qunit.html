@@ -192,7 +192,7 @@
 							tooltip: "Tooltip 4",
 							selected: true
 						})
-					]
+					],
 				}),
 					new sap.m.PlanningCalendarRow(sID + "-Row2", {
 						icon: "../../ui/unified/images/m_01.png",
@@ -682,6 +682,21 @@
 			oCalendarRow = oRow.getCalendarRow();
 			assert.ok(jQuery.sap.equal(oCalendarRow.getNonWorkingDays(), [2, 3]), "Row2: CalendarRow - nonWorkingDays");
 			assert.ok(jQuery.sap.equal(oCalendarRow.getNonWorkingHours(), [11, 12]), "Row2: CalendarRow - nonWorkingHours");
+		});
+
+		QUnit.test("PlanningCalendarRow's customData is used", function () {
+			// Prepare
+			var oCustomData = new sap.ui.core.CustomData();
+
+			// Act
+			var oPCRow = new sap.m.PlanningCalendarRow({
+				customData: oCustomData
+			});
+
+			// Assert
+			assert.deepEqual(oPCRow._oColumnListItem.getCustomData(), oPCRow.getCustomData(),
+				"getCustomData of PlanningCalendarRow is used by internal ColumnListItem");
+
 		});
 
 		QUnit.test("Table", function(assert) {
