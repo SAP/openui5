@@ -32,7 +32,10 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/InvisibleText"],
 			sId = oSF.getId(),
 			bShowRefreshButton = oSF.getShowRefreshButton(),
 			bShowSearchBtn = oSF.getShowSearchButton(),
-			oAccAttributes = {}; // additional accessibility attributes
+			oAccAttributes = {}, // additional accessibility attributes
+			sToolTipValue,
+			sRefreshToolTip = oSF.getRefreshButtonTooltip(),
+			sResetToolTipValue;
 
 		// container
 		rm.write("<div");
@@ -128,6 +131,8 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/InvisibleText"],
 				// 2. Reset button
 				rm.write("<div");
 				rm.writeAttribute("id", oSF.getId() + "-reset");
+				sResetToolTipValue = sValue === "" ? this.oSearchFieldToolTips.SEARCH_BUTTON_TOOLTIP : this.oSearchFieldToolTips.RESET_BUTTON_TOOLTIP;
+				rm.writeAttributeEscaped("title", sResetToolTipValue); // initial rendering reset is search when no value is set
 				rm.addClass("sapMSFR"); // reset
 				rm.addClass("sapMSFB"); // button
 				if (Device.browser.firefox) {
@@ -149,9 +154,12 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/InvisibleText"],
 						rm.addClass("sapMSFBF"); // firefox, active state by peventDefault
 					}
 					rm.writeClasses();
-					if (oSF.getRefreshButtonTooltip()) {
-						rm.writeAttributeEscaped("title", oSF.getRefreshButtonTooltip());
+					if (bShowRefreshButton) {
+						sToolTipValue = sRefreshToolTip === "" ? this.oSearchFieldToolTips.REFRESH_BUTTON_TOOLTIP : sRefreshToolTip;
+					} else {
+						sToolTipValue = this.oSearchFieldToolTips.SEARCH_BUTTON_TOOLTIP;
 					}
+					rm.writeAttributeEscaped("title", sToolTipValue);
 					rm.write( "></div>");
 				}
 			}
