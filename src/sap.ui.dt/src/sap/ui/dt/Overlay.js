@@ -156,7 +156,18 @@ function(
 				/**
 				 * Fires when scrollbar is synced
 				 */
-				scrollSynced: {}
+				scrollSynced: {},
+
+				/**
+				 * Fires when isRoot is changed
+				 */
+				isRootChanged: {
+					parameters: {
+						value: {
+							type: "boolean"
+						}
+					}
+				}
 			}
 		},
 		constructor: function () {
@@ -832,6 +843,17 @@ function(
 			this.getVisible()
 			&& (this.isRoot() ? true : this.getParent().isVisible())
 		);
+	};
+
+	Overlay.prototype.setIsRoot = function (bValue) {
+		bValue = !!bValue;
+
+		if (this.getIsRoot() !== bValue) {
+			this.setProperty('isRoot', bValue);
+			this.fireIsRootChanged({
+				value: bValue
+			});
+		}
 	};
 
 	/**

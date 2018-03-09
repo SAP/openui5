@@ -167,12 +167,68 @@ function(
 	});
 
 	ElementOverlay.prototype.asyncInit = function () {
-		this._oMutationObserver = Overlay.getMutationObserver();
-		this._oMutationObserver.attachDomChanged(this._onDomChanged, this);
+		return (
+			this.getDesignTimeMetadata()
+			? Promise.resolve()
+			: this._loadDesignTimeMetadata()
+		).then(function () {
+			this._initMutationObserver();
+			this._initControlObserver();
+		}.bind(this));
 
-		this._observe();
+	};
 
-		return this.getDesignTimeMetadata() ? Promise.resolve() : this._loadDesignTimeMetadata();
+	ElementOverlay.prototype._initMutationObserver = function () {
+		if (this.isRoot()) {
+			this._subscribeToMutationObserver();
+		}
+
+		this.attachEvent('isRootChanged', function (oEvent) {
+			if (oEvent.getParameter('value')) {
+				this._subscribeToMutationObserver();
+			} else {
+				this._unsubscribeFromMutationObserver();
+			}
+		}, this);
+	};
+
+	ElementOverlay.prototype._subscribeToMutationObserver = function () {
+		var oMutationObserver = Overlay.getMutationObserver();
+		oMutationObserver.addToWhiteList(this.getElement().getId());
+		oMutationObserver.attachDomChanged(this._onDomChanged, this);
+	};
+
+	ElementOverlay.prototype._unsubscribeFromMutationObserver = function () {
+		var oMutationObserver = Overlay.getMutationObserver();
+		oMutationObserver.removeFromWhiteList(this.getAssociation('element'));
+		oMutationObserver.detachDomChanged(this._onDomChanged, this);
+	};
+
+	/**
+	 * Starts monotoring element with ControlObserser
+	 * @private
+	 */
+	ElementOverlay.prototype._initControlObserver = function() {
+		if (this.getElement() instanceof Control) {
+			this._oObserver = new ControlObserver({
+				target: this.getElement()
+			});
+		} else {
+			this._oObserver = new ManagedObjectObserver({
+				target: this.getElement()
+			});
+		}
+		this._oObserver.attachModified(this._onElementModified, this);
+		this._oObserver.attachDestroyed(this._onElementDestroyed, this);
+	};
+
+	/**
+	 * @private
+	 */
+	ElementOverlay.prototype._destroyControlObserver = function() {
+		if (this._oObserver) {
+			this._oObserver.destroy();
+		}
 	};
 
 	ElementOverlay.prototype._getAttributes = function () {
@@ -214,16 +270,12 @@ function(
 	 * @protected
 	 */
 	ElementOverlay.prototype.exit = function () {
-		if (this._oMutationObserver) {
-			this._oMutationObserver.detachDomChanged(this._onDomChanged, this);
-			delete this._oMutationObserver;
-		}
+		this._unsubscribeFromMutationObserver();
+		this._destroyControlObserver();
 
 		if (this._iApplyStylesRequest) {
 			window.cancelAnimationFrame(this._iApplyStylesRequest);
 		}
-
-		this._unobserve();
 
 		Overlay.prototype.exit.apply(this, arguments);
 	};
@@ -617,33 +669,6 @@ function(
 					&& !oDesignTimeMetadata.isAggregationIgnored(oElement, sAggregationName)
 				);
 			});
-	};
-
-	/**
-	 * Starts monotoring element with ControlObserser
-	 * @private
-	 */
-	ElementOverlay.prototype._observe = function() {
-		if (this.getElement() instanceof Control) {
-			this._oObserver = new ControlObserver({
-				target: this.getElement()
-			});
-		} else {
-			this._oObserver = new ManagedObjectObserver({
-				target: this.getElement()
-			});
-		}
-		this._oObserver.attachModified(this._onElementModified, this);
-		this._oObserver.attachDestroyed(this._onElementDestroyed, this);
-	};
-
-	/**
-	 * @private
-	 */
-	ElementOverlay.prototype._unobserve = function() {
-		if (this._oObserver) {
-			this._oObserver.destroy();
-		}
 	};
 
 	/**
