@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/demo/orderbrowser/test/integration/pages/Common",
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/matchers/AggregationFilled",
+	"sap/ui/test/matchers/AggregationEmpty",
 	"sap/ui/test/matchers/PropertyStrictEquals"
-], function(Opa5, Press, EnterText, Common, AggregationLengthEquals, AggregationFilled, PropertyStrictEquals) {
+], function(Opa5, Press, EnterText, Common, AggregationLengthEquals, AggregationFilled, AggregationEmpty, PropertyStrictEquals) {
 	"use strict";
 
 	var sViewName = "Master",
@@ -128,22 +129,6 @@ sap.ui.define([
 					});
 				},
 
-				iTypeSomethingInTheSearchThatCannotBeFoundAndTriggerRefresh : function () {
-					var fireRefreshButtonPressedOnSearchField = function (oSearchField) {
-
-						/*eslint-disable new-cap */
-						var oEvent = jQuery.Event("touchend");
-						/*eslint-enable new-cap */
-						oEvent.originalEvent = {refreshButtonPressed: true, id: oSearchField.getId()};
-						oEvent.target = oSearchField;
-						oEvent.srcElement = oSearchField;
-						jQuery.extend(oEvent, oEvent.originalEvent);
-
-						oSearchField.fireSearch(oEvent);
-					};
-					return this.iSearchForValue([new EnterText({text: sSomethingThatCannotBeFound}), fireRefreshButtonPressedOnSearchField]);
-				},
-
 				iSearchForValue : function (aActions) {
 					return this.waitFor({
 						id : "searchField",
@@ -201,11 +186,11 @@ sap.ui.define([
 					});
 				},
 
-				theListHasEntries : function () {
+				theListHasNoEntries : function () {
 					return this.waitFor({
 						viewName : sViewName,
 						id : "list",
-						matchers : new AggregationFilled({
+						matchers : new AggregationEmpty({
 							name : "items"
 						}),
 						success : function () {

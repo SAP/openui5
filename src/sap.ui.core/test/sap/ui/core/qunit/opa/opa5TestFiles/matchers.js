@@ -155,7 +155,7 @@ sap.ui.define([
 		});
 		oOpa5.emptyQueue();
 
-		this.clock.tick(iExecutionDelay);
+		this.clock.tick(iExecutionDelay + 200);
 		assert.strictEqual(oMatchSpy.callCount, 1, "called the matcher for the first time");
 		this.clock.tick(200);
 		assert.strictEqual(oMatchSpy.callCount, 2, "called the matcher for the second time");
@@ -194,7 +194,7 @@ sap.ui.define([
 		});
 		Opa5.emptyQueue();
 
-		this.clock.tick(iExecutionDelay);
+		this.clock.tick(iExecutionDelay + 200);
 		// Assert
 		assert.strictEqual(oTextMatcherSpy.callCount, 0, "did not call the oTextMatcher yet");
 		assert.strictEqual(oEnabledMatcherSpy.callCount, 1, "called the oEnabledMatcher");
@@ -297,8 +297,8 @@ sap.ui.define([
 			timeout : 1 //second
 		});
 		oOpa5.emptyQueue();
-		this.clock.tick(iExecutionDelay);
-		this.clock.tick(iExecutionDelay);
+		this.clock.tick(iExecutionDelay + 200);
+		this.clock.tick(iExecutionDelay + 200);
 
 		assert.strictEqual(fnMatcher.callCount, 2, "called the matcher twice");
 

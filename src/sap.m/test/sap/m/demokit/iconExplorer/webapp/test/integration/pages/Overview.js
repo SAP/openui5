@@ -5,10 +5,11 @@ sap.ui.define([
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/matchers/AggregationFilled",
+	"sap/ui/test/matchers/AggregationEmpty",
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/demo/iconexplorer/test/integration/pages/Common"
-], function(Opa5, Press, EnterText, Ancestor, AggregationLengthEquals, AggregationFilled, Properties, PropertyStrictEquals, Common) {
+], function(Opa5, Press, EnterText, Ancestor, AggregationLengthEquals, AggregationFilled, AggregationEmpty, Properties, PropertyStrictEquals, Common) {
 	"use strict";
 
 	var sViewName = "Overview",
@@ -228,21 +229,6 @@ sap.ui.define([
 					return this.iSearchForValueWithActions([new EnterText({text: sSearchString}), new Press()]);
 				},
 
-				iTypeSomethingInTheSearchThatCannotBeFoundAndTriggerRefresh: function () {
-					var fireRefreshButtonPressedOnSearchField = function (oSearchField) {
-						/*eslint-disable new-cap */
-						var oEvent = jQuery.Event("touchend");
-						/*eslint-enable new-cap */
-						oEvent.originalEvent = {refreshButtonPressed: true, id: oSearchField.getId()};
-						oEvent.target = oSearchField;
-						oEvent.srcElement = oSearchField;
-						jQuery.extend(oEvent, oEvent.originalEvent);
-
-						oSearchField.fireSearch(oEvent);
-					};
-					return this.iSearchForValueWithActions([new EnterText({text: sSomethingThatCannotBeFound}), fireRefreshButtonPressedOnSearchField]);
-				},
-
 				iClearTheSearch: function () {
 					return this.iSearchForValueWithActions([new EnterText({text: ""})]);
 				},
@@ -428,17 +414,17 @@ sap.ui.define([
 					}));
 				},
 
-				theTableHasEntries: function () {
+				theTableHasNoEntries: function () {
 					return this.waitFor({
 						viewName: sViewName,
 						id: sResultsId,
-						matchers: new AggregationFilled({
+						matchers: new AggregationEmpty({
 							name: "items"
 						}),
 						success: function () {
-							Opa5.assert.ok(true, "The table has entries");
+							Opa5.assert.ok(true, "The table has no entries");
 						},
-						errorMessage: "The table had no entries"
+						errorMessage: "The table has entries"
 					});
 				},
 
