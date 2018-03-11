@@ -1,4 +1,3 @@
- /*global QUnit*/
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/demo/cart/test/arrangement/Arrangement",
@@ -28,8 +27,5 @@ sap.ui.define([
 		viewNamespace : "sap.ui.demo.cart.view.",
 		autoWait: true
 	});
-
-	// some features take more than 90sec that is the default timeout so need to increase it
-	QUnit.config.testTimeout = 180000;
 });
 

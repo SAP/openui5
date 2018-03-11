@@ -4,11 +4,10 @@ sap.ui.define([
 		"sap/ui/test/actions/EnterText",
 		"sap/ui/test/matchers/AggregationLengthEquals",
 		"sap/ui/test/matchers/AggregationFilled",
-		"sap/ui/test/matchers/AggregationEmpty",
 		"sap/ui/test/matchers/PropertyStrictEquals",
 		"sap/ui/demo/worklist/test/integration/pages/Common",
 		"sap/ui/demo/worklist/test/integration/pages/shareOptions"
-	], function(Opa5, Press, EnterText,AggregationLengthEquals, AggregationFilled, AggregationEmpty, PropertyStrictEquals, Common, shareOptions) {
+	], function(Opa5, Press, EnterText,AggregationLengthEquals, AggregationFilled, PropertyStrictEquals, Common, shareOptions) {
 		"use strict";
 
 		var sViewName = "Worklist",
@@ -145,6 +144,22 @@ sap.ui.define([
 						return this.iSearchForValueWithActions([new EnterText({text : sSearchString}), new Press()]);
 					},
 
+					iTypeSomethingInTheSearchThatCannotBeFoundAndTriggerRefresh : function () {
+						var fireRefreshButtonPressedOnSearchField = function (oSearchField) {
+
+							/*eslint-disable new-cap */
+							var oEvent = jQuery.Event("touchend");
+							/*eslint-enable new-cap */
+							oEvent.originalEvent = {refreshButtonPressed: true, id: oSearchField.getId()};
+							oEvent.target = oSearchField;
+							oEvent.srcElement = oSearchField;
+							jQuery.extend(oEvent, oEvent.originalEvent);
+
+							oSearchField.fireSearch(oEvent);
+						};
+						return this.iSearchForValueWithActions([new EnterText({text: sSomethingThatCannotBeFound}), fireRefreshButtonPressedOnSearchField]);
+					},
+
 					iClearTheSearch : function () {
 						return this.iSearchForValueWithActions([new EnterText({text: ""}), new Press()]);
 					},
@@ -180,17 +195,17 @@ sap.ui.define([
 						});
 					},
 
-					theTableHasNoEntries : function () {
+					theTableHasEntries : function () {
 						return this.waitFor({
 							viewName : sViewName,
 							id : sTableId,
-							matchers : new AggregationEmpty({
+							matchers : new AggregationFilled({
 								name : "items"
 							}),
 							success : function () {
-								Opa5.assert.ok(true, "The table has no entries");
+								Opa5.assert.ok(true, "The table has entries");
 							},
-							errorMessage : "The table had entries"
+							errorMessage : "The table had no entries"
 						});
 					},
 

@@ -50,6 +50,5 @@ sap.ui.define([
 
 		// Assertions
 		Then.onTheOverviewPage.theTableDoesNotContainTheIcon("activate");
-		Then.iTeardownMyApp();
 	});
 });

@@ -14,7 +14,7 @@ sap.ui.define([
 		//Actions
 		When.onTheWorklistPage.iRememberTheItemAtPosition(1);
 		When.onTheBrowser.iRestartTheAppWithTheRememberedItem({
-			delay: 5000
+			delay: 1000
 		});
 		When.onTheAppPage.iWaitUntilTheAppBusyIndicatorIsGone();
 
