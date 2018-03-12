@@ -778,6 +778,10 @@ sap.ui.require([
 
 		// code under test
 		oMetaModel = new ODataMetaModel(null, null, null, oModel);
+
+		// code under test
+		assert.strictEqual(oMetaModel.getAdapterFactoryModulePath(),
+			"sap/ui/model/odata/v4/meta/ODataAdapterFactory");
 	});
 
 	//*********************************************************************************************
