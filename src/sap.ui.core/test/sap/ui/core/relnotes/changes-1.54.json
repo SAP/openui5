@@ -746,5 +746,28 @@
         "references": []
       }
     ]
+  },
+  "1.54.2": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "47c7a33abf009b636b7c62a236b2bb3adb211b2d",
+        "type": "FIX",
+        "text": " Usage of different jQuery version (sap-ui-core-nojQuery.js)",
+        "references": []
+      },
+      {
+        "id": "916f17f14c3bdb0e0f2f7625bcc1936abc9329e1",
+        "type": "FIX",
+        "text": " core/AppCacheBuster: cache buster token for XHR",
+        "references": []
+      },
+      {
+        "id": "4732e0570678bd1eff2000d8dfe133dd36ca97eb",
+        "type": "FIX",
+        "text": " performance/Interaction: do not count cached requests",
+        "references": []
+      }
+    ]
   }
 }

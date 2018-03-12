@@ -1460,5 +1460,76 @@
         "references": []
       }
     ]
+  },
+  "1.52.8": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "6e38f9c97112f0d7049bf46131fd5094eaab0e1e",
+        "type": "FIX",
+        "text": " sap.m.Button: Now the icons are with the correct color when Reject/Accept/Emphasized + Disabled",
+        "references": []
+      },
+      {
+        "id": "a86265725719360e12ffe994ce550661338d8035",
+        "type": "FIX",
+        "text": " sap.m.GrowingEnablement: Focus shouldn\u0027t jump out of the control.",
+        "references": []
+      },
+      {
+        "id": "51602def0996a3d05b735d4dfef46e5e35a70c21",
+        "type": "FIX",
+        "text": " sap.m.Input: SelectedItem is now correctly set when tap is pressed",
+        "references": []
+      },
+      {
+        "id": "8c80e1adeb0e0efb2ef3b1eb780ff0b927ff69e5",
+        "type": "FIX",
+        "text": " sap.m.MessagePage: Positioning in ObjectPage section fixed",
+        "references": []
+      },
+      {
+        "id": "c6d71b5a3a32af4a3d281d23252856b04a220f39",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Reset cached sizes on control reset",
+        "references": []
+      },
+      {
+        "id": "ad4616f46cea192c3435f42d75c2373e842478c2",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Auto closing is now fixed",
+        "references": []
+      },
+      {
+        "id": "1346370d95e3885e275d786ee423da4f19a9093f",
+        "type": "FIX",
+        "text": " sap.m.StepInput: pressing PageUp or PageDown doesn\u0027t scroll the page now",
+        "references": []
+      },
+      {
+        "id": "3419112100f4d83f962a71bc6f8c1d89bafcc492",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: Tile is initially visible now if TileContainer contains only one tile",
+        "references": []
+      },
+      {
+        "id": "33ee28b07ae2fbe37199262b65dc03407fcb38ce",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: The placeholder now is correctly displayed in IE after focusout",
+        "references": []
+      },
+      {
+        "id": "a143b8b26f0f63952d46cc8c021af951323ec77f",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: nonWorkingDays now can have another type when set using specialDates aggregation",
+        "references": []
+      },
+      {
+        "id": "d16e68de68dea94505bb144807ced82ab429949d",
+        "type": "FIX",
+        "text": " sap.ui.unified.MenuListItem: Arrow positioned correctly in compact mode",
+        "references": []
+      }
+    ]
   }
 }

@@ -128,5 +128,22 @@
         "references": []
       }
     ]
+  },
+  "1.54.2": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "c6c8c95b564e9e9ecfb807e5f5e031323bda6a4b",
+        "type": "FIX",
+        "text": " Add getPreparedChange to ctrl variant commands",
+        "references": []
+      },
+      {
+        "id": "2d8a8bb3786c7956ade92abf2d0efaa293480598",
+        "type": "FIX",
+        "text": " Fix open issues",
+        "references": []
+      }
+    ]
   }
 }

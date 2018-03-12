@@ -290,5 +290,34 @@
         "references": []
       }
     ]
+  },
+  "1.54.2": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "c6c8c95b564e9e9ecfb807e5f5e031323bda6a4b",
+        "type": "FIX",
+        "text": " Add getPreparedChange to ctrl variant commands",
+        "references": []
+      },
+      {
+        "id": "fe12e435472c023ef5f11672fc6c173ed271fbaa",
+        "type": "FIX",
+        "text": " sap.ui.rta: Delete the app variant from the layered repository if",
+        "references": []
+      },
+      {
+        "id": "a7bd11cbc9ada7c8ff5e86c7705f16d1789defaf",
+        "type": "FIX",
+        "text": " sap.ui.rta: Getting rid of the feature toggle parameter.",
+        "references": []
+      },
+      {
+        "id": "2b3ecc4b2fa97faca73fd7428eb426eabb3914cb",
+        "type": "FIX",
+        "text": " sap.ui.rta: check geometry of overlay instead of original element",
+        "references": []
+      }
+    ]
   }
 }
