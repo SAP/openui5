@@ -1089,6 +1089,51 @@
 		});
 	});
 
+	QUnit.module("First visible section", {
+
+		beforeEach: function () {
+			this.oObjectPage = helpers.generateObjectPageWithSubSectionContent(oFactory, 5, 2);
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+		}
+	});
+
+	QUnit.test("iconTabBar mode selected section", function (assert) {
+		this.oObjectPage.setUseIconTabBar(true);
+
+		var oSectionToSelect = this.oObjectPage.getSections()[1];
+		this.oObjectPage.setSelectedSection(oSectionToSelect);
+
+		helpers.renderObject(this.oObjectPage);
+
+		assert.ok(this.oObjectPage._isFirstVisibleSectionBase(oSectionToSelect), "the selected section is the first visible one");
+	});
+
+	QUnit.test("iconTabBar mode selected section first subSection", function (assert) {
+		this.oObjectPage.setUseIconTabBar(true);
+
+		var oSectionToSelect = this.oObjectPage.getSections()[1],
+			oSectionToSelectFirstSubSection = oSectionToSelect.getSubSections()[0];
+		this.oObjectPage.setSelectedSection(oSectionToSelect);
+
+		helpers.renderObject(this.oObjectPage);
+
+		assert.ok(this.oObjectPage._isFirstVisibleSectionBase(oSectionToSelectFirstSubSection), "the first visible subSection is correct");
+	});
+
+	QUnit.test("iconTabBar mode selected section non-first subSection", function (assert) {
+		this.oObjectPage.setUseIconTabBar(true);
+
+		var oSectionToSelect = this.oObjectPage.getSections()[1],
+			oSectionToSelectSecondSubSection = oSectionToSelect.getSubSections()[1];
+		this.oObjectPage.setSelectedSection(oSectionToSelect);
+
+		helpers.renderObject(this.oObjectPage);
+
+		assert.ok(!this.oObjectPage._isFirstVisibleSectionBase(oSectionToSelectSecondSubSection), "the first visible subSection is correct");
+	});
+
 	function checkObjectExists(sSelector) {
 		var oObject = jQuery(sSelector);
 		return oObject.length !== 0;
