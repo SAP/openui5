@@ -257,7 +257,7 @@ sap.ui.define([
 		var $DomNode = this.$(),
 			sMode = this.getMode(),
 			// In Background mode, the src property should be read from the temp Image object
-			sSrc = (sMode === ImageMode.Image) ? $DomNode.attr("src") : this._oImage.src,
+			sSrc = (sMode === ImageMode.Image) ? this._getDomImg().attr("src") : this._oImage.src,
 			d = Image._currentDevicePixelRatio,
 			sCurrentSrc = this._isActiveState ? this.getActiveSrc() : this.getSrc();
 
@@ -528,12 +528,22 @@ sap.ui.define([
 			// the src is updated on the output DOM element when mode is set to Image
 			// the src is updated on the temp Image object when mode is set to Background
 			if (sMode === ImageMode.Image) {
-				$DomNode.attr("src", sSrc);
+				this._getDomImg().attr("src", sSrc);
 			} else {
 				$DomNode.addClass("sapMNoImg");
 				jQuery(this._oImage).attr("src", sSrc);
 			}
 		}
+	};
+
+	/**
+	 * Returns the img Dom element
+	 * @private
+	 */
+	Image.prototype._getDomImg = function() {
+		var $DomNode = this.$();
+
+		return this.getDetailBox() ? $DomNode.children("img") : $DomNode;
 	};
 
 	/**
