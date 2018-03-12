@@ -744,9 +744,6 @@ sap.ui.define([
 	 *   The meta path corresponding to the resource path; needed in case V2 response does not
 	 *   contain <code>__metadata.type</code>, for example "2.2.7.2.4 RetrievePrimitiveProperty
 	 *   Request"
-	 * @param {boolean} [bIsFreshToken=false]
-	 *   Whether the CSRF token has already been refreshed and thus should not be refreshed
-	 *   again
 	 * @returns {Promise}
 	 *   A promise on the outcome of the HTTP request
 	 * @throws {Error}
@@ -755,119 +752,61 @@ sap.ui.define([
 	 * @private
 	 */
 	Requestor.prototype.request = function (sMethod, sResourcePath, sGroupId, mHeaders, oPayload,
-			fnSubmit, fnCancel, sMetaPath, bIsFreshToken) {
-		var oBatchRequest,
-			bIsBatch = sResourcePath === "$batch",
-			sPayload,
-			oPromise,
+			fnSubmit, fnCancel, sMetaPath) {
+		var oPromise,
 			oRequest,
 			that = this;
-
-		function executeRequest() {
-			return new Promise(function (fnResolve, fnReject) {
-				var sCurrentCSRFToken = that.mHeaders["X-CSRF-Token"];
-				// Adding query parameters could have been the responsibility of submitBatch,
-				// but doing it here makes the $batch recognition easier.
-				jQuery.ajax(that.sServiceUrl + that.convertResourcePath(sResourcePath)
-						+ (bIsBatch ? that.sQueryParams : ""), {
-					data : sPayload,
-					headers : jQuery.extend({},
-						that.mPredefinedRequestHeaders,
-						that.mHeaders,
-						mHeaders,
-						bIsBatch ? oBatchRequest.headers : that.mFinalHeaders),
-					method : sMethod
-				}).then(function (oPayload, sTextStatus, jqXHR) {
-					try {
-						that.doCheckVersionHeader(jqXHR.getResponseHeader, sResourcePath);
-					} catch (oError) {
-						fnReject(oError);
-						return;
-					}
-					that.mHeaders["X-CSRF-Token"]
-						= jqXHR.getResponseHeader("X-CSRF-Token") || that.mHeaders["X-CSRF-Token"];
-					if (bIsBatch) {
-						fnResolve(_Batch.deserializeBatchResponse(
-							jqXHR.getResponseHeader("Content-Type"), oPayload));
-					} else {
-						try {
-							fnResolve(that.doConvertResponse(oPayload, sMetaPath));
-						} catch (oError) {
-							fnReject(oError);
-						}
-					}
-				}, function (jqXHR, sTextStatus, sErrorMessage) {
-					var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
-					if (!bIsFreshToken && jqXHR.status === 403
-							&& sCsrfToken && sCsrfToken.toLowerCase() === "required") {
-						// refresh CSRF token and repeat original request
-						that.refreshSecurityToken(sCurrentCSRFToken).then(function () {
-							// no fnSubmit, it has been called already
-							// no fnCancel, it is only relevant while the request is in the queue
-							fnResolve(that.request(sMethod, sResourcePath, sGroupId, mHeaders,
-								oPayload, undefined, undefined, sMetaPath, true));
-						}, fnReject);
-					} else {
-						fnReject(_Helper.createError(jqXHR));
-					}
-				});
-			});
-		}
 
 		if (sGroupId === "$cached") {
 			throw new Error("Unexpected request: " + sMethod + " " + sResourcePath);
 		}
 
+		sResourcePath = this.convertResourcePath(sResourcePath);
 		sGroupId = sGroupId || "$direct";
-		if (bIsBatch) {
-			oBatchRequest = _Batch.serializeBatchRequest(_Requestor.cleanBatch(oPayload));
-			sPayload = oBatchRequest.body;
-		} else {
-			if (this.getGroupSubmitMode(sGroupId) !== "Direct") {
-				oPromise = new Promise(function (fnResolve, fnReject) {
-					var aRequests = that.mBatchQueue[sGroupId];
+		if (this.getGroupSubmitMode(sGroupId) !== "Direct") {
+			oPromise = new Promise(function (fnResolve, fnReject) {
+				var aRequests = that.mBatchQueue[sGroupId];
 
-					if (!aRequests) {
-						aRequests = that.mBatchQueue[sGroupId] = [[/*empty change set*/]];
-						if (that.oModelInterface.fnOnCreateGroup) {
-							that.oModelInterface.fnOnCreateGroup(sGroupId);
-						}
+				if (!aRequests) {
+					aRequests = that.mBatchQueue[sGroupId] = [[/*empty change set*/]];
+					if (that.oModelInterface.fnOnCreateGroup) {
+						that.oModelInterface.fnOnCreateGroup(sGroupId);
 					}
-					oRequest = {
-						method : sMethod,
-						url : that.convertResourcePath(sResourcePath),
-						headers : jQuery.extend({},
-							that.mPredefinedPartHeaders,
-							that.mHeaders,
-							mHeaders,
-							that.mFinalHeaders),
-						body : oPayload,
-						$cancel : fnCancel,
-						$metaPath : sMetaPath,
-						$reject : fnReject,
-						$resolve : fnResolve,
-						$submit : fnSubmit
-					};
-					if (sMethod === "GET") { // push behind change set
-						aRequests.push(oRequest);
-					} else { // push into change set
-						aRequests[0].push(oRequest);
-					}
-				});
-				oRequest.$promise = oPromise;
-				return oPromise;
-			}
-
-			sPayload = JSON.stringify(_Requestor.cleanPayload(oPayload));
-			if (fnSubmit) {
-				fnSubmit();
-			}
+				}
+				oRequest = {
+					method : sMethod,
+					url : sResourcePath,
+					headers : jQuery.extend({},
+						that.mPredefinedPartHeaders,
+						that.mHeaders,
+						mHeaders,
+						that.mFinalHeaders),
+					body : oPayload,
+					$cancel : fnCancel,
+					$metaPath : sMetaPath,
+					$reject : fnReject,
+					$resolve : fnResolve,
+					$submit : fnSubmit
+				};
+				if (sMethod === "GET") { // push behind change set
+					aRequests.push(oRequest);
+				} else { // push into change set
+					aRequests[0].push(oRequest);
+				}
+			});
+			oRequest.$promise = oPromise;
+			return oPromise;
 		}
 
-		if (this.oSecurityTokenPromise && sMethod !== "GET") {
-			return this.oSecurityTokenPromise.then(executeRequest);
+		if (fnSubmit) {
+			fnSubmit();
 		}
-		return executeRequest();
+		return this.sendRequest(sMethod, sResourcePath,
+			jQuery.extend({}, mHeaders, this.mFinalHeaders),
+			JSON.stringify(_Requestor.cleanPayload(oPayload))
+		).then(function (oResponse) {
+			return that.doConvertResponse(oResponse.body, sMetaPath);
+		});
 	};
 
 	/**
@@ -900,6 +839,91 @@ sap.ui.define([
 		if (!bFound) {
 			throw new Error("Request not found in group '" + sCurrentGroupId + "'");
 		}
+	};
+
+	/**
+	 * Sends a batch request.
+	 *
+	 * @param {object[]} aRequests The requests
+	 * @returns {Promise} A promise on the responses
+	 */
+	Requestor.prototype.sendBatch = function (aRequests) {
+		var oBatchRequest = _Batch.serializeBatchRequest(aRequests);
+
+		return this.sendRequest("POST", "$batch" + this.sQueryParams,
+			jQuery.extend(oBatchRequest.headers, mBatchHeaders), oBatchRequest.body
+		).then(function (oResponse) {
+			return _Batch.deserializeBatchResponse(oResponse.contentType, oResponse.body);
+		});
+	};
+
+	/**
+	 * Sends the request. Fetches a new security token and resends the request once when the
+	 * security token is missing or rejected.
+	 *
+	 * @param {string} sMethod
+	 *   HTTP method, e.g. "GET"
+	 * @param {string} sResourcePath
+	 *   A resource path relative to the service URL for which this requestor has been created
+	 * @param {object} [mHeaders]
+	 *   Map of request-specific headers, overriding both the mandatory OData V4 headers and the
+	 *   default headers given to the factory.
+	 * @param {string} [sPayload]
+	 *   Data to be sent to the server
+	 * @returns {Promise}
+	 *   A promise that is resolved with an object having the properties body and contentType. The
+	 *   body is already an object if the Content-Type is "application/json". The promise is
+	 *   rejected with an error if the request failed.
+	 */
+	Requestor.prototype.sendRequest = function (sMethod, sResourcePath, mHeaders, sPayload) {
+		var sRequestUrl = this.sServiceUrl + sResourcePath,
+			that = this;
+
+		return new Promise(function (fnResolve, fnReject) {
+
+			function send(bIsFreshToken) {
+				var sOldCsrfToken = that.mHeaders["X-CSRF-Token"];
+
+				return jQuery.ajax(sRequestUrl, {
+					data : sPayload,
+					headers : jQuery.extend({},
+						that.mPredefinedRequestHeaders,
+						that.mHeaders,
+						mHeaders),
+					method : sMethod
+				}).then(function (oResponse, sTextStatus, jqXHR) {
+					try {
+						that.doCheckVersionHeader(jqXHR.getResponseHeader, sResourcePath);
+					} catch (oError) {
+						fnReject(oError);
+						return;
+					}
+					that.mHeaders["X-CSRF-Token"]
+						= jqXHR.getResponseHeader("X-CSRF-Token") || that.mHeaders["X-CSRF-Token"];
+					fnResolve({
+						body : oResponse,
+						contentType : jqXHR.getResponseHeader("Content-Type")
+					});
+				}, function (jqXHR, sTextStatus, sErrorMessage) {
+					var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
+
+					if (!bIsFreshToken && jqXHR.status === 403
+							&& sCsrfToken && sCsrfToken.toLowerCase() === "required") {
+						// refresh CSRF token and repeat original request
+						that.refreshSecurityToken(sOldCsrfToken).then(function () {
+							send(true);
+						}, fnReject);
+					} else {
+						fnReject(_Helper.createError(jqXHR));
+					}
+				});
+			}
+
+			if (that.oSecurityTokenPromise && sMethod !== "GET") {
+			    return that.oSecurityTokenPromise.then(send);
+			}
+			return send();
+		});
 	};
 
 	/**
@@ -1046,7 +1070,7 @@ sap.ui.define([
 		bHasChanges = aChangeSet.length > 0;
 		this.batchRequestSent(sGroupId, bHasChanges);
 
-		return this.request("POST", "$batch", undefined, mBatchHeaders, aRequests)
+		return this.sendBatch(_Requestor.cleanBatch(aRequests))
 			.then(function (aResponses) {
 				that.batchResponseReceived(sGroupId, bHasChanges);
 				visit(aRequests, aResponses);
