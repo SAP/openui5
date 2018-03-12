@@ -112,7 +112,7 @@ sap.ui.require([
 		assert.strictEqual(oDoneSpy.callCount, 1, "Did resolve the deferred");
 	});
 
-	QUnit.test("Should resolve on first poll if the conditions are met", function(assert) {
+	QUnit.test("Should resolve after 0ms if the conditions are met", function(assert) {
 		// System under Test
 		var oOpa = new Opa();
 
@@ -127,7 +127,7 @@ sap.ui.require([
 		});
 
 		Opa.emptyQueue();
-		this.clock.tick(iExecutionDelay + 400);
+		this.clock.tick(iExecutionDelay);
 	});
 
 	QUnit.test("Should wait for additional waitFor's declared in the success handler before continuing the queue", function(assert) {
@@ -226,7 +226,12 @@ sap.ui.require([
 
 		Opa.emptyQueue().done(oDoneSpy);
 
-		this.clock.tick(1200);
+		// 2 wait fors and an empty queue - 3 times initial delay
+		this.clock.tick(iExecutionDelay);
+		this.clock.tick(iExecutionDelay);
+		this.clock.tick(iExecutionDelay);
+
+		this.clock.tick(1000);
 		assert.strictEqual(oFirstCheckSpy.callCount, 6, "Did apply the polling of the extendConfig");
 
 		bFirstCheck = true;
@@ -235,7 +240,7 @@ sap.ui.require([
 		this.clock.tick(200);
 
 		//check for faster polling
-		this.clock.tick(1100);
+		this.clock.tick(1000);
 		assert.strictEqual(oSecondCheckSpy.callCount, 11, "Did apply the polling of the waitFor");
 
 		bSecondCheck = true;
@@ -270,10 +275,10 @@ sap.ui.require([
 		sinon.assert.notCalled(fnFirstSuccessSpy);
 		this.clock.tick(2000);
 		sinon.assert.notCalled(fnFirstSuccessSpy);
-		this.clock.tick(3000 + 400);
+		this.clock.tick(3000);
 		sinon.assert.calledOnce(fnFirstSuccessSpy);
 		sinon.assert.notCalled(fnSecondSuccessSpy);
-		this.clock.tick(5000 + 400);
+		this.clock.tick(5000);
 	});
 
 	QUnit.module("Exception Handling");
@@ -289,9 +294,9 @@ sap.ui.require([
 			fnSpy = this.spy();
 
 		oOpa.waitFor({check : fnFaultyFunction}).emptyQueue().fail(fnSpy);
-		this.clock.tick(400);
+		this.clock.tick(100);
 		oOpa1.waitFor({success : fnFaultyFunction}).emptyQueue().fail(fnSpy);
-		this.clock.tick(400);
+		this.clock.tick(100);
 		assert.strictEqual(fnSpy.callCount, 2, "Promise rejected in both cases");
 		assert.ok(fnSpy.args[0][0].errorMessage.match("^Failure in Opa check function\n"), "Unexpected error message");
 		assert.ok(fnSpy.args[1][0].errorMessage.match("^Failure in Opa success function\n"), "Unexpected error message");
@@ -318,7 +323,7 @@ sap.ui.require([
 		});
 
 		oOpa.emptyQueue().fail(fnFail);
-		this.clock.tick(400);
+		this.clock.tick(100);
 		var errorMessage = fnFail.args[0][0].errorMessage;
 		assert.strictEqual(fnFail.callCount, 1, "Called error handler");
 		assert.ok(errorMessage.match("^Failure in Opa check function\n"), "Unexpected error message");
@@ -349,7 +354,7 @@ sap.ui.require([
 		oFailingWaitFor.fail(fnWaitForFail);
 
 		oOpa.emptyQueue().fail(fnEmptyQueueFail);
-		this.clock.tick(400);
+		this.clock.tick(100);
 		assert.strictEqual(fnWaitForFail.callCount, 1, "Should call waitFor error handler");
 		assert.strictEqual(fnEmptyQueueFail.callCount, 1, "Should call emptyQueue error handler");
 		assert.ok(fnWaitForFail.calledBefore(fnEmptyQueueFail), "Should call waitFor error handler before emptyQueue error handler");
@@ -494,7 +499,7 @@ sap.ui.require([
 			// _stopQueue on QUnit timeout is called outside the queue
 			// put this in a timeout to ensure the queue is started
 			Opa._stopQueue({qunitTimeout: 30000});
-		}, 400);
+		}, 50);
 	});
 
 	QUnit.module("Timeouts", {

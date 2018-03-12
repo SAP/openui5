@@ -407,13 +407,24 @@ sap.ui.require([
 							Opa5.assert.ok(true, "Entered the custom debug value " + sValue);
 						}
 					});
+				},
+				iCloseThePopup: function () {
+					return this.waitFor({
+						id : "technicalInfoDialogAssistantPopover--Popover",
+						actions : function (oPopover) {
+							oPopover.close();
+						},
+						success : function () {
+							Opa5.assert.ok(true, "Popopver is closed.");
+						}
+					});
 				}
 			},
 			assertions: {
 				theBootstrapOptionIsInTheRightState: function (sWhich, bEnabled) {
 					return this.waitFor({
 						id: "technicalInfoDialogAssistantPopover--" + sWhich + "BootstrapURL",
-						autoWait: false,	// TODO enable autowaiter once a proper sollution to test for disabled control is available
+						autoWait: false,
 						matchers: new PropertyStrictEquals({name: "enabled", value: bEnabled}),
 						success: function () {
 							Opa5.assert.ok(true, "The " + sWhich + " boostrap option is " + (bEnabled ? "enabled" : "disabled"));
@@ -432,6 +443,7 @@ sap.ui.require([
 				theCustomBootstrapOptionIsInState: function (sState) {
 					return this.waitFor({
 						id: "technicalInfoDialogAssistantPopover--customBootstrapURL",
+						autoWait: false,
 						matchers: new PropertyStrictEquals({name: "valueState", value: sState}),
 						success: function () {
 							Opa5.assert.ok(true, "The bootstrap option is in " + sState);
@@ -441,6 +453,7 @@ sap.ui.require([
 				theErrorMessageIsCorrect: function () {
 					return this.waitFor({
 						id: "technicalInfoDialogAssistantPopover--customBootstrapURL",
+						autoWait: false,
 						matchers: new I18NText({
 							propertyName : "valueStateText",
 							key: "TechInfo.SupportAssistantConfigPopup.URLValidationMessage"
@@ -453,6 +466,7 @@ sap.ui.require([
 				theMessageIs: function (sMessage) {
 					return this.waitFor({
 						id: "technicalInfoDialogAssistantPopover--customBootstrapURL",
+						autoWait: false,
 						matchers: new PropertyStrictEquals({name: "valueStateText", value: sMessage}),
 						success: function () {
 							Opa5.assert.ok(true, "The message is correct");
@@ -776,7 +790,7 @@ sap.ui.require([
 			oI18nModel.getProperty("TechInfo.SupportAssistantConfigPopup.ErrorNotFound");
 
 		// Arrange
-		When.onTheConfigDialog.iEnterCustomBootstrapUrl("");
+		When.onTheConfigDialog.iEnterCustomBootstrapUrl("").iCloseThePopup();
 		Then.onTheConfigDialog.theCustomBootstrapOptionIsInState("None");
 
 		// Act

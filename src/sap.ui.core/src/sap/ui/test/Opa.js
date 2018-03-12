@@ -97,7 +97,7 @@ sap.ui.define([
 
 		timeout = setTimeout(function () {
 			internalWait(queueElement.callback, queueElement.options);
-		}, queueElement.options.pollingInterval + Opa.config.executionDelay);
+		}, Opa.config.executionDelay);
 	}
 
 	function ensureNewlyAddedWaitForStatementsPrepended (oWaitForCounter, oNestedInOptions){
