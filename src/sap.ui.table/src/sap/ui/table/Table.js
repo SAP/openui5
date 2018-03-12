@@ -2687,14 +2687,7 @@ sap.ui.define([
 			return this._updateRows(iRows, sReason);
 		} else {
 			var bReturn = !this._mTimeouts.handleRowCountModeAutoAdjustRows;
-			var iBusyIndicatorDelay = this.getBusyIndicatorDelay();
-			var bBusyIndicatorEnabled = this.getEnableBusyIndicator();
 			var that = this;
-
-			if (oBinding && bBusyIndicatorEnabled) {
-				this.setBusyIndicatorDelay(0);
-				this.setBusy(true);
-			}
 
 			if (iTableAvailableSpace) {
 				this._setRowContentHeight(iTableAvailableSpace);
@@ -2707,11 +2700,6 @@ sap.ui.define([
 				}
 
 				delete that._mTimeouts.handleRowCountModeAutoAdjustRows;
-
-				if (oBinding && bBusyIndicatorEnabled) {
-					that.setBusyIndicatorDelay(iBusyIndicatorDelay);
-					that.setBusy(false);
-				}
 			}, 0);
 
 			return bReturn;
