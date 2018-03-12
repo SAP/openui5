@@ -256,7 +256,9 @@ sap.ui.define([
 			//hide the cursor
 			this._oEditor.renderer.$cursorLayer.element.style.display = "none";
 		}
-		this._oEditor.setReadOnly(!this.getEditable());
+
+		// This is required for BCP:1880235178
+		this._oEditor.textInput.setReadOnly(!bValue);
 		return this;
 	};
 
@@ -267,6 +269,7 @@ sap.ui.define([
 	 */
 	CodeEditor.prototype.focus = function() {
 		this._oEditor.focus();
+
 		return this;
 	};
 
@@ -376,15 +379,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * @private
-	 */
-	CodeEditor.prototype.onfocusin = function() {
-		if (!this.getEditable()) {
-			document.activeElement.blur(); // prevent virtual keyboard from opening when control is not editable
-		}
-	};
-
-	/**
 	 * Sets <code>maxLines</code> property.
 	 * @param {int} iMaxLines Maximum number of lines the editor should display
 	 * @override
@@ -460,6 +454,9 @@ sap.ui.define([
 	};
 
 	CodeEditor.prototype.onfocusin = function () {
+		if (!this.getEditable()) {
+			document.activeElement.blur(); // prevent virtual keyboard from opening when control is not editable
+		}
 		this._oEditor.getSession().setUseWorker(true);
 	};
 
