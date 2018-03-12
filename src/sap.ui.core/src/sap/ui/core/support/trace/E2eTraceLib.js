@@ -270,7 +270,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.trace'],
 					jQuery.sap.log.info(tstmp, "", "E2ETraceLibIE");
 					return tstmp;
 				};
-				//check if browser supports PerfomanceTiming
+				//check if browser supports PerformanceTiming
 				if (window.performance && performance.timing && performance.timing.navigationStart) {
 					// handle browser dependencies in (hires) time stamps
 					if (Device.browser.chrome && Device.browser.version >= 49) {
