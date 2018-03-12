@@ -173,7 +173,7 @@ sap.ui.require([
 		};
 
 		// simulate FormContainer
-		sinon.stub(oFormElement, "getParent", function() {return oParent;});
+		sinon.stub(oFormElement, "getParent").callsFake(function() {return oParent;});
 
 		assert.notOk(oLabel.isDisplayOnly(), "Label is not display only");
 
@@ -199,7 +199,7 @@ sap.ui.require([
 		};
 
 		// simulate FormContainer
-		sinon.stub(oFormElement, "getParent", function() {return oParent;});
+		sinon.stub(oFormElement, "getParent").callsFake(function() {return oParent;});
 
 		assert.notOk(oLabel.isDisplayOnly(), "Label is not display only");
 
@@ -406,7 +406,7 @@ sap.ui.require([
 		};
 
 		// simulate FormContainer
-		sinon.stub(oFormElement, "getParent", function() {return oParent;});
+		sinon.stub(oFormElement, "getParent").callsFake(function() {return oParent;});
 
 		oFormElement.onLayoutDataChange();
 		assert.ok(bCalled, "onLayoutDataChange called on parent");
@@ -422,7 +422,7 @@ sap.ui.require([
 		};
 
 		// simulate FormContainer
-		sinon.stub(oFormElement, "getParent", function() {return oParent;});
+		sinon.stub(oFormElement, "getParent").callsFake(function() {return oParent;});
 
 		assert.equal(oFormElement.getRenderedDomRef(), "X", "Value returned from Container");
 	});
