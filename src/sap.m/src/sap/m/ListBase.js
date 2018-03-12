@@ -1496,8 +1496,7 @@ function(
 			oSrcControl = oEvent.srcControl;
 
 		if (oContent && oSrcControl && !this._isSwipeActive && this !== oSrcControl && !this._eventHandledByControl
-				// also enable the swipe feature when runs on Windows 8 device
-				&& (Device.support.touch)) {
+				&& Device.support.touch) {
 			// source can be anything so, check parents and find the list item
 			/*eslint-disable no-extra-semi, curly */
 			for (var li = oSrcControl; li && !(li instanceof ListItemBase); li = li.oParent);
