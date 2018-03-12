@@ -186,7 +186,7 @@ sap.ui.require([
 			var menu = oTable.getColumns()[iCol].getMenu();
 			menu.destroyAggregation("items", true);
 			menu._addFreezeMenuItem();
-			return menu.getItems()[0].getText() == menu._oResBundle.getText(unfreeze ? "TBL_UNFREEZE" : "TBL_FREEZE");
+			return menu.getItems()[0].getText() == TableUtils.getResourceBundle().getText(unfreeze ? "TBL_UNFREEZE" : "TBL_FREEZE");
 		}
 
 		assert.ok(hasFreezeMenuItem(0, true), "Column 0 has Unfreeze menu");

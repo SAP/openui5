@@ -1,8 +1,9 @@
 /*global QUnit, oTable, oTreeTable */
 
 sap.ui.require([
-	"sap/ui/qunit/QUnitUtils"
-], function(qutils) {
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/table/TableUtils"
+], function(qutils, TableUtils) {
 	"use strict";
 
 	// mapping of global function calls
@@ -239,10 +240,10 @@ sap.ui.require([
 			aExpected.push("DESCRIPTION_" + oCell.getText());
 		}
 		if (iIndex == 0) {
-			aExpected.push(sap.ui.getCore().getLibraryResourceBundle("sap.ui.table").getText("TBL_CTRL_STATE_READONLY"));
+			aExpected.push(TableUtils.getResourceBundle().getText("TBL_CTRL_STATE_READONLY"));
 		}
 		if (iIndex == 2) {
-			aExpected.push(sap.ui.getCore().getLibraryResourceBundle("sap.ui.table").getText("TBL_CTRL_STATE_DISABLED"));
+			aExpected.push(TableUtils.getResourceBundle().getText("TBL_CTRL_STATE_DISABLED"));
 			aExpected.push("CHILD1 CHILD2");
 		}
 
@@ -1170,7 +1171,6 @@ sap.ui.require([
 			null
 		];
 
-		var oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.table");
 		var i, j;
 		var sHighlight;
 
@@ -1203,7 +1203,7 @@ sap.ui.require([
 			}));
 			sap.ui.getCore().applyChanges();
 
-			assertHighlightTexts(true, oResBundle.getText("TBL_ROW_STATE_" + sHighlight.toUpperCase()));
+			assertHighlightTexts(true, TableUtils.getResourceBundle().getText("TBL_ROW_STATE_" + sHighlight.toUpperCase()));
 		}
 
 		for (i = 0; i < aInvisibleHighlights.length; i++) {

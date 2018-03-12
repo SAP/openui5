@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/core/format/DateFormat",
 	"sap/m/Menu",
-	"sap/m/MenuItem"
-], function(Controller, JSONModel, Menu, MenuItem, MessageToast, DateFormat, MenuM, MenuItemM) {
+	"sap/m/MenuItem",
+	"sap/ui/table/sample/TableExampleUtils"
+], function(Controller, JSONModel, Menu, MenuItem, MessageToast, DateFormat, MenuM, MenuItemM, TableExampleUtils) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.Menus.Controller", {
@@ -131,12 +132,7 @@ sap.ui.define([
 		},
 
 		showInfo : function(oEvent) {
-			try {
-				jQuery.sap.require("sap.ui.table.sample.TableExampleUtils");
-				sap.ui.table.sample.TableExampleUtils.showInfo(jQuery.sap.getModulePath("sap.ui.table.sample.Menus", "/info.json"), oEvent.getSource());
-			} catch (e) {
-				// nothing
-			}
+			TableExampleUtils.showInfo(jQuery.sap.getModulePath("sap.ui.table.sample.Menus", "/info.json"), oEvent.getSource());
 		},
 
 		onToggleContextMenu : function(oEvent) {

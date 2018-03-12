@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/ui/table/SortOrder",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/format/DateFormat"
-], function(Controller, SortOrder, Sorter, JSONModel, DateFormat) {
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/table/sample/TableExampleUtils"
+], function(Controller, SortOrder, Sorter, JSONModel, DateFormat, TableExampleUtils) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.Sorting.Controller", {
@@ -134,12 +135,7 @@ sap.ui.define([
 		},
 
 		showInfo : function(oEvent) {
-			try {
-				jQuery.sap.require("sap.ui.table.sample.TableExampleUtils");
-				sap.ui.table.sample.TableExampleUtils.showInfo(jQuery.sap.getModulePath("sap.ui.table.sample.Sorting", "/info.json"), oEvent.getSource());
-			} catch (e) {
-				// nothing
-			}
+			TableExampleUtils.showInfo(jQuery.sap.getModulePath("sap.ui.table.sample.Sorting", "/info.json"), oEvent.getSource());
 		}
 
 	});
