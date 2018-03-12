@@ -821,5 +821,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.29": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "689272a9552ac2d88238e6b7325ced00ceba9350",
+        "type": "FIX",
+        "text": " GridTable: Scrollbar styling in base theme",
+        "references": []
+      }
+    ]
   }
 }

@@ -1315,5 +1315,22 @@
         "references": []
       }
     ]
+  },
+  "1.44.29": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "d2a230d679bbaa3d6f0ce9f115412fcaceb03548",
+        "type": "FIX",
+        "text": " sap.ui.core.LocaleData: CZK digits",
+        "references": []
+      },
+      {
+        "id": "eebeadcf750b4caa0cf57c5b407238e70a3b7966",
+        "type": "FIX",
+        "text": " sap.ui.core: a disabled localStorage must not enable debug mode",
+        "references": []
+      }
+    ]
   }
 }

@@ -2134,5 +2134,28 @@
         "references": []
       }
     ]
+  },
+  "1.38.33": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "cc376620deea9b25184dc9a93106da0f85b73b44",
+        "type": "FIX",
+        "text": " Filter/Sorter: Get comparator methods right",
+        "references": []
+      },
+      {
+        "id": "e7dc05235df7c45a22ee24d743f61c99ac7ffbfe",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Clientside sorting and filtering of Edm types",
+        "references": []
+      },
+      {
+        "id": "98251b72dadb11f208a76b7682a4b92a53e16506",
+        "type": "FIX",
+        "text": " v2.ODataModel: createCustomParams",
+        "references": []
+      }
+    ]
   }
 }
