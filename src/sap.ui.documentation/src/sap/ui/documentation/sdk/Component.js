@@ -59,10 +59,6 @@ sap.ui.define([
 
 				// create the views based on the url/hash
 				this.getRouter().initialize();
-
-				// Prevents inappropriate focus change which causes ObjectPage to scroll,
-				// thus text can be selected and copied
-				sap.m.TablePopin.prototype.onfocusin = function () {};
 			},
 
 			/**
