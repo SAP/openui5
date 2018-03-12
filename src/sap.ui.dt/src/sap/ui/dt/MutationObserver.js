@@ -7,8 +7,15 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/dt/OverlayUtil',
 	'sap/ui/dt/ElementUtil',
-	'sap/ui/base/ManagedObject'
-], function(jQuery, OverlayUtil, ElementUtil, ManagedObject) {
+	'sap/ui/base/ManagedObject',
+	'sap/ui/dt/DOMUtil'
+], function(
+	jQuery,
+	OverlayUtil,
+	ElementUtil,
+	ManagedObject,
+	DOMUtil
+) {
 	"use strict";
 
 	/**
@@ -70,6 +77,7 @@ sap.ui.define([
 
 		window.addEventListener("scroll", this._onScroll, true);
 		this._aIgnoredMutations = [];
+		this._aWhiteList = [];
 	};
 
 	/**
@@ -99,6 +107,38 @@ sap.ui.define([
 		this._aIgnoredMutations.push(mParams);
 	};
 
+	MutationObserver.prototype.addToWhiteList = function (sId) {
+		this._aWhiteList.push(sId);
+	};
+
+	MutationObserver.prototype.removeFromWhiteList = function (sId) {
+		this._aWhiteList = this._aWhiteList.filter(function (sCurrentId) {
+			return sCurrentId !== sId;
+		});
+	};
+
+	MutationObserver.prototype.isRelevantNode = function (oNode) {
+		return (
+			// 1. Mutation happened in Node which is still in actual DOM Tree
+			document.body.contains(oNode)
+
+			// 2. Node is not part of preserve area
+			&& !DOMUtil.contains('sap-ui-preserve', oNode)
+
+			// 3. Node must be white listed OR meet certain criterias
+			&& (
+				this._aWhiteList.some(function (sId) {
+					return (
+						// 3.1. Target Node is inside one of the white listed element
+						DOMUtil.contains(sId, oNode)
+						// 3.2. Target Node is an ancestor of one of the white listed element
+						|| oNode.contains(document.getElementById(sId))
+					);
+				})
+			)
+		);
+	};
+
 	/**
 	 * @private
 	 */
@@ -107,7 +147,7 @@ sap.ui.define([
 			return;
 		}
 
-		var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+		var MutationObserver = window.MutationObserver;
 		if (MutationObserver) {
 			this._oMutationObserver = new MutationObserver(function(aMutations) {
 				var aTargetNodes = [];
@@ -120,24 +160,16 @@ sap.ui.define([
 						oTarget = oMutation.target.parentNode;
 					}
 
-					// TODO: ignore all RTA dom elements (dialogs, context menus, toolbars etc.)
-					var bIsFromRTA = OverlayUtil.isInOverlayContainer(oTarget)
-						|| jQuery(oTarget).closest(".sapUiDtContextMenu").length > 0
-						|| jQuery(oTarget).closest(".sapUiRtaToolbar").length > 0;
-
-					var bRelevantNode = jQuery.contains(document, oTarget)
-						&& oTarget.id !== sap.ui.getCore().getStaticAreaRef().getAttribute('id')
-						&& jQuery(oTarget).closest("#sap-ui-preserve").length === 0;
-
-					if (bRelevantNode && !bIsFromRTA) {
+					if (this.isRelevantNode(oTarget)) {
 						var bIgnore = this._aIgnoredMutations.some(function(oIgnoredMutation, iIndex, aSource) {
-							if (oIgnoredMutation.target === oMutation.target
-									&& (oIgnoredMutation.type ? oIgnoredMutation.type === oMutation.type : true)) {
+							if (
+								oIgnoredMutation.target === oMutation.target
+								&& (!oIgnoredMutation.type || oIgnoredMutation.type === oMutation.type)
+							) {
 								aSource.splice(iIndex, 1);
 								return true;
 							}
 						});
-
 
 						if (!bIgnore) {
 							aTargetNodes.push(oTarget);
@@ -150,7 +182,6 @@ sap.ui.define([
 							}
 						}
 					}
-
 				}.bind(this));
 
 				if (aTargetNodes.length) {
@@ -193,7 +224,7 @@ sap.ui.define([
 	MutationObserver.prototype._fireDomChangeOnScroll = function(oEvent) {
 		var oTarget = oEvent.target;
 		if (
-			!OverlayUtil.isInOverlayContainer(oTarget)
+			this.isRelevantNode(oTarget)
 			&& !OverlayUtil.getClosestOverlayForNode(oTarget)
 			// The line below is required to avoid double scrollbars on the browser
 			// when the document is scrolled to negative values (relevant for Mac)
