@@ -2832,5 +2832,34 @@
         "references": []
       }
     ]
+  },
+  "1.44.29": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "449dfcef7694f403069862bbd2eae0321e9ade80",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: properly show TimePicker in Edge",
+        "references": []
+      },
+      {
+        "id": "26b69a219d8311d9a15f7e3b6203e4f6b58b4c25",
+        "type": "FIX",
+        "text": " sap.m.Page: Escape title properly",
+        "references": []
+      },
+      {
+        "id": "4e75a3e6e663ee53773f5fb47c4fe8fbc3d5a1f8",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: removeItem, removeItems, removeButton and removeButtons return the removed elements",
+        "references": []
+      },
+      {
+        "id": "59a81e8308def4daf0915694858fc738c702bc80",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: The placeholder now is correctly displayed in IE after focusout",
+        "references": []
+      }
+    ]
   }
 }

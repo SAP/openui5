@@ -3597,5 +3597,28 @@
         "references": []
       }
     ]
+  },
+  "1.38.33": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "627b96d8ec967142bb746599a561c1a6be554bb9",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: When MultiInput.enabled\u003dfalse, tokens can\u0027t be removed any more",
+        "references": []
+      },
+      {
+        "id": "123b81e80799b9cdb70ce923fae48881a2b89677",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Reset cached sizes on control reset",
+        "references": []
+      },
+      {
+        "id": "a2c41c1197284393879f041dc4f4c471bf85e26d",
+        "type": "FIX",
+        "text": " sap.m.Wizard - Removed most of the scrollLocks, fixed chaining of nextStep().nextStep() and previousStep().previousStep()",
+        "references": []
+      }
+    ]
   }
 }
