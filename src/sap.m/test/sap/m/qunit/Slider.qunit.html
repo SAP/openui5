@@ -345,6 +345,22 @@
 				oSlider.destroy();
 			});
 
+			QUnit.test("Aria labels forwarding to handle", function (assert) {
+				// arrange & act
+				var sHandleLabels,
+					oSlider = new sap.m.Slider({ariaLabelledBy: new sap.m.Label({text: "LabelForSlider"})});
+
+				oSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				sHandleLabels = oSlider.getDomRef("handle").getAttribute("aria-labelledby");
+				assert.ok(sHandleLabels.indexOf(oSlider.getAriaLabelledBy()[0]) > -1, "The slider's label is forwarded to its handle");
+
+				// cleanup
+				oSlider.destroy();
+			});
+
 			/* ------------------------------ */
 			/* getWidth()                     */
 			/* ------------------------------ */
