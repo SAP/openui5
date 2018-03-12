@@ -31,6 +31,12 @@
         "type": "FIX",
         "text": " Fix open issues",
         "references": []
+      },
+      {
+        "id": "ff97aeb09fc61c7bb7b283f30bd5b2b2070a6553",
+        "type": "FIX",
+        "text": " Add getPreparedChange to ctrl variant commands",
+        "references": []
       }
     ]
   }

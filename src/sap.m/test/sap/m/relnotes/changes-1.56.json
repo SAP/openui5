@@ -217,6 +217,96 @@
         "type": "FIX",
         "text": " sap.m.TimePicker: The placeholder now is correctly displayed in IE after focusout",
         "references": []
+      },
+      {
+        "id": "ce78d481a1b2a9fd3ffc0e4bad412789b9219d38",
+        "type": "FEATURE",
+        "text": " getScrollDelegate: Lookup scroll delegate across components",
+        "references": []
+      },
+      {
+        "id": "775f407ce0388b5871e14516a8271eac83bef15a",
+        "type": "FEATURE",
+        "text": " sap.m.Table: Enhancing the stickiness of the column headers",
+        "references": []
+      },
+      {
+        "id": "39ae08cfe6a97b6a9796f932e1f351b31f9da833",
+        "type": "FIX",
+        "text": " Opa: make polling consistent when using execution delay",
+        "references": []
+      },
+      {
+        "id": "b7cf5e12f5aef16660f3f035a07ce7fbe50d93c3",
+        "type": "FIX",
+        "text": " RatingIndicator: Adapt labeling in ACC test page",
+        "references": []
+      },
+      {
+        "id": "4e7c941869902ba8b400153438eec3cb1da381ae",
+        "type": "FIX",
+        "text": " sap.m.Button: Combine buttons change handler generates stable ID now",
+        "references": []
+      },
+      {
+        "id": "cca75b0313939b1d480b54068a7181385d048013",
+        "type": "FIX",
+        "text": " sap.m.CheckBox: Test page adjusted",
+        "references": []
+      },
+      {
+        "id": "8e730533d27231edb7a6b442fbc8349bea5e9f4a",
+        "type": "FIX",
+        "text": " sap.m.ColorPalette: focus indication for IE, Edge in standard theme is fixed.",
+        "references": []
+      },
+      {
+        "id": "99673f5c9ed25232da651d65f3c9603ffed32df5",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: when picker is opened for IE \u0026 Edge, input should not be focusable",
+        "references": []
+      },
+      {
+        "id": "cf450adb5ce1b25a4e5385dea9647d4c996bbf46",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: correct navigation with arrow keys",
+        "references": []
+      },
+      {
+        "id": "f242e938f1807d6ca331b358c6cd5274c686b98f",
+        "type": "FIX",
+        "text": " sap.m.GrowingEnablement: Focus is lost after growing",
+        "references": []
+      },
+      {
+        "id": "40a16afde58098def3820a5ee7d45c4415dd4e2c",
+        "type": "FIX",
+        "text": " sap.m.Image: Test page adjusted",
+        "references": []
+      },
+      {
+        "id": "ebe87d714d0e8c9d5cd2edc43da06985d12a3073",
+        "type": "FIX",
+        "text": " sap.m.PagingButton: Test page adjusted",
+        "references": []
+      },
+      {
+        "id": "0e6894316ed0b4196f16fdf6b013b3695c65b774",
+        "type": "FIX",
+        "text": " sap.m.Select: Select is focused before opening the dialog on mobile",
+        "references": []
+      },
+      {
+        "id": "da3696f0f0cf38bbcd5e4949a6a2da343c4422e1",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: Custom tiles show now visual indication of deletion",
+        "references": []
+      },
+      {
+        "id": "52adee2b7b6ed337aca6a06e762f8183b630f7b3",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Test page adjusted",
+        "references": []
       }
     ]
   }

@@ -31,6 +31,18 @@
         "type": "FIX",
         "text": " sap.f.FlexibleColumnLayout: Arrow buttons aligned with VD spec",
         "references": []
+      },
+      {
+        "id": "00a945c9ba0b7ec3d680e5b0c75b7238b7a075d2",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Missing documentation fixed",
+        "references": []
+      },
+      {
+        "id": "c34f38e136c8ebca7551415c055d35ba43390ee0",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Visual indicator visibility corrected",
+        "references": []
       }
     ]
   }

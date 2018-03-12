@@ -139,6 +139,84 @@
         "type": "FIX",
         "text": " sap.ui.base.BindingParser: String part in expression binding",
         "references": []
+      },
+      {
+        "id": "b611460d06de2ff45701d91771fba5bf7d30a077",
+        "type": "FEATURE",
+        "text": " NumberFormat: UOM CurrencyDigits",
+        "references": []
+      },
+      {
+        "id": "348455173c873f5c2b8ad586989ac4189b9204db",
+        "type": "FEATURE",
+        "text": " XMLView, JSONView: new event handler parameter syntax",
+        "references": []
+      },
+      {
+        "id": "775f407ce0388b5871e14516a8271eac83bef15a",
+        "type": "FEATURE",
+        "text": " sap.m.Table: Enhancing the stickiness of the column headers",
+        "references": []
+      },
+      {
+        "id": "3dbe98bb7516e7e0c47619414fcde47a98b85778",
+        "type": "FIX",
+        "text": " Controller: extend lifecycle methods:",
+        "references": []
+      },
+      {
+        "id": "f485fe683c4f7e2df260d3ed2cc69fd6f1ea77dd",
+        "type": "FIX",
+        "text": " Controller: wrong error log",
+        "references": []
+      },
+      {
+        "id": "3abec537ac87c4ed072934d9178f6277cd37be32",
+        "type": "FIX",
+        "text": " ODataModel(V2) docs: add since information for invalidate* methods",
+        "references": []
+      },
+      {
+        "id": "39ae08cfe6a97b6a9796f932e1f351b31f9da833",
+        "type": "FIX",
+        "text": " Opa: make polling consistent when using execution delay",
+        "references": []
+      },
+      {
+        "id": "097a3d28d348f131cfe5ec97b150ef9dc16a781d",
+        "type": "FIX",
+        "text": " Usage of different jQuery version (sap-ui-core-nojQuery.js)",
+        "references": []
+      },
+      {
+        "id": "cfc51c70cdddebe567ac7dda21a92ab739e6733e",
+        "type": "FIX",
+        "text": " core/AppCacheBuster: cache buster token for XHR",
+        "references": []
+      },
+      {
+        "id": "147c9af76db1ebab1f1652803df5833409507b53",
+        "type": "FIX",
+        "text": " crossroads.js: correctly handle the parse of skipped optional param",
+        "references": []
+      },
+      {
+        "id": "b6384ad6ee704b90c66362d7435e381de067ff26",
+        "type": "FIX",
+        "text": " mvc/XMLView: expose errors from template parsing",
+        "references": []
+      },
+      {
+        "id": "d78c6c9e305d92573b1b1a22a298f79d9d2d69b5",
+        "type": "FIX",
+        "text": " sap.ui.core.TechnicalInfo: Destroy dialog after it has been closed",
+        "references": []
+      },
+      {
+        "id": "eaa187aaa7f97b2a9abeb39af83cc09fe7918907",
+        "type": "FIX",
+        "text": " v2.ODataContextBinding: Preliminary check for Propagated Contexts",
+        "references": []
       }
     ]
   }

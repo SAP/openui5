@@ -61,6 +61,12 @@
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: focus clearly visible in IE for HCB and HCW",
         "references": []
+      },
+      {
+        "id": "427664ce587dc07cdff9ada945e3a3a0a36d7049",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: appointments\u0027 container has no tab stop anymore.",
+        "references": []
       }
     ]
   }
