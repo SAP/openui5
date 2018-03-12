@@ -97,7 +97,7 @@ sap.ui.define([
 
 		timeout = setTimeout(function () {
 			internalWait(queueElement.callback, queueElement.options);
-		}, Opa.config.executionDelay);
+		}, (Opa.config.asyncPolling ? queueElement.options.pollingInterval : 0) + Opa.config.executionDelay);
 	}
 
 	function ensureNewlyAddedWaitForStatementsPrepended (oWaitForCounter, oNestedInOptions){
@@ -382,7 +382,8 @@ sap.ui.define([
 			pollingInterval : 400,
 			debugTimeout: 0,
 			_stackDropCount : 0, //Internal use. Specify numbers of additional stack frames to remove for logging
-			executionDelay: executionDelayDefault
+			executionDelay: executionDelayDefault,
+			asyncPolling: false
 		},opaUriParams);
 	};
 
@@ -664,7 +665,8 @@ sap.ui.define([
 		"timeout",
 		"debugTimeout",
 		"pollingInterval",
-		"_stackDropCount"
+		"_stackDropCount",
+		"asyncPolling"
 	];
 
 	/* all config values  that will be used in waitFor */
@@ -676,7 +678,8 @@ sap.ui.define([
 		debugTimeout: "numeric",
 		pollingInterval: "numeric",
 		_stackDropCount: "numeric",
-		errorMessage: "string"
+		errorMessage: "string",
+		asyncPolling: "bool"
 	};
 
 
