@@ -1224,7 +1224,10 @@ sap.ui.define([
 		if (nScrollPosition == null) {
 			var iFirstVisibleRowIndex = oTable.getFirstVisibleRow();
 			var iMaxFirstRenderedRowIndex = oTable._getMaxFirstRenderedRowIndex();
-			if (iMaxFirstRenderedRowIndex > 0 && iFirstVisibleRowIndex >= iMaxFirstRenderedRowIndex) {
+			if (iFirstVisibleRowIndex > iMaxFirstRenderedRowIndex) {
+				// The first visible row is inside the buffer. The table will be scrolled to the bottom to receive the heights of the rows in the
+				// buffer. The first visible row will then be correctly displayed on top when the inner scroll position is updated.
+				// This process is not required for the first row in the buffer.
 				this._nVerticalScrollPosition = this.getVerticalScrollRange();
 				this._iFirstVisibleRowInBuffer = iFirstVisibleRowIndex - iMaxFirstRenderedRowIndex;
 			} else {
