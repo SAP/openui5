@@ -307,13 +307,16 @@ sap.ui.require([
 	});
 
 	QUnit.test("when calling 'updateCurrentVariant'", function(assert) {
+		var fnUpdateCurrentVariantInMapStub = sandbox.stub(this.oModel.oVariantController, "updateCurrentVariantInMap");
 		assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant1", "then initially current variant is variant1");
 		assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant1", "then initially original current variant is variant1");
+		this.oModel.oData["variantMgmtId1"].updateVariantInURL = true;
 		return this.oModel.updateCurrentVariant("variantMgmtId1", "variant0")
 		.then(function() {
 			assert.ok(this.fnLoadSwitchChangesStub.calledOnce, "then loadSwitchChangesMapForComponent called once from ChangePersitence");
 			assert.ok(this.fnRevertChangesStub.calledOnce, "then revertChangesOnControl called once in FlexController");
 			assert.ok(this.fnApplyChangesStub.calledOnce, "then applyVariantChanges called once in FlexController");
+			assert.ok(fnUpdateCurrentVariantInMapStub.calledWith("variantMgmtId1", "variant0"), "then variantController.updateCurrentVariantInMap called with the right parameters");
 			assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant0", "then current variant updated to variant0");
 			assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant0", "then original current variant updated to variant0");
 		}.bind(this));

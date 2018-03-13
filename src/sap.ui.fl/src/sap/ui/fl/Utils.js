@@ -889,15 +889,16 @@ sap.ui.define([
 		 * Deactivates hash based navigation while performing the operations, which is then re-activated upon completion.
 		 * If the passed doesn't exist in the url hash or technical parameters, then a new object is added respectively.
 		 *
-		 * @param  {object} oComponent Component instance used to get the technical parameters
+		 * @param {object} oComponent Component instance used to get the technical parameters
 		 * @param {string} sParameterName Name of the parameter (e.g. "sap-ui-fl-control-variant-id")
 		 * @param {string[]} aValues Array of values for the technical parameter
 		 */
 		setTechnicalURLParameterValues: function (oComponent, sParameterName, aValues) {
-			if (Utils.getUshellContainer()) {
+			var oUshellContainer = Utils.getUshellContainer();
+			if (oUshellContainer) {
 				hasher.changed.active = false; //disable changed signal
 
-				var oURLParser = sap.ushell.Container.getService("URLParsing");
+				var oURLParser = oUshellContainer.getService("URLParsing");
 				var oParsedHash = oURLParser.parseShellHash(oURLParser.getHash(window.location.href));
 				var mParams = oParsedHash.params;
 				var mTechnicalParameters = Utils.getTechnicalParametersForComponent(oComponent);
@@ -906,13 +907,13 @@ sap.ui.define([
 				}
 				if (aValues.length === 0) {
 					delete mParams[sParameterName];
-					mTechnicalParameters && delete mTechnicalParameters[sParameterName];// Case when ControlVariantsAPI.clearVariantParameterInURL is called with a parameter
+					mTechnicalParameters && delete mTechnicalParameters[sParameterName]; // Case when ControlVariantsAPI.clearVariantParameterInURL is called with a parameter
 				} else {
 					mParams[sParameterName] = aValues;
 					mTechnicalParameters && (mTechnicalParameters[sParameterName] = aValues); // Technical parameters need to be in sync with the URL hash
 				}
-				hasher.setHash(oURLParser.constructShellHash(oParsedHash)); //set hash without dispatching changed signal
-				hasher.changed.active = true; //re-enable signal
+				hasher.replaceHash(oURLParser.constructShellHash(oParsedHash)); // Set hash without dispatching changed signal nor writing history
+				hasher.changed.active = true; // Re-enable signal
 			}
 		},
 
