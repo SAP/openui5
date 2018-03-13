@@ -335,13 +335,7 @@ sap.ui.define([
 	 * @deprecated since 1.48.0 IE8 is not supported anymore, thus no special handling is required. Use native for-in loop instead.
 	 * @since 1.7.1
 	 */
-	jQuery.sap.forIn = function(oObject, fnCallback) {
-		for (var n in oObject) {
-			if ( fnCallback(n, oObject[n]) === false ) {
-				return;
-			}
-		}
-	};
+	jQuery.sap.forIn = each;
 
 	/**
 	 * Calculate delta of old list and new list.
