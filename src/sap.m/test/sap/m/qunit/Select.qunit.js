@@ -5170,26 +5170,37 @@
 	});
 
 	QUnit.module("ariaLabelledBy()");
-
-	QUnit.test("it should set the value of the aria-labelledby attribute to the id of the label concatenated with the id of the internal label element separated by a space", function (assert) {
+	QUnit.test("aria-labelledby content", function (assert) {
 
 		// system under test
-		var oLabel = new sap.m.Label({
-			id: "label"
-		});
-
-		var oSelect = new sap.m.Select({
-			ariaLabelledBy: oLabel
-		});
+		var aActualAriaLabelledByIDs,
+			oLabel = new sap.m.Label({
+				id: "label"
+			}),
+			oSelect = new sap.m.Select({
+				ariaLabelledBy: oLabel
+			}),
+			sSelectID = oSelect.getId(),
+			aExpectedAriaLabelledByIDs = [
+				"label",
+				sSelectID + "-label"
+			];
 
 		// arrange
 		oLabel.placeAt("content");
 		oSelect.placeAt("content");
 		sap.ui.getCore().applyChanges();
-		var sExpectedLabelledBy = "label " + oSelect.getId() + "-label";
 
 		// assert
-		assert.strictEqual(oSelect.getDomRef().getAttribute("aria-labelledby"), sExpectedLabelledBy);
+		aActualAriaLabelledByIDs = oSelect.$().attr("aria-labelledby").split(" ");
+
+		// aria-labelledby should consist of (separated by space)
+		// - external label ID
+		// - internal label ID
+		assert.strictEqual(aExpectedAriaLabelledByIDs.length, aActualAriaLabelledByIDs.length, "The number of actual arria-labelledby IDs correspond to the expected IDs' one");
+		aExpectedAriaLabelledByIDs.forEach(function (sExpectedID) {
+			assert.ok(aActualAriaLabelledByIDs.indexOf(sExpectedID) !== -1, "aria-labelledby includes ID " + sExpectedID);
+		});
 
 		// cleanup
 		oSelect.destroy();
@@ -8498,6 +8509,23 @@
 		oSelect.destroy();
 	});
 
+	QUnit.test("Enabled/Disabled state", function (assert) {
+		var oEnabledSelect = new sap.m.Select({ enabled: true }),
+			oDisabledSelect = new sap.m.Select({ enabled: false });
+
+		oEnabledSelect.placeAt("content");
+		oDisabledSelect.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assertion
+		assert.strictEqual(oEnabledSelect.$().attr("aria-disabled"), "false", "Enabled Select isn't indicated as disabled");
+		assert.strictEqual(oDisabledSelect.$().attr("aria-disabled"), "true", "Disabled Select is indicated as disabled appropriately");
+
+		// Cleanup
+		oEnabledSelect.destroy();
+		oDisabledSelect.destroy();
+	});
+
 	QUnit.module("value state");
 
 	QUnit.test("it should open the value state message popup on focusin", function (assert) {
@@ -8747,5 +8775,35 @@
 
 		// Open the Select, in order for the title to be updated.
 		this.oSelect.open();
+	});
+
+	QUnit.module("Hidden input element", {
+		beforeEach: function () {
+			this.oSelect = new sap.m.Select().placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			this.$oHiddenInputRef = this.oSelect.$("hiddenInput");
+		},
+		afterEach: function () {
+			this.oSelect.destroy();
+		}
+	});
+
+	QUnit.test("Hidden input rendering", function (assert) {
+		assert.ok(this.$oHiddenInputRef.length > 0, "Hidden input is rendered in the DOM");
+	});
+
+	QUnit.test("Hidden input attributes and classes", function (assert) {
+		// Attributes
+		assert.strictEqual(this.$oHiddenInputRef.attr("aria-multiline"), "false", "Hidden input is not a textarea");
+		assert.strictEqual(this.$oHiddenInputRef.attr("aria-readonly"), "true", "Hidden input is readonly");
+		assert.strictEqual(this.$oHiddenInputRef.attr("tabindex"), "-1", "Hidden input shouldn't be reachable via keyboard navigation");
+
+		// Classes
+		assert.ok(this.$oHiddenInputRef.hasClass("sapUiPseudoInvisibleText"), "Hidden input isn't visible to the user");
+	});
+
+	QUnit.test("Hidden input referencing", function (assert) {
+		assert.strictEqual(this.oSelect.getIdForLabel(), this.$oHiddenInputRef.attr("id"), "getIdForLabel() returns the hidden input ID");
 	});
 }());

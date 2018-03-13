@@ -17,7 +17,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 
 	// The controls which should not be referenced by a "for" attribute (Specified in the HTML standard).
 	// Extend when needed.
-	var NON_LABELABLE_CONTROLS = ["sap.m.Link", "sap.m.Select", "sap.m.Label", "sap.m.Text"];
+	var NON_LABELABLE_CONTROLS = ["sap.m.Link", "sap.m.Label", "sap.m.Text"];
 
 	// Returns the control for the given id (if available) and invalidates it if desired
 	function toControl(sId, bInvalidate) {
