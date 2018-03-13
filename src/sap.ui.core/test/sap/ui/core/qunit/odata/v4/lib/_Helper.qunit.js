@@ -666,40 +666,47 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
-		sKeyPredicate : "('42')",
+		sKeyPredicate : "('4%2F2')",
+		mKeyProperties : {"ID" : "'4/2'"}
+	}, {
+		sKeyPredicate : "(Bar=42,Fo%3Do='Walter%22s%20Win''s')",
+		mKeyProperties : {"Bar" : "42","Fo=o" : "'Walter\"s Win''s'"}
+	}, {
+		sKeyPredicate: undefined,
+		mKeyProperties: undefined
+	}].forEach(function (oFixture) {
+		QUnit.test("getKeyPredicate: " + oFixture.sKeyPredicate, function (assert) {
+			var oEntityInstance = {},
+				sMetaPath = "~path~",
+				mTypeForMetaPath = {};
+
+			this.mock(_Helper).expects("getKeyProperties")
+				.withExactArgs(sinon.match.same(oEntityInstance), sMetaPath,
+					sinon.match.same(mTypeForMetaPath), true)
+				.returns(oFixture.mKeyProperties);
+
+			// code under test
+			assert.strictEqual(
+				_Helper.getKeyPredicate(oEntityInstance, sMetaPath, mTypeForMetaPath),
+				oFixture.sKeyPredicate);
+		});
+	});
+
+	//*********************************************************************************************
+	[{
 		oEntityInstance : {"ID" : "42"},
 		oEntityType : {
 			"$Key" : ["ID"],
 			"ID" : {
 				"$Type" : "Edm.String"
 			}
-		}
+		},
+		mKeyProperties : {"ID" : "'42'"}
 	}, {
-		sKeyPredicate : "('Walter%22s%20Win''s')",
-		oEntityInstance : {"ID" : "Walter\"s Win's"},
-		oEntityType : {
-			"$Key" : ["ID"],
-			"ID" : {
-				"$Type" : "Edm.String"
-			}
-		}
-	}, {
-		sKeyPredicate : "(Sector='DevOps',ID='42')",
-		oEntityInstance : {"ID" : "42", "Sector" : "DevOps"},
-		oEntityType : {
-			"$Key" : ["Sector", "ID"],
-			"Sector" : {
-				"$Type" : "Edm.String"
-			},
-			"ID" : {
-				"$Type" : "Edm.String"
-			}
-		}
-	}, {
-		sKeyPredicate : "(Bar=42,Fo%3Do='Walter%22s%20Win''s')",
 		oEntityInstance : {
 			"Bar" : 42,
-			"Fo=o" : "Walter\"s Win's"
+			"Fo=o" : "Walter\"s Win's",
+			"Baz" : "foo"
 		},
 		oEntityType : {
 			"$Key" : ["Bar", "Fo=o"],
@@ -709,89 +716,82 @@ sap.ui.require([
 			"Fo=o" : {
 				"$Type" : "Edm.String"
 			}
+		},
+		mKeyProperties : {
+			"Bar" : "42",
+			"Fo=o" : "'Walter\"s Win''s'"
 		}
-	}].forEach(function (oFixture) {
-		QUnit.test("getKeyPredicate: " + oFixture.sKeyPredicate, function (assert) {
-			this.spy(_Helper, "formatLiteral");
-
-			assert.strictEqual(
-				_Helper.getKeyPredicate(oFixture.oEntityInstance, "~path~", {
-					"~path~" : oFixture.oEntityType
-				}),
-				oFixture.sKeyPredicate);
-
-			// check that formatPropertyAsLiteral() is called for each key property
-			oFixture.oEntityType.$Key.forEach(function (sProperty) {
-				sinon.assert.calledWithExactly(_Helper.formatLiteral,
-					sinon.match.same(oFixture.oEntityInstance[sProperty]),
-					sinon.match.same(oFixture.oEntityType[sProperty].$Type));
-			});
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("getKeyPredicate: key with alias", function (assert) {
-		var oComplexType = {
-				"baz" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.Int16"
-				}
-			},
-			oEntityInstance = {},
-			oEntityType = {
-				"$Key" : ["qux", {"foo" : "bar/baz"}],
-				"qux" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String"
-				}
-			},
-			oHelperMock = this.mock(_Helper);
-
-		oHelperMock.expects("drillDown")
-			.withExactArgs(oEntityInstance, ["qux"]).returns("v1");
-		oHelperMock.expects("drillDown")
-			.withExactArgs(oEntityInstance, ["bar", "baz"]).returns("v2");
-		oHelperMock.expects("formatLiteral")
-			.withExactArgs("v1", "Edm.String").returns("~1");
-		oHelperMock.expects("formatLiteral")
-			.withExactArgs("v2", "Edm.Int16").returns("~2");
-
-		assert.strictEqual(_Helper.getKeyPredicate(oEntityInstance, "~path~", {
-				"~path~" : oEntityType,
-				"~path~/bar" : oComplexType
-			}),
-			"(qux=~1,foo=~2)");
-	});
-
-	//*********************************************************************************************
-	[{
-		sDescription : "one key property",
+	}, {
 		oEntityInstance : {},
 		oEntityType : {
 			"$Key" : ["ID"],
 			"ID" : {
 				"$Type" : "Edm.String"
 			}
-		}
-	}, {
-		sDescription : "multiple key properties",
-		oEntityInstance : {"Sector" : "DevOps"},
-		oEntityType : {
-			"$Key" : ["Sector", "ID"],
-			"Sector" : {
-				"$Type" : "Edm.String"
-			},
-			"ID" : {
-				"$Type" : "Edm.String"
-			}
-		}
+		},
+		mKeyProperties : undefined
 	}].forEach(function (oFixture) {
-		QUnit.test("getKeyPredicate: missing key, " + oFixture.sDescription, function (assert) {
-			assert.strictEqual(
-				_Helper.getKeyPredicate(oFixture.oEntityInstance, "~path~", {
+		QUnit.test("getKeyProperties: " + oFixture.mKeyProperties, function (assert) {
+			this.spy(_Helper, "formatLiteral");
+
+			// code under test
+			assert.deepEqual(
+				_Helper.getKeyProperties(oFixture.oEntityInstance, "~path~", {
 					"~path~" : oFixture.oEntityType
 				}),
-				undefined);
+				oFixture.mKeyProperties);
+
+			// check that formatPropertyAsLiteral() is called for each key property
+			oFixture.oEntityType.$Key.forEach(function (sProperty) {
+				if (sProperty in oFixture.oEntityInstance) {
+					sinon.assert.calledWithExactly(_Helper.formatLiteral,
+						sinon.match.same(oFixture.oEntityInstance[sProperty]),
+						sinon.match.same(oFixture.oEntityType[sProperty].$Type));
+				}
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		oResult : {"qux" : "~1", "bar/baz" : "~2"},
+		bReturnAlias : false
+	}, {
+		oResult : {qux : "~1", foo : "~2"},
+		bReturnAlias : true
+	}].forEach(function (oFixture) {
+		QUnit.test("getKeyProperties: bReturnAlias=" + oFixture.bReturnAlias, function (assert) {
+			var oComplexType = {
+					"baz": {
+						"$kind": "Property",
+						"$Type": "Edm.Int16"
+					}
+				},
+				oEntityInstance = {},
+				oEntityType = {
+					"$Key": ["qux", {"foo": "bar/baz"}],
+					"qux": {
+						"$kind": "Property",
+						"$Type": "Edm.String"
+					}
+				},
+				oHelperMock = this.mock(_Helper),
+				sMetaPath = "~path~",
+				mTypeForMetaPath = {
+					"~path~": oEntityType,
+					"~path~/bar": oComplexType
+				};
+
+			oHelperMock.expects("drillDown")
+				.withExactArgs(sinon.match.same(oEntityInstance), ["qux"]).returns("v1");
+			oHelperMock.expects("drillDown")
+				.withExactArgs(sinon.match.same(oEntityInstance), ["bar", "baz"]).returns("v2");
+			oHelperMock.expects("formatLiteral").withExactArgs("v1", "Edm.String").returns("~1");
+			oHelperMock.expects("formatLiteral").withExactArgs("v2", "Edm.Int16").returns("~2");
+
+			// code under test
+			assert.deepEqual(_Helper.getKeyProperties(oEntityInstance, sMetaPath, mTypeForMetaPath,
+				oFixture.bReturnAlias), oFixture.oResult);
 		});
 	});
 
