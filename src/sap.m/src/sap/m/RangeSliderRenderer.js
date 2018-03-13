@@ -11,14 +11,16 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer"], function (Renderer, 
      */
     var RangeSliderRenderer = Renderer.extend(SliderRenderer);
 
-    RangeSliderRenderer.renderHandles = function (oRM, oControl) {
+    RangeSliderRenderer.renderHandles = function (oRM, oControl, sRangeSliderLabels) {
         this.renderHandle(oRM, oControl, {
             id: oControl.getId() + "-handle1",
-            position: "start"
+            position: "start",
+            forwardedLabels: sRangeSliderLabels
         });
         this.renderHandle(oRM, oControl, {
             id: oControl.getId() + "-handle2",
-            position: "end"
+            position: "end",
+            forwardedLabels: sRangeSliderLabels
         });
 
         // Render ARIA labels
@@ -49,7 +51,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer"], function (Renderer, 
             fValue = aRange[mOptions.position === "start" ? 0 : 1];
 
             oRM.writeAttribute("data-range-val", mOptions.position);
-            oRM.writeAttribute("aria-labelledby", oControl._mHandleTooltip[mOptions.position].label.getId());
+            oRM.writeAttribute("aria-labelledby", (mOptions.forwardedLabels + " " + oControl._mHandleTooltip[mOptions.position].label.getId()).trim());
 
             if (oControl.getInputsAsTooltips()) {
                 oRM.writeAttribute("aria-controls", oControl._mHandleTooltip[mOptions.position].tooltip.getId());
@@ -151,7 +153,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer"], function (Renderer, 
         oRM.write("</div>");
     };
 
-    RangeSliderRenderer.renderProgressIndicator = function(oRm, oSlider) {
+    RangeSliderRenderer.renderProgressIndicator = function(oRm, oSlider, sForwardedLabels) {
         var aRange = oSlider.getRange();
 
         oRm.write("<div");
@@ -171,7 +173,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer"], function (Renderer, 
             valuemax: oSlider.toFixed(oSlider.getMax()),
             valuenow: aRange.join("-"),
             valuetext: oSlider._oResourceBundle.getText('RANGE_SLIDER_RANGE_ANNOUNCEMENT', aRange),
-            labelledby: oSlider.getAggregation("_handlesLabels")[2].getId() //  range lable
+            labelledby: (sForwardedLabels + " " + oSlider.getAggregation("_handlesLabels")[2].getId()).trim()//  range label
         });
 
         oRm.write('></div>');

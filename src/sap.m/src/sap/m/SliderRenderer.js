@@ -28,7 +28,10 @@ sap.ui.define(['./SliderUtilities'],
 		SliderRenderer.render = function(oRm, oSlider) {
 			var bEnabled = oSlider.getEnabled(),
 				sTooltip = oSlider.getTooltip_AsString(),
-				CSS_CLASS = SliderRenderer.CSS_CLASS;
+				CSS_CLASS = SliderRenderer.CSS_CLASS,
+				sSliderLabels = oSlider.getAriaLabelledBy().reduce(function(sAccumulator, sId){
+					return sAccumulator + " " + sId;
+				}, "");
 
 			oRm.write("<div");
 			this.addClass(oRm, oSlider);
@@ -60,10 +63,10 @@ sap.ui.define(['./SliderUtilities'],
 			oRm.write(">");
 
 			if (oSlider.getProgress()) {
-				this.renderProgressIndicator(oRm, oSlider);
+				this.renderProgressIndicator(oRm, oSlider, sSliderLabels);
 			}
 
-			this.renderHandles(oRm, oSlider);
+			this.renderHandles(oRm, oSlider, sSliderLabels);
 			oRm.write("</div>");
 
 			if (oSlider.getEnableTickmarks()) {
@@ -89,16 +92,16 @@ sap.ui.define(['./SliderUtilities'],
 			oRm.writeStyles();
 			oRm.write(' aria-hidden="true"></div>');
 		};
-
 		/**
 		 * This hook method is reserved for derived classes to render more handles.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 		 * @param {sap.ui.core.Control} oSlider An object representation of the slider that should be rendered.
 		 */
-		SliderRenderer.renderHandles = function(oRm, oSlider) {
+		SliderRenderer.renderHandles = function(oRm, oSlider, sForwardedLabels) {
 			this.renderHandle(oRm, oSlider,  {
-				id: oSlider.getId() + "-handle"
+				id: oSlider.getId() + "-handle",
+				forwardedLabels: sForwardedLabels
 			});
 		};
 
@@ -111,7 +114,7 @@ sap.ui.define(['./SliderUtilities'],
 				oRm.writeAttributeEscaped("id", mOptions.id);
 			}
 
-			oRm.writeAttribute("aria-labelledby", oSlider.getAggregation("_handlesLabels")[0].getId());
+			oRm.writeAttribute("aria-labelledby", (mOptions.forwardedLabels + " " + oSlider.getAggregation("_handlesLabels")[0].getId()).trim());
 
 			if (oSlider.getShowHandleTooltip() && !oSlider.getShowAdvancedTooltip()) {
 				this.writeHandleTooltip(oRm, oSlider);

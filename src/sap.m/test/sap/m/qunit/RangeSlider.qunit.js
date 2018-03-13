@@ -43,6 +43,25 @@
 		assert.ok(jQuery("[id$='-handle2']").attr("aria-valuenow"), "Aria attribute \"aria-valuenow\" should be rendered for handle2.");
 	});
 
+	QUnit.test("Aria labels forwarding to handles and progress indicator", function (assert) {
+		// arrange & act
+		var s1stHandleLabels, s2ndHandleLabels, sProgressIndicatorLabels, sRSLabelId;
+		this.rangeSlider.addAriaLabelledBy(new sap.m.Text({text: "LabelForRS"}));
+
+		sap.ui.getCore().applyChanges();
+
+		sRSLabelId = this.rangeSlider.getAriaLabelledBy()[0];
+		s1stHandleLabels = this.rangeSlider.getDomRef("handle1").getAttribute("aria-labelledby");
+		s2ndHandleLabels = this.rangeSlider.getDomRef("handle2").getAttribute("aria-labelledby");
+		sProgressIndicatorLabels = this.rangeSlider.getDomRef("progress").getAttribute("aria-labelledby");
+
+		// assert
+		assert.ok(s1stHandleLabels.indexOf(sRSLabelId) > -1, "The slider's label is forwarded to its 1st handle");
+		assert.ok(s2ndHandleLabels.indexOf(sRSLabelId) > -1, "The slider's label is forwarded to its 2nd handle");
+		assert.ok(sProgressIndicatorLabels.indexOf(sRSLabelId) > -1, "The slider's label is forwarded to its progress indicator");
+
+	});
+
 	QUnit.test("Handles' Tooltips", function (assert) {
 		this.rangeSlider.getAggregation("_tooltipContainer").show(this.rangeSlider);
 		assert.strictEqual(jQuery(".sapMSliderTooltip").length, 2, "There should be two tooltips.");
