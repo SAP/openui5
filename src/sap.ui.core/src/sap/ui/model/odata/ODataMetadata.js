@@ -105,12 +105,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 
 	/*
 	 * Handle Promise resolving/eventing when metadata is loaded
+	 *
 	 */
 	ODataMetadata.prototype._handleLoaded = function(oMetadata, mParams, bSuppressEvents) {
 		var aEntitySets = [];
 
 		this.oMetadata = this.oMetadata ? this.merge(this.oMetadata, oMetadata, aEntitySets) : oMetadata;
 		this.oRequestHandle = null;
+
+		mParams.entitySets = aEntitySets;
 
 		// resolve global promise
 		this.fnResolve(mParams);
@@ -142,8 +145,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 		var oRequest = this._createRequest(sUrl);
 
 		return new Promise(function(resolve, reject) {
-			var oRequestHandle,
-				aEntitySets = [];
+			var oRequestHandle;
 
 			function _handleSuccess(oMetadata, oResponse) {
 				if (!oMetadata || !oMetadata.dataServices) {
@@ -157,12 +159,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 				}
 
 				that.sMetadataBody = oResponse.body;
-				that.oMetadata = that.oMetadata ? that.merge(that.oMetadata, oMetadata, aEntitySets) : oMetadata;
 				that.oRequestHandle = null;
 
 				var mParams = {
-					metadataString: that.sMetadataBody,
-					entitySets: aEntitySets
+					metadataString: that.sMetadataBody
 				};
 
 				var sLastModified = oResponse.headers["Last-Modified"];

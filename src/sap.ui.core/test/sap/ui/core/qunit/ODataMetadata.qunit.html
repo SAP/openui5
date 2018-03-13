@@ -352,9 +352,13 @@
 
 
 	var fnTestAnnotations = function(oModel, assert, done) {
-		assert.expect(14);
+		assert.expect(15);
 		var oMetadata = oModel.oMetadata;
+		var oServiceMetadata = oModel.getServiceMetadata();
 
+		assert.equal(oServiceMetadata.dataServices.schema[0].annotations.length, 1,
+			"exactly one annotation for the schema should exist"
+		);
 		assert.equal(
 			oMetadata._getAnnotation("/FlightCollection(1)/AirLineID/#@sap:label"),
 			"Airline",
