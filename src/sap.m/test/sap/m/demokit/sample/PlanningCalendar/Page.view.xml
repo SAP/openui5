@@ -23,6 +23,9 @@
 					text="{role}"
 					appointments="{path : 'appointments', templateShareable: 'true'}"
 					intervalHeaders="{path: 'headers', templateShareable: 'true'}">
+					<customData>
+						<core:CustomData key="emp-name" value="{name}" writeToDom="true"/>
+					</customData>
 					<appointments>
 						<unified:CalendarAppointment
 							startDate="{start}"
