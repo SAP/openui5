@@ -1,6 +1,7 @@
 <mvc:View
 	controllerName="sap.m.sample.PlanningCalendar.Page"
 	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
 	xmlns:unified="sap.ui.unified"
 	xmlns="sap.m">
 	<VBox class="sapUiSmallMargin">
@@ -21,6 +22,9 @@
 					text="{role}"
 					appointments="{path : 'appointments', templateShareable: 'true'}"
 					intervalHeaders="{path: 'headers', templateShareable: 'true'}">
+					<customData>
+						<core:CustomData key="emp-name" value="{name}" writeToDom="true"/>
+					</customData>
 					<appointments>
 						<unified:CalendarAppointment
 							startDate="{start}"
