@@ -6,13 +6,23 @@
 				"id": "6064be9a4770e39ce594d4a18311c5acf30a91a1",
 				"type": "FIX",
 				"text": "sap.tnt.NavigationList: The texts in the Popup are no longer cut off in IE",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680090969"
+					}
+				]
 			},
 			{
 				"id": "02fb8a9004fde53c9988fd204a273de2a41c10f0",
 				"type": "FIX",
 				"text": "sap.tnt.NavigationListItem: Icon tooltip corrected",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680108841"
+					}
+				]
 			}
 		]
 	}

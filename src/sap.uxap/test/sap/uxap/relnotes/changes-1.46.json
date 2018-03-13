@@ -1,0 +1,57 @@
+{
+  "1.46.0": {
+    "data": "January 2017",
+    "notes": [
+      {
+        "id": "b5b5b921a25e1295ef9b0f0202966ba734a65ad1",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: rendering performance",
+        "references": []
+      },
+      {
+        "id": "566bfdd80b906ad0203dc835bd017e1f4403fb1b",
+        "type": "FIX",
+        "text": "core.Popup: event handler should be moved to new DOM of autoclose area after rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570874378"
+          }
+        ]
+      },
+      {
+        "id": "38db27da4ddd4986580216dd61252dc67ac7b70e",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSectionBase: uncaught promise rejection leaked out of the ObjectPage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680295406"
+          }
+        ]
+      },
+      {
+        "id": "ce274319b22f5b75d96898a6bb6fe37d999a5ba3",
+        "type": "FIX",
+        "text": "sap.uxap: Hybrid devices were incorrectly detected as tablets",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670532898"
+          }
+        ]
+      },
+      {
+        "id": "961c50504269b9a5dd475153c4d728118db5db72",
+        "type": "FIX",
+        "text": "sap.uxap.AnchorBar: anchors didn't have correct tab-index",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670524256"
+          }
+        ]
+      }
+    ]
+  }
+}

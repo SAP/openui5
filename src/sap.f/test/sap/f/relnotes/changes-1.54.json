@@ -5,62 +5,87 @@
       {
         "id": "6d621cbbbd0c1d9d374876a1ab74c416d8e855bd",
         "type": "FIX",
-        "text": " sap.f.DynamicPageHeader: Fixed toggle header indicator size",
+        "text": "sap.f.DynamicPageHeader: Fixed toggle header indicator size",
         "references": []
       },
       {
         "id": "083a236ff2051322e15e089c0f94ed0c6f11ca46",
         "type": "FIX",
-        "text": " sap.m.DynamicPageTitle: Fixed expand button outline in IE",
-        "references": []
+        "text": "sap.m.DynamicPageTitle: Fixed expand button outline in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770577831"
+          }
+        ]
       },
       {
         "id": "469a2111baa7bbdd036152fe381c02a1c8a394b3",
         "type": "FEATURE",
-        "text": " sap.f.DynamicPageTitle: Added new property areaShrinkRatio",
+        "text": "sap.f.DynamicPageTitle: Added new property areaShrinkRatio",
         "references": []
       },
       {
         "id": "689a818c2583b300739affd752157b52603a7117",
         "type": "FEATURE",
-        "text": " ManagedObject(-Metadata): aggregation forwarding",
+        "text": "ManagedObject(-Metadata): aggregation forwarding",
         "references": []
       },
       {
         "id": "123f231d3f11508cbf8e2383b0eee124fa9793d0",
         "type": "FIX",
-        "text": " sap.f.Avatar: src property is now escaped",
-        "references": []
+        "text": "sap.f.Avatar: src property is now escaped",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780430119"
+          }
+        ]
       },
       {
         "id": "a346d583dbd6ed7d10a523fcd53be93326c65f33",
         "type": "FEATURE",
-        "text": " sap.m.DynamicPageTitle: Introduced stateChange event",
+        "text": "sap.m.DynamicPageTitle: Introduced stateChange event",
         "references": []
       },
       {
         "id": "48c7cdd7b75376feed6da14030da7ec79bf9be04",
         "type": "FEATURE",
-        "text": " sap.f.FlexibleColumnLayout: New property added",
+        "text": "sap.f.FlexibleColumnLayout: New property added",
         "references": []
       },
       {
         "id": "c9d342d0204d26773e8af1934b7ba4caab00b749",
         "type": "FIX",
-        "text": " f.DynamicPage: Ensure only own scroll handlers are detached",
-        "references": []
+        "text": "f.DynamicPage: Ensure only own scroll handlers are detached",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780516564"
+          }
+        ]
       },
       {
         "id": "1508874cb1fe7fcf246635f49ed5745e2f694000",
         "type": "FIX",
-        "text": " sap.f.Avatar: DetailBox opens when avatar used with list binding",
-        "references": []
+        "text": "sap.f.Avatar: DetailBox opens when avatar used with list binding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880004603"
+          }
+        ]
       },
       {
         "id": "58e64e9d466c69d51ff49bdc9c48e2d70dae6433",
         "type": "FIX",
-        "text": " sap.f.DynamicPage: Expand header button tabbing order fixed",
-        "references": []
+        "text": "sap.f.DynamicPage: Expand header button tabbing order fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770574236"
+          }
+        ]
       }
     ]
   }

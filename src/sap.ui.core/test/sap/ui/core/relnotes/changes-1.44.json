@@ -113,7 +113,7 @@
       {
         "id": "8512215ae4f6d68ff1e8c7e8d776de368786bd99",
         "type": "FEATURE",
-        "text": "sap.ui.test.Opa - slow OPA added a URL parameter \u0027opaExecutionDelay\u0027 to slow down OPA",
+        "text": "sap.ui.test.Opa - slow OPA added a URL parameter 'opaExecutionDelay' to slow down OPA",
         "references": []
       },
       {
@@ -132,25 +132,45 @@
         "id": "6d955f61c8091261f7eaa660f7153f97417fc546",
         "type": "FIX",
         "text": "AnalyticalBinding - Wrong MultiUnit Keys",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670408452"
+          }
+        ]
       },
       {
         "id": "36e0aed1e52bf5728811c6c9840a5ef3736d79c9",
         "type": "FIX",
         "text": "CLDR: Wrong short million in Arabic language",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002803442016"
+          }
+        ]
       },
       {
         "id": "cb32cd445ccf52d070a74774b6a06aa3dceb2361",
         "type": "FIX",
         "text": "Configuration: setRTL must not ignore the new value",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1139"
+          }
+        ]
       },
       {
         "id": "3a109ff933505768e76d7d52ff5a4392724ccb29",
         "type": "FIX",
         "text": "Core: Add JSDoc for \"themeChanged\" Event",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680232071"
+          }
+        ]
       },
       {
         "id": "b3888c015f5fe87c6f62c670923a3629f330b643",
@@ -162,30 +182,50 @@
         "id": "d0107fad5a74606eae97591f9ce3e4d2ef7ccec8",
         "type": "FIX",
         "text": "Device.js: Fix Resizing",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680116166"
+          }
+        ]
       },
       {
         "id": "f375c9f4c4df7a80cccc1fe8dc1ba25a10ef9247",
         "type": "FIX",
         "text": "ListBinding: Detect updates if grouping is enabled",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670388084"
+          }
+        ]
       },
       {
         "id": "0e0a95f8895499543c745cc8e3642cdf7153fb29",
         "type": "FIX",
         "text": "ManagedObject: Avoid mismatch of context and model",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680049167"
+          }
+        ]
       },
       {
         "id": "c546303f168bc209b859e12723de6b4b980323f2",
         "type": "FIX",
         "text": "ManagedObject: document type of oContext in setBindingContext",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670436630"
+          }
+        ]
       },
       {
         "id": "1ba92a56bad16790976a3a3d97a2f270cd3c421a",
-        "type": "FIX] MANAGEDOBJECT: THE TYPE \u0027STRING[",
-        "text": "\u0027 should cast anything to string",
+        "type": "FIX",
+        "text": "ManagedObject: the type 'string[]' should cast anything to string",
         "references": []
       },
       {
@@ -210,7 +250,12 @@
         "id": "9ddb81aa84a70fdf008f5727a30312f7b25d2bef",
         "type": "FIX",
         "text": "ODataAnnotations: Provide lastModified date for annotations",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680241240"
+          }
+        ]
       },
       {
         "id": "ac3cff1cddcf1e94e8f5b283eec5f6fb0a66a97c",
@@ -228,7 +273,12 @@
         "id": "a9eb008fbc8b4de62f257c73a3fafe003c024c5f",
         "type": "FIX",
         "text": "OPA was sometimes failing to start an IFrame in firefox when mockserver was present",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680241591"
+          }
+        ]
       },
       {
         "id": "bd43e49c72061b43a4a027e89b08f6c34173cf23",
@@ -240,7 +290,12 @@
         "id": "be1efcb60420fc56493ab587189781e81b1e40f3",
         "type": "FIX",
         "text": "Opa5 autoWait is waiting for Microtasks",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680241593"
+          }
+        ]
       },
       {
         "id": "9666a6b53cb1acd54d967d2c0e8384e95c171064",
@@ -252,13 +307,31 @@
         "id": "5cc8ac88bacc20be5a4196aa2ed1526ef4916654",
         "type": "FIX",
         "text": "TreeBindingAdapter - SelectAll",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670489690"
+          }
+        ]
       },
       {
         "id": "4ba0fb4ae1d1dfca58fdf5cd6cfcf2b6f3198d38",
         "type": "FIX",
-        "text": "base.ManagedObject: don\u0027t ignore wrong context",
-        "references": []
+        "text": "base.ManagedObject: don't ignore wrong context",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670501568"
+          },
+          {
+            "type": "BCP",
+            "reference": "1670490350"
+          },
+          {
+            "type": "BCP",
+            "reference": "1670490943"
+          }
+        ]
       },
       {
         "id": "7afbdb345e6ea90a8307a8c5acd6dd9f80b5339e",
@@ -270,43 +343,86 @@
         "id": "d0fc0fb0c25690121f1b23ddf92993fd5291c06e",
         "type": "FIX",
         "text": "core.DateFormat: date parsed wrongly when pm/am appears before time",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670396276"
+          }
+        ]
       },
       {
         "id": "a37f401cf54cac32d327df734457dab9aa150857",
         "type": "FIX",
         "text": "core.Popup: Removal of BlockLayer now happens when Popup has closed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001677572016"
+          }
+        ]
       },
       {
         "id": "b9b8c09dbbd71db9354b85c45f5b585533aad3fd",
         "type": "FIX",
-        "text": "core.Popup: new position isn\u0027t applied in RTL after popup is opened",
-        "references": []
+        "text": "core.Popup: new position isn't applied in RTL after popup is opened",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670432171"
+          }
+        ]
       },
       {
         "id": "3b54ac03c4cb6627369e94bcd6327026c828f443",
         "type": "FIX",
         "text": "core.Popup: remove visible shieldlayer when destroy popup",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680110163"
+          }
+        ]
       },
       {
         "id": "df86a1c4636101e2341e25641e062140dbdc9e60",
         "type": "FIX",
         "text": "core.Popup: should keep focus for non-recently-opened modal popup",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680147990"
+          }
+        ]
       },
       {
         "id": "4bb1e01257ac8f6fb854548dcac26059a7dd4f65",
         "type": "FIX",
         "text": "core.TooltipBase: show parent control tooltip if no tooltip on child",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "917"
+          },
+          {
+            "type": "BCP",
+            "reference": "1670187459"
+          },
+          {
+            "type": "BCP",
+            "reference": "1570632712"
+          }
+        ]
       },
       {
         "id": "cc79277a278578087b658d8d82e463fe4cbb6859",
         "type": "FIX",
         "text": "core.UIComponent: improve JSDoc for createContent, esp. @returns",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1190"
+          }
+        ]
       },
       {
         "id": "49f1d8c1dde40fa52135d590dac3d0dbfd18c51c",
@@ -318,7 +434,12 @@
         "id": "c387389b08a9797b5b4fc5fc984fe1ba76d26fb8",
         "type": "FIX",
         "text": "jQuery.sap.encoder: Check host names in validateUrl",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680084594"
+          }
+        ]
       },
       {
         "id": "27b4454f768d18cf638c538b4ecba712bcf22381",
@@ -336,13 +457,23 @@
         "id": "937fe215822f8a2833bcce20900bcbaccbbb332b",
         "type": "FIX",
         "text": "jQuery.sap.properties: reduce processing memory and heap",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670411316"
+          }
+        ]
       },
       {
         "id": "b82f0b92a5c21e51e59a35a22ce3a59caaeabb23",
         "type": "FIX",
         "text": "jQuery.sap.strings: JSDoc return types, JSDoc best practices",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1189"
+          }
+        ]
       },
       {
         "id": "3d89d3e44afb0b1421bde3f72a61aad4f41ef93e",
@@ -360,13 +491,23 @@
         "id": "01c3fca1a516d55be0ab4f56a96628cce43378e0",
         "type": "FIX",
         "text": "mvc/XMLView: cache fail does not break view processing",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670409148"
+          }
+        ]
       },
       {
         "id": "04c5ee8a8766dc00cb39891f839a2e7634d185a8",
         "type": "FIX",
         "text": "sap.m.Carousel:  Nested carousels are now working correctly",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670448472"
+          }
+        ]
       },
       {
         "id": "49cfcd672bfb79a1a4d742c5af4e004fa2c3d8de",
@@ -384,19 +525,34 @@
         "id": "0d20cb06499bb5b69dbfcb734bb81a24028f959c",
         "type": "FIX",
         "text": "sap.ui.core.format.DateFormat: fallback format by using given pattern without delimiters",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002007974700002759252016"
+          }
+        ]
       },
       {
         "id": "4576c6899b34f81fb5e5d107eb2da9806be1b0ed",
         "type": "FIX",
         "text": "sap.ui.core.theming.Parameters: Correctly rewrite  relative urls",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670436898"
+          }
+        ]
       },
       {
         "id": "53ddc3c7501b4377b6e97da56a2ec947b67b805f",
         "type": "FIX",
         "text": "sap.ui.model.Context: There is no parameter oContext on constructor",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1104"
+          }
+        ]
       },
       {
         "id": "3473d9eb696a4e378e63190433f0679dfa293335",
@@ -426,43 +582,68 @@
         "id": "2e9e1f2c1b8cf2e797a128be92e2b2ada4b5cd80",
         "type": "FIX",
         "text": "sap.ui.test.actions.Press - focusevents even when focus is not possible",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670397910"
+          }
+        ]
       },
       {
         "id": "31b35fe9da3bffe47295d4d6744212897ba0eeac",
         "type": "FIX",
-        "text": "sap.ui.test.actions.Press - m.Input\u0027s value help is triggered",
+        "text": "sap.ui.test.actions.Press - m.Input's value help is triggered",
         "references": []
       },
       {
         "id": "202fdd1c0419986375c586fd95d9bde3a6edfc3b",
         "type": "FIX",
-        "text": "sap.ui.test.gherkin - don\u0027t load QUnit if it is already loaded via script",
+        "text": "sap.ui.test.gherkin - don't load QUnit if it is already loaded via script",
         "references": []
       },
       {
         "id": "d024ee480d594a898553bc2ffa2a8f9bea896e48",
         "type": "FIX",
         "text": "v2.ODataContextBinding: Detect navigation property changes",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680148955"
+          }
+        ]
       },
       {
         "id": "2b34973252944a1576bc600cae26f977d1c57702",
         "type": "FIX",
         "text": "v2.ODataListBinding - Endless Change-Event Loop",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002384822016"
+          }
+        ]
       },
       {
         "id": "ff56529b9db97869021d4eb7b87431af0a57c13d",
         "type": "FIX",
         "text": "v2.ODataModel: bindElement status code 204",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670473768"
+          }
+        ]
       },
       {
         "id": "7647b04a15218233b28b1e362453ed4efb00cf97",
         "type": "FIX",
         "text": "v2.ODataModel: error when customParam of a Binding is undefined",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670352369"
+          }
+        ]
       }
     ]
   }

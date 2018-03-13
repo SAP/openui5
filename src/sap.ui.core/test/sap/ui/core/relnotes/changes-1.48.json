@@ -5,595 +5,948 @@
       {
         "id": "736571fbe2af450374ff7318340cfab8f50be55b",
         "type": "FIX",
-        "text": " v2.ODataModel: Improve compatibility with Gateway\"",
+        "text": "v2.ODataModel: Improve compatibility with Gateway\"",
         "references": []
       },
       {
         "id": "15ab976be15ec707da4b74ef8d1e2badfbc70ac3",
         "type": "FEATURE",
-        "text": " Add sap.ui.core.AbsoluteCSSSize type",
+        "text": "Add sap.ui.core.AbsoluteCSSSize type",
         "references": []
       },
       {
         "id": "ed927db11c56fc5e976b828c56741a30a941c141",
         "type": "FEATURE",
-        "text": " Component: explicit usage declaration for reuse components",
+        "text": "Component: explicit usage declaration for reuse components",
         "references": []
       },
       {
         "id": "b48d43babb782bce72ac6c8c3930c1c38dc94719",
         "type": "FEATURE",
-        "text": " ComponentContainer: support prefixing of component id",
+        "text": "ComponentContainer: support prefixing of component id",
         "references": []
       },
       {
         "id": "f904e7cb3dcd383bd8df87a649423f33475f2500",
         "type": "FEATURE",
-        "text": " Element: open dependents aggregation to Elements",
+        "text": "Element: open dependents aggregation to Elements",
         "references": []
       },
       {
         "id": "12e8853c9e359308a402d25d03f393ad095d930d",
         "type": "FEATURE",
-        "text": " Mockserver: Improve \"search\" param behavior: SUBSTRINGOF",
+        "text": "Mockserver: Improve \"search\" param behavior: SUBSTRINGOF",
         "references": []
       },
       {
         "id": "102f01bd24b973ee39b14dd302e48b71fa09ea42",
         "type": "FEATURE",
-        "text": " Opa: implement extensions",
+        "text": "Opa: implement extensions",
         "references": []
       },
       {
         "id": "3a3b1fc29113cb5db1e07157ed051c82c2e74867",
         "type": "FEATURE",
-        "text": " Opa: parameters from uri",
+        "text": "Opa: parameters from uri",
         "references": []
       },
       {
         "id": "491d3100a119d4424d86abde04a67930bff0c8d5",
         "type": "FEATURE",
-        "text": " SAP Icons v3.8 update",
+        "text": "SAP Icons v3.8 update",
         "references": []
       },
       {
         "id": "b8787cf4e3ac8ef3c781b5f3fb56b8008802dc2e",
         "type": "FEATURE",
-        "text": " core.DateFormat: Date Interval",
+        "text": "core.DateFormat: Date Interval",
         "references": []
       },
       {
         "id": "0a8e5f6116eab06dd31a8d9c871dff29a315946c",
         "type": "FEATURE",
-        "text": " core.routing.Router: new param to suppress hash parsing in \u0027initialize\u0027",
-        "references": []
+        "text": "core.routing.Router: new param to suppress hash parsing in 'initialize'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780042552"
+          }
+        ]
       },
       {
         "id": "c694454062ad1f428fd74b1bc239ffd25dfe391f",
         "type": "FEATURE",
-        "text": " core/DesignTimeSupport: DesignTime for Components",
+        "text": "core/DesignTimeSupport: DesignTime for Components",
         "references": []
       },
       {
         "id": "2634f200f510c88dc9616aee9b581c462d1566e1",
         "type": "FEATURE",
-        "text": " sap.m.ObjectAttribute: When active, only the value is clickable",
-        "references": []
+        "text": "sap.m.ObjectAttribute: When active, only the value is clickable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680367718"
+          }
+        ]
       },
       {
         "id": "8f65b118d203972e278a6159d22c0d21d898bef7",
         "type": "FEATURE",
-        "text": " sap.ui.core.routing: \u0027beforeMatched\u0027 and \u0027beforeRouteMatched\u0027 events",
+        "text": "sap.ui.core.routing: 'beforeMatched' and 'beforeRouteMatched' events",
         "references": []
       },
       {
         "id": "b16d04cebf653d14598b0b2b07ddf54f1300339f",
         "type": "FEATURE",
-        "text": " sap.ui.core.util.Mockserver: Support URL Param \"search\"",
+        "text": "sap.ui.core.util.Mockserver: Support URL Param \"search\"",
         "references": []
       },
       {
         "id": "29e2e2c2aa6aa097951986f1c50c05a96985fcd0",
         "type": "FEATURE",
-        "text": " sap.ui.model.base.ManagedObjectModel: Initial version - erased alias handling - erased handlePath",
+        "text": "sap.ui.model.base.ManagedObjectModel: Initial version - erased alias handling - erased handlePath",
         "references": []
       },
       {
         "id": "c4161244e82e6da3b26993a5f72986cfac0375f7",
         "type": "FIX",
-        "text": " @sapUiShadowHeader less parameter alignment",
+        "text": "@sapUiShadowHeader less parameter alignment",
         "references": []
       },
       {
         "id": "13f3fae777ffb08ddd0fc1124c5d887e051ad239",
         "type": "FIX",
-        "text": " AnalyticalBinding: Import data into ODataModel",
-        "references": []
+        "text": "AnalyticalBinding: Import data into ODataModel",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780119901"
+          }
+        ]
       },
       {
         "id": "00bbc34927e85310cc7f8ca5ca8bf3e8bc339119",
         "type": "FIX",
-        "text": " Chart Color adaption for sap_hcb",
+        "text": "Chart Color adaption for sap_hcb",
         "references": []
       },
       {
         "id": "44342edcf992a9177ad053d2ce4abf935c660a3f",
         "type": "FIX",
-        "text": " ClientTreeBinding: Calculate correct selected nodes count when filtering",
-        "references": []
+        "text": "ClientTreeBinding: Calculate correct selected nodes count when filtering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770124220"
+          }
+        ]
       },
       {
         "id": "32cba59c7626d7bc9b97afb10e6d259b7a3cd625",
         "type": "FIX",
-        "text": " Component Lifecycle: ensure to load includes during Metadata#init",
+        "text": "Component Lifecycle: ensure to load includes during Metadata#init",
         "references": []
       },
       {
         "id": "ac8f3724d52538772947a41c5b0b74befd8fe48d",
         "type": "FIX",
-        "text": " Component Lifecycle: removal of CSS resources on destruction",
-        "references": []
+        "text": "Component Lifecycle: removal of CSS resources on destruction",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680191442"
+          }
+        ]
       },
       {
         "id": "a438ae53900d2a67e0b4f00b0155fcec25533306",
         "type": "FIX",
-        "text": " Component Models: Add sap-language/sap-client URI params",
-        "references": []
+        "text": "Component Models: Add sap-language/sap-client URI params",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780089417"
+          }
+        ]
       },
       {
         "id": "be78b33f23b4536d04d16bd62792d7c623af6ec1",
         "type": "FIX",
-        "text": " Configuration: getSAPParam(\"sap-language\") after language change",
-        "references": []
+        "text": "Configuration: getSAPParam(\"sap-language\") after language change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770004448"
+          },
+          {
+            "type": "BCP",
+            "reference": "1780101258"
+          }
+        ]
       },
       {
         "id": "0c8a17fc1b801305b5746ce3b18a1aa6e9f24dc2",
         "type": "FIX",
-        "text": " Fragment, Customizing: ensure viewModification support",
-        "references": []
+        "text": "Fragment, Customizing: ensure viewModification support",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780111083"
+          }
+        ]
       },
       {
         "id": "36c523bd0749e0f2b8587f4f7c8e82e40eee7d10",
         "type": "FIX",
-        "text": " Gherkin dataTableUtils methods toTable and toObject now throw an Error if they detect duplicate keys",
+        "text": "Gherkin dataTableUtils methods toTable and toObject now throw an Error if they detect duplicate keys",
         "references": []
       },
       {
         "id": "473223b6d9abb089143666ffc3dd3620b20fc993",
         "type": "FIX",
-        "text": " Gherkin now correctly counts duplicate step definitions as an error",
+        "text": "Gherkin now correctly counts duplicate step definitions as an error",
         "references": []
       },
       {
         "id": "65df4e62e4300a314edcbd9078400257a7847f96",
         "type": "FIX",
-        "text": " Gherkin now correctly throws Ambiguous Step Definition Errors",
+        "text": "Gherkin now correctly throws Ambiguous Step Definition Errors",
         "references": []
       },
       {
         "id": "b6400d93afcd150e3a05334a44120cd53a378fe4",
         "type": "FIX",
-        "text": " Gherkin now supports multiple Examples per Scenario Outline",
+        "text": "Gherkin now supports multiple Examples per Scenario Outline",
         "references": []
       },
       {
         "id": "fd988d0f0d22aebbf55a5ea434b313c361a73f46",
         "type": "FIX",
-        "text": " Gherkin: Fixed bugs in @tag handling",
+        "text": "Gherkin: Fixed bugs in @tag handling",
         "references": []
       },
       {
         "id": "184a21c2916321a0366f44b0f43fde36048d7ca8",
         "type": "FIX",
-        "text": " Gherkin: can now @wip Examples",
+        "text": "Gherkin: can now @wip Examples",
         "references": []
       },
       {
         "id": "d326b777507dc328fdd91c1924d404bb2f91f704",
         "type": "FIX",
-        "text": " Less Parameter Values for sequential chart parameters for sap_hcb",
+        "text": "Less Parameter Values for sequential chart parameters for sap_hcb",
         "references": []
       },
       {
         "id": "2984a94ad722bab5414f11490bb4dba62e8bae0e",
         "type": "FIX",
-        "text": " Link in Form: focus outline too large",
-        "references": []
+        "text": "Link in Form: focus outline too large",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780131982"
+          }
+        ]
       },
       {
         "id": "6d1b485fb368b50aa0e2699888800ff688dd9739",
         "type": "FIX",
-        "text": " ManagedObject: _removeChild should not invalidate on its own",
+        "text": "ManagedObject: _removeChild should not invalidate on its own",
         "references": []
       },
       {
         "id": "0e24ac45f448044436d1973ef02468a24cac96af",
         "type": "FIX",
-        "text": " MessageManager: exception when adding message without processor",
-        "references": []
+        "text": "MessageManager: exception when adding message without processor",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770076142"
+          }
+        ]
       },
       {
         "id": "b1803ee6754ae5133cf0733920daa02aa3fa2891",
         "type": "FIX",
-        "text": " MessageMixin - Ignore Message with type \u0027Information\u0027",
-        "references": []
+        "text": "MessageMixin - Ignore Message with type 'Information'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001702552017"
+          }
+        ]
       },
       {
         "id": "ca1fda0bf98758c92423278b9ba7d54da868646c",
         "type": "FIX",
-        "text": " Messaging: Validation messages not removed",
-        "references": []
+        "text": "Messaging: Validation messages not removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780134322"
+          }
+        ]
       },
       {
         "id": "055708b993628281e3cb9b3ce1a33ff15e84b987",
         "type": "FIX",
-        "text": " Mock Server unit test failing randomly for filter on Edm.Decimal",
-        "references": []
+        "text": "Mock Server unit test failing randomly for filter on Edm.Decimal",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780077252"
+          }
+        ]
       },
       {
         "id": "ef5f5dc9ba381f72c6a76686e9db1033b434169d",
         "type": "FIX",
-        "text": " ODataListBinding: Update expanded list array",
-        "references": []
+        "text": "ODataListBinding: Update expanded list array",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680348695"
+          },
+          {
+            "type": "BCP",
+            "reference": "1780081156"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770008576"
+          }
+        ]
       },
       {
         "id": "bcc79680b6088b8116e3d723d8d8a8a3faa87c7c",
         "type": "FIX",
-        "text": " ODataMessageParser: propertyRef and target in messages",
-        "references": []
+        "text": "ODataMessageParser: propertyRef and target in messages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770169246"
+          }
+        ]
       },
       {
         "id": "4fdeecf992896199d1d2f1625ac74512dacebf8c",
         "type": "FIX",
-        "text": " ODataModel V1: deprecated tag added to JS DOC",
+        "text": "ODataModel V1: deprecated tag added to JS DOC",
         "references": []
       },
       {
         "id": "eafa2b16ffba6a560dbb5dae51f0c1cba28af81f",
         "type": "FIX",
-        "text": " ODataTreeBindingFlat: Ignore successive expand/collapse calls on the same node",
-        "references": []
+        "text": "ODataTreeBindingFlat: Ignore successive expand/collapse calls on the same node",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770002499"
+          }
+        ]
       },
       {
         "id": "120233f2b9f788a5e10616ddde97b262c62d5f3e",
         "type": "FIX",
-        "text": " ODataTreeBindingFlat: Reduce number of requests in certain paging scenarios",
-        "references": []
+        "text": "ODataTreeBindingFlat: Reduce number of requests in certain paging scenarios",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780070875"
+          }
+        ]
       },
       {
         "id": "00b14e719447fbd02155aa8c56bab6c17fd7a846",
         "type": "FIX",
-        "text": " OPA5: Timeout handling when using values bigger than 59s",
+        "text": "OPA5: Timeout handling when using values bigger than 59s",
         "references": []
       },
       {
         "id": "4c8e92c473f2d4db65cebc5f3bb8fbf5c8205a9b",
         "type": "FIX",
-        "text": " OPA5: add debugTimeout as valid parameter for waitFor",
+        "text": "OPA5: add debugTimeout as valid parameter for waitFor",
         "references": []
       },
       {
         "id": "b77c4f5c905b9473ec393a43fdb8a4ce91189095",
         "type": "FIX",
-        "text": " OPA5: fix docu",
+        "text": "OPA5: fix docu",
         "references": []
       },
       {
         "id": "45b18ff250362138e300b764dc8bfca42c61dfcc",
         "type": "FIX",
-        "text": " Opa: accept non-string uri when starting iframe",
-        "references": []
+        "text": "Opa: accept non-string uri when starting iframe",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770152701"
+          }
+        ]
       },
       {
         "id": "968468871c8afc007772e81fd4e791b50533c55c",
         "type": "FIX",
-        "text": " ResourceModel: apply enhancements after localization change",
-        "references": []
+        "text": "ResourceModel: apply enhancements after localization change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770103216"
+          }
+        ]
       },
       {
         "id": "c22207fdc35895d8599933f5151b0235ad2ef28e",
         "type": "FIX",
-        "text": " Support Edm.Decimal with lower case \u0027m\u0027. For example $filter\u003dUnitPrice le 100m",
-        "references": []
+        "text": "Support Edm.Decimal with lower case 'm'. For example $filter=UnitPrice le 100m",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780021087"
+          }
+        ]
       },
       {
         "id": "1437f73c04d65436c4fcc4dceeb5582d0075bacc",
         "type": "FIX",
-        "text": " ThemeCheck: Fix Cross-Origin issues in Firefox",
-        "references": []
+        "text": "ThemeCheck: Fix Cross-Origin issues in Firefox",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780051923"
+          }
+        ]
       },
       {
         "id": "b0932ec9273c86eeb3b8654b8fef6ea1d12945c4",
         "type": "FIX",
-        "text": " TreeBindingAdapter: Clear selectAllMode from all nodes on clearSelection()",
-        "references": []
+        "text": "TreeBindingAdapter: Clear selectAllMode from all nodes on clearSelection()",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780040138"
+          }
+        ]
       },
       {
         "id": "b514a43475c517531f1f4410a2b35e75f345ed83",
         "type": "FIX",
-        "text": " TreeBindingAdapter: Harmonize selection behavior when expanding nodes using setNumberOfExpandedLevels()",
-        "references": []
+        "text": "TreeBindingAdapter: Harmonize selection behavior when expanding nodes using setNumberOfExpandedLevels()",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780134367"
+          }
+        ]
       },
       {
         "id": "62a2378664f3772352e94e92c8d53486e6555c31",
         "type": "FIX",
-        "text": " core.BusyIndicator: should consider window scroll position in placement",
-        "references": []
+        "text": "core.BusyIndicator: should consider window scroll position in placement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780096668"
+          }
+        ]
       },
       {
         "id": "31ac6227f457e768a1077b6de2a614c8c055175a",
         "type": "FIX",
-        "text": " core.IconPool: add local font path for SAP-icons Icon Font",
-        "references": []
+        "text": "core.IconPool: add local font path for SAP-icons Icon Font",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001690922017"
+          }
+        ]
       },
       {
         "id": "a1b3b78f4cad0332bdc02ea96bfc6aa2a31806b4",
         "type": "FIX",
-        "text": " core.IconPool: safely check the default icon collection",
-        "references": []
+        "text": "core.IconPool: safely check the default icon collection",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1346"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770011552"
+          }
+        ]
       },
       {
         "id": "74ae546e8407bae826bfaa4cb84594b19b968aae",
         "type": "FIX",
-        "text": " core.NumberFormat: adapt decimals when number of integer isn\u0027t sufficient",
-        "references": []
+        "text": "core.NumberFormat: adapt decimals when number of integer isn't sufficient",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001263342017"
+          }
+        ]
       },
       {
         "id": "d2d2d3365e7f8f558196e3a17013b3cb9bdaa855",
         "type": "FIX",
-        "text": " core.NumberFormat: consider \u0027decimals\u0027 for style \u0027short\u0027 format",
-        "references": []
+        "text": "core.NumberFormat: consider 'decimals' for style 'short' format",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770162301"
+          }
+        ]
       },
       {
         "id": "f06c3bac1e612291f22ebb9ddda091ede05931fc",
         "type": "FIX",
-        "text": " core.Popup|m.Dialog: consider window scroll for positioning",
-        "references": []
+        "text": "core.Popup|m.Dialog: consider window scroll for positioning",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780107083"
+          }
+        ]
       },
       {
         "id": "c06f9b7501e291e2275bc56b4c91b40f702ed7d6",
         "type": "FIX",
-        "text": " core.format.DateFormat: format and parse the DayNumberOfWeek",
-        "references": []
+        "text": "core.format.DateFormat: format and parse the DayNumberOfWeek",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780020552"
+          }
+        ]
       },
       {
         "id": "401e3e3574ae4ff69c0c8527b82e18d0262f8aa7",
         "type": "FIX",
-        "text": " core.qunit.DateFormat: adapt tests to run across different timezones",
-        "references": []
+        "text": "core.qunit.DateFormat: adapt tests to run across different timezones",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780103330"
+          }
+        ]
       },
       {
         "id": "73a999bdf79f24978f6f4815d79dd3c0eb800856",
         "type": "FIX",
-        "text": " core.qunit.Popup: fix tests which fail on mobile device",
-        "references": []
+        "text": "core.qunit.Popup: fix tests which fail on mobile device",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780065595"
+          }
+        ]
       },
       {
         "id": "e6a3617c9106adf4ba4404d2f0a58030238b4cdd",
         "type": "FIX",
-        "text": " core.routing.Router: \u0027stop\u0027 can be called before \u0027initialize\u0027",
-        "references": []
+        "text": "core.routing.Router: 'stop' can be called before 'initialize'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770080082"
+          }
+        ]
       },
       {
         "id": "5ea1def26d25a0e5f2ba7bce7f14821594d135ac",
         "type": "FIX",
-        "text": " core.testsuite.opa.qunit: remove noglobals from the Press.qunit.html",
-        "references": []
+        "text": "core.testsuite.opa.qunit: remove noglobals from the Press.qunit.html",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780053898"
+          }
+        ]
       },
       {
         "id": "cf42562e95367d2a228a70d931e8ccca558bb3d5",
         "type": "FIX",
-        "text": " jQuery.sap.global: Firefox sync XHR/Promise",
+        "text": "jQuery.sap.global: Firefox sync XHR/Promise",
         "references": []
       },
       {
         "id": "33a274a6128941857e6d3bdb537115eb5040930b",
         "type": "FIX",
-        "text": " jQuery.sap.global: Improve Firefox XHR proxy compatibility",
-        "references": []
+        "text": "jQuery.sap.global: Improve Firefox XHR proxy compatibility",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770100068"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770099921"
+          }
+        ]
       },
       {
         "id": "f240eda4b743925eb167fd012f747cdc01f25862",
         "type": "FIX",
-        "text": " jQuery.sap.global: open the TechnicalInfo only when left \u0027alt\u0027 is pressed",
-        "references": []
+        "text": "jQuery.sap.global: open the TechnicalInfo only when left 'alt' is pressed",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1323"
+          },
+          {
+            "type": "BCP",
+            "reference": "1780092450"
+          }
+        ]
       },
       {
         "id": "95adbdbbf36f6f743f41185fdf5a0478b5e021de",
         "type": "FIX",
-        "text": " jQuery.sap.script: Fixed jQuery.sap.equal for undefined properties",
+        "text": "jQuery.sap.script: Fixed jQuery.sap.equal for undefined properties",
         "references": []
       },
       {
         "id": "f1a7ec8382dd353e3815c187fa7a2ee43395e83e",
         "type": "FIX",
-        "text": " sap.m.Carousel: Holding down an arrow animation issue solved.",
-        "references": []
+        "text": "sap.m.Carousel: Holding down an arrow animation issue solved.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780132565"
+          }
+        ]
       },
       {
         "id": "36f99344a394ac7278aa5098273066ba424cd6c8",
         "type": "FIX",
-        "text": " sap.ui.commons.Callout: Prevent standard tooltip from showing on click",
-        "references": []
+        "text": "sap.ui.commons.Callout: Prevent standard tooltip from showing on click",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780041849"
+          }
+        ]
       },
       {
         "id": "e9ae9f14655eddc4856101be114e078162987e85",
         "type": "FIX",
-        "text": " sap.ui.core.Icon: provide theme dependent color for IconColor.Default",
-        "references": []
+        "text": "sap.ui.core.Icon: provide theme dependent color for IconColor.Default",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780087758"
+          }
+        ]
       },
       {
         "id": "0d9b625471d4b45f80f1ad873fc787e369e48060",
         "type": "FIX",
-        "text": " sap.ui.core.IconPool: Use sap.ui.getCore() instead of AMD export",
-        "references": []
+        "text": "sap.ui.core.IconPool: Use sap.ui.getCore() instead of AMD export",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780046575"
+          },
+          {
+            "type": "BCP",
+            "reference": "1780055543"
+          },
+          {
+            "type": "BCP",
+            "reference": "1780052096"
+          },
+          {
+            "type": "BCP",
+            "reference": "1780055143"
+          },
+          {
+            "type": "BCP",
+            "reference": "1780055706"
+          }
+        ]
       },
       {
         "id": "2f2ac270bb54514881af35610108f9a6930e2ce5",
         "type": "FIX",
-        "text": " sap.ui.core.Popup: check the validity of document.activeElement",
-        "references": []
+        "text": "sap.ui.core.Popup: check the validity of document.activeElement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780121855"
+          }
+        ]
       },
       {
         "id": "9026444aada9fa1dc5da5a8222070807e9667f0d",
         "type": "FIX",
-        "text": " sap.ui.core.Popup: fix the check for multi level wrapped popups",
-        "references": []
+        "text": "sap.ui.core.Popup: fix the check for multi level wrapped popups",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780026487"
+          }
+        ]
       },
       {
         "id": "8ce73dde0f593cf3f77f5bf1b4d56ffeb0c2e6e9",
         "type": "FIX",
-        "text": " sap.ui.core.delegate.ScrollEnablement: Container doesn\u0027t jump now when multiple animations are set",
-        "references": []
+        "text": "sap.ui.core.delegate.ScrollEnablement: Container doesn't jump now when multiple animations are set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770060103"
+          }
+        ]
       },
       {
         "id": "3d14a2ed3420c23ff5feba1477eeed96f0726d37",
         "type": "FIX",
-        "text": " sap.ui.core.routing.Target: add TitleProvider shoudn\u0027t invalidate view",
+        "text": "sap.ui.core.routing.Target: add TitleProvider shoudn't invalidate view",
         "references": []
       },
       {
         "id": "73477c867b147bfc0571c0686b7ffd69e49b0100",
         "type": "FIX",
-        "text": " sap.ui.core.support.plugins.ControlTree: ControlTree is now fixed",
-        "references": []
+        "text": "sap.ui.core.support.plugins.ControlTree: ControlTree is now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770097256"
+          }
+        ]
       },
       {
         "id": "d4b6456b2fe645c8c09b3b9719b773bb3742223d",
         "type": "FIX",
-        "text": " sap.ui.core.theming.Parameters: Fix URL in warning message (was undefined)",
+        "text": "sap.ui.core.theming.Parameters: Fix URL in warning message (was undefined)",
         "references": []
       },
       {
         "id": "bb73793004200e0c2c074f272f62858d9bb2b9bd",
         "type": "FIX",
-        "text": " sap.ui.core.util.DraftEnabledMockServer: Support empty DraftRoot annotation.",
-        "references": []
+        "text": "sap.ui.core.util.DraftEnabledMockServer: Support empty DraftRoot annotation.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770178908"
+          }
+        ]
       },
       {
         "id": "f031be72424daa29dfe7d884a6491bb8f3ffaf2b",
         "type": "FIX",
-        "text": " sap.ui.core.util.Mockserver: Support filtering while sample data contains null values.",
-        "references": []
+        "text": "sap.ui.core.util.Mockserver: Support filtering while sample data contains null values.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780087944"
+          }
+        ]
       },
       {
         "id": "1806ad2259185b3c58bb46b90f5e94c83e975606",
         "type": "FIX",
-        "text": " sap.ui.model.analytics.AnalyticalBinding",
-        "references": []
+        "text": "sap.ui.model.analytics.AnalyticalBinding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770008178"
+          }
+        ]
       },
       {
         "id": "20af6bdc3f6860bbf050467d97eea7c958d9e304",
         "type": "FIX",
-        "text": " sap.ui.model.odata.v4.Context: fix sap.m.Input change event value",
-        "references": []
+        "text": "sap.ui.model.odata.v4.Context: fix sap.m.Input change event value",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770157239"
+          }
+        ]
       },
       {
         "id": "5318d43738358bca877bfa185c861123954a815b",
         "type": "FIX",
-        "text": " sap.ui.model.odata.v4.ODataContextBinding: use SyncPromise",
+        "text": "sap.ui.model.odata.v4.ODataContextBinding: use SyncPromise",
         "references": []
       },
       {
         "id": "a1ba142ef759f18555de7bb6dc3c0b5958e7c730",
         "type": "FIX",
-        "text": " sap.ui.model.type: Improved validation messages",
+        "text": "sap.ui.model.type: Improved validation messages",
         "references": []
       },
       {
         "id": "9f50569cf6c24841166f5ded1f9297377ac95e04",
         "type": "FIX",
-        "text": " sap.ui.odata.type.DateTimeBase: running in UTC time zone",
-        "references": []
+        "text": "sap.ui.odata.type.DateTimeBase: running in UTC time zone",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780103413"
+          }
+        ]
       },
       {
         "id": "770715df2327c21764e6decfc38fa7f74a2e7608",
         "type": "FIX",
-        "text": " sap.ui.qunit.TestRunner.js: Improve Memory consumption in IE11",
+        "text": "sap.ui.qunit.TestRunner.js: Improve Memory consumption in IE11",
         "references": []
       },
       {
         "id": "626af4b49e6b01cbc77f863c7239950e522f9242",
         "type": "FIX",
-        "text": " sap.ui.test.launchers.iFrameLauncher: Workarround for IE leak",
+        "text": "sap.ui.test.launchers.iFrameLauncher: Workarround for IE leak",
         "references": []
       },
       {
         "id": "02d2612e08545f5366a3225b9d35f5a0d08e7929",
         "type": "FIX",
-        "text": " shared.less: missing font sizes for HC themes",
-        "references": []
+        "text": "shared.less: missing font sizes for HC themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770089122"
+          }
+        ]
       },
       {
         "id": "ca2d6879149c57aa525c6bdbe86c54bc8f29b8b4",
         "type": "FIX",
-        "text": " v2.ODataAnnotations.js: Improve robustness of the annotations loaded method",
-        "references": []
+        "text": "v2.ODataAnnotations.js: Improve robustness of the annotations loaded method",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680241240"
+          }
+        ]
       },
       {
         "id": "a49888138dc7c015f8a54e74a65e96f8fb7aaedb",
         "type": "FIX",
-        "text": " v2.ODataListBinding: Check whether a refresh is needed",
-        "references": []
+        "text": "v2.ODataListBinding: Check whether a refresh is needed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680056373"
+          }
+        ]
       },
       {
         "id": "4df721d32dd7b0ffe88c61bd5f7c15ee2d835b66",
         "type": "FIX",
-        "text": " v2.ODataListBinding: Remove pretend request",
-        "references": []
+        "text": "v2.ODataListBinding: Remove pretend request",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770146794"
+          }
+        ]
       },
       {
         "id": "b675691c98731d687c394340f21b4ba5f257b1d3",
         "type": "FIX",
-        "text": " v2.ODataListBinding: Skip data evens for aborted requests",
-        "references": []
+        "text": "v2.ODataListBinding: Skip data evens for aborted requests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680064949"
+          }
+        ]
       },
       {
         "id": "8a1593183a96c8680057ffc9170e02652e2360a7",
         "type": "FIX",
-        "text": " v2.ODataModel: Don\u0027t cache failed metadata object",
-        "references": []
+        "text": "v2.ODataModel: Don't cache failed metadata object",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000581532017"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500003614532016"
+          }
+        ]
       },
       {
         "id": "daad56acca5cb7c4d08b663c9354c67a70ca0e15",
         "type": "FIX",
-        "text": " v2.ODataModel: Improve compatibility with Gateway",
-        "references": []
+        "text": "v2.ODataModel: Improve compatibility with Gateway",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780035653"
+          }
+        ]
       },
       {
         "id": "ccfe86b7f146a60fdc0356f7b11ca58dafa9081b",
         "type": "FIX",
-        "text": " v2.ODataModel: Make abort call error handler sync",
-        "references": []
+        "text": "v2.ODataModel: Make abort call error handler sync",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770075045"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770120478"
+          }
+        ]
       },
       {
         "id": "f8f10b30224d28386b5feca7b1fd6cd5b13e6d5d",
         "type": "FIX",
-        "text": " v2.ODataModel: Normalize binary properties",
-        "references": []
+        "text": "v2.ODataModel: Normalize binary properties",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001545762017"
+          }
+        ]
       },
       {
         "id": "dda5e83054b18fd6fa6fe2ec8b72bf644ca6cfb1",
         "type": "FIX",
-        "text": " v2.ODataModel: Normalize keys on cache read",
-        "references": []
+        "text": "v2.ODataModel: Normalize keys on cache read",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780035653"
+          }
+        ]
       },
       {
         "id": "878f1974b44e49197722dd306030170288ec8807",
         "type": "FIX",
-        "text": " v2.ODataModel: eTag not updated correctly",
-        "references": []
+        "text": "v2.ODataModel: eTag not updated correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770001105"
+          }
+        ]
       },
       {
         "id": "f4b691ef114df7839700b1d310d14aede5dc781f",
         "type": "FIX",
-        "text": " v2.ODataModel: getBindingContext returns wrong Context",
-        "references": []
+        "text": "v2.ODataModel: getBindingContext returns wrong Context",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770014809"
+          }
+        ]
       },
       {
         "id": "962139a1752d7ac1239c08fbb7a704c0d5dfb938",
         "type": "FEATURE",
-        "text": " sap.ui.support - OPA integration",
+        "text": "sap.ui.support - OPA integration",
         "references": []
       }
     ]

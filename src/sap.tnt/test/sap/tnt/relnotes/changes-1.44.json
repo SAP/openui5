@@ -24,13 +24,23 @@
         "id": "5543f5f86408ad89cba75236433e183b4b0cd512",
         "type": "FIX",
         "text": "sap.tnt. ToolPage: SideNavigation is initially expanded  on laptop with touch",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670424167"
+          }
+        ]
       },
       {
         "id": "c0bdbed3a148eee6945b01fe1f2b92b0471d71c1",
         "type": "FIX",
         "text": "sap.tnt.NavigationList: Popover not closing in collapsed mode issue fixed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670453591"
+          }
+        ]
       }
     ]
   }
