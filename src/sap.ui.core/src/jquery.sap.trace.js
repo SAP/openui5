@@ -13,15 +13,15 @@
  * All measurement activities get recorded by jquery.sap.measure, which is located in jquery.sap.global. As the initial
  * interaction is the app startup, we need the measuring capability already before this module is loaded.
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Device', 'sap/ui/performance/E2ETrace/Passport', 'sap/ui/performance/Interaction', 'sap/ui/performance/FESR', 'sap/ui/Global'],
-function(jQuery, URI, Device, Passport, Interaction, FESR /*,jQuery*/) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Device', 'sap/ui/performance/E2ETrace/Passport', 'sap/ui/performance/Interaction', 'sap/ui/performance/FESR', 'sap/base/log', 'sap/ui/Global'],
+function(jQuery, URI, Device, Passport, Interaction, FESR, log) {
 	"use strict";
 
 
 	function logSupportWarning() {
 		// in case we do not have this API measurement is superfluous due to insufficient performance data
 		if (!(window.performance && window.performance.getEntries)) {
-			jQuery.sap.log.warning("Interaction tracking is not supported on browsers with insufficient performance API");
+			log.warning("Interaction tracking is not supported on browsers with insufficient performance API");
 		}
 	}
 

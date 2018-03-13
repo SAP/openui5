@@ -17,11 +17,6 @@
 
 /*global console */
 
-//Declare Module if API is available
-if (window.jQuery && window.jQuery.sap && window.jQuery.sap.declare) {
-	window.jQuery.sap.declare("sap.ui.Device", false);
-}
-
 //Introduce namespace if it does not yet exist
 if (typeof window.sap !== "object" && typeof window.sap !== "function" ) {
 	  window.sap = {};

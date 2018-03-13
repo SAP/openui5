@@ -36,7 +36,8 @@ sap.ui.define([
 
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/jqueryui/jquery-ui-position",
-	"ui5loader-autoconfig"
+	"ui5loader-autoconfig",
+	"jquery.sap.stubs"
 ], function(now, getObject, getter, Version, extend, assert, log,
 
      Configuration, appendHead, computedStylePolyfill, includeScript,
@@ -47,18 +48,13 @@ sap.ui.define([
 
      Device, URI,
 
-     jQuery /*, jqueryUiPosition, ui5loaderAutoconfig*/) {
+     jQuery /*, jqueryUiPosition, ui5loaderAutoconfig, jquerySapStubs */) {
 
 	"use strict";
 
 
 	if ( !jQuery ) {
 		throw new Error("Loading of jQuery failed");
-	}
-
-	// ensure not to initialize twice
-	if (jQuery.sap) {
-		return;
 	}
 
 	var _ui5loader = sap.ui._ui5loader;
@@ -166,7 +162,7 @@ sap.ui.define([
 	 * @public
 	 * @static
 	 */
-	jQuery.sap = {};
+	jQuery.sap = jQuery.sap || {}; // namespace already created by jquery.sap.stubs
 
 	// -------------------------- VERSION -------------------------------------
 
@@ -854,7 +850,7 @@ sap.ui.define([
 			i;
 
 		if ( syncCallBehavior && oContext === window ) {
-			jQuery.sap.log.error("[nosync] getObject called to retrieve global name '" + sName + "'");
+			log.error("[nosync] getObject called to retrieve global name '" + sName + "'");
 		}
 
 		for (i = 0; oObject && i < l; i++) {
@@ -1686,7 +1682,7 @@ sap.ui.define([
 		 * @deprecated
 		 */
 		jQuery.sap.preloadModules = function(sPreloadModule, bAsync, oSyncPoint) {
-			jQuery.sap.log.error("jQuery.sap.preloadModules was never a public API and has been removed. Migrate to Core.loadLibrary()!");
+			log.error("jQuery.sap.preloadModules was never a public API and has been removed. Migrate to Core.loadLibrary()!");
 		};
 
 		/**

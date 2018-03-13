@@ -8,8 +8,13 @@
 sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	"use strict";
 
+	// Using "Object.getOwnPropertyDescriptor" to not trigger the "getter" - see jquery.sap.stubs
+	function getValue(oTarget, sProperty) {
+		var descriptor = Object.getOwnPropertyDescriptor(oTarget, sProperty);
+		return descriptor && descriptor.value;
+	}
 
-	if (!jQuery.fn.zIndex) {
+	if (!getValue(jQuery.fn, "zIndex")) {
 		/*
 		 * Get the z-index for an element.
 		 *

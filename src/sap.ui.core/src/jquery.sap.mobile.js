@@ -6,13 +6,15 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/MobileSupport',
-	'sap/ui/Device',
-
-	// load old modules for compatibility
-	'jquery.sap.dom',
-	'jquery.sap.events'
-], function(jQuery, MobileSupport, Device/* , jQuerySap1, jQuerySap2 */) {
+	'sap/ui/Device'
+], function(jQuery, MobileSupport, Device) {
 	"use strict";
+
+	// Using "Object.getOwnPropertyDescriptor" to not trigger the "getter" - see jquery.sap.stubs
+	function getValue(oTarget, sProperty) {
+		var descriptor = Object.getOwnPropertyDescriptor(oTarget, sProperty);
+		return descriptor && descriptor.value;
+	}
 
 	//deprecated functionality
 	//init os
@@ -50,7 +52,7 @@ sap.ui.define([
 			 * @public
 			 */
 			fVersion: Device.os.version
-		}, jQuery.os);
+		}, getValue(jQuery, "os"));
 
 		jQuery.os[Device.os.name] = true;
 		/**
@@ -87,15 +89,13 @@ sap.ui.define([
 
 
 		// feature and state detection
-		jQuery.extend(jQuery.support, {
-
-			/**
-			 * Whether the device has a retina display (window.devicePixelRatio >= 2)
-			 * @type {boolean}
-			 * @public
-			 */
-			retina: window.devicePixelRatio >= 2
-		});
+		jQuery.support = jQuery.support || {};
+		/**
+		 * Whether the device has a retina display (window.devicePixelRatio >= 2)
+		 * @type {boolean}
+		 * @public
+		 */
+		jQuery.support.retina = window.devicePixelRatio >= 2;
 
 		/**
 		 * @name jQuery.device
@@ -103,7 +103,7 @@ sap.ui.define([
 		 * @deprecated since 1.20 use the respective functions of {@link sap.ui.Device} instead
 		 * @public
 		 */
-		jQuery.device = jQuery.extend({}, jQuery.device);
+		jQuery.device = jQuery.extend({}, getValue(jQuery, "device"));
 
 		/**
 		 * Holds information about the current device and its state
