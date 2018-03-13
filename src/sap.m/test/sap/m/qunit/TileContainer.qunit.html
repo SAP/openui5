@@ -347,7 +347,50 @@
 			}.bind(this), delay);
 		});
 
+		QUnit.test("Given 2 pages, scrolling to the second, adding more tiles to make pages 3, then toggle TC visibility", function() {
+			var done = assert.async();
+			//Arrange
+			var sut,
+				m = sap.m,
+				lastTile;
 
+
+			//SUT
+			sut = new m.TileContainer({tiles : new m.StandardTile()});
+			sut.placeAt("uiArea1"); //with of uiArea1 is 600px, will fit 2 tiles x 210px (12 rem + 2x8 margins + 2x1 borders. If changed in less, should be reflected here)
+			core.applyChanges();
+			setTimeout(function() {
+				sut._calculatePageSize();
+
+				//Add one more Tile than total amount of Tiles fitting in the current container
+				while(sut._iMaxTiles +1 > sut.getTiles().length){
+					lastTile = new m.StandardTile();
+					sut.addTile(lastTile);
+				}
+				core.applyChanges();
+
+				//Act
+				// scroll to the page where the last tile will be
+				sut.scrollIntoView(lastTile,false);
+
+				//Add 2 more tiles so that a third page appears (second is active)
+				sut.addTile(new m.StandardTile());
+				sut.addTile(new m.StandardTile());
+
+				sut.setVisible(false);
+				core.applyChanges();
+				sut.setVisible(true);
+				core.applyChanges();
+
+				//Assert
+				assert.ok(sut.$("rightscroller").is(":visible"), "..right scroller should be visible");
+				assert.ok(sut.$("leftscroller").is(":visible"), "..right scroller should be visible");
+
+				//Cleanup
+				sut.destroy();
+				done();
+			}.bind(this), delay);
+		});
 
 		QUnit.test('TilesShouldHaveTheSameOrderInTheDomAsInTheAggregation', function (assert) {
 			var done = assert.async();
@@ -756,6 +799,7 @@
 			assert.equal(this.oSut.currentPageIsLast(), false, "Current page is last");
 			assert.equal(this.oSut.oldCurrentPageIsLast(), false, "Old current page is last");
 			assert.equal(this.oSut.currentPageIsLastChanged(), false, "Current page is last changed");
+			assert.equal(this.oSut.currentPageRelativePositionChanged(), false, "Current page's relative position changed");
 
 			assert.equal(this.oSut.isPagerCreated(), true, "Pager created");
 		});
@@ -785,6 +829,7 @@
 			assert.equal(this.oSut.currentPageIsLast(), true, "Current page is last");
 			assert.equal(this.oSut.oldCurrentPageIsLast(), false, "Old current page is last");
 			assert.equal(this.oSut.currentPageIsLastChanged(), true, "Current page is last changed");
+			assert.equal(this.oSut.currentPageRelativePositionChanged(), true, "Current page's relative position changed");
 
 			assert.equal(this.oSut.isPagerCreated(), true, "Pager created");
 		});
