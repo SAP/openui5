@@ -55,14 +55,14 @@ sap.ui.define([
 					});
 				},
 
-                iPressOnTheProductSmartphoneAlphaTitle: function () {
-                    this.waitFor({
-                        controlType: "sap.m.ObjectIdentifier",
-                        matchers: new Properties({title : "Smartphone Alpha"}),
-                        actions: new Press(),
-                        errorMessage: "The product Smartphone Alpha was not found and could not be pressed"
-                    });
-                },
+				iPressOnTheProductSmartphoneAlphaTitle: function () {
+					this.waitFor({
+						controlType: "sap.m.ObjectIdentifier",
+						matchers: new Properties({title : "Smartphone Alpha"}),
+						actions: new Press(),
+						errorMessage: "The product Smartphone Alpha was not found and could not be pressed"
+					});
+				},
 
 				iPressTheProductImage: function () {
 					return this.waitFor({
@@ -73,24 +73,6 @@ sap.ui.define([
 						}),
 						actions: new Press(),
 						errorMessage: "The product image was not displayed"
-					});
-				},
-
-				iPressTheCloseButtonOfTheLightBox: function () {
-					return this.waitFor({
-						controlType : "sap.m.Button",
-						matchers : [
-							new PropertyStrictEquals({
-								name : "text",
-								value : "Close"
-							}),
-							new PropertyStrictEquals({
-								name : "enabled",
-								value : true
-							})
-						],
-						actions : new Press(),
-						errorMessage : "Did not find the Close button"
 					});
 				}
 			},
@@ -114,16 +96,6 @@ sap.ui.define([
 							Opa5.assert.ok(true, "Avatar button is visible");
 						},
 						errorMessage: "There is no avatar button"
-					});
-				},
-
-				iShouldSeeTheProductInLightBox: function () {
-					return this.waitFor({
-						controlType: "sap.m.LightBox",
-						success: function (oBox) {
-							Opa5.assert.ok(oBox[0].getImageContent()[0].getTitle().length > 0, "The product " + oBox[0].getImageContent()[0].getTitle() + " was displayed in light box");
-						},
-						errorMessage: "The product was not displayed in the light box"
 					});
 				},
 

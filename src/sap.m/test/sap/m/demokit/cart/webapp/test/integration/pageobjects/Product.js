@@ -29,6 +29,23 @@ sap.ui.define([
 						id : "productImage",
 						actions : new Press()
 					});
+				},
+				iPressTheCloseButtonOfTheLightBox: function () {
+					return this.waitFor({
+						controlType : "sap.m.Button",
+						matchers : [
+							new PropertyStrictEquals({
+								name : "text",
+								value : "Close"
+							}),
+							new PropertyStrictEquals({
+								name : "enabled",
+								value : true
+							})
+						],
+						actions : new Press(),
+						errorMessage : "Did not find the Close button"
+					});
 				}
 			},
 

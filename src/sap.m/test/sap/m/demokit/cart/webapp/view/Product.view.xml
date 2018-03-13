@@ -85,7 +85,7 @@
 					width="100%"
 					height="100%">
 					<detailBox>
-						<LightBox>
+						<LightBox id="lightBox">
 							<imageContent>
 								<LightBoxItem
 									imageSrc="{PictureUrl}"
@@ -93,8 +93,9 @@
 							</imageContent>
 						</LightBox>
 					</detailBox>
-					</Image>
+				</Image>
 			</VBox>
 		</content>
+
 	</Page>
 </mvc:View>

@@ -24,6 +24,20 @@ sap.ui.define([
 		Then.onTheCategory.iShouldSeeSomeEntriesInTheProductList();
 	});
 
+	opaTest("Should press the image and see the LightBox item", function (Given, When, Then) {
+		//Actions
+		When.onTheProduct.iPressOnTheProductPicture();
+		//Assertions
+		Then.onTheProduct.iShouldSeeALightBox();
+	});
+
+	opaTest("Should press the close button and see the product view", function (Given, When, Then) {
+		//Actions
+		When.onTheProduct.iPressTheCloseButtonOfTheLightBox();
+		//Assertions
+		Then.onTheProduct.iShouldSeeTheProductPage();
+	});
+
 	opaTest("Should press back button and navigate to welcome view", function (Given, When, Then) {
 		// Actions
 		When.onTheCategory.iPressTheBackButtonInProduct();
@@ -38,14 +52,8 @@ sap.ui.define([
 		When.onTheCategory.iGoToTheCartPage();
 		// Assertions
 		Then.onTheCart.iShouldSeeTheProductInMyCart();
-	});
-
-	opaTest("Should press the first product in viewed items and see it in light box ", function (Given, When, Then) {
-		// Actions
-		When.onTheWelcomePage.iPressTheProductImage();
-		// Assertions
-		Then.onTheWelcomePage.iShouldSeeTheProductInLightBox();
-		When.onTheWelcomePage.iPressTheCloseButtonOfTheLightBox().and.iTeardownMyApp();
+		// Cleanup
+		Then.iTeardownMyApp();
 	});
 
 });

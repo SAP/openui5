@@ -43,7 +43,6 @@
 		"test/integration/configureOpa.js",
 		"test/integration/DeleteProduct.feature",
 		"test/integration/DeleteProductJourney.js",
-		"test/integration/LightBox.feature",
 		"test/integration/opaTestsWithComponent.qunit.html",
 		"test/integration/opaTestsWithGherkin.qunit.html",
 		"test/integration/opaTestsWithGherkinAndComponent.qunit.html",
