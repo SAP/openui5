@@ -409,7 +409,7 @@ function(
 
 					// on iOS this can be a negative integer
 					// which is causing the dialog to be rendered partially off-screen
-					if (scrollPosY < 0) {
+					if (Device.os.ios || scrollPosY < 0) {
 						scrollPosY = 0;
 					}
 
