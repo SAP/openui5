@@ -149,7 +149,7 @@ sap.ui.define(['jquery.sap.global',
 
 			this.sCountMode = (mParameters && mParameters.countMode) || this.oModel.sDefaultCountMode;
 			if (this.sCountMode == CountMode.None) {
-				jQuery.log.fatal("To use an ODataTreeBinding at least one CountMode must be supported by the service!");
+				jQuery.sap.log.fatal("To use an ODataTreeBinding at least one CountMode must be supported by the service!");
 			}
 
 			if (mParameters) {
