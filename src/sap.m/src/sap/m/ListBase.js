@@ -2059,7 +2059,7 @@ function(
 	ListBase.prototype.onsapfocusleave = function(oEvent) {
 		if (this._oItemNavigation &&
 			!this.bAnnounceDetails &&
-			!this.getNavigationRoot().contains(jQuery.sap.domById(oEvent.relatedControlId))) {
+			!this.getNavigationRoot().contains(document.activeElement)) {
 			this.bAnnounceDetails = true;
 		}
 	};
