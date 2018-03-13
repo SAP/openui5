@@ -142,6 +142,10 @@ sap.ui.define([
 		return true;
 	};
 
+	Variant.prototype.getDefinitionWithChanges = function () {
+		return this._oDefinition;
+	};
+
 	/**
 	 * Returns the title
 	 *
@@ -240,7 +244,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Variant.prototype.getContent = function () {
-		return this._oDefinition.content;
+		return this._oDefinition.content.content;
 	};
 
 	/**
@@ -251,7 +255,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Variant.prototype.setContent = function (oContent) {
-		this._oDefinition.content = oContent;
+		this._oDefinition.content.content = oContent;
 		this.setState(Variant.states.DIRTY);
 	};
 
@@ -613,10 +617,10 @@ sap.ui.define([
 					user: "",
 					sapui5Version: sap.ui.version
 				},
-				validAppVersions: oPropertyBag.validAppVersions || {}
+				validAppVersions: oPropertyBag.content.validAppVersions || {}
 			},
 			controlChanges: oPropertyBag.controlChanges || [],
-			variantChanges: {}
+			variantChanges: {} //should be empty for new variant
 		};
 
 		return oNewFile;
