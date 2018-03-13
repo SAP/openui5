@@ -598,6 +598,7 @@
 		var oPC1 = sap.m.PlanningCalendar("PC1", {
 			startDate: new Date("2015", "0", "1", "08", "00"),
 			rows: [ new sap.m.PlanningCalendarRow("Row1", {
+						customData: new sap.ui.core.CustomData({key: "myKey", value: "myValue", writeToDom: true}),
 						icon: "sap-icon://employee",
 						title: "Max Mustermann",
 						text: "Musterteam",

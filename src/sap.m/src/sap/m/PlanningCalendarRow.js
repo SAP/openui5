@@ -3,10 +3,21 @@
  */
 
 //Provides control sap.ui.unified.PlanningCalendarRow.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem', './StandardListItemRenderer',
-		'sap/ui/core/Renderer', './library', 'sap/ui/unified/DateRange', 'sap/ui/unified/CalendarRow', 'sap/ui/unified/CalendarRowRenderer'],
-	function (jQuery, Element, StandardListItem, StandardListItemRenderer, Renderer, library, DateRange,
-			  CalendarRow, CalendarRowRenderer) {
+sap.ui.define(['jquery.sap.global',
+		'sap/ui/core/Element',
+		'sap/ui/core/Control',
+		'./StandardListItem',
+		'./StandardListItemRenderer',
+		'sap/ui/core/Renderer',
+		'./library',
+		'sap/ui/unified/library',
+		'sap/ui/unified/DateRange',
+		'sap/ui/unified/CalendarRow',
+		'sap/ui/unified/CalendarRowRenderer',
+		'sap/m/ColumnListItem',
+		'sap/m/ColumnListItemRenderer'],
+	function (jQuery, Element, Control, StandardListItem, StandardListItemRenderer, Renderer, library, unifiedLibrary, DateRange,
+			  CalendarRow, CalendarRowRenderer, ColumnListItem, ColumnListItemRenderer) {
 	"use strict";
 
 	/**
@@ -119,6 +130,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 	 */
 	PlanningCalendarRow.AGGR_NONWORKING_DATES_NAME = "_nonWorkingDates";
 
+	// ************************************* PRIVATE CLASSES BEGIN *****************************************************
 	var CalenderRowHeader = StandardListItem.extend("CalenderRowHeader", {
 
 		metadata : {
@@ -189,6 +201,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 		renderer: CalendarRowInPCRenderer
 	});
 
+	/**
+	 * A bridge between sap.m.PlanningCalendarRow and sap.m.Table item. Contains 2 cells:
+	 * - so called "calendar row header" - used for employee names
+	 * - so called "calendar row" - used to render the appointments corresponding to the before mentioned header
+	 *
+	 */
+	var ColumnListItemInPlanningCalendar = ColumnListItem.extend("ColumnListItemInPlanningCalendar", {
+		metadata: {
+			associations : {
+				planningCalendarRow : {type : "sap.m.PlanningCalendarRow", multiple : false, visibility : "hidden"}
+			}
+		},
+		renderer: ColumnListItemRenderer
+	});
+
+	/**
+	 * Takes care to ensure that the custom data given to the PlanningCalendarRow (sap.ui.core.Element) is used.
+	 * @returns {*} the custom data
+	 */
+	ColumnListItemInPlanningCalendar.prototype.getCustomData = function() {
+		return sap.ui.getCore().byId(this.getAssociation("planningCalendarRow")).getCustomData();
+	};
+	// ************************************* PRIVATE CLASSES END *******************************************
+
 	PlanningCalendarRow.prototype.init = function(){
 
 		var sId = this.getId();
@@ -220,9 +256,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 
 		};
 
-		this._oColumnListItem = new sap.m.ColumnListItem(this.getId() + "-CLI", {
+		this._oColumnListItem = new ColumnListItemInPlanningCalendar(this.getId() + "-CLI", {
 			cells: [ oCalendarRowHeader,
-					 oCalendarRow]
+					 oCalendarRow],
+			planningCalendarRow: this
 		});
 
 	};
