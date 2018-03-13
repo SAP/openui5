@@ -278,6 +278,56 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 												"id" : "variant1"
 											}
 										}
+									],
+									"setVisible": [
+										{
+											"fileName":"variantChange2",
+											"fileType": "ctrl_variant_change",
+											"selector": {
+												"id" : "variant2_invisible"
+											},
+											"content": {
+												"visible": false,
+												"createdByReset": false
+											}
+										}
+									]
+								},
+								"changes" : []
+							},
+							{
+								"content" : {
+									"content" : {
+										"title": "variant 2"
+									},
+									"fileName": "variant2_invisible",
+									"fileType": "ctrl_variant",
+									"variantManagementReference": "variantManagementId"
+								},
+								"controlChanges": [
+									{
+										"variantReference":"variant2",
+										"fileName":"controlChange1",
+										"fileType":"change",
+										"content":{},
+										"selector":{
+											"id":"selectorId"
+										}
+									}
+								],
+								"variantChanges": {
+									"setVisible": [
+										{
+											"fileName":"variantChange3",
+											"fileType": "ctrl_variant_change",
+											"selector": {
+												"id" : "variant2_invisible"
+											},
+											"content": {
+												"visible": false,
+												"createdByReset": true
+											}
+										}
 									]
 								},
 								"changes" : []
@@ -300,9 +350,20 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			}
 		};
 
+		var oInvisibleVariant = oMockedWrappedContent.changes.variantSection.variantManagementId.variants[2];
+		var aInvisibleChangFileNames = [
+			oInvisibleVariant.content.fileName,
+			oInvisibleVariant.controlChanges[0].fileName,
+			oInvisibleVariant.variantChanges.setVisible[0].fileName
+		];
+
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 		return this.oChangePersistence.getChangesForComponent({includeCtrlVariants: true, includeVariants: true}).then(function(aChanges) {
-			assert.equal(aChanges.length, 8, "then all the variant related changes are part of the response");
+			var aFilteredChanges = aChanges.filter( function (oChange) {
+				return aInvisibleChangFileNames.indexOf(oChange.getId()) > -1;
+			});
+			assert.ok(aFilteredChanges.length === 0, "then no changes belonging to invisible variant returned");
+			assert.equal(aChanges.length, 8, "then all the visible variant related changes are part of the response");
 		});
 	});
 
