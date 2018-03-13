@@ -95,6 +95,26 @@
 		assert.ok(oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding, "treeBinding class check");
 	});
 
+	QUnit.test("TreeBinding getTreeAnnotation", function(assert){
+		var done = assert.async();
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/Employees(2)", null, [], {
+				navigation: {
+					Employees: "Employees1",
+					Employees1: "Employees1"
+				},
+				displayRootNode: true
+			});
+			assert.equal(oBinding.bHasTreeAnnotations, false, "TreeAnnotation unavailable");
+			assert.equal(oBinding.getTreeAnnotation("hierarchy-level-for"), undefined, "TreeAnnotation unavailable");
+			assert.equal(oBinding.getTreeAnnotation("hierarchy-parent-node-for"),undefined, "TreeAnnotation unavailable");
+			assert.equal(oBinding.getTreeAnnotation("hierarchy-node-for"), undefined, "TreeAnnotation unavailable");
+			assert.equal(oBinding.getTreeAnnotation("hierarchy-drill-state-for"), undefined, "TreeAnnotation unavailable");
+			assert.equal(oBinding.getTreeAnnotation("foo"), undefined, "TreeAnnotation property incorrect/unavailable");
+			done();
+		});
+	});
+
 	QUnit.test("getRootContexts getNodeContexts", function(assert){
 		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
@@ -339,7 +359,6 @@
 				var aRootContexts = oBinding.getRootContexts();
 				var oContext = aRootContexts[1];
 				var aChildContexts = oBinding.getNodeContexts(oContext);
-				var oContext;
 
 				assert.equal(aChildContexts.length, 5, "TreeBinding rootContexts length");
 
@@ -607,7 +626,7 @@
 
 				assert.equal(aContexts.length, 1, "TreeBinding rootContexts length is 1 after application filtering");
 
-				oContext = aContexts[0];
+				var oContext = aContexts[0];
 				assert.equal(oModel.getProperty("FirstName", oContext), "Nancy", "After refresh: TreeBinding root contexts[0] is correct (Tom)");
 
 				done();
@@ -919,6 +938,22 @@
 		});
 	});
 
+	QUnit.test("TreeBinding getTreeAnnotation", function(assert){
+		var done = assert.async();
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
+				navigation: {}
+			});
+			assert.equal(oBinding.bHasTreeAnnotations, true, "TreeAnnotation available");
+			assert.equal(oBinding.getTreeAnnotation("hierarchy-level-for"), "FinStatementHierarchyLevelVal", "TreeAnnotation available");
+			assert.equal(oBinding.getTreeAnnotation("hierarchy-parent-node-for"), "ParentNode", "TreeAnnotation available");
+			assert.equal(oBinding.getTreeAnnotation("hierarchy-node-for"), "HierarchyNode", "TreeAnnotation available");
+			assert.equal(oBinding.getTreeAnnotation("hierarchy-drill-state-for"), "DrilldownState", "TreeAnnotation available");
+			assert.equal(oBinding.getTreeAnnotation("foo"), undefined, "TreeAnnotation property unavailable/incorrect");
+			done();
+		});
+	});
+
 	QUnit.test("TreeBinding getRootContexts getNodeContexts", function(assert){
 		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
@@ -1096,8 +1131,6 @@
 				numberOfExpandedLevels: 2,
 				rootLevel: 1
 			});
-
-			var oContext;
 
 			var handler1 = function(oEvent) {
 				oBinding.detachChange(handler1);
@@ -1526,7 +1559,7 @@
 
 				assert.equal(aContexts.length, 2, "TreeBinding returned rootContexts length");
 
-				oContext = aContexts[0];
+				var oContext = aContexts[0];
 				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
 				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
 				assert.equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
@@ -1746,7 +1779,7 @@
 
 				assert.equal(aContexts.length, 2, "TreeBinding returned rootContexts length");
 
-				oContext = aContexts[0];
+				var oContext = aContexts[0];
 				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
 				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
 				assert.equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
@@ -1933,7 +1966,7 @@
 				var aContexts = oBinding.getRootContexts(0, 10);
 				assert.equal(aContexts.length, 7, "TreeBinding returned rootContexts length");
 
-				oContext = aContexts[0];
+				var oContext = aContexts[0];
 				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
 				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
 				assert.equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
