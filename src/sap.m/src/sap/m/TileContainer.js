@@ -487,6 +487,10 @@ function(
 				currentPageIsFirstChanged: function() {
 					return this.currentPageIsFirst() !== this.oldCurrentPageIsFirst();
 				},
+				/* true if current page's relative position is changed - the page becomes first, last or was first or last and now it is not*/
+				currentPageRelativePositionChanged: function() {
+					return this.currentPageIsFirstChanged() || this.currentPageIsLastChanged();
+				},
 				pageCountChanged: function() {
 					return iCount !== iOldCount;
 				},
@@ -1211,7 +1215,9 @@ function(
 		var oPager,
 			oScrollLeft,
 			oScrollRight,
-			aHTML;
+			aHTML,
+			/* true if the pager is created as part of this function*/
+			bPagerJustCreated = false;
 
 		if (!this._oPagesInfo.pageCountChanged() && !this._oPagesInfo.currentPageChanged()) {
 			return;
@@ -1241,6 +1247,7 @@ function(
 			oPager.style.display = "block";
 			oPager.childNodes[0].className = "sapMTCActive"; //initially active page is the 1st(span)
 			this._oPagesInfo.setPagerCreated(true);
+			bPagerJustCreated = true;
 		} else if (this._oPagesInfo.pageCountChanged()) {
 			if (this._oPagesInfo.getCount() - this._oPagesInfo.getOldCount() < 0) {//one page less
 				oPager.removeChild(oPager.lastChild);
@@ -1258,8 +1265,8 @@ function(
 				oPager.childNodes[0].className = "";
 			}
 		}
-		if (Device.system.desktop &&
-			(this._oPagesInfo.currentPageIsFirstChanged() || this._oPagesInfo.currentPageIsLastChanged())) {
+
+		if (Device.system.desktop && (bPagerJustCreated || this._oPagesInfo.currentPageRelativePositionChanged())) {
 			if (this._bRtl) {
 				// Less builder swaps left and right in RTL styles,
 				// and that is not required here, otherwise left scroller will go right and vice versa.
