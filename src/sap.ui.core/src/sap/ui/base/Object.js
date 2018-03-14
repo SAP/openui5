@@ -71,7 +71,7 @@ sap.ui.define(['jquery.sap.global', './Interface', './Metadata'],
 	 * This method is only defined when metadata has been declared by using {@link sap.ui.base.Object.defineClass}
 	 * or {@link sap.ui.base.Object.extend}.
 	 *
-	 * @return {sap.ui.base.Metadata] metadata for the class of the object
+	 * @return {sap.ui.base.Metadata} metadata for the class of the object
 	 * @name sap.ui.base.Object#getMetadata
 	 * @function
 	 * @public
