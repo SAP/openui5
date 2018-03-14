@@ -186,6 +186,7 @@ function(
 
 		// Cleanup
 		this._resetDelayedRerenderItems();
+		Device.resize.detachHandler(this._handleResizeChange, this);
 	};
 
 	/**
