@@ -83,7 +83,7 @@ sap.ui.define([
 
 				// the unstashed control is added as **last child** => correct its position in parent container
 				this.oHeader.removeContent(this.oTabNavigation);
-				this.oHeader.insertContent(this.oTabNavigation, 1);
+				this.oHeader.insertContent(this.oTabNavigation, 2);
 
 				this.oRouter = this.getRouter();
 
