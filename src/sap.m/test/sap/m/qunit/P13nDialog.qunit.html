@@ -1,639 +1,973 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-<title>Test Page for sap.m.P13nDialog</title>
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap" data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js"
-	data-sap-ui-resourceroots='{ "resourceroot": "./" }'>
-
-</script>
-
-<link rel="stylesheet"
-	href="../../../../resources/sap/ui/thirdparty/qunit.css"
-	type="text/css" media="screen" />
-<script
-	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script
-	src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
-<script
-	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script
-	src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<script
-	src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-
-<script>
-
-	(function() {
-		jQuery.sap.require("sap.m.P13nDialog");
-		jQuery.sap.require("sap.m.P13nPanel");
-
-		QUnit.module("Properties", {
-			beforeEach: function() {
-			},
-			afterEach: function() {
-				sap.ui.Device.system.desktop = true;
-				sap.ui.Device.system.phone = false;
-			}
-		});
-
-		var fTest01 = function() {
-			// system under test
-			var oP13nDialog = new sap.m.P13nDialog();
-
-			// arrange
-			oP13nDialog.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			// assertions
-			assert.strictEqual(oP13nDialog.getInitialVisiblePanelType(), "", "getInitialVisiblePanelType is ''");
-			assert.strictEqual(oP13nDialog.getShowReset(), false, "getShowReset is false");
-			assert.strictEqual(oP13nDialog._getNavigationControl(), null, "segmented button does not exist");
-			assert.strictEqual(oP13nDialog.getVisiblePanel(), null, "no panel is shown");
-			if (sap.ui.Device.system.phone) {
-				assert.strictEqual(oP13nDialog.getVerticalScrolling(), false, "getVerticalScrolling is false");
-				assert.ok(oP13nDialog.getButtons()[0], "OK button");
-				assert.ok(oP13nDialog.getButtons()[1], "Cancel button");
-				assert.ok(oP13nDialog.getButtons()[2], "Reset button");
-				assert.strictEqual(oP13nDialog.getCustomHeader().getContentMiddle()[0].getText(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"), "default title");
-			} else {
-				assert.strictEqual(oP13nDialog.getVerticalScrolling(), true, "getVerticalScrolling is true");
-				assert.strictEqual(oP13nDialog.getButtons().length, 3, "OK, Cancel and Reset buttons");
-				assert.strictEqual(oP13nDialog.getButtons()[0].getVisible(), true, "OK button is visible");
-				assert.strictEqual(oP13nDialog.getButtons()[1].getVisible(), true, "Cancel button is visible");
-				assert.strictEqual(oP13nDialog.getButtons()[2].getVisible(), false, "Reset button is not visible");
-				assert.strictEqual(oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"), "default title");
-			}
-
-			// cleanup
-			oP13nDialog.destroy();
-		};
-		QUnit.test("Default Values (Desktop)", function(assert) {
-			sap.ui.Device.system.desktop = true;
-			sap.ui.Device.system.phone = false;
-			fTest01();
-		});
-		QUnit.test("Default Values (Phone)", function(assert) {
-			sap.ui.Device.system.desktop = false;
-			sap.ui.Device.system.phone = true;
-			fTest01();
-		});
-
-		/*test("destroy", function() {
-
-			// system under test
-			var oP13nDialog = new sap.m.P13nDialog({
-				panels : [new sap.m.P13nPanel({
-					title : "filter",
-					type : sap.m.P13nPanelType.filter
-				}), new sap.m.P13nPanel({
-					title : "sort",
-					type : sap.m.P13nPanelType.sort
-				})]
-			});
-
-			// arrange
-			oP13nDialog.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			// act
-			oP13nDialog.destroy();
-
-			// assertions
-			assert.strictEqual(oP13nDialog.getSubHeader(), null);
-			assert.strictEqual(oP13nDialog.getButtons(), []);
-			assert.strictEqual(oP13nDialog._oResetButton, null);
-			//assert.strictEqual(oP13nDialog.getContent(), []);
-
-			// cleanup
-
-		});*/
-
-		var fTest02 = function() {
-
-			// system under test
-			var oP13nDialog = new sap.m.P13nDialog({
-				showReset: true
-			});
-
-			// arrange
-			oP13nDialog.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			// assertions
-			assert.strictEqual(oP13nDialog.getButtons()[2].getVisible(), true, "Reset button is visible");
-
-			// cleanup
-			oP13nDialog.destroy();
-		};
-		QUnit.test("Show reset (Desktop)", function(assert) {
-			sap.ui.Device.system.desktop = true;
-			sap.ui.Device.system.phone = false;
-			fTest02();
-		});
-		QUnit.test("Show reset (Phone)", function(assert) {
-			sap.ui.Device.system.desktop = false;
-			sap.ui.Device.system.phone = true;
-			fTest02();
-		});
-
-		QUnit.test("add one panel - without initialVisiblePanelType", function(assert) {
-
-			// system under test
-			var oPanel;
-			var oP13nDialog = new sap.m.P13nDialog({
-				panels: [
-					oPanel = new sap.m.P13nPanel({
-						title: "Filter",
-						type: sap.m.P13nPanelType.filter
-					})
-				]
-			});
-
-			// arrange
-			oP13nDialog.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			// assertions
-			assert.strictEqual(oP13nDialog.getInitialVisiblePanelType(), "");
-			assert.strictEqual(oP13nDialog._getNavigationControl(), null, "segmented button does not exist for only one panel");
-			assert.ok(oP13nDialog.getTitle() !== sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"), "default title");
-			assert.deepEqual(oP13nDialog.getVisiblePanel(), oPanel, "panel is shown");
-
-			// cleanup
-			oP13nDialog.destroy();
-		});
-
-		QUnit.test("add one panel - with initialVisiblePanelType", function(assert) {
-
-			// system under test
-			var oPanel;
-			var oP13nDialog = new sap.m.P13nDialog({
-				initialVisiblePanelType: sap.m.P13nPanelType.filter,
-				panels: [
-					oPanel = new sap.m.P13nPanel({
-						title: "Filter",
-						type: sap.m.P13nPanelType.filter
-					})
-				]
-			});
-
-			// arrange
-			oP13nDialog.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			// assertions
-			assert.strictEqual(oP13nDialog.getInitialVisiblePanelType(), oPanel.getType());
-			assert.strictEqual(oP13nDialog._getNavigationControl(), null, "segmented button does not exist for only one panel");
-			assert.ok(oP13nDialog.getTitle() !== sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"), "default title");
-			assert.deepEqual(oP13nDialog.getVisiblePanel(), oPanel, "panel is shown");
-
-			// cleanup
-			oP13nDialog.destroy();
-		});
-
-		QUnit.test("add one panel - with wrong initialVisiblePanelType", function(assert) {
-
-			// system under test
-			var oPanel;
-			var oP13nDialog = new sap.m.P13nDialog({
-				initialVisiblePanelType: "dummy",
-				panels: [
-					oPanel = new sap.m.P13nPanel({
-						title: "Filter",
-						type: sap.m.P13nPanelType.filter
-					})
-				]
-			});
-
-			// arrange
-			oP13nDialog.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			// assertions
-			assert.strictEqual(oP13nDialog.getInitialVisiblePanelType(), "dummy");
-			assert.strictEqual(oP13nDialog._getNavigationControl(), null, "segmented button does not exist for only one panel");
-			assert.ok(oP13nDialog.getTitle() !== sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"), "default title");
-			assert.deepEqual(oP13nDialog.getVisiblePanel(), oPanel, "panel is shown");
-
-			// cleanup
-			oP13nDialog.destroy();
-		});
-
-		QUnit.test("add one panel - custom panel", function(assert) {
-
-			sap.m.P13nPanel.extend("CustomPanel", {
-				metadata: {},
-				renderer: function(oRm, oControl) {
-					if (!oControl.getVisible()) {
-						return;
-					}
-				}
-			});
-
-			// system under test
-			var oPanel;
-			var oP13nDialog = new sap.m.P13nDialog({
-				panels: [
-					oPanel = new CustomPanel({
-						titleLarge: "Custom Panel Settings",
-						type: "customPanel"
-					})
-				]
-			});
-
-			// arrange
-			oP13nDialog.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			// assertions
-			assert.ok(oP13nDialog.getTitle() === "Custom Panel Settings");
-
-			// cleanup
-			oP13nDialog.destroy();
-		});
-
-		QUnit.test("add more than one panel at once - without initialVisiblePanelType", function(assert) {
-
-			// system under test
-			var oPanel = new sap.m.P13nPanel({
-				title: "Filter",
-				type: sap.m.P13nPanelType.filter
-			});
-			var oP13nDialog = new sap.m.P13nDialog({
-				panels: [
-					oPanel, new sap.m.P13nPanel({
-						title: "sort",
-						type: sap.m.P13nPanelType.sort
-					})
-				]
-			});
-
-			// arrange
-			oP13nDialog.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			// assertions
-			assert.strictEqual(oP13nDialog.getInitialVisiblePanelType(), "");
-			assert.ok(oP13nDialog._getNavigationControl(), "segmented button does exist");
-			assert.strictEqual(oP13nDialog._getNavigationControl().getButtons().length, 2, "segmented button has 2 buttons");
-			assert.strictEqual(oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"), "default title");
-			assert.deepEqual(oP13nDialog.getVisiblePanel(), oPanel, "default panel is shown");
-			assert.strictEqual(oP13nDialog._getNavigationControl().getSelectedButton(), oP13nDialog._getNavigationItemByPanel(oPanel).getId(), "selected button belongs to desplayed panel");
-
-			// cleanup
-			oP13nDialog.destroy();
-		});
-
-		QUnit.test("add more than one panel - with initialVisiblePanelType", function(assert) {
-
-			// system under test
-			var oPanel = new sap.m.P13nPanel({
-				title: "Filter",
-				type: sap.m.P13nPanelType.filter
-			});
-			var oP13nDialog = new sap.m.P13nDialog({
-				initialVisiblePanelType: sap.m.P13nPanelType.filter,
-				panels: [
-					new sap.m.P13nPanel({
-						title: "sort",
-						type: sap.m.P13nPanelType.sort
-					}), oPanel
-				]
-			});
-
-			// arrange
-			oP13nDialog.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			// assertions
-			assert.strictEqual(oP13nDialog.getInitialVisiblePanelType(), oPanel.getType());
-			assert.ok(oP13nDialog._getNavigationControl(), "segmented button does exist");
-			assert.strictEqual(oP13nDialog._getNavigationControl().getButtons().length, 2, "segmented button has 2 buttons");
-			assert.strictEqual(oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"), "default title");
-			assert.deepEqual(oP13nDialog.getVisiblePanel(), oPanel, "default panel is shown");
-			assert.strictEqual(oP13nDialog._getNavigationControl().getSelectedButton(), oP13nDialog._getNavigationItemByPanel(oPanel).getId(), "selected button belongs to desplayed panel");
-
-			// cleanup
-			oP13nDialog.destroy();
-		});
-
-		QUnit.test("_switchPanel", function(assert) {
-
-			// system under test
-			var oPanelF = new sap.m.P13nPanel({
-				title: "filter",
-				type: sap.m.P13nPanelType.filter
-			});
-			var oPanelS = new sap.m.P13nPanel({
-				title: "sort",
-				type: sap.m.P13nPanelType.sort
-			});
-			var oP13nDialog = new sap.m.P13nDialog({
-				panels: [
-					oPanelS, oPanelF
-				]
-			});
-
-			// arrange
-			oP13nDialog.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			// act
-			var oButton = oP13nDialog._getNavigationItemByPanel(oPanelF);
-			oP13nDialog._switchPanel(oButton);
-
-			// assertions
-			assert.strictEqual(oP13nDialog.getInitialVisiblePanelType(), "");
-			assert.strictEqual(oP13nDialog._getNavigationControl().getButtons().length, 2, "segmented button has 2 buttons");
-			assert.deepEqual(oP13nDialog.getVisiblePanel(), oPanelF, "switched panel is shown");
-			//assert.strictEqual(oP13nDialog._getNavigationControl().getSelectedButton(), oP13nDialog._getButtonByPanel(oPanelF).getId(), "selected button belongs to switched panel");
-
-			// cleanup
-			oP13nDialog.destroy();
-		});
-
-		QUnit.test("binding of 'title'", function(assert) {
-			// system under test
-			var oP13nPanelF, oP13nPanelS, oP13nPanelD;
-			sap.ui.getCore().setModel(new sap.ui.model.resource.ResourceModel({
-				bundleName: "resourceroot.data.i18n.i18n"
-			}), "i18n");
-
-			// act
-			var oP13nDialog = new sap.m.P13nDialog({
-				panels: [
-					oP13nPanelD = new sap.m.P13nPanel({
-						title: "Without Binding",
-						type: sap.m.P13nPanelType.dimeasure
-					}), oP13nPanelF = new sap.m.P13nPanel({
-						title: "{i18n>FilterTab}",
-						type: sap.m.P13nPanelType.filter
-					}), oP13nPanelS = new sap.m.P13nPanel({
-						title: "{i18n>SortTab}",
-						type: sap.m.P13nPanelType.sort
-					})
-				]
-			});
-
-			// arrange
-			oP13nDialog.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			// assertions
-			assert.strictEqual(oP13nPanelF.getTitle(), "Filter Settings");
-			assert.strictEqual(oP13nPanelS.getTitle(), "Sort Settings");
-			assert.strictEqual(oP13nPanelD.getTitle(), "Without Binding");
-
-			assert.strictEqual(oP13nDialog._getNavigationItemByPanel(oP13nPanelF).getText(), "Filter Settings");
-			assert.strictEqual(oP13nDialog._getNavigationItemByPanel(oP13nPanelS).getText(), "Sort Settings");
-			assert.strictEqual(oP13nDialog._getNavigationItemByPanel(oP13nPanelD).getText(), "Without Binding");
-
-			// cleanup
-			oP13nDialog.destroy();
-		});
-
-		/*test("_showValidationDialog: show bullet point for move then one messages", function() {
-			// system under test
-			var oPanelC = new sap.m.P13nPanel({
-				title: "Columns",
-				type: sap.m.P13nPanelType.culumns
-			});
-			var oPanelG = new sap.m.P13nPanel({
-				title: "Group",
-				type: sap.m.P13nPanelType.group
-			});
-			var oP13nDialog = new sap.m.P13nDialog({
-				panels: [
-					oPanelC, oPanelG
-				]
-			});
-
-			// arrange
-			oP13nDialog.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			// act
-			oP13nDialog._showValidationDialog(function() {
-			}, [], [
-				{
-					columnKey: "columnKey1",
-					panelTypes: [
-						"group", "columns"
-					],
-					messageType: "Warning",
-					messageText: "Dummy Warning 1..."
-				}, {
-					columnKey: "columnKey2",
-					panelTypes: [
-						"group", "columns"
-					],
-					messageType: "Warning",
-					messageText: "Dummy Warning 2..."
-				}
-			]);
-			var $Dialog = jQuery.find(".sapMMessageBoxWarning");
-			var oDialog = jQuery($Dialog).control(0);
-
-			// assertions
-			assert.ok(oDialog);
-			assert.strictEqual(oDialog.getContent()[0].getText(), "• Dummy Warning 2...\n• Dummy Warning 1...\n");
-
-			// cleanup
-			oDialog.destroy();
-			oP13nDialog.destroy();
-		});*/
-
-		QUnit.test("_showValidationDialog: show no bullet point for one message", function(assert) {
-			// system under test
-			var oP13nDialog = new sap.m.P13nDialog({
-				panels: [
-					new sap.m.P13nPanel({
-						title: "Columns",
-						type: sap.m.P13nPanelType.culumns
-					}), new sap.m.P13nPanel({
-						title: "Group",
-						type: sap.m.P13nPanelType.group
-					})
-				]
-			});
-
-			// arrange
-			oP13nDialog.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			// act
-			oP13nDialog._showValidationDialog(function() {
-			}, [], [
-				{
-					columnKey: "columnKey1",
-					messageType: "Warning",
-					messageText: "Dummy Warning..."
-				}
-			]);
-			var $Dialog = jQuery.find(".sapMMessageBoxWarning");
-			var oDialog = jQuery($Dialog).control(0);
-
-			// assertions
-			assert.ok(oDialog);
-			assert.strictEqual(oDialog.getContent()[0].getText(), "Dummy Warning..." + "\n" + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE_QUESTION"));
-
-			// cleanup
-			oDialog.destroy();
-			oP13nDialog.destroy();
-		});
-
-		// BCP 1670188253
-		QUnit.test("_showValidationDialog: show only one message of many equal messages", function(assert) {
-			// system under test
-			var oP13nDialog = new sap.m.P13nDialog({
-				panels: [
-					new sap.m.P13nPanel({
-						title: "Columns",
-						type: sap.m.P13nPanelType.culumns
-					}), new sap.m.P13nPanel({
-						title: "Group",
-						type: sap.m.P13nPanelType.group
-					})
-				]
-			});
-
-			// arrange
-			oP13nDialog.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			// act
-			oP13nDialog._showValidationDialog(function() {
-			}, [], [
-				{
-					columnKey: "columnKey1",
-					messageType: "Warning",
-					messageText: "Dummy Warning..."
-				}, {
-					columnKey: "columnKey2",
-					messageType: "Warning",
-					messageText: "Dummy Warning..."
-				}
-			]);
-			var $Dialog = jQuery.find(".sapMMessageBoxWarning");
-			var oDialog = jQuery($Dialog).control(0);
-
-			// assertions
-			assert.ok(oDialog);
-			assert.strictEqual(oDialog.getContent()[0].getText(), "Dummy Warning..." + "\n" + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE_QUESTION"));
-
-			// cleanup
-			oDialog.destroy();
-			oP13nDialog.destroy();
-		});
-
-		QUnit.test("_showValidationDialog: show no dialog if no messages exist", function(assert) {
-			// system under test
-			var oP13nDialog = new sap.m.P13nDialog({
-				panels: [
-					new sap.m.P13nPanel({
-						title: "Columns",
-						type: sap.m.P13nPanelType.culumns
-					}), new sap.m.P13nPanel({
-						title: "Group",
-						type: sap.m.P13nPanelType.group
-					})
-				]
-			});
-
-			// arrange
-			oP13nDialog.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			// act
-			oP13nDialog._showValidationDialog(function() {
-			}, [], []);
-			var $Dialog = jQuery.find(".sapMMessageBoxWarning");
-			var oDialog = jQuery($Dialog).control(0);
-
-			// assertions
-			assert.ok(!oDialog);
-
-			// cleanup
-			oP13nDialog.destroy();
-		});
-
-		QUnit.test("_prepareMessages", function(assert) {
-			// system under test
-			var oP13nDialog = new sap.m.P13nDialog({
-				panels: [
-					new sap.m.P13nPanel({
-						title: "Columns",
-						type: sap.m.P13nPanelType.culumns
-					}), new sap.m.P13nPanel({
-						title: "Group",
-						type: sap.m.P13nPanelType.group
-					})
-				]
-			});
-
-			// arrange
-			oP13nDialog.placeAt("content");
-			sap.ui.getCore().applyChanges();
-			var aWarnings = [], aErrors = [];
-
-			// act
-			oP13nDialog._prepareMessages([], [
-				{
-					columnKey: "columnKey1",
-					messageType: "Error",
-					messageText: "A"
-				}, {
-					columnKey: "columnKey2",
-					messageType: "Warning",
-					messageText: "B"
-				}, {
-					columnKey: "columnKey3",
-					messageType: "Error",
-					messageText: "B"
-				}, {
-					columnKey: "columnKey4",
-					messageType: "Warning",
-					messageText: "A"
-				}
-			], aWarnings, aErrors);
-
-			// assertions
-			assert.deepEqual(aWarnings, [
-				{
-					columnKey: "columnKey4",
-					messageType: "Warning",
-					messageText: "A"
-				}
-			]);
-			assert.deepEqual(aErrors, [
-				{
-					columnKey: "columnKey3",
-					messageType: "Error",
-					messageText: "B"
-				}
-			]);
-
-			// cleanup
-			oP13nDialog.destroy();
-		});
-
-	}());
-</script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Test Page for sap.m.P13nDialog</title>
+    <script src="../shared-config.js"></script>
+    <script id="sap-ui-bootstrap" data-sap-ui-noConflict="true"
+            data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js"
+            data-sap-ui-resourceroots='{ "resourceroot": "./" }'>
+
+    </script>
+
+    <link rel="stylesheet"
+          href="../../../../resources/sap/ui/thirdparty/qunit.css"
+          type="text/css" media="screen"/>
+    <script
+            src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+    <script
+            src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+    <script
+            src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+    <script
+            src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+    <script
+            src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+    <script
+            src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+    <script>
+
+        (function () {
+            jQuery.sap.require("sap.m.P13nDialog");
+            jQuery.sap.require("sap.m.P13nPanel");
+
+            var oP13nDialog;
+            var oPanel1;
+            var oPanel2;
+            var oPanel3;
+            QUnit.module("Properties", {
+                beforeEach: function () {
+                },
+                afterEach: function () {
+                    if (oP13nDialog) {
+                        oP13nDialog.destroy();
+                        oP13nDialog = undefined;
+                        oPanel1 = undefined;
+                        oPanel2 = undefined;
+                        oPanel3 = undefined;
+                    }
+                    sap.ui.Device.system.desktop = true;
+                    sap.ui.Device.system.phone = false;
+                }
+            });
+
+            var fTest01 = function () {
+                // system under test
+                var oP13nDialog = new sap.m.P13nDialog();
+
+                // arrange
+                oP13nDialog.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                // assertions
+                assert.strictEqual(oP13nDialog.getInitialVisiblePanelType(), "", "getInitialVisiblePanelType is ''");
+                assert.strictEqual(oP13nDialog.getShowReset(), false, "getShowReset is false");
+                assert.strictEqual(oP13nDialog._getNavigationControl(), null, "segmented button does not exist");
+                assert.strictEqual(oP13nDialog.getVisiblePanel(), null, "no panel is shown");
+                if (sap.ui.Device.system.phone) {
+                    assert.strictEqual(oP13nDialog.getVerticalScrolling(), false, "getVerticalScrolling is false");
+                    assert.ok(oP13nDialog.getButtons()[0], "OK button");
+                    assert.ok(oP13nDialog.getButtons()[1], "Cancel button");
+                    assert.ok(oP13nDialog.getButtons()[2], "Reset button");
+                    assert.strictEqual(oP13nDialog.getCustomHeader().getContentMiddle()[0].getText(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"), "default title");
+                } else {
+                    assert.strictEqual(oP13nDialog.getVerticalScrolling(), true, "getVerticalScrolling is true");
+                    assert.strictEqual(oP13nDialog.getButtons().length, 3, "OK, Cancel and Reset buttons");
+                    assert.strictEqual(oP13nDialog.getButtons()[0].getVisible(), true, "OK button is visible");
+                    assert.strictEqual(oP13nDialog.getButtons()[1].getVisible(), true, "Cancel button is visible");
+                    assert.strictEqual(oP13nDialog.getButtons()[2].getVisible(), false, "Reset button is not visible");
+                    assert.strictEqual(oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"), "default title");
+                }
+
+                // cleanup
+                oP13nDialog.destroy();
+            };
+            QUnit.test("Default Values (Desktop)", function (assert) {
+                sap.ui.Device.system.desktop = true;
+                sap.ui.Device.system.phone = false;
+                fTest01();
+            });
+            QUnit.test("Default Values (Phone)", function (assert) {
+                sap.ui.Device.system.desktop = false;
+                sap.ui.Device.system.phone = true;
+                fTest01();
+            });
+
+            /*test("destroy", function() {
+
+                // system under test
+                var oP13nDialog = new sap.m.P13nDialog({
+                    panels : [new sap.m.P13nPanel({
+                        title : "filter",
+                        type : sap.m.P13nPanelType.filter
+                    }), new sap.m.P13nPanel({
+                        title : "sort",
+                        type : sap.m.P13nPanelType.sort
+                    })]
+                });
+
+                // arrange
+                oP13nDialog.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                // act
+                oP13nDialog.destroy();
+
+                // assertions
+                assert.strictEqual(oP13nDialog.getSubHeader(), null);
+                assert.strictEqual(oP13nDialog.getButtons(), []);
+                assert.strictEqual(oP13nDialog._oResetButton, null);
+                //assert.strictEqual(oP13nDialog.getContent(), []);
+
+                // cleanup
+
+            });*/
+
+            var fTest02 = function () {
+
+                // system under test
+                var oP13nDialog = new sap.m.P13nDialog({
+                    showReset: true
+                });
+
+                // arrange
+                oP13nDialog.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                // assertions
+                assert.strictEqual(oP13nDialog.getButtons()[2].getVisible(), true, "Reset button is visible");
+
+                // cleanup
+                oP13nDialog.destroy();
+            };
+            QUnit.test("Show reset (Desktop)", function (assert) {
+                sap.ui.Device.system.desktop = true;
+                sap.ui.Device.system.phone = false;
+                fTest02();
+            });
+            QUnit.test("Show reset (Phone)", function (assert) {
+                sap.ui.Device.system.desktop = false;
+                sap.ui.Device.system.phone = true;
+                fTest02();
+            });
+
+            QUnit.test("add one panel - without initialVisiblePanelType", function (assert) {
+
+                // system under test
+                var oPanel;
+                var oP13nDialog = new sap.m.P13nDialog({
+                    panels: [
+                        oPanel = new sap.m.P13nPanel({
+                            title: "Filter",
+                            type: sap.m.P13nPanelType.filter
+                        })
+                    ]
+                });
+
+                // arrange
+                oP13nDialog.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                // assertions
+                assert.strictEqual(oP13nDialog.getInitialVisiblePanelType(), "");
+                assert.strictEqual(oP13nDialog._getNavigationControl(), null, "segmented button does not exist for only one panel");
+                assert.ok(oP13nDialog.getTitle() !== sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"), "default title");
+                assert.deepEqual(oP13nDialog.getVisiblePanel(), oPanel, "panel is shown");
+
+                // cleanup
+                oP13nDialog.destroy();
+            });
+
+            QUnit.test("add one panel - with initialVisiblePanelType", function (assert) {
+
+                // system under test
+                var oPanel;
+                var oP13nDialog = new sap.m.P13nDialog({
+                    initialVisiblePanelType: sap.m.P13nPanelType.filter,
+                    panels: [
+                        oPanel = new sap.m.P13nPanel({
+                            title: "Filter",
+                            type: sap.m.P13nPanelType.filter
+                        })
+                    ]
+                });
+
+                // arrange
+                oP13nDialog.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                // assertions
+                assert.strictEqual(oP13nDialog.getInitialVisiblePanelType(), oPanel.getType());
+                assert.strictEqual(oP13nDialog._getNavigationControl(), null, "segmented button does not exist for only one panel");
+                assert.ok(oP13nDialog.getTitle() !== sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"), "default title");
+                assert.deepEqual(oP13nDialog.getVisiblePanel(), oPanel, "panel is shown");
+
+                // cleanup
+                oP13nDialog.destroy();
+            });
+
+            QUnit.test("add one panel - with wrong initialVisiblePanelType", function (assert) {
+
+                // system under test
+                var oPanel;
+                var oP13nDialog = new sap.m.P13nDialog({
+                    initialVisiblePanelType: "dummy",
+                    panels: [
+                        oPanel = new sap.m.P13nPanel({
+                            title: "Filter",
+                            type: sap.m.P13nPanelType.filter
+                        })
+                    ]
+                });
+
+                // arrange
+                oP13nDialog.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                // assertions
+                assert.strictEqual(oP13nDialog.getInitialVisiblePanelType(), "dummy");
+                assert.strictEqual(oP13nDialog._getNavigationControl(), null, "segmented button does not exist for only one panel");
+                assert.ok(oP13nDialog.getTitle() !== sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"), "default title");
+                assert.deepEqual(oP13nDialog.getVisiblePanel(), oPanel, "panel is shown");
+
+                // cleanup
+                oP13nDialog.destroy();
+            });
+
+            QUnit.test("add one panel - custom panel", function (assert) {
+
+                sap.m.P13nPanel.extend("CustomPanel", {
+                    metadata: {},
+                    renderer: function (oRm, oControl) {
+                        if (!oControl.getVisible()) {
+                            return;
+                        }
+                    }
+                });
+
+                // system under test
+                var oPanel;
+                var oP13nDialog = new sap.m.P13nDialog({
+                    panels: [
+                        oPanel = new CustomPanel({
+                            titleLarge: "Custom Panel Settings",
+                            type: "customPanel"
+                        })
+                    ]
+                });
+
+                // arrange
+                oP13nDialog.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                // assertions
+                assert.ok(oP13nDialog.getTitle() === "Custom Panel Settings");
+
+                // cleanup
+                oP13nDialog.destroy();
+            });
+
+            function asyncNavigationItemsTest(assert, fnTest) {
+                var sContainerModule;
+                var sItemModule;
+
+                if (sap.ui.Device.system.phone) {
+                    sContainerModule = "sap/m/List";
+                    sItemModule = "sap/m/StandardListItem";
+                } else {
+                    sContainerModule = "sap/m/SegmentedButton";
+                    sItemModule = "sap/m/SegmentedButtonItem";
+                }
+
+                if (sap.ui.require(sContainerModule) && sap.ui.require(sItemModule)
+                        && oP13nDialog._getNavigationControl()) {
+                    fnTest(assert);
+                } else {
+                    var fnDone = assert.async();
+                    sap.ui.require([sContainerModule, sItemModule], function () {
+                        fnTest(assert);
+                        fnDone();
+                    });
+                }
+            }
+
+            function moreTanOnePanel(assert) {
+                var oNavigationControl = oP13nDialog._getNavigationControl();
+                assert.strictEqual(oP13nDialog.getInitialVisiblePanelType(), "");
+                assert.ok(oNavigationControl, "segmented button does exist");
+                assert.strictEqual(oNavigationControl.getItems().length, 2, "segmented button has 2 buttons");
+                assert.strictEqual(oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"), "default title");
+                assert.deepEqual(oP13nDialog.getVisiblePanel(), oPanel1, "default panel is shown");
+                assert.strictEqual(oNavigationControl.getSelectedItem(), oP13nDialog._getNavigationItemByPanel(oPanel1).getId(), "selected button belongs to desplayed panel");
+            }
+
+            QUnit.test("add more than one panel at once - without initialVisiblePanelType", function (assert) {
+
+                // system under test
+                oPanel1 = new sap.m.P13nPanel("P1", {
+                    title: "Filter",
+                    type: sap.m.P13nPanelType.filter
+                });
+                oP13nDialog = new sap.m.P13nDialog("PD1", {
+                    panels: [
+                        oPanel1, new sap.m.P13nPanel("P2", {
+                            title: "sort",
+                            type: sap.m.P13nPanelType.sort
+                        })
+                    ]
+                });
+
+                // arrange
+                oP13nDialog.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                // assertions
+                asyncNavigationItemsTest(assert, moreTanOnePanel);
+            });
+
+            function moreTanOnePanelInitialVisiblePanelType(assert) {
+                var oNavigationControl = oP13nDialog._getNavigationControl();
+                assert.strictEqual(oP13nDialog.getInitialVisiblePanelType(), oPanel1.getType());
+                assert.ok(oNavigationControl, "segmented button does exist");
+                assert.strictEqual(oNavigationControl.getItems().length, 2, "segmented button has 2 buttons");
+                assert.strictEqual(oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"), "default title");
+                assert.deepEqual(oP13nDialog.getVisiblePanel(), oPanel1, "default panel is shown");
+                assert.strictEqual(oNavigationControl.getSelectedItem(), oP13nDialog._getNavigationItemByPanel(oPanel1).getId(), "selected button belongs to desplayed panel");
+            }
+
+            QUnit.test("add more than one panel - with initialVisiblePanelType", function (assert) {
+
+                // system under test
+                oPanel1 = new sap.m.P13nPanel("P1", {
+                    title: "Filter",
+                    type: sap.m.P13nPanelType.filter
+                });
+                oP13nDialog = new sap.m.P13nDialog("PD1", {
+                    initialVisiblePanelType: sap.m.P13nPanelType.filter,
+                    panels: [
+                        new sap.m.P13nPanel("P2", {
+                            title: "sort",
+                            type: sap.m.P13nPanelType.sort
+                        }), oPanel1
+                    ]
+                });
+
+                // arrange
+                oP13nDialog.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                // assertions
+                asyncNavigationItemsTest(assert, moreTanOnePanelInitialVisiblePanelType);
+            });
+
+            function switchPanel(assert) {
+                var oNavigationControl = oP13nDialog._getNavigationControl();
+                var oItem = oP13nDialog._getNavigationItemByPanel(oPanel1);
+                oP13nDialog._switchPanel(oItem);
+
+                // assertions
+                assert.strictEqual(oP13nDialog.getInitialVisiblePanelType(), "");
+                assert.strictEqual(oNavigationControl.getItems().length, 2, "segmented button has 2 buttons");
+                assert.deepEqual(oP13nDialog.getVisiblePanel(), oPanel1, "switched panel is shown");
+            }
+
+            QUnit.test("_switchPanel", function (assert) {
+
+                // system under test
+                oPanel1 = new sap.m.P13nPanel("P1", {
+                    title: "filter",
+                    type: sap.m.P13nPanelType.filter
+                });
+                oPanel2 = new sap.m.P13nPanel("P2", {
+                    title: "sort",
+                    type: sap.m.P13nPanelType.sort
+                });
+                oP13nDialog = new sap.m.P13nDialog({
+                    panels: [
+                        oPanel2, oPanel1
+                    ]
+                });
+
+                // arrange
+                oP13nDialog.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                // act
+                asyncNavigationItemsTest(assert, switchPanel);
+            });
+
+            function bindingOfTitle(assert) {
+                assert.strictEqual(oPanel1.getTitle(), "Without Binding");
+                assert.strictEqual(oPanel2.getTitle(), "Filter Settings");
+                assert.strictEqual(oPanel3.getTitle(), "Sort Settings");
+
+                assert.strictEqual(oP13nDialog._getNavigationItemByPanel(oPanel1).getText(), "Without Binding");
+                assert.strictEqual(oP13nDialog._getNavigationItemByPanel(oPanel2).getText(), "Filter Settings");
+                assert.strictEqual(oP13nDialog._getNavigationItemByPanel(oPanel3).getText(), "Sort Settings");
+            }
+
+            QUnit.test("binding of 'title'", function (assert) {
+                // system under test
+                sap.ui.getCore().setModel(new sap.ui.model.resource.ResourceModel({
+                    bundleName: "resourceroot.data.i18n.i18n"
+                }), "i18n");
+
+                oPanel1 = new sap.m.P13nPanel("P1", {
+                    title: "Without Binding",
+                    type: sap.m.P13nPanelType.dimeasure
+                });
+                oPanel2 = new sap.m.P13nPanel("P2", {
+                    title: "{i18n>FilterTab}",
+                    type: sap.m.P13nPanelType.filter
+                });
+                oPanel3 = new sap.m.P13nPanel("P3", {
+                    title: "{i18n>SortTab}",
+                    type: sap.m.P13nPanelType.sort
+                });
+                // act
+                oP13nDialog = new sap.m.P13nDialog({
+                    panels: [
+                        oPanel1, oPanel2, oPanel3
+                    ]
+                });
+
+                // arrange
+                oP13nDialog.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                // assertions
+                asyncNavigationItemsTest(assert, bindingOfTitle);
+            });
+
+            QUnit.test("_showValidationDialog: show no bullet point for one message", function (assert) {
+                // system under test
+                var oP13nDialog = new sap.m.P13nDialog({
+                    panels: [
+                        new sap.m.P13nPanel({
+                            title: "Columns",
+                            type: sap.m.P13nPanelType.culumns
+                        }), new sap.m.P13nPanel({
+                            title: "Group",
+                            type: sap.m.P13nPanelType.group
+                        })
+                    ]
+                });
+
+                // arrange
+                oP13nDialog.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                // act
+                var fnDone = assert.async();
+                oP13nDialog._showValidationDialog(function () {
+                }, [], [
+                    {
+                        columnKey: "columnKey1",
+                        messageType: "Warning",
+                        messageText: "Dummy Warning..."
+                    }
+                ]).then(function () {
+                    var $Dialog = jQuery.find(".sapMMessageBoxWarning");
+                    var oDialog = jQuery($Dialog).control(0);
+
+                    // assertions
+                    assert.ok(oDialog);
+                    assert.strictEqual(oDialog.getContent()[0].getText(), "Dummy Warning..." + "\n" + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE_QUESTION"));
+                    fnDone();
+
+                    // cleanup
+                    oDialog.destroy();
+                    oP13nDialog.destroy();
+                });
+            });
+
+            // BCP 1670188253
+            QUnit.test("_showValidationDialog: show only one message of many equal messages", function (assert) {
+                // system under test
+                var oP13nDialog = new sap.m.P13nDialog({
+                    panels: [
+                        new sap.m.P13nPanel({
+                            title: "Columns",
+                            type: sap.m.P13nPanelType.culumns
+                        }), new sap.m.P13nPanel({
+                            title: "Group",
+                            type: sap.m.P13nPanelType.group
+                        })
+                    ]
+                });
+
+                // arrange
+                oP13nDialog.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                // act
+                var fnDone = assert.async();
+                oP13nDialog._showValidationDialog(function () {
+                }, [], [
+                    {
+                        columnKey: "columnKey1",
+                        messageType: "Warning",
+                        messageText: "Dummy Warning..."
+                    }, {
+                        columnKey: "columnKey2",
+                        messageType: "Warning",
+                        messageText: "Dummy Warning..."
+                    }
+                ]).then(function () {
+                    var $Dialog = jQuery.find(".sapMMessageBoxWarning");
+                    var oDialog = jQuery($Dialog).control(0);
+
+                    // assertions
+                    assert.ok(oDialog);
+                    assert.strictEqual(oDialog.getContent()[0].getText(), "Dummy Warning..." + "\n" + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE_QUESTION"));
+                    fnDone();
+
+                    // cleanup
+                    oDialog.destroy();
+                    oP13nDialog.destroy();
+                });
+            });
+
+            QUnit.test("_showValidationDialog: show no dialog if no messages exist", function (assert) {
+                // system under test
+                var oP13nDialog = new sap.m.P13nDialog({
+                    panels: [
+                        new sap.m.P13nPanel({
+                            title: "Columns",
+                            type: sap.m.P13nPanelType.culumns
+                        }), new sap.m.P13nPanel({
+                            title: "Group",
+                            type: sap.m.P13nPanelType.group
+                        })
+                    ]
+                });
+
+                // arrange
+                oP13nDialog.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                // act
+                var fnDone = assert.async();
+                oP13nDialog._showValidationDialog(function () {
+                }, [], []).then(function () {
+                    var $Dialog = jQuery.find(".sapMMessageBoxWarning");
+                    var oDialog = jQuery($Dialog).control(0);
+
+                    // assertions
+                    assert.ok(!oDialog);
+                    fnDone();
+
+                    // cleanup
+                    oP13nDialog.destroy();
+                });
+            });
+
+            QUnit.test("_prepareMessages", function (assert) {
+                // system under test
+                var oP13nDialog = new sap.m.P13nDialog({
+                    panels: [
+                        new sap.m.P13nPanel({
+                            title: "Columns",
+                            type: sap.m.P13nPanelType.culumns
+                        }), new sap.m.P13nPanel({
+                            title: "Group",
+                            type: sap.m.P13nPanelType.group
+                        })
+                    ]
+                });
+
+                // arrange
+                oP13nDialog.placeAt("content");
+                sap.ui.getCore().applyChanges();
+                var aWarnings = [], aErrors = [];
+
+                // act
+                oP13nDialog._prepareMessages([], [
+                    {
+                        columnKey: "columnKey1",
+                        messageType: "Error",
+                        messageText: "A"
+                    }, {
+                        columnKey: "columnKey2",
+                        messageType: "Warning",
+                        messageText: "B"
+                    }, {
+                        columnKey: "columnKey3",
+                        messageType: "Error",
+                        messageText: "B"
+                    }, {
+                        columnKey: "columnKey4",
+                        messageType: "Warning",
+                        messageText: "A"
+                    }
+                ], aWarnings, aErrors);
+
+                // assertions
+                assert.deepEqual(aWarnings, [
+                    {
+                        columnKey: "columnKey4",
+                        messageType: "Warning",
+                        messageText: "A"
+                    }
+                ]);
+                assert.deepEqual(aErrors, [
+                    {
+                        columnKey: "columnKey3",
+                        messageType: "Error",
+                        messageText: "B"
+                    }
+                ]);
+
+                // cleanup
+                oP13nDialog.destroy();
+            });
+
+            QUnit.module("stable IDs", {
+                beforeEach: function () {
+                },
+                afterEach: function () {
+                    if (oP13nDialog) {
+                        oP13nDialog.destroy();
+                        oP13nDialog = undefined;
+                        oPanel1 = undefined;
+                        oPanel2 = undefined;
+                        oPanel3 = undefined;
+                    }
+                    sap.ui.Device.system.desktop = true;
+                    sap.ui.Device.system.phone = false;
+                }
+            });
+
+            function createDialogForIDs() {
+                oPanel1 = new sap.m.P13nPanel("P1", {
+                    title: "Filter",
+                    type: sap.m.P13nPanelType.filter
+                });
+
+                oPanel2 = new sap.m.P13nPanel("P2", {
+                    title: "sort",
+                    type: sap.m.P13nPanelType.sort
+                });
+
+                oP13nDialog = new sap.m.P13nDialog("PD1", {
+                    panels: [oPanel1, oPanel2]
+                }).placeAt("content");
+                sap.ui.getCore().applyChanges();
+            }
+
+            function desktopIDs(assert) {
+                var oBar = oP13nDialog.getSubHeader();
+                assert.equal(oBar.getId(), "PD1-navigationBar", "ID of navigation bar");
+
+                var oSegmentedButton = oBar.getContentLeft()[0];
+                assert.equal(oSegmentedButton.getId(), "PD1-navigationItems", "ID of SegmentedButton");
+
+                var aItems = oSegmentedButton.getItems();
+                assert.equal(aItems[0].getId(), "P1-navItem", "ID of navigation item for first panel");
+                assert.equal(aItems[1].getId(), "P2-navItem", "ID of navigation item for second panel");
+
+                oP13nDialog.removePanel(oPanel2);
+                assert.notOk(!!sap.ui.getCore().byId("P2-navItem"), "navigation item destoyed after removing panel");
+                assert.notOk(!!sap.ui.getCore().byId("PD1-navigationItems"), "SegmentedButton destoyed after removing panel");
+
+                oP13nDialog.insertPanel(oPanel2, 0);
+                oBar = oP13nDialog.getSubHeader();
+                oSegmentedButton = oBar.getContentLeft()[0];
+                aItems = oSegmentedButton.getItems();
+                assert.equal(oSegmentedButton.getId(), "PD1-navigationItems", "ID of SegmentedButton");
+                assert.equal(aItems[0].getId(), "P2-navItem", "ID of navigation item for first panel");
+                assert.equal(aItems[1].getId(), "P1-navItem", "ID of navigation item for second panel");
+            }
+
+            QUnit.test("desktop IDs", function (assert) {
+                createDialogForIDs();
+
+                var aButtons = oP13nDialog.getButtons();
+                assert.equal(aButtons[0].getId(), "PD1-ok", "ID of OK button");
+                assert.equal(aButtons[1].getId(), "PD1-cancel", "ID of CANCEL button");
+                assert.equal(aButtons[2].getId(), "PD1-reset", "ID of RESET button");
+
+                asyncNavigationItemsTest(assert, desktopIDs);
+            });
+
+            function phoneIDs(assert) {
+                var oList = oP13nDialog.getContent()[0];
+                assert.equal(oList.getId(), "PD1-navigationItems", "ID of List");
+
+                var aItems = oList.getItems();
+                assert.equal(aItems[0].getId(), "P1-navItem", "ID of navigation item for first panel");
+                assert.equal(aItems[1].getId(), "P2-navItem", "ID of navigation item for second panel");
+
+                oP13nDialog.removePanel(oPanel2);
+                assert.notOk(!!sap.ui.getCore().byId("P2-navItem"), "navigation item destoyed after removing panel");
+                assert.notOk(!!sap.ui.getCore().byId("PD1-navigationItems"), "List destoyed after removing panel");
+
+                oP13nDialog.insertPanel(oPanel2, 0);
+                oList = oP13nDialog.getContent()[0];
+                aItems = oList.getItems();
+                assert.equal(oList.getId(), "PD1-navigationItems", "ID of List");
+                assert.equal(aItems[0].getId(), "P2-navItem", "ID of navigation item for first panel");
+                assert.equal(aItems[1].getId(), "P1-navItem", "ID of navigation item for second panel");
+            }
+
+            QUnit.test("phone IDs", function (assert) {
+                sap.ui.Device.system.desktop = false;
+                sap.ui.Device.system.phone = true;
+                createDialogForIDs();
+
+                var oHeaderBar = oP13nDialog.getCustomHeader();
+                assert.equal(oHeaderBar.getId(), "PD1-phoneHeader", "ID of header bar");
+
+                var oBackButton = oHeaderBar.getContentLeft()[0];
+                assert.equal(oBackButton.getId(), "PD1-backToList", "ID of back button");
+
+                var oTitle = oHeaderBar.getContentMiddle()[0];
+                assert.equal(oTitle.getId(), "PD1-phoneTitle", "ID of Title");
+
+                var aButtons = oP13nDialog.getButtons();
+                assert.equal(aButtons[0].getId(), "PD1-ok", "ID of OK button");
+                assert.equal(aButtons[1].getId(), "PD1-cancel", "ID of CANCEL button");
+                assert.equal(aButtons[2].getId(), "PD1-reset", "ID of RESET button");
+
+                asyncNavigationItemsTest(assert, phoneIDs);
+            });
+
+            QUnit.module("Desktop: Dialog with initially one panel", {
+                beforeEach: function () {
+                    this.oP13nDialog = new sap.m.P13nDialog({
+                        panels: [
+                            new sap.m.P13nColumnsPanel({
+                                items: [new sap.m.P13nItem({
+                                    text: "Product ID",
+                                    columnKey: "productId"
+                                }), new sap.m.P13nItem({
+                                    text: "Name",
+                                    columnKey: "name"
+                                })],
+                                columnsItems: [new sap.m.P13nColumnsItem({
+                                    columnKey: "name",
+                                    visible: true
+                                })]
+                            })
+                        ]
+                    });
+                },
+                afterEach: function () {
+                    this.oP13nDialog.destroy();
+                }
+            });
+            QUnit.test("show dialog with one panel", function (assert) {
+                var fnDone = assert.async();
+
+                // Preconditions
+                assert.equal(sap.ui.Device.system.phone, false);
+                assert.equal(this.oP13nDialog.getPanels().length, 1);
+
+                this.oP13nDialog.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                this.oP13nDialog.attachAfterOpen(function () {
+                    assert.equal(this.oP13nDialog.getPanels().length, 1);
+                    assert.equal(this.oP13nDialog.$().find(".sapMDialogSubHeader").length, 0);
+                    assert.equal(this.oP13nDialog.$().find(".sapMP13nColumnsPanel").length, 1);
+                    fnDone();
+                }.bind(this));
+
+                this.oP13nDialog.open();
+            });
+            QUnit.test("show dialog after panel has been added", function (assert) {
+                var fnDone = assert.async();
+
+                // Preconditions
+                assert.equal(sap.ui.Device.system.phone, false);
+                assert.equal(this.oP13nDialog.getPanels().length, 1);
+
+                this.oP13nDialog.setInitialVisiblePanelType("sort");
+                this.oP13nDialog.addPanel(new sap.m.P13nSortPanel({
+                    items: [new sap.m.P13nItem({
+                        text: "Product ID",
+                        columnKey: "productId"
+                    }), new sap.m.P13nItem({
+                        text: "Name",
+                        columnKey: "name"
+                    })]
+                }));
+
+                this.oP13nDialog.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                this.oP13nDialog.attachAfterOpen(function () {
+                    assert.equal(this.oP13nDialog.getPanels().length, 2);
+                    assert.equal(this.oP13nDialog.$().find(".sapMDialogSubHeader").length, 1);
+                    assert.equal(this.oP13nDialog.$().find(".sapMSortPanel").length, 1);
+                    fnDone();
+                }.bind(this));
+
+                this.oP13nDialog.open();
+            });
+
+            QUnit.module("Phone: Dialog with initially one panel", {
+                beforeEach: function () {
+                    sap.ui.Device.system.phone = true;
+                    this.oP13nDialog = new sap.m.P13nDialog({
+                        panels: [
+                            new sap.m.P13nColumnsPanel({
+                                items: [new sap.m.P13nItem({
+                                    text: "Product ID",
+                                    columnKey: "productId"
+                                }), new sap.m.P13nItem({
+                                    text: "Name",
+                                    columnKey: "name"
+                                })],
+                                columnsItems: [new sap.m.P13nColumnsItem({
+                                    columnKey: "name",
+                                    visible: true
+                                })]
+                            })
+                        ]
+                    });
+                },
+                afterEach: function () {
+                    sap.ui.Device.system.phone = false;
+                    this.oP13nDialog.destroy();
+                }
+            });
+
+            QUnit.test("show dialog with one panel", function (assert) {
+                var fnDone = assert.async();
+
+                // Preconditions
+                assert.equal(sap.ui.Device.system.phone, true);
+                assert.equal(this.oP13nDialog.getPanels().length, 1);
+
+                this.oP13nDialog.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                this.oP13nDialog.attachAfterOpen(function () {
+                    assert.equal(this.oP13nDialog.getPanels().length, 1);
+//                    assert.equal(this.oP13nDialog.$().find(".sapMList").length, 0);
+                    assert.equal(this.oP13nDialog.$().find(".sapMP13nColumnsPanel").length, 1);
+                    fnDone();
+                }.bind(this));
+
+                this.oP13nDialog.open();
+            });
+            QUnit.test("show dialog after panel has been added", function (assert) {
+                var fnDone = assert.async();
+
+                // Preconditions
+                assert.equal(sap.ui.Device.system.phone, true);
+                assert.equal(this.oP13nDialog.getPanels().length, 1);
+
+                this.oP13nDialog.setInitialVisiblePanelType("sort");
+                this.oP13nDialog.addPanel(new sap.m.P13nSortPanel({
+                    items: [new sap.m.P13nItem({
+                        text: "Product ID",
+                        columnKey: "productId"
+                    }), new sap.m.P13nItem({
+                        text: "Name",
+                        columnKey: "name"
+                    })]
+                }));
+
+                this.oP13nDialog.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                this.oP13nDialog.attachAfterOpen(function () {
+                    assert.equal(this.oP13nDialog.getPanels().length, 2);
+//                    assert.equal(this.oP13nDialog.$().find(".sapMList").length, 1);
+                    assert.equal(this.oP13nDialog.$().find(".sapMSortPanel").length, 0);
+                    fnDone();
+                }.bind(this));
+
+                this.oP13nDialog.open();
+            });
+
+
+            QUnit.module("Desktop: Dialog with initially more panels", {
+                beforeEach: function () {
+                    this.oP13nDialog = new sap.m.P13nDialog({
+                        panels: [
+                            new sap.m.P13nColumnsPanel({
+                                items: [new sap.m.P13nItem({
+                                    text: "Product ID",
+                                    columnKey: "productId"
+                                }), new sap.m.P13nItem({
+                                    text: "Name",
+                                    columnKey: "name"
+                                })],
+                                columnsItems: [new sap.m.P13nColumnsItem({
+                                    columnKey: "name",
+                                    visible: true
+                                })]
+                            }),
+                            new sap.m.P13nFilterPanel({
+                                items: [new sap.m.P13nItem({
+                                    text: "Product ID",
+                                    columnKey: "productId"
+                                })]
+                            })
+                        ]
+                    });
+                },
+                afterEach: function () {
+                    this.oP13nDialog.destroy();
+                }
+            });
+            QUnit.test("show dialog with two panel", function (assert) {
+                var fnDone = assert.async();
+
+                // Preconditions
+                assert.equal(sap.ui.Device.system.phone, false);
+                assert.equal(this.oP13nDialog.getPanels().length, 2);
+
+                this.oP13nDialog.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                this.oP13nDialog.attachAfterOpen(function () {
+                    assert.equal(this.oP13nDialog.getPanels().length, 2);
+                    assert.equal(this.oP13nDialog.$().find(".sapMDialogSubHeader").length, 1);
+                    assert.equal(this.oP13nDialog.$().find(".sapMP13nColumnsPanel").length, 1);
+                    fnDone();
+                }.bind(this));
+
+                this.oP13nDialog.open();
+            });
+            QUnit.test("show dialog after one panel has been removed", function (assert) {
+                var fnDone = assert.async();
+
+                // Preconditions
+                assert.equal(sap.ui.Device.system.phone, false);
+                assert.equal(this.oP13nDialog.getPanels().length, 2);
+
+                this.oP13nDialog.removePanel(this.oP13nDialog.getPanels()[1]);
+
+                this.oP13nDialog.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                this.oP13nDialog.attachAfterOpen(function () {
+                    assert.equal(this.oP13nDialog.getPanels().length, 1);
+                    assert.equal(this.oP13nDialog.$().find(".sapMDialogSubHeader").length, 0);
+                    assert.equal(this.oP13nDialog.$().find(".sapMP13nColumnsPanel").length, 1);
+                    fnDone();
+                }.bind(this));
+
+                this.oP13nDialog.open();
+            });
+
+        }());
+    </script>
 
 
 </head>
 <body id="body" class="sapUiBody">
-	<h1 id="qunit-header">QUnit Page for sap.m.P13nDialog</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<ol id="qunit-tests"></ol>
+<h1 id="qunit-header">QUnit Page for sap.m.P13nDialog</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<ol id="qunit-tests"></ol>
 
-	<div id="content"></div>
+<div id="content"></div>
 </body>
 </html>
