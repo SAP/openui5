@@ -291,5 +291,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.9": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "0e2f39213120fc43854d5b81c31fb98f6c659f9c",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Now in IE the week numbers are visible",
+        "references": []
+      }
+    ]
   }
 }

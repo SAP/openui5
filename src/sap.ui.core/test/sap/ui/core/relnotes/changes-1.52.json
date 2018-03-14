@@ -757,5 +757,46 @@
         "references": []
       }
     ]
+  },
+  "1.52.9": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "fd254760e7cb71ae423adaf27c18c44b50155ec5",
+        "type": "FIX",
+        "text": " ODataModel(V2) docs: add since information for invalidate* methods",
+        "references": []
+      },
+      {
+        "id": "ef68b98f8383f9cd44a83ee5ab95f9a949359859",
+        "type": "FIX",
+        "text": " mvc/XMLView: expose errors from template parsing",
+        "references": []
+      },
+      {
+        "id": "3fe3300509532377076589bddcf0fe461e34f4b1",
+        "type": "FIX",
+        "text": " sap.ui.core.LocaleData: CZK digits",
+        "references": []
+      },
+      {
+        "id": "a0f83817ad43ad58b27414077f1bf210dfb08eb2",
+        "type": "FIX",
+        "text": " sap.ui.core: a disabled localStorage must not enable debug mode",
+        "references": []
+      },
+      {
+        "id": "f30599e2129cf290e93cfacf9d93f8dd7e5ace99",
+        "type": "FIX",
+        "text": " v2.ODataContextBinding: Preliminary check for Propagated Contexts",
+        "references": []
+      },
+      {
+        "id": "bbb3284cc9d50f788375d6fc09ab591b2407b7b3",
+        "type": "FIX",
+        "text": " v2.oDataContextBinding: Null check for empty context",
+        "references": []
+      }
+    ]
   }
 }

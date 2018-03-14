@@ -1531,5 +1531,76 @@
         "references": []
       }
     ]
+  },
+  "1.52.9": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "30f6cd93f135b0c12cb799f4afd2692629be6e8c",
+        "type": "FIX",
+        "text": " sap.m.Button: Combine buttons change handler generates stable ID now",
+        "references": []
+      },
+      {
+        "id": "539d81d45bd3c08815cc365e1cb80e0ba4b82ac8",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: properly show TimePicker in Edge",
+        "references": []
+      },
+      {
+        "id": "79be47e62abe57a87726aace22f15d492387ac0e",
+        "type": "FIX",
+        "text": " sap.m.Dialog: stretch property when using content size fixed",
+        "references": []
+      },
+      {
+        "id": "76f23550bbddc593f60b6e43fbc05ad73c6a2b4b",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: correct navigation with arrow keys",
+        "references": []
+      },
+      {
+        "id": "81eb6c998bc95434ce8bdab0af63a49bd2151b8b",
+        "type": "FIX",
+        "text": " sap.m.GrowingEnablement: Focus is lost after growing",
+        "references": []
+      },
+      {
+        "id": "4d0d1d983072b23cda2e66522d9c9a4a6acc94e3",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Disabled tabs are no longer selectable",
+        "references": []
+      },
+      {
+        "id": "f608a0d169969831796f785217d2c91451126331",
+        "type": "FIX",
+        "text": " sap.m.Page: Escape title properly",
+        "references": []
+      },
+      {
+        "id": "9e5664f1959b71e91b09745ae609d53246435ce5",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: customData for PlanningCalendarRow is fully supported.",
+        "references": []
+      },
+      {
+        "id": "3abc71b11b9930957f4dd0cc99f198122acba6cd",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: removeItem, removeItems, removeButton and removeButtons return the removed elements",
+        "references": []
+      },
+      {
+        "id": "865007b6f6e6740953df47c796e8ae47e20cdeb1",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: active page is displayed correct now.",
+        "references": []
+      },
+      {
+        "id": "ff5a13c5c24c142ffaad190465fa69b2bad49734",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: fix failing unit tests",
+        "references": []
+      }
+    ]
   }
 }

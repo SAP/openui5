@@ -285,5 +285,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.9": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "d16698c00a969d3cc95fa37d23d271e0fa70dbc1",
+        "type": "FIX",
+        "text": " GridTable: Color contrast of Information Highlight fixed in HCB/W",
+        "references": []
+      }
+    ]
   }
 }

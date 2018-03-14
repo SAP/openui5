@@ -243,5 +243,28 @@
         "references": []
       }
     ]
+  },
+  "1.52.9": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "d16698c00a969d3cc95fa37d23d271e0fa70dbc1",
+        "type": "FIX",
+        "text": " GridTable: Color contrast of Information Highlight fixed in HCB/W",
+        "references": []
+      },
+      {
+        "id": "2316912d94a55d5918b9cf3af417ec6c309cbcbb",
+        "type": "FIX",
+        "text": " GridTable: Fix up/down navigation with arrow keys",
+        "references": []
+      },
+      {
+        "id": "cf0477dd46d7b0d7b8427839da54305dc53c0a0b",
+        "type": "FIX",
+        "text": " GridTable: Scrollbar styling in base theme",
+        "references": []
+      }
+    ]
   }
 }
