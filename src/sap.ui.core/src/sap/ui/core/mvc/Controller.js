@@ -735,11 +735,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * hooks.
 		 * (Even though this method is declared as "abstract", it does not need to be defined in controllers, if the
 		 * method does not exist, it will simply not be called.)
-		 * 
-		 * <b>Note:</b> In component based apps <code>this.getOwnerComponent().getModel()</code> should be used 
-		 * inside <code>onInit()</code> to get a model assigned to the component instead of using 
+		 *
+		 * <b>Note:</b> In component based apps <code>this.getOwnerComponent().getModel()</code> should be used
+		 * inside <code>onInit()</code> to get a model assigned to the component instead of using
 		 * <code>this.getView().getModel()</code>. The latter call might return <code>undefined</code> because
-		 * the view might not have been attached to a parent yet (i.e. the component), and thus the view 
+		 * the view might not have been attached to a parent yet (i.e. the component), and thus the view
 		 * can't inherit a model from that parent.
 		 *
 		 * @function
