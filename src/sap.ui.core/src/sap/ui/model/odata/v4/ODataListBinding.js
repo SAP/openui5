@@ -1525,59 +1525,67 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates the binding's "$apply" parameter based on the given analytical information as
-	 * "groupby((&lt;dimension_1,...,dimension_N,unit_or_text_1,...,unit_or_text_K>),
-	 * aggregate(&lt;measure_1,...,measure_M>))" where the "aggregate" part is only present if
-	 * measures are given.
+	 * Updates the binding's "$apply" parameter based on the given data aggregation information. Its
+	 * value is "groupby((&lt;dimension_1,...,dimension_N,unit_or_text_1,...,unit_or_text_K>),
+	 * aggregate(&lt;measure> with &lt;method> as &lt;alias>, ...))" where the
+	 * "aggregate" part is only present if measures are given and both "with" and "as" are optional.
 	 *
-	 * Analytical information is the mapping of UI columns to properties in the bound OData entity
-	 * set. Every column object contains at least the <code>name</code> of the bound property.
-	 * <ol>
-	 *   <li>A column bound to a dimension property has further boolean properties:
-	 *     <ul>
-	 *       <li><code>grouped</code>: its presence is used to detect a dimension</li>
-	 *       <li><code>inResult</code> and <code>visible</code>: the dimension is ignored unless at
-	 *         least one of these is <code>true</code></li>
-	 *     </ul>
-	 *   </li>
-	 *   <li>A column bound to a measure property has further boolean properties:
-	 *     <ul>
-	 *       <li><code>total</code>: its presence is used to detect a measure</li>
-	 *     </ul>
-	 *   </li>
-	 *   <li>A column bound to neither a dimension nor a measure property, but for instance
-	 *   bound to a text property or in some cases to a unit property, has no further boolean
-	 *   properties</li>
-	 * </ol>
-	 *
-	 * @param {object[]} aColumns
-	 *   An array with objects holding the analytical information for every column, from left to
-	 *   right
+	 * @param {object[]} aAggregationInfos
+	 *   An array with objects holding the information needed for data aggregation; see also
+	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData Extension
+	 *   for Data Aggregation Version 4.0</a>
+	 * @param {string} aAggregationInfos[].name
+	 *   The name of an OData property. A property which is neither a dimension nor a measure, but
+	 *   for instance a text property or in some cases a unit property, has no further details.
+	 * @param {boolean} [aAggregationInfos[].grouped]
+	 *   Its presence is used to detect a dimension; the dimension is ignored unless at least one of
+	 *   <code>inResult</code> and <code>visible</code> is <code>true</code>
+	 * @param {boolean} [aAggregationInfos[].inResult]
+	 *   Dimensions only: see above
+	 * @param {boolean} [aAggregationInfos[].visible]
+	 *   Dimensions only: see above
+	 * @param {boolean} [aAggregationInfos[].total]
+	 *   Its presence is used to detect a measure
+	 * @param {string} [aAggregationInfos[].with]
+	 *   Measures only: The name of the method (for example "sum") used for aggregation of this
+	 *   measure; see "3.1.2 Keyword with" (since 1.55.0)
+	 * @param {string} [aAggregationInfos[].as]
+	 *   Measures only: The alias, that is the name of the dynamic property used for aggregation of
+	 *   this measure; see "3.1.1 Keyword as" (since 1.55.0)
 	 * @throws {Error}
-	 *   If the binding's root binding is suspended or a column is both a dimension and a measure
+	 *   If the binding's root binding is suspended or a property is both a dimension and a measure
 	 *
 	 * @protected
 	 * @see sap.ui.model.analytics.AnalyticalBinding#updateAnalyticalInfo
 	 * @see #changeParameters
 	 * @since 1.53.0
 	 */
-	ODataListBinding.prototype.updateAnalyticalInfo = function (aColumns) {
+	ODataListBinding.prototype.updateAnalyticalInfo = function (aAggregationInfos) {
 		var aAggregate = [],
 			aGroupBy = [],
 			aGroupByNoDimension = [];
 
-		aColumns.forEach(function (oColumn) {
-			if ("total" in oColumn) { // measure
-				if ("grouped" in oColumn) {
-					throw new Error("Both dimension and measure: " + oColumn.name);
+		aAggregationInfos.forEach(function (oAggregationInfo) {
+			var sAggregate;
+
+			if ("total" in oAggregationInfo) { // measure
+				if ("grouped" in oAggregationInfo) {
+					throw new Error("Both dimension and measure: " + oAggregationInfo.name);
 				}
-				aAggregate.push(oColumn.name);
-			} else if ("grouped" in oColumn) { // dimension
-				if (oColumn.inResult || oColumn.visible) {
-					aGroupBy.push(oColumn.name);
+				sAggregate = oAggregationInfo.name;
+				if ("with" in oAggregationInfo) {
+					sAggregate += " with " + oAggregationInfo.with;
+				}
+				if ("as" in oAggregationInfo) {
+					sAggregate += " as " + oAggregationInfo.as;
+				}
+				aAggregate.push(sAggregate);
+			} else if ("grouped" in oAggregationInfo) { // dimension
+				if (oAggregationInfo.inResult || oAggregationInfo.visible) {
+					aGroupBy.push(oAggregationInfo.name);
 				}
 			} else {
-				aGroupByNoDimension.push(oColumn.name);
+				aGroupByNoDimension.push(oAggregationInfo.name);
 			}
 		});
 
