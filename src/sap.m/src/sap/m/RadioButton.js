@@ -359,6 +359,22 @@ function(
 	};
 
 	/**
+	 * @see sap.ui.core.Control#getAccessibilityInfo
+	 * @protected
+	 * @returns {Object} The <code>sap.m.RadioButton</code> accessibility information
+	 */
+	RadioButton.prototype.getAccessibilityInfo = function() {
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		return {
+			role: "radio",
+			type: oBundle.getText("ACC_CTR_TYPE_RADIO"),
+			description: (this.getText() || "") + (this.getSelected() ? (" " + oBundle.getText("ACC_CTR_STATE_CHECKED")) : ""),
+			enabled: this.getEnabled(),
+			editable: this.getEditable()
+		};
+	};
+
+	/**
 	 * Determines next focusable item
 	 *
 	 * @param {enum} sNavigation any item from KH_NAVIGATION
