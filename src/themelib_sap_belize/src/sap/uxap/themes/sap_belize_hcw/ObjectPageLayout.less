@@ -3,10 +3,6 @@
 /* Belize High Contrast White theme           */
 /* ========================================== */
 
-.sapUxAPObjectPageNavigation {
-	background-color: @sapUiObjectHeaderBackground;
-}
-
 .sapUxAPObjectChildPage {
 	width: 0.25rem;
 }
@@ -33,14 +29,14 @@
 }
 
 // title hover
-.sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutTitleClickEnabled:not(.sapUxAPObjectPageLayoutHeaderPinned) .sapFDynamicPageTitle:hover {
+.sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutTitleClickEnabled .sapFDynamicPageTitle:hover {
 	background: @sapUiHighlight;
 	box-shadow: @sapUiShadowHeader;
 }
 
 // toggle header visual indicator
 .sapUxAPObjectPageLayout {
-  &.sapUxAPObjectPageLayoutTitleClickEnabled:not(.sapUxAPObjectPageLayoutHeaderPinned) {
+  &.sapUxAPObjectPageLayoutTitleClickEnabled {
     .sapFDynamicPageTitle:hover,
     &.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitle {
       background: @sapUiHighlight;

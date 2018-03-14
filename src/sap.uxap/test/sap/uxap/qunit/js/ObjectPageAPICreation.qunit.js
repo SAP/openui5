@@ -1011,7 +1011,7 @@
 		assert.strictEqual(checkObjectExists("#objectPageViewSample--newHeader"), true);
 	});
 
-	QUnit.test("Should call ObjectPageHeader _toggleFocusableState", function (assert) {
+	QUnit.test("Should not call ObjectPageHeader _toggleFocusableState in non DynamicPageTitle case", function (assert) {
 		var oObjectPage = this.oSampleView.byId("objectPage13"),
 			oHeader = oObjectPage.getHeaderTitle(),
 			oHeaderSpy = this.spy(oHeader, "_toggleFocusableState");
@@ -1020,7 +1020,7 @@
 		oObjectPage.setToggleHeaderOnTitleClick(false);
 
 		// assert
-		assert.strictEqual(oHeaderSpy.callCount, 1, "ObjectPageHeader _toggleFocusableState is called");
+		assert.strictEqual(oHeaderSpy.callCount, 0, "ObjectPageHeader _toggleFocusableState is not called");
 	});
 
 	QUnit.test("Should copy _headerContent hidden aggregation to the ObjectPage clone", function (assert) {
@@ -1405,6 +1405,8 @@
 
 		var oObjectPage = this.oObjectPage,
 			oObjectPageTitle = oObjectPage.getHeaderTitle(),
+			oHeaderContent = oObjectPage._getHeaderContent(),
+			oPinButton = oHeaderContent._getPinButton(),
 			oFakeEvent = {
 				srcControl: oObjectPageTitle
 			};
@@ -1427,6 +1429,13 @@
 
 		oObjectPageTitle.ontap(oFakeEvent);
 		assert.equal(oObjectPage._bHeaderExpanded, true, "After restoring toggleHeaderOnTitleClick to true, the header again expands on click");
+
+		oPinButton.firePress();
+		oObjectPageTitle.ontap(oFakeEvent);
+
+		assert.strictEqual(oObjectPage._bHeaderExpanded, false, "After one click, the header is collapsed even it's pinned");
+		assert.strictEqual(oPinButton.getPressed(), false, "Pin button pressed state should be reset.");
+		assert.strictEqual(oObjectPage.$().hasClass("sapUxAPObjectPageLayoutHeaderPinned"), false, "ObjectPage header should be unpinned.");
 	});
 
 	QUnit.test("ObjectPage Header - expanding/collapsing by clicking the title", function (assert) {
