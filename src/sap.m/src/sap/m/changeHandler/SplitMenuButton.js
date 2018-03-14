@@ -47,7 +47,7 @@ sap.ui.define(["sap/ui/fl/Utils", "jquery.sap.strings"], function(FlexUtils, jQu
 				oRevertData = {
 					sParentAggregation : sParentAggregation,
 					insertIndex: iAggregationIndex,
-					insertedButtonsIds: []
+					insertedButtons: []
 				};
 
 			aMenuItems.forEach(function (oMenuItem, index) {
@@ -71,10 +71,13 @@ sap.ui.define(["sap/ui/fl/Utils", "jquery.sap.strings"], function(FlexUtils, jQu
 				// we need to simply extract the button with the right Id
 				// from the dependents aggregation of the MenuItem
 				if (sSavedId && aMenuItemDependents.length > 0) {
-					aMenuItemDependents.some(function(oControl) {
-						if (sSavedId === oModifier.getId(oControl)) {
-							oButton = oControl;
-							oRevertData.insertedButtonsIds.push(oModifier.getId(oButton));
+					aMenuItemDependents.some(function(oMenuItemDependentControl) {
+						if (sSavedId === oModifier.getId(oMenuItemDependentControl)) {
+							oButton = oMenuItemDependentControl;
+							oRevertData.insertedButtons.push({
+								id: oModifier.getId(oButton),
+								menuItemId: sMenuItemId
+							});
 
 							return true;
 						}
@@ -90,7 +93,9 @@ sap.ui.define(["sap/ui/fl/Utils", "jquery.sap.strings"], function(FlexUtils, jQu
 					var sId = aNewElementIds[index];
 
 					oButton = oModifier.createControl("sap.m.Button", mPropertyBag.appComponent, oView, sId);
-					oRevertData.insertedButtonsIds.push(oModifier.getId(oButton));
+					oRevertData.insertedButtons.push({
+						id: oModifier.getId(oButton)
+					});
 
 					oModifier.setProperty(oButton, "text", oModifier.getProperty(oMenuItem, "text"));
 					oModifier.setProperty(oButton, "icon",  oModifier.getProperty(oMenuItem, "icon"));
@@ -103,7 +108,7 @@ sap.ui.define(["sap/ui/fl/Utils", "jquery.sap.strings"], function(FlexUtils, jQu
 			});
 
 			oModifier.removeAggregation(oParent, sParentAggregation, oSourceControl);
-			oModifier.insertAggregation(oControl, "dependents", oSourceControl);
+			oModifier.insertAggregation(oParent, "dependents", oSourceControl);
 
 			oChange.setRevertData(oRevertData);
 
@@ -131,13 +136,25 @@ sap.ui.define(["sap/ui/fl/Utils", "jquery.sap.strings"], function(FlexUtils, jQu
 				oParent = oModifier.getParent(oSourceControl),
 				sParentAggregation = oRevertData.sParentAggregation,
 				iAggregationIndex = oRevertData.insertIndex,
-				aButtonsIds = oRevertData.insertedButtonsIds,
-				aButtons = aButtonsIds.map(function(sId){
-					return oModifier.bySelector(sId, oAppComponent);
+				aButtonInfo = oRevertData.insertedButtons,
+				oMenu = oModifier.getAggregation(oSourceControl, "menu"),
+				aMenuItems = oModifier.getAggregation(oMenu, "items"),
+				aButtons = aButtonInfo.map(function(oButtonInfo){
+					return oModifier.bySelector(oButtonInfo.id, oAppComponent);
 				});
 
-			aButtons.forEach(function(oButton){
-				oModifier.removeAggregation(oParent, sParentAggregation, oButton);
+			aButtonInfo.forEach(function(oButtonInfo, index){
+				oModifier.removeAggregation(oParent, sParentAggregation, aButtons[index]);
+				if (oButtonInfo.menuItemId) {
+					aMenuItems.some(function (oMenuItem) {
+						if (oModifier.getId(oMenuItem) === oButtonInfo.menuItemId) {
+							oModifier.insertAggregation(oMenuItem, "dependents", aButtons[index]);
+							return true;
+						}
+					});
+				} else {
+					aButtons[index].destroy();
+				}
 			});
 
 			oModifier.insertAggregation(oParent, sParentAggregation, oSourceControl, iAggregationIndex);

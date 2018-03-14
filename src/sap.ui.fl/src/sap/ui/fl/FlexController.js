@@ -1022,6 +1022,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Check if change handler applicable to the passed change and control has revertChange()
+	 *
+	 * @param {object} oChange Change object
+	 * @param {object} oControl Control instance object
+	 * @returns {boolean} Returns true if change handler has revertChange()
+	 * @public
+	 */
+	FlexController.prototype.isChangeHandlerRevertible = function(oChange, oControl) {
+		var sControlType = JsControlTreeModifier.getControlType(oControl);
+		var oChangeHandler = this._getChangeHandler(oChange, sControlType, oControl, JsControlTreeModifier);
+		return !!(oChangeHandler && typeof oChangeHandler.revertChange === "function");
+	};
+
+	/**
 	 * Applying variant changes.
 	 *
 	 * @param {array} aChanges Array of relevant changes

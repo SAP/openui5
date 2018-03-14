@@ -50,19 +50,20 @@ sap.ui.define([ 'sap/ui/rta/command/BaseCommand',
 		return flUtils.execPromiseQueueSequentially(aPromises, true)
 
 		.catch(function(e) {
-			// if a command has a restoreState function but no state, undoing it could cause errors.
-			// this happens when such a command didn't get executed yet (a command before failed)
 			var aCommands = this.getCommands();
 			aCommands.forEach(function(oCommand) {
 				if (oCommand instanceof sap.ui.rta.command.FlexCommand) {
-					if (oCommand.getFnRestoreState() && !oCommand.getState() || !oCommand._aRecordedUndo) {
+					if (!oCommand._aRecordedUndo) {
 						this.removeCommand(oCommand);
 					}
 				}
 			}.bind(this));
 
-			this.undo();
-			return Promise.reject(e);
+			return this.undo()
+
+			.then(function() {
+				return Promise.reject(e);
+			});
 		}.bind(this));
 	};
 

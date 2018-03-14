@@ -1,9 +1,19 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactory",
-		"sap/ui/rta/ControlTreeModifier", "sap/ui/fl/Utils"], function(BaseCommand, FlexControllerFactory,
-		RtaControlTreeModifier, Utils) {
+sap.ui.define([
+	"sap/ui/rta/command/BaseCommand",
+	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/rta/ControlTreeModifier",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/changeHandler/JsControlTreeModifier"
+], function(
+	BaseCommand,
+	FlexControllerFactory,
+	RtaControlTreeModifier,
+	Utils,
+	JsControlTreeModifier
+) {
 	"use strict";
 
 	/**
@@ -28,18 +38,6 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 			properties : {
 				changeType : {
 					type : "string"
-				},
-				/**
-				 * getState and restoreState are used for retrieving custom undo/redo implementations from design time metadata
-				 */
-				fnGetState : {
-					type : "any"
-				},
-				state : {
-					type : "any"
-				},
-				fnRestoreState : {
-					type : "any"
 				},
 				/**
 				 * selector object containing id, appComponent and controlType to create a command for an element, which is not instantiated
@@ -185,15 +183,26 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 	 * @override
 	 */
 	FlexCommand.prototype.undo = function() {
-		//If the command has a "restoreState" implementation, use that to perform the undo
-		if (this.getFnRestoreState()){
-			this.getFnRestoreState()((this.getElement() || this.getSelector()), this.getState());
-		} else if (this._aRecordedUndo) {
-			RtaControlTreeModifier.performUndo(this._aRecordedUndo);
-		} else {
-			jQuery.sap.log.warning("Undo is not available for " + this.getElement() || this.getSelector());
-		}
-		return Promise.resolve();
+		return Promise.resolve()
+			.then(function() {
+				var oControl = this.getElement() || this.getSelector();
+				var oChange = this.getPreparedChange();
+
+				if (oChange.getRevertData()) {
+					var oFlexController = FlexControllerFactory.createForControl(this.getAppComponent());
+					var bRevertible = oFlexController.isChangeHandlerRevertible(oChange, oControl);
+					if (!bRevertible) {
+						jQuery.sap.log.error("No revert change function available to handle revert data for " + oControl);
+						return;
+					}
+					var oAppComponent = this.getAppComponent();
+					return oFlexController.revertChangesOnControl([oChange], oAppComponent);
+				} else if (this._aRecordedUndo) {
+					RtaControlTreeModifier.performUndo(this._aRecordedUndo);
+				} else {
+					jQuery.sap.log.warning("Undo is not available for " + oControl);
+				}
+			}.bind(this));
 	};
 
 	/**
@@ -207,20 +216,13 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 		var oChange = vChange.change || vChange;
 
 		var oAppComponent = this.getAppComponent();
-		var oChangeDefinition = oChange.getDefinition();
 		var oSelectorElement = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
+		var oFlexController = FlexControllerFactory.createForControl(this.getAppComponent());
+		var bRevertible = oFlexController.isChangeHandlerRevertible(oChange, oSelectorElement);
 
-		// If the command has a "getState" implementation, use that instead of recording the undo
-		if (this.getFnGetState()){
-			this.setState.call(this, (this.getFnGetState()((this.getElement() || this.getSelector()), oChangeDefinition, {
-			modifier: RtaControlTreeModifier,
-			appComponent : oAppComponent
-			})));
-		} else {
+		if (!bRevertible) {
 			RtaControlTreeModifier.startRecordingUndo();
 		}
-
-		var oFlexController = FlexControllerFactory.createForControl(this.getAppComponent());
 
 		return Promise.resolve(oFlexController.checkTargetAndApplyChange(oChange, oSelectorElement, {modifier: RtaControlTreeModifier, appComponent: oAppComponent}))
 
@@ -234,7 +236,7 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 		})
 
 		.then(function(bSuccess) {
-			if (!this.getFnGetState()){
+			if (!bRevertible){
 				this._aRecordedUndo = RtaControlTreeModifier.stopRecordingUndo();
 			}
 			if (!bSuccess) {

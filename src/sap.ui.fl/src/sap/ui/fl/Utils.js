@@ -25,6 +25,7 @@ sap.ui.define([
 	aLayers.forEach(function(sLayer, iIndex){
 		mLayersIndex[sLayer] = iIndex;
 	});
+
 	/**
 	 * Provides utility functions for the SAPUI5 flexibility library
 	 *
@@ -1209,7 +1210,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Recursivly goes through an XML Tree and calls a callback function for every control inside
+		 * Recursively goes through an XML Tree and calls a callback function for every control inside
 		 * Does not call the callback function for aggregations
 		 *
 		 * @param {function} fnCallback function that will be called for every control with the following argument:

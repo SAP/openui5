@@ -529,15 +529,7 @@ function(
 				data : {
 					actions : {
 						remove : {
-							changeType : "hideControl",
-							getState : function(oGroupElement) {
-								return {
-									visible : oGroupElement.getVisible()
-								};
-							},
-							restoreState : function(oGroupElement, oState) {
-								oGroupElement.setVisible(oState.visible);
-							}
+							changeType : "hideControl"
 						}
 					}
 				}

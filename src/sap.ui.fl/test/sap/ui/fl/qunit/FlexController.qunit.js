@@ -210,6 +210,29 @@ function (
 		assert.strictEqual(fChangeHandlerActual, fChangeHandler);
 	});
 
+	QUnit.test("when isChangeHandlerRevertible is called", function (assert) {
+		var sControlType = "sap.ui.core.Control";
+		var oChangeHandler = {
+			revertChange: function() {}
+		};
+		var oChange = {
+			getChangeType: function() {},
+			getLayer: function() {}
+		};
+		sandbox.stub(JsControlTreeModifier, "getControlType").returns(sControlType);
+		sandbox.stub(this.oFlexController, "_getChangeRegistry").returns({
+			getChangeHandler: sandbox.stub().returns(oChangeHandler)
+		});
+
+		assert.ok(this.oFlexController.isChangeHandlerRevertible(oChange), "then true is returned when change handler has revertChange()");
+
+		oChangeHandler.revertChange = "testValue";
+		assert.notOk(this.oFlexController.isChangeHandlerRevertible(oChange), "then false is returned when change handler's revertChange() is not a function");
+
+		delete oChangeHandler.revertChange;
+		assert.notOk(this.oFlexController.isChangeHandlerRevertible(oChange), "then false is returned when change handler's revertChange() is undefined");
+	});
+
 	QUnit.test("_resolveGetChangesForView shall not log if change can be applied", function(assert) {
 		// PREPARE
 		var oChange = new Change(labelChangeContent);
