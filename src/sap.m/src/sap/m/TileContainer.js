@@ -1238,7 +1238,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (oPager.childNodes[this._oPagesInfo.getOldCurrentPage()]) {
 				oPager.childNodes[this._oPagesInfo.getOldCurrentPage()].className = "";
 			}
-			if (this._oPagesInfo.getCurrentPage() >= 2) { //deactivate the initially active page (span)
+			if (this._oPagesInfo.getCurrentPage() >= 1) { //deactivate the initially active page (span)
 				oPager.childNodes[0].className = "";
 			}
 		}
