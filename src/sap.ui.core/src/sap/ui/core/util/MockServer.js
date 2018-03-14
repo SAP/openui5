@@ -1075,15 +1075,17 @@ sap.ui
 
 			/**
 			 * Refreshes the service metadata document and the mockdata
-			 *
+			 * @param {boolean} bSkipMetadata if truthy then the metadata will not be reloaded
 			 * @private
 			 */
-			MockServer.prototype._refreshData = function() {
+			MockServer.prototype._refreshData = function(bSkipMetadata) {
 
 				// load the metadata
-				var oMetadata = this._loadMetadata(this._sMetadataString);
-				if (!oMetadata) {
-					return;
+				if (!bSkipMetadata){
+					var oMetadata = this._loadMetadata(this._sMetadataString);
+					if (!oMetadata) {
+						return;
+					}
 				}
 
 				// here we need to analyse the EDMX and identify the entity sets
@@ -1950,7 +1952,7 @@ sap.ui
 					var DraftEnabledMockServer = sap.ui.requireSync("sap/ui/core/util/DraftEnabledMockServer");
 					DraftEnabledMockServer.handleDraft(oAnnotations, this);
 				}
-				this._refreshData();
+				this._refreshData(true);
 
 				// helper to handle xsrf token
 				var fnHandleXsrfTokenHeader = function(oXhr, mHeaders) {
