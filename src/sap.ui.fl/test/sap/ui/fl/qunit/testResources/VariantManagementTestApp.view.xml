@@ -1,0 +1,101 @@
+<mvc:View
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:uxap="sap.uxap"
+	xmlns:vm="sap.ui.fl.variants"
+	xmlns:l="sap.ui.layout"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+	<Page title="Variant Management Testapp" id="page" enableScrolling="false">
+		<content>
+			<Button id="Button"
+					text="Test">
+			</Button>
+
+			<uxap:ObjectPageLayout id="ObjectPageLayout">
+				<uxap:headerTitle>
+					<uxap:ObjectPageHeader
+							id="obheader0"
+							objectTitle="VMTitle"
+							objectSubtitle="VMSubtitle"
+							objectImageURI="">
+						<uxap:navigationBar>
+							<Bar>
+								<contentRight>
+									<vm:VariantManagement id="VariantManagement1" for="ObjectPageLayout" updateVariantInURL="true"></vm:VariantManagement>
+								</contentRight>
+							</Bar>
+						</uxap:navigationBar>
+					</uxap:ObjectPageHeader>
+
+				</uxap:headerTitle>
+				<uxap:sections>
+					<uxap:ObjectPageSection id="ObjectPageSection1">
+						<uxap:ObjectPageSubSection  id="ObjectPageSubSection1" title="SubSectionTitle1">
+							<form:SimpleForm class="sapUiSmallMargin"
+											 title="Simple Form" id="MainForm"
+											 maxContainerCols="3"
+											 editable="true">
+								<form:content>
+									<core:Title id="Title1" text="Title 1" />
+									<Label id="Label1" text="Label 1" />
+									<Text id="Text1" text="Text 1" />
+									<Label id="Label2" text="Label 2" />
+									<Text id="Text2" text="Text 2" />
+
+									<core:Title id="Title2" text="Title 2" />
+									<Label id="Label3" text="Label 3" />
+									<Text id="Text3" text="Text 3" />
+									<Label id="Label4" text="Label 4" />
+									<Text id="Text4" text="Text 4" />
+								</form:content>
+							</form:SimpleForm>
+						</uxap:ObjectPageSubSection>
+					</uxap:ObjectPageSection>
+
+					<uxap:ObjectPageSection id="ObjectPageSection2" title="SectionTitle2">
+						<uxap:ObjectPageSubSection>
+							<form:SimpleForm class="sapUiNoMargin"
+											 title="Simple Form bound to EntityTypeNav using navigation" id="NavPropertyForm"
+											 maxContainerCols="3"
+											 editable="true">
+								<form:content>
+									<core:Title id="Title3" text="Title 3" />
+									<Label id="Label5" text="Label 5" />
+									<Text id="Text5" text="Text 5" />
+									<Label id="Label6" text="Label 6" />
+									<Text id="Text6" text="Text 6" />
+
+									<core:Title id="Title4" text="Title 4" />
+									<Label id="Label7" text="Label 7" />
+									<Text id="Text7" text="Text 7" />
+									<Label id="Label8" text="Label 8" />
+									<Text id="Text8" text="Text 8" />
+								</form:content>
+							</form:SimpleForm>
+						</uxap:ObjectPageSubSection>
+					</uxap:ObjectPageSection>
+
+					<uxap:ObjectPageSection id="ObjectPageSection3" title="SectionTitle3">
+						<uxap:ObjectPageSubSection id="ObjectPageSubSection2">
+							<l:Grid>
+								<Bar>
+									<contentRight>
+										<vm:VariantManagement id="VariantManagement2" for="ObjectPageSubSection2" updateVariantInURL="true"></vm:VariantManagement>
+									</contentRight>
+								</Bar>
+								<html:div>
+									<Title id = "TextTitle1" text="Text Title 1"></Title>
+									<Title id = "TextTitle2" text="Text Title 2"></Title>
+								</html:div>
+							</l:Grid>
+						</uxap:ObjectPageSubSection>
+					</uxap:ObjectPageSection>
+
+				</uxap:sections>
+			</uxap:ObjectPageLayout>
+
+		</content>
+	</Page>
+</mvc:View>
