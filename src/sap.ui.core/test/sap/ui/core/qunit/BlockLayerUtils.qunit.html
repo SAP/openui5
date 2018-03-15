@@ -1,0 +1,405 @@
+<!DOCTYPE HTML>
+<html>
+
+<!--
+  Tested class: sap.ui.core.BusyIndicator
+-->
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>QUnit Page for sap.ui.core.BlockLayerUtils</title>
+
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.commons, sap.m">
+		</script>
+
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+
+		<script>
+		// load required modules
+		sap.ui.require(["sap/m/Button"], function (Button) {
+
+			QUnit.module("CSS classes", {
+				beforeEach : function() {
+					this.oButton = new sap.m.Button({
+						text: "Press"
+					}).placeAt("target1");
+
+					sap.ui.getCore().applyChanges();
+				},
+
+				afterEach : function() {
+					this.oButton.destroy();
+					sap.ui.getCore().applyChanges();
+				}
+			});
+
+			QUnit.test("Static/Relative Positioning - Reset", function (assert) {
+				// set static positioning
+				// NOTE: Direct DOM manipulation of the "style" attribute fails under PhantomJS (v2.2+) and IE10.
+				var $button = jQuery(this.oButton.getDomRef());
+				$button.css("position", "static");
+
+				this.oButton.setBusyIndicatorDelay(0);
+				this.oButton.setBusy(true);
+
+				// check for relative position
+				assert.equal($button.css("position"), "relative", "css position attribute was changed to 'relative'");
+
+				this.oButton.setBusy(false);
+
+				// check for resetting "position" to "static"
+				assert.equal($button.css("position"), "static", "css position attribute was changed to 'static'");
+			});
+
+			QUnit.test("Static/Relative Positioning - NO Reset", function (assert) {
+				// set static positioning
+				// NOTE: Direct DOM manipulation of the "style" attribute fails under PhantomJS (v2.2+) and IE10.
+				var $button = jQuery(this.oButton.getDomRef());
+				$button.css("position", "fixed");
+
+				this.oButton.setBusyIndicatorDelay(0);
+				this.oButton.setBusy(true);
+
+				// check for fixed position
+				assert.equal($button.css("position"), "fixed", "after setBusy(true) the position is still 'fixed'");
+
+				this.oButton.setBusy(false);
+
+				// after setBusy(false) the position is still "fixed"
+				assert.equal($button.css("position"), "fixed", "after setBusy(false) the position is still 'fixed'");
+			});
+
+			QUnit.module("Toggle setBlocked and setBusy", {
+				beforeEach : function() {
+					this.oButton = new sap.m.Button({
+						text: "Press"
+					}).placeAt("target1");
+
+					sap.ui.getCore().applyChanges();
+				},
+
+				afterEach : function() {
+					this.oButton.destroy();
+
+					sap.ui.getCore().applyChanges();
+				}
+			});
+
+			function getSibling(oDomRef, sDirection) {
+				var oSiblingDomRef;
+
+				if (sDirection == "prev") {
+					oSiblingDomRef = oDomRef.previousElementSibling;
+				} else {
+					// next
+					oSiblingDomRef = oDomRef.nextElementSibling;
+				}
+
+				return oSiblingDomRef;
+			}
+
+			function testOneTabbableSpanExists(oDomRef) {
+				var oSiblingDomRef;
+
+				// check of previous tabbable span
+				oSiblingDomRef = getSibling(oDomRef, "prev");
+				assert.equal(oSiblingDomRef.getAttribute("tabindex"), 0, "Previous tabbable span should be available.")
+
+				// Get previous element of previous tabbable span element
+				var oPrevSiblingDomRef = getSibling(oSiblingDomRef, "prev");
+				assert.ok(oPrevSiblingDomRef === null ||  oPrevSiblingDomRef.getAttribute("tabindex") === "0",  "Only one previous tabbable span should be available");
+
+				// check of next tabbable span
+				oSiblingDomRef = getSibling(oDomRef, "next");
+				assert.equal(oSiblingDomRef.getAttribute("tabindex"), 0, "Next tabbable span should be available.");
+
+				// Get the next element after the next tabbable span
+				var oNextSiblingDomRef = getSibling(oSiblingDomRef, "next");
+				assert.ok(oNextSiblingDomRef === null ||  oNextSiblingDomRef.getAttribute("tabindex") === "0",  "Only one next tabbable span should be available");
+			}
+
+			function testNoneTabbableSpanExists(oDomRef) {
+				var oSiblingDomRef;
+
+				// check of previous tabbable span
+				oSiblingDomRef = getSibling(oDomRef, "prev");
+				assert.ok(oSiblingDomRef === null || (oSiblingDomRef.getAttribute("tabindex") !== "0" && oSiblingDomRef.nodeName !== "SPAN"), "Previous tabbable span shouldn't be available.")
+
+				// check of next tabbable spanq
+				oSiblingDomRef = getSibling(oDomRef, "next");
+				assert.ok(oSiblingDomRef === null || (oSiblingDomRef.getAttribute("tabindex") !== "0" && oSiblingDomRef.nodeName !== "SPAN"), "Next tabbable span shouldn't be available.")
+			}
+
+			QUnit.test("setBlocked() → setBusy()", function(assert) {
+				var oSiblingDomRef;
+
+				this.oButton.setBusyIndicatorDelay(0);
+
+				this.oButton.setBusy(true);
+				assert.ok(this.oButton.getBusy(), "Button should be busy");
+				assert.equal(jQuery('.sapUiLocalBusyIndicator').length, 1, "BusyIndicator should be available.");
+
+				this.oButton.setBlocked(true);
+				assert.ok(this.oButton.getBlocked(), "Button should be blocked");
+
+				testOneTabbableSpanExists(this.oButton.getDomRef());
+			});
+
+			QUnit.test("setBlocked(true) → setBusy(true) : setBlocked(false) → setBusy(false)", function(assert) {
+				var oSiblingDomRef;
+
+				this.oButton.setBusyIndicatorDelay(0);
+
+				this.oButton.setBlocked(true);
+				assert.ok(this.oButton.getBlocked(), "Button should be blocked");
+				assert.equal(jQuery('.sapUiBlockLayerOnly').length, 1, "BlockLayer should be available.");
+
+				this.oButton.setBusy(true);
+				assert.ok(this.oButton.getBusy(), "Button should be busy");
+
+				this.oButton.setBlocked(false);
+				assert.notOk(this.oButton.getBlocked(), "Button shouldn't be blocked anymore");
+				testOneTabbableSpanExists(this.oButton.getDomRef());
+
+				this.oButton.setBusy(false);
+				assert.notOk(this.oButton.getBusy(), "Button shouldn't be busy anymore");
+				testNoneTabbableSpanExists(this.oButton.getDomRef());
+			});
+
+			QUnit.test("setBlocked(true) → setBusy(true) : setBusy(false) → setBlocked(false)", function(assert) {
+				var oSiblingDomRef;
+
+				this.oButton.setBusyIndicatorDelay(0);
+
+				this.oButton.setBlocked(true);
+				assert.ok(this.oButton.getBlocked(), "Button should be blocked");
+				assert.equal(jQuery('.sapUiBlockLayerOnly').length, 1, "BlockLayer should be available.");
+
+				this.oButton.setBusy(true);
+				assert.ok(this.oButton.getBusy(), "Button should be busy");
+
+				this.oButton.setBusy(false);
+				assert.notOk(this.oButton.getBusy(), "Button shouldn't be busy anymore");
+				testOneTabbableSpanExists(this.oButton.getDomRef());
+
+				this.oButton.setBlocked(false);
+				assert.notOk(this.oButton.getBlocked(), "Button shouldn't be blocked anymore");
+				testNoneTabbableSpanExists(this.oButton.getDomRef());
+			});
+
+			QUnit.test("setBusy(true) → setBlocked(true) : setBusy(false) → setBlocked(false)", function(assert) {
+				var oSiblingDomRef;
+
+				this.oButton.setBusyIndicatorDelay(0);
+
+				this.oButton.setBusy(true);
+				assert.ok(this.oButton.getBusy(), "Button should be busy");
+				assert.equal(jQuery('.sapUiLocalBusyIndicator').length, 1, "BusyIndicator should be available.");
+
+				this.oButton.setBlocked(true);
+				assert.ok(this.oButton.getBlocked(), "Button should be blocked");
+
+				this.oButton.setBusy(false);
+				assert.notOk(this.oButton.getBusy(), "Button shouldn't be busy anymore");
+				testOneTabbableSpanExists(this.oButton.getDomRef());
+
+				this.oButton.setBlocked(false);
+				assert.notOk(this.oButton.getBlocked(), "Button shouldn't be blocked anymore");
+				testNoneTabbableSpanExists(this.oButton.getDomRef());
+			});
+
+			QUnit.test("setBusy(true) → setBlocked(true) : setBlock(false) → setBusy(false)", function(assert) {
+				var oSiblingDomRef;
+
+				this.oButton.setBusyIndicatorDelay(0);
+
+				this.oButton.setBusy(true);
+				assert.ok(this.oButton.getBusy(), "Button should be busy");
+				assert.equal(jQuery('.sapUiLocalBusyIndicator').length, 1, "BusyIndicator should be available.");
+
+				this.oButton.setBlocked(true);
+				assert.ok(this.oButton.getBlocked(), "Button should be blocked");
+
+				this.oButton.setBlocked(false);
+				assert.notOk(this.oButton.getBlocked(), "Button shouldn't be blocked anymore");
+				testOneTabbableSpanExists(this.oButton.getDomRef());
+
+				this.oButton.setBusy(false);
+				assert.notOk(this.oButton.getBusy(), "Button shouldn't be busy anymore");
+				testNoneTabbableSpanExists(this.oButton.getDomRef());
+			});
+
+			QUnit.test("setBlocked(true) → setBusy(true) : setBlocked(false) → setBlocked(true) → setBlocked(false)", function(assert) {
+				var oSiblingDomRef,
+					oJQuerySapLogSpy = sinon.spy(jQuery.sap.log, "info");
+
+				this.oButton.setBusyIndicatorDelay(0);
+
+				this.oButton.setBlocked(true);
+				assert.ok(this.oButton.getBlocked(), "Button should be blocked");
+				assert.equal(jQuery('.sapUiBlockLayerOnly').length, 1, "BlockLayer should be available.");
+
+				this.oButton.setBusy(true);
+				assert.ok(this.oButton.getBusy(), "Button should be busy");
+				assert.equal(jQuery('.sapUiLocalBusyIndicator').length, 1, "BusyIndicator should be available.");
+				assert.equal(jQuery('.sapUiBlockLayerOnly').length, 0, "BlockLayerOnly class shouldn't be set anymore");
+				testOneTabbableSpanExists(this.oButton.getDomRef());
+
+				this.oButton.setBlocked(false);
+				assert.notOk(this.oButton.getBlocked(), "Button shouldn't be blocked anymore");
+				assert.equal(jQuery('.sapUiLocalBusyIndicator').length, 1, "BusyIndicator should be still available.");
+				testOneTabbableSpanExists(this.oButton.getDomRef());
+
+				this.oButton.setBlocked(true);
+				assert.ok(this.oButton.getBlocked(), "Button should be blocked");
+				assert.ok(oJQuerySapLogSpy.calledTwice, "Info logged. Block Layer creation ignored since Busy Layer still exists.")
+				assert.equal(jQuery('.sapUiBlockLayerOnly').length, 0, "BlockLayerOnly class shouldn't be set anymore");
+				testOneTabbableSpanExists(this.oButton.getDomRef());
+
+				this.oButton.setBlocked(false);
+				assert.notOk(this.oButton.getBlocked(), "Button shouldn't be busy anymore");
+				assert.ok(oJQuerySapLogSpy.calledThrice, "Info logged. Unblocking ignored since Busy Layer still exists.")
+				testOneTabbableSpanExists(this.oButton.getDomRef());
+
+				oJQuerySapLogSpy.restore();
+			});
+
+			QUnit.test("setBlocked(true) → setBusy(true) : setBusy(false) → setBusy(true) → setBusy(false)", function(assert) {
+				var oSiblingDomRef;
+
+				this.oButton.setBusyIndicatorDelay(0);
+
+				this.oButton.setBlocked(true);
+				assert.ok(this.oButton.getBlocked(), "Button should be blocked");
+				assert.equal(jQuery('.sapUiBlockLayerOnly').length, 1, "BlockLayer should be available.");
+				testOneTabbableSpanExists(this.oButton.getDomRef());
+
+				this.oButton.setBusy(true);
+				assert.ok(this.oButton.getBusy(), "Button should be busy");
+				assert.equal(jQuery('.sapUiLocalBusyIndicator').length, 1, "BusyIndicator should be available.");
+				assert.equal(jQuery('.sapUiHiddenBusyIndicatorAnimation').length, 0, "BusyIndicator Animation should be visible.");
+				assert.equal(jQuery('.sapUiBlockLayerOnly').length, 0, "BlockLayerOnly class shouldn't be set anymore");
+				testOneTabbableSpanExists(this.oButton.getDomRef());
+
+				this.oButton.setBusy(false);
+				assert.notOk(this.oButton.getBusy(), "Button shouldn't be busy anymore");
+				assert.equal(jQuery('.sapUiHiddenBusyIndicatorAnimation').length, 1, "BusyIndicator Animation should be hidden.");
+				assert.equal(jQuery('.sapUiBlockLayerOnly').length, 1, "BlockLayerOnly class should be set again");
+				testOneTabbableSpanExists(this.oButton.getDomRef());
+
+				this.oButton.setBusy(true);
+				assert.ok(this.oButton.getBusy(), "Button should be busy");
+				assert.equal(jQuery('.sapUiBlockLayerOnly').length, 0, "BlockLayerOnly class shouldn't be set anymore");
+				assert.equal(jQuery('.sapUiHiddenBusyIndicatorAnimation').length, 0, "BusyIndicator Animation should be visible again.");
+				testOneTabbableSpanExists(this.oButton.getDomRef());
+
+				this.oButton.setBusy(false);
+				assert.notOk(this.oButton.getBusy(), "Button shouldn't be busy anymore");
+				assert.equal(jQuery('.sapUiHiddenBusyIndicatorAnimation').length, 1, "BusyIndicator Animation should be invisible ");
+				assert.equal(jQuery('.sapUiBlockLayerOnly').length, 1, "BlockLayerOnly class should be set again");
+				testOneTabbableSpanExists(this.oButton.getDomRef());
+			});
+
+			QUnit.test("setBusy(true) → setBlocked(true) : setBusy(false) → setBusy(true) → setBusy(false)", function(assert) {
+				var oSiblingDomRef,
+					oJQuerySapLogSpy = sinon.spy(jQuery.sap.log, "info");
+
+				this.oButton.setBusyIndicatorDelay(0);
+
+				this.oButton.setBusy(true);
+				assert.ok(this.oButton.getBusy(), "Button should be busy");
+				assert.equal(jQuery('.sapUiLocalBusyIndicator').length, 1, "BusyIndicator should be available.");
+				assert.equal(jQuery('.sapUiHiddenBusyIndicatorAnimation').length, 0, "BusyIndicator Animation should be visible.");
+
+				this.oButton.setBlocked(true);
+				assert.ok(this.oButton.getBlocked(), "Button should be blocked");
+				assert.ok(oJQuerySapLogSpy.calledOnce, "Info logged. Block Layer creation ignored since Busy Layer still exists.")
+				assert.equal(jQuery('.sapUiBlockLayerOnly').length, 0, "BlockLayerOnly class shouldn't be set anymore");
+				testOneTabbableSpanExists(this.oButton.getDomRef());
+
+				this.oButton.setBusy(false);
+				assert.notOk(this.oButton.getBusy(), "Button shouldn't be busy anymore");
+				assert.equal(jQuery('.sapUiHiddenBusyIndicatorAnimation').length, 1, "BusyIndicator Animation should be invisible.");
+				assert.equal(jQuery('.sapUiBlockLayerOnly').length, 1, "BlockLayerOnly class should be set again");
+				testOneTabbableSpanExists(this.oButton.getDomRef());
+
+				this.oButton.setBusy(true);
+				assert.ok(this.oButton.getBusy(), "Button should be busy");
+				assert.equal(jQuery('.sapUiHiddenBusyIndicatorAnimation').length, 0, "BusyIndicator Animation should be visible.");
+				assert.equal(jQuery('.sapUiBlockLayerOnly').length, 0, "BlockLayerOnly class shouldn't be set anymore");
+				testOneTabbableSpanExists(this.oButton.getDomRef());
+
+				this.oButton.setBusy(false);
+				assert.notOk(this.oButton.getBusy(), "Button shouldn't be busy anymore");
+				assert.equal(jQuery('.sapUiHiddenBusyIndicatorAnimation').length, 1, "BusyIndicator Animation should be invisible.");
+				assert.equal(jQuery('.sapUiBlockLayerOnly').length, 1, "BlockLayerOnly class should be set again");
+				testOneTabbableSpanExists(this.oButton.getDomRef());
+
+				oJQuerySapLogSpy.restore();
+			});
+
+			QUnit.test("setBusy(true) → setBlocked(true) : setBlocked(false) → setBlocked(true) → setBlocked(false)", function(assert) {
+				var oSiblingDomRef,
+					oJQuerySapLogSpy = sinon.spy(jQuery.sap.log, "info");
+
+				this.oButton.setBusyIndicatorDelay(0);
+
+				this.oButton.setBusy(true);
+				assert.ok(this.oButton.getBusy(), "Button should be busy");
+				assert.equal(jQuery('.sapUiLocalBusyIndicator').length, 1, "BusyIndicator should be available.");
+				assert.equal(jQuery('.sapUiHiddenBusyIndicatorAnimation').length, 0, "BusyIndicator Animation should be visible.");
+
+				this.oButton.setBlocked(true);
+				assert.ok(this.oButton.getBlocked(), "Button should be blocked");
+				assert.ok(oJQuerySapLogSpy.calledOnce, "Info logged. Block Layer creation ignored since Busy Layer still exists.")
+				assert.equal(jQuery('.sapUiBlockLayerOnly').length, 0, "BlockLayerOnly class shouldn't be set anymore");
+				testOneTabbableSpanExists(this.oButton.getDomRef());
+
+				this.oButton.setBlocked(false);
+				assert.notOk(this.oButton.getBlocked(), "Button shouldn't be blocked");
+				assert.ok(oJQuerySapLogSpy.calledTwice, "Info logged. Unblocking ignored since Busy Layer still exists.")
+				assert.equal(jQuery('.sapUiBlockLayerOnly').length, 0, "BlockLayerOnly class shouldn't be set anymore");
+				assert.equal(jQuery('.sapUiHiddenBusyIndicatorAnimation').length, 0, "BusyIndicator Animation should be visible.");
+				testOneTabbableSpanExists(this.oButton.getDomRef());
+
+				this.oButton.setBlocked(true);
+				assert.ok(this.oButton.getBlocked(), "Button should be blocked");
+				assert.ok(oJQuerySapLogSpy.calledThrice, "Info logged. Block Layer creation ignored since Busy Layer still exists.")
+				assert.equal(jQuery('.sapUiBlockLayerOnly').length, 0, "BlockLayerOnly class shouldn't be set anymore");
+				testOneTabbableSpanExists(this.oButton.getDomRef());
+
+				this.oButton.setBlocked(false);
+				assert.notOk(this.oButton.getBlocked(), "Button shouldn't be blocked");
+				assert.equal(oJQuerySapLogSpy.callCount, 4, "Info logged. Unblocking ignored since Busy Layer still exists.")
+				assert.equal(jQuery('.sapUiBlockLayerOnly').length, 0, "BlockLayerOnly class shouldn't be set anymore");
+				assert.equal(jQuery('.sapUiHiddenBusyIndicatorAnimation').length, 0, "BusyIndicator Animation should be visible.");
+				testOneTabbableSpanExists(this.oButton.getDomRef());
+
+				oJQuerySapLogSpy.restore();
+			});
+
+		});
+
+    </script>
+	</head>
+	<body>
+    <h1 id="qunit-header">QUnit Page for sap.ui.core.BlockLayerUtils</h1>
+    <h2 id="qunit-banner"></h2>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+    <div id="target1"></div>
+	</body>
+</html>

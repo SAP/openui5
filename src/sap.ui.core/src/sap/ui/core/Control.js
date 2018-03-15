@@ -3,8 +3,8 @@
  */
 
 // Provides base class sap.ui.core.Control for all controls
-sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', './UIArea', './RenderManager', './ResizeHandler', './BusyIndicatorUtils'],
-	function(jQuery, CustomStyleClassSupport, Element, UIArea, RenderManager, ResizeHandler, BusyIndicatorUtils) {
+sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', './UIArea', './RenderManager', './ResizeHandler', './BusyIndicatorUtils', './BlockLayerUtils'],
+	function(jQuery, CustomStyleClassSupport, Element, UIArea, RenderManager, ResizeHandler, BusyIndicatorUtils, BlockLayerUtils) {
 	"use strict";
 
 	/**
@@ -63,12 +63,14 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 			publicMethods: ["placeAt", "attachBrowserEvent", "detachBrowserEvent", "getControlsByFieldGroup", "triggerValidateFieldGroup", "checkFieldGroupIds"],
 			library: "sap.ui.core",
 			properties : {
-
+				/**
+				 * Whether the control is currently in blocked state.
+				 */
+				"blocked" : {type: "boolean", defaultValue: false},
 				/**
 				 * Whether the control is currently in busy state.
 				 */
 				"busy" : {type: "boolean", defaultValue: false},
-
 				/**
 				 * The delay in milliseconds, after which the busy indicator will show up for this control.
 				 */
@@ -645,34 +647,33 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 
 
 	// ---- local busy indicator handling ---------------------------------------------------------------------------------------
+	var oRenderingDelegate = {
+		onBeforeRendering: function() {
+			// remove all block-layers to prevent leftover DOM elements and eventhandlers
+			fnRemoveAllBlockLayers.call(this);
+		},
+		onAfterRendering: function () {
+			if (this.getBlocked() && this.getDomRef() && !this.getDomRef("blockedLayer")) {
+				this._oBlockState = BlockLayerUtils.block(this, this.getId() + "-blockedLayer", this._sBlockSection);
+				jQuery(this._oBlockState.$blockLayer.get(0)).addClass("sapUiBlockLayerOnly");
+			}
+			if (this.getBusy() && this.getDomRef() && !this._busyIndicatorDelayedCallId && !this.getDomRef("busyIndicator")) {
+				// Also use the BusyIndicatorDelay when a control is initialized
+				// with "busy = true". If the delayed call was already initialized
+				// skip any further call if the control was re-rendered while
+				// the delay is running.
+				var iDelay = this.getBusyIndicatorDelay();
 
-	var aPreventedEvents = ["focusin", "focusout", "keydown", "keypress", "keyup", "mousedown", "touchstart", "touchmove", "mouseup", "touchend", "click"],
-		rForbiddenTags = /^(?:area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr|tr)$/i,
-		oBusyIndicatorDelegate = {
-			onBeforeRendering: function() {
-				// deregister handler/DomRef as after rendering new handler/DomRef exists and must be registered
-				if (this.getBusy() && this.getDomRef() && !this._busyIndicatorDelayedCallId && this.getDomRef("busyIndicator")) {
-					fnHandleInteraction.call(this, false);
-				}
-			},
-			onAfterRendering: function () {
-				if (this.getBusy() && this.getDomRef() && !this._busyIndicatorDelayedCallId && !this.getDomRef("busyIndicator")) {
-					// Also use the BusyIndicatorDelay when a control is initialized
-					// with "busy = true". If the delayed call was already initialized
-					// skip any further call if the control was re-rendered while
-					// the delay is running.
-					var iDelay = this.getBusyIndicatorDelay();
-
-					// Only do it via timeout if there is a delay. Otherwise append the
-					// BusyIndicator immediately
-					if (iDelay) {
-						this._busyIndicatorDelayedCallId = jQuery.sap.delayedCall(iDelay, this, fnAppendBusyIndicator);
-					} else {
-						fnAppendBusyIndicator.call(this);
-					}
+				// Only do it via timeout if there is a delay. Otherwise append the
+				// BusyIndicator immediately
+				if (iDelay) {
+					this._busyIndicatorDelayedCallId = jQuery.sap.delayedCall(iDelay, this, fnAppendBusyIndicator);
+				} else {
+					fnAppendBusyIndicator.call(this);
 				}
 			}
-		};
+		}
+	};
 
 
 	/**
@@ -702,203 +703,157 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 			return;
 		}
 
-		//Check if DOM Element where the busy indicator is supposed to be placed can handle content
-		var sTag = $this.get(0) && $this.get(0).tagName;
-		if (rForbiddenTags.test(sTag)) {
-			jQuery.sap.log.warning("BusyIndicator cannot be placed in elements with tag '" + sTag + "'.");
-			return;
+		if (this._sBlockSection === this._sBusySection) {
+			if (this._oBlockState) {
+				BusyIndicatorUtils.addHTML(this._oBlockState, this.getBusyIndicatorSize());
+
+				BlockLayerUtils.toggleAnimationStyle(this._oBlockState, true);
+
+				this._oBusyBlockState = this._oBlockState;
+
+			} else {
+				// BusyIndicator is the first blocking element created (and )
+				fnAddStandaloneBusyIndicator.call(this);
+			}
+		} else {
+			// Standalone busy indicator
+			fnAddStandaloneBusyIndicator.call(this);
 		}
+	}
 
-		//check if the control has static position, if this is the case we need to change it,
-		//because we relay on relative/absolute/fixed positioning
-		if ($this.css('position') == 'static') {
-			this._busyStoredPosition = 'static';
-			$this.css('position', 'relative');
-		}
+	/**
+	 * Adds a standalone block-layer. Might be shared with a BusyIndicator later on.
+	 */
+	function fnAddStandaloneBlockLayer () {
+		this._oBlockState = BlockLayerUtils.block(this, this.getId() + "-blockedLayer", this._sBlockSection);
+		jQuery(this._oBlockState.$blockLayer.get(0)).addClass("sapUiBlockLayerOnly");
+	}
 
-		//Append busy indicator to control DOM
-		this._$BusyIndicator = BusyIndicatorUtils.addHTML($this, this.getId() + "-busyIndicator", this.getBusyIndicatorSize());
+	/**
+	 * Adds a standalone BusyIndicator.
+	 * The block-layer code is able to recognize that a new block-layer is not needed.
+	 */
+	function fnAddStandaloneBusyIndicator () {
+		this._oBusyBlockState = BlockLayerUtils.block(this, this.getId() + "-busyIndicator", this._sBusySection);
+		BusyIndicatorUtils.addHTML(this._oBusyBlockState, this.getBusyIndicatorSize());
+	}
 
-		fnHandleInteraction.call(this, true);
+	/**
+	 * Cleanup all block-layers.
+	 * Doesn't matter if it's a busy- or regular block-layer.
+	 * Used to remove all unnecessary DOM elements and event-handlers during destroy and before rerendering.
+	 */
+	function fnRemoveAllBlockLayers() {
+		BlockLayerUtils.unblock(this._oBlockState);
+		BlockLayerUtils.unblock(this._oBusyBlockState);
+
+		delete this._oBlockState;
+		delete this._oBusyBlockState;
 	}
 
 	/**
 	 * Remove busy indicator from DOM
-	 *
+	 * @param {boolean} bForceRemoval Forces the removal of all Block layers
 	 * @private
 	 */
-	function fnRemoveBusyIndicator() {
+	function fnRemoveBusyIndicator(bForceRemoval) {
+		// removing all block layers is done upon rerendering and destroy of the control
+		if (bForceRemoval) {
+			fnRemoveAllBlockLayers.call(this);
+			return;
+		}
+
 		var $this = this.$(this._sBusySection);
 
 		$this.removeClass('sapUiLocalBusy');
 		//Unset the actual DOM Element´s 'aria-busy'
 		$this.removeAttr('aria-busy');
 
-		//Reset the position style to its original state
-		if (this._busyStoredPosition) {
-			$this.css('position', this._busyStoredPosition);
-			delete this._busyStoredPosition;
-		}
-		if (this._$BusyIndicator) {
-			fnHandleInteraction.call(this, false);
-			//Remove the busy indicator from the DOM
-			this._$BusyIndicator.remove();
-			delete this._$BusyIndicator;
+		if (this._sBlockSection === this._sBusySection) {
+			if (!this.getBlocked() && !this.getBusy()) {
+				// Remove shared block state & busy block state reference
+				fnRemoveAllBlockLayers.call(this);
+
+			} else if (this.getBlocked()) {
+				// Hide animation in shared block layer
+				BlockLayerUtils.toggleAnimationStyle(this._oBlockState || this._oBusyBlockState, false);
+
+				this._oBlockState = this._oBusyBlockState;
+
+			} else if (this._oBusyBlockState) {
+				BlockLayerUtils.unblock(this._oBusyBlockState);
+
+				delete this._oBusyBlockState;
+			}
+		} else if (this._oBusyBlockState) {
+			// standalone busy block state
+			BlockLayerUtils.unblock(this._oBusyBlockState);
+
+			delete this._oBusyBlockState;
 		}
 	}
 
 	/**
-	 * Handler which suppresses event bubbling for busy section
+	 * Set the controls block state.
 	 *
-	 * @param {object} oEvent The event on the suppressed DOM
-	 * @private
+	 * @param {boolean} bBlocked The new blocked state to be set
+	 * @return {sap.ui.core.Control} <code>this</code> to allow method chaining
 	 */
-	function suppressDefaultAndStopPropagation(oEvent) {
-		var bTargetIsBusyIndicator = oEvent.target === this._$BusyIndicator.get(0);
-		if (bTargetIsBusyIndicator && oEvent.type === 'keydown' && oEvent.keyCode === 9) {
-			// Special handling for "tab" keydown: redirect to next element before or after busy section
-			jQuery.sap.log.debug("Local Busy Indicator Event keydown handled: " + oEvent.type);
-			var oBusyTabbable = oEvent.shiftKey ? this.oBusyTabbableBefore : this.oBusyTabbableAfter;
-			oBusyTabbable.setAttribute("tabindex", -1);
-			// ignore execution of focus handler
-			this.bIgnoreBusyFocus = true;
-			oBusyTabbable.focus();
-			this.bIgnoreBusyFocus = false;
-			oBusyTabbable.setAttribute("tabindex", 0);
-			oEvent.stopImmediatePropagation();
-		} else if (bTargetIsBusyIndicator && (oEvent.type === 'mousedown' || oEvent.type === 'touchstart')) {
-			// Do not "preventDefault" to allow to focus busy indicator
-			jQuery.sap.log.debug("Local Busy Indicator click handled on busy area: " + oEvent.target.id);
-			oEvent.stopImmediatePropagation();
+	Control.prototype.setBlocked = function(bBlocked, sBlockedSection /* this is an internal parameter to apply partial blocking for a specific section of the control */) {
+		//If the new state is already set, we don't need to do anything
+		if (!!bBlocked == this.getProperty("blocked")) {
+			return this;
+		}
+		this._sBlockSection = sBlockedSection || this._sBlockSection;
+
+		//No rerendering - should be modeled as a non-invalidating property once we have that
+		this.setProperty("blocked", bBlocked, /*bSuppressInvalidate*/ true);
+
+		if (bBlocked) {
+			this.addDelegate(oRenderingDelegate, false, this);
 		} else {
-			jQuery.sap.log.debug("Local Busy Indicator Event Suppressed: " + oEvent.type);
-			oEvent.preventDefault();
-			oEvent.stopImmediatePropagation();
+			this.removeDelegate(oRenderingDelegate);
 		}
-	}
 
-	/**
-	 * Captures and redirects focus before it reaches busy section (from both sides)
-	 *
-	 * @private
-	 */
-	function redirectBusyFocus() {
-		if (!this.bIgnoreBusyFocus) {
-			// Redirect focus onto busy indicator (if not already focused)
-			this._$BusyIndicator.get(0).focus();
+		//If no domref exists stop here.
+		if (!this.getDomRef()) {
+			return this;
 		}
-	}
 
-	/**
-	 * Create a tabbable span for the busy section of the control with according focus handling.
-	 *
-	 * @param {function} fnRedirectBusyFocus Focus handling function
-	 * @returns {object} The span element's DOM node
-	 * @private
-	 */
-	function createBusyTabbable(fnRedirectBusyFocus) {
-		var oBusySpan = document.createElement("span");
-		oBusySpan.setAttribute("tabindex", 0);
-		oBusySpan.addEventListener('focusin', fnRedirectBusyFocus);
-		return oBusySpan;
-	}
-
-	/**
-	 * Create a tabbable span for the busy section of the control with according focus handling.
-	 *
-	 * @param {object}
-	 * @param {function} fnRedirectBusyFocus Focus handling function
-	 * @returns {object} The span element's DOM node
-	 */
-	function removeBusyTabbable(oBusySpan, fnRedirectBusyFocus) {
-		if (oBusySpan.parentNode) {
-			oBusySpan.parentNode.removeChild(oBusySpan);
-		}
-		oBusySpan.removeEventListener('focusin', fnRedirectBusyFocus);
-	}
-
-	/**
-	 * Register event handler to suppress event within busy section
-	 */
-	function registerBusyInteractionHandler(oBusySectionDomRef, $BusyIndicatorDomRef, fnHandler) {
-		var aSuppressHandler = [];
-		for (var i = 0; i < aPreventedEvents.length; i++) {
-			// Add event listeners with "useCapture" settings to suppress events before dispatching/bubbling starts
-			oBusySectionDomRef.addEventListener(aPreventedEvents[i], fnHandler, {
-				capture: true,
-				passive: false
-			});
-			aSuppressHandler.push(jQuery.sap._suppressTriggerEvent(aPreventedEvents[i], oBusySectionDomRef, $BusyIndicatorDomRef.get(0)));
-		}
-		//for jQuery triggered events we also need the keydown handler
-		$BusyIndicatorDomRef.bind('keydown', fnHandler);
-		return aSuppressHandler;
-	}
-
-	/**
-	 * Deregister event handler to suppress event within busy section
-	 */
-	function deregisterBusyInteractionHandler(oBusySectionDomRef, $BusyIndicatorDomRef, fnHandler, aSuppressHandler) {
-		var i;
-		if (oBusySectionDomRef) {
-			for (i = 0; i < aPreventedEvents.length; i++) {
-			// Remove event listeners with "useCapture" settings
-				oBusySectionDomRef.removeEventListener(aPreventedEvents[i], fnHandler, {
-					capture: true,
-					passive: false
-				});
-			}
-		}
-		if (aSuppressHandler) {
-			for (i = 0; i < aSuppressHandler.length; i++) {
-				// this part should be done even no DOMRef exists
-				jQuery.sap._releaseTriggerEvent(aSuppressHandler[i]);
-			}
-		}
-		if ($BusyIndicatorDomRef) {
-			$BusyIndicatorDomRef.unbind('keydown', fnHandler);
-		}
-	}
-
-	/**
-	 * Suppress interactions on all DOM elements in the busy section
-	 *
-	 * @param {boolean} bBusy New busy state
-	 * @private
-	 */
-	function fnHandleInteraction(bBusy) {
-		var oBusySectionDomRef = this.getDomRef(this._sBusySection);
-
-		if (bBusy) {
-			if (oBusySectionDomRef){
-				// Those two elements handle the tab chain so it is not possible to tab behind the busy section.
-				this.fnRedirectBusyFocus = redirectBusyFocus.bind(this);
-				this.oBusyTabbableBefore = createBusyTabbable(this.fnRedirectBusyFocus);
-				this.oBusyTabbableAfter = createBusyTabbable(this.fnRedirectBusyFocus);
-
-				oBusySectionDomRef.parentNode.insertBefore(this.oBusyTabbableBefore, oBusySectionDomRef);
-				oBusySectionDomRef.parentNode.insertBefore(this.oBusyTabbableAfter, oBusySectionDomRef.nextSibling);
-
-				this._fnSuppressDefaultAndStopPropagationHandler = suppressDefaultAndStopPropagation.bind(this);
-
-				this._aSuppressHandler = registerBusyInteractionHandler(oBusySectionDomRef, this._$BusyIndicator, this._fnSuppressDefaultAndStopPropagationHandler);
+		if (bBlocked) {
+			// blocking
+			if (this._sBlockSection === this._sBusySection) {
+				// only create a new block state if neither busy nor blocking blockState is present
+				if (!this._oBusyBlockState && !this._oBlockState) {
+					fnAddStandaloneBlockLayer.call(this);
+				} else {
+					jQuery.sap.log.info("The control is already busy. Hence, no new block-layer was created for the shared section.");
+				}
 			} else {
-				jQuery.sap.log.warning("fnHandleInteraction called with bBusy true, but no DOMRef exists!");
+				fnAddStandaloneBlockLayer.call(this);
 			}
 		} else {
-			if (this.oBusyTabbableBefore) {
-				removeBusyTabbable(this.oBusyTabbableBefore, this.fnRedirectBusyFocus);
-				delete this.oBusyTabbableBefore;
+			// unblocking
+			if (this._sBlockSection === this._sBusySection) {
+				if (!this.getBlocked() && !this.getBusy()) {
+					// Remove shared block state & busy block state reference
+					fnRemoveAllBlockLayers.call(this);
+
+				} else if (this.getBusy()) {
+					// Control or section is still busy, hence no removal required
+					jQuery.sap.log.info("The control is already busy. Hence, no new block-layer was created for the shared section.");
+
+				}
+			} else if (this._oBlockState) {
+				// standalone block state
+				BlockLayerUtils.unblock(this._oBlockState);
+
+				delete this._oBlockState;
 			}
-			if (this.oBusyTabbableAfter) {
-				removeBusyTabbable(this.oBusyTabbableAfter, this.fnRedirectBusyFocus);
-				delete this.oBusyTabbableAfter;
-			}
-			delete this.fnRedirectBusyFocus;
-			//trigger handler deregistration needs to be done even if DomRef is already destroyed
-			deregisterBusyInteractionHandler(oBusySectionDomRef, this._$BusyIndicator, this._fnSuppressDefaultAndStopPropagationHandler, this._aSuppressHandler);
 		}
-	}
+
+		return this;
+	};
 
 	/**
 	 * Set the controls busy state.
@@ -913,15 +868,15 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 			return this;
 		}
 
-		this._sBusySection = sBusySection;
+		this._sBusySection = sBusySection || this._sBusySection;
 
 		//No rerendering - should be modeled as a non-invalidating property once we have that
 		this.setProperty("busy", bBusy, /*bSuppressInvalidate*/ true);
 
 		if (bBusy) {
-			this.addDelegate(oBusyIndicatorDelegate, false, this);
+			this.addDelegate(oRenderingDelegate, false, this);
 		} else {
-			this.removeDelegate(oBusyIndicatorDelegate);
+			this.removeDelegate(oRenderingDelegate);
 			//If there is a pending delayed call we clear it
 			if (this._busyIndicatorDelayedCallId) {
 				jQuery.sap.clearDelayedCall(this._busyIndicatorDelayedCallId);
@@ -980,7 +935,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 			jQuery.sap.clearDelayedCall(this._busyIndicatorDelayedCallId);
 			delete this._busyIndicatorDelayedCallId;
 		}
-		fnHandleInteraction.call(this, false);
+		fnRemoveBusyIndicator.call(this, true);
 	};
 
 
