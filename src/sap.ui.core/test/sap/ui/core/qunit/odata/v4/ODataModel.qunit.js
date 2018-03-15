@@ -1051,6 +1051,21 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("buildBindingParameters, $$aggregation", function (assert) {
+		var aAggregation = [],
+			aAllowed = ["$$aggregation"],
+			oModel = createModel(),
+			mParameters = {$$aggregation : aAggregation},
+			mResult;
+
+		// code under test
+		mResult = oModel.buildBindingParameters(mParameters, aAllowed);
+
+		assert.deepEqual(mResult, mParameters);
+		assert.strictEqual(mResult.$$aggregation, aAggregation);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("buildBindingParameters, $$groupId", function (assert) {
 		var aAllowedParams = ["$$groupId"],
 			oModel = createModel();
