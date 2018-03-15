@@ -41,7 +41,7 @@
     "grunt-git": "^1.0.1",
     "grunt-mocha-test": "^0.12.6",
     "grunt-npm-install": "^0.3.1",
-    "grunt-openui5": "^0.12.0",
+    "grunt-openui5": "^0.13.0",
     "grunt-text-replace": "^0.4.0",
     "grunt-timer": "^0.5.4",
     "json2json-openui5": "0.0.1",
