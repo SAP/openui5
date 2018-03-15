@@ -561,6 +561,7 @@
 			oCore.attachInit(function () {
 				function start() {
 					try {
+						oCore.detachThemeChanged(start);
 						QUnit.start();
 					} catch (ex) {
 						// no way to tell if QUnit.start() has already been called :-(
