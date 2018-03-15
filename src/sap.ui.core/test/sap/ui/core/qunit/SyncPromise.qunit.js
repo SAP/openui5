@@ -339,6 +339,17 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("SyncPromise.all: sparse array", function (assert) {
+		var aValues = ["4"];
+
+		// Note: aValues[1] is not part of the array's keys and thus not visited by Array#forEach,
+		// but aValues.length === 3
+		aValues[2] = "2";
+
+		assertFulfilled(assert, SyncPromise.all(aValues), ["4", undefined, "2"]);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("SyncPromise.all: missing array", function (assert) {
 		var oSyncPromise = SyncPromise.all();
 
