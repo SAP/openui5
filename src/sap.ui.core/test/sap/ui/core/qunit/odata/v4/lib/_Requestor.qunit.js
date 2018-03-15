@@ -485,43 +485,46 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("request: $direct", function (assert) {
-		var fnCancel = this.spy(),
-			oChangedPayload = {"foo" : 42},
-			oConvertedResponse = {},
-			oPayload = {},
-			oPromise,
-			oRequestor = _Requestor.create(sServiceUrl, oModelInterface, undefined, {
-				"foo" : "URL params are ignored for normal requests"
-			}),
-			oResponse = {body : {}},
-			fnSubmit = this.spy();
+	[undefined, "$direct"].forEach(function (sGroupId) {
+		QUnit.test("request: sGroupId=" + sGroupId, function (assert) {
+			var fnCancel = this.spy(),
+				oChangedPayload = {"foo" : 42},
+				oConvertedResponse = {},
+				oPayload = {},
+				oPromise,
+				oRequestor = _Requestor.create(sServiceUrl, oModelInterface, undefined, {
+					"foo" : "URL params are ignored for normal requests"
+				}),
+				oResponse = {body : {}},
+				fnSubmit = this.spy();
 
-		this.mock(oRequestor).expects("convertResourcePath").withExactArgs("Employees?custom=value")
-			.returns("~Employees~?custom=value");
-		this.mock(_Requestor).expects("cleanPayload")
-			.withExactArgs(sinon.match.same(oPayload)).returns(oChangedPayload);
-		this.mock(oRequestor).expects("sendRequest")
-			.withExactArgs("METHOD", "~Employees~?custom=value", {
-					"header" : "value",
-					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
-				}, JSON.stringify(oChangedPayload))
-			.resolves(oResponse);
-		this.mock(oRequestor).expects("doConvertResponse")
-			.withExactArgs(sinon.match.same(oResponse.body), "meta/path")
-			.returns(oConvertedResponse);
+			this.mock(oRequestor).expects("convertResourcePath")
+				.withExactArgs("Employees?custom=value")
+				.returns("~Employees~?custom=value");
+			this.mock(_Requestor).expects("cleanPayload")
+				.withExactArgs(sinon.match.same(oPayload)).returns(oChangedPayload);
+			this.mock(oRequestor).expects("sendRequest")
+				.withExactArgs("METHOD", "~Employees~?custom=value", {
+						"header" : "value",
+						"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+					}, JSON.stringify(oChangedPayload))
+				.resolves(oResponse);
+			this.mock(oRequestor).expects("doConvertResponse")
+				.withExactArgs(sinon.match.same(oResponse.body), "meta/path")
+				.returns(oConvertedResponse);
 
-		// code under test
-		oPromise = oRequestor.request("METHOD", "Employees?custom=value", "$direct", {
-			"header" : "value",
-			"Content-Type" : "wrong"
-		}, oPayload, fnSubmit, fnCancel, "meta/path");
+			// code under test
+			oPromise = oRequestor.request("METHOD", "Employees?custom=value", sGroupId, {
+				"header" : "value",
+				"Content-Type" : "wrong"
+			}, oPayload, fnSubmit, fnCancel, "meta/path");
 
-		return oPromise.then(function (oResult) {
-			assert.strictEqual(oResult, oConvertedResponse);
+			return oPromise.then(function (oResult) {
+				assert.strictEqual(oResult, oConvertedResponse);
 
-			sinon.assert.calledOnce(fnSubmit);
-			sinon.assert.notCalled(fnCancel);
+				sinon.assert.calledOnce(fnSubmit);
+				sinon.assert.notCalled(fnCancel);
+			});
 		});
 	});
 
