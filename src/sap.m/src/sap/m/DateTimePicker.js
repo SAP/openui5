@@ -629,21 +629,8 @@ sap.ui.define([
 		this._oCalendar.addSelectedDate(new DateRange().setStartDate(this._getInitialFocusedDateValue()));
 	}
 
-	function _handleBeforeOpen(oEvent){
-		var oInput;
-
-		if (Device.browser.msie || Device.browser.edge) {
-			//For IE & Edge, any selection of the underlying input must be removed before opening the picker popup,
-			//otherwise the input will receive focus via TAB during the picker is opened. The selection is restored back
-			//when the popup is closed
-			oInput = this._$input.get(0);
-			this._oInputSelBeforePopupOpen = {
-				iStart: oInput.selectionStart,
-				iEnd: oInput.selectionEnd
-			};
-			oInput.selectionStart = 0;
-			oInput.selectionEnd = 0;
-		}
+	function _handleBeforeOpen(){
+		this._storeInputSelection(this._$input.get(0));
 	}
 
 	function _handleAfterOpen(oEvent){
@@ -653,16 +640,10 @@ sap.ui.define([
 
 	}
 
-	function _handleAfterClose(oEvent){
-		var oInput;
+	function _handleAfterClose(){
 		this.$("inner").attr("aria-expanded", false);
 
-		if (Device.browser.msie || Device.browser.edge) {
-			oInput = this._$input.get(0);
-			//The selection is restored back due to issue with IE & Edge. See _handleBeforeOpen
-			oInput.selectionStart = this._oInputSelBeforePopupOpen.iStart;
-			oInput.selectionEnd = this._oInputSelBeforePopupOpen.iEnd;
-		}
+		this._restoreInputSelection(this._$input.get(0));
 	}
 
 	function _getTimePattern(){
