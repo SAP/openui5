@@ -1,5 +1,11 @@
 /* global QUnit */
 
+// It is not possible to reset already loaded modules in each test
+// so they have to be executed in a stable order.
+// Each test can be executed individually, which proves that there
+// is no actually dependency between them.
+QUnit.config.reorder = false;
+
 /*
  * Currently known set of jQuery.sap.* scripts except .stubs itself
  */
@@ -20,17 +26,11 @@ function jquerySapScriptsNotLoaded(assert) {
 	scriptsLoaded(assert, aAllScriptNames.map(function(s){return "jquery.sap." + s;}), false);
 }
 
-var bBefore = true;
-QUnit.module("jquery.sap.stubs", {
-	// TODO cleanup QUnitUtils from jQuery.sap.* dependencies!!!
-	// beforeEach: function() {
-	beforeEach: function(assert) {
-		if (bBefore) {
-			assert.notOk(window.jQuery && jQuery.sap, "jQuery.sap must not be defined");
-			jquerySapScriptsNotLoaded(assert);
-			bBefore = false;
-		}
-	}
+QUnit.module("jquery.sap.stubs");
+
+QUnit.test("Initial check", function(assert) {
+	assert.notOk(window.jQuery && jQuery.sap, "jQuery.sap must not be defined");
+	jquerySapScriptsNotLoaded(assert);
 });
 
 QUnit.test("AMD module definition", function(assert) {
@@ -65,26 +65,6 @@ QUnit.test("jQuery.sap.* function stub", function(assert) {
 	});
 });
 
-QUnit.test("jQuery.fn function stub", function(assert) {
-	var done = assert.async();
-	sap.ui.require(["jquery.sap.stubs"], function(_jQuery) {
-		scriptsLoaded(assert, ["sap/ui/dom/jquery/control"], false);
-		assert.ok(typeof jQuery().control === "function", "jQuery.fn stub works");
-		scriptsLoaded(assert, ["sap/ui/dom/jquery/control"]);
-		done();
-	});
-});
-
-QUnit.test("jQuery.Event.prototype function stub", function(assert) {
-	var done = assert.async();
-	sap.ui.require(["jquery.sap.stubs"], function(_jQuery) {
-		scriptsLoaded(assert, ["sap/ui/events/jqueryEvent"], false);
-		assert.ok(typeof new jQuery.Event().getPseudoTypes === "function", "jqQuery.Event.prototype stub works");
-		scriptsLoaded(assert, ["sap/ui/events/jqueryEvent"]);
-		done();
-	});
-});
-
 QUnit.test("jQuery.expr[\":\"] function stub", function(assert) {
 	var done = assert.async();
 	sap.ui.require(["jquery.sap.stubs"], function(_jQuery) {
@@ -105,5 +85,25 @@ QUnit.test("concurrent usage of require and stub", function(assert) {
 			done();
 		});
 		assert.ok(_jQuery().zIndex, "property is available");
+	});
+});
+
+QUnit.test("jQuery.fn function stub", function(assert) {
+	var done = assert.async();
+	sap.ui.require(["jquery.sap.stubs"], function(_jQuery) {
+		scriptsLoaded(assert, ["sap/ui/dom/jquery/control"], false);
+		assert.ok(typeof jQuery().control === "function", "jQuery.fn stub works");
+		scriptsLoaded(assert, ["sap/ui/dom/jquery/control"]);
+		done();
+	});
+});
+
+QUnit.test("jQuery.Event.prototype function stub", function(assert) {
+	var done = assert.async();
+	sap.ui.require(["jquery.sap.stubs"], function(_jQuery) {
+		scriptsLoaded(assert, ["sap/ui/events/jqueryEvent"], false);
+		assert.ok(typeof new jQuery.Event().getPseudoTypes === "function", "jqQuery.Event.prototype stub works");
+		scriptsLoaded(assert, ["sap/ui/events/jqueryEvent"]);
+		done();
 	});
 });
