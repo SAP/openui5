@@ -1833,7 +1833,7 @@ sap.ui.require([
 				"a@$ui5.b" : "c",
 				"@$ui51" : "bar",
 				"@$ui5.option" : "baz",
-				"@$ui5.transient" : true
+				"@$ui5._.transient" : true
 			},
 			oChangedPostData = {
 				"foo" : "bar",
@@ -1848,7 +1848,7 @@ sap.ui.require([
 
 		assert.deepEqual(_Requestor.cleanPayload(oPostData), oChangedPostData);
 		assert.strictEqual(oPostData["@$ui5.option"], "baz");
-		assert.strictEqual(oPostData["@$ui5.transient"], true);
+		assert.strictEqual(oPostData["@$ui5._.transient"], true);
 
 		sinon.assert.calledOnce(jQuery.extend);
 	});

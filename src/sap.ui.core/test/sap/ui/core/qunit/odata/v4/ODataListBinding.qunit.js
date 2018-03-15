@@ -50,7 +50,7 @@ sap.ui.require([
 	 * @param {number} [iCount]
 	 *   the  value for "$count", remains unset if undefined
 	 * @param {boolean} [bKeyPredicates]
-	 *   add a property "@$ui5.predicate" with a key predicate
+	 *   add a property "@$ui5._.predicate" with a key predicate
 	 * @return {object}
 	 *   the data
 	 */
@@ -71,7 +71,7 @@ sap.ui.require([
 				NullValue : null
 			};
 			if (bKeyPredicates) {
-				oData.value[i]["@$ui5.predicate"] = "('" + (iStart + i) + "')";
+				oData.value[i]["@$ui5._.predicate"] = "('" + (iStart + i) + "')";
 			}
 		}
 		return bDrillDown ? oData.value : oData;
@@ -2405,7 +2405,7 @@ sap.ui.require([
 
 			if (bUsePredicates) {
 				aResults.forEach(function (vValue, i) {
-					vValue["@$ui5.predicate"] = "('" + i + "')";
+					vValue["@$ui5._.predicate"] = "('" + i + "')";
 				});
 			}
 			this.mock(oBinding.oModel).expects("resolve").twice()
@@ -2413,7 +2413,7 @@ sap.ui.require([
 				.returns("~resolved~");
 			for (i = oRange.start; i < oRange.start + aResults.length; i += 1) {
 				sPath = "~resolved~" +
-					(bUsePredicates ? aResults[i - oRange.start]["@$ui5.predicate"] : "/" + i);
+					(bUsePredicates ? aResults[i - oRange.start]["@$ui5._.predicate"] : "/" + i);
 				oContextMock.expects("create")
 					.withExactArgs(sinon.match.same(oBinding.oModel), sinon.match.same(oBinding),
 						sPath, i)
@@ -2559,11 +2559,11 @@ sap.ui.require([
 
 		// code under test
 		oBinding.createContexts(0, 3, [{
-			"@$ui5.predicate" : "('1')"
+			"@$ui5._.predicate" : "('1')"
 		}, {
-			"@$ui5.predicate" : "('2')"
+			"@$ui5._.predicate" : "('2')"
 		}, {
-			"@$ui5.predicate" : "('3')"
+			"@$ui5._.predicate" : "('3')"
 		}]);
 
 		assert.strictEqual(oBinding.aContexts[0], oContext1);
@@ -2890,7 +2890,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("create: relative binding", function (assert) {
-		var aCacheResult = [{}, {}, {"@$ui5.predicate" : "('foo')"}, {}],
+		var aCacheResult = [{}, {}, {"@$ui5._.predicate" : "('foo')"}, {}],
 			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS/1", 1),
 			oContext2 = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS/2", 2),
 			aContexts,
