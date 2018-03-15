@@ -1869,6 +1869,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 *  "TND" : {"digits": 3}
 		 * }
 		 * </code>
+		 * @public
 		 * @returns {object} the mapping between custom currencies and its digits
 		 */
 		getCustomCurrencies : function() {
@@ -1885,6 +1886,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 * }
 		 * </code>
 		 * Note: To unset the custom currencies: call with <code>undefined</code>
+		 * @public
 		 * @param {object} mCurrencies currency map which is set
 		 * @returns {sap.ui.core.Configuration.FormatSettings}
 		 */
@@ -1908,6 +1910,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 * }
 		 * </code>
 		 *
+		 * @public
 		 * @param {object} mCurrencies adds to the currency map
 		 * @return {sap.ui.core.Configuration.FormatSettings}
 		 * @see sap.ui.core.Configuration#setCustomCurrencies

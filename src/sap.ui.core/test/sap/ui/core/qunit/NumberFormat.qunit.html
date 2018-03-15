@@ -1731,14 +1731,14 @@
 		});
 		assert.equal(oFormat.format(123456.789, "EUR"), "\u20ac" + "123,456.79", "123456.789 EUR");
 		assert.equal(oFormat.format(123456.789, "JPY"), "\u00a5" + "123,457", "123456.789 YEN");
-		assert.equal(oFormat.format(123456.789, "CKZ"), "CKZ\xa0" + "123,456.79", "123456.789 CKZ");
+		assert.equal(oFormat.format(123456.789, "CZK"), "CZK\xa0" + "123,456.79", "123456.789 CZK");
 		assert.equal(oFormat.format(123456.789, "BTC"), "BTC\xa0" + "123,456.79", "123456.789 BTC");
 
 		// set custom currency digits
 		sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies({
 			"EUR": {"digits": 1},
 			"JPY": {"digits": 3},
-			"CKZ": {"digits": 3},
+			"CZK": {"digits": 3},
 			"BTC": {"digits": 5}
 		});
 
@@ -1747,7 +1747,7 @@
 		});
 		assert.equal(oFormat.format(123456.789, "EUR"), "\u20ac" + "123,456.8", "123456.789 EUR");
 		assert.equal(oFormat.format(123456.789, "JPY"), "\u00a5" + "123,456.789", "123456.789 YEN");
-		assert.equal(oFormat.format(123456.789, "CKZ"), "CKZ\xa0" + "123,456.789", "123456.789 CKZ");
+		assert.equal(oFormat.format(123456.789, "CZK"), "CZK\xa0" + "123,456.789", "123456.789 CZK");
 		assert.equal(oFormat.format(123456.789, "BTC"), "BTC\xa0" + "123,456.78900", "123456.789 BTC");
 
 		// add custom currencies
@@ -1768,7 +1768,7 @@
 		});
 		assert.equal(oFormat.format(123456.789, "EUR"), "\u20ac" + "123,456.79", "123456.789 EUR");
 		assert.equal(oFormat.format(123456.789, "JPY"), "\u00a5" + "123,457", "123456.789 YEN");
-		assert.equal(oFormat.format(123456.789, "CKZ"), "CKZ\xa0" + "123,456.79", "123456.789 CKZ");
+		assert.equal(oFormat.format(123456.789, "CZK"), "CZK\xa0" + "123,456.79", "123456.789 CZK");
 		assert.equal(oFormat.format(123456.789, "BTC"), "BTC\xa0" + "123,456.79", "123456.789 BTC");
 	});
 
