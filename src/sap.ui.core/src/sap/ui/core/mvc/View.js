@@ -338,15 +338,11 @@ sap.ui.define([
 				// we need to extend the controller if an instance is passed
 				var sOwnerId = ManagedObject._sOwnerId;
 				if (bAsync) {
-					oController = Controller.extendByMember(oController, bAsync)
-						.then(function(oController) {
-							return Controller.extendByCustomizing(oController, sName, bAsync);
-						})
+					oController = Controller.extendByCustomizing(oController, sName, bAsync)
 						.then(function(oController) {
 							return Controller.extendByProvider(oController, sName, sOwnerId, bAsync);
 						});
 				} else {
-					oController = Controller.extendByMember(oController, bAsync);
 					oController = Controller.extendByCustomizing(oController, sName, bAsync);
 					oController = Controller.extendByProvider(oController, sName, sOwnerId, bAsync);
 				}
