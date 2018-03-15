@@ -306,19 +306,19 @@ sap.ui.define([
 	 */
 	SyncPromise.all = function (aValues) {
 		return new SyncPromise(function (resolve, reject) {
-			var iPending; // number of pending promises
+			var bDone = false,
+				iPending = 0; // number of pending promises
 
 			function checkFulfilled() {
-				if (iPending === 0) {
+				if (bDone && iPending === 0) {
 					resolve(aValues); // Note: 1st reject/resolve wins!
 				}
 			}
 
 			aValues = Array.prototype.slice.call(aValues);
-			iPending = aValues.length;
-			checkFulfilled();
 			aValues.forEach(function (vValue, i) {
 				if (hasThen(vValue)) {
+					iPending += 1;
 					SyncPromise.resolve(vValue).then(function (vResult0) {
 						aValues[i] = vResult0;
 						iPending -= 1;
@@ -326,11 +326,10 @@ sap.ui.define([
 					}, function (vReason) {
 						reject(vReason); // Note: 1st reject/resolve wins!
 					});
-				} else { // cannot be a "thenable"
-					iPending -= 1;
-					checkFulfilled();
-				}
+				} // else: not a "thenable"
 			});
+			bDone = true;
+			checkFulfilled();
 		});
 	};
 
