@@ -68,6 +68,12 @@ sap.ui.require([
 		}.bind(this));
 	});
 
+	QUnit.test("when calling 'updateCurrentVariantInMap'  of the VariantController", function(assert) {
+		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
+		oVariantController.updateCurrentVariantInMap("idMain1--variantManagementOrdersTable", "variant2");
+		assert.strictEqual(oVariantController._mVariantManagement["idMain1--variantManagementOrdersTable"].currentVariant, "variant2", "then current variant set correctly for the passed variant management reference");
+	});
+
 	QUnit.test("when calling 'getVariant' of the VariantController", function(assert) {
 		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
 		var oExpectedVariant = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0];
@@ -516,15 +522,14 @@ sap.ui.require([
 		var oExpectedData = {
 			"variantMgmtId1": {
 				"defaultVariant": "variant1",
+				"currentVariant": "variant0",
 				"variants": [{
-					//"author": "SAP",
 					"favorite": true,
 					"visible": true,
 					"key": "variantMgmtId1",
 					"title": "Standard"
 				},
 				{
-					//"author": "Me",
 					"favorite": true,
 					"visible": true,
 					"key": "variant0",
@@ -532,7 +537,6 @@ sap.ui.require([
 					"title": "variant A"
 				},
 				{
-					//"author": "Me",
 					"favorite": true,
 					"visible": true,
 					"key": "variant1",
@@ -544,7 +548,7 @@ sap.ui.require([
 		var oVariantController = new VariantController("MyComponent", "1.2.3", {});
 		var fnApplyChangesOnVariantSpy = sandbox.spy(oVariantController, "_applyChangesOnVariant");
 		oVariantController._setChangeFileContent(oFakeVariantResponse);
-
+		oVariantController._mVariantManagement["variantMgmtId1"].currentVariant = "variant0"; //mocking property
 		var oData = oVariantController._fillVariantModel();
 		assert.equal(fnApplyChangesOnVariantSpy.callCount, 3, "_applyChangesOnVariant called thrice for 3 variants");
 		assert.propEqual(oData, oExpectedData, "then correct variant model data is returned");

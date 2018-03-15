@@ -108,6 +108,7 @@ sap.ui.define([
 				this.oData[sVariantManagementReference].currentVariant = sNewVariantReference;
 				if (this.oData[sVariantManagementReference].updateVariantInURL) {
 					this._updateVariantInURL(sVariantManagementReference, sNewVariantReference);
+					this.oVariantController.updateCurrentVariantInMap(sVariantManagementReference, sNewVariantReference);
 				}
 				this.checkUpdate();
 			}.bind(this));
