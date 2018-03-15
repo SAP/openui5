@@ -2015,6 +2015,19 @@ sap.ui.define(['jquery.sap.global',
 	};
 
 	/**
+	 * Returns the value of a given hierarchy annotation.
+	 *
+	 * @param {string} sAttributeName The name of the hierarchy annotation
+	 * @return {string|undefined} The value of the hierarchy annotation
+	 * @since 1.56
+	 * @private
+	 * @ui5-restricted sap.ui.comp
+	 */
+	ODataTreeBinding.prototype.getTreeAnnotation = function(sAttributeName) {
+		return this.bHasTreeAnnotations ? this.oTreeProperties[sAttributeName] : undefined;
+	};
+
+	/**
 	 * Get a download URL with the specified format considering the
 	 * sort/filter/custom parameters.
 	 *
