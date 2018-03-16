@@ -24,19 +24,34 @@
         "id": "4bf589e3e3ab1b885abaeb8903a84e07eb8687a1",
         "type": "FIX",
         "text": "sap.tnt.NavigationList: Focus is now styled correctly",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570874790"
+          }
+        ]
       },
       {
         "id": "8485c3f9f1d64c95a6e86bb6599719267f1c5fb8",
         "type": "FIX",
         "text": "sap.tnt.SideNavigation: Blinking effect on collapse is not visible anymore",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670074223"
+          }
+        ]
       },
       {
         "id": "0e2f3315124f17d6043cbddc970e9e2c9a739f81",
         "type": "FIX",
         "text": "sap.tnt.SideNavigation: Fix Typo in Sample",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "895"
+          }
+        ]
       }
     ]
   },
@@ -47,7 +62,12 @@
         "id": "7cb91c4e314a7d8e530c2eee0d4c8f6f4ea1ac70",
         "type": "FIX",
         "text": "sap.tnt.SideNavigation: Window scrolling in iOS is now prevented",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670250764"
+          }
+        ]
       }
     ]
   },
@@ -58,7 +78,12 @@
         "id": "d6147ffdb6e2e3d06d496cb0c70aedea2b1e7fc9",
         "type": "FIX",
         "text": "sap.tnt.ToolPage: sideExpanded is fixed in IE",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670279635"
+          }
+        ]
       }
     ]
   },
@@ -69,13 +94,23 @@
         "id": "026f3ecb41d431c8a55a4cd939c415f9797d0bee",
         "type": "FIX",
         "text": "sap.tnt.NavigationList: Icon rendering issue solved",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670303055"
+          }
+        ]
       },
       {
         "id": "08c6f4375124a83f72e762a7ca624bdf18911948",
         "type": "FIX",
         "text": "sap.tnt.ToolPage: sideExpanded is fixed for Phone use case",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670279327"
+          }
+        ]
       }
     ]
   },
@@ -86,7 +121,12 @@
         "id": "67acb598f648a9057238ef0f1de6538f5165d55d",
         "type": "FIX",
         "text": "sap.tnt.NavigationList: The texts in the Popup are no longer cut off in IE",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680090969"
+          }
+        ]
       }
     ]
   },
@@ -97,7 +137,12 @@
         "id": "6e3f7978028daa401ce735279a91cf17dd02aa64",
         "type": "FIX",
         "text": "sap.tnt.NavigationListItem: Icon tooltip corrected",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680108841"
+          }
+        ]
       }
     ]
   },
@@ -108,13 +153,23 @@
         "id": "127c4e758be4696590bc845f8c4028f987d27695",
         "type": "FIX",
         "text": "sap.tnt. ToolPage: SideNavigation is initially expanded  on laptop with touch",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670424167"
+          }
+        ]
       },
       {
         "id": "70708a3ee5b8a14ecfedb8d8f7c774192739fb82",
         "type": "FIX",
         "text": "sap.tnt.NavigationList: Popover not closing in collapsed mode issue fixed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670453591"
+          }
+        ]
       }
     ]
   },
@@ -131,7 +186,12 @@
         "id": "9a7b753dfd64fe3f294a88aa098ee3094a257f5f",
         "type": "FIX",
         "text": "sap.tnt.ToolPage: SideNavigation overlapping the content in combi devices now corrected",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670554554"
+          }
+        ]
       }
     ]
   }

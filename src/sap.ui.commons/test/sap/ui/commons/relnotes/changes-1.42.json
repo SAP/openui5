@@ -6,7 +6,12 @@
         "id": "d8790b8b4ba2ab2757b34312842aee72f436dd2b",
         "type": "FIX",
         "text": "sap.ui.commons.ListBox: Scroll should not have special handling on mobile device",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002364902016"
+          }
+        ]
       }
     ]
   },
@@ -17,19 +22,46 @@
         "id": "1cefafc4662997371ad56d2c0f11c18b1ca76efa",
         "type": "FIX",
         "text": "Theme image URLs in commons/ux3/layout libraries",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670427408"
+          },
+          {
+            "type": "BCP",
+            "reference": "1670427766"
+          }
+        ]
       },
       {
         "id": "23a4390160856d3bd630225de5f8487451dbdb0c",
         "type": "FIX",
         "text": "commons.Dialog: Center dialog according the view point size",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680225299"
+          }
+        ]
       },
       {
         "id": "1acdc491a5a2c7abb416654d7e0d4bdcb4065107",
         "type": "FIX",
         "text": "core.TooltipBase: show parent control tooltip if no tooltip on child",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "917"
+          },
+          {
+            "type": "BCP",
+            "reference": "1670187459"
+          },
+          {
+            "type": "BCP",
+            "reference": "1570632712"
+          }
+        ]
       },
       {
         "id": "df780ac05d7ee2fe24376632456098c24046883c",
@@ -41,19 +73,34 @@
         "id": "8790fa0fad42ff7f3a4c86a827ed59aab0188430",
         "type": "FIX",
         "text": "sap.ui.commons.DropDownBox: Selecting text and focusing does not cycle anymore.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002914702016"
+          }
+        ]
       },
       {
         "id": "d9411a1855fba48a53fa9b7b0ad13218a8610274",
         "type": "FIX",
         "text": "sap.ui.commons.DropDownBox: Selection of the ListBox items work onclick.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680218440"
+          }
+        ]
       },
       {
         "id": "70ab889b850791800b944dcadd273e5e4d43f943",
         "type": "FIX",
         "text": "sap.ui.commons.TabStrip: Destroying tabs is now correct",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670428783"
+          }
+        ]
       }
     ]
   },
@@ -64,7 +111,12 @@
         "id": "a118b9e3d8e6ddb650c7d19e6031732fc41bfd53",
         "type": "FIX",
         "text": "sap.ui.commons.Paginator: onsapenter is now handled",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670431542"
+          }
+        ]
       }
     ]
   },
@@ -75,13 +127,23 @@
         "id": "565bfb4ffb0859546ea0fafbce94a767583228f6",
         "type": "FIX",
         "text": "sap.ui.commons.Link: Focus visualization in sap.ui.table.Table Cell",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680175114"
+          }
+        ]
       },
       {
         "id": "3660102bbf1c226f19cf2ceae0b439e5664e3a93",
         "type": "FIX",
-        "text": "sap.ui.core.Popup: keep blocklayer when there\u0027s still modal popup open",
-        "references": []
+        "text": "sap.ui.core.Popup: keep blocklayer when there's still modal popup open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670449871"
+          }
+        ]
       }
     ]
   },
@@ -91,8 +153,13 @@
       {
         "id": "5a8c1ee4e1a622e313843825ee650b7f09abacad",
         "type": "FIX",
-        "text": " sap.ui.commons.RadioButton: Memory leak issue",
-        "references": []
+        "text": "sap.ui.commons.RadioButton: Memory leak issue",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1273"
+          }
+        ]
       }
     ]
   }

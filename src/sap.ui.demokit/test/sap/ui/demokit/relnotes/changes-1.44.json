@@ -30,7 +30,12 @@
         "id": "7363858d48c2b2590651add17763f1af05fc9cbd",
         "type": "FEATURE",
         "text": "sap.ui.demokit.CodeViewer: Improve readability of Code samples",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1080"
+          }
+        ]
       },
       {
         "id": "937b7693aa6333dd25da8590490a477a514fe9e7",
@@ -64,8 +69,13 @@
       {
         "id": "07d30309ddad679817f03f006feab4b34827a55f",
         "type": "FIX",
-        "text": " SDK: accept hash for LICENSE.txt",
-        "references": []
+        "text": "SDK: accept hash for LICENSE.txt",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1320"
+          }
+        ]
       }
     ]
   }
