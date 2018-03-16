@@ -3239,8 +3239,10 @@ sap.ui.define([
 	 * @param {string|function} oBindingInfo.key the name of the key property or a function getting the context as only parameter to calculate a key for entries. This can be used to improve update behaviour in models, where a key is not already available.
 	 * @param {object} [oBindingInfo.parameters] a map of parameters which is passed to the binding.
 	 * The supported parameters are listed in the corresponding model-specific implementation of <code>sap.ui.model.ListBinding</code> or <code>sap.ui.model.TreeBinding</code>.
-	 * @param {function} [oBindingInfo.groupHeaderFactory] a factory function to generate custom group visualization (optional)
-	 *
+	 * @param {function} [oBindingInfo.groupHeaderFactory] a factory function to generate custom group visualization (optional).
+	 * The factory function must return a {@link sap.m.GroupHeaderListItem}. It will be called with an <code>oGroup<code>
+	 * object containing the intended header string as the property <code>oGroup.key<code>. To change that key provide a
+	 * custom <code>fnGroup<code> function on your {@link sap.ui.model.Sorter}.
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public
 	 */

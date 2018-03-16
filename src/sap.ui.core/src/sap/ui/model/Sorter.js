@@ -67,7 +67,8 @@ sap.ui.define(['sap/ui/base/Object'],
 
 		/**
 		 * Returns a group object, at least containing a key property for group detection.
-		 * May contain additional properties as provided by a custom group function.
+		 * May contain additional properties as provided by a custom group function <code>fnGroup</code>.
+		 * See {@link  #.getGroupFunction Sorter.getGroupFunction} for further details.
 		 *
 		 * @param {sap.ui.model.Context} oContext the binding context
 		 * @return {object} An object containing a key property and optional custom properties
@@ -88,6 +89,10 @@ sap.ui.define(['sap/ui/base/Object'],
 		 * undefined, if no explicit group function has been defined the default group function is returned.
 		 * The returned function is bound to its Sorter, so it will group according to its own property path,
 		 * even if it is used in the context of another Sorter.
+		 *
+		 * To provide an explicit group function just override the function <code>fnGroup</code> of this Sorter.
+		 * The current {@link sap.ui.model.Context} will be passed into the custom function. It must return
+		 * a string value.
 		 *
 		 * @return {function} The group function
 		 * @public
