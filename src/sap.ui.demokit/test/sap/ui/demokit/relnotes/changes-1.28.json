@@ -11,7 +11,7 @@
       {
         "id": "f0240eecfee4a607c954942c1a2af9bf5b8ea5e9",
         "type": "FEATURE",
-        "text": "Extended predefined CSS margin classes - Added responsive CSS margin classes - Added tiny CSS margin sizes - Added \u0027no margin\u0027 classes",
+        "text": "Extended predefined CSS margin classes - Added responsive CSS margin classes - Added tiny CSS margin sizes - Added 'no margin' classes",
         "references": []
       },
       {
@@ -82,7 +82,12 @@
         "id": "9f895fb08971121030ed1f1524a006b37419735b",
         "type": "FIX",
         "text": "Existence of namespace ensured during Core.initLibrary()",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570295165"
+          }
+        ]
       }
     ]
   },
@@ -93,7 +98,12 @@
         "id": "ef64c1a4a6bece9d407d67ec7ddfa78ad7163071",
         "type": "FIX",
         "text": "demokit/Explored app: Resetting search field issue solved",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580213121"
+          }
+        ]
       }
     ]
   }
