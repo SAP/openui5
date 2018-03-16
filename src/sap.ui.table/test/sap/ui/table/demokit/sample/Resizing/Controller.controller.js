@@ -2,8 +2,9 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageToast",
-	"sap/ui/core/format/DateFormat"
-], function(Controller, JSONModel, MessageToast, DateFormat) {
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/table/sample/TableExampleUtils"
+], function(Controller, JSONModel, MessageToast, DateFormat, TableExampleUtils) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.Resizing.Controller", {
@@ -107,12 +108,7 @@ sap.ui.define([
 		},
 
 		showInfo : function(oEvent) {
-			try {
-				jQuery.sap.require("sap.ui.table.sample.TableExampleUtils");
-				sap.ui.table.sample.TableExampleUtils.showInfo(jQuery.sap.getModulePath("sap.ui.table.sample.Resizing", "/info.json"), oEvent.getSource());
-			} catch (e) {
-				// nothing
-			}
+			TableExampleUtils.showInfo(jQuery.sap.getModulePath("sap.ui.table.sample.Resizing", "/info.json"), oEvent.getSource());
 		}
 
 	});

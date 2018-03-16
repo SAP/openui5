@@ -3,13 +3,9 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/fl/changeHandler/Base",
-	"sap/ui/fl/Utils"
+	"jquery.sap.global"
 ], function(
-	jQuery,
-	Base,
-	FlexUtils
+	jQuery
 ) {
 	"use strict";
 

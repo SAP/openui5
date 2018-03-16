@@ -130,7 +130,7 @@
 			}),
 			new sap.m.DateTimePicker({
 				placeholder: "DateTimePicker",
-				width: "150px"
+				width: "250px"
 			}),
 			new sap.m.CheckBox({
 				text : "Checkbox"
@@ -147,17 +147,14 @@
 	}
 
 	TBHeader = new sap.m.Toolbar({
-        active: true,
 		content : getToolbarContent("This is a Header", "selH")
 	});
 
 	TBSubHeader = new sap.m.Toolbar({
-        active: true,
 		content : getToolbarContent("This is a SubHeader", "selSubH")
 	});
 
 	TBFooter = new sap.m.Toolbar({
-        active: true,
 		content : getToolbarContent("This is a Footer", "selF")
 	});
 
@@ -224,9 +221,10 @@
 						width : "2rem"
 					})
 				]
+			}).attachPress(function(oEvent) {
+				sap.m.MessageToast.show("InfoBar Pressed! Sorce: " + oEvent.getParameter("srcControl").getId());
 			}),
 			new sap.m.Toolbar({
-				active : true,
 				design : sap.m.ToolbarDesign.Solid,
 				height : "auto",
 				content : [
@@ -251,8 +249,6 @@
 						}
 					})
 				]
-			}).attachPress(function(oEvent) {
-				sap.m.MessageToast.show("InfoBar Pressed! Sorce: " + oEvent.getParameter("srcControl").getId());
 			}),
 			new sap.m.Toolbar({
 				height: "auto",

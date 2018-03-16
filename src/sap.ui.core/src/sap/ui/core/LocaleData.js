@@ -911,13 +911,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 		 * @since 1.21.1
 		 */
 		getCurrencyDigits: function(sCurrency) {
-			var oCurrencyDigits = this._get("currencyDigits");
-			var iDigits = 2;
-			if (oCurrencyDigits) {
-				if (oCurrencyDigits[sCurrency] != undefined) {
-					iDigits = oCurrencyDigits[sCurrency];
-				} else {
-					iDigits = oCurrencyDigits["DEFAULT"];
+
+			// try to lookup currency digits from custom currencies
+			var mCustomCurrencies = this._get("currency");
+			if (mCustomCurrencies) {
+				if (mCustomCurrencies[sCurrency] && mCustomCurrencies[sCurrency].hasOwnProperty("digits")) {
+					return mCustomCurrencies[sCurrency].digits;
+				} else if (mCustomCurrencies["DEFAULT"] && mCustomCurrencies["DEFAULT"].hasOwnProperty("digits")) {
+					return mCustomCurrencies["DEFAULT"].digits;
+				}
+			}
+
+			var iDigits = this._get("currencyDigits", sCurrency);
+			if (iDigits == null) {
+				iDigits = this._get("currencyDigits", "DEFAULT");
+
+				if (iDigits == null) {
+					iDigits = 2; // default
 				}
 			}
 			return iDigits;
@@ -3230,7 +3240,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
 			// first try customdata with special formatted key
 			// afterwards try customdata lookup
 			// afterwards try mData lookup
-			return this.mCustomData[sKey] || this._getDeep(this.mCustomData, arguments) || this._getDeep(this.mData, arguments);
+			var vValue = this.mCustomData[sKey];
+			if (vValue == null) {
+				vValue = this._getDeep(this.mCustomData, arguments);
+				if (vValue == null) {
+					vValue = this._getDeep(this.mData, arguments);
+				}
+			}
+
+			return vValue;
 		},
 
 		/**

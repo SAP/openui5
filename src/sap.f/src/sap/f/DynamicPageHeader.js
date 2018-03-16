@@ -109,7 +109,7 @@ sap.ui.define([
 			ARIA_EXPANDED: "aria-expanded",
 			ARIA_LABEL: "aria-label",
 			LABEL_EXPANDED: DynamicPageHeader._getResourceBundle().getText("EXPANDED_HEADER"),
-			LABEL_SNAPPED: DynamicPageHeader._getResourceBundle().getText("SNAPPED_HEADER"),
+			LABEL_COLLAPSED: DynamicPageHeader._getResourceBundle().getText("COLLAPSED_HEADER"),
 			LABEL_PINNED: DynamicPageHeader._getResourceBundle().getText("PIN_HEADER"),
 			LABEL_UNPINNED: DynamicPageHeader._getResourceBundle().getText("UNPIN_HEADER"),
 			TOOLTIP_COLLAPSE_BUTTON: DynamicPageHeader._getResourceBundle().getText("COLLAPSE_HEADER_BUTTON_TOOLTIP"),
@@ -216,7 +216,7 @@ sap.ui.define([
 				$header.attr(DynamicPageHeader.ARIA.ARIA_LABEL, DynamicPageHeader.ARIA.LABEL_EXPANDED);
 			} else {
 				$header.attr(DynamicPageHeader.ARIA.ARIA_EXPANDED, DynamicPageHeader.ARIA.STATE_FALSE);
-				$header.attr(DynamicPageHeader.ARIA.ARIA_LABEL, DynamicPageHeader.ARIA.LABEL_SNAPPED);
+				$header.attr(DynamicPageHeader.ARIA.ARIA_LABEL, DynamicPageHeader.ARIA.LABEL_COLLAPSED);
 			}
 		};
 

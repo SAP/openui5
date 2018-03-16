@@ -235,6 +235,16 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 			},
 
 			/**
+			 * Returns the drop configuration corresponding to the drop control.
+			 *
+			 * @returns {sap.ui.core.dnd.DropInfo|null}
+			 * @protected
+			 */
+			getDropInfo: function() {
+				return aValidDropInfos[0] || null;
+			},
+
+			/**
 			 * Returns the calculated position of the drop action relative to the valid dropped control.
 			 *
 			 * @returns {String}

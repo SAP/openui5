@@ -52,6 +52,7 @@ sap.ui.define([
          * @public
          * @since 1.38
          * @alias sap.m.RangeSlider
+		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/range-slider/ Range Slider}
          * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
          */
         var RangeSlider = Slider.extend("sap.m.RangeSlider", /** @lends sap.m.RangeSlider.prototype */ {

@@ -103,6 +103,7 @@ function(
 	 * @constructor
 	 * @public
 	 * @alias sap.m.SelectDialog
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/select-dialog/ Select Dialog}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SelectDialog = Control.extend("sap.m.SelectDialog", /** @lends sap.m.SelectDialog.prototype */ { metadata : {

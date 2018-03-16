@@ -4,8 +4,8 @@
 
 // Provides control sap.m.P13nSelectionPanel.
 sap.ui.define([
-	'jquery.sap.global', './ColumnListItem', './P13nPanel', './SearchField', './Table', './library', 'sap/ui/model/ChangeReason', 'sap/ui/model/json/JSONModel', 'sap/ui/model/BindingMode', 'sap/ui/core/ResizeHandler', 'sap/m/ScrollContainer', './P13nSelectionItem'
-], function(jQuery, ColumnListItem, P13nPanel, SearchField, Table, library, ChangeReason, JSONModel, BindingMode, ResizeHandler, ScrollContainer /*, kept for compatibility: P13nSelectionItem */) {
+	'jquery.sap.global', './ColumnListItem', './P13nPanel', './SearchField', './Table', './library', 'sap/ui/core/library','sap/ui/model/ChangeReason', 'sap/ui/model/json/JSONModel', 'sap/ui/model/BindingMode', 'sap/ui/core/ResizeHandler', 'sap/m/ScrollContainer', './P13nSelectionItem'
+], function(jQuery, ColumnListItem, P13nPanel, SearchField, Table, library, CoreLibrary, ChangeReason, JSONModel, BindingMode, ResizeHandler, ScrollContainer /*, kept for compatibility: P13nSelectionItem */) {
 	"use strict";
 
 	// shortcut for sap.m.ToolbarDesign
@@ -145,8 +145,8 @@ sap.ui.define([
 				var $dialogCont = null, iContentHeight, iHeaderHeight;
 				var oParent = that.getParent();
 				var oToolbar = that._getToolbar();
-				if (oParent) {
-					$dialogCont = jQuery("#" + oParent.getId() + "-cont");
+				if (oParent && oParent.$) {
+					$dialogCont = oParent.$("cont");
 					if ($dialogCont.children().length > 0 && oToolbar.$().length > 0) {
 						iScrollContainerHeightOld = oScrollContainer.$()[0].clientHeight;
 
@@ -335,6 +335,7 @@ sap.ui.define([
 			selectionChange: jQuery.proxy(this._onSelectionChange, this),
 			columns: [
 				new sap.m.Column({
+                    vAlign: CoreLibrary.VerticalAlign.Middle,
 					header: new sap.m.Text({
 						text: {
 							parts: [

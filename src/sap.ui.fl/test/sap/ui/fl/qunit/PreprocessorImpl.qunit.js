@@ -153,7 +153,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		var sCodeContent2 = "{onInit: function() { \nassert.ok(this.getView().getViewName() === \"sap.ui.fl.PreprocessorImpl.testResources.view2\", \"the extension of the second controller was applied and executed\"); \nthis.getView().callDone(); \n}}";
 		var sAsciiCodeContent2 = sap.ui.fl.Utils.stringToAscii(sCodeContent2);
 		var oCodingChange2 = {
-			fileName: "id_1436877480596_108",
+			fileName: "id_1436877480596_109",
 			namespace: "ui.s2p.mm.purchorder.approve.Component",
 			fileType: "change",
 			layer: "CUSTOMER",

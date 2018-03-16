@@ -64,20 +64,106 @@ module.exports = function(grunt) {
 					preload: {
 						src: [
 
-							'*.js',
+							'**/*.js',
+
+							// configuration copied from sap/ui/core/.library
 
 							// files are already part of sap-ui-core.js
+							'!sap/ui/thirdparty/baseuri.js',
 							'!sap/ui/thirdparty/es6-promise.js',
-							'!jquery.sap.global.js',
-							'!sap-ui-*.js',
+							'!sap/ui/thirdparty/es6-string-methods.js',
+							'!ui5loader*.js',
 
-							'sap/ui/core/**',
+							// exclude all merged files as well as the top level jQuery copy (not visible in OpenUI5)
+							'!jquery-*.js',
+							'!sap-*',
+							// CorePlugin, shouldn't be installed by default
+							'!sap/ui/core/plugin/DeclarativeSupport.js',
+							'!sap/ui/core/plugin/LessSupport.js',
+							// exclude non-productive code
+							'!sap/ui/debug/**',
+							'!sap/ui/core/support/**',
+							'!sap/ui/qunit/**',
+							'!sap/ui/test/**',
+							'!testsuite/**',
+							// Ignore substitutes for moved third party libs
+							'!jquery-ui-core.js',
+							'!jquery-ui-datepicker.js',
+							'!jquery-ui-position.js',
+							'!sap/ui/model/odata/datajs.js',
+							// Third party libs which should NOT be part of the all-in-one file
+							'!sap/ui/thirdparty/blanket.js',
+							// '!sap/ui/thirdparty/crossroads.js'
+							// '!sap/ui/thirdparty/caja-htmlsanitizer.js'
+							'!sap/ui/thirdparty/d3.js',
+							'!sap/ui/thirdparty/datajs.js',
+							'!sap/ui/thirdparty/flexie.js',
+							'!sap/ui/thirdparty/handlebars.js',
+							// '!sap/ui/thirdparty/hasher.js'
+							'!sap/ui/thirdparty/IPv6.js',
+							'!sap/ui/thirdparty/iscroll.js',
+							'!sap/ui/thirdparty/iscroll-lite.js',
+							'!sap/ui/thirdparty/jqueryui/jquery-ui-widget.js',
+							'!sap/ui/thirdparty/jqueryui/jquery-effect*.js',
+							'!sap/ui/thirdparty/jqueryui/jquery-ui-effect.js',
+							'!sap/ui/thirdparty/jqueryui/jquery-ui-effect-blind.js',
+							'!sap/ui/thirdparty/jqueryui/jquery-ui-effect-bounce.js',
+							'!sap/ui/thirdparty/jqueryui/jquery-ui-effect-clip.js',
+							'!sap/ui/thirdparty/jqueryui/jquery-ui-effect-drop.js',
+							'!sap/ui/thirdparty/jqueryui/jquery-ui-effect-explode.js',
+							'!sap/ui/thirdparty/jqueryui/jquery-ui-effect-fade.js',
+							'!sap/ui/thirdparty/jqueryui/jquery-ui-effect-fold.js',
+							'!sap/ui/thirdparty/jqueryui/jquery-ui-effect-highlight.js',
+							'!sap/ui/thirdparty/jqueryui/jquery-ui-effect-pulsate.js',
+							'!sap/ui/thirdparty/jqueryui/jquery-ui-effect-scale.js',
+							'!sap/ui/thirdparty/jqueryui/jquery-ui-effect-shake.js',
+							'!sap/ui/thirdparty/jqueryui/jquery-ui-effect-slide.js',
+							'!sap/ui/thirdparty/jqueryui/jquery-ui-effect-transfer.js',
+							'!sap/ui/thirdparty/jqueryui/jquery-ui-mouse.js',
+							'!sap/ui/thirdparty/jqueryui/jquery-ui-draggable.js',
+							'!sap/ui/thirdparty/jqueryui/jquery-ui-resizable.js',
+							'!sap/ui/thirdparty/jqueryui/jquery-ui-selectable.js',
+							'!sap/ui/thirdparty/jqueryui/jquery-ui-sortable.js',
+							'!sap/ui/thirdparty/jqueryui/jquery-ui-droppable.js',
+							'!sap/ui/thirdparty/jszip.js',
+							'!sap/ui/thirdparty/klay.js',
+							'!sap/ui/thirdparty/less.js',
+							'!sap/ui/thirdparty/mobify-carousel.js',
+							'!sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js',
+							'!sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js',
+							'!sap/ui/thirdparty/mobiscroll/js/mobiscroll-datetime.js',
+							'!sap/ui/thirdparty/punycode.js',
+							'!sap/ui/thirdparty/qunit-2.js',
+							'!sap/ui/thirdparty/qunit-composite.js',
+							'!sap/ui/thirdparty/qunit-reporter-junit.js',
+							'!sap/ui/thirdparty/qunit.js',
+							'!sap/ui/thirdparty/RequestRecorder.js',
+							'!sap/ui/thirdparty/require.js',
+							'!sap/ui/thirdparty/SecondLevelDomains.js',
+							// '!sap/ui/thirdparty/signals.js'
+							'!sap/ui/thirdparty/sinon-4.js',
+							'!sap/ui/thirdparty/sinon-ie.js',
+							'!sap/ui/thirdparty/sinon-qunit.js',
+							'!sap/ui/thirdparty/sinon-server.js',
+							'!sap/ui/thirdparty/sinon.js',
+							'!sap/ui/thirdparty/swipe-view.js',
+							'!sap/ui/thirdparty/unorm.js',
+							'!sap/ui/thirdparty/unormdata.js',
+							// URI is no longer excluded because it's needed in jquery.sap.global and others
+							// '!sap/ui/thirdparty/URI.js'
+							'!sap/ui/thirdparty/URITemplate.js',
+							'!sap/ui/thirdparty/vkbeautify.js',
+							'!sap/ui/thirdparty/zyngascroll.js',
+							// INCLUDED (because not mentioned in the list above) are the following libs:
+							// jquery.sap.global.js
+							// sap/ui/thirdparty/jquery-mobile-custom.js
+							// sap/ui/thirdparty/jqueryui/jquery-ui-core.js
+							// sap/ui/thirdparty/jqueryui/jquery-ui-position.js
+							// sap/ui/thirdparty/jqueryui/jquery-ui-datepicker.js
+
+							// exclude CLDR and messagebundles
 							'!sap/ui/core/cldr/**',
-							'!sap/ui/core/messagebundle*',
-
-							'sap/ui/base/**',
-							'sap/ui/model/**',
-							'sap/ui/Global.js'
+							'!sap/ui/core/messagebundle*'
 						]
 					}
 			},

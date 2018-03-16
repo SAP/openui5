@@ -128,6 +128,52 @@ sap.ui.define([
 			}
 
 			return oSelector;
+		},
+
+		/**
+		 * This function takes the fragment, goes through all the children and adds a prefix to the control's ID.
+		 * Can also handle 'FragmentDefinition' as root node, then all the children's IDs are prefixed.
+		 * Adds a '.' at the end of the prefix to separate it from the original ID.
+		 * Throws an error if any one of the controls in the fragment have no ID specified.
+		 * Aggregations will be ignored and don't need an ID.
+		 *
+		 * @param {Node} oFragment the fragment in XML
+		 * @param {string} sIdPrefix string which will be used to prefix the IDs
+		 * @returns {Node} Returns the original fragment in XML with updated IDs.
+		 */
+		checkAndPrefixIdsInFragment: function(oFragment, sIdPrefix) {
+			if (oFragment.parseError.errorCode !== 0) {
+				throw new Error(oFragment.parseError.reason);
+			}
+
+			var oControlNodes = oFragment.documentElement;
+
+			var aRootChildren = [], aChildren = [];
+			if (oControlNodes.localName === "FragmentDefinition") {
+				aRootChildren = Utils.getElementNodeChildren(oControlNodes);
+			} else {
+				aRootChildren = [oControlNodes];
+			}
+			aChildren = [].concat(aRootChildren);
+
+			// get all children and their children
+			function oCallback(oChild) {
+				aChildren.push(oChild);
+			}
+			for (var i = 0, n = aRootChildren.length; i < n; i++) {
+				Utils.traverseXmlTree(oCallback, aRootChildren[i]);
+			}
+
+			for (var j = 0, m = aChildren.length; j < m; j++) {
+				// aChildren[j].id is not available in IE11, therefore using .getAttribute/.setAttribute
+				if (aChildren[j].getAttribute("id")) {
+					aChildren[j].setAttribute("id", sIdPrefix + "." + aChildren[j].getAttribute("id"));
+				} else {
+					throw new Error("At least one control does not have a stable ID");
+				}
+			}
+
+			return oControlNodes;
 		}
 	};
 });

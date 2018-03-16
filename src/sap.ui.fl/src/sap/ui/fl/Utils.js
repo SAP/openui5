@@ -25,6 +25,7 @@ sap.ui.define([
 	aLayers.forEach(function(sLayer, iIndex){
 		mLayersIndex[sLayer] = iIndex;
 	});
+
 	/**
 	 * Provides utility functions for the SAPUI5 flexibility library
 	 *
@@ -889,15 +890,16 @@ sap.ui.define([
 		 * Deactivates hash based navigation while performing the operations, which is then re-activated upon completion.
 		 * If the passed doesn't exist in the url hash or technical parameters, then a new object is added respectively.
 		 *
-		 * @param  {object} oComponent Component instance used to get the technical parameters
+		 * @param {object} oComponent Component instance used to get the technical parameters
 		 * @param {string} sParameterName Name of the parameter (e.g. "sap-ui-fl-control-variant-id")
 		 * @param {string[]} aValues Array of values for the technical parameter
 		 */
 		setTechnicalURLParameterValues: function (oComponent, sParameterName, aValues) {
-			if (Utils.getUshellContainer()) {
+			var oUshellContainer = Utils.getUshellContainer();
+			if (oUshellContainer) {
 				hasher.changed.active = false; //disable changed signal
 
-				var oURLParser = sap.ushell.Container.getService("URLParsing");
+				var oURLParser = oUshellContainer.getService("URLParsing");
 				var oParsedHash = oURLParser.parseShellHash(oURLParser.getHash(window.location.href));
 				var mParams = oParsedHash.params;
 				var mTechnicalParameters = Utils.getTechnicalParametersForComponent(oComponent);
@@ -906,13 +908,13 @@ sap.ui.define([
 				}
 				if (aValues.length === 0) {
 					delete mParams[sParameterName];
-					mTechnicalParameters && delete mTechnicalParameters[sParameterName];// Case when ControlVariantsAPI.clearVariantParameterInURL is called with a parameter
+					mTechnicalParameters && delete mTechnicalParameters[sParameterName]; // Case when ControlVariantsAPI.clearVariantParameterInURL is called with a parameter
 				} else {
 					mParams[sParameterName] = aValues;
 					mTechnicalParameters && (mTechnicalParameters[sParameterName] = aValues); // Technical parameters need to be in sync with the URL hash
 				}
-				hasher.setHash(oURLParser.constructShellHash(oParsedHash)); //set hash without dispatching changed signal
-				hasher.changed.active = true; //re-enable signal
+				hasher.replaceHash(oURLParser.constructShellHash(oParsedHash)); // Set hash without dispatching changed signal nor writing history
+				hasher.changed.active = true; // Re-enable signal
 			}
 		},
 
@@ -1162,6 +1164,78 @@ sap.ui.define([
 		hasInterface: function(oElement, sInterface) {
 			var aInterfaces = oElement.getMetadata().getInterfaces();
 			return aInterfaces.indexOf(sInterface) !== -1;
+		},
+
+		/**
+		 * Gets the Metadata of am XML control.
+		 *
+		 * @param {Node} oControl control in XML
+		 * @returns {sap.ui.base.Metadata} Returns the Metadata of the control
+		 */
+		getControlMetadataInXml: function(oControl) {
+			var sControlType = this.getControlTypeInXml(oControl);
+			jQuery.sap.require(sControlType);
+			var ControlType = jQuery.sap.getObject(sControlType);
+			return ControlType.getMetadata();
+		},
+
+		/**
+		 * Gets the ControlType of an XML control
+		 *
+		 * @param {Node} oControl control in XML
+		 * @returns {string} Returns the control type as a string, e.g. 'sap.m.Button'.
+		 */
+		getControlTypeInXml: function (oControl) {
+			var sControlType = oControl.namespaceURI;
+			sControlType = sControlType ? sControlType + "." : ""; // add a dot if there is already a prefix
+			sControlType += oControl.localName;
+
+			return sControlType;
+		},
+
+		/**
+		 * Gets all the children of an XML Node that are element nodes
+		 *
+		 * @param {Node} oNode XML Node
+		 * @returns {Node[]} Returns an array with the children of the node.
+		 */
+		getElementNodeChildren: function(oNode) {
+			var aChildren = [];
+			var aNodes = oNode.childNodes;
+			for (var i = 0, n = aNodes.length; i < n; i++) {
+				if (aNodes[i].nodeType === 1) {
+					aChildren.push(aNodes[i]);
+				}
+			}
+			return aChildren;
+		},
+
+		/**
+		 * Recursively goes through an XML Tree and calls a callback function for every control inside
+		 * Does not call the callback function for aggregations
+		 *
+		 * @param {function} fnCallback function that will be called for every control with the following argument:
+		 * 								{Node} node Element
+		 * @param {Node} oRootNode rootnode from which we start traversing the tree
+		 */
+		traverseXmlTree: function(fnCallback, oRootNode) {
+			function recurse(oParent, oCurrentNode, bIsAggregation) {
+				var oAggregations;
+				if (!bIsAggregation) {
+					var oMetadata = Utils.getControlMetadataInXml(oCurrentNode);
+					oAggregations = oMetadata.getAllAggregations();
+				}
+				var aChildren = Utils.getElementNodeChildren(oCurrentNode);
+				aChildren.forEach(function(oChild) {
+					var bIsCurrentNodeAggregation = oAggregations && oAggregations[oChild.localName];
+					recurse(oCurrentNode, oChild, bIsCurrentNodeAggregation);
+					// if it's an aggregation, we don't call the callback function
+					if (!bIsCurrentNodeAggregation) {
+						fnCallback(oChild);
+					}
+				});
+			}
+			recurse(oRootNode, oRootNode, false);
 		}
 	};
 	return Utils;

@@ -9,9 +9,10 @@ sap.ui.define([
     'sap/ui/core/library',
     'sap/ui/model/resource/ResourceModel',
     './View',
-    "./JSONViewRenderer"
+    "./JSONViewRenderer",
+    "./EventHandlerResolver"
 ],
-	function(jQuery, ManagedObject, library, ResourceModel, View, JSONViewRenderer) {
+	function(jQuery, ManagedObject, library, ResourceModel, View, JSONViewRenderer, EventHandlerResolver) {
 	"use strict";
 
 	// shortcut for enum(s)
@@ -169,7 +170,7 @@ sap.ui.define([
 								break;
 							case 5: // EVENTS
 								if ( typeof oValue === "string" ) {
-									oSettings[sKey] = View._resolveEventHandler(oValue, oController);
+									oSettings[sKey] = EventHandlerResolver.resolveEventHandler(oValue, oController);
 								}
 								break;
 							}

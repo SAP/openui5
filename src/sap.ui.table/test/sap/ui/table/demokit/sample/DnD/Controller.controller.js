@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/MessageToast"
-], function(Controller, JSONModel, MessageToast) {
+	"sap/m/MessageToast",
+	"sap/ui/table/sample/TableExampleUtils"
+], function(Controller, JSONModel, MessageToast, TableExampleUtils) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.DnD.Controller", {
@@ -185,8 +186,7 @@ sap.ui.define([
 		},
 
 		showInfo : function(oEvent) {
-			jQuery.sap.require("sap.ui.table.sample.TableExampleUtils");
-			sap.ui.table.sample.TableExampleUtils.showInfo(jQuery.sap.getModulePath("sap.ui.table.sample.DnD", "/info.json"), oEvent.getSource());
+			TableExampleUtils.showInfo(jQuery.sap.getModulePath("sap.ui.table.sample.DnD", "/info.json"), oEvent.getSource());
 		}
 	});
 

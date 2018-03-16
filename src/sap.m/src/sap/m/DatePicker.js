@@ -851,7 +851,27 @@ sap.ui.define([
 		return this;
 	};
 
+	DatePicker.prototype._storeInputSelection = function (oInput) {
+		if (Device.browser.msie || Device.browser.edge) {
+			//For IE & Edge, any selection of the underlying input must be removed before opening the picker popup,
+			//otherwise the input will receive focus via TAB during the picker is opened. The selection is restored back
+			//when the popup is closed
+			this._oInputSelBeforePopupOpen = {
+				iStart: oInput.selectionStart,
+				iEnd: oInput.selectionEnd
+			};
+			oInput.selectionStart = 0;
+			oInput.selectionEnd = 0;
+		}
+	};
 
+	DatePicker.prototype._restoreInputSelection = function (oInput) {
+		if (Device.browser.msie || Device.browser.edge) {
+			//The selection is restored back due to issue with IE & Edge. See _handleBeforeOpen
+			oInput.selectionStart = this._oInputSelBeforePopupOpen.iStart;
+			oInput.selectionEnd = this._oInputSelBeforePopupOpen.iEnd;
+		}
+	};
 
 
 	function _open(){
@@ -1178,6 +1198,7 @@ sap.ui.define([
 	}
 
 	function _handleOpened(oEvent) {
+		this._storeInputSelection(this._$input.get(0));
 
 		this._renderedDays = this._oCalendar.$("-Month0-days").find(".sapUiCalItem").length;
 
@@ -1188,6 +1209,8 @@ sap.ui.define([
 
 	function _handleClosed(oEvent) {
 		this.$("inner").attr("aria-expanded", false);
+
+		this._restoreInputSelection(this._$input.get(0));
 	}
 
 	function _resizeCalendar(oEvent){

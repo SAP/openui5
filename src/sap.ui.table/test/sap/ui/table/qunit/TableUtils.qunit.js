@@ -669,7 +669,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("getNoDataText", function(assert) {
-		assert.equal(TableUtils.getNoDataText(oTable), oTable._oResBundle.getText("TBL_NO_DATA"));
+		assert.equal(TableUtils.getNoDataText(oTable), TableUtils.getResourceBundle().getText("TBL_NO_DATA"));
 		oTable.setNoData("Foobar");
 		assert.equal(TableUtils.getNoDataText(oTable), "Foobar");
 		oTable.setNoData(new Control());
@@ -834,6 +834,7 @@ sap.ui.require([
 		assert.ok(checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable not loaded before check");
 		assert.equal(TableUtils.isInstanceOf(oAnalyticalTable, "sap/ui/table/AnalyticalTable"), true, "Is of type sap.ui.table.AnalyticalTable");
 		assert.ok(checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable not loaded after check");
+		oAnalyticalTable.destroy();
 	});
 
 	QUnit.test("isFirstScrollableRow / isLastScrollableRow", function(assert) {
@@ -894,6 +895,70 @@ sap.ui.require([
 		oElement = getCell(0, 0);
 		assert.ok(TableUtils.getCell(oTable, oElement).is(oElement), "Returned Data Cell");
 		assert.ok(TableUtils.getCell(oTable, oElement.find(":first")).is(oElement), "Returned Data Cell");
+	});
+
+	QUnit.test("getResourceBundle", function(assert) {
+		var pPromise;
+		var oBundle;
+		var oPreviousBundle;
+		var sOriginalLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+		var sTestLanguageA = sOriginalLanguage === "en-US" ? "de-DE" : "en-US";
+		var sTestLanguageB = sOriginalLanguage === "en-US" ? "fr-FR" : "en-US";
+		var fnOnLocalizationChanged = Table.prototype.onlocalizationChanged;
+		var done = assert.async();
+
+		Table.prototype.onlocalizationChanged = function() {};
+
+		/* Synchronous */
+
+		oBundle = TableUtils.getResourceBundle();
+		assert.ok(jQuery.sap.resources.isBundle(oBundle), "{async: false, reload: false} - Should return a bundle");
+		assert.strictEqual(TableUtils.getResourceBundle(), oBundle, "{async: false, reload: false} - Should return the already loaded bundle");
+
+		sap.ui.getCore().getConfiguration().setLanguage(sTestLanguageA);
+
+		oPreviousBundle = oBundle;
+		assert.strictEqual(TableUtils.getResourceBundle(), oBundle,
+			"{async: false, reload: false} (language changed) - Should return the already loaded bundle");
+		oBundle = TableUtils.getResourceBundle({reload: true});
+		assert.ok(oBundle !== oPreviousBundle && jQuery.sap.resources.isBundle(oBundle),
+			"{async: false, reload: true} - Should return a new bundle");
+		assert.strictEqual(TableUtils.getResourceBundle({reload: true}), oBundle,
+			"{async: false, reload: true} - Should return the already loaded bundle");
+
+		/* Asynchronous */
+
+		sap.ui.getCore().getConfiguration().setLanguage(sTestLanguageB);
+
+		pPromise = TableUtils.getResourceBundle({async: true});
+		assert.ok(pPromise instanceof Promise, "{async: true, reload: false} (language changed) - Should return a Promise");
+		pPromise.then(function(_oBundle) {
+			oPreviousBundle = oBundle;
+			oBundle = _oBundle;
+			assert.strictEqual(oBundle, oPreviousBundle, "Promise should return the already loaded bundle");
+
+			pPromise = TableUtils.getResourceBundle({async: true, reload: true});
+			assert.ok(pPromise instanceof Promise, "{async: true, reload: true} - Should return a Promise");
+			return pPromise;
+		}).then(function(_oBundle) {
+			oPreviousBundle = oBundle;
+			oBundle = _oBundle;
+			assert.ok(oBundle !== oPreviousBundle && jQuery.sap.resources.isBundle(oBundle), "Promise should return a new bundle");
+
+			pPromise = TableUtils.getResourceBundle({async: true, reload: true});
+			assert.ok(pPromise instanceof Promise, "{async: true, reload: true} - Should return a Promise");
+			return pPromise;
+		}).then(function(_oBundle) {
+			oPreviousBundle = oBundle;
+			oBundle = _oBundle;
+			assert.strictEqual(oBundle, oPreviousBundle, "Promise should return the already loaded bundle");
+		}).then(function() {
+			// Restore
+			sap.ui.getCore().getConfiguration().setLanguage(sOriginalLanguage);
+			Table.prototype.onlocalizationChanged = fnOnLocalizationChanged;
+
+			done();
+		});
 	});
 
 	QUnit.module("Cozy", {

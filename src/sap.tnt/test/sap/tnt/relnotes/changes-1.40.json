@@ -24,31 +24,56 @@
 				"id": "4bf589e3e3ab1b885abaeb8903a84e07eb8687a1",
 				"type": "FIX",
 				"text": "sap.tnt.NavigationList: Focus is now styled correctly",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1570874790"
+					}
+				]
 			},
 			{
 				"id": "0ec17ff58341b34c6a28a0b70593acd50a3b64b7",
 				"type": "FIX",
 				"text": "sap.tnt.NavigationList: Icon rendering issue solved",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670303055"
+					}
+				]
 			},
 			{
 				"id": "8485c3f9f1d64c95a6e86bb6599719267f1c5fb8",
 				"type": "FIX",
 				"text": "sap.tnt.SideNavigation: Blinking effect on collapse is not visible anymore",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670074223"
+					}
+				]
 			},
 			{
 				"id": "0e2f3315124f17d6043cbddc970e9e2c9a739f81",
 				"type": "FIX",
 				"text": "sap.tnt.SideNavigation: Fix Typo in Sample",
-				"references": []
+				"references": [
+					{
+						"type": "GitHub",
+						"reference": "895"
+					}
+				]
 			},
 			{
 				"id": "a1c85a8b8fb725e9b69adaac388533ec62c781f9",
 				"type": "FIX",
 				"text": "sap.tnt.SideNavigation: Window scrolling in iOS is now prevented",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670250764"
+					}
+				]
 			},
 			{
 				"id": "ca42118022c75402a16a9f53da5c359d5de4ed25",
@@ -60,13 +85,23 @@
 				"id": "96ac3265ad453238b8fd8790b398f3333e5966dd",
 				"type": "FIX",
 				"text": "sap.tnt.ToolPage: sideExpanded is fixed for Phone use case",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670279327"
+					}
+				]
 			},
 			{
 				"id": "1134d85bafbd28f8c14ae8e021dd243ca88408de",
 				"type": "FIX",
 				"text": "sap.tnt.ToolPage: sideExpanded is fixed in IE",
-				"references": []
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670279635"
+					}
+				]
 			}
 		]
 	}

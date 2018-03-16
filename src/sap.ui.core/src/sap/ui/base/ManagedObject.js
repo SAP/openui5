@@ -3200,14 +3200,11 @@ sap.ui.define([
 				}
 			};
 
-		// Only use context for bindings on the primary model
-		oContext = this.getBindingContext(oBindingInfo.model);
-
 		oBindingInfo.parts.forEach(function(oPart) {
-			// Only use context for bindings on the primary model
+			// get context and model for this part
 			oContext = that.getBindingContext(oPart.model);
-			// Create binding object
 			oModel = that.getModel(oPart.model);
+
 			// Create type instance if needed
 			oType = oPart.type;
 			if (typeof oType == "string") {

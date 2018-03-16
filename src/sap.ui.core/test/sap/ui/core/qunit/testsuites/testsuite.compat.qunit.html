@@ -12,6 +12,8 @@
 			var suite = new parent.jsUnitTestSuite();
 			var contextPath = "/" + window.location.pathname.split("/")[1];
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.global-compat.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.stubs.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.stubs-async.qunit.html");
 			return suite;
 		}
 

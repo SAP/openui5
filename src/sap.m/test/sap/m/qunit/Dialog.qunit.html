@@ -1250,6 +1250,68 @@
 				oDialog.destroy();
 			});
 
+			QUnit.module("PopUp Position",{
+				beforeEach: function() {
+					this.oDialog = new sap.m.Dialog({
+						title: "Some title"
+					});
+					this.mockPosition = {};
+				},
+				afterEach: function() {
+					this.oDialog.destroy();
+					this.mockPosition = null;
+				}
+			});
+
+			QUnit.test("Check if device is ios", function(assert) {
+				this.stub(sap.ui.Device, "os", {ios: true});
+
+				// act
+				this.oDialog.open();
+
+				this.clock.tick(500);
+
+				this.stub(window, "scrollY", 50);
+				this.oDialog.oPopup._applyPosition(this.mockPosition);
+
+				// assert
+				assert.strictEqual(this.mockPosition.at.top, "calc(50% + 0px)", "The top position should not add additional pixels in scrollPosY ");
+				assert.strictEqual(this.mockPosition.at.left, "calc(50% + 0px)", "The left position should not add additional pixels in scrollPosX");
+
+			});
+
+			QUnit.test("ScrollY should be included in the top position calculation", function(assert) {
+				this.stub(sap.ui.Device, "os", {ios: false});
+
+				// act
+				this.oDialog.open();
+
+				this.clock.tick(500);
+
+				this.stub(window, "scrollY", 50);
+				this.oDialog.oPopup._applyPosition(this.mockPosition);
+
+				// assert
+				assert.strictEqual(this.mockPosition.at.top, "calc(50% + 50px)", "The top position should include scrollPosY");
+				assert.strictEqual(this.mockPosition.at.left, "calc(50% + 0px)", "The left position should not add additional pixels in scrollPosX");
+			});
+
+			QUnit.test("ScrollY should not be included in the top position calculation", function(assert) {
+				this.stub(sap.ui.Device, "os", {ios: false});
+
+				// act
+				this.oDialog.open();
+
+				this.clock.tick(500);
+
+				this.stub(window, "scrollY", -50);
+				this.oDialog.oPopup._applyPosition(this.mockPosition);
+
+				// assert
+				assert.strictEqual(this.mockPosition.at.top, "calc(50% + 0px)", "The top position should not add additional pixels in scrollPosY ");
+				assert.strictEqual(this.mockPosition.at.left, "calc(50% + 0px)", "The left position should not add additional pixels in scrollPosX");
+			});
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

@@ -1318,6 +1318,27 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		});
 	});
 
+	QUnit.test("create_ui_setDeviceTypes", function(assert) {
+		return DescriptorInlineChangeFactory.create_ui_setDeviceTypes({
+			"deviceTypes" : { "desktop" : true, "tablet" : true, "phone" : true }
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+		});
+	});
+
+	QUnit.test("create_ui_setDeviceTypes failure", function (assert) {
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_ui_setDeviceTypes({
+				"types" : { "desktop" : true, "tablet" : true, "phone" : true }
+			});
+		});
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_ui_setDeviceTypes({
+				"deviceTypes" : "desktop"
+			});
+		});
+	});
+
 	QUnit.test("create_url_setUri", function(assert) {
 		return DescriptorInlineChangeFactory.create_url_setUri({
 			"uri" : "uri.com"

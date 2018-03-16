@@ -349,11 +349,12 @@ sap.ui.define([
 		} else if (iCellType === CellType.ROWACTION) {
 			oCell = oTable.getDomRef("rowact" + iRowIndex);
 		} else if (iCellType === CellType.DATACELL
-				   && (iColumnIndex != null && iColumnIndex >= 0 && iColumnIndex < TableUtils.getVisibleColumnCount(oTable))) {
+				   && (iColumnIndex != null && iColumnIndex >= 0)) {
 			var oColumn = oTable.getColumns()[iColumnIndex];
 			var iColumnIndexInCellsAggregation = TableKeyboardDelegate._getColumnIndexInVisibleAndGroupedColumns(oTable, oColumn);
-
-			oCell = oRow.getDomRef("col" + iColumnIndexInCellsAggregation);
+			if (iColumnIndexInCellsAggregation >= 0 && iColumnIndexInCellsAggregation < TableUtils.getVisibleColumnCount(oTable)) {
+				oCell = oRow.getDomRef("col" + iColumnIndexInCellsAggregation);
+			}
 		}
 
 		if (oCell == null) {
@@ -826,11 +827,10 @@ sap.ui.define([
 			if (!TableUtils.isNoDataVisible(this)) {
 				TableKeyboardDelegate._restoreFocusOnLastFocusedDataCell(this, oEvent);
 			}
-			/* else {
-			 // If needed and NoData visible, then set the focus to NoData area.
-			 this.$("noDataCnt").focus();
-			 }*/
-		}
+		}/* else {
+			// If needed and NoData visible, then set the focus to NoData area.
+			this.$("noDataCnt").focus();
+		}*/
 
 		var $Cell = TableUtils.getParentCell(this, $Target);
 		var bElementIsInCell = $Cell !== null;

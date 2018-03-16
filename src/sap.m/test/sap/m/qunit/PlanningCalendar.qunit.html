@@ -192,7 +192,7 @@
 							tooltip: "Tooltip 4",
 							selected: true
 						})
-					]
+					],
 				}),
 					new sap.m.PlanningCalendarRow(sID + "-Row2", {
 						icon: "../../ui/unified/images/m_01.png",
@@ -682,6 +682,21 @@
 			oCalendarRow = oRow.getCalendarRow();
 			assert.ok(jQuery.sap.equal(oCalendarRow.getNonWorkingDays(), [2, 3]), "Row2: CalendarRow - nonWorkingDays");
 			assert.ok(jQuery.sap.equal(oCalendarRow.getNonWorkingHours(), [11, 12]), "Row2: CalendarRow - nonWorkingHours");
+		});
+
+		QUnit.test("PlanningCalendarRow's customData is used", function () {
+			// Prepare
+			var oCustomData = new sap.ui.core.CustomData();
+
+			// Act
+			var oPCRow = new sap.m.PlanningCalendarRow({
+				customData: oCustomData
+			});
+
+			// Assert
+			assert.deepEqual(oPCRow._oColumnListItem.getCustomData(), oPCRow.getCustomData(),
+				"getCustomData of PlanningCalendarRow is used by internal ColumnListItem");
+
 		});
 
 		QUnit.test("Table", function(assert) {
@@ -2386,6 +2401,39 @@
 			qutils.triggerKeydown(sMonthIdPrefix + "20160910", "END");
 			sap.ui.getCore().applyChanges();
 			assert.equal(document.activeElement.id,  sMonthIdPrefix + "20160930", "30 of September focused");
+		});
+
+		QUnit.test("keyboard navigation ARROW_RIGHT for 1 Month view at the border of 2 months", function (assert) {
+			// Prepare
+			var oApp1stOct2016 = new CalendarAppointment("app1stOct2016", {
+				startDate: new Date(2016, 9, 1, 17),
+				endDate: new Date(2016, 9, 1, 18)
+			}), $30Sep, $1stOct;
+
+
+			this.oPC2.getRows()[0].addAppointment(oApp1stOct2016);
+			_switchToView(CalendarIntervalType.OneMonth, this.oPC2);
+			this.oPC2.setStartDate(this.o1Sep2016MidOfWeek);
+			sap.ui.getCore().applyChanges();
+
+			// Get days
+			this.oPC2Interval = this.oPC2.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
+			this.oPC2IntervalRow = this.oPC2Interval.getAggregation('month')[0];
+
+			aDays = this.oPC2IntervalRow.$("days").children();
+			$30Sep = aDays[29];
+			$1stOct = aDays[30];
+
+			// Act
+			// Focus 30th of Sep, 2016 and move right via keyboard, expect appointment for 1 of Oct to be visible once
+			// the view is switched to October
+			qutils.triggerEvent("mousedown", $30Sep); //focus should be done via mouse events, since this is the way Month.js handles focusing
+			qutils.triggerEvent("mouseup", $30Sep);
+			_navFocusNext.call(this, $1stOct);
+
+			// Assert
+			assert.ok(oApp1stOct2016.getDomRef(), "Once moved to October, the 1st appoint. should be visible");
+
 		});
 
 		QUnit.test("When start date is defined the planning calendar should shift to the first day of the week that includes the start date ", function(assert) {

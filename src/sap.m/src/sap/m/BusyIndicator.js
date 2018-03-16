@@ -52,6 +52,7 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.m.BusyIndicator
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/busy-indicator/ Busy Indicator}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var BusyIndicator = Control.extend("sap.m.BusyIndicator", /** @lends sap.m.BusyIndicator.prototype */ { metadata : {

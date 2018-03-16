@@ -551,9 +551,17 @@
 		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 2, "2 digits fuer EUR");
 		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "0 digits fuer JPY");
 		assert.equal(oLocaleData.getCurrencyDigits("BHD"), 3, "3 digits fuer BHD");
-		// Cash digits
+
+		// CZK, CRC, SEK and NOK are explicitly tested
+		// For these currencies the cash digits in the CLDR differ from the standard digits in CLDR,
+		// as well as SAP's TCURX
+		assert.equal(oLocaleData.getCurrencyDigits("CZK"), 2, "2 digits fuer CZK");
+		assert.equal(oLocaleData.getCurrencyDigits("CRC"), 2, "2 digits fuer CRC");
+		assert.equal(oLocaleData.getCurrencyDigits("SEK"), 2, "2 digits fuer SEK");
+		assert.equal(oLocaleData.getCurrencyDigits("NOK"), 2, "2 digits fuer NOK");
+
+		// HUF and TWD are explicitly set to 0 digits
 		assert.equal(oLocaleData.getCurrencyDigits("HUF"), 0, "0 digits fuer HUF");
-		assert.equal(oLocaleData.getCurrencyDigits("CZK"), 0, "0 digits fuer CZK");
 		assert.equal(oLocaleData.getCurrencyDigits("TWD"), 0, "0 digits fuer TWD");
 	});
 
@@ -764,6 +772,40 @@
 			//check retrieval of languages to see if the localeData was successfully loaded
 			assert.ok(Object.keys(oLocaleData.getLanguages()).length > 0, "languages are present for locale: " + sLocale);
 		});
+	});
+
+	QUnit.test("Currency Digits", function(assert) {
+
+		var oLocaleData = sap.ui.core.LocaleData.getInstance(
+			sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()
+		);
+
+		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
+		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 2, "number of digits for Euro");
+
+		sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies({"JPY": {"digits": 3}});
+		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 3, "number of digits for Japanese Yen");
+		sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies({"EUR": {"digits": 3}});
+		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
+
+		sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies();
+		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
+
+
+		sap.ui.getCore().getConfiguration().getFormatSettings().addCustomCurrencies();
+		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
+
+		sap.ui.getCore().getConfiguration().getFormatSettings().addCustomCurrencies({"EUR": {"digits": 3}});
+		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 3, "number of digits for Euro");
+		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
+
+		sap.ui.getCore().getConfiguration().getFormatSettings().addCustomCurrencies({"JPY": {"digits": 3}});
+		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 3, "number of digits for Euro");
+		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 3, "number of digits for Japanese Yen");
+
+		sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies();
+		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 2, "number of digits for Euro");
+		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
 	});
 
 </script>

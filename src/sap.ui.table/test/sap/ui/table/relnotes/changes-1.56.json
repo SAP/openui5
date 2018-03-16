@@ -19,6 +19,24 @@
         "type": "FIX",
         "text": " TreeTable: Outline offset of tree icon in zoom levels \u003c 100%",
         "references": []
+      },
+      {
+        "id": "964f990699939f33c47044823f0222f1d74412e1",
+        "type": "FIX",
+        "text": " GridTable: Color contrast of Information Highlight fixed in HCB/W",
+        "references": []
+      },
+      {
+        "id": "a73a2443094c0bd2e428a9d94c091cb96ce4352b",
+        "type": "FIX",
+        "text": " GridTable: Fix update of firstVisibleRow on scrolling",
+        "references": []
+      },
+      {
+        "id": "8d2a3caaf2a2539e9ebd1461ff4b7343735a4bd1",
+        "type": "FIX",
+        "text": " GridTable: Scrollbar styling in base theme",
+        "references": []
       }
     ]
   }

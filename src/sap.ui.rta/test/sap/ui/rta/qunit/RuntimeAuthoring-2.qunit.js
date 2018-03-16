@@ -5,6 +5,7 @@ sap.ui.require([
 	// Controls
 	'sap/m/Button',
 	'sap/m/MessageBox',
+	'sap/m/MessageToast',
 	// internal
 	'sap/ui/dt/plugin/ContextMenu',
 	'sap/ui/dt/OverlayRegistry',
@@ -24,13 +25,11 @@ sap.ui.require([
 	'sap/ui/base/Event',
 	'sap/ui/rta/command/BaseCommand',
 	'sap/ui/rta/qunit/RtaQunitUtils',
-	// should be last
-	'sap/ui/thirdparty/sinon',
-	'sap/ui/thirdparty/sinon-ie',
-	'sap/ui/thirdparty/sinon-qunit'
+	'sap/ui/thirdparty/sinon'
 ], function(
 	Button,
 	MessageBox,
+	MessageToast,
 	ContextMenu,
 	OverlayRegistry,
 	Settings,
@@ -629,6 +628,101 @@ sap.ui.require([
 		QUnit.test("and FL settings return rejected promise", function(assert) {
 			assert.equal(this.oRta.getToolbar().getControl('restore').getVisible(), true, "then the Reset Button is still visible");
 			assert.equal(this.oRta.getToolbar().getControl('publish').getVisible(), false, "then the Publish Button is invisible");
+		});
+	});
+
+	QUnit.module("Given that RuntimeAuthoring is created but not started", {
+		beforeEach : function(assert) {
+			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
+			this.oRta = new RuntimeAuthoring({
+				rootControl : this.oRootControl
+			});
+		},
+		afterEach : function(assert) {
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when _onUnload is called with changes", function(assert) {
+			sandbox.stub(this.oRta, "getCommandStack").returns({
+				canUndo: function() {
+					return true;
+				}
+			});
+			var sMessage = this.oRta._onUnload();
+			assert.equal(sMessage, this.oRta._getTextResources().getText("MSG_UNSAVED_CHANGES"), "then the function returns the correct message");
+		});
+
+		QUnit.test("when _onUnload is called with changes but 'showWindowUnloadDialog' set to false", function(assert) {
+			sandbox.stub(this.oRta, "getCommandStack").returns({
+				canUndo: function() {
+					return true;
+				}
+			});
+			this.oRta.setShowWindowUnloadDialog(false);
+			var sMessage = this.oRta._onUnload();
+			assert.equal(sMessage, undefined, "then the function returns no message");
+		});
+
+		QUnit.test("when _onUnload is called without changes", function(assert) {
+			sandbox.stub(this.oRta, "getCommandStack").returns({
+				canUndo: function() {
+					return false;
+				},
+				canRedo: function() {
+					return false;
+				}
+			});
+			var sMessage = this.oRta._onUnload();
+			assert.equal(sMessage, undefined, "then the function returns no message");
+		});
+
+		QUnit.test("when getSelection is called with no designtime available", function(assert) {
+			var aSelection = this.oRta.getSelection();
+			assert.ok(Array.isArray(aSelection), "then it still returns an array");
+			assert.equal(aSelection.length, 0, "and the array is empty");
+		});
+
+		QUnit.test("when _showMessageToast is called", function(assert) {
+			var oMessageToastStub = sandbox.stub(MessageToast, "show");
+			sandbox.stub(this.oRta, "_getTextResources").returns({
+				getText: function() {
+					return "myMessage";
+				}
+			});
+			this.oRta._showMessageToast("myMessage");
+			assert.equal(oMessageToastStub.callCount, 1, "then one message toast was opened");
+			assert.equal(oMessageToastStub.lastCall.args[0], "myMessage", "and the message was set correctly");
+		});
+
+		QUnit.test("when _onElementEditableChange is called", function(assert) {
+			assert.equal(this.oRta.iEditableOverlaysCount, 0, "initially the counter is 0");
+
+			this.oRta._onElementEditableChange({
+				getParameter: function() {
+					return true;
+				}
+			});
+			assert.equal(this.oRta.iEditableOverlaysCount, 1, "the counter is now 1");
+
+			this.oRta._onElementEditableChange({
+				getParameter: function() {
+					return false;
+				}
+			});
+			assert.equal(this.oRta.iEditableOverlaysCount, 0, "the counter is now 0 again");
+		});
+
+		QUnit.test("when _checkChangesExist is called without a componentName", function(assert) {
+			sandbox.stub(this.oRta, "_getFlexController").returns({
+				getComponentName: function() {
+					return [];
+				}
+			});
+
+			return this.oRta._checkChangesExist().then(function(bPromiseValue) {
+				assert.equal(bPromiseValue, false, "then the promise resolved with false as parameter");
+			});
 		});
 	});
 

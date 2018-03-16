@@ -3,33 +3,34 @@
  */
 
 // Provides functionality related to DOM analysis and manipulation which is not provided by jQuery itself.
-sap.ui.define(['jquery.sap.global', 'sap/ui/dom/focus', 'sap/ui/dom/containsOrEquals',
-		'sap/ui/dom/replaceNode', 'sap/ui/dom/syncStyleClass', 'sap/ui/dom/ownerWindow', 'sap/ui/dom/scrollbarSize',
-		'sap/ui/dom/denormalizeScrollLeftRTL', 'sap/ui/dom/denormalizeScrollBeginRTL',
-		'sap/ui/dom/units/Rem', 'sap/ui/dom/jquery/byId', 'sap/ui/dom/jquery/Aria',
-		'sap/ui/dom/jquery/Selection', 'sap/ui/dom/jquery/zIndex', 'sap/ui/dom/jquery/parentByAttribute',
-		'sap/ui/dom/jquery/cursorPos', 'sap/ui/dom/jquery/selectText', 'sap/ui/dom/jquery/getSelectedText',
-		'sap/ui/dom/jquery/outerHTML', 'sap/ui/dom/jquery/rect', 'sap/ui/dom/jquery/rectContains', 'sap/ui/dom/jquery/Focusable',
-		'sap/ui/dom/jquery/hasTabIndex', 'sap/ui/dom/jquery/scrollLeftRTL', 'sap/ui/dom/jquery/scrollRightRTL', 'sap/ui/dom/jquery/Selectors'],
-	function(jQuery, domFocus, domContainsOrEquals, domReplaceNode, domSyncStyleClass, domOwnerWindow,
-	         domScrollbarSize, domDenormalizeScrollLeftRTL, domDenormalizeScrollBeginRTL, domUnitsRem,
-	         jqueryById /*,
-	         jqueryAria,
-	         jquerySelection,
-	         jqueryzIndex,
-	         jqueryParentByAttribute,
-	         jqueryCursorPos,
-	         jquerySelectText,
-	         jqueryGetSelectedText,
-	         jqueryOuterHTML,
-	         jqueryRect,
-	         jqueryRectContains,
-	         jqueryFocusable,
-	         jqueryHasTabIndex,
-	         jqueryScrollLeftRTL,
-	         jqueryScrollRightRTL,
-	         jquerySelectors*/
-	) {
+sap.ui.define([
+	'jquery.sap.global', 'sap/ui/dom/focus', 'sap/ui/dom/containsOrEquals',
+	'sap/ui/dom/replaceNode', 'sap/ui/dom/syncStyleClass', 'sap/ui/dom/ownerWindow', 'sap/ui/dom/scrollbarSize',
+	'sap/ui/dom/denormalizeScrollLeftRTL', 'sap/ui/dom/denormalizeScrollBeginRTL',
+	'sap/ui/dom/units/Rem', 'sap/ui/dom/jquery/byId', 'sap/ui/dom/jquery/Aria',
+	'sap/ui/dom/jquery/Selection', 'sap/ui/dom/jquery/zIndex', 'sap/ui/dom/jquery/parentByAttribute',
+	'sap/ui/dom/jquery/cursorPos', 'sap/ui/dom/jquery/selectText', 'sap/ui/dom/jquery/getSelectedText',
+	'sap/ui/dom/jquery/outerHTML', 'sap/ui/dom/jquery/rect', 'sap/ui/dom/jquery/rectContains', 'sap/ui/dom/jquery/Focusable',
+	'sap/ui/dom/jquery/hasTabIndex', 'sap/ui/dom/jquery/scrollLeftRTL', 'sap/ui/dom/jquery/scrollRightRTL', 'sap/ui/dom/jquery/Selectors'
+], function(jQuery, domFocus, domContainsOrEquals, domReplaceNode, domSyncStyleClass, domOwnerWindow,
+	domScrollbarSize, domDenormalizeScrollLeftRTL, domDenormalizeScrollBeginRTL, domUnitsRem,
+	jqueryById/*,
+	jqueryAria,
+	jquerySelection,
+	jqueryzIndex,
+	jqueryParentByAttribute,
+	jqueryCursorPos,
+	jquerySelectText,
+	jqueryGetSelectedText,
+	jqueryOuterHTML,
+	jqueryRect,
+	jqueryRectContains,
+	jqueryFocusable,
+	jqueryHasTabIndex,
+	jqueryScrollLeftRTL,
+	jqueryScrollRightRTL,
+	jquerySelectors*/
+) {
 	"use strict";
 
 	/**

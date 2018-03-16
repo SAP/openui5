@@ -261,7 +261,9 @@
 			}.bind(this),delay);
 		});
 
-		QUnit.test("ShouldScrollIntoAView", function(assert) {
+		QUnit.module("ShouldScrollIntoAView");
+
+		QUnit.test("Given 2 pages and scrolling to the second", function(assert) {
 			var done = assert.async();
 			//Arrange
 			var sut,
@@ -290,17 +292,104 @@
 				var aRenderedTiles = sut.$().find(".sapMTCCnt").children();
 
 				//Assert
-				assert.equal(sut._oPagesInfo.getCurrentPage(), 1);
-				assert.equal(sut._iMaxTiles, sut.getPageFirstTileIndex());
-				assert.equal(aRenderedTiles.length, 3, "last tile should be rendered in the DOM");
-				assert.ok(!!lastTile.getDomRef(), "last tile should have DOM element");
-				assert.equal(aRenderedTiles.last()[0], lastTile.getDomRef(), "last tile should be rendered as last element in the DOM");
+				assert.equal(sut._oPagesInfo.getCurrentPage(), 1, "..should update the this._oPagesInfo.getCurrentPage()");
+				assert.equal(sut._iMaxTiles, sut.getPageFirstTileIndex(), "..should calculate this._iMaxTiles");
+				assert.equal(aRenderedTiles.length, 3, "..should render 3 tiles in the DOM");
+				assert.ok(!!lastTile.getDomRef(), "..should render last tile in the DOM");
+				assert.equal(aRenderedTiles.last()[0], lastTile.getDomRef(), "..should render last tile as last tile's DOM element");
 
 				//Cleanup
 				sut.destroy();
 				done();
 			}.bind(this), delay);
 
+		});
+
+		QUnit.test("Given 2 pages, scrolling to the second, then toggle TC visibility", function() {
+			var done = assert.async();
+			//Arrange
+			var sut,
+				m = sap.m,
+				lastTile;
+
+
+			//SUT
+			sut = new m.TileContainer({tiles : new m.StandardTile()});
+			sut.placeAt("uiArea1"); //with of uiArea1 is 600px, will fit 2 tiles x 210px (12 rem + 2x8 margins + 2x1 borders. If changed in less, should be reflected here)
+			core.applyChanges();
+			setTimeout(function() {
+				sut._calculatePageSize();
+
+				//Add one more Tile than total amount of Tiles fitting in the current container
+				while(sut._iMaxTiles +1 > sut.getTiles().length){
+					lastTile = new m.StandardTile();
+					sut.addTile(lastTile);
+					sut._calculatePageSize();
+				}
+
+				//Act
+				// scroll to the page where the last tile will be
+				sut.scrollIntoView(lastTile,false);
+				sut.setVisible(false);
+				core.applyChanges();
+				sut.setVisible(true);
+
+				core.applyChanges();
+
+				//Assert
+				assert.equal(sut.$("pager").children().length, 2, "..should render 2 dots");
+				assert.notOk(sut.$("pager").children()[0].classList.contains("sapMTCActive"), "..1st dot should not be active");
+				assert.ok(sut.$("pager").children()[1].classList.contains("sapMTCActive"), "..2nd dot should be active");
+
+				//Cleanup
+				sut.destroy();
+				done();
+			}.bind(this), delay);
+		});
+
+		QUnit.test("Given 2 pages, scrolling to the second, adding more tiles to make pages 3, then toggle TC visibility", function() {
+			var done = assert.async();
+			//Arrange
+			var sut,
+				m = sap.m,
+				lastTile;
+
+
+			//SUT
+			sut = new m.TileContainer({tiles : new m.StandardTile()});
+			sut.placeAt("uiArea1"); //with of uiArea1 is 600px, will fit 2 tiles x 210px (12 rem + 2x8 margins + 2x1 borders. If changed in less, should be reflected here)
+			core.applyChanges();
+			setTimeout(function() {
+				sut._calculatePageSize();
+
+				//Add one more Tile than total amount of Tiles fitting in the current container
+				while(sut._iMaxTiles +1 > sut.getTiles().length){
+					lastTile = new m.StandardTile();
+					sut.addTile(lastTile);
+				}
+				core.applyChanges();
+
+				//Act
+				// scroll to the page where the last tile will be
+				sut.scrollIntoView(lastTile,false);
+
+				//Add 2 more tiles so that a third page appears (second is active)
+				sut.addTile(new m.StandardTile());
+				sut.addTile(new m.StandardTile());
+
+				sut.setVisible(false);
+				core.applyChanges();
+				sut.setVisible(true);
+				core.applyChanges();
+
+				//Assert
+				assert.ok(sut.$("rightscroller").is(":visible"), "..right scroller should be visible");
+				assert.ok(sut.$("leftscroller").is(":visible"), "..right scroller should be visible");
+
+				//Cleanup
+				sut.destroy();
+				done();
+			}.bind(this), delay);
 		});
 
 		QUnit.test('TilesShouldHaveTheSameOrderInTheDomAsInTheAggregation', function (assert) {
@@ -710,6 +799,7 @@
 			assert.equal(this.oSut.currentPageIsLast(), false, "Current page is last");
 			assert.equal(this.oSut.oldCurrentPageIsLast(), false, "Old current page is last");
 			assert.equal(this.oSut.currentPageIsLastChanged(), false, "Current page is last changed");
+			assert.equal(this.oSut.currentPageRelativePositionChanged(), false, "Current page's relative position changed");
 
 			assert.equal(this.oSut.isPagerCreated(), true, "Pager created");
 		});
@@ -739,6 +829,7 @@
 			assert.equal(this.oSut.currentPageIsLast(), true, "Current page is last");
 			assert.equal(this.oSut.oldCurrentPageIsLast(), false, "Old current page is last");
 			assert.equal(this.oSut.currentPageIsLastChanged(), true, "Current page is last changed");
+			assert.equal(this.oSut.currentPageRelativePositionChanged(), true, "Current page's relative position changed");
 
 			assert.equal(this.oSut.isPagerCreated(), true, "Pager created");
 		});

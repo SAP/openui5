@@ -4,12 +4,12 @@
 
 // Provides control sap.m.DisplayListItem.
 sap.ui.define([
-	'./ListItemBase',
-	'./library',
-	'sap/ui/core/library',
-	'./DisplayListItemRenderer'
+	"sap/ui/core/library",
+	"./library",
+	"./ListItemBase",
+	"./DisplayListItemRenderer"
 ],
-	function(ListItemBase, library, coreLibrary, DisplayListItemRenderer) {
+	function(coreLibrary, library, ListItemBase, DisplayListItemRenderer) {
 	"use strict";
 
 

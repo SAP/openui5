@@ -57,6 +57,8 @@ sap.ui.define([
 				type : sap.ui.core.mvc.ViewType.XML
 			});
 
+			this.oView = oPage;
+
 			oPage.setModel(oModel, "view");
 
 			oApp.addPage(oPage);

@@ -149,7 +149,7 @@ sap.ui.define(['jquery.sap.global',
 
 			this.sCountMode = (mParameters && mParameters.countMode) || this.oModel.sDefaultCountMode;
 			if (this.sCountMode == CountMode.None) {
-				jQuery.log.fatal("To use an ODataTreeBinding at least one CountMode must be supported by the service!");
+				jQuery.sap.log.fatal("To use an ODataTreeBinding at least one CountMode must be supported by the service!");
 			}
 
 			if (mParameters) {
@@ -2012,6 +2012,19 @@ sap.ui.define(['jquery.sap.global',
 			jQuery.sap.log.error("Neither navigation paths parameters, nor (complete/valid) tree hierarchy annotations where provided to the TreeBinding.");
 			this.oNavigationPaths = {};
 		}
+	};
+
+	/**
+	 * Returns the value of a given hierarchy annotation.
+	 *
+	 * @param {string} sAttributeName The name of the hierarchy annotation
+	 * @return {string|undefined} The value of the hierarchy annotation
+	 * @since 1.56
+	 * @private
+	 * @ui5-restricted sap.ui.comp
+	 */
+	ODataTreeBinding.prototype.getTreeAnnotation = function(sAttributeName) {
+		return this.bHasTreeAnnotations ? this.oTreeProperties[sAttributeName] : undefined;
 	};
 
 	/**

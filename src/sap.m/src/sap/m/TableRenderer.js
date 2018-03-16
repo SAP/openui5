@@ -10,9 +10,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 	// shortcut for sap.m.ListKeyboardMode
 	var ListKeyboardMode = library.ListKeyboardMode;
 
-	// shortcut for sap.m.Sticky
-	var Sticky = library.Sticky;
-
 
 	/**
 	 * List renderer.
@@ -79,9 +76,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 		if (isHeaderHidden) {
 			rm.addClass("sapMListTblHeaderNone");
 		} else {
-			if (type === "Head" && oTable.getSticky() === Sticky.ColumnHeaders) {
-				rm.addClass("sapMListTblStickyColHdr");
-			}
 			rm.addClass("sapMListTblRow sapMLIBFocusable sapMListTbl" + type + "er");
 			ColumnListItemRenderer.addLegacyOutlineClass.call(ColumnListItemRenderer, rm);
 		}
@@ -193,6 +187,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 	TableRenderer.renderListStartAttributes = function(rm, oControl) {
 		rm.write("<table");
 		rm.addClass("sapMListTbl");
+		rm.addClass(oControl.getStickyStyleClass());
 		if (oControl.getFixedLayout() === false) {
 			rm.addStyle("table-layout", "auto");
 		}

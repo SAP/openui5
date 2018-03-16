@@ -13,13 +13,8 @@ sap.ui.define([
 	'sap/ui/events/_triggerEventHook',
 	'sap/ui/events/F6Navigation',
 	'sap/ui/events/jqueryEvent',
-	'sap/ui/events/EventSimulation',
-
-	// load old modules for compatibility
-	'jquery.sap.keycodes',
-	'jquery.sap.dom',
-	'jquery.sap.script'
-], function(jQuery, ControlEvents, PseudoEvents, fnCheckMouseEnterOrLeave, fnIsSpecialKey, fnIsMouseEventDelayed, _triggerEventHook, F6Navigation, jQueryEvent, EventSimulation /*,jQuerySap1, jQuerySap2, jQuerySap3*/) {
+	'sap/ui/events/EventSimulation'
+], function(jQuery, ControlEvents, PseudoEvents, fnCheckMouseEnterOrLeave, fnIsSpecialKey, fnIsMouseEventDelayed, _triggerEventHook, F6Navigation, jQueryEvent, EventSimulation) {
 	"use strict";
 
 

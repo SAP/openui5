@@ -20,8 +20,7 @@
 					<ObjectPageHeaderActionButton id="entityBackToSearch" text="Back to search results" hideIcon="true" hideText="false" press="backToSearch" visible="false"/>
 					<ObjectPageHeaderActionButton
 							id="toggleFullScreenBtn"
-							class="sapUiHideOnPhone"
-							visible="{=!${device>/system/phone}}"
+							visible="{device>/system/desktop}"
 							icon="sap-icon://full-screen"
 							tooltip="Show this sample in full screen mode"
 							press="onToggleFullScreen" />

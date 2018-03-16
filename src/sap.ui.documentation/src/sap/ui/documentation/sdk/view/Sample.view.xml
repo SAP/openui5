@@ -41,7 +41,7 @@
 					<Button
 							id="toggleFullScreenBtn"
 							icon="sap-icon://full-screen"
-							class="sapUiHideOnPhone"
+							visible="{device>/system/desktop}"
 							tooltip="Show this sample in full screen mode"
 							press="onToggleFullScreen" />
 					<Button

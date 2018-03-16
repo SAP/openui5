@@ -291,27 +291,25 @@ sap.ui.define([
 		},
 
 		/**
-		 * Instantiates a fragment and turns the result into an array of controls
+		 * Instantiates a fragment and turns the result into an array of controls. Also prefixes all the controls with a given namespace
+		 * Throws an Error if there is at least one control in the fragment without stable ID
 		 *
 		 * @param {string} sFragment path to the fragment
-		 * @param {string} sChangeId id of the current change
+		 * @param {string} sNamespace namespace of the app
 		 * @param {sap.ui.core.mvc.View} oView view for the fragment
 		 * @param {sap.ui.core.mvc.Controller} oController controller for the fragment
-		 * @returns {array} Returns an array with the controls of the fragment
+		 * @returns {sap.ui.core.Control[]} Returns an array with the controls of the fragment
 		 */
-		instantiateFragment: function(sFragment, sChangeId, oView, oController) {
+		instantiateFragment: function(sFragment, sNamespace, oView, oController) {
+			var oFragment = jQuery.sap.parseXML(sFragment);
+			oFragment = this.checkAndPrefixIdsInFragment(oFragment, sNamespace);
+
 			var aNewControls;
-			if (oView) {
-				aNewControls = sap.ui.xmlfragment({
-					fragmentContent: sFragment,
-					sId: oView.getId() + "--" + sChangeId
-				}, oController);
-			} else {
-				aNewControls = sap.ui.xmlfragment({
-					fragmentContent: sFragment,
-					sId: sChangeId
-				});
-			}
+			var sId = oView && oView.getId();
+			aNewControls = sap.ui.xmlfragment({
+				fragmentContent: oFragment,
+				sId:sId
+			}, oController);
 
 			if (!Array.isArray(aNewControls)) {
 				aNewControls = [aNewControls];

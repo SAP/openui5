@@ -75,8 +75,8 @@
 		this.clock.tick(iRenderingDelay);
 
 		assert.strictEqual(oLastSectionButton.$().hasClass("sapUxAPAnchorBarButtonSelected"), true, "select button programmatically");
-		assert.strictEqual(oLastSectionButton.$().attr("aria-pressed"), "true", "ARIA pressed state should be true for the selected button");
-		assert.strictEqual(oFirstSectionButton.$().attr("aria-pressed"), "false", "ARIA pressed state should be false for the unselected button");
+		assert.strictEqual(oLastSectionButton.$().attr("aria-checked"), "true", "ARIA checked state should be true for the selected button");
+		assert.strictEqual(oFirstSectionButton.$().attr("aria-checked"), "false", "ARIA checked state should be false for the unselected button");
 	});
 
 	QUnit.test("Submenu button accessibility", function (assert) {
@@ -299,6 +299,37 @@
 		var oSectionButton = this.oObjectPage.getAggregation("_anchorBar").getContent()[1];
 
 		assert.strictEqual(oSectionButton.getText(), "Title(2)", "section title binding updates anchor bar button");
+	});
+
+	QUnit.module("Accessibility", {
+		beforeEach: function () {
+			this.anchorBarView = sap.ui.xmlview("UxAP-69_anchorBarBinding", {
+				viewName: "view.UxAP-69_AnchorBarBinding"
+			});
+			this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
+			this.anchorBarView.setModel(oModel);
+			this.anchorBarView.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.anchorBarView.destroy();
+			this.oObjectPage = null;
+		}
+	});
+
+	QUnit.test("Count information", function (assert) {
+		var aAnchorBarContent = this.oObjectPage.getAggregation("_anchorBar").getContent(),
+			iAnchorBarContentLength = aAnchorBarContent.length,
+			$oCurrentButtonDomRef,
+			iIndex;
+
+		for (iIndex = 0; iIndex < iAnchorBarContentLength; iIndex++) {
+			$oCurrentButtonDomRef = aAnchorBarContent[iIndex].$();
+			// Convert the numbers to strings, since .attr would return a string
+			// We need to add '+ 1' to the index for posinset, since posinset starts from 1, rather than 0
+			assert.strictEqual($oCurrentButtonDomRef.attr("aria-setsize"), iAnchorBarContentLength.toString(), "aria-setsize indicates anchorBar's length correctly");
+			assert.strictEqual($oCurrentButtonDomRef.attr("aria-posinset"), (iIndex + 1).toString(), "aria-posinset indicates the correct position of the button");
+		}
 	});
 
 

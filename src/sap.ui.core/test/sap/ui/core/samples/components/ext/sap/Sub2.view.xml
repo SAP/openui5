@@ -3,6 +3,8 @@
 
 	<core:ExtensionPoint name="extension1" />
 
+	<Button text="test" press=".api.showToast" />
+
 	<Button text="SAP-delivered button" press="originalSAPAction" />
 
 	<TextView text="SAP View 'Sub2' - this one is extended by the customer and there should be a button after this text"></TextView>

@@ -315,59 +315,56 @@
             afterRedo : fnConfirmSnappedContentElement1IsOn3rdPosition
         });
 
-        // TODO: We will deactivate this feature for now since there is problem with moving the overflow toolbar's content
-        // in DynamicPageTitle
-
         // --------- MOVING THE CONTROL'S ACTIONS CONTENT ---------
         // Check if the move action is working properly
-        // var fnConfirmActionsContentElement1IsOn3rdPosition = function(oAppComponent, oViewAfterAction, assert) {
-        //     assert.strictEqual( oViewAfterAction.byId("btn1").getId(),                   // Id of element at first position in original view
-        //                         oViewAfterAction.byId("title").getActions() [2].getId(),   // Id of third element in group after change has been applied
-        //                         "then the control has been moved to the right position");
-        // };
-        // var fnConfirmActionsContentElement1IsOn1stPosition = function(oAppComponent, oViewAfterAction, assert) {
-        //     assert.strictEqual( oViewAfterAction.byId("btn1").getId(),                   // Id of element at first position in original view
-        //                         oViewAfterAction.byId("title").getActions() [0].getId(),   // Id of third element in group after change has been applied
-        //                         "then the control has been moved to the previous position");
-        // };
-        // // Use rtaControlEnablingCheck to check if a control is ready for the move action of UI adaptation
-        // rtaControlEnablingCheck("Checking the move action for a simple control in DynamicPageTitle's actions aggregation", {
-        //     xmlView :
-        //         '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.f">' +
-        //             '<DynamicPageTitle id="title">' +
-        //                 '<actions>' +
-        //                     '<m:Button id="btn1" text="Action 1" />' +
-        //                     '<m:Button id="btn2" text="Action 2" />' +
-        //                     '<m:Button id="btn3" text="Action 3" />' +
-        //                 '</actions>' +
-        //             '</DynamicPageTitle>' +
-        //         '</mvc:View>'
-        //     ,
-        //     action : {
-        //         name : "move",
-        //         controlId : "title",
-        //         parameter : function(oView){
-        //             return {
-        //                 movedElements : [{
-        //                     element : oView.byId("btn1"),
-        //                     sourceIndex : 0,
-        //                     targetIndex : 2
-        //                 }],
-        //                 source : {
-        //                     aggregation: "actions",
-        //                     parent: oView.byId("title")
-        //                 },
-        //                 target : {
-        //                     aggregation: "actions",
-        //                     parent: oView.byId("title")
-        //                 }
-        //             };
-        //         }
-        //     },
-        //     afterAction : fnConfirmActionsContentElement1IsOn3rdPosition,
-        //     afterUndo : fnConfirmActionsContentElement1IsOn1stPosition,
-        //     afterRedo : fnConfirmActionsContentElement1IsOn3rdPosition
-        // });
+        var fnConfirmActionsContentElement1IsOn3rdPosition = function(oAppComponent, oViewAfterAction, assert) {
+            assert.strictEqual( oViewAfterAction.byId("btn1").getId(),                   // Id of element at first position in original view
+                                oViewAfterAction.byId("title").getActions() [2].getId(),   // Id of third element in group after change has been applied
+                                "then the control has been moved to the right position");
+        };
+        var fnConfirmActionsContentElement1IsOn1stPosition = function(oAppComponent, oViewAfterAction, assert) {
+            assert.strictEqual( oViewAfterAction.byId("btn1").getId(),                   // Id of element at first position in original view
+                                oViewAfterAction.byId("title").getActions() [0].getId(),   // Id of third element in group after change has been applied
+                                "then the control has been moved to the previous position");
+        };
+        // Use rtaControlEnablingCheck to check if a control is ready for the move action of UI adaptation
+        rtaControlEnablingCheck("Checking the move action for a simple control in DynamicPageTitle's actions aggregation", {
+            xmlView :
+                '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.f">' +
+                    '<DynamicPageTitle id="title">' +
+                        '<actions>' +
+                            '<m:Button id="btn1" text="Action 1" />' +
+                            '<m:Button id="btn2" text="Action 2" />' +
+                            '<m:Button id="btn3" text="Action 3" />' +
+                        '</actions>' +
+                    '</DynamicPageTitle>' +
+                '</mvc:View>'
+            ,
+            action : {
+                name : "move",
+                controlId : "title",
+                parameter : function(oView){
+                    return {
+                        movedElements : [{
+                            element : oView.byId("btn1"),
+                            sourceIndex : 0,
+                            targetIndex : 2
+                        }],
+                        source : {
+                            aggregation: "actions",
+                            parent: oView.byId("title")
+                        },
+                        target : {
+                            aggregation: "actions",
+                            parent: oView.byId("title")
+                        }
+                    };
+                }
+            },
+            afterAction : fnConfirmActionsContentElement1IsOn3rdPosition,
+            afterUndo : fnConfirmActionsContentElement1IsOn1stPosition,
+            afterRedo : fnConfirmActionsContentElement1IsOn3rdPosition
+        });
 
         // --------- COMBINING THE CONTROL'S ACTIONS ---------
         // Check if the combine action is working properly

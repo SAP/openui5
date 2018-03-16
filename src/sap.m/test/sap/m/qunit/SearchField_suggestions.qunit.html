@@ -223,7 +223,8 @@
 		});
 
 		QUnit.test("Background color on blur is restored", function(assert) {
-			oSF.onBlur();
+			var oMockEvent = {type: "blur"};
+			oSF.onBlur(oMockEvent);
 			this.clock.tick(1000);
 
 			assert.strictEqual(oSF.$().hasClass( "sapMFocus"), false, "Blur event processing restores the previous background color");
@@ -308,7 +309,6 @@
 			this.clock.tick(1000);
 			assert.ok(!oSF.getDomRef(), "The search field is removed");
 		});
-
 	</script>
 	</head>
 	<body id="body" class="sapUiBody">

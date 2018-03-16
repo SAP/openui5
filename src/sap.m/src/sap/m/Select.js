@@ -991,6 +991,10 @@ function(
 					return;
 				}
 
+				if (Device.system.phone) {
+					this.focus();
+				}
+
 				this.open();
 			}
 

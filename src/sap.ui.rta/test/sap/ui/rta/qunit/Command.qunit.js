@@ -20,6 +20,8 @@ sap.ui.require([
 	'sap/ui/fl/registry/SimpleChanges',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/fl/Utils',
+	'sap/ui/rta/ControlTreeModifier',
+	'sap/ui/fl/FlexControllerFactory',
 	'sap/ui/thirdparty/sinon',
 	'sap/ui/thirdparty/sinon-ie',
 	'sap/ui/thirdparty/sinon-qunit'
@@ -43,20 +45,11 @@ function(
 	ChangeRegistry,
 	SimpleChanges,
 	JSONModel,
-	FLUtils
+	FlexUtils,
+	RtaControlTreeModifier,
+	FlexControllerFactory
 ) {
 	"use strict";
-
-	var oChangeRegistry = ChangeRegistry.getInstance();
-
-	oChangeRegistry.registerControlsForChanges({
-		"sap.m.Button": [
-			SimpleChanges.hideControl,
-			SimpleChanges.unhideControl
-		],
-		"sap.m.ObjectHeader": [SimpleChanges.moveControls],
-		"sap.ui.layout.VerticalLayout": [SimpleChanges.moveControls]
-	});
 
 	var oCommandFactory = new CommandFactory({
 		flexSettings: {
@@ -65,7 +58,7 @@ function(
 	});
 
 	var sandbox = sinon.sandbox.create();
-
+	sinon.stub(FlexUtils, "getCurrentLayer").returns("VENDOR");
 	var ERROR_INTENTIONALLY = new Error("this command intentionally failed");
 
 	var oMockedAppComponent = {
@@ -99,8 +92,7 @@ function(
 
 	QUnit.module("Given a command factory", {
 		beforeEach : function(assert) {
-			sandbox.stub(FLUtils, "getCurrentLayer").returns("VENDOR");
-			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			this.oButton = new Button(oMockedAppComponent.createId("myButton"));
 		},
 		afterEach : function(assert) {
@@ -138,7 +130,7 @@ function(
 
 	QUnit.module("Given a flex command", {
 		beforeEach : function(assert) {
-			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			this.fnApplyChangeSpy = sandbox.spy(HideControl, "applyChange");
 			this.oFlexCommand = new FlexCommand({
 				element : new Button(),
@@ -161,7 +153,7 @@ function(
 	QUnit.module("Given a command stack", {
 		beforeEach : function(assert) {
 			this.stack = new Stack();
-			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			this.command = new BaseCommand();
 			this.failingCommand = this.command.clone();
 			this.failingCommand.execute = function(oElement) {
@@ -292,9 +284,7 @@ function(
 
 	QUnit.module("Given a property command", {
 		beforeEach : function(assert) {
-			sandbox.stub(FLUtils, "getCurrentLayer").returns("VENDOR");
-			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oMockedAppComponent);
-
+			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			this.OLD_VALUE = '2px';
 			this.NEW_VALUE = '5px';
 			this.oControl = new Column(oMockedAppComponent.createId("control"), {
@@ -325,8 +315,10 @@ function(
 			.then(function() {
 				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should do the work.");
 				assert.equal(this.oControl.getWidth(), this.NEW_VALUE, "then the controls text changed accordingly");
+				return this.oPropertyCommand.undo();
+			}.bind(this))
 
-				this.oPropertyCommand.undo();
+			.then(function() {
 				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should not be called, because undo is done via rta ControlTreeModifier!");
 				assert.equal(this.oControl.getWidth(), this.OLD_VALUE, "then the controls text changed accordingly");
 
@@ -342,9 +334,7 @@ function(
 
 	QUnit.module("Given a bind property command", {
 		beforeEach : function(assert) {
-			sandbox.stub(FLUtils, "getCurrentLayer").returns("VENDOR");
-			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oMockedAppComponent);
-
+			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			this.OLD_BOOLEAN_VALUE = false;
 			this.NEW_BOOLEAN_BINDING_WITH_CRITICAL_CHARS = "{= ( ${/field1} === 'critical' ) &&  ( ${/field2} > 100 ) }";
 			this.NEW_BOOLEAN_VALUE = true;
@@ -399,11 +389,12 @@ function(
 			.then(function() {
 				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should do the work.");
 				assert.equal(this.oInput.getShowValueHelp(), this.NEW_BOOLEAN_VALUE, "then the controls property changed accordingly");
+				return this.oBindShowValueHelpCommandWithoutOldValueSet.undo();
+			}.bind(this))
 
-				this.oBindShowValueHelpCommandWithoutOldValueSet.undo();
+			.then(function() {
 				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should not be called for the undo.");
 				assert.equal(this.oInput.getShowValueHelp(), this.OLD_BOOLEAN_VALUE, "then the controls property changed accordingly");
-
 				return this.oBindShowValueHelpCommandWithoutOldValueSet.execute();
 			}.bind(this))
 
@@ -419,11 +410,12 @@ function(
 			.then(function() {
 				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should do the work.");
 				assert.equal(this.oInput.getValue(), this.NEW_VALUE, "then the controls property changed accordingly");
+				return this.oBindValuePropertyCommandWithoutOldBindingSet.undo();
+			}.bind(this))
 
-				this.oBindValuePropertyCommandWithoutOldBindingSet.undo();
+			.then(function() {
 				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should not be called for the undo.");
 				assert.equal(this.oInput.getValue(), this.OLD_VALUE, "then the controls property changed accordingly");
-
 				return this.oBindValuePropertyCommandWithoutOldBindingSet.execute();
 			}.bind(this))
 
@@ -436,7 +428,7 @@ function(
 
 	QUnit.module("Given remove command", {
 		beforeEach : function(assert) {
-			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			this.oButton = new Button(oMockedAppComponent.createId("button"));
 			this.oCommand = CommandFactory.getCommandFor(this.oButton, "Remove", {
 				removedElement: this.oButton
@@ -596,13 +588,11 @@ function(
 	QUnit.module("Given an empty command stack and commands", {
 		beforeEach : function(assert) {
 			this.stack = new Stack();
-			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			this.command = new BaseCommand();
 			this.command2 = new BaseCommand();
 			this.command3 = new BaseCommand();
-			this.command4 = new FlexCommand({
-				fnRestoreState: function() {}
-			});
+			this.command4 = new FlexCommand();
 			this.compositeCommand = new CompositeCommand();
 		},
 		afterEach : function(assert) {
@@ -744,7 +734,10 @@ function(
 
 	QUnit.module("Given controls and designTimeMetadata", {
 		beforeEach : function(assert){
-			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+			ChangeRegistry.getInstance().registerControlsForChanges({
+				"sap.m.ObjectHeader": [SimpleChanges.moveControls]
+			});
 			this.oMovable = new ObjectAttribute(oMockedAppComponent.createId("attribute"));
 			this.oSourceParent = new ObjectHeader(oMockedAppComponent.createId("header"), {
 				attributes : [this.oMovable]
@@ -802,6 +795,115 @@ function(
 			assert.equal(oMoveCmd.getChangeType(), "moveControls", "then the command with corresponding changeType is returned");
 
 			oMoveCmd.destroy();
+		});
+	});
+
+	QUnit.module("Given a command stack with a hideControl flex command", {
+		beforeEach : function(assert) {
+			this.oCommandStack = new Stack();
+			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+			var oButton = new Button(oMockedAppComponent.createId("button"));
+			this.oLayout = new VerticalLayout(oMockedAppComponent.createId("layout"), {
+				content : [oButton]
+			});
+			this.oCompositeCommand = new CompositeCommand();
+			this.oFlexCommand = new FlexCommand({
+				element: oButton,
+				changeType: "hideControl"
+			});
+			this.fnApplyChangeSpy = sandbox.spy(FlexCommand.prototype, "_applyChange");
+			this.fnRtaStartRecordingStub = sandbox.stub(RtaControlTreeModifier, "startRecordingUndo");
+			this.fnPerformUndoStub = sandbox.stub(RtaControlTreeModifier, "performUndo");
+			this.fnRtaStopRecordingStub = sandbox.stub(RtaControlTreeModifier, "stopRecordingUndo", function() {
+				return ["undoOperation1", "undoOperation2"];
+			});
+
+			this.fnChangeHandler = {
+				applyChange: function (oChange) {
+					if (this.revertChange) {
+						oChange.setRevertData({
+							data: "testdata"
+						});
+					}
+					assert.ok(true, "then change handler's applyChange() called");
+				},
+				completeChangeContent: function () {
+					assert.ok(true, "then change handler's completeChangeContent() called");
+				},
+				revertChange: function () {
+					assert.ok(true, "then change handler's revertChange() called instead of undo");
+				}
+			};
+
+		},
+		afterEach : function(assert) {
+			sandbox.restore();
+			this.oFlexCommand.destroy();
+			this.oCompositeCommand.destroy();
+			this.oCommandStack .destroy();
+			this.oLayout.destroy();
+		}
+	}, function() {
+		QUnit.test("when change handler is revertible and command is executed", function (assert) {
+			assert.expect(10);
+			var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent);
+			var fnRevertChangesOnControlStub = sandbox.spy(oFlexController, "revertChangesOnControl");
+			sandbox.stub(ChangeRegistry.getInstance(), "getChangeHandler").returns(this.fnChangeHandler);
+
+			this.oCommandStack.push(this.oFlexCommand);
+
+			return this.oCommandStack.execute()
+				.then( function () {
+					var oChange = this.oFlexCommand.getPreparedChange();
+					assert.ok(true, "then a Promise.resolve() is returned on Stack.execute()");
+					assert.equal(this.fnApplyChangeSpy.callCount, 1, "then Command._applyChange called once");
+					assert.deepEqual(oChange.getRevertData(), {
+						data: "testdata"
+					}, "then revert data set correctly");
+
+					return this.oCommandStack.undo()
+						.then( function () {
+							assert.ok(true, "then a Promise.resolve() is returned on Stack.undo()");
+							assert.ok(fnRevertChangesOnControlStub.calledWith([oChange], oMockedAppComponent), "then FlexController.revertChangesOnControl called with required parameters");
+							assert.equal(this.fnRtaStartRecordingStub.callCount, 0, "then recording of rta undo operations not started");
+							assert.equal(this.fnRtaStopRecordingStub.callCount, 0, "then recording of rta undo operations not stopped");
+						}.bind(this));
+				}.bind(this));
+		});
+
+		QUnit.test("when change handler is not revertible and command is executed", function (assert) {
+			assert.expect(8);
+			delete this.fnChangeHandler.revertChange;
+			sandbox.stub(ChangeRegistry.getInstance(), "getChangeHandler").returns(this.fnChangeHandler);
+			this.oCommandStack.push(this.oFlexCommand);
+
+			return this.oCommandStack.execute()
+				.then( function () {
+					var oChange = this.oFlexCommand.getPreparedChange();
+					assert.equal(this.fnApplyChangeSpy.callCount, 1, "then Command._applyChange called once");
+					assert.notOk(oChange.getRevertData(), "then no revert data set for change");
+
+					return this.oCommandStack.undo()
+						.then( function () {
+							assert.ok(true, "then a Promise.resolve() is returned on Stack.undo()");
+							assert.equal(this.fnRtaStartRecordingStub.callCount, 1, "then recording of rta undo operations is started");
+							assert.equal(this.fnRtaStopRecordingStub.callCount, 1, "then recording of rta undo operations is stopped");
+							assert.ok(this.fnPerformUndoStub.calledWith(["undoOperation1", "undoOperation2"]), "then undo operation is performed with the correct operations");
+						}.bind(this));
+				}.bind(this));
+		});
+
+		QUnit.test("when change handler is not available", function (assert) {
+			assert.expect(1);
+			sandbox.stub(ChangeRegistry.getInstance(), "getChangeHandler").returns(undefined);
+			this.oCommandStack.push(this.oFlexCommand);
+
+			return this.oCommandStack.execute()
+				.then(
+					function () {},
+					function () {
+						assert.ok(true, "then Promise reject returned");
+					});
 		});
 	});
 });

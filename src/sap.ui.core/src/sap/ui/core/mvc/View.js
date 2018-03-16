@@ -338,11 +338,15 @@ sap.ui.define([
 				// we need to extend the controller if an instance is passed
 				var sOwnerId = ManagedObject._sOwnerId;
 				if (bAsync) {
-					oController = Controller.extendByCustomizing(oController, sName, bAsync)
+					oController = Controller.extendByMember(oController, bAsync)
+						.then(function(oController) {
+							return Controller.extendByCustomizing(oController, sName, bAsync);
+						})
 						.then(function(oController) {
 							return Controller.extendByProvider(oController, sName, sOwnerId, bAsync);
 						});
 				} else {
+					oController = Controller.extendByMember(oController, bAsync);
 					oController = Controller.extendByCustomizing(oController, sName, bAsync);
 					oController = Controller.extendByProvider(oController, sName, sOwnerId, bAsync);
 				}
@@ -363,9 +367,9 @@ sap.ui.define([
 					connectToView(oController);
 				}
 			}
-
 		} else {
-			oThis.oController = {};
+			sap.ui.controller("sap.ui.core.mvc.EmptyControllerImpl", {"_sap.ui.core.mvc.EmptyControllerImpl":true});
+			oThis.oController = sap.ui.controller("sap.ui.core.mvc.EmptyControllerImpl");
 		}
 	};
 
@@ -415,31 +419,22 @@ sap.ui.define([
 			};
 		}
 
-		var fnPropagateOwner = function(fn, bAsync) {
-			jQuery.sap.assert(typeof fn === "function", "fn must be a function");
+		var fnPropagateOwner = function(fnCallback, bAsync) {
+			jQuery.sap.assert(typeof fnCallback === "function", "fn must be a function");
 
 			var Component = sap.ui.require("sap/ui/core/Component");
 			var oOwnerComponent = Component && Component.getOwnerComponentFor(that);
 			if (oOwnerComponent) {
-				if (!bAsync) {
-					return oOwnerComponent.runAsOwner(fn);
+				if (bAsync) {
+					// special treatment when component loading is async but instance creation is sync
+					that.fnScopedRunWithOwner = that.fnScopedRunWithOwner || function(fnCallbackToBeScoped) {
+						return oOwnerComponent.runAsOwner(fnCallbackToBeScoped);
+					};
 				}
-
-				// create a function, which scopes the instance creation of a class with the corresponding owner ID
-				// XMLView special logic for asynchronous template parsing,
-				// when component loading is async but instance creation is sync.
-				that.fnScopedRunWithOwner = that.fnScopedRunWithOwner || function(fnCallbackToBeScoped) {
-					return oOwnerComponent.runAsOwner(fnCallbackToBeScoped);
-				};
-
-				//for non-XMLViews wrap the existing behaviour with a promise
-				return Promise.resolve(oOwnerComponent.runAsOwner(fn));
-			} else {
-				if (!bAsync) {
-					return fn.call();
-				}
-				return Promise.resolve(fn.call());
+				return oOwnerComponent.runAsOwner(fnCallback);
 			}
+
+			return fnCallback();
 		};
 
 		var fnAttachControllerToViewEvents = function(oView) {
@@ -974,72 +969,6 @@ sap.ui.define([
 		}
 	};
 
-
-	/**
-	 * Helper method to resolve an event handler either locally (from a controller) or globally.
-	 *
-	 * Which contexts are checked for the event handler depends on the syntax of the name:
-	 * <ul>
-	 * <li><i>relative</i>: names starting with a dot ('.') must specify a handler in
-	 *     the controller (example: <code>".myLocalHandler"</code>)</li>
-	 * <li><i>absolute</i>: names that contain, but do not start with a dot ('.') are
-	 *     always assumed to mean a global handler function. {@link jQuery.sap.getObject}
-	 *     will be used to retrieve the function (example: <code>"some.global.handler"</code> )</li>
-	 * <li><i>legacy</i>: Names that contain no dot at all are first interpreted as a relative name
-	 *     and then - if nothing is found - as an absolute name. This variant is only supported
-	 *     for backward compatibility (example: <code>"myHandler"</code>)</li>
-	 * </ul>
-	 *
-	 * The returned settings will always use the given <code>oController</code> as context object ('this')
-	 * This should allow the implementation of generic global handlers that might need an easy back link
-	 * to the controller/view in which they are currently used (e.g. to call createId/byId). It also makes
-	 * the development of global event handlers more consistent with controller local event handlers.
-	 *
-	 * <strong>Note</strong>: It is not mandatory but improves readability of declarative views when
-	 * legacy names are converted to relative names where appropriate.
-	 *
-	 * @param {string} sName the name to resolve
-	 * @param {sap.ui.core.mvc.Controller} oController the controller to use as context
-	 * @return {any[]} an array with function and context object, suitable for applySettings.
-	 * @private
-	 */
-	View._resolveEventHandler = function(sName, oController) {
-
-		var fnHandler;
-
-		if (!sap.ui.getCore().getConfiguration().getControllerCodeDeactivated()) {
-			switch (sName.indexOf('.')) {
-				case 0:
-					// starts with a dot, must be a controller local handler
-					// usage of jQuery.sap.getObject to allow addressing functions in properties
-					fnHandler = oController && jQuery.sap.getObject(sName.slice(1), undefined, oController);
-					break;
-				case -1:
-					// no dot at all: first check for a controller local, then for a global handler
-					fnHandler = oController && oController[sName];
-					if ( fnHandler != null ) {
-						// if the name can be resolved, don't try to find a global handler (even if it is not a function)
-						break;
-					}
-					// falls through
-				default:
-					fnHandler = jQuery.sap.getObject(sName);
-			}
-		} else {
-			// When design mode is enabled, controller code is not loaded. That is why we stub the handler functions.
-			fnHandler = function() {};
-		}
-
-		if ( typeof fnHandler === "function" ) {
-			// the handler name is set as property on the function to keep this information
-			// e.g. for serializers which convert a control tree back to a declarative format
-			fnHandler._sapui_handlerName = sName;
-			// always attach the handler with the controller as context ('this')
-			return [ fnHandler, oController ];
-		}
-
-		// return undefined
-	};
 
 	/**
 	 * Interface for Preprocessor implementations that can be hooked in the view life cycle.

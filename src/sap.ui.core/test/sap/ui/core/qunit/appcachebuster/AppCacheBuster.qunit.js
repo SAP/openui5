@@ -101,21 +101,21 @@ sap.ui.require([
 	QUnit.test("check method interception", function(assert) {
 		assert.expect(8);
 
-		var fnAjaxOrig = jQuery.ajax,
+		var fnXhrOpenOrig = window.XMLHttpRequest.prototype.open,
 			fnValidateProperty = ManagedObject.prototype.validateProperty,
 			descScriptSrc = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src'),
 			descLinkHref = Object.getOwnPropertyDescriptor(HTMLLinkElement.prototype, 'href');
 
 		AppCacheBuster.init();
 
-		assert.notEqual(fnAjaxOrig, jQuery.ajax, "jQuery.ajax is intercepted");
+		assert.notEqual(fnXhrOpenOrig, window.XMLHttpRequest.prototype.open, "window.XMLHttpRequest.prototype.open is intercepted");
 		assert.notEqual(fnValidateProperty, ManagedObject.prototype.validateProperty, "ManagedObject.prototype.validateProperty is intercepted");
 		assert.notDeepEqual(Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src'), descScriptSrc, "Property 'src' of HTMLScriptElement is intercepted");
 		assert.notDeepEqual(Object.getOwnPropertyDescriptor(HTMLLinkElement.prototype, 'href'), descLinkHref, "Property 'href' of HTMLLinkElement is intercepted");
 
 		AppCacheBuster.exit();
 
-		assert.equal(fnAjaxOrig, jQuery.ajax, "jQuery.ajax is restored");
+		assert.equal(fnXhrOpenOrig, window.XMLHttpRequest.prototype.open, "window.XMLHttpRequest.prototype.open is restored");
 		assert.equal(fnValidateProperty, ManagedObject.prototype.validateProperty, "ManagedObject.prototype.validateProperty is restored");
 		assert.deepEqual(Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src'), descScriptSrc, "Property 'src' of HTMLScriptElement is restored");
 		assert.deepEqual(Object.getOwnPropertyDescriptor(HTMLLinkElement.prototype, 'href'), descLinkHref, "Property 'href' of HTMLLinkElement is restored");
@@ -335,6 +335,18 @@ sap.ui.require([
 
 		});
 
+		QUnit.test("check XMLHttpRequest handling", function(assert) {
+			assert.expect(2);
+
+			var oReq = new XMLHttpRequest();
+			oReq.open("GET", "js/script.js");
+			assert.ok(oReq.url.indexOf("/~" + sTimestamp + "~/") != -1, "URL \"" + oReq.url + "\" is correctly prefixed!");
+
+			oReq = new XMLHttpRequest();
+			oReq.open("GET", "js/script1.js");
+			assert.ok(oReq.url.indexOf("/~" + sTimestamp + "~/") == -1, "URL \"" + oReq.url + "\" should not be prefixed!");
+		});
+
 	});
 
 
@@ -489,6 +501,19 @@ sap.ui.require([
 		});
 
 	});
+
+	QUnit.test("check XMLHttpRequest handling", function(assert) {
+		assert.expect(2);
+
+		var oReq = new XMLHttpRequest();
+		oReq.open("GET", "http://anyserver.company.corp:4711/anyapp/js/script.js");
+		assert.ok(oReq.url.indexOf("/~" + sTimestamp + "~/") != -1, "URL \"" + oReq.url + "\" is correctly prefixed!");
+
+		oReq = new XMLHttpRequest();
+		oReq.open("GET", "http://anyserver.company.corp:4711/anyapp/js/script1.js");
+		assert.ok(oReq.url.indexOf("/~" + sTimestamp + "~/") == -1, "URL \"" + oReq.url + "\" should not be prefixed!");
+	});
+
 
 	QUnit.module("hook scenario", {
 		beforeEach : function() {

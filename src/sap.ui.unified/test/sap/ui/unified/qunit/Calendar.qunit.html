@@ -985,6 +985,29 @@
 				oCal7.destroy();
 			});
 
+			// BCP: 1780409322
+			QUnit.test("year change update aria-label of the button", function (assert) {
+				// prepare
+				var oCalendar = new sap.ui.unified.Calendar(),
+					oCurrentDate = new Date(2017, 5, 2),
+					oNewFocusedDate = new Date(2018, 6, 3);
+
+				oCalendar.displayDate(oCurrentDate);
+				oCalendar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				assert.equal(oCalendar.$("-Head-B2").attr("aria-label"),oCalendar.$("-Head-B2").text(), "aria-label should be equal to the text of the button");
+
+				// act
+				oCalendar.displayDate(oNewFocusedDate);
+
+				// assert
+				assert.equal(oCalendar.$("-Head-B2").attr("aria-label"),oCalendar.$("-Head-B2").text(), "aria-label should be equal to the text of the button");
+
+				// cleanup
+				oCalendar.destroy();
+			});
+
 
 			// BCP: 1780409322
 			QUnit.test("month change update aria-label of the button", function (assert) {
@@ -1374,8 +1397,8 @@
 			QUnit.test("_updateHeadersYearPrimaryText should call header and secondMonthHeader methods with proper value", function (assert) {
 				// arrange
 				var sExpectedValue = "2018",
-					oHeader = { setTextButton2: this.spy(), _setTextButton4: this.spy() },
-					oSecondMonthHeader = { setTextButton2: this.spy() },
+					oHeader = { setTextButton2: this.spy(), setAriaLabelButton2: this.spy(), _setTextButton4: this.spy(), _setAriaLabelButton4: this.spy() },
+					oSecondMonthHeader = { setTextButton2: this.spy(), setAriaLabelButton2: this.spy() },
 					oCalendar = new sap.ui.unified.Calendar(),
 					oGetAggregationStub = this.stub(oCalendar, "getAggregation");
 				oGetAggregationStub.withArgs("header").returns(oHeader);
@@ -1386,8 +1409,11 @@
 
 				// assert
 				assert.equal(oHeader.setTextButton2.getCall(0).args[0], sExpectedValue, "setTextButton2 should be called with " + sExpectedValue);
+				assert.equal(oHeader.setAriaLabelButton2.getCall(0).args[0], sExpectedValue, "setAriaLabelButton2 should be called with " + sExpectedValue);
 				assert.equal(oHeader._setTextButton4.getCall(0).args[0], sExpectedValue, "_setTextButton4 should be called with " + sExpectedValue);
+				assert.equal(oHeader._setAriaLabelButton4.getCall(0).args[0], sExpectedValue, "_setAriaLabelButton4 should be called with " + sExpectedValue);
 				assert.equal(oSecondMonthHeader.setTextButton2.getCall(0).args[0], sExpectedValue, "setTextButton2 should be called with " + sExpectedValue);
+				assert.equal(oSecondMonthHeader.setAriaLabelButton2.getCall(0).args[0], sExpectedValue, "setAriaLabelButton2 should be called with " + sExpectedValue);
 
 				// cleanup
 				oCalendar.destroy();

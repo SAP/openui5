@@ -381,5 +381,10 @@ function(
 		jQuery('#overlay-container').prepend(oStyle);
 	};
 
+	DOMUtil.contains = function (sId, oTargetNode) {
+		var oNode = document.getElementById(sId);
+		return oNode && oNode.contains(oTargetNode);
+	};
+
 	return DOMUtil;
 }, /* bExport= */ true);

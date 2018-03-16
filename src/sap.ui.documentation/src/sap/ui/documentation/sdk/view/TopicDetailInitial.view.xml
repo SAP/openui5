@@ -64,22 +64,30 @@
 						class="largeCell"
 						backgroundColorSet="ColorSet11"
 						backgroundColorShade="ShadeA">
+					<l:VerticalLayout width="100%">
 					<custom:TitleLink
 							width="100%"
 							text="What's New?"
 							href="#/topic/99ac68a5b1c3416ab5c84c99fefa250d"
 							titleStyle="H1"/>
+						<Text
+								text="Find out about the new features in the latest UI5 versions"/>
+					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
 				<l:BlockLayoutCell
 						class="largeCell"
 						backgroundColorSet="ColorSet11"
 						backgroundColorShade="ShadeB">
+					<l:VerticalLayout width="100%">
 					<custom:TitleLink
 							width="100%"
 							text="Read Me First"
 							href="#/topic/167193ced54c41c3961d7df3479d7bbe"
 							titleStyle="H1"/>
+						<Text
+								text="Important information before you start using UI5 productively"/>
+					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
 				<l:BlockLayoutCell
@@ -141,7 +149,7 @@
 					<l:VerticalLayout width="100%">
 						<custom:TitleLink
 								width="100%"
-								text="Developing Content"
+								text="Developing Controls"
 								href="#/topic/8dcab0011d274051808f959800cabf9f"
 								titleStyle="H1"/>
 						<Text

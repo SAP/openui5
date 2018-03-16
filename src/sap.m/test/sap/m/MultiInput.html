@@ -32,43 +32,34 @@
 			oEventList.addItem(item);
 		};
 
+		var aDialogContent = [
+			new sap.m.Label({id:"mil1", labelFor:"mi1", text:"Multi input 1"}),
+			new sap.m.MultiInput({
+				id:"mi1",
+				tokens: [
+					new sap.m.Token({text: "Token 1", key: "0001"}),
+					new sap.m.Token({text: "Token 2", key: "0002"}),
+					new sap.m.Token({text: "Token 3", key: "0003"}),
+					new sap.m.Token({text: "Token 4", key: "0004"}),
+					new sap.m.Token({text: "Token 5", key: "0005"}),
+					new sap.m.Token({text: "Token 6", key: "0006"}),
+					new sap.m.Token({text: "Token 7", key: "0007"}),
+					new sap.m.Token({text: "Token 8", key: "0008"}),
+					new sap.m.Token({text: "Token 9", key: "0009"})
+				]
+			})
+		];
+
+		for (var i = 2; i < 16; i++) {
+			aDialogContent.push(new sap.m.Label({id:"mil" + i, labelFor:"mi" + i, text:"Multi input " + i}));
+			aDialogContent.push(new sap.m.MultiInput({id:"mi" + i}));
+		}
+
 		var oDialog = new sap.m.Dialog("dialog", {
 			title: "Multi Inputs",
 			contentWidth: "420px",
 			horizontalScrolling: false,
-			content: [
-						new sap.m.MultiInput(),
-						new sap.m.MultiInput(),
-						new sap.m.MultiInput(),
-						new sap.m.MultiInput(),
-						new sap.m.MultiInput({
-							tokens: [
-							         new sap.m.Token({text: "Token 1", key: "0001"}),
-							         new sap.m.Token({text: "Token 2", key: "0002"}),
-							         new sap.m.Token({text: "Token 3", key: "0003"}),
-							         new sap.m.Token({text: "Token 4", key: "0004"}),
-							         new sap.m.Token({text: "Token 5", key: "0005"}),
-							         new sap.m.Token({text: "Token 6", key: "0006"}),
-							         new sap.m.Token({text: "Token 7", key: "0007"}),
-							         new sap.m.Token({text: "Token 8", key: "0008"}),
-							         new sap.m.Token({text: "Token 9", key: "0009"})
-							         ]
-
-						}),
-						new sap.m.MultiInput(),
-						new sap.m.MultiInput(),
-						new sap.m.MultiInput(),
-						new sap.m.MultiInput(),
-						new sap.m.MultiInput(),
-						new sap.m.MultiInput(),
-						new sap.m.MultiInput(),
-						new sap.m.MultiInput(),
-						new sap.m.MultiInput(),
-						new sap.m.MultiInput(),
-						new sap.m.MultiInput(),
-						new sap.m.MultiInput(),
-						new sap.m.MultiInput()
-					],
+			content: aDialogContent,
 			beginButton:
 				new sap.m.Button({
 					text: "OK",
@@ -86,7 +77,6 @@
 					}
 			})
 		});
-
 
 		// open in a dialog
 		function openDialog(){

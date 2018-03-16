@@ -3,19 +3,6 @@
 	<head>
 		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
 		<title>Test Page for sap.ui.dt.MutationObserver</title>
-
-		<style>
-			#qunit-fixture {
-				border: 1px solid grey;
-				position: absolute;
-				top: 500px;
-				left: 100px;
-				width : 200px;
-				height: 2000px;
-				overflow: auto;
-			}
-		</style>
-
 		<script src="../shared-config.js"></script>
 		<script>
 			window['sap-ui-config'].libs = 'sap.m, sap.ui.dt, sap.ui.layout';
@@ -32,13 +19,13 @@
 			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
 
 			// code coverage report only for sap.ui.dt namespace
-			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/dt]');
+			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/dt/MutationObserver.js]');
 
 			jQuery.sap.includeScript('./MutationObserver.qunit.js');
 		</script>
 	</head>
 	<body>
 		<div id="qunit"></div>
-		<div id="qunit-fixture"></div>
+		<div id="qunit-fixture" style="position: fixed; top: auto; right: 0; bottom: 0; left: auto; width: 600px; height: 600px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);"></div>
 	</body>
 </html>

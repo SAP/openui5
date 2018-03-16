@@ -296,6 +296,8 @@ function(
 			var oRootControl = new sap.ui.core.Control();
 			var oRtaCommandStack = new Stack();
 			var oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: oRootControl});
+			sandbox.stub(oRtaCommandStack, "getAllExecutedCommands").returns(["testCommand"]);
+
 			this.oAppVariantManager = new AppVariantManager({rootControl: oRootControl, commandSerializer: oCommandSerializer});
 			oServer = sinon.fakeServer.create();
 		},
@@ -423,9 +425,41 @@ function(
 
 			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
 
-			return this.oAppVariantManager.copyUnsavedChangesToLREP("AppVariantId", true).then(function() {
+			return this.oAppVariantManager.copyUnsavedChangesToLREP("AppVariantId", false).then(function() {
 				assert.ok("then the promise is resolved");
 			});
+		});
+
+		QUnit.test("When copyUnsavedChangesToLREP() method is called, taking over dirty changes failed", function (assert) {
+			var fnTakeOverDirtyChanges = sandbox.stub(this.oAppVariantManager, "_takeOverDirtyChangesByAppVariant").returns(Promise.reject("Saving error"));
+			var fnDeleteAppVariant = sandbox.stub(this.oAppVariantManager, "_deleteAppVariantFromLREP").returns(Promise.resolve());
+			var fnShowRelevantDialog = sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.reject());
+
+			return new Promise(function(resolve, reject) {
+				return this.oAppVariantManager.copyUnsavedChangesToLREP("AppVariantId", true).then(reject, function () {
+					assert.ok(true, "a rejection took place");
+					assert.equal(fnTakeOverDirtyChanges.callCount, 1, "then the _takeOverDirtyChangesByAppVariant() method is called once");
+					assert.equal(fnDeleteAppVariant.callCount, 1, "then the _deleteAppVariantFromLREP() method is called once");
+					assert.equal(fnShowRelevantDialog.callCount, 1, "then the showRelevantDialog() method is called once");
+					resolve();
+				});
+			}.bind(this));
+		});
+
+		QUnit.test("When copyUnsavedChangesToLREP() method is called, taking over dirty changes failed and then the deleting of app variants is also failed", function (assert) {
+			var fnTakeOverDirtyChanges = sandbox.stub(this.oAppVariantManager, "_takeOverDirtyChangesByAppVariant").returns(Promise.reject("Saving error"));
+			var fnDeleteAppVariant = sandbox.stub(this.oAppVariantManager, "_deleteAppVariantFromLREP").returns(Promise.reject("Delete Error"));
+			var fnShowRelevantDialog = sandbox.stub(sap.ui.rta.appVariant.AppVariantUtils, "showRelevantDialog").returns(Promise.reject());
+
+			return new Promise(function(resolve, reject) {
+				return this.oAppVariantManager.copyUnsavedChangesToLREP("AppVariantId", true).then(reject, function () {
+					assert.ok(true, "a rejection took place");
+					assert.equal(fnTakeOverDirtyChanges.callCount, 1, "then the _takeOverDirtyChangesByAppVariant() method is called once");
+					assert.equal(fnDeleteAppVariant.callCount, 1, "then the _deleteAppVariantFromLREP() method is called once");
+					assert.equal(fnShowRelevantDialog.callCount, 1, "then the showRelevantDialog() method is called once");
+					resolve();
+				});
+			}.bind(this));
 		});
 
 		QUnit.test("When triggerCatalogAssignment() method is called on S4/Hana Cloud", function (assert) {

@@ -52,6 +52,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	 * @public
 	 * @since 1.9.1
 	 * @alias sap.m.ActionSheet
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/action-sheet/ Action Sheet}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ActionSheet = Control.extend("sap.m.ActionSheet", /** @lends sap.m.ActionSheet.prototype */ { metadata : {

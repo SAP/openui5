@@ -15,6 +15,11 @@
 		class="sapUiDemokit">
 		<content>
 			<tnt:ToolHeader id="headerToolbar">
+				<ToggleButton icon="sap-icon://menu2" type="Transparent" visible="{= ${appView>/bHasMaster} &amp;&amp; !${device>/system/phone} &amp;&amp; !${appView>/bLandscape} &amp;&amp; !${appView>/bSearchMode} }" press="toggleMaster" pressed="{appView>/bIsShownMaster}">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow" />
+					</layoutData>
+				</ToggleButton>
 				<Image id="sap_logo" src="./resources/sap/ui/documentation/sdk/images/logo_ui5.png"
 					visible="{=!${appView>/bPhoneSize}}"
 					densityAware="false"
@@ -77,6 +82,12 @@
 
 				<ObjectStatus text="{= ${versionData>/isBetaVersion} ? 'Beta version' : 'Version'} {versionData>/version} {= ${versionData>/isBetaVersion} ? '– not for productive use!' : ${versionData>/isDevVersion} ? '- development in progress!' : ''}" state="{= ${versionData>/isBetaVersion} ? 'Error' : ${versionData>/isDevVersion} ? 'Warning' : 'None'}" visible="{=!${appView>/bPhoneSize}}" />
 
+				<Button id="changeVersionButton" press="onChangeVersionButtonPress" type="Transparent" text="Change version" visible="{appView>/bShowVersionSwitchInHeader}">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow" />
+					</layoutData>
+				</Button>
+
 				<custom:Search id="searchControl" toggle="onToggleSearchMode" search="onSearch" width="{= (${appView>/bPhoneSize} &amp;&amp; ${appView>/bSearchMode}) ? '100%' : ''}"/>
 
 				<Button press="feedbackDialogOpen" icon="sap-icon://comment" type="Transparent" visible="{=!${appView>/bPhoneSize} &amp;&amp; !${appView>/bSearchMode}}">
@@ -94,6 +105,7 @@
 						<Menu class="sapContrast sapContrastPlus" itemSelected="handleMenuItemClick">
 							<items>
 								<MenuItem text="{= ${versionData>/isBetaVersion} ? 'Beta' : ''} Version {versionData>/version} {=${versionData>/isDevVersion} ? '- development in progress!' : ''}" visible="{appView>/bPhoneSize}" />
+								<MenuItem text="Change version" visible="{appView>/bShowVersionSwitchInMenu}" />
 								<MenuItem text="Feedback" visible="{appView>/bPhoneSize}" />
 								<MenuItem text="About" />
 								<MenuItem text="Legal" />

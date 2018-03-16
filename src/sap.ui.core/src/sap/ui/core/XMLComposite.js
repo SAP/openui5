@@ -272,7 +272,7 @@ sap.ui.define([
 					return true;// in case the user defined own content this shall win
 				}
 
-				var oAggregationFragment = aAggregationFragments[sAggregationName];
+				var oAggregationFragment = aAggregationFragments[sAggregationName].cloneNode(true);
 				// resolve templating in composite aggregation fragment
 				oContextVisitor.visitChildNodes(oAggregationFragment);
 

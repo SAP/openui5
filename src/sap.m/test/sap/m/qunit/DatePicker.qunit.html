@@ -1268,6 +1268,45 @@
 				oDP.destroy();
 			});
 
+			// BCP: 1880193676
+			QUnit.test("For IE & Edge the input selection is cleared before opening the picker and restoring back when picker is closed", function(assert) {
+				// Arrange
+				var done = assert.async(),
+					oStub = this.stub(sap.ui.Device, "browser", {msie: true});
+
+				this.clock = sinon.useFakeTimers();
+				var oDP = new sap.m.DatePicker("DTP6", {
+					dateValue: new Date()
+				}).placeAt("uiArea2");
+				sap.ui.getCore().applyChanges();
+
+				oDP._$input.get(0).selectionStart = 3;
+				oDP._$input.get(0).selectionEnd = 3;
+
+				oDP.$().find(".sapUiIcon").click(); //simulate opening
+				this.clock.tick(100);
+
+				//Assert
+				assert.equal(oDP._$input.get(0).selectionStart, 0, "selection start should be 0");
+				assert.equal(oDP._$input.get(0).selectionEnd, 0, "selection end should be 0");
+
+				//Act
+				oDP._oPopup.close();
+
+				setTimeout(function(){
+					//Assert
+					assert.equal(oDP._$input.get(0).selectionStart, 3, "selection start must be restored");
+					assert.equal(oDP._$input.get(0).selectionEnd, 3, "selection end must be restored");
+
+					//Cleanup
+					oStub.restore();
+					this.clock.restore();
+					done();
+				}.bind(this), 1000);
+
+				this.clock.tick(1000);//"waits" for close popup animation to complete
+			});
+
 			QUnit.module("ARIA");
 
 			QUnit.test("aria-ownes and aria-expanded correctly set", function(assert) {
@@ -1542,6 +1581,52 @@
 					this.oDP.destroy();
 					this.oDP = null;
 				}
+			});
+
+			// BCP: 1880193676
+			QUnit.test("_storeInputSelection should store the selectionStart and End position of the Input and set it to 0", function (assert) {
+				// Arrange
+				var oStub = this.stub(sap.ui.Device, "browser", {msie: true}),
+						iExpectedSelectionStart = 2,
+						iExpectedSelectionEnd = 3,
+						oMockedInput = { selectionStart: iExpectedSelectionStart, selectionEnd: iExpectedSelectionEnd },
+						oDP = new sap.m.DatePicker();
+
+				// Act
+				oDP._storeInputSelection(oMockedInput);
+
+				// Assert
+				assert.equal(oDP._oInputSelBeforePopupOpen.iStart, iExpectedSelectionStart, "Stored selectionStart should be equal to " + iExpectedSelectionStart);
+				assert.equal(oDP._oInputSelBeforePopupOpen.iStart, iExpectedSelectionStart, "Stored selectionEnd should be equal to " + iExpectedSelectionEnd);
+				assert.equal(oMockedInput.selectionStart, 0, "Input's sectionStart should be restored to 0");
+				assert.equal(oMockedInput.selectionEnd, 0, "Input's sectionEnd should be restored to 0");
+
+				// Cleanup
+				oDP.destroy();
+			});
+
+			// BCP: 1880193676
+			QUnit.test("_restoreInputSelection should restore the selectionStart and End position of the Input", function (assert) {
+				// Arrange
+				var oStub = this.stub(sap.ui.Device, "browser", {msie: true}),
+					iExpectedSelectionStart = 2,
+					iExpectedSelectionEnd = 3,
+					oMockedInput = { selectionStart: iExpectedSelectionStart, selectionEnd: iExpectedSelectionEnd },
+					oDP = new sap.m.DatePicker();
+				oDP._oInputSelBeforePopupOpen = {
+					iStart: iExpectedSelectionStart,
+					iEnd: iExpectedSelectionEnd
+				};
+
+				// Act
+				oDP._restoreInputSelection(oMockedInput);
+
+				// Assert
+				assert.equal(oMockedInput.selectionStart, iExpectedSelectionStart, "Input's sectionStart should be restored to " + iExpectedSelectionStart);
+				assert.equal(oMockedInput.selectionEnd, iExpectedSelectionEnd, "Input's sectionEnd should be restored to " + iExpectedSelectionEnd);
+
+				// Cleanup
+				oDP.destroy();
 			});
 
 			QUnit.test("_getVisibleDatesRange", function (assert) {
