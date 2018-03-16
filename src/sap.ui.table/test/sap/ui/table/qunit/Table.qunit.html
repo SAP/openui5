@@ -409,7 +409,7 @@
 		oTable.getDomRef().style.width = "0px";
 		assert.ok(oTable.getDomRef("tableCCnt").clientHeight > 0, "CCnt still has clientHeight");
 	});
-	
+
 	QUnit.test("getCellControl", function(assert) {
 		oTable.getColumns()[2].setVisible(false);
 		sap.ui.getCore().applyChanges();
@@ -419,28 +419,28 @@
 
 		oCell = oTable.getCellControl(1, 1, true);
 		assert.strictEqual(oCell.getId(), oTable.getRows()[1].getCells()[1].getId(), "Cell 1,1");
-		
+
 		oCell = oTable.getCellControl(2, 2, true);
 		assert.strictEqual(oCell.getId(), oTable.getRows()[2].getCells()[2].getId(), "Cell 2,2");
-		
+
 		oCell = oTable.getCellControl(0, 0, false);
 		assert.strictEqual(oCell.getId(), oTable.getRows()[0].getCells()[0].getId(), "Cell 0,0");
 
 		oCell = oTable.getCellControl(1, 1, false);
 		assert.strictEqual(oCell.getId(), oTable.getRows()[1].getCells()[1].getId(), "Cell 1,1");
-		
+
 		oCell = oTable.getCellControl(2, 2, false);
 		assert.ok(!oCell, "Cell 2,2");
 
 		oCell = oTable.getCellControl(-1, 2, false);
 		assert.ok(!oCell, "Negative RowIndex");
-		
+
 		oCell = oTable.getCellControl(2, -1, false);
 		assert.ok(!oCell, "Negative ColIndex");
-		
+
 		oCell = oTable.getCellControl(5000, 2, false);
 		assert.ok(!oCell, "Big RowIndex");
-		
+
 		oCell = oTable.getCellControl(2, 5000, false);
 		assert.ok(!oCell, "Big ColIndex");
 	});
@@ -1820,7 +1820,7 @@
 			target: oTable.getColumns()[5].getDomRef()
 		});
 
-		oScrollExtension._ExtensionDelegate.onfocusin(oEvent);
+		oScrollExtension._ExtensionDelegate.onfocusin.call(oTable, oEvent);
 		assert.ok(jQuery(oEvent.target).parent('.sapUiTableColHdrTr').length > 0, "Column header is in focus");
 	});
 
